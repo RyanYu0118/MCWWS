@@ -471,4 +471,275 @@
     .mcwws-dock-tile-label {
         font-size: 10px;
     }
+
+    .mcwws-map-controls {
+        right: 10px;
+        bottom: 16px;
+    }
+
+    .mcwws-ctrl-bottom-row {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mcwws-layer-menu {
+        right: 0;
+        bottom: calc(100% + 8px);
+        min-width: 140px;
+    }
+}
+
+/* ═══ 右下角地图控件（高德风格） ═══ */
+body.mcwws-clean-mode #mcwws-shop-panel,
+body.mcwws-clean-mode #mcwws-shop-pin-layer {
+    display: none !important;
+}
+
+.mcwws-map-controls {
+    position: fixed;
+    right: 16px;
+    bottom: 24px;
+    z-index: 10001;
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    pointer-events: none;
+}
+
+.mcwws-map-controls * {
+    box-sizing: border-box;
+}
+
+.mcwws-map-controls-stack {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.mcwws-map-controls-stack,
+.mcwws-map-controls-stack * {
+    pointer-events: auto;
+}
+
+.mcwws-ctrl-btn {
+    width: 40px;
+    height: 40px;
+    border: 0;
+    border-radius: 8px;
+    background: #fff;
+    color: #374151;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.mcwws-ctrl-btn:hover {
+    background: #f9fafb;
+}
+
+.mcwws-ctrl-btn:active {
+    transform: scale(0.96);
+}
+
+.mcwws-ctrl-compass {
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.mcwws-compass-dial {
+    position: relative;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    background: radial-gradient(circle at 50% 35%, #fff 0%, #f3f4f6 100%);
+}
+
+.mcwws-compass-dial::before,
+.mcwws-compass-dial::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    border: 1px dashed transparent;
+    border-top-color: #d1d5db;
+    border-bottom-color: #d1d5db;
+    transform: rotate(45deg);
+    opacity: 0.7;
+}
+
+.mcwws-compass-needle {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 0;
+    height: 0;
+    border-left: 4px solid transparent;
+    border-right: 4px solid transparent;
+    border-bottom: 14px solid #ef4444;
+    transform: translate(-50%, -100%) rotate(0deg);
+    transform-origin: 50% 100%;
+    filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
+    transition: transform 0.12s linear;
+}
+
+.mcwws-ctrl-mode-label {
+    font-size: 13px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    color: #111827;
+}
+
+.mcwws-ctrl-zoom {
+    display: flex;
+    flex-direction: column;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+}
+
+.mcwws-ctrl-zoom .mcwws-ctrl-btn {
+    width: 40px;
+    height: 36px;
+    border-radius: 0;
+    box-shadow: none;
+    font-size: 20px;
+    line-height: 1;
+    font-weight: 300;
+}
+
+.mcwws-ctrl-zoom .mcwws-ctrl-zoom-in {
+    border-bottom: 1px solid #e5e7eb;
+}
+
+.mcwws-ctrl-bottom-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 8px;
+}
+
+.mcwws-ctrl-layer,
+.mcwws-ctrl-fullscreen {
+    border: 0;
+    cursor: pointer;
+    background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    transition: background 0.15s, transform 0.1s;
+}
+
+.mcwws-ctrl-layer {
+    width: 72px;
+    height: 72px;
+    border-radius: 10px;
+    padding: 0;
+    overflow: hidden;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-end;
+}
+
+.mcwws-ctrl-layer-thumb {
+    position: absolute;
+    inset: 0;
+    background:
+        linear-gradient(135deg, #86efac 0%, #22c55e 40%, #15803d 100%);
+    opacity: 0.85;
+}
+
+.mcwws-ctrl-layer-text {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    width: 100%;
+    padding: 6px 4px;
+    background: rgba(0, 0, 0, 0.55);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 600;
+}
+
+.mcwws-ctrl-layer-icon {
+    flex-shrink: 0;
+}
+
+.mcwws-ctrl-fullscreen {
+    width: 40px;
+    height: 72px;
+    border-radius: 8px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    color: #374151;
+    padding: 6px 4px;
+}
+
+.mcwws-ctrl-fullscreen:hover,
+.mcwws-ctrl-layer:hover {
+    background: #f9fafb;
+}
+
+.mcwws-ctrl-fs-label {
+    font-size: 11px;
+    color: #4b5563;
+    line-height: 1.1;
+}
+
+.mcwws-layer-menu {
+    position: absolute;
+    right: 0;
+    bottom: calc(100% + 10px);
+    min-width: 160px;
+    max-height: 240px;
+    overflow: auto;
+    padding: 6px;
+    border-radius: 10px;
+    background: #fff;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.16), 0 0 0 1px rgba(0, 0, 0, 0.05);
+    pointer-events: auto;
+}
+
+.mcwws-layer-item {
+    width: 100%;
+    border: 0;
+    background: transparent;
+    border-radius: 8px;
+    padding: 8px 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+    text-align: left;
+    color: #111827;
+}
+
+.mcwws-layer-item:hover {
+    background: #f3f4f6;
+}
+
+.mcwws-layer-item.is-active {
+    background: #eff6ff;
+    color: #1d4ed8;
+}
+
+.mcwws-layer-item-thumb {
+    width: 36px;
+    height: 36px;
+    border-radius: 6px;
+    flex-shrink: 0;
+    background: linear-gradient(135deg, #93c5fd, #2563eb);
+}
+
+.mcwws-layer-item-name {
+    font-size: 13px;
+    font-weight: 600;
 }

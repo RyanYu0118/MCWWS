@@ -2,6 +2,7 @@
     const API_PORT = 8002;
     const PANEL_ID = 'mcwws-shop-panel';
     const PIN_LAYER_ID = 'mcwws-shop-pin-layer';
+    const MAP_CONTROLS_ID = 'mcwws-map-controls';
     const CACHE_KEY = 'mcwws-shop-markers-cache';
     const FLAT_HEIGHT_KEY = 'mcwws-last-flat-distance';
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
@@ -22,6 +23,9 @@
     let tradeItemId = '';
     let launchTradeHandled = false;
     let dockEventsBound = false;
+    let mapControlsBound = false;
+    let cleanModeActive = false;
+    let layerMenuOpen = false;
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -725,6 +729,265 @@
         }
     }
 
+    function getMapViewState() {
+        return getBlueMapApp()?.appState?.controls?.state || parseHash()?.mode || 'perspective';
+    }
+
+    function getMapRotationRad() {
+        const view = parseHash();
+        if (!view) return 0;
+        return getMapViewState() === 'flat'
+            ? (Number(view.roll) || 0)
+            : (Number(view.yaw) || 0);
+    }
+
+    function resetMapRotation() {
+        const view = parseHash();
+        if (!view) return;
+        view.yaw = 0;
+        view.roll = 0;
+        setViewHash(view);
+    }
+
+    function adjustMapZoom(direction) {
+        const factor = direction > 0 ? 0.82 : 1.22;
+        const cm = getControlsManager();
+        const state = getMapViewState();
+        if (state === 'flat' && cm && Number.isFinite(Number(cm.distance))) {
+            cm.distance = Math.max(5, Math.min(8000, Number(cm.distance) * factor));
+            rememberFlatZoom();
+            const view = parseHash();
+            if (view) {
+                view.height = cm.distance;
+                view.mode = 'flat';
+                setViewHash(view);
+            }
+            return;
+        }
+        const view = parseHash();
+        if (!view) return;
+        const nextHeight = Math.max(5, Math.min(8000, (Number(view.height) || lastFlatHeight || 128) * factor));
+        view.height = nextHeight;
+        setViewHash(view);
+    }
+
+    function toggleMapViewMode() {
+        const state = getMapViewState();
+        const view = parseHash();
+        if (state === 'flat') {
+            setBlueMapViewMode('perspective');
+            if (view) {
+                view.mode = 'perspective';
+                setViewHash(view);
+            }
+            return;
+        }
+        rememberFlatZoom();
+        setBlueMapViewMode('flat');
+        if (view) {
+            view.mode = 'flat';
+            view.pitch = 0;
+            view.height = lastFlatHeight;
+            setViewHash(view);
+        }
+    }
+
+    function getAvailableMaps() {
+        const bm = getBlueMapApp();
+        const list = bm?.appState?.maps;
+        if (Array.isArray(list) && list.length) {
+            return list.map((entry) => {
+                if (typeof entry === 'string') {
+                    return { id: entry, name: entry };
+                }
+                const id = entry?.id || entry?.mapId || entry?.map?.id;
+                const name = entry?.name || entry?.map?.name || entry?.label || id;
+                if (!id) return null;
+                return { id: String(id), name: String(name || id) };
+            }).filter(Boolean);
+        }
+        const ids = new Set();
+        markers.forEach((marker) => {
+            if (marker.map) ids.add(marker.map);
+        });
+        const current = parseHash()?.map;
+        if (current) ids.add(current);
+        if (!ids.size) ids.add('world');
+        return [...ids].map((id) => ({ id, name: id }));
+    }
+
+    function switchMapLayer(mapId) {
+        if (!mapId) return;
+        const view = parseHash();
+        if (view) {
+            view.map = mapId;
+            setViewHash(view);
+        } else {
+            setViewHash({
+                map: mapId,
+                x: 0,
+                y: 64,
+                z: 0,
+                height: lastFlatHeight,
+                pitch: 0,
+                yaw: 0,
+                roll: 0,
+                fov: 1,
+                mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
+            });
+        }
+        const bm = getBlueMapApp();
+        if (bm && typeof bm.setMap === 'function') {
+            bm.setMap(mapId);
+        }
+        layerMenuOpen = false;
+        renderLayerMenu();
+        renderPanel();
+        syncPinElements();
+    }
+
+    function setCleanMode(active) {
+        cleanModeActive = !!active;
+        document.body.classList.toggle('mcwws-clean-mode', cleanModeActive);
+        const root = document.getElementById(MAP_CONTROLS_ID);
+        root?.classList.toggle('is-clean', cleanModeActive);
+        try {
+            window.parent.postMessage({ type: 'mcwws-map-clean', active: cleanModeActive }, '*');
+        } catch {
+            /* ignore */
+        }
+        updateMapControlsState();
+    }
+
+    function toggleCleanMode() {
+        setCleanMode(!cleanModeActive);
+    }
+
+    function renderLayerMenu() {
+        const menu = document.getElementById(MAP_CONTROLS_ID)?.querySelector('.mcwws-layer-menu');
+        if (!menu) return;
+        const maps = getAvailableMaps();
+        const current = parseHash()?.map || maps[0]?.id;
+        menu.hidden = !layerMenuOpen;
+        menu.innerHTML = maps.map((entry) => {
+            const active = entry.id === current;
+            return `
+                <button type="button" class="mcwws-layer-item${active ? ' is-active' : ''}" data-map-id="${escapeHtml(entry.id)}">
+                    <span class="mcwws-layer-item-thumb" aria-hidden="true"></span>
+                    <span class="mcwws-layer-item-name">${escapeHtml(entry.name)}</span>
+                </button>
+            `;
+        }).join('');
+    }
+
+    function updateMapControlsState() {
+        const root = document.getElementById(MAP_CONTROLS_ID);
+        if (!root) return;
+        const needle = root.querySelector('.mcwws-compass-needle');
+        const modeLabel = root.querySelector('.mcwws-ctrl-mode-label');
+        const fsLabel = root.querySelector('.mcwws-ctrl-fs-label');
+        const deg = getMapRotationRad() * (180 / Math.PI);
+        if (needle) {
+            needle.style.transform = `translate(-50%, -100%) rotate(${deg.toFixed(1)}deg)`;
+        }
+        if (modeLabel) {
+            modeLabel.textContent = getMapViewState() === 'flat' ? '3D' : '2D';
+        }
+        if (fsLabel) {
+            fsLabel.textContent = cleanModeActive ? '退出' : '全屏';
+        }
+        const fsIcon = root.querySelector('.mcwws-ctrl-fs-icon path');
+        if (fsIcon) {
+            fsIcon.setAttribute('d', cleanModeActive
+                ? 'M7 7h4V5H5v6h2V7zm10 0v4h2V5h-6v2h4zM7 17H5v-6H3v8h8v-2H7zm10 0h-4v2h6v-8h-2v6z'
+                : 'M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z');
+        }
+        root.querySelector('.mcwws-ctrl-fullscreen')?.setAttribute(
+            'title',
+            cleanModeActive ? '退出全屏，还原功能模块' : '全屏，隐藏所有功能模块'
+        );
+    }
+
+    function ensureMapControls() {
+        let root = document.getElementById(MAP_CONTROLS_ID);
+        if (root?.dataset.ready === '1') {
+            updateMapControlsState();
+            return root;
+        }
+        root = document.createElement('div');
+        root.id = MAP_CONTROLS_ID;
+        root.className = 'mcwws-map-controls';
+        root.dataset.ready = '1';
+        root.innerHTML = `
+            <div class="mcwws-layer-menu" hidden></div>
+            <div class="mcwws-map-controls-stack">
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北">
+                    <span class="mcwws-compass-dial" aria-hidden="true">
+                        <span class="mcwws-compass-needle"></span>
+                    </span>
+                </button>
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="切换 2D / 3D 视图">
+                    <span class="mcwws-ctrl-mode-label">2D</span>
+                </button>
+                <div class="mcwws-ctrl-zoom">
+                    <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-in" title="放大">+</button>
+                    <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-out" title="缩小">−</button>
+                </div>
+                <div class="mcwws-ctrl-bottom-row">
+                    <button type="button" class="mcwws-ctrl-layer" title="图层选择">
+                        <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
+                        <span class="mcwws-ctrl-layer-text">
+                            <svg class="mcwws-ctrl-layer-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/></svg>
+                            图层
+                        </span>
+                    </button>
+                    <button type="button" class="mcwws-ctrl-fullscreen" title="全屏，隐藏所有功能模块">
+                        <svg class="mcwws-ctrl-fs-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z"/></svg>
+                        <span class="mcwws-ctrl-fs-label">全屏</span>
+                    </button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(root);
+        bindMapControlEvents(root);
+        renderLayerMenu();
+        updateMapControlsState();
+        return root;
+    }
+
+    function bindMapControlEvents(root) {
+        if (mapControlsBound) return;
+        mapControlsBound = true;
+
+        root.querySelector('.mcwws-ctrl-compass')?.addEventListener('click', resetMapRotation);
+        root.querySelector('.mcwws-ctrl-mode')?.addEventListener('click', () => {
+            toggleMapViewMode();
+            updateMapControlsState();
+        });
+        root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
+        root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
+        root.querySelector('.mcwws-ctrl-fullscreen')?.addEventListener('click', toggleCleanMode);
+        root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            layerMenuOpen = !layerMenuOpen;
+            renderLayerMenu();
+        });
+
+        root.addEventListener('click', (e) => {
+            const item = e.target.closest('.mcwws-layer-item');
+            if (!item) return;
+            switchMapLayer(item.dataset.mapId);
+            updateMapControlsState();
+        });
+
+        document.addEventListener('click', (e) => {
+            if (!layerMenuOpen) return;
+            if (e.target.closest('.mcwws-ctrl-layer') || e.target.closest('.mcwws-layer-menu')) return;
+            layerMenuOpen = false;
+            renderLayerMenu();
+        });
+    }
+
     function applyMatrix4(point, matrix) {
         const e = matrix.elements || matrix;
         const x = point.x;
@@ -854,6 +1117,7 @@
         if (!document.body) return;
         lastPanelMap = parseHash()?.map || null;
         ensureDockShell();
+        ensureMapControls();
         renderResultsPanel();
         updatePinPositions();
     }
@@ -910,6 +1174,9 @@
         if (tickFrame % 10 === 0) {
             rememberFlatZoom();
         }
+        if (tickFrame % 6 === 0) {
+            updateMapControlsState();
+        }
         animationId = requestAnimationFrame(tickPins);
     }
 
@@ -920,6 +1187,8 @@
             syncPinElements();
         }
         updatePinPositions();
+        updateMapControlsState();
+        if (layerMenuOpen) renderLayerMenu();
     });
     window.addEventListener('resize', updatePinPositions);
     window.addEventListener('beforeunload', () => {

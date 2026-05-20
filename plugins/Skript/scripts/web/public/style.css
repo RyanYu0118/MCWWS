@@ -2748,6 +2748,15 @@ body {
     z-index: 2;
 }
 
+body.services-map-clean .services-subnav {
+    display: none;
+}
+
+body.services-map-clean .services-map-frame-wrap {
+    margin-top: 0;
+    min-height: 100vh;
+}
+
 .services-map-footer {
     flex: 0 0 auto;
 }

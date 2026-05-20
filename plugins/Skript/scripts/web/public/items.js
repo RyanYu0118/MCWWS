@@ -226,22 +226,24 @@ function appendTradeParamsToMapUrl(url, item) {
     if (!raw) return null;
     const itemId = item && item.id ? String(item.id) : '';
     const q = item && (item.name || item.displayName) ? String(item.name || item.displayName) : '';
+
+    let bluemapHash = '';
     try {
         const parsed = new URL(raw, window.location.href);
-        parsed.searchParams.set('trade', '1');
-        if (itemId) parsed.searchParams.set('item', itemId);
-        if (q) parsed.searchParams.set('q', q);
-        return parsed.toString();
+        bluemapHash = parsed.hash;
     } catch {
         const hashIdx = raw.indexOf('#');
-        const base = hashIdx >= 0 ? raw.slice(0, hashIdx) : raw;
-        const hash = hashIdx >= 0 ? raw.slice(hashIdx) : '';
-        const sep = base.includes('?') ? '&' : '?';
-        const parts = [`${base}${sep}trade=1`];
-        if (itemId) parts.push(`item=${encodeURIComponent(itemId)}`);
-        if (q) parts.push(`q=${encodeURIComponent(q)}`);
-        return `${parts.join('&')}${hash}`;
+        bluemapHash = hashIdx >= 0 ? raw.slice(hashIdx) : '';
     }
+
+    const mapPage = new URL('map.html', window.location.href);
+    if (bluemapHash) {
+        mapPage.hash = bluemapHash.startsWith('#') ? bluemapHash.slice(1) : bluemapHash;
+    }
+    mapPage.searchParams.set('trade', '1');
+    if (itemId) mapPage.searchParams.set('item', itemId);
+    if (q) mapPage.searchParams.set('q', q);
+    return mapPage.toString();
 }
 
 function escapeHtml(str) {

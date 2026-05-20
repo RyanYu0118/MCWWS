@@ -13,7 +13,7 @@
 </head>
 <body class="services-hub-page services-map-page">
     <nav class="services-subnav glass">
-        <a href="home.html" class="services-back-link">← 流浪世界服务</a>
+        <a href="home.html" class="services-back-link">🏠 更多服务</a>
         <span class="services-subnav-title">流浪世界地图系统</span>
         <a href="#" class="services-open-map-btn" id="openMapBtn" target="_blank" rel="noopener">在新标签页打开地图</a>
     </nav>
@@ -36,20 +36,48 @@
             const openBtn = document.getElementById('openMapBtn');
             const loading = document.getElementById('mapLoading');
 
+            function resolveBluemapBase() {
+                return (window.MCWWS_SERVICES && window.MCWWS_SERVICES.bluemapUrl) || '/';
+            }
+
+            function buildBluemapFrameUrl() {
+                let url;
+                try {
+                    url = new URL(resolveBluemapBase(), window.location.href);
+                } catch {
+                    url = new URL('/', window.location.href);
+                }
+                const pageParams = new URLSearchParams(window.location.search);
+                pageParams.forEach((value, key) => {
+                    url.searchParams.set(key, value);
+                });
+                if (window.location.hash) {
+                    url.hash = window.location.hash;
+                }
+                return url.toString();
+            }
+
             function mountMap() {
-                const url = (window.MCWWS_SERVICES && window.MCWWS_SERVICES.bluemapUrl) || '/';
+                const url = buildBluemapFrameUrl();
                 if (openBtn) openBtn.href = url;
-                if (!frame || frame.dataset.loaded === '1') return;
-                frame.dataset.loaded = '1';
-                frame.addEventListener('load', () => {
-                    if (loading) loading.hidden = true;
-                }, { once: true });
+                if (!frame) return;
+                if (frame.dataset.loaded !== '1') {
+                    frame.dataset.loaded = '1';
+                    frame.addEventListener('load', () => {
+                        if (loading) loading.hidden = true;
+                    }, { once: true });
+                }
                 frame.src = url;
             }
 
             mountMap();
             window.addEventListener('mcwws-services-config', mountMap);
             window.setTimeout(mountMap, 500);
+
+            window.addEventListener('message', (event) => {
+                if (event.data?.type !== 'mcwws-map-clean') return;
+                document.body.classList.toggle('services-map-clean', !!event.data.active);
+            });
         })();
     </script>
 </body>
