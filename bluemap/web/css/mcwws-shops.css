@@ -547,16 +547,23 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
 
 .mcwws-ctrl-compass {
     border-radius: 999px;
-    overflow: hidden;
+    overflow: visible;
+}
+
+.mcwws-compass-shell {
+    position: relative;
+    display: block;
+    width: 28px;
+    height: 28px;
 }
 
 .mcwws-compass-dial {
-    position: relative;
-    width: 28px;
-    height: 28px;
+    position: absolute;
+    inset: 0;
     border-radius: 999px;
     border: 1px solid #e5e7eb;
     background: radial-gradient(circle at 50% 35%, #fff 0%, #f3f4f6 100%);
+    transition: transform 0.12s linear;
 }
 
 .mcwws-compass-dial::before,
@@ -566,25 +573,38 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     inset: 0;
     border-radius: inherit;
     border: 1px dashed transparent;
-    border-top-color: #d1d5db;
-    border-bottom-color: #d1d5db;
+    border-top-color: #cbd5e1;
+    border-bottom-color: #cbd5e1;
     transform: rotate(45deg);
-    opacity: 0.7;
+    opacity: 0.75;
+}
+
+.mcwws-compass-n {
+    position: absolute;
+    top: 3px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 9px;
+    font-weight: 700;
+    line-height: 1;
+    color: #64748b;
+    z-index: 1;
 }
 
 .mcwws-compass-needle {
     position: absolute;
     left: 50%;
     top: 50%;
+    z-index: 2;
     width: 0;
     height: 0;
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-bottom: 14px solid #ef4444;
-    transform: translate(-50%, -100%) rotate(0deg);
+    transform: translate(-50%, -100%);
     transform-origin: 50% 100%;
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
-    transition: transform 0.12s linear;
+    pointer-events: none;
 }
 
 .mcwws-ctrl-mode-label {

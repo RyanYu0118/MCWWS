@@ -544,16 +544,21 @@
         const x = Number(marker.position.x) + 0.5;
         const y = Number(marker.position.y);
         const z = Number(marker.position.z) + 0.5;
+        const dist = lastFlatHeight;
+        const cm = getControlsManager();
+        const angle = Number(cm?.angle);
+        const defaultAngle = getMaxPerspectiveAngleForDistance(dist) * 0.55;
         setViewHash({
             map: marker.map,
             x,
             y,
             z,
-            height: lastFlatHeight,
-            pitch: 0,
-            yaw: 0,
-            roll: 0,
-            fov: 1,
+            distance: dist,
+            height: dist,
+            rotation: 0,
+            angle: Number.isFinite(angle) && angle > 0.05 ? angle : defaultAngle,
+            tilt: 0,
+            ortho: 0,
             mode: 'flat'
         });
     }
@@ -578,37 +583,49 @@
         return parseHashParts(hash.split(':'));
     }
 
+    /** BlueMap 锚点：map:x:y:z:distance:rotation:angle:tilt:ortho:mode */
     function parseHashParts(parts) {
         if (parts.length < 4) return null;
         const x = Number(parts[1]);
         const y = Number(parts[2]);
         const z = Number(parts[3]);
         if (![x, y, z].every(Number.isFinite)) return null;
+        const distance = Number.isFinite(Number(parts[4])) ? Math.max(1, Number(parts[4])) : 128;
+        const rotation = Number.isFinite(Number(parts[5])) ? Number(parts[5]) : 0;
+        const angle = Number.isFinite(Number(parts[6])) ? Number(parts[6]) : 0;
+        const tilt = Number.isFinite(Number(parts[7])) ? Number(parts[7]) : 0;
+        const ortho = Number.isFinite(Number(parts[8])) ? Number(parts[8]) : 0;
         return {
             map: parts[0],
             x,
             y,
             z,
-            height: Number.isFinite(Number(parts[4])) ? Math.max(1, Number(parts[4])) : 128,
-            pitch: Number.isFinite(Number(parts[5])) ? Number(parts[5]) : -0.8,
-            yaw: Number.isFinite(Number(parts[6])) ? Number(parts[6]) : 0,
-            roll: Number.isFinite(Number(parts[7])) ? Number(parts[7]) : 0,
-            fov: Number.isFinite(Number(parts[8])) ? Number(parts[8]) : 0,
+            distance,
+            height: distance,
+            rotation,
+            angle,
+            tilt,
+            ortho,
+            pitch: angle,
+            yaw: rotation,
+            roll: tilt,
+            fov: ortho,
             mode: parts[9] || 'perspective'
         };
     }
 
     function formatViewHash(view) {
+        const distance = view.distance ?? view.height ?? 128;
         return [
             view.map,
             roundViewNumber(view.x),
             roundViewNumber(view.y),
             roundViewNumber(view.z),
-            roundViewNumber(view.height),
-            roundViewNumber(view.pitch),
-            roundViewNumber(view.yaw),
-            roundViewNumber(view.roll || 0),
-            roundViewNumber(view.fov || 0),
+            roundViewNumber(distance),
+            roundViewNumber(view.rotation ?? view.yaw ?? 0),
+            roundViewNumber(view.angle ?? view.pitch ?? 0),
+            roundViewNumber(view.tilt ?? view.roll ?? 0),
+            roundViewNumber(view.ortho ?? view.fov ?? 0),
             view.mode || 'perspective'
         ].join(':');
     }
@@ -658,10 +675,12 @@
         const bluemap = getBlueMapApp();
         if (!bluemap) return;
         cachedCamera = null;
+        const cm = getControlsManager();
+        const dist = clampMapDistance(cm?.distance || lastFlatHeight);
         if (mode === 'flat' && typeof bluemap.setFlatView === 'function') {
-            bluemap.setFlatView();
+            bluemap.setFlatView(500, dist);
         } else if (mode === 'perspective' && typeof bluemap.setPerspectiveView === 'function') {
-            bluemap.setPerspectiveView();
+            bluemap.setPerspectiveView(500, 0);
         }
     }
 
@@ -733,20 +752,125 @@
         return getBlueMapApp()?.appState?.controls?.state || parseHash()?.mode || 'perspective';
     }
 
-    function getMapRotationRad() {
-        const view = parseHash();
-        if (!view) return 0;
-        return getMapViewState() === 'flat'
-            ? (Number(view.roll) || 0)
-            : (Number(view.yaw) || 0);
+    function getMaxPerspectiveAngleForDistance(distance) {
+        const HALF_PI = Math.PI / 2;
+        const e = Math.max(Number(distance) || 128, 5);
+        return Math.min(
+            Math.max((1 - Math.pow(Math.max(e - 5, 0.001) * 5e-4, 0.5)) * HALF_PI, 0),
+            HALF_PI
+        );
     }
 
-    function resetMapRotation() {
-        const view = parseHash();
-        if (!view) return;
-        view.yaw = 0;
-        view.roll = 0;
-        setViewHash(view);
+    function getControlsRotation() {
+        const cm = getControlsManager();
+        return Number(cm?.rotation) || 0;
+    }
+
+    function syncPageAddressFromControls() {
+        const bm = getBlueMapApp();
+        if (bm && typeof bm.updatePageAddress === 'function') {
+            bm.updatePageAddress();
+        }
+    }
+
+    function clampMapDistance(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n) || n <= 0) return lastFlatHeight || 128;
+        return Math.max(5, Math.min(8000, n));
+    }
+
+    function clampMapAngle(angle, distance) {
+        const max = getMaxPerspectiveAngleForDistance(distance);
+        const a = Number(angle);
+        if (!Number.isFinite(a) || a < 0.08) return max * 0.55;
+        return Math.min(Math.max(a, 0.08), max);
+    }
+
+    function animateControlsRotation(cm, targetRotation, onDone) {
+        const start = Number(cm.rotation) || 0;
+        const target = Number(targetRotation) || 0;
+        if (Math.abs(start - target) < 0.001) {
+            cm.rotation = target;
+            onDone();
+            return;
+        }
+        const duration = 300;
+        const startTime = performance.now();
+        function easeOutQuad(t) {
+            return 1 - (1 - t) * (1 - t);
+        }
+        function step(now) {
+            const t = Math.min(1, (now - startTime) / duration);
+            cm.rotation = start + (target - start) * (1 - easeOutQuad(t));
+            if (t < 1) {
+                requestAnimationFrame(step);
+            } else {
+                cm.rotation = target;
+                onDone();
+            }
+        }
+        requestAnimationFrame(step);
+    }
+
+    function applyNorthFlatView(cm, distance, angle) {
+        const dist = clampMapDistance(distance);
+        const ang = clampMapAngle(angle, dist);
+        const maxAngle = getMaxPerspectiveAngleForDistance(dist);
+        cm.rotation = 0;
+        cm.distance = dist;
+        cm.angle = Math.min(ang, maxAngle);
+        rememberFlatZoom();
+        syncPageAddressFromControls();
+        updateMapControlsState();
+        updatePinPositions();
+    }
+
+    function waitForBlueMapViewAnimation(bm, onDone) {
+        let frames = 0;
+        const maxFrames = 120;
+        function tick() {
+            frames += 1;
+            if (!bm.viewAnimation || frames >= maxFrames) {
+                onDone();
+                return;
+            }
+            requestAnimationFrame(tick);
+        }
+        requestAnimationFrame(tick);
+    }
+
+    function resetCompassNorth() {
+        const cm = getControlsManager();
+        const bm = getBlueMapApp();
+        if (!cm || !bm) return;
+
+        const hash = parseHash();
+        const savedDistance = clampMapDistance(
+            Number.isFinite(cm.distance) ? cm.distance : (hash?.distance || lastFlatHeight)
+        );
+        const savedAngle = clampMapAngle(
+            Number.isFinite(cm.angle) && cm.angle > 0.02 ? cm.angle : (hash?.angle || 0),
+            savedDistance
+        );
+        const state = getMapViewState();
+
+        if (state === 'flat') {
+            animateControlsRotation(cm, 0, () => {
+                applyNorthFlatView(cm, savedDistance, savedAngle);
+            });
+            return;
+        }
+
+        if (typeof bm.setFlatView === 'function') {
+            bm.setFlatView(500, savedDistance);
+            waitForBlueMapViewAnimation(bm, () => {
+                applyNorthFlatView(cm, savedDistance, savedAngle);
+            });
+            return;
+        }
+
+        setBlueMapViewMode('flat');
+        applyNorthFlatView(cm, savedDistance, savedAngle);
     }
 
     function adjustMapZoom(direction) {
@@ -756,40 +880,47 @@
         if (state === 'flat' && cm && Number.isFinite(Number(cm.distance))) {
             cm.distance = Math.max(5, Math.min(8000, Number(cm.distance) * factor));
             rememberFlatZoom();
-            const view = parseHash();
-            if (view) {
-                view.height = cm.distance;
-                view.mode = 'flat';
-                setViewHash(view);
-            }
+            syncPageAddressFromControls();
             return;
         }
         const view = parseHash();
         if (!view) return;
-        const nextHeight = Math.max(5, Math.min(8000, (Number(view.height) || lastFlatHeight || 128) * factor));
-        view.height = nextHeight;
+        const nextDist = Math.max(5, Math.min(8000, (Number(view.distance) || lastFlatHeight || 128) * factor));
+        view.distance = nextDist;
+        view.height = nextDist;
+        view.angle = Math.min(Number(view.angle) || 0, getMaxPerspectiveAngleForDistance(nextDist));
         setViewHash(view);
     }
 
     function toggleMapViewMode() {
         const state = getMapViewState();
         const view = parseHash();
+        const cm = getControlsManager();
         if (state === 'flat') {
             setBlueMapViewMode('perspective');
             if (view) {
                 view.mode = 'perspective';
                 setViewHash(view);
             }
+            syncPageAddressFromControls();
             return;
         }
         rememberFlatZoom();
-        setBlueMapViewMode('flat');
+        const dist = Number.isFinite(cm?.distance) ? cm.distance : lastFlatHeight;
+        const angle = Number.isFinite(cm?.angle) && cm.angle > 0.02
+            ? cm.angle
+            : getMaxPerspectiveAngleForDistance(dist) * 0.55;
         if (view) {
             view.mode = 'flat';
-            view.pitch = 0;
-            view.height = lastFlatHeight;
+            view.distance = dist;
+            view.height = dist;
+            view.rotation = Number(view.rotation) || 0;
+            view.angle = angle;
             setViewHash(view);
+        } else {
+            setBlueMapViewMode('flat');
         }
+        syncPageAddressFromControls();
     }
 
     function getAvailableMaps() {
@@ -828,11 +959,12 @@
                 x: 0,
                 y: 64,
                 z: 0,
+                distance: lastFlatHeight,
                 height: lastFlatHeight,
-                pitch: 0,
-                yaw: 0,
-                roll: 0,
-                fov: 1,
+                rotation: 0,
+                angle: getMaxPerspectiveAngleForDistance(lastFlatHeight) * 0.55,
+                tilt: 0,
+                ortho: 0,
                 mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
             });
         }
@@ -883,12 +1015,12 @@
     function updateMapControlsState() {
         const root = document.getElementById(MAP_CONTROLS_ID);
         if (!root) return;
-        const needle = root.querySelector('.mcwws-compass-needle');
+        const dial = root.querySelector('.mcwws-compass-dial');
         const modeLabel = root.querySelector('.mcwws-ctrl-mode-label');
         const fsLabel = root.querySelector('.mcwws-ctrl-fs-label');
-        const deg = getMapRotationRad() * (180 / Math.PI);
-        if (needle) {
-            needle.style.transform = `translate(-50%, -100%) rotate(${deg.toFixed(1)}deg)`;
+        if (dial) {
+            const deg = (-getControlsRotation() * 180) / Math.PI;
+            dial.style.transform = `rotate(${deg.toFixed(1)}deg)`;
         }
         if (modeLabel) {
             modeLabel.textContent = getMapViewState() === 'flat' ? '3D' : '2D';
@@ -921,8 +1053,9 @@
         root.innerHTML = `
             <div class="mcwws-layer-menu" hidden></div>
             <div class="mcwws-map-controls-stack">
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北">
-                    <span class="mcwws-compass-dial" aria-hidden="true">
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
+                    <span class="mcwws-compass-shell" aria-hidden="true">
+                        <span class="mcwws-compass-dial"><span class="mcwws-compass-n">北</span></span>
                         <span class="mcwws-compass-needle"></span>
                     </span>
                 </button>
@@ -959,7 +1092,7 @@
         if (mapControlsBound) return;
         mapControlsBound = true;
 
-        root.querySelector('.mcwws-ctrl-compass')?.addEventListener('click', resetMapRotation);
+        root.querySelector('.mcwws-ctrl-compass')?.addEventListener('click', resetCompassNorth);
         root.querySelector('.mcwws-ctrl-mode')?.addEventListener('click', () => {
             toggleMapViewMode();
             updateMapControlsState();
@@ -1026,7 +1159,7 @@
         const dx = marker.position.x - view.x;
         const dy = marker.position.y - view.y;
         const dz = marker.position.z - view.z;
-        const yaw = view.yaw;
+        const yaw = view.rotation ?? view.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const right = dx * cos - dz * sin;
