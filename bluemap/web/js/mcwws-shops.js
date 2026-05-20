@@ -224,7 +224,7 @@
             row.addEventListener('click', (e) => {
                 if (e.target.closest('.mcwws-shop-mini-btn')) return;
                 const marker = markers.find((item) => item.id === row.dataset.shopId);
-                openMarker(marker);
+                handlePinClick(marker);
             });
         });
         panel.querySelectorAll('.mcwws-shop-mini-btn').forEach((btn) => {
@@ -518,22 +518,44 @@
         return !current || !marker.map || current === marker.map;
     }
 
+    const markerSavedHashCache = new Map();
+
+    /** 管理页保存的锚点原样使用，不做 rotation/angle 对调（否则会破坏合法 BlueMap 链接） */
+    function getMarkerSavedViewHash(marker) {
+        if (!marker?.viewUrl) return null;
+        if (!markerSavedHashCache.has(marker.id)) {
+            const raw = String(marker.viewUrl).trim();
+            const hash = raw.includes('#') ? raw.slice(raw.indexOf('#') + 1) : raw;
+            const parts = hash.split(':');
+            markerSavedHashCache.set(
+                marker.id,
+                parts.length === 10 && parts[0] ? hash : null
+            );
+        }
+        return markerSavedHashCache.get(marker.id);
+    }
+
     function openMarker(marker) {
         if (!marker || !marker.viewUrl) return;
         selectedMarkerId = marker.id;
         selectedMarkerTopDown = false;
-        const target = parseViewUrl(marker.viewUrl);
-        setBlueMapViewMode('perspective');
-        if (target) {
-            setViewHash({ ...target, mode: target.mode || 'perspective' });
-        } else {
-            const hashIndex = marker.viewUrl.indexOf('#');
-            if (hashIndex >= 0) {
-                window.location.hash = marker.viewUrl.slice(hashIndex + 1);
-            } else {
-                window.location.href = marker.viewUrl;
+        const savedHash = getMarkerSavedViewHash(marker);
+        if (savedHash) {
+            const mode = savedHash.split(':')[9];
+            if (mode === 'flat') {
+                openMarkerTopDown(marker);
+                return;
             }
+            replaceLocationHash(savedHash);
+            void loadBlueMapPageAddress();
+            return;
         }
+        const target = parseViewUrl(marker.viewUrl);
+        if (!target) {
+            window.location.href = marker.viewUrl;
+            return;
+        }
+        void applyBlueMapView({ ...target, mode: 'perspective' });
     }
 
     function openMarkerTopDown(marker) {
@@ -541,14 +563,12 @@
         selectedMarkerId = marker.id;
         selectedMarkerTopDown = true;
         rememberFlatZoom();
+
         const x = Number(marker.position.x) + 0.5;
         const y = Number(marker.position.y);
         const z = Number(marker.position.z) + 0.5;
-        const dist = lastFlatHeight;
-        const cm = getControlsManager();
-        const angle = Number(cm?.angle);
-        const defaultAngle = getMaxPerspectiveAngleForDistance(dist) * 0.55;
-        setViewHash({
+        const dist = clampMapDistance(lastFlatHeight);
+        void applyBlueMapView({
             map: marker.map,
             x,
             y,
@@ -556,7 +576,7 @@
             distance: dist,
             height: dist,
             rotation: 0,
-            angle: Number.isFinite(angle) && angle > 0.05 ? angle : defaultAngle,
+            angle: defaultFlatTiltAngle(dist),
             tilt: 0,
             ortho: 0,
             mode: 'flat'
@@ -565,11 +585,11 @@
 
     function handlePinClick(marker) {
         if (!marker) return;
-        if (selectedMarkerId === marker.id && !selectedMarkerTopDown) {
-            openMarkerTopDown(marker);
-        } else {
+        if (selectedMarkerId === marker.id && selectedMarkerTopDown) {
             openMarker(marker);
+            return;
         }
+        openMarkerTopDown(marker);
     }
 
     function parseHash() {
@@ -635,13 +655,61 @@
     }
 
     function setViewHash(view) {
-        updateHashSilently(formatViewHash(view));
-        updatePinPositions();
+        void applyBlueMapView(view);
+    }
+
+    /** 仅写地址栏；真正移动相机须调用 loadBlueMapPageAddress() */
+    function replaceLocationHash(hash) {
+        const clean = String(hash || '').replace(/^#/, '');
+        const url = `${window.location.pathname}${window.location.search}#${clean}`;
+        window.history.replaceState(null, '', url);
+        syncParentMapHash(clean);
+    }
+
+    function syncParentMapHash(hash) {
+        if (window.parent === window) return;
+        try {
+            const parentUrl = new URL(window.parent.location.href);
+            parentUrl.hash = hash;
+            window.parent.history.replaceState(null, '', parentUrl.toString());
+        } catch {
+            /* 跨域 iframe 无法同步 */
+        }
+    }
+
+    async function loadBlueMapPageAddress() {
+        const bm = getBlueMapApp();
+        if (!bm || typeof bm.loadPageAddress !== 'function') {
+            return false;
+        }
+        cachedCamera = null;
+        try {
+            await bm.loadPageAddress();
+            if (typeof bm.mapViewer?.updateLoadedMapArea === 'function') {
+                bm.mapViewer.updateLoadedMapArea();
+            }
+            updatePinPositions();
+            updateMapControlsState();
+            return true;
+        } catch (err) {
+            console.warn('[mcwws-shops] loadPageAddress failed', err);
+            return false;
+        }
+    }
+
+    async function applyBlueMapView(view) {
+        const v = normalizeViewForBlueMap(view);
+        if (!v) return false;
+        replaceLocationHash(formatViewHash(v));
+        if (await loadBlueMapPageAddress()) {
+            return true;
+        }
+        applyControlsViewFallback(v);
+        return false;
     }
 
     function updateHashSilently(hash) {
-        const url = `${window.location.pathname}${window.location.search}#${hash}`;
-        window.history.replaceState(null, '', url);
+        replaceLocationHash(hash);
         window.dispatchEvent(new HashChangeEvent('hashchange'));
     }
 
@@ -779,11 +847,71 @@
         return Math.max(5, Math.min(8000, n));
     }
 
-    function clampMapAngle(angle, distance) {
+    /**
+     * BlueMap 2D 俯视：angle 越小越垂直向下，越大越接近水平。
+     * 仅需轻微透视时用小角度（约 0.1–0.38 rad），不能用 max*0.55（近水平）。
+     */
+    function defaultFlatTiltAngle(distance) {
         const max = getMaxPerspectiveAngleForDistance(distance);
+        return Math.min(0.38, Math.max(0.1, max * 0.22));
+    }
+
+    function clampMapAngle(angle, distance) {
+        const cap = defaultFlatTiltAngle(distance);
         const a = Number(angle);
-        if (!Number.isFinite(a) || a < 0.08) return max * 0.55;
-        return Math.min(Math.max(a, 0.08), max);
+        if (!Number.isFinite(a) || a <= 0.02) return cap;
+        return Math.min(Math.max(a, 0.02), cap);
+    }
+
+    /** 仅规范化俯视参数；3D（perspective）保持原锚点数值，避免误改 rotation/angle */
+    function normalizeViewForBlueMap(view) {
+        if (!view) return null;
+        const v = { ...view };
+        const mode = v.mode || 'perspective';
+
+        if (mode === 'flat') {
+            v.distance = clampMapDistance(v.distance ?? v.height);
+            v.rotation = Number.isFinite(v.rotation) ? v.rotation : 0;
+            v.angle = clampMapAngle(v.angle, v.distance);
+            v.tilt = 0;
+            v.ortho = 0;
+            return v;
+        }
+
+        v.distance = clampMapDistance(v.distance ?? v.height);
+        v.rotation = Number.isFinite(Number(v.rotation)) ? Number(v.rotation) : 0;
+        v.angle = Number.isFinite(Number(v.angle)) ? Number(v.angle) : 0;
+        v.tilt = Number.isFinite(Number(v.tilt)) ? Number(v.tilt) : 0;
+        v.ortho = Number.isFinite(Number(v.ortho)) ? Number(v.ortho) : 0;
+        return v;
+    }
+
+    function applyControlsViewFallback(view) {
+        const bm = getBlueMapApp();
+        const cm = getControlsManager();
+        if (!cm || !view) return;
+        cm.controls = null;
+        const dist = clampMapDistance(view.distance ?? view.height);
+        const mode = view.mode || 'perspective';
+        if (mode === 'flat' && typeof bm?.setFlatView === 'function') {
+            bm.setFlatView(0, dist);
+        } else if (typeof bm?.setPerspectiveView === 'function') {
+            bm.setPerspectiveView(0, 0);
+        }
+        cm.position.x = view.x;
+        cm.position.y = view.y;
+        cm.position.z = view.z;
+        cm.distance = dist;
+        cm.rotation = view.rotation ?? view.yaw ?? 0;
+        cm.angle = view.angle ?? view.pitch ?? 0;
+        cm.tilt = view.tilt ?? view.roll ?? 0;
+        cm.ortho = view.ortho ?? view.fov ?? 0;
+        syncPageAddressFromControls();
+        if (typeof bm?.mapViewer?.updateLoadedMapArea === 'function') {
+            bm.mapViewer.updateLoadedMapArea();
+        }
+        updatePinPositions();
+        updateMapControlsState();
     }
 
     function animateControlsRotation(cm, targetRotation, onDone) {
@@ -815,10 +943,9 @@
     function applyNorthFlatView(cm, distance, angle) {
         const dist = clampMapDistance(distance);
         const ang = clampMapAngle(angle, dist);
-        const maxAngle = getMaxPerspectiveAngleForDistance(dist);
         cm.rotation = 0;
         cm.distance = dist;
-        cm.angle = Math.min(ang, maxAngle);
+        cm.angle = ang;
         rememberFlatZoom();
         syncPageAddressFromControls();
         updateMapControlsState();
@@ -897,30 +1024,32 @@
         const view = parseHash();
         const cm = getControlsManager();
         if (state === 'flat') {
-            setBlueMapViewMode('perspective');
             if (view) {
-                view.mode = 'perspective';
-                setViewHash(view);
+                void applyBlueMapView({ ...view, mode: 'perspective' });
+            } else {
+                const bm = getBlueMapApp();
+                bm?.setPerspectiveView?.(0, 0);
             }
-            syncPageAddressFromControls();
             return;
         }
         rememberFlatZoom();
         const dist = Number.isFinite(cm?.distance) ? cm.distance : lastFlatHeight;
-        const angle = Number.isFinite(cm?.angle) && cm.angle > 0.02
-            ? cm.angle
-            : getMaxPerspectiveAngleForDistance(dist) * 0.55;
+        const angle = clampMapAngle(
+            Number.isFinite(cm?.angle) && cm.angle > 0.02 ? cm.angle : 0,
+            dist
+        );
         if (view) {
-            view.mode = 'flat';
-            view.distance = dist;
-            view.height = dist;
-            view.rotation = Number(view.rotation) || 0;
-            view.angle = angle;
-            setViewHash(view);
+            void applyBlueMapView({
+                ...view,
+                mode: 'flat',
+                distance: dist,
+                height: dist,
+                rotation: Number(view.rotation) || 0,
+                angle
+            });
         } else {
             setBlueMapViewMode('flat');
         }
-        syncPageAddressFromControls();
     }
 
     function getAvailableMaps() {
@@ -962,7 +1091,7 @@
                 distance: lastFlatHeight,
                 height: lastFlatHeight,
                 rotation: 0,
-                angle: getMaxPerspectiveAngleForDistance(lastFlatHeight) * 0.55,
+                angle: defaultFlatTiltAngle(lastFlatHeight),
                 tilt: 0,
                 ortho: 0,
                 mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
@@ -1263,6 +1392,7 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             markers = Array.isArray(data.markers) ? data.markers : [];
+            markerSavedHashCache.clear();
             localStorage.setItem(CACHE_KEY, JSON.stringify(markers));
             loading = false;
             renderPanel();
