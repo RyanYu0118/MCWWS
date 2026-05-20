@@ -564,6 +564,11 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     border: 1px solid #e5e7eb;
     background: radial-gradient(circle at 50% 35%, #fff 0%, #f3f4f6 100%);
     transition: transform 0.12s linear;
+    transform-origin: 50% 50%;
+}
+
+.mcwws-compass-shell.is-perspective .mcwws-compass-dial {
+    border-radius: 50%;
 }
 
 .mcwws-compass-dial::before,
@@ -601,10 +606,19 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     border-left: 4px solid transparent;
     border-right: 4px solid transparent;
     border-bottom: 14px solid #ef4444;
-    transform: translate(-50%, -100%);
+    transform: translate(-50%, -100%) scaleY(1);
     transform-origin: 50% 100%;
     filter: drop-shadow(0 1px 1px rgba(0, 0, 0, 0.15));
     pointer-events: none;
+    transition: transform 0.12s linear;
+}
+
+.mcwws-compass-shell.is-perspective .mcwws-compass-needle {
+    transform: translate(-50%, -100%) scaleY(var(--compass-needle-sy, 0.65));
+}
+
+.mcwws-compass-shell.is-flat .mcwws-compass-needle {
+    transform: translate(-50%, -100%) scaleY(1);
 }
 
 .mcwws-ctrl-mode-label {

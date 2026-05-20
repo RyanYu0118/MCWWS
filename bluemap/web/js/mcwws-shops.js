@@ -313,9 +313,15 @@
             case 'economy-dashboard':
                 window.open(economyUrl('/index.html'), '_blank', 'noopener');
                 break;
-            case 'perspective':
-                setBlueMapViewMode('perspective');
+            case 'perspective': {
+                const view = parseHash();
+                if (view) {
+                    void applyBlueMapView({ ...view, mode: 'perspective', ortho: 0 });
+                } else {
+                    setBlueMapViewMode('perspective');
+                }
                 break;
+            }
             case 'flat-overview': {
                 const visible = markers.filter(sameMap);
                 if (visible.length) openMarkerTopDown(visible[0]);
@@ -1020,6 +1026,22 @@
         return Number(cm?.rotation) || 0;
     }
 
+    /** 透视下指南针随俯仰角缩短（像椭圆）；正交俯视保持 1:1 */
+    function getCompassForeshorten() {
+        if (getMapViewState() === 'flat') {
+            return { needleSy: 1, dialSy: 1 };
+        }
+        const cm = getControlsManager();
+        let pitch = Math.abs(Number(cm?.angle) || 0);
+        if (pitch < 0.02) {
+            pitch = 0.65;
+        }
+        pitch = Math.min(Math.PI / 2, pitch);
+        const needleSy = Math.max(0.32, Math.sin(pitch));
+        const dialSy = Math.max(0.65, Math.min(1, 0.55 + needleSy * 0.45));
+        return { needleSy, dialSy };
+    }
+
     function syncPageAddressFromControls() {
         const bm = getBlueMapApp();
         if (bm && typeof bm.updatePageAddress === 'function') {
@@ -1049,7 +1071,7 @@
         return Math.min(Math.max(a, 0.02), cap);
     }
 
-    /** 仅规范化俯视参数；3D（perspective）保持原锚点数值，避免误改 rotation/angle */
+    /** flat：正交俯视；perspective：必须 ortho=0，否则会保持正交投影 */
     function normalizeViewForBlueMap(view) {
         if (!view) return null;
         const v = { ...view };
@@ -1066,9 +1088,14 @@
 
         v.distance = clampMapDistance(v.distance ?? v.height);
         v.rotation = Number.isFinite(Number(v.rotation)) ? Number(v.rotation) : 0;
-        v.angle = Number.isFinite(Number(v.angle)) ? Number(v.angle) : 0;
         v.tilt = Number.isFinite(Number(v.tilt)) ? Number(v.tilt) : 0;
-        v.ortho = Number.isFinite(Number(v.ortho)) ? Number(v.ortho) : 0;
+        v.ortho = 0;
+        const ang = Number(v.angle);
+        if (!Number.isFinite(ang) || Math.abs(ang) < 0.05) {
+            v.angle = -0.75;
+        } else {
+            v.angle = ang;
+        }
         return v;
     }
 
@@ -1201,7 +1228,7 @@
         const cm = getControlsManager();
         if (state === 'flat') {
             if (view) {
-                void applyBlueMapView({ ...view, mode: 'perspective' });
+                void applyBlueMapView({ ...view, mode: 'perspective', ortho: 0 });
             } else {
                 const bm = getBlueMapApp();
                 bm?.setPerspectiveView?.(0, 0);
@@ -1318,12 +1345,29 @@
     function updateMapControlsState() {
         const root = document.getElementById(MAP_CONTROLS_ID);
         if (!root) return;
+        const shell = root.querySelector('.mcwws-compass-shell');
         const dial = root.querySelector('.mcwws-compass-dial');
         const modeLabel = root.querySelector('.mcwws-ctrl-mode-label');
         const fsLabel = root.querySelector('.mcwws-ctrl-fs-label');
+        const isFlat = getMapViewState() === 'flat';
+        const { needleSy, dialSy } = getCompassForeshorten();
+        if (shell) {
+            shell.classList.toggle('is-flat', isFlat);
+            shell.classList.toggle('is-perspective', !isFlat);
+            shell.style.setProperty('--compass-needle-sy', String(needleSy));
+            shell.style.setProperty('--compass-dial-sy', String(dialSy));
+        }
         if (dial) {
             const deg = (-getControlsRotation() * 180) / Math.PI;
-            dial.style.transform = `rotate(${deg.toFixed(1)}deg)`;
+            dial.style.transform = isFlat
+                ? `rotate(${deg.toFixed(1)}deg)`
+                : `rotate(${deg.toFixed(1)}deg) scaleY(${dialSy.toFixed(3)})`;
+        }
+        const compassBtn = root.querySelector('.mcwws-ctrl-compass');
+        if (compassBtn) {
+            compassBtn.title = isFlat
+                ? '复位朝北（2D 正交俯视，上北下南）'
+                : '复位朝北（3D 透视）';
         }
         if (modeLabel) {
             modeLabel.textContent = getMapViewState() === 'flat' ? '3D' : '2D';
