@@ -1026,20 +1026,46 @@
         return Number(cm?.rotation) || 0;
     }
 
-    /** 透视下指南针随俯仰角缩短（像椭圆）；正交俯视保持 1:1 */
-    function getCompassForeshorten() {
-        if (getMapViewState() === 'flat') {
-            return { needleSy: 1, dialSy: 1 };
-        }
+    /**
+     * 屏幕对齐椭圆：长轴恒为横向（scaleX=1），短轴恒为竖向（scaleY 随俯仰变化）。
+     * 内层表盘 rotateZ 表示方位；BlueMap angle 越小越俯视，短轴 scaleY 越大。
+     */
+    function buildCompassTransform() {
         const cm = getControlsManager();
-        let pitch = Math.abs(Number(cm?.angle) || 0);
-        if (pitch < 0.02) {
-            pitch = 0.65;
+        const isFlat = getMapViewState() === 'flat';
+        const bearingDeg = (-getControlsRotation() * 180) / Math.PI;
+
+        let angle = Math.abs(Number(cm?.angle) || 0);
+        if (isFlat && angle < 0.02) {
+            angle = 0;
         }
-        pitch = Math.min(Math.PI / 2, pitch);
-        const needleSy = Math.max(0.32, Math.sin(pitch));
-        const dialSy = Math.max(0.65, Math.min(1, 0.55 + needleSy * 0.45));
-        return { needleSy, dialSy };
+        const elevation = Math.min(Math.PI / 2, Math.max(0, angle));
+        const shortScale = isFlat ? 1 : Math.max(0.2, Math.cos(elevation));
+
+        return { bearingDeg, shortScale };
+    }
+
+    function migrateCompassDom(root) {
+        const shell = root?.querySelector('.mcwws-compass-shell');
+        if (!shell) return;
+
+        let ellipse = shell.querySelector('.mcwws-compass-ellipse');
+        let dial = shell.querySelector('.mcwws-compass-dial');
+
+        dial?.querySelector('.mcwws-compass-n')?.remove();
+
+        if (!ellipse && dial) {
+            ellipse = document.createElement('span');
+            ellipse.className = 'mcwws-compass-ellipse';
+            shell.insertBefore(ellipse, dial);
+            ellipse.appendChild(dial);
+        }
+
+        dial = shell.querySelector('.mcwws-compass-dial');
+        const needle = shell.querySelector('.mcwws-compass-needle');
+        if (needle && dial && needle.parentElement !== dial) {
+            dial.appendChild(needle);
+        }
     }
 
     function syncPageAddressFromControls() {
@@ -1346,22 +1372,23 @@
         const root = document.getElementById(MAP_CONTROLS_ID);
         if (!root) return;
         const shell = root.querySelector('.mcwws-compass-shell');
+        const ellipse = root.querySelector('.mcwws-compass-ellipse');
         const dial = root.querySelector('.mcwws-compass-dial');
         const modeLabel = root.querySelector('.mcwws-ctrl-mode-label');
         const fsLabel = root.querySelector('.mcwws-ctrl-fs-label');
         const isFlat = getMapViewState() === 'flat';
-        const { needleSy, dialSy } = getCompassForeshorten();
+        const compass = buildCompassTransform();
         if (shell) {
             shell.classList.toggle('is-flat', isFlat);
             shell.classList.toggle('is-perspective', !isFlat);
-            shell.style.setProperty('--compass-needle-sy', String(needleSy));
-            shell.style.setProperty('--compass-dial-sy', String(dialSy));
+            shell.style.perspective = '';
+            shell.style.perspectiveOrigin = '';
+        }
+        if (ellipse) {
+            ellipse.style.transform = `scaleY(${compass.shortScale.toFixed(3)})`;
         }
         if (dial) {
-            const deg = (-getControlsRotation() * 180) / Math.PI;
-            dial.style.transform = isFlat
-                ? `rotate(${deg.toFixed(1)}deg)`
-                : `rotate(${deg.toFixed(1)}deg) scaleY(${dialSy.toFixed(3)})`;
+            dial.style.transform = `rotate(${compass.bearingDeg.toFixed(2)}deg)`;
         }
         const compassBtn = root.querySelector('.mcwws-ctrl-compass');
         if (compassBtn) {
@@ -1390,6 +1417,7 @@
     function ensureMapControls() {
         let root = document.getElementById(MAP_CONTROLS_ID);
         if (root?.dataset.ready === '1') {
+            migrateCompassDom(root);
             updateMapControlsState();
             return root;
         }
@@ -1402,8 +1430,11 @@
             <div class="mcwws-map-controls-stack">
                 <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
                     <span class="mcwws-compass-shell" aria-hidden="true">
-                        <span class="mcwws-compass-dial"><span class="mcwws-compass-n">北</span></span>
-                        <span class="mcwws-compass-needle"></span>
+                        <span class="mcwws-compass-ellipse">
+                            <span class="mcwws-compass-dial">
+                                <span class="mcwws-compass-needle"></span>
+                            </span>
+                        </span>
                     </span>
                 </button>
                 <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="切换 2D / 3D 视图">
