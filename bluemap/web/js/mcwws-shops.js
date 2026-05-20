@@ -5,6 +5,10 @@
     const MAP_CONTROLS_ID = 'mcwws-map-controls';
     const CACHE_KEY = 'mcwws-shop-markers-cache';
     const FLAT_HEIGHT_KEY = 'mcwws-last-flat-distance';
+    /** BlueMap：ortho=1 为完全正交俯视，ortho=0 为带透视的 flat */
+    const FLAT_ORTHO_ON = 1;
+    const VIEW_MODE_TRANSITION_MS = 520;
+    const VIEW_PARAMS_TRANSITION_MS = 420;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     let markers = [];
     let loading = true;
@@ -546,8 +550,10 @@
                 openMarkerTopDown(marker);
                 return;
             }
-            replaceLocationHash(savedHash);
-            void loadBlueMapPageAddress();
+            const view = parseHashParts(savedHash.split(':'));
+            if (view) {
+                void applyBlueMapView(view);
+            }
             return;
         }
         const target = parseViewUrl(marker.viewUrl);
@@ -576,9 +582,9 @@
             distance: dist,
             height: dist,
             rotation: 0,
-            angle: defaultFlatTiltAngle(dist),
+            angle: 0,
             tilt: 0,
-            ortho: 0,
+            ortho: FLAT_ORTHO_ON,
             mode: 'flat'
         });
     }
@@ -697,15 +703,175 @@
         }
     }
 
-    async function applyBlueMapView(view) {
+    function waitForBlueMapViewAnimationAsync(bm, maxFrames = 150) {
+        return new Promise((resolve) => {
+            if (!bm) {
+                resolve();
+                return;
+            }
+            let frames = 0;
+            function tick() {
+                frames += 1;
+                if (!bm.viewAnimation || frames >= maxFrames) {
+                    resolve();
+                    return;
+                }
+                requestAnimationFrame(tick);
+            }
+            requestAnimationFrame(tick);
+        });
+    }
+
+    async function ensureMapForView(view, bm) {
+        if (!view?.map || !bm || typeof bm.setMap !== 'function') {
+            return;
+        }
+        const current = bm.mapViewer?.data?.map?.id || parseHash()?.map;
+        if (current === view.map) {
+            return;
+        }
+        bm.setMap(view.map);
+        await waitForBlueMapViewAnimationAsync(bm);
+    }
+
+    function applyControlsFromView(view) {
+        const bm = getBlueMapApp();
+        const cm = getControlsManager();
+        if (!cm || !view) {
+            return;
+        }
+        cm.controls = null;
+        const dist = clampMapDistance(view.distance ?? view.height);
+        cm.position.x = view.x;
+        cm.position.y = view.y;
+        cm.position.z = view.z;
+        cm.distance = dist;
+        cm.rotation = view.rotation ?? view.yaw ?? 0;
+        cm.angle = view.angle ?? view.pitch ?? 0;
+        cm.tilt = view.tilt ?? view.roll ?? 0;
+        cm.ortho = view.ortho ?? view.fov ?? 0;
+        syncPageAddressFromControls();
+        if (typeof bm?.mapViewer?.updateLoadedMapArea === 'function') {
+            bm.mapViewer.updateLoadedMapArea();
+        }
+    }
+
+    function easeOutQuad(t) {
+        return 1 - (1 - t) * (1 - t);
+    }
+
+    function lerpNumber(a, b, t) {
+        return a + (b - a) * t;
+    }
+
+    async function animateControlsToView(view, durationMs) {
+        const cm = getControlsManager();
+        if (!cm || !view || durationMs <= 0) {
+            applyControlsFromView(view);
+            return;
+        }
+        const dist = clampMapDistance(view.distance ?? view.height);
+        const end = {
+            x: view.x,
+            y: view.y,
+            z: view.z,
+            distance: dist,
+            rotation: view.rotation ?? view.yaw ?? 0,
+            angle: view.angle ?? view.pitch ?? 0,
+            tilt: view.tilt ?? view.roll ?? 0,
+            ortho: view.ortho ?? view.fov ?? 0
+        };
+        const start = {
+            x: cm.position.x,
+            y: cm.position.y,
+            z: cm.position.z,
+            distance: cm.distance,
+            rotation: cm.rotation ?? 0,
+            angle: cm.angle ?? 0,
+            tilt: cm.tilt ?? 0,
+            ortho: cm.ortho ?? 0
+        };
+        const delta = Math.hypot(end.x - start.x, end.y - start.y, end.z - start.z)
+            + Math.abs(end.distance - start.distance)
+            + Math.abs(end.ortho - start.ortho) * 80
+            + Math.abs(end.angle - start.angle) * 40;
+        if (delta < 0.5) {
+            applyControlsFromView(view);
+            return;
+        }
+
+        cm.controls = null;
+        const startTime = performance.now();
+        let frame = 0;
+        await new Promise((resolve) => {
+            function step(now) {
+                const t = Math.min(1, (now - startTime) / durationMs);
+                const e = easeOutQuad(t);
+                cm.position.x = lerpNumber(start.x, end.x, e);
+                cm.position.y = lerpNumber(start.y, end.y, e);
+                cm.position.z = lerpNumber(start.z, end.z, e);
+                cm.distance = lerpNumber(start.distance, end.distance, e);
+                cm.rotation = lerpNumber(start.rotation, end.rotation, e);
+                cm.angle = lerpNumber(start.angle, end.angle, e);
+                cm.tilt = lerpNumber(start.tilt, end.tilt, e);
+                cm.ortho = lerpNumber(start.ortho, end.ortho, e);
+                frame += 1;
+                if (frame % 3 === 0) {
+                    updatePinPositions();
+                }
+                if (t < 1) {
+                    requestAnimationFrame(step);
+                    return;
+                }
+                applyControlsFromView(view);
+                resolve();
+            }
+            requestAnimationFrame(step);
+        });
+    }
+
+    async function applyBlueMapView(view, options = {}) {
         const v = normalizeViewForBlueMap(view);
         if (!v) return false;
-        replaceLocationHash(formatViewHash(v));
-        if (await loadBlueMapPageAddress()) {
-            return true;
+        const bm = getBlueMapApp();
+        const modeMs = Number.isFinite(options.modeDuration)
+            ? options.modeDuration
+            : VIEW_MODE_TRANSITION_MS;
+        const paramMs = Number.isFinite(options.paramDuration)
+            ? options.paramDuration
+            : VIEW_PARAMS_TRANSITION_MS;
+
+        if (!bm) {
+            applyControlsViewFallback(v);
+            replaceLocationHash(formatViewHash(v));
+            return false;
         }
-        applyControlsViewFallback(v);
-        return false;
+
+        cachedCamera = null;
+        await ensureMapForView(v, bm);
+
+        const fromState = getMapViewState();
+        const toState = v.mode || 'perspective';
+        const dist = clampMapDistance(v.distance ?? v.height);
+
+        if (fromState !== toState && modeMs > 0) {
+            if (toState === 'flat' && typeof bm.setFlatView === 'function') {
+                bm.setFlatView(modeMs, dist);
+            } else if (typeof bm.setPerspectiveView === 'function') {
+                bm.setPerspectiveView(modeMs, 0);
+            }
+            await waitForBlueMapViewAnimationAsync(bm);
+            await animateControlsToView(v, paramMs);
+        } else if (options.fast || paramMs <= 0) {
+            applyControlsFromView(v);
+        } else {
+            await animateControlsToView(v, paramMs);
+        }
+
+        replaceLocationHash(formatViewHash(v));
+        updatePinPositions();
+        updateMapControlsState();
+        return true;
     }
 
     function updateHashSilently(hash) {
@@ -872,9 +1038,9 @@
         if (mode === 'flat') {
             v.distance = clampMapDistance(v.distance ?? v.height);
             v.rotation = Number.isFinite(v.rotation) ? v.rotation : 0;
-            v.angle = clampMapAngle(v.angle, v.distance);
+            v.angle = 0;
             v.tilt = 0;
-            v.ortho = 0;
+            v.ortho = FLAT_ORTHO_ON;
             return v;
         }
 
@@ -888,28 +1054,14 @@
 
     function applyControlsViewFallback(view) {
         const bm = getBlueMapApp();
-        const cm = getControlsManager();
-        if (!cm || !view) return;
-        cm.controls = null;
-        const dist = clampMapDistance(view.distance ?? view.height);
-        const mode = view.mode || 'perspective';
+        const mode = view?.mode || 'perspective';
+        const dist = clampMapDistance(view?.distance ?? view?.height);
         if (mode === 'flat' && typeof bm?.setFlatView === 'function') {
-            bm.setFlatView(0, dist);
+            bm.setFlatView(VIEW_MODE_TRANSITION_MS, dist);
         } else if (typeof bm?.setPerspectiveView === 'function') {
-            bm.setPerspectiveView(0, 0);
+            bm.setPerspectiveView(VIEW_MODE_TRANSITION_MS, 0);
         }
-        cm.position.x = view.x;
-        cm.position.y = view.y;
-        cm.position.z = view.z;
-        cm.distance = dist;
-        cm.rotation = view.rotation ?? view.yaw ?? 0;
-        cm.angle = view.angle ?? view.pitch ?? 0;
-        cm.tilt = view.tilt ?? view.roll ?? 0;
-        cm.ortho = view.ortho ?? view.fov ?? 0;
-        syncPageAddressFromControls();
-        if (typeof bm?.mapViewer?.updateLoadedMapArea === 'function') {
-            bm.mapViewer.updateLoadedMapArea();
-        }
+        applyControlsFromView(view);
         updatePinPositions();
         updateMapControlsState();
     }
@@ -942,10 +1094,12 @@
 
     function applyNorthFlatView(cm, distance, angle) {
         const dist = clampMapDistance(distance);
-        const ang = clampMapAngle(angle, dist);
+        const useOrtho = Number(cm.ortho) >= FLAT_ORTHO_ON;
+        const ang = useOrtho ? 0 : clampMapAngle(angle, dist);
         cm.rotation = 0;
         cm.distance = dist;
         cm.angle = ang;
+        cm.ortho = useOrtho ? FLAT_ORTHO_ON : (Number(cm.ortho) || 0);
         rememberFlatZoom();
         syncPageAddressFromControls();
         updateMapControlsState();
@@ -953,17 +1107,7 @@
     }
 
     function waitForBlueMapViewAnimation(bm, onDone) {
-        let frames = 0;
-        const maxFrames = 120;
-        function tick() {
-            frames += 1;
-            if (!bm.viewAnimation || frames >= maxFrames) {
-                onDone();
-                return;
-            }
-            requestAnimationFrame(tick);
-        }
-        requestAnimationFrame(tick);
+        waitForBlueMapViewAnimationAsync(bm).then(() => onDone?.());
     }
 
     function resetCompassNorth() {
@@ -975,13 +1119,19 @@
         const savedDistance = clampMapDistance(
             Number.isFinite(cm.distance) ? cm.distance : (hash?.distance || lastFlatHeight)
         );
-        const savedAngle = clampMapAngle(
-            Number.isFinite(cm.angle) && cm.angle > 0.02 ? cm.angle : (hash?.angle || 0),
-            savedDistance
-        );
+        const orthoOn = Number(hash?.ortho) >= FLAT_ORTHO_ON || Number(cm.ortho) >= FLAT_ORTHO_ON;
+        const savedAngle = orthoOn
+            ? 0
+            : clampMapAngle(
+                Number.isFinite(cm.angle) && cm.angle > 0.02 ? cm.angle : (hash?.angle || 0),
+                savedDistance
+            );
         const state = getMapViewState();
 
         if (state === 'flat') {
+            if (orthoOn) {
+                cm.ortho = FLAT_ORTHO_ON;
+            }
             animateControlsRotation(cm, 0, () => {
                 applyNorthFlatView(cm, savedDistance, savedAngle);
             });
@@ -991,12 +1141,18 @@
         if (typeof bm.setFlatView === 'function') {
             bm.setFlatView(500, savedDistance);
             waitForBlueMapViewAnimation(bm, () => {
+                if (orthoOn) {
+                    cm.ortho = FLAT_ORTHO_ON;
+                }
                 applyNorthFlatView(cm, savedDistance, savedAngle);
             });
             return;
         }
 
         setBlueMapViewMode('flat');
+        if (orthoOn) {
+            cm.ortho = FLAT_ORTHO_ON;
+        }
         applyNorthFlatView(cm, savedDistance, savedAngle);
     }
 
@@ -1016,7 +1172,7 @@
         view.distance = nextDist;
         view.height = nextDist;
         view.angle = Math.min(Number(view.angle) || 0, getMaxPerspectiveAngleForDistance(nextDist));
-        setViewHash(view);
+        void applyBlueMapView(view, { modeDuration: 0, paramDuration: 220 });
     }
 
     function toggleMapViewMode() {
@@ -1034,10 +1190,6 @@
         }
         rememberFlatZoom();
         const dist = Number.isFinite(cm?.distance) ? cm.distance : lastFlatHeight;
-        const angle = clampMapAngle(
-            Number.isFinite(cm?.angle) && cm.angle > 0.02 ? cm.angle : 0,
-            dist
-        );
         if (view) {
             void applyBlueMapView({
                 ...view,
@@ -1045,7 +1197,9 @@
                 distance: dist,
                 height: dist,
                 rotation: Number(view.rotation) || 0,
-                angle
+                angle: 0,
+                tilt: 0,
+                ortho: FLAT_ORTHO_ON
             });
         } else {
             setBlueMapViewMode('flat');
@@ -1091,9 +1245,9 @@
                 distance: lastFlatHeight,
                 height: lastFlatHeight,
                 rotation: 0,
-                angle: defaultFlatTiltAngle(lastFlatHeight),
+                angle: 0,
                 tilt: 0,
-                ortho: 0,
+                ortho: FLAT_ORTHO_ON,
                 mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
             });
         }
