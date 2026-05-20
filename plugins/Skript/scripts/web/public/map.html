@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
+    <title>地图系统 - 流浪世界服务</title>
+    <meta name="description" content="流浪世界服务器 BlueMap 地图 — 商店标记与交易搜索">
+    <link rel="stylesheet" href="style.css?v=2.5.55">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body class="services-hub-page services-map-page">
+    <nav class="services-subnav glass">
+        <a href="home.html" class="services-back-link">← 流浪世界服务</a>
+        <span class="services-subnav-title">流浪世界地图系统</span>
+        <a href="#" class="services-open-map-btn" id="openMapBtn" target="_blank" rel="noopener">在新标签页打开地图</a>
+    </nav>
+
+    <main class="services-map-frame-wrap">
+        <iframe
+            id="bluemapFrame"
+            class="services-map-frame"
+            title="BlueMap 地图"
+            loading="lazy"
+            referrerpolicy="no-referrer-when-downgrade"
+        ></iframe>
+        <div class="services-map-loading glass" id="mapLoading">正在加载地图…</div>
+    </main>
+
+    <footer class="services-hub-footer services-map-footer">
+        <p>BlueMap · <a href="home.html">返回服务首页</a> · <a href="items.html">商店系统</a></p>
+    </footer>
+
+    <script src="services-config.js?v=1"></script>
+    <script>
+        (function () {
+            const frame = document.getElementById('bluemapFrame');
+            const openBtn = document.getElementById('openMapBtn');
+            const loading = document.getElementById('mapLoading');
+
+            function mountMap() {
+                const url = (window.MCWWS_SERVICES && window.MCWWS_SERVICES.bluemapUrl) || '/';
+                if (openBtn) openBtn.href = url;
+                if (!frame || frame.dataset.loaded === '1') return;
+                frame.dataset.loaded = '1';
+                frame.addEventListener('load', () => {
+                    if (loading) loading.hidden = true;
+                }, { once: true });
+                frame.src = url;
+            }
+
+            mountMap();
+            window.addEventListener('mcwws-services-config', mountMap);
+            window.setTimeout(mountMap, 500);
+        })();
+    </script>
+</body>
+</html>

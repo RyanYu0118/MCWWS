@@ -1,0 +1,474 @@
+/* 隐藏 BlueMap 原版 #app 内全部 UI（控制栏、缩放、侧栏、移动端键位等） */
+#app {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+/* MCWWS — 高德风格左上角 Dock */
+#mcwws-shop-panel {
+    position: fixed;
+    left: 12px;
+    top: 12px;
+    z-index: 10000;
+    width: min(420px, calc(100vw - 24px));
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    color: #1f2937;
+    pointer-events: none;
+}
+
+#mcwws-shop-panel * {
+    box-sizing: border-box;
+}
+
+#mcwws-shop-panel > * {
+    pointer-events: auto;
+}
+
+.mcwws-dock-card {
+    background: #fff;
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.12), 0 0 0 1px rgba(0, 0, 0, 0.04);
+    overflow: hidden;
+}
+
+/* —— 搜索栏（始终可见）—— */
+.mcwws-dock-search {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    min-height: 48px;
+}
+
+.mcwws-dock-brand {
+    flex: 0 0 36px;
+    width: 36px;
+    height: 36px;
+    border-radius: 10px;
+    background: linear-gradient(135deg, #2563eb 0%, #0ea5e9 100%);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 18px;
+    line-height: 1;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.35);
+}
+
+.mcwws-dock-input-wrap {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    align-items: center;
+    background: #f3f4f6;
+    border-radius: 8px;
+    padding: 0 10px;
+    height: 36px;
+    border: 1px solid transparent;
+    transition: border-color 0.15s, background 0.15s;
+}
+
+.mcwws-dock-input-wrap:focus-within {
+    background: #fff;
+    border-color: #3b82f6;
+    box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.15);
+}
+
+.mcwws-dock-trade-toggle {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 8px;
+    height: 36px;
+    border-radius: 8px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 12px;
+    cursor: pointer;
+    user-select: none;
+    white-space: nowrap;
+    transition: background 0.15s, color 0.15s, box-shadow 0.15s;
+}
+
+.mcwws-dock-trade-toggle input {
+    width: 14px;
+    height: 14px;
+    margin: 0;
+    accent-color: #2563eb;
+    cursor: pointer;
+}
+
+#mcwws-shop-panel.is-trade-mode .mcwws-dock-trade-toggle {
+    background: #eff6ff;
+    color: #1d4ed8;
+    box-shadow: inset 0 0 0 1px #93c5fd;
+}
+
+.mcwws-dock-input {
+    flex: 1;
+    min-width: 0;
+    border: 0;
+    background: transparent;
+    font-size: 14px;
+    color: #111827;
+    outline: none;
+}
+
+.mcwws-dock-input::placeholder {
+    color: #9ca3af;
+}
+
+.mcwws-dock-search-btn,
+.mcwws-dock-economy-btn {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 8px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 16px;
+    transition: background 0.15s, transform 0.1s;
+}
+
+.mcwws-dock-search-btn {
+    background: #f3f4f6;
+    color: #4b5563;
+}
+
+.mcwws-dock-search-btn:hover {
+    background: #e5e7eb;
+}
+
+.mcwws-dock-economy-btn {
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+}
+
+.mcwws-dock-economy-btn:hover {
+    filter: brightness(1.05);
+}
+
+/* —— 可折叠功能区 —— */
+.mcwws-dock-body {
+    max-height: 0;
+    opacity: 0;
+    overflow: hidden;
+    transition: max-height 0.28s ease, opacity 0.2s ease;
+    border-top: 0 solid #f3f4f6;
+}
+
+#mcwws-shop-panel.is-expanded .mcwws-dock-body {
+    max-height: 520px;
+    opacity: 1;
+    border-top-width: 1px;
+}
+
+.mcwws-dock-modules {
+    padding: 12px 10px 8px;
+}
+
+.mcwws-dock-grid {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 4px 2px;
+    margin-bottom: 10px;
+}
+
+.mcwws-dock-grid:last-of-type {
+    margin-bottom: 0;
+}
+
+.mcwws-dock-tile {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 2px;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: 8px;
+    color: #374151;
+    transition: background 0.12s;
+}
+
+.mcwws-dock-tile:hover {
+    background: #f3f4f6;
+}
+
+.mcwws-dock-tile-icon {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    line-height: 1;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+.mcwws-dock-tile-icon.is-soft {
+    width: 40px;
+    height: 40px;
+    border-radius: 12px;
+    font-size: 20px;
+    box-shadow: none;
+    background: #f3f4f6 !important;
+}
+
+.mcwws-dock-tile-label {
+    font-size: 11px;
+    line-height: 1.2;
+    text-align: center;
+    max-width: 72px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+/* 底部快捷条 */
+.mcwws-dock-shortcuts {
+    display: flex;
+    align-items: stretch;
+    border-top: 1px solid #f3f4f6;
+    background: #fafafa;
+}
+
+.mcwws-dock-shortcut {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    padding: 10px 8px;
+    border: 0;
+    background: transparent;
+    font-size: 13px;
+    color: #4b5563;
+    cursor: pointer;
+    transition: background 0.12s, color 0.12s;
+}
+
+.mcwws-dock-shortcut:hover {
+    background: #f3f4f6;
+    color: #111827;
+}
+
+.mcwws-dock-shortcut + .mcwws-dock-shortcut {
+    border-left: 1px solid #e5e7eb;
+}
+
+.mcwws-dock-shortcut-icon {
+    font-size: 16px;
+    line-height: 1;
+}
+
+/* 搜索结果 / 商店列表 */
+.mcwws-dock-results {
+    max-height: 220px;
+    overflow-y: auto;
+    border-top: 1px solid #f3f4f6;
+    background: #fff;
+}
+
+.mcwws-dock-results:empty {
+    display: none;
+}
+
+.mcwws-dock-result-hint {
+    padding: 10px 14px;
+    font-size: 12px;
+    color: #9ca3af;
+    text-align: center;
+}
+
+.mcwws-shop-row {
+    width: 100%;
+    display: flex;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 0;
+    border-bottom: 1px solid #f3f4f6;
+    background: transparent;
+    color: inherit;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.12s;
+}
+
+.mcwws-shop-row:last-child {
+    border-bottom: 0;
+}
+
+.mcwws-shop-row:hover {
+    background: #eff6ff;
+}
+
+.mcwws-shop-row.is-trade-hit {
+    background: #fffbeb;
+    border-left: 3px solid #f59e0b;
+    padding-left: 11px;
+}
+
+.mcwws-dock-trade-summary {
+    color: #b45309;
+    font-weight: 600;
+    background: #fffbeb;
+    border-bottom: 1px solid #fde68a;
+}
+
+.mcwws-shop-pin {
+    flex: 0 0 auto;
+    width: 32px;
+    height: 32px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;
+    background: linear-gradient(135deg, #3b82f6, #06b6d4);
+    color: #fff;
+    font-size: 14px;
+}
+
+.mcwws-shop-main {
+    min-width: 0;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.mcwws-shop-name {
+    font-size: 14px;
+    font-weight: 600;
+    color: #111827;
+}
+
+.mcwws-shop-meta,
+.mcwws-shop-pos,
+.mcwws-shop-desc {
+    font-size: 12px;
+    color: #6b7280;
+}
+
+.mcwws-shop-empty {
+    padding: 20px 14px;
+    text-align: center;
+    font-size: 13px;
+    color: #9ca3af;
+}
+
+.mcwws-shop-row-actions {
+    flex: 0 0 auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    align-self: center;
+}
+
+.mcwws-shop-mini-btn {
+    padding: 4px 8px;
+    font-size: 11px;
+    border: 1px solid #e5e7eb;
+    border-radius: 6px;
+    background: #fff;
+    color: #374151;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.mcwws-shop-mini-btn:hover {
+    border-color: #3b82f6;
+    color: #2563eb;
+    background: #eff6ff;
+}
+
+/* 地图 Pin */
+#mcwws-shop-pin-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    pointer-events: none;
+}
+
+.mcwws-screen-pin {
+    position: absolute;
+    transform: translate3d(-50%, -100%, 0);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    border: 0;
+    border-radius: 999px;
+    padding: 5px 10px 5px 5px;
+    background: #fff;
+    color: #111827;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.18);
+    cursor: pointer;
+    pointer-events: auto;
+    font-family: inherit;
+    white-space: nowrap;
+    border: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.mcwws-screen-pin.is-offscreen {
+    display: none;
+}
+
+.mcwws-screen-pin.is-trade-hit {
+    box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.55), 0 6px 20px rgba(245, 158, 11, 0.35);
+    border-color: #f59e0b;
+}
+
+.mcwws-screen-pin.is-trade-hit .mcwws-screen-pin-icon {
+    background: linear-gradient(135deg, #f59e0b, #ea580c);
+}
+
+.mcwws-screen-pin-icon {
+    width: 26px;
+    height: 26px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 999px;
+    background: linear-gradient(135deg, #ef4444, #f97316);
+    color: #fff;
+    font-size: 14px;
+    line-height: 1;
+}
+
+.mcwws-screen-pin-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: #111827;
+}
+
+@media (max-width: 640px) {
+    #mcwws-shop-panel {
+        left: 8px;
+        right: 8px;
+        width: auto;
+        top: 8px;
+    }
+
+    .mcwws-dock-grid {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 2px;
+    }
+
+    .mcwws-dock-tile-icon {
+        width: 38px;
+        height: 38px;
+        font-size: 18px;
+    }
+
+    .mcwws-dock-tile-label {
+        font-size: 10px;
+    }
+}

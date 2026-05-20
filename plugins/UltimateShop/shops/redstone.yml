@@ -1,0 +1,180 @@
+settings:
+  menu: 'example-shop-menu'
+  buy-more: true
+  shop-name: '{lang:redstone-shop-name}'
+  hide-message: false
+  secret-shop-items: true
+  allow-favourite: true
+
+items:
+  A:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: DISPENSER
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_dispenser%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_dispenser%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: NOTE_BLOCK
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_note_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_note_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: STICKY_PISTON
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sticky_piston%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sticky_piston%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  D:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: PISTON
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_piston%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_piston%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  E:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: TNT
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tnt%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tnt%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  F:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: DROPPER
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_dropper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_dropper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  G:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: OBSERVER
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_observer%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_observer%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  H:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: REPEATER
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_repeater%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_repeater%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  I:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      1:
+        material: COMPARATOR
+        amount: 1
+    buy-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_comparator%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      1:
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_comparator%'
+        placeholder: '{amount}$'
+        start-apply: 0

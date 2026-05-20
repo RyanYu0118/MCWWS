@@ -1,0 +1,27 @@
+# --- plugins ---
+plugins/ScreenInMC/Temp/
+plugins/ScreenInMC/Chromium/
+plugins/Skript/scripts/web/certs/
+plugins/.paper-remapped/
+**/cache.mv.db
+**/Backup/*.zip
+
+# --- world saves (keep locally, too large for GitHub) ---
+world/
+world_nether/
+world_the_end/
+
+# --- server runtime / binaries ---
+logs/
+cache/
+libraries/
+versions/
+libs/
+assets/
+ScreenInMCChromiumbinlibwin64/
+bluemap/web/maps/
+
+
+logs/
+backups/
+crash-reports/

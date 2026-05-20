@@ -1,0 +1,1584 @@
+<!-- DS-WEB-VERSION: 2.5.16 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
+    <title>管理 · UltimateShop 商店位置</title>
+    <style>
+        @font-face {
+            font-family: 'MinecraftAE';
+            src: url('../5_Minecraft AE.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            unicode-range: U+0000-00D6, U+00D8-10FFFF;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2236;
+            --bg-card-hover: #1f2a40;
+            --bg-input: #0d1524;
+            --border: #2a3654;
+            --border-focus: #6366f1;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+            --danger-hover: #f87171;
+            --info: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MinecraftAE', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        span:not(.icon-lightning),
+        div,
+        input,
+        button,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        label,
+        a,
+        strong,
+        b,
+        code {
+            font-family: 'MinecraftAE', 'Segoe UI', sans-serif !important;
+            font-weight: normal !important;
+        }
+
+        .navbar {
+            height: 64px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 80;
+        }
+
+        .nav-brand,
+        .nav-links,
+        .nav-actions,
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-brand {
+            gap: 12px;
+        }
+
+        .icon-lightning {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            line-height: 0;
+            vertical-align: middle;
+        }
+
+        .icon-lightning svg {
+            width: 1.15em;
+            height: 1.15em;
+            fill: #facc15;
+            filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.45));
+        }
+
+        .brand-icon.icon-lightning svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .nav-icon.icon-lightning svg {
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+        h2 .icon-lightning {
+            margin-right: 0.35em;
+        }
+
+        h2 .icon-lightning svg {
+            width: 1.05em;
+            height: 1.05em;
+        }
+
+        .nav-icon {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+            font-size: 1em;
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        .brand-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+            white-space: nowrap;
+        }
+
+        .brand-status .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #818cf8, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-link.active {
+            color: var(--accent-hover);
+            background: rgba(99, 102, 241, 0.16);
+        }
+
+        .nav-actions,
+        .user-actions {
+            gap: 12px;
+        }
+
+        .user-status {
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .auth-button {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .auth-button:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.18);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* 导航标签页 */
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+        }
+
+        .nav-tab {
+            padding: 13px 22px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 24px 32px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 面包屑 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb .sep {
+            color: var(--text-muted);
+        }
+
+        .breadcrumb .current {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 搜索框 */
+        .search-container {
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px 12px 42px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 14px center;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* 分类网格 */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .cat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .cat-card.hidden-cat {
+            opacity: 0.5;
+        }
+
+        .cat-card.hidden-cat:hover {
+            opacity: 0.8;
+        }
+
+        .cat-card .cat-icon {
+            width: 40px;
+            height: 40px;
+            image-rendering: pixelated;
+            margin-bottom: 12px;
+        }
+
+        .cat-card .cat-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cat-card .cat-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .cat-card .cat-badges {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cat-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .cat-badge.items {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent);
+        }
+
+        .cat-badge.shortage {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--warning);
+        }
+
+        .cat-badge.oos {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .cat-badge.hidden {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-muted);
+        }
+
+        /* 物品表格 */
+        .items-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .items-scroll {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 1;
+        }
+
+        .items-table td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(42, 54, 84, 0.3);
+        }
+
+        .items-table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .item-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-cell img {
+            width: 28px;
+            height: 28px;
+            image-rendering: pixelated;
+        }
+
+        .item-cell .name {
+            font-weight: 500;
+        }
+
+        .item-cell .id {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .stock-pos {
+            color: var(--success);
+        }
+
+        .stock-neg {
+            color: var(--danger);
+        }
+
+        .stock-zero {
+            color: var(--warning);
+        }
+
+        .price-inc {
+            color: var(--warning);
+            font-weight: 500;
+        }
+
+        /* 卡片、字段、开关、按钮 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .config-field label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .config-field input,
+        .config-field select {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .config-field input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .config-field .hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-row label {
+            font-size: 14px;
+        }
+
+        .toggle-row .desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle .slider {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .toggle .slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            left: 3px;
+            top: 3px;
+            transition: 0.2s;
+        }
+
+        .toggle input:checked+.slider {
+            background: var(--accent);
+        }
+
+        .toggle input:checked+.slider::before {
+            transform: translateX(20px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        .modal-overlay.active,
+        .modal-overlay.closing {
+            display: flex;
+        }
+
+        .modal-overlay.active {
+            animation: modalBackdropIn 0.22s ease forwards;
+        }
+
+        .modal-overlay.closing {
+            animation: modalBackdropOut 0.18s ease forwards;
+            pointer-events: none;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform-origin: center;
+            will-change: transform, opacity;
+        }
+
+        .modal-overlay.active .modal {
+            animation: modalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .modal-overlay.closing .modal {
+            animation: modalOut 0.18s ease forwards;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.96);
+                filter: blur(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes modalOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(12px) scale(0.97);
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes modalBackdropIn {
+            from {
+                opacity: 0;
+                background: rgba(0, 0, 0, 0);
+            }
+
+            to {
+                opacity: 1;
+                background: rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        @keyframes modalBackdropOut {
+            from {
+                opacity: 1;
+                background: rgba(0, 0, 0, 0.7);
+            }
+
+            to {
+                opacity: 0;
+                background: rgba(0, 0, 0, 0);
+            }
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal h2 img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+
+        .field-group {
+            margin-bottom: 14px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .field-group input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field-group input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        .shop-location-input {
+            width: 100%;
+            min-width: 86px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .shop-location-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        /* 通知 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            animation: toastIn 0.3s ease-out;
+            min-width: 280px;
+        }
+
+        .toast.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .toast.error {
+            background: var(--danger);
+            color: white;
+        }
+
+        .toast.info {
+            background: var(--info);
+            color: white;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .auth-gate {
+            min-height: calc(100vh - 64px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+
+        .auth-gate-card {
+            width: min(520px, 100%);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.08));
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 34px;
+            text-align: center;
+            box-shadow: 0 18px 54px rgba(0, 0, 0, 0.32);
+        }
+
+        .auth-gate-card h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .auth-gate-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 22px;
+        }
+
+        .auth-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .auth-toggle-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-toggle-btn.active {
+            background: rgba(99, 102, 241, 0.24);
+            color: var(--text-primary);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .form-field input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .primary-btn {
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6366f1, #22d3ee);
+            color: white;
+            padding: 11px 22px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .auth-message {
+            min-height: 22px;
+            margin-top: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .auth-modal {
+            width: min(460px, calc(100vw - 32px));
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                height: auto;
+                min-height: 64px;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 10px 16px;
+            }
+
+            .brand-text,
+            .user-status {
+                display: none;
+            }
+
+            .brand-status {
+                margin-left: 0;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .cat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast-container" id="toasts"></div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon icon-lightning" aria-hidden="true"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+            <span class="brand-text">流浪世界 · 管理</span>
+            <div class="brand-status">
+                <div class="dot"></div><span>已连接</span>
+            </div>
+        </div>
+                <div class="nav-links">
+            <a href="../home.html" class="nav-link" title="返回流浪世界服务">
+                <span class="nav-icon">🏠</span> 服务
+            </a>
+        </div>
+        <div class="nav-actions">
+            <div class="user-actions">
+                <span id="userStatus" class="user-status">未登录</span>
+                <button id="authButton" class="auth-button" type="button">登录 / 注册</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="authGate" class="auth-gate" style="display:none;">
+        <div class="auth-gate-card">
+            <h2 id="authGateTitle">管理功能需要登录</h2>
+            <p id="authGateMessage">请使用和商店系统一致的账户登录。登录后即可配置 UltimateShop 商店在 BlueMap 上的位置。</p>
+            <button id="authGateButton" type="button" class="primary-btn" onclick="openAuthModal()">登录 / 注册</button>
+        </div>
+    </div>
+
+    <div id="authModal" class="modal-overlay">
+        <div class="modal auth-modal">
+            <h2 id="authModalTitle">登录</h2>
+            <div id="authSecurityWarning"></div>
+            <div class="auth-toggle">
+                <button id="authModeLogin" type="button" class="auth-toggle-btn active" onclick="switchAuthMode('login')">登录</button>
+                <button id="authModeRegister" type="button" class="auth-toggle-btn" onclick="switchAuthMode('register')">注册</button>
+            </div>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-field">
+                    <label for="authUsername">用户名</label>
+                    <input type="text" id="authUsername" autocomplete="username" required>
+                </div>
+                <div class="form-field">
+                    <label for="authPassword">密码</label>
+                    <input type="password" id="authPassword" autocomplete="current-password" required>
+                </div>
+                <div class="form-field auth-register-only" style="display:none;">
+                    <label for="authPlayerId">游戏玩家ID</label>
+                    <input type="text" id="authPlayerId" autocomplete="off">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeAuthModal()">取消</button>
+                    <button type="submit" class="primary-btn">提交</button>
+                </div>
+                <p id="authMessage" class="auth-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="accessDeniedModal" class="modal-overlay">
+        <div class="modal auth-modal">
+            <h2>权限已失效</h2>
+            <p id="accessDeniedMessage" style="color:var(--text-secondary);line-height:1.8;margin-bottom:20px;">
+                你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。
+            </p>
+            <div class="form-actions">
+                <button type="button" class="primary-btn" onclick="exitAdminPage()">确认并退出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ 主应用 ═══════ -->
+    <div id="app" style="display:none;">
+        <div class="content">
+            <!-- ═══ 商店选项卡 ═══ -->
+            <div class="tab-content active" id="tab-shop">
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;">
+                        <div>
+                            <h2 style="margin-bottom:4px;">🗺️ UltimateShop 商店位置</h2>
+                            <p style="color:var(--text-secondary);font-size:13px;">为每个商店粘贴 BlueMap 链接（含 <code>#世界:坐标...</code> 锚点即可）。打开地图后会显示 MCWWS 商店搜索与标记。</p>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="loadShopLocations()">🔄 刷新商店</button>
+                    </div>
+                    <div class="items-card">
+                        <div class="items-scroll">
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th>商店</th>
+                                        <th>物品数</th>
+                                        <th>BlueMap 网页链接</th>
+                                        <th>备注</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shopLocationsBody">
+                                    <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">加载商店中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── 状态 ───
+        let authToken = localStorage.getItem('authToken') || null;
+        let currentUser = null;
+        let authMode = 'login';
+        let adminAccessTimer = null;
+        let accessDeniedActive = false;
+        let allShops = [];
+
+        // ─── API 辅助 ───
+        async function apiFetch(path, opts = {}) {
+            const headers = { 'Content-Type': 'application/json', ...opts.headers };
+            if (authToken) {
+                headers.Authorization = `Bearer ${authToken}`;
+            }
+            const res = await fetch(path, { ...opts, headers });
+            if (res.status === 401) {
+                await handleExpiredAuth();
+                throw new Error('未授权');
+            }
+            if (res.status === 403) {
+                const result = await res.json();
+                showAuthGate(result.error || '你没有进入管理系统的权限。需要 OP 或 ultimateshop.editor 权限。', true);
+                throw new Error('权限不足');
+            }
+            return res.json();
+        }
+
+        // ─── 认证流程 ───
+        async function init() {
+            await loadUserProfile();
+        }
+
+        async function showApp() {
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            startAdminAccessPolling();
+            loadShopLocations();
+        }
+
+        function exitAdminPage() {
+            window.location.href = '../home.html';
+        }
+
+        function stopAdminAccessPolling() {
+            if (adminAccessTimer) {
+                clearInterval(adminAccessTimer);
+                adminAccessTimer = null;
+            }
+        }
+
+        function showDialog(modal) {
+            if (!modal) return;
+            modal.classList.remove('closing');
+            modal.classList.add('active');
+        }
+
+        function hideDialog(modal, afterClose) {
+            if (!modal || !modal.classList.contains('active')) {
+                if (typeof afterClose === 'function') afterClose();
+                return;
+            }
+            modal.classList.add('closing');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.remove('closing');
+                if (typeof afterClose === 'function') afterClose();
+            }, 190);
+        }
+
+        function showAccessDeniedDialog(message) {
+            if (accessDeniedActive) return;
+            accessDeniedActive = true;
+            document.getElementById('app').style.display = 'none';
+            const messageEl = document.getElementById('accessDeniedMessage');
+            if (messageEl) {
+                messageEl.textContent = message || '你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。';
+            }
+            showDialog(document.getElementById('accessDeniedModal'));
+            if (!adminAccessTimer) {
+                startAdminAccessPolling();
+            }
+        }
+
+        async function checkAdminAccess({ forceDialog = false } = {}) {
+            if (!authToken || !currentUser) return false;
+            try {
+                const response = await fetch('/api/admin/access', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
+                const result = await response.json();
+                if (!response.ok || !result.allowed) {
+                    const message = result.error || '你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。';
+                    if (forceDialog) {
+                        showAccessDeniedDialog(message);
+                    } else {
+                        showAuthGate(message, true);
+                    }
+                    return false;
+                }
+                const gate = document.getElementById('authGate');
+                const gateVisible = gate && gate.style.display !== 'none';
+                if (accessDeniedActive || gateVisible) {
+                    accessDeniedActive = false;
+                    hideDialog(document.getElementById('accessDeniedModal'));
+                    if (gate) gate.style.display = 'none';
+                    toast('管理权限已恢复。', 'success');
+                    showApp();
+                }
+                return true;
+            } catch (error) {
+                if (forceDialog) {
+                    showAccessDeniedDialog('无法确认管理权限，请退出后重新进入管理系统。');
+                }
+                return false;
+            }
+        }
+
+        function startAdminAccessPolling() {
+            stopAdminAccessPolling();
+            adminAccessTimer = setInterval(() => {
+                checkAdminAccess({ forceDialog: true });
+            }, 10000);
+        }
+
+        function showAuthGate(message, accessDenied = false) {
+            if (accessDenied && authToken && currentUser) {
+                startAdminAccessPolling();
+            } else {
+                stopAdminAccessPolling();
+            }
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('authGate').style.display = 'flex';
+            const titleEl = document.getElementById('authGateTitle');
+            const messageEl = document.getElementById('authGateMessage');
+            const buttonEl = document.getElementById('authGateButton');
+            if (titleEl) {
+                titleEl.textContent = accessDenied ? '权限不足' : '管理功能需要登录';
+            }
+            if (messageEl) {
+                messageEl.textContent = message || '请使用和商店系统一致的账户登录。登录后即可配置 UltimateShop 商店在 BlueMap 上的位置。';
+            }
+            if (buttonEl) {
+                buttonEl.textContent = accessDenied ? '确认并退出' : '登录 / 注册';
+                buttonEl.onclick = accessDenied ? exitAdminPage : openAuthModal;
+            }
+        }
+
+        function updateAuthUi() {
+            const userStatus = document.getElementById('userStatus');
+            const authButton = document.getElementById('authButton');
+            if (!userStatus || !authButton) return;
+
+            if (currentUser) {
+                userStatus.textContent = `已登录：${currentUser.username}（${currentUser.playerId}）`;
+                authButton.textContent = '退出登录';
+                authButton.onclick = handleLogout;
+            } else {
+                userStatus.textContent = '未登录';
+                authButton.textContent = '登录 / 注册';
+                authButton.onclick = openAuthModal;
+            }
+        }
+
+        function openAuthModal() {
+            authMode = 'login';
+            switchAuthMode('login');
+            showDialog(document.getElementById('authModal'));
+        }
+
+        function closeAuthModal() {
+            hideDialog(document.getElementById('authModal'));
+            const message = document.getElementById('authMessage');
+            if (message) {
+                message.textContent = '';
+                message.style.color = '';
+            }
+            document.getElementById('authForm')?.reset();
+        }
+
+        function switchAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('authModeLogin')?.classList.toggle('active', mode === 'login');
+            document.getElementById('authModeRegister')?.classList.toggle('active', mode === 'register');
+            document.querySelectorAll('.auth-register-only').forEach(field => {
+                field.style.display = mode === 'register' ? 'flex' : 'none';
+            });
+            const title = document.getElementById('authModalTitle');
+            if (title) title.textContent = mode === 'login' ? '登录' : '注册';
+            const message = document.getElementById('authMessage');
+            if (message) {
+                message.textContent = '';
+                message.style.color = '';
+            }
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('authUsername')?.value.trim();
+            const password = document.getElementById('authPassword')?.value;
+            const playerId = document.getElementById('authPlayerId')?.value.trim();
+            const message = document.getElementById('authMessage');
+
+            if (!username || !password) {
+                if (message) message.textContent = '请填写用户名和密码。';
+                return;
+            }
+            if (authMode === 'register' && !playerId) {
+                if (message) message.textContent = '注册时请填写游戏玩家ID。';
+                return;
+            }
+
+            const endpoint = authMode === 'register' ? '/api/register' : '/api/login';
+            const payload = authMode === 'register' ? { username, password, playerId } : { username, password };
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    if (message) {
+                        message.textContent = result.error || '操作失败，请重试。';
+                        message.style.color = 'var(--danger)';
+                    }
+                    return;
+                }
+
+                authToken = result.authToken;
+                localStorage.setItem('authToken', authToken);
+                currentUser = { username: result.username, playerId: result.playerId };
+                updateAuthUi();
+                closeAuthModal();
+                toast(authMode === 'register' ? '注册成功，已登录。' : '登录成功！', 'success');
+                await loadUserProfile();
+            } catch (error) {
+                if (message) {
+                    message.textContent = `网络错误：${error.message || '请检查服务器是否已启动。'}`;
+                    message.style.color = 'var(--danger)';
+                }
+            }
+        }
+
+        async function handleLogout() {
+            if (authToken) {
+                try {
+                    await fetch('/api/logout', {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${authToken}` }
+                    });
+                } catch (error) { }
+            }
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            stopAdminAccessPolling();
+            updateAuthUi();
+            showAuthGate();
+            toast('已退出登录。', 'success');
+        }
+
+        async function handleExpiredAuth() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            stopAdminAccessPolling();
+            updateAuthUi();
+            showAuthGate();
+            toast('登录已过期，请重新登录。', 'error');
+        }
+
+        async function loadUserProfile() {
+            if (!authToken) {
+                currentUser = null;
+                updateAuthUi();
+                showAuthGate();
+                return;
+            }
+            try {
+                const response = await fetch('/api/profile', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
+                if (!response.ok) {
+                    throw new Error('未登录');
+                }
+                currentUser = await response.json();
+                updateAuthUi();
+                if (!await checkAdminAccess()) {
+                    return;
+                }
+                showApp();
+            } catch (error) {
+                authToken = null;
+                currentUser = null;
+                localStorage.removeItem('authToken');
+                stopAdminAccessPolling();
+                updateAuthUi();
+                showAuthGate();
+            }
+        }
+
+        // ─── UltimateShop 商店位置 ───
+        function escapeAttr(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        async function loadShopLocations() {
+            const body = document.getElementById('shopLocationsBody');
+            if (body) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">加载商店中...</td></tr>';
+            }
+            try {
+                allShops = await apiFetch('/api/admin/shops');
+                renderShopLocations();
+            } catch (error) {
+                if (body) {
+                    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:32px;">商店列表加载失败</td></tr>';
+                }
+            }
+        }
+
+        function renderShopLocations() {
+            const body = document.getElementById('shopLocationsBody');
+            if (!body) return;
+            if (!allShops.length) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">未找到 UltimateShop 商店 YAML</td></tr>';
+                return;
+            }
+            body.innerHTML = allShops.map(shop => {
+                const loc = shop.location || {};
+                const configured = !!loc.viewUrl;
+                return `
+                    <tr data-shop-id="${escapeAttr(shop.id)}">
+                        <td>
+                            <div style="font-size:13px;color:var(--text-primary);">${escapeAttr(shop.titleResolved || shop.id)}</div>
+                            <div style="font-size:11px;color:var(--text-muted);">${escapeAttr(shop.id)} · ${escapeAttr(shop.file)}</div>
+                        </td>
+                        <td>${shop.itemCount || 0}</td>
+                        <td style="min-width:420px;"><input class="shop-location-input" data-field="viewUrl" value="${escapeAttr(loc.viewUrl || '')}" placeholder="例如 http://127.0.0.1:8100/#world:-406:66:23:5:-2.26:1.57:0:0:perspective"></td>
+                        <td style="min-width:180px;"><input class="shop-location-input" data-field="description" value="${escapeAttr(loc.description || '')}" placeholder="例如 主城建材区"></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="saveShopLocation('${escapeAttr(shop.id)}')">保存</button>
+                            <div style="font-size:11px;color:${configured ? 'var(--success)' : 'var(--text-muted)'};margin-top:4px;">${configured ? '已配置' : '未配置'}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function saveShopLocation(shopId) {
+            const row = [...document.querySelectorAll('#shopLocationsBody tr')]
+                .find(item => item.dataset.shopId === shopId);
+            if (!row) return;
+            const body = {};
+            row.querySelectorAll('.shop-location-input').forEach(input => {
+                const field = input.dataset.field;
+                body[field] = input.type === 'number' && input.value !== '' ? Number(input.value) : input.value.trim();
+            });
+            body.enabled = true;
+            try {
+                const res = await apiFetch('/api/admin/shop-locations/' + encodeURIComponent(shopId), {
+                    method: 'POST',
+                    body: JSON.stringify(body)
+                });
+                if (res.error) {
+                    toast(res.error, 'error');
+                    return;
+                }
+                toast('已保存商店位置：' + shopId, 'success');
+                await loadShopLocations();
+            } catch (error) {
+                toast('保存商店位置失败', 'error');
+            }
+        }
+
+
+
+        function toast(msg, type = 'info') {
+            const el = document.createElement('div');
+            el.className = 'toast ' + type;
+            el.textContent = msg;
+            document.getElementById('toasts').appendChild(el);
+            setTimeout(() => el.remove(), 3500);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                if (accessDeniedActive) return;
+                closeAuthModal();
+            }
+        });
+
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            document.getElementById('authSecurityWarning').innerHTML = `
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #f87171; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; text-align: left;">
+            <strong>⚠️ 检测到不安全连接</strong><br>
+            你正在通过未加密的 HTTP 连接访问管理功能。避免在公共网络下登录，以防止凭据被窃取。
+        </div>
+    `;
+        }
+
+        init();
+    </script>
+</body>
+
+</html>

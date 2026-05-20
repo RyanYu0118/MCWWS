@@ -1,0 +1,2659 @@
+<!-- DS-WEB-VERSION: 2.5.16 -->
+<!DOCTYPE html>
+<html lang="zh-CN">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
+    <title>流浪世界服务器商店系统管理面板</title>
+    <style>
+        @font-face {
+            font-family: 'MinecraftAE';
+            src: url('5_Minecraft AE.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+            unicode-range: U+0000-00D6, U+00D8-10FFFF;
+        }
+
+        :root {
+            --bg-primary: #0a0e17;
+            --bg-secondary: #111827;
+            --bg-card: #1a2236;
+            --bg-card-hover: #1f2a40;
+            --bg-input: #0d1524;
+            --border: #2a3654;
+            --border-focus: #6366f1;
+            --text-primary: #e2e8f0;
+            --text-secondary: #94a3b8;
+            --text-muted: #64748b;
+            --accent: #6366f1;
+            --accent-hover: #818cf8;
+            --accent-glow: rgba(99, 102, 241, 0.15);
+            --success: #22c55e;
+            --warning: #eab308;
+            --danger: #ef4444;
+            --danger-hover: #f87171;
+            --info: #06b6d4;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'MinecraftAE', 'Segoe UI', sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+
+        body,
+        h1,
+        h2,
+        h3,
+        h4,
+        h5,
+        h6,
+        p,
+        span:not(.icon-lightning),
+        div,
+        input,
+        button,
+        select,
+        textarea,
+        table,
+        th,
+        td,
+        label,
+        a,
+        strong,
+        b,
+        code {
+            font-family: 'MinecraftAE', 'Segoe UI', sans-serif !important;
+            font-weight: normal !important;
+        }
+
+        .navbar {
+            height: 64px;
+            background: rgba(15, 23, 42, 0.92);
+            backdrop-filter: blur(12px);
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 32px;
+            position: sticky;
+            top: 0;
+            z-index: 80;
+        }
+
+        .nav-brand,
+        .nav-links,
+        .nav-actions,
+        .user-actions {
+            display: flex;
+            align-items: center;
+        }
+
+        .nav-brand {
+            gap: 12px;
+        }
+
+        .icon-lightning {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            flex-shrink: 0;
+            line-height: 0;
+            vertical-align: middle;
+        }
+
+        .icon-lightning svg {
+            width: 1.15em;
+            height: 1.15em;
+            fill: #facc15;
+            filter: drop-shadow(0 0 4px rgba(250, 204, 21, 0.45));
+        }
+
+        .brand-icon.icon-lightning svg {
+            width: 22px;
+            height: 22px;
+        }
+
+        .nav-icon.icon-lightning svg {
+            width: 1.1em;
+            height: 1.1em;
+        }
+
+        h2 .icon-lightning {
+            margin-right: 0.35em;
+        }
+
+        h2 .icon-lightning svg {
+            width: 1.05em;
+            height: 1.05em;
+        }
+
+        .nav-icon {
+            font-family: "Segoe UI Emoji", "Apple Color Emoji", "Noto Color Emoji", sans-serif !important;
+            font-size: 1em;
+            -webkit-text-fill-color: initial;
+            background: none;
+        }
+
+        .brand-status {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-left: 4px;
+            white-space: nowrap;
+        }
+
+        .brand-status .dot {
+            width: 7px;
+            height: 7px;
+            border-radius: 50%;
+            background: var(--success);
+            animation: pulse 2s infinite;
+        }
+
+        .brand-text {
+            font-size: 20px;
+            font-weight: 700;
+            background: linear-gradient(135deg, #818cf8, #06b6d4);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .nav-links {
+            gap: 8px;
+        }
+
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            color: var(--text-secondary);
+            text-decoration: none;
+            border-radius: 8px;
+            transition: all 0.2s;
+        }
+
+        .nav-link:hover {
+            color: var(--text-primary);
+            background: var(--bg-card-hover);
+        }
+
+        .nav-link.active {
+            color: var(--accent-hover);
+            background: rgba(99, 102, 241, 0.16);
+        }
+
+        .nav-actions,
+        .user-actions {
+            gap: 12px;
+        }
+
+        .user-status {
+            color: var(--text-secondary);
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .auth-button {
+            border: 1px solid var(--border);
+            background: rgba(255, 255, 255, 0.06);
+            color: var(--text-primary);
+            padding: 8px 16px;
+            border-radius: 999px;
+            cursor: pointer;
+            font-family: inherit;
+            transition: all 0.2s;
+        }
+
+        .auth-button:hover {
+            border-color: var(--accent);
+            background: rgba(99, 102, 241, 0.18);
+        }
+
+        @keyframes pulse {
+
+            0%,
+            100% {
+                opacity: 1;
+            }
+
+            50% {
+                opacity: 0.4;
+            }
+        }
+
+        /* 导航标签页 */
+        .nav-tabs {
+            display: flex;
+            gap: 0;
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--border);
+            padding: 0 32px;
+        }
+
+        .nav-tab {
+            padding: 13px 22px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            border-bottom: 2px solid transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        .nav-tab:hover {
+            color: var(--text-primary);
+        }
+
+        .nav-tab.active {
+            color: var(--accent);
+            border-bottom-color: var(--accent);
+        }
+
+        /* 内容区 */
+        .content {
+            padding: 24px 32px;
+            max-width: 1440px;
+            margin: 0 auto;
+        }
+
+        .tab-content {
+            display: none;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* 面包屑 */
+        .breadcrumb {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .breadcrumb a {
+            color: var(--accent);
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .breadcrumb a:hover {
+            text-decoration: underline;
+        }
+
+        .breadcrumb .sep {
+            color: var(--text-muted);
+        }
+
+        .breadcrumb .current {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        /* 搜索框 */
+        .search-container {
+            margin-bottom: 24px;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: 480px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            padding: 12px 16px 12px 42px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.2s;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='%2364748b' viewBox='0 0 24 24'%3E%3Cpath d='M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: 14px center;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        /* 分类网格 */
+        .cat-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 16px;
+        }
+
+        .cat-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .cat-card:hover {
+            border-color: var(--accent);
+            transform: translateY(-2px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+        }
+
+        .cat-card.hidden-cat {
+            opacity: 0.5;
+        }
+
+        .cat-card.hidden-cat:hover {
+            opacity: 0.8;
+        }
+
+        .cat-card .cat-icon {
+            width: 40px;
+            height: 40px;
+            image-rendering: pixelated;
+            margin-bottom: 12px;
+        }
+
+        .cat-card .cat-name {
+            font-size: 15px;
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .cat-card .cat-meta {
+            font-size: 12px;
+            color: var(--text-muted);
+        }
+
+        .cat-card .cat-badges {
+            display: flex;
+            gap: 6px;
+            margin-top: 10px;
+            flex-wrap: wrap;
+        }
+
+        .cat-badge {
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 500;
+        }
+
+        .cat-badge.items {
+            background: rgba(99, 102, 241, 0.15);
+            color: var(--accent);
+        }
+
+        .cat-badge.shortage {
+            background: rgba(234, 179, 8, 0.15);
+            color: var(--warning);
+        }
+
+        .cat-badge.oos {
+            background: rgba(239, 68, 68, 0.15);
+            color: var(--danger);
+        }
+
+        .cat-badge.hidden {
+            background: rgba(100, 116, 139, 0.2);
+            color: var(--text-muted);
+        }
+
+        /* 物品表格 */
+        .items-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        .items-scroll {
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .items-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+        }
+
+        .items-table th {
+            text-align: left;
+            padding: 10px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            background: var(--bg-card);
+            z-index: 1;
+        }
+
+        .items-table td {
+            padding: 10px 14px;
+            font-size: 13px;
+            border-bottom: 1px solid rgba(42, 54, 84, 0.3);
+        }
+
+        .items-table tr:hover td {
+            background: var(--bg-card-hover);
+        }
+
+        .item-cell {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-cell img {
+            width: 28px;
+            height: 28px;
+            image-rendering: pixelated;
+        }
+
+        .item-cell .name {
+            font-weight: 500;
+        }
+
+        .item-cell .id {
+            font-size: 11px;
+            color: var(--text-muted);
+        }
+
+        .stock-pos {
+            color: var(--success);
+        }
+
+        .stock-neg {
+            color: var(--danger);
+        }
+
+        .stock-zero {
+            color: var(--warning);
+        }
+
+        .price-inc {
+            color: var(--warning);
+            font-weight: 500;
+        }
+
+        /* 卡片、字段、开关、按钮 */
+        .card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 20px;
+        }
+
+        .card h2 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .config-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 14px;
+        }
+
+        .config-field {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .config-field label {
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+        }
+
+        .config-field input,
+        .config-field select {
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .config-field input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .config-field .hint {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .toggle-row:last-child {
+            border-bottom: none;
+        }
+
+        .toggle-row label {
+            font-size: 14px;
+        }
+
+        .toggle-row .desc {
+            font-size: 12px;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .toggle {
+            position: relative;
+            width: 44px;
+            height: 24px;
+            cursor: pointer;
+            flex-shrink: 0;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .toggle .slider {
+            position: absolute;
+            inset: 0;
+            background: var(--border);
+            border-radius: 12px;
+            transition: 0.2s;
+        }
+
+        .toggle .slider::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: white;
+            left: 3px;
+            top: 3px;
+            transition: 0.2s;
+        }
+
+        .toggle input:checked+.slider {
+            background: var(--accent);
+        }
+
+        .toggle input:checked+.slider::before {
+            transform: translateX(20px);
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            font-family: inherit;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+
+        .btn-danger {
+            background: var(--danger);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: var(--danger-hover);
+        }
+
+        .btn-ghost {
+            background: transparent;
+            color: var(--text-secondary);
+            border: 1px solid var(--border);
+        }
+
+        .btn-ghost:hover {
+            background: var(--bg-card-hover);
+            color: var(--text-primary);
+        }
+
+        .btn-sm {
+            padding: 6px 12px;
+            font-size: 12px;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 8px;
+            margin-top: 16px;
+        }
+
+        /* 模态框 */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+        }
+
+        .modal-overlay.active,
+        .modal-overlay.closing {
+            display: flex;
+        }
+
+        .modal-overlay.active {
+            animation: modalBackdropIn 0.22s ease forwards;
+        }
+
+        .modal-overlay.closing {
+            animation: modalBackdropOut 0.18s ease forwards;
+            pointer-events: none;
+        }
+
+        .modal {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 28px;
+            width: 560px;
+            max-height: 90vh;
+            overflow-y: auto;
+            transform-origin: center;
+            will-change: transform, opacity;
+        }
+
+        .modal-overlay.active .modal {
+            animation: modalIn 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+        }
+
+        .modal-overlay.closing .modal {
+            animation: modalOut 0.18s ease forwards;
+        }
+
+        @keyframes modalIn {
+            from {
+                opacity: 0;
+                transform: translateY(18px) scale(0.96);
+                filter: blur(4px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+        }
+
+        @keyframes modalOut {
+            from {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+                filter: blur(0);
+            }
+
+            to {
+                opacity: 0;
+                transform: translateY(12px) scale(0.97);
+                filter: blur(3px);
+            }
+        }
+
+        @keyframes modalBackdropIn {
+            from {
+                opacity: 0;
+                background: rgba(0, 0, 0, 0);
+            }
+
+            to {
+                opacity: 1;
+                background: rgba(0, 0, 0, 0.7);
+            }
+        }
+
+        @keyframes modalBackdropOut {
+            from {
+                opacity: 1;
+                background: rgba(0, 0, 0, 0.7);
+            }
+
+            to {
+                opacity: 0;
+                background: rgba(0, 0, 0, 0);
+            }
+        }
+
+        .modal h2 {
+            font-size: 18px;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .modal h2 img {
+            width: 32px;
+            height: 32px;
+            image-rendering: pixelated;
+        }
+
+        .field-group {
+            margin-bottom: 14px;
+        }
+
+        .field-group label {
+            display: block;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .field-group input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 10px 14px;
+            color: var(--text-primary);
+            font-size: 14px;
+            font-family: inherit;
+        }
+
+        .field-group input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+        }
+
+        .shop-location-input {
+            width: 100%;
+            min-width: 86px;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 10px;
+            color: var(--text-primary);
+            font-size: 12px;
+            font-family: inherit;
+        }
+
+        .shop-location-input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 2px var(--accent-glow);
+        }
+
+        /* 通知 */
+        .toast-container {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 200;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            padding: 12px 20px;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 500;
+            animation: toastIn 0.3s ease-out;
+            min-width: 280px;
+        }
+
+        .toast.success {
+            background: var(--success);
+            color: white;
+        }
+
+        .toast.error {
+            background: var(--danger);
+            color: white;
+        }
+
+        .toast.info {
+            background: var(--info);
+            color: white;
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(40px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        .auth-gate {
+            min-height: calc(100vh - 64px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 32px;
+        }
+
+        .auth-gate-card {
+            width: min(520px, 100%);
+            background: linear-gradient(135deg, rgba(99, 102, 241, 0.16), rgba(6, 182, 212, 0.08));
+            border: 1px solid var(--border);
+            border-radius: 22px;
+            padding: 34px;
+            text-align: center;
+            box-shadow: 0 18px 54px rgba(0, 0, 0, 0.32);
+        }
+
+        .auth-gate-card h2 {
+            font-size: 26px;
+            margin-bottom: 10px;
+        }
+
+        .auth-gate-card p {
+            color: var(--text-secondary);
+            line-height: 1.8;
+            margin-bottom: 22px;
+        }
+
+        .auth-toggle {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 18px;
+        }
+
+        .auth-toggle-btn {
+            flex: 1;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            background: var(--bg-input);
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .auth-toggle-btn.active {
+            background: rgba(99, 102, 241, 0.24);
+            color: var(--text-primary);
+        }
+
+        .form-field {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            margin-bottom: 14px;
+        }
+
+        .form-field label {
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .form-field input {
+            width: 100%;
+            background: var(--bg-input);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 14px;
+            color: var(--text-primary);
+            font-family: inherit;
+        }
+
+        .form-field input:focus {
+            outline: none;
+            border-color: var(--border-focus);
+            box-shadow: 0 0 0 3px var(--accent-glow);
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 16px;
+        }
+
+        .primary-btn {
+            border: none;
+            border-radius: 999px;
+            background: linear-gradient(90deg, #6366f1, #22d3ee);
+            color: white;
+            padding: 11px 22px;
+            cursor: pointer;
+            font-family: inherit;
+        }
+
+        .auth-message {
+            min-height: 22px;
+            margin-top: 12px;
+            color: var(--text-secondary);
+            font-size: 13px;
+        }
+
+        .auth-modal {
+            width: min(460px, calc(100vw - 32px));
+        }
+
+        /* 滚动条 */
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 3px;
+        }
+
+        .loading {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 60px;
+            color: var(--text-muted);
+        }
+
+        .spinner {
+            width: 22px;
+            height: 22px;
+            border: 3px solid var(--border);
+            border-top-color: var(--accent);
+            border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            margin-right: 10px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .navbar {
+                height: auto;
+                min-height: 64px;
+                flex-wrap: wrap;
+                gap: 10px;
+                padding: 10px 16px;
+            }
+
+            .brand-text,
+            .user-status {
+                display: none;
+            }
+
+            .brand-status {
+                margin-left: 0;
+            }
+
+            .nav-links {
+                order: 3;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .content {
+                padding: 16px;
+            }
+
+            .cat-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .config-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="toast-container" id="toasts"></div>
+
+    <nav class="navbar">
+        <div class="nav-brand">
+            <span class="brand-icon icon-lightning" aria-hidden="true"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span>
+            <span class="brand-text">流浪世界服务器商店系统</span>
+            <div class="brand-status">
+                <div class="dot"></div><span>已连接</span>
+            </div>
+        </div>
+        <div class="nav-links">
+            <a href="home.html" class="nav-link" title="返回流浪世界服务">
+                <span class="nav-icon">🏠</span> 服务
+            </a>
+            <a href="index.html" class="nav-link" title="管理模块首页">
+                <span class="nav-icon">📦</span> 管理
+            </a>
+            <a href="index.html" class="nav-link">
+                <span class="nav-icon">📊</span> 仪表板
+            </a>
+            <a href="items.html" class="nav-link">
+                <span class="nav-icon">🛒</span> 物品目录
+            </a>
+            <a href="admin.html" class="nav-link active">
+                <span class="nav-icon icon-lightning" aria-hidden="true"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> 管理面板
+            </a>
+        </div>
+        <div class="nav-actions">
+            <div class="user-actions">
+                <span id="userStatus" class="user-status">未登录</span>
+                <button id="authButton" class="auth-button" type="button">登录 / 注册</button>
+            </div>
+        </div>
+    </nav>
+
+    <div id="authGate" class="auth-gate" style="display:none;">
+        <div class="auth-gate-card">
+            <h2 id="authGateTitle">管理面板需要登录</h2>
+            <p id="authGateMessage">请使用和仪表盘、物品目录一致的账户系统登录。登录后即可进入管理功能。</p>
+            <button id="authGateButton" type="button" class="primary-btn" onclick="openAuthModal()">登录 / 注册</button>
+        </div>
+    </div>
+
+    <div id="authModal" class="modal-overlay">
+        <div class="modal auth-modal">
+            <h2 id="authModalTitle">登录</h2>
+            <div id="authSecurityWarning"></div>
+            <div class="auth-toggle">
+                <button id="authModeLogin" type="button" class="auth-toggle-btn active" onclick="switchAuthMode('login')">登录</button>
+                <button id="authModeRegister" type="button" class="auth-toggle-btn" onclick="switchAuthMode('register')">注册</button>
+            </div>
+            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <div class="form-field">
+                    <label for="authUsername">用户名</label>
+                    <input type="text" id="authUsername" autocomplete="username" required>
+                </div>
+                <div class="form-field">
+                    <label for="authPassword">密码</label>
+                    <input type="password" id="authPassword" autocomplete="current-password" required>
+                </div>
+                <div class="form-field auth-register-only" style="display:none;">
+                    <label for="authPlayerId">游戏玩家ID</label>
+                    <input type="text" id="authPlayerId" autocomplete="off">
+                </div>
+                <div class="form-actions">
+                    <button type="button" class="btn btn-ghost" onclick="closeAuthModal()">取消</button>
+                    <button type="submit" class="primary-btn">提交</button>
+                </div>
+                <p id="authMessage" class="auth-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <div id="accessDeniedModal" class="modal-overlay">
+        <div class="modal auth-modal">
+            <h2>权限已失效</h2>
+            <p id="accessDeniedMessage" style="color:var(--text-secondary);line-height:1.8;margin-bottom:20px;">
+                你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。
+            </p>
+            <div class="form-actions">
+                <button type="button" class="primary-btn" onclick="exitAdminPage()">确认并退出</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══════ 主应用 ═══════ -->
+    <div id="app" style="display:none;">
+        <div class="nav-tabs">
+            <div class="nav-tab active" data-tab="shop">📦 商店</div>
+            <div class="nav-tab" data-tab="config">⚙️ 配置</div>
+            <div class="nav-tab" data-tab="actions">🔧 操作</div>
+            <div class="nav-tab" data-tab="perms">🔑 权限</div>
+            <div class="nav-tab" data-tab="audit">📋 审计日志</div>
+        </div>
+
+        <div class="content">
+            <!-- ═══ 商店选项卡 ═══ -->
+            <div class="tab-content active" id="tab-shop">
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;">
+                        <div>
+                            <h2 style="margin-bottom:4px;">🗺️ UltimateShop 商店位置</h2>
+                            <p style="color:var(--text-secondary);font-size:13px;">为每个商店粘贴 BlueMap 链接（含 <code>#世界:坐标...</code> 锚点即可）。打开地图后会显示 MCWWS 商店搜索与标记。</p>
+                        </div>
+                        <button class="btn btn-ghost btn-sm" onclick="loadShopLocations()">🔄 刷新商店</button>
+                    </div>
+                    <div class="items-card">
+                        <div class="items-scroll">
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th>商店</th>
+                                        <th>物品数</th>
+                                        <th>BlueMap 网页链接</th>
+                                        <th>备注</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="shopLocationsBody">
+                                    <tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">加载商店中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+                <div class="search-container">
+                    <input type="text" class="search-input" id="globalSearch"
+                        placeholder="搜索物品或分类..." oninput="handleSearch()">
+                </div>
+                <!-- 分类视图 -->
+                <div id="categoryView">
+                    <div class="cat-grid" id="categoryGrid">
+                        <div class="loading">
+                            <div class="spinner"></div>加载分类中...
+                        </div>
+                    </div>
+                </div>
+                <!-- 物品视图（选择分类或搜索时显示） -->
+                <div id="itemsView" style="display:none;">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
+                        <div class="breadcrumb" id="breadcrumb"></div>
+                        <div style="display:flex;gap:8px;">
+                            <div id="bulkActionsWrapper" style="display:none;position:relative;">
+                                <button class="btn btn-ghost btn-sm" onclick="toggleBulkActions()">批量操作 ⏷</button>
+                                <div id="bulkActionsMenu" style="display:none;position:absolute;top:100%;right:0;background:var(--bg-card);border:1px solid var(--border);border-radius:8px;padding:8px;z-index:100;box-shadow:0 10px 30px rgba(0,0,0,0.5);width:160px;">
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;margin-bottom:4px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('disable_item')">❌ 禁用物品</button>
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;margin-bottom:4px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('enable_item')">✓ 启用物品</button>
+                                    <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;">
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;margin-bottom:4px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('disable_buy')">⛔ 禁用购买</button>
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;margin-bottom:4px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('enable_buy')">🟢 启用购买</button>
+                                    <hr style="border:none;border-top:1px solid var(--border);margin:4px 0;">
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;margin-bottom:4px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('disable_sell')">⛔ 禁用出售</button>
+                                    <button class="btn btn-ghost" style="width:100%;text-align:left;font-size:12px;display:flex;align-items:center;padding:6px 10px;" onclick="performBulkAction('enable_sell')">🟢 启用出售</button>
+                                </div>
+                            </div>
+                            <button class="btn btn-primary btn-sm" id="btnAddItem" onclick="openAddItemModal()" style="display:none;">✚ 添加物品</button>
+                        </div>
+                    </div>
+                    <div class="items-card">
+                        <div class="items-scroll">
+                            <table class="items-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 30px;"><input type="checkbox" id="selectAllItems" onclick="toggleAllItems()"></th>
+                                        <th>物品</th>
+                                        <th>基础价</th>
+                                        <th>购买价</th>
+                                        <th>出售价</th>
+                                        <th>库存</th>
+                                        <th>缺货</th>
+                                        <th>+%</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="itemsBody"></tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ 配置选项卡 ═══ -->
+            <div class="tab-content" id="tab-config">
+                <div class="card">
+                    <h2><span class="icon-lightning" aria-hidden="true"><svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path d="M13 2 3 14h9l-1 8 10-12h-9l1-8z"/></svg></span> 动态定价</h2>
+                    <div id="configToggles"></div>
+                    <div class="config-grid" id="configNumbers" style="margin-top:16px;"></div>
+                </div>
+                <div class="card">
+                    <h2>💰 经济</h2>
+                    <div id="economyToggles"></div>
+                    <div class="config-grid" id="economyNumbers" style="margin-top:16px;"></div>
+                </div>
+                <div class="card">
+                    <h2>🏪 玩家商店</h2>
+                    <div id="shopToggles"></div>
+                    <div class="config-grid" id="shopNumbers" style="margin-top:16px;"></div>
+                </div>
+                <div class="card">
+                    <h2>🌐 网页服务器</h2>
+                    <div id="webToggles"></div>
+                    <div class="config-grid" id="webNumbers" style="margin-top:16px;"></div>
+                </div>
+                <div class="card">
+                    <h2>🔧 杂项</h2>
+                    <div id="miscToggles"></div>
+                    <div class="config-grid" id="miscNumbers" style="margin-top:16px;"></div>
+                </div>
+                <div class="btn-group">
+                    <button class="btn btn-primary" onclick="saveConfig()">💾 保存所有配置</button>
+                    <button class="btn btn-ghost" onclick="loadConfig()">🔄 重新加载</button>
+                </div>
+                <p style="color:var(--text-muted); font-size:12px; margin-top:8px;">⚠️ 某些更改（网页服务器端口/绑定地址、GUI大小）需要重启服务器才能生效。</p>
+            </div>
+
+            <!-- ═══ 操作选项卡 ═══ -->
+            <div class="tab-content" id="tab-actions">
+                <div class="card">
+                    <h2>缺货管理</h2>
+                    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:16px;">重置累积的缺货时长。清除基于时间的价格膨胀。</p>
+                    <button class="btn btn-danger" onclick="resetAllShortage()">⚠️ 重置所有缺货数据</button>
+                </div>
+                <div class="card">
+                    <h2>批量库存</h2>
+                    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:16px;">一次性设置所有物品的库存数量。</p>
+                    <div style="display:flex; gap:12px; align-items:end;">
+                        <div class="config-field" style="flex:1;"><label>库存数量</label><input type="number"
+                                id="bulkStockAmount" value="0" step="1"></div>
+                        <button class="btn btn-primary" onclick="setBulkStock()">设置全部库存</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ 权限选项卡 ═══ -->
+            <div class="tab-content" id="tab-perms">
+                <div class="card">
+                    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+                        <div>
+                            <h2 style="margin-bottom:4px;">🔑 权限与组商店</h2>
+                            <p style="color:var(--text-secondary);font-size:13px;">玩家购买这些物品后，将获得权限节点或通过 Vault 被添加到用户组。</p>
+                        </div>
+                        <button class="btn btn-primary" onclick="openAddSpecialItem()">✚ 添加权限/组</button>
+                    </div>
+                    <div class="items-card">
+                        <div class="items-scroll">
+                            <table class="items-table" id="specialItemsTable">
+                                <thead>
+                                    <tr>
+                                        <th>类型</th>
+                                        <th>名称</th>
+                                        <th>值（权限/组）</th>
+                                        <th>价格</th>
+                                        <th>前置权限</th>
+                                        <th></th>
+                                    </tr>
+                                </thead>
+                                <tbody id="specialItemsBody">
+                                    <tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:32px;">加载中...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ═══ 审计日志选项卡 ═══ -->
+            <div class="tab-content" id="tab-audit">
+                <div class="card">
+                    <h2>管理员更改日志</h2>
+                    <p style="color:var(--text-secondary); font-size:14px; margin-bottom:16px;">所有通过网页管理面板进行的更改都将记录在此。</p>
+                    <div class="btn-group" style="margin-bottom:16px; margin-top:0;">
+                        <button class="btn btn-ghost btn-sm" onclick="loadAudit()">🔄 刷新</button>
+                    </div>
+                    <div id="auditLog" style="max-height:60vh; overflow-y:auto;">
+                        <div class="loading">
+                            <div class="spinner"></div>加载中...
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ 编辑物品模态框 ═══ -->
+    <div class="modal-overlay" id="editModal">
+        <div class="modal">
+            <h2><img id="modalImg" src=""><span id="modalTitle">编辑物品</span></h2>
+            <div class="field-group"><label>基础价格</label><input type="number" id="editBasePrice" step="0.01"></div>
+            <div class="field-group"><label>当前库存</label><input type="number" id="editStock" step="1"></div>
+            <div class="field-group"><label>缺货率（%/负单位）</label><input type="number"
+                    id="editStockRate" step="0.1"></div>
+            <div class="field-group"><label>定价曲线最大库存</label><input type="number" id="editMaxStock"
+                    step="0.1" placeholder="留空则使用全局默认值"></div>
+            <div class="field-group"><label>储存硬上限</label><input type="number" id="editMaxStockStorage"
+                    step="1" placeholder="留空则不设上限"></div>
+            <div class="field-group"><label>缺货小时数</label><input type="number" id="editShortageHours"
+                    step="0.1"></div>
+            <div style="margin:14px 0;">
+                <div class="toggle-row">
+                    <div><label>禁用购买</label>
+                        <div class="desc">阻止购买</div>
+                    </div><label class="toggle"><input type="checkbox" id="editBuyDisabled"><span
+                            class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div><label>禁用出售</label>
+                        <div class="desc">阻止出售</div>
+                    </div><label class="toggle"><input type="checkbox" id="editSellDisabled"><span
+                            class="slider"></span></label>
+                </div>
+                <div class="toggle-row">
+                    <div><label>物品禁用</label>
+                        <div class="desc">从商店隐藏</div>
+                    </div><label class="toggle"><input type="checkbox" id="editDisabled"><span
+                            class="slider"></span></label>
+                </div>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveItem()">💾 保存</button>
+                <button class="btn btn-danger btn-sm" onclick="resetItemShortage()">重置缺货</button>
+                <button class="btn btn-ghost" onclick="closeModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ 编辑分类模态框 ═══ -->
+    <div class="modal-overlay" id="editCategoryModal">
+        <div class="modal">
+            <h2><img id="catModalImg" src=""><span id="catModalTitle">编辑分类</span></h2>
+            <div class="field-group"><label>显示名称</label><input type="text" id="editCatName"
+                    placeholder="默认名称"></div>
+            <div class="field-group"><label>图标（材料名）</label><input type="text" id="editCatIcon"
+                    placeholder="例如 STONE"></div>
+            <div class="field-group"><label>槽位位置（0-53，-1 为隐藏）</label><input type="number"
+                    id="editCatSlot" step="1" min="-1" max="53"></div>
+
+            <div style="margin-top:20px; border-top:1px solid var(--border); padding-top:16px;">
+                <label style="font-weight:600; margin-bottom:8px; display:block;">自动补货规则</label>
+                <div class="field-group"><label>目标库存数量</label><input type="number"
+                        id="editCatRestockTarget" step="1" min="0" placeholder="留空则禁用"></div>
+                <div class="field-group"><label>间隔（分钟）</label><input type="number"
+                        id="editCatRestockInterval" step="1" min="1" placeholder="留空则禁用"></div>
+            </div>
+
+            <div class="btn-group" style="margin-top:20px;">
+                <button class="btn btn-primary" onclick="saveCategory()">💾 保存</button>
+                <button class="btn btn-danger btn-sm" id="btnDeleteCat" onclick="deleteCategory()"
+                    style="display:none;">🗑️ 删除</button>
+                <button class="btn btn-ghost" onclick="closeCatModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ 添加物品模态框 ═══ -->
+    <div class="modal-overlay" id="addItemModal">
+        <div class="modal" style="width:480px;">
+            <h2>➕ 添加物品到商店</h2>
+            <div class="field-group">
+                <label>材料名称 <span style="color:var(--text-muted);font-size:11px;">（例如 DIAMOND 或 diamond）</span></label>
+                <input type="text" id="addItemMaterial" placeholder="DIAMOND" autocomplete="off" oninput="filterMaterialSuggestions()" style="text-transform:uppercase;">
+                <div id="materialSuggestions" style="background:var(--bg-input);border:1px solid var(--border);border-radius:8px;margin-top:4px;max-height:180px;overflow-y:auto;display:none;"></div>
+            </div>
+            <div class="field-group">
+                <label>基础价格</label>
+                <input type="number" id="addItemPrice" min="0.01" step="0.01" placeholder="100">
+            </div>
+            <div class="field-group">
+                <label>分类覆盖 <span style="color:var(--text-muted);font-size:11px;">（可选，留空则自动检测）</span></label>
+                <select id="addItemCategory" style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-primary);font-size:14px;font-family:inherit;">
+                    <option value="">自动检测</option>
+                </select>
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="submitAddItem()">💾 添加到商店</button>
+                <button class="btn btn-ghost" onclick="closeAddItemModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ═══ 特殊物品（权限/组/命令）编辑模态框 ═══ -->
+    <div class="modal-overlay" id="editSpecialModal">
+        <div class="modal" style="width:520px;">
+            <h2 id="specialModalTitle">🔑 添加权限 / 组 / 命令</h2>
+            <div class="field-group">
+                <label>类型</label>
+                <select id="siType" onchange="onSiTypeChange()" style="width:100%;background:var(--bg-input);border:1px solid var(--border);border-radius:8px;padding:10px 14px;color:var(--text-primary);font-size:14px;font-family:inherit;">
+                    <option value="perm">权限节点</option>
+                    <option value="group">权限组</option>
+                    <option value="command">执行命令</option>
+                </select>
+            </div>
+            <div class="field-group" id="siNameRow" style="display:none;">
+                <label>显示名称 <span style="color:var(--text-muted);font-size:11px;">（商店中显示给玩家）</span></label>
+                <input type="text" id="siName" placeholder="购买VIP等级">
+            </div>
+            <div class="field-group" id="siPermRow">
+                <label>权限节点 <span style="color:var(--text-muted);font-size:11px;">（例如 essentials.fly）</span></label>
+                <input type="text" id="siPermission" placeholder="permission.node">
+            </div>
+            <div class="field-group" id="siPermWorldRow">
+                <label>权限世界 <span style="color:var(--text-muted);font-size:11px;">（可选，留空则为全局）</span></label>
+                <input type="text" id="siPermWorld" placeholder="survival_world">
+            </div>
+            <div class="field-group" id="siGroupRow" style="display:none;">
+                <label>组名 <span style="color:var(--text-muted);font-size:11px;">（来自你的权限插件的准确组名）</span></label>
+                <input type="text" id="siGroup" placeholder="vip">
+            </div>
+            <div class="field-group" id="siGroupWorldRow" style="display:none;">
+                <label>组世界 <span style="color:var(--text-muted);font-size:11px;">（可选，留空则为全局）</span></label>
+                <input type="text" id="siGroupWorld" placeholder="survival_world">
+            </div>
+            <div class="field-group" id="siCommandRow" style="display:none;">
+                <label>控制台命令 <span style="color:var(--text-muted);font-size:11px;">（使用 <code style="background:var(--bg-input);padding:1px 5px;border-radius:4px;">{player}</code> 作为玩家名占位符，不要加前导斜杠）</span></label>
+                <input type="text" id="siCommand" placeholder="lp user {player} parent set vip">
+            </div>
+            <div class="field-group">
+                <label>价格</label>
+                <input type="number" id="siPrice" min="0" step="0.01" placeholder="5000">
+            </div>
+            <div class="field-group">
+                <label>显示材料 <span style="color:var(--text-muted);font-size:11px;">（可选，例如 EMERALD）</span></label>
+                <input type="text" id="siMaterial" placeholder="ENCHANTED_BOOK">
+            </div>
+            <div class="field-group">
+                <label>所需权限 <span style="color:var(--text-muted);font-size:11px;">（可选，玩家必须已经拥有该权限才能购买）</span></label>
+                <input type="text" id="siRequiredPerm" placeholder="留空则不设限制">
+            </div>
+            <div class="btn-group">
+                <button class="btn btn-primary" onclick="saveSpecialItem()">💾 保存</button>
+                <button class="btn btn-ghost" onclick="closeSpecialModal()">取消</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ─── 状态 ───
+        let authToken = localStorage.getItem('authToken') || null;
+        let currentUser = null;
+        let authMode = 'login';
+        let adminAccessTimer = null;
+        let accessDeniedActive = false;
+        let allItems = [], allCategories = [], currentConfig = {}, editingItem = null, currentCategory = null;
+        let allShops = [];
+
+        // ─── API 辅助 ───
+        async function apiFetch(path, opts = {}) {
+            const headers = { 'Content-Type': 'application/json', ...opts.headers };
+            if (authToken) {
+                headers.Authorization = `Bearer ${authToken}`;
+            }
+            const res = await fetch(path, { ...opts, headers });
+            if (res.status === 401) {
+                await handleExpiredAuth();
+                throw new Error('未授权');
+            }
+            if (res.status === 403) {
+                const result = await res.json();
+                showAuthGate(result.error || '你没有进入管理系统的权限。需要 OP 或 ultimateshop.editor 权限。', true);
+                throw new Error('权限不足');
+            }
+            return res.json();
+        }
+
+        // ─── 认证流程 ───
+        async function init() {
+            await loadUserProfile();
+        }
+
+        async function showApp() {
+            document.getElementById('authGate').style.display = 'none';
+            document.getElementById('app').style.display = 'block';
+            startAdminAccessPolling();
+            loadShopLocations();
+            loadCategories();
+            loadConfig();
+            loadSpecialItems();
+        }
+
+        function exitAdminPage() {
+            window.location.href = 'index.html';
+        }
+
+        function stopAdminAccessPolling() {
+            if (adminAccessTimer) {
+                clearInterval(adminAccessTimer);
+                adminAccessTimer = null;
+            }
+        }
+
+        function showAccessDeniedDialog(message) {
+            if (accessDeniedActive) return;
+            accessDeniedActive = true;
+            document.getElementById('app').style.display = 'none';
+            const messageEl = document.getElementById('accessDeniedMessage');
+            if (messageEl) {
+                messageEl.textContent = message || '你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。';
+            }
+            showDialog(document.getElementById('accessDeniedModal'));
+            if (!adminAccessTimer) {
+                startAdminAccessPolling();
+            }
+        }
+
+        async function checkAdminAccess({ forceDialog = false } = {}) {
+            if (!authToken || !currentUser) return false;
+            try {
+                const response = await fetch('/api/admin/access', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
+                const result = await response.json();
+                if (!response.ok || !result.allowed) {
+                    const message = result.error || '你已不再满足进入管理系统的条件。需要 OP 或 ultimateshop.editor 权限。';
+                    if (forceDialog) {
+                        showAccessDeniedDialog(message);
+                    } else {
+                        showAuthGate(message, true);
+                    }
+                    return false;
+                }
+                const gate = document.getElementById('authGate');
+                const gateVisible = gate && gate.style.display !== 'none';
+                if (accessDeniedActive || gateVisible) {
+                    accessDeniedActive = false;
+                    hideDialog(document.getElementById('accessDeniedModal'));
+                    if (gate) gate.style.display = 'none';
+                    toast('管理权限已恢复。', 'success');
+                    showApp();
+                }
+                return true;
+            } catch (error) {
+                if (forceDialog) {
+                    showAccessDeniedDialog('无法确认管理权限，请退出后重新进入管理系统。');
+                }
+                return false;
+            }
+        }
+
+        function startAdminAccessPolling() {
+            stopAdminAccessPolling();
+            adminAccessTimer = setInterval(() => {
+                checkAdminAccess({ forceDialog: true });
+            }, 10000);
+        }
+
+        function showAuthGate(message, accessDenied = false) {
+            if (accessDenied && authToken && currentUser) {
+                startAdminAccessPolling();
+            } else {
+                stopAdminAccessPolling();
+            }
+            document.getElementById('app').style.display = 'none';
+            document.getElementById('authGate').style.display = 'flex';
+            const titleEl = document.getElementById('authGateTitle');
+            const messageEl = document.getElementById('authGateMessage');
+            const buttonEl = document.getElementById('authGateButton');
+            if (titleEl) {
+                titleEl.textContent = accessDenied ? '权限不足' : '管理面板需要登录';
+            }
+            if (messageEl) {
+                messageEl.textContent = message || '请使用和仪表盘、物品目录一致的账户系统登录。登录后即可进入管理功能。';
+            }
+            if (buttonEl) {
+                buttonEl.textContent = accessDenied ? '确认并退出' : '登录 / 注册';
+                buttonEl.onclick = accessDenied ? exitAdminPage : openAuthModal;
+            }
+        }
+
+        function updateAuthUi() {
+            const userStatus = document.getElementById('userStatus');
+            const authButton = document.getElementById('authButton');
+            if (!userStatus || !authButton) return;
+
+            if (currentUser) {
+                userStatus.textContent = `已登录：${currentUser.username}（${currentUser.playerId}）`;
+                authButton.textContent = '退出登录';
+                authButton.onclick = handleLogout;
+            } else {
+                userStatus.textContent = '未登录';
+                authButton.textContent = '登录 / 注册';
+                authButton.onclick = openAuthModal;
+            }
+        }
+
+        function openAuthModal() {
+            authMode = 'login';
+            switchAuthMode('login');
+            showDialog(document.getElementById('authModal'));
+        }
+
+        function closeAuthModal() {
+            hideDialog(document.getElementById('authModal'));
+            const message = document.getElementById('authMessage');
+            if (message) {
+                message.textContent = '';
+                message.style.color = '';
+            }
+            document.getElementById('authForm')?.reset();
+        }
+
+        function switchAuthMode(mode) {
+            authMode = mode;
+            document.getElementById('authModeLogin')?.classList.toggle('active', mode === 'login');
+            document.getElementById('authModeRegister')?.classList.toggle('active', mode === 'register');
+            document.querySelectorAll('.auth-register-only').forEach(field => {
+                field.style.display = mode === 'register' ? 'flex' : 'none';
+            });
+            const title = document.getElementById('authModalTitle');
+            if (title) title.textContent = mode === 'login' ? '登录' : '注册';
+            const message = document.getElementById('authMessage');
+            if (message) {
+                message.textContent = '';
+                message.style.color = '';
+            }
+        }
+
+        async function handleAuthSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById('authUsername')?.value.trim();
+            const password = document.getElementById('authPassword')?.value;
+            const playerId = document.getElementById('authPlayerId')?.value.trim();
+            const message = document.getElementById('authMessage');
+
+            if (!username || !password) {
+                if (message) message.textContent = '请填写用户名和密码。';
+                return;
+            }
+            if (authMode === 'register' && !playerId) {
+                if (message) message.textContent = '注册时请填写游戏玩家ID。';
+                return;
+            }
+
+            const endpoint = authMode === 'register' ? '/api/register' : '/api/login';
+            const payload = authMode === 'register' ? { username, password, playerId } : { username, password };
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(payload)
+                });
+                const result = await response.json();
+                if (!response.ok) {
+                    if (message) {
+                        message.textContent = result.error || '操作失败，请重试。';
+                        message.style.color = 'var(--danger)';
+                    }
+                    return;
+                }
+
+                authToken = result.authToken;
+                localStorage.setItem('authToken', authToken);
+                currentUser = { username: result.username, playerId: result.playerId };
+                updateAuthUi();
+                closeAuthModal();
+                toast(authMode === 'register' ? '注册成功，已登录。' : '登录成功！', 'success');
+                await loadUserProfile();
+            } catch (error) {
+                if (message) {
+                    message.textContent = `网络错误：${error.message || '请检查服务器是否已启动。'}`;
+                    message.style.color = 'var(--danger)';
+                }
+            }
+        }
+
+        async function handleLogout() {
+            if (authToken) {
+                try {
+                    await fetch('/api/logout', {
+                        method: 'POST',
+                        headers: { Authorization: `Bearer ${authToken}` }
+                    });
+                } catch (error) { }
+            }
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            stopAdminAccessPolling();
+            updateAuthUi();
+            showAuthGate();
+            toast('已退出登录。', 'success');
+        }
+
+        async function handleExpiredAuth() {
+            authToken = null;
+            currentUser = null;
+            localStorage.removeItem('authToken');
+            stopAdminAccessPolling();
+            updateAuthUi();
+            showAuthGate();
+            toast('登录已过期，请重新登录。', 'error');
+        }
+
+        async function loadUserProfile() {
+            if (!authToken) {
+                currentUser = null;
+                updateAuthUi();
+                showAuthGate();
+                return;
+            }
+            try {
+                const response = await fetch('/api/profile', {
+                    headers: { Authorization: `Bearer ${authToken}` }
+                });
+                if (!response.ok) {
+                    throw new Error('未登录');
+                }
+                currentUser = await response.json();
+                updateAuthUi();
+                if (!await checkAdminAccess()) {
+                    return;
+                }
+                showApp();
+            } catch (error) {
+                authToken = null;
+                currentUser = null;
+                localStorage.removeItem('authToken');
+                stopAdminAccessPolling();
+                updateAuthUi();
+                showAuthGate();
+            }
+        }
+
+        // ─── 选项卡导航 ───
+        document.querySelectorAll('.nav-tab').forEach(tab => {
+            tab.addEventListener('click', () => {
+                document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+                if (tab.dataset.tab === 'perms') loadSpecialItems();
+                if (tab.dataset.tab === 'audit') loadAudit();
+            });
+        });
+
+        // ─── UltimateShop 商店位置 ───
+        function escapeAttr(value) {
+            return String(value == null ? '' : value)
+                .replace(/&/g, '&amp;')
+                .replace(/"/g, '&quot;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;');
+        }
+
+        async function loadShopLocations() {
+            const body = document.getElementById('shopLocationsBody');
+            if (body) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">加载商店中...</td></tr>';
+            }
+            try {
+                allShops = await apiFetch('/api/admin/shops');
+                renderShopLocations();
+            } catch (error) {
+                if (body) {
+                    body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--danger);padding:32px;">商店列表加载失败</td></tr>';
+                }
+            }
+        }
+
+        function renderShopLocations() {
+            const body = document.getElementById('shopLocationsBody');
+            if (!body) return;
+            if (!allShops.length) {
+                body.innerHTML = '<tr><td colspan="5" style="text-align:center;color:var(--text-muted);padding:32px;">未找到 UltimateShop 商店 YAML</td></tr>';
+                return;
+            }
+            body.innerHTML = allShops.map(shop => {
+                const loc = shop.location || {};
+                const configured = !!loc.viewUrl;
+                return `
+                    <tr data-shop-id="${escapeAttr(shop.id)}">
+                        <td>
+                            <div style="font-size:13px;color:var(--text-primary);">${escapeAttr(shop.titleResolved || shop.id)}</div>
+                            <div style="font-size:11px;color:var(--text-muted);">${escapeAttr(shop.id)} · ${escapeAttr(shop.file)}</div>
+                        </td>
+                        <td>${shop.itemCount || 0}</td>
+                        <td style="min-width:420px;"><input class="shop-location-input" data-field="viewUrl" value="${escapeAttr(loc.viewUrl || '')}" placeholder="例如 http://127.0.0.1:8100/#world:-406:66:23:5:-2.26:1.57:0:0:perspective"></td>
+                        <td style="min-width:180px;"><input class="shop-location-input" data-field="description" value="${escapeAttr(loc.description || '')}" placeholder="例如 主城建材区"></td>
+                        <td>
+                            <button class="btn btn-primary btn-sm" onclick="saveShopLocation('${escapeAttr(shop.id)}')">保存</button>
+                            <div style="font-size:11px;color:${configured ? 'var(--success)' : 'var(--text-muted)'};margin-top:4px;">${configured ? '已配置' : '未配置'}</div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        async function saveShopLocation(shopId) {
+            const row = [...document.querySelectorAll('#shopLocationsBody tr')]
+                .find(item => item.dataset.shopId === shopId);
+            if (!row) return;
+            const body = {};
+            row.querySelectorAll('.shop-location-input').forEach(input => {
+                const field = input.dataset.field;
+                body[field] = input.type === 'number' && input.value !== '' ? Number(input.value) : input.value.trim();
+            });
+            body.enabled = true;
+            try {
+                const res = await apiFetch('/api/admin/shop-locations/' + encodeURIComponent(shopId), {
+                    method: 'POST',
+                    body: JSON.stringify(body)
+                });
+                if (res.error) {
+                    toast(res.error, 'error');
+                    return;
+                }
+                toast('已保存商店位置：' + shopId, 'success');
+                await loadShopLocations();
+            } catch (error) {
+                toast('保存商店位置失败', 'error');
+            }
+        }
+
+        // ─── 分类 ───
+        async function loadCategories() {
+            allCategories = await apiFetch('/api/admin/categories');
+            allItems = await apiFetch('/api/admin/items');
+            renderCategories(allCategories);
+        }
+
+        function renderCategories(cats) {
+            currentCategory = null;
+            document.getElementById('categoryView').style.display = 'block';
+            document.getElementById('itemsView').style.display = 'none';
+
+            const grid = document.getElementById('categoryGrid');
+            const visible = cats.filter(c => !c.hidden);
+            const hiddenWithItems = cats.filter(c => c.hidden && c.itemCount > 0);
+            const all = [...visible, ...hiddenWithItems];
+
+            if (all.length === 0) { grid.innerHTML = '<div style="color:var(--text-muted);padding:40px;">未找到分类</div>'; return; }
+
+            let html = all.map(c => `
+        <div class="cat-card ${c.hidden ? 'hidden-cat' : ''}" style="position:relative;" onclick="openCategory('${c.id}')">
+            <button class="btn btn-ghost btn-sm" style="position:absolute; top:8px; right:8px; z-index:10; padding:4px 8px; font-size:14px; background:var(--bg-card); border-radius:4px;" onclick="event.stopPropagation(); openEditCategory('${c.id}')">✏️</button>
+            <img class="cat-icon" src="${c.iconUrl}" alt="${c.displayName}" onerror="this.style.display='none'">
+            <div class="cat-name">${c.displayName}</div>
+            <div class="cat-meta">${c.id}</div>
+            <div class="cat-badges">
+                <span class="cat-badge items">${c.itemCount} 个物品</span>
+                ${c.outOfStockCount > 0 ? '<span class="cat-badge oos">' + c.outOfStockCount + ' 缺货</span>' : ''}
+                ${c.shortageCount > 0 ? '<span class="cat-badge shortage">' + c.shortageCount + ' 短缺</span>' : ''}
+                ${c.hidden ? '<span class="cat-badge hidden">隐藏</span>' : ''}
+            </div>
+        </div>
+    `).join('');
+
+            html += `
+        <div class="cat-card" style="border: 2px dashed #444; background: transparent; cursor: pointer; display: flex; align-items: center; justify-content: center; flex-direction: column; min-height: 180px;" onclick="openCreateCategory()">
+            <div style="font-size: 32px; margin-bottom: 8px;">➕</div>
+            <div style="color: var(--text-muted);">创建分类</div>
+        </div>
+    `;
+
+            grid.innerHTML = html;
+        }
+
+        // ─── 打开分类内的物品 ───
+        function openCategory(catId) {
+            currentCategory = catId;
+            const cat = allCategories.find(c => c.id === catId);
+            const items = allItems.filter(i => i.category === catId);
+
+            document.getElementById('categoryView').style.display = 'none';
+            document.getElementById('itemsView').style.display = 'block';
+            document.getElementById('btnAddItem').style.display = '';
+            document.getElementById('breadcrumb').innerHTML = `
+        <a onclick="backToCategories()">分类</a>
+        <span class="sep">›</span>
+        <span class="current">${cat ? cat.displayName : catId} (${items.length})</span>
+    `;
+            renderItems(items);
+        }
+
+        function backToCategories() {
+            document.getElementById('globalSearch').value = '';
+            document.getElementById('btnAddItem').style.display = 'none';
+            renderCategories(allCategories);
+        }
+
+        // ─── 搜索 ───
+        function handleSearch() {
+            const q = document.getElementById('globalSearch').value.toLowerCase().trim();
+            if (!q) { renderCategories(allCategories); return; }
+
+            const matched = allItems.filter(i => i.displayName.toLowerCase().includes(q) || i.item.toLowerCase().includes(q));
+            const matchedCats = allCategories.filter(c => c.displayName.toLowerCase().includes(q) || c.id.toLowerCase().includes(q));
+
+            if (matchedCats.length > 0 && matched.length === 0) {
+                renderCategories(matchedCats);
+            } else if (matched.length > 0) {
+                document.getElementById('categoryView').style.display = 'none';
+                document.getElementById('itemsView').style.display = 'block';
+                document.getElementById('breadcrumb').innerHTML = `
+            <a onclick="backToCategories()">分类</a>
+            <span class="sep">›</span>
+            <span class="current">搜索：“${q}” (${matched.length})</span>
+        `;
+                renderItems(matched);
+            } else {
+                document.getElementById('categoryView').style.display = 'none';
+                document.getElementById('itemsView').style.display = 'block';
+                document.getElementById('breadcrumb').innerHTML = `<a onclick="backToCategories()">分类</a><span class="sep">›</span><span class="current">无结果</span>`;
+                document.getElementById('itemsBody').innerHTML = '<tr><td colspan="8" style="text-align:center;padding:40px;color:var(--text-muted);">没有找到匹配的物品</td></tr>';
+            }
+        }
+
+        // ─── 物品表格 ───
+        function renderItems(items) {
+            const tbody = document.getElementById('itemsBody');
+            document.getElementById('selectAllItems').checked = false;
+            updateBulkActionUI();
+            if (!items.length) { tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:40px;color:var(--text-muted);">暂无物品</td></tr>'; return; }
+            tbody.innerHTML = items.map(i => `<tr>
+        <td><input type="checkbox" class="item-select-chk" value="${i.item}" onchange="updateBulkActionUI()"></td>
+        <td><div class="item-cell"><img src="${i.imageUrl}" onerror="this.style.display='none'"><div><div class="name">${i.displayName}</div><div class="id">${i.item}</div></div></div></td>
+        <td>￥${i.basePrice.toFixed(2)}</td>
+        <td>￥${i.buyPrice.toFixed(2)}</td>
+        <td>￥${i.sellPrice.toFixed(2)}</td>
+        <td class="${i.stock < 0 ? 'stock-neg' : i.stock === 0 ? 'stock-zero' : 'stock-pos'}">${i.stock.toFixed(0)}</td>
+        <td>${i.shortageHours > 0 ? i.shortageHours.toFixed(1) + 'h' : '—'}</td>
+        <td>${i.priceIncreasePercent > 0 ? '<span class="price-inc">+' + i.priceIncreasePercent.toFixed(0) + '%</span>' : '—'}</td>
+        <td><button class="btn btn-ghost btn-sm" onclick="openEdit('${i.item}')">编辑</button></td>
+    </tr>`).join('');
+        }
+
+        function toggleAllItems() {
+            const checked = document.getElementById('selectAllItems').checked;
+            document.querySelectorAll('.item-select-chk').forEach(c => c.checked = checked);
+            updateBulkActionUI();
+        }
+
+        function updateBulkActionUI() {
+            let chks = document.querySelectorAll('.item-select-chk');
+            if(chks.length === 0) {
+                document.getElementById('bulkActionsWrapper').style.display = 'none';
+                return;
+            }
+            const count = document.querySelectorAll('.item-select-chk:checked').length;
+            document.getElementById('bulkActionsWrapper').style.display = count > 0 ? 'inline-block' : 'none';
+            if (count < chks.length) { document.getElementById('selectAllItems').checked = false; }
+            else if (count > 0 && count === chks.length) { document.getElementById('selectAllItems').checked = true; }
+        }
+
+        function toggleBulkActions() {
+            const menu = document.getElementById('bulkActionsMenu');
+            menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+        }
+
+        document.addEventListener('click', function(e) {
+            const wrapper = document.getElementById('bulkActionsWrapper');
+            if (wrapper && !wrapper.contains(e.target)) {
+                const menu = document.getElementById('bulkActionsMenu');
+                if(menu) menu.style.display = 'none';
+            }
+        });
+
+        function showDialog(modal) {
+            if (!modal) return;
+            modal.classList.remove('closing');
+            modal.classList.add('active');
+        }
+
+        function hideDialog(modal, afterClose) {
+            if (!modal || !modal.classList.contains('active')) {
+                if (typeof afterClose === 'function') afterClose();
+                return;
+            }
+            modal.classList.add('closing');
+            modal.classList.remove('active');
+            setTimeout(() => {
+                modal.classList.remove('closing');
+                if (typeof afterClose === 'function') afterClose();
+            }, 190);
+        }
+
+        async function performBulkAction(actionType) {
+            document.getElementById('bulkActionsMenu').style.display = 'none';
+            const selectedBoxes = Array.from(document.querySelectorAll('.item-select-chk:checked'));
+            const itemsToUpdate = selectedBoxes.map(c => c.value).filter(val => !val.startsWith('special:') && !val.startsWith('playershop:'));
+            if (itemsToUpdate.length === 0) {
+                toast('未选中任何标准物品。无法批量操作特殊/玩家商店物品。', 'error');
+                return;
+            }
+            if (!confirm(`确定要将此操作应用到 ${itemsToUpdate.length} 个物品吗？`)) return;
+
+            const updates = {};
+            if (actionType === 'disable_item') updates.disabled = true;
+            if (actionType === 'enable_item') updates.disabled = false;
+            if (actionType === 'disable_buy') updates.buyDisabled = true;
+            if (actionType === 'enable_buy') updates.buyDisabled = false;
+            if (actionType === 'disable_sell') updates.sellDisabled = true;
+            if (actionType === 'enable_sell') updates.sellDisabled = false;
+
+            try {
+                const res = await apiFetch('/api/admin/items/bulk', {
+                    method: 'POST',
+                    body: JSON.stringify({ items: itemsToUpdate, updates: updates })
+                });
+                if (res.error) { toast(res.error, 'error'); } 
+                else {
+                    toast('成功更新 ' + res.updated + ' 个物品', 'success');
+                    allItems = await apiFetch('/api/admin/items');
+                    if (currentCategory) openCategory(currentCategory);
+                    else handleSearch();
+                    document.getElementById('selectAllItems').checked = false;
+                    updateBulkActionUI();
+                }
+            } catch (e) {
+                toast('批量操作失败', 'error');
+            }
+        }
+
+        // ─── 编辑模态框 ───
+        async function deletePlayerShop(id) {
+            if (!confirm('确定要删除这个玩家商店列表吗？')) return;
+            try {
+                const res = await apiFetch(`/api/admin/playershop/org.minecraftsmp:DynamicShop:jar:2.5.7`, { method: 'DELETE' });
+                if (res.error) { toast(res.error, 'error'); return; }
+                toast('已删除玩家商店列表', 'success');
+                allItems = await apiFetch('/api/admin/items');
+                if (currentCategory) openCategory(currentCategory);
+            } catch (e) {
+                toast('删除失败', 'error');
+            }
+        }
+
+        function openEdit(itemName) {
+            if (itemName.startsWith('special:')) {
+                openEditSpecialItem(itemName.split(':')[1]);
+                return;
+            }
+            if (itemName.startsWith('playershop:')) {
+                deletePlayerShop(itemName.split(':')[1]);
+                return;
+            }
+            const item = allItems.find(i => i.item === itemName);
+            if (!item) return;
+            editingItem = item;
+            document.getElementById('modalImg').src = item.imageUrl;
+            document.getElementById('modalTitle').textContent = item.displayName;
+            document.getElementById('editBasePrice').value = item.basePrice;
+            document.getElementById('editStock').value = item.stock.toFixed(0);
+            document.getElementById('editStockRate').value = item.stockRate;
+            document.getElementById('editMaxStock').value = item.maxStock != null ? item.maxStock : '';
+            document.getElementById('editMaxStockStorage').value = item.maxStockStorage != null ? item.maxStockStorage : '';
+            document.getElementById('editShortageHours').value = item.shortageHours.toFixed(1);
+            document.getElementById('editBuyDisabled').checked = item.buyDisabled;
+            document.getElementById('editSellDisabled').checked = item.sellDisabled;
+            document.getElementById('editDisabled').checked = item.disabled;
+            showDialog(document.getElementById('editModal'));
+        }
+        function closeModal() { hideDialog(document.getElementById('editModal'), () => { editingItem = null; }); }
+
+        function openCreateCategory() {
+            const available = allCategories.find(c => c.hidden && c.isCustom);
+            if (!available) {
+                toast('没有可用的自定义分类槽位了（当前最多20个）', 'error');
+                return;
+            }
+            openEditCategory(available.id);
+            setTimeout(() => {
+                document.getElementById('editCatSlot').value = "0";
+                document.getElementById('editCatName').value = "新分类";
+            }, 10);
+        }
+
+        function openEditCategory(catId) {
+            const cat = allCategories.find(c => c.id === catId);
+            if (!cat) return;
+            document.getElementById('catModalImg').src = cat.iconUrl;
+            document.getElementById('catModalTitle').textContent = cat.displayName;
+            document.getElementById('editCatName').value = cat.displayName;
+            document.getElementById('editCatIcon').value = cat.icon;
+            document.getElementById('editCatSlot').value = cat.slot;
+            document.getElementById('editCatRestockTarget').value = cat.restockTarget != null ? cat.restockTarget : '';
+            document.getElementById('editCatRestockInterval').value = cat.restockInterval != null ? cat.restockInterval : '';
+
+            if (cat.isCustom) document.getElementById('btnDeleteCat').style.display = 'block';
+            else document.getElementById('btnDeleteCat').style.display = 'none';
+
+            showDialog(document.getElementById('editCategoryModal'));
+            document.getElementById('editCategoryModal').dataset.catId = catId;
+        }
+
+        async function deleteCategory() {
+            const catId = document.getElementById('editCategoryModal').dataset.catId;
+            if (!confirm('确定要删除此自定义分类吗？它将永久移除。')) return;
+
+            try {
+                const res = await apiFetch('/api/admin/category/' + catId, {
+                    method: 'POST',
+                    body: JSON.stringify({ slot: -1, icon: "DEFAULT", displayName: "", restockTarget: null, restockInterval: null })
+                });
+                if (res.success) {
+                    toast('分类已删除', 'warning');
+                    closeCatModal();
+                    loadCategories();
+                } else {
+                    toast(res.error || '删除分类失败', 'error');
+                }
+            } catch (e) { toast('删除分类时出错', 'error'); }
+        }
+        function closeCatModal() { hideDialog(document.getElementById('editCategoryModal')); }
+
+        async function saveCategory() {
+            const catId = document.getElementById('editCategoryModal').dataset.catId;
+            if (!catId) return;
+            const body = {
+                displayName: document.getElementById('editCatName').value.trim() || undefined,
+                icon: document.getElementById('editCatIcon').value.trim() || undefined,
+                slot: +document.getElementById('editCatSlot').value,
+                restockTarget: document.getElementById('editCatRestockTarget').value ? +document.getElementById('editCatRestockTarget').value : null,
+                restockInterval: document.getElementById('editCatRestockInterval').value ? +document.getElementById('editCatRestockInterval').value : null
+            };
+            try {
+                await apiFetch('/api/admin/category/' + catId, { method: 'POST', body: JSON.stringify(body) });
+                toast('已更新分类', 'success');
+                closeCatModal();
+                loadCategories();
+            } catch (e) { toast('更新分类失败', 'error'); }
+        }
+
+        async function saveItem() {
+            if (!editingItem) return;
+            const body = {
+                basePrice: +document.getElementById('editBasePrice').value,
+                stock: +document.getElementById('editStock').value,
+                stockRate: +document.getElementById('editStockRate').value,
+                maxStock: document.getElementById('editMaxStock').value ? +document.getElementById('editMaxStock').value : null,
+                maxStockStorage: document.getElementById('editMaxStockStorage').value ? +document.getElementById('editMaxStockStorage').value : null,
+                shortageHours: +document.getElementById('editShortageHours').value,
+                buyDisabled: document.getElementById('editBuyDisabled').checked,
+                sellDisabled: document.getElementById('editSellDisabled').checked,
+                disabled: document.getElementById('editDisabled').checked
+            };
+            try {
+                await apiFetch('/api/admin/item/' + editingItem.item, { method: 'POST', body: JSON.stringify(body) });
+                toast('已更新：' + editingItem.displayName, 'success');
+                closeModal();
+                setTimeout(loadCategories, 500);
+            } catch (e) { toast('更新失败', 'error'); }
+        }
+
+        async function resetItemShortage() {
+            if (!editingItem) return;
+            try {
+                await apiFetch('/api/admin/resetshortage/' + editingItem.item, { method: 'POST' });
+                toast('缺货重置：' + editingItem.displayName, 'success');
+                document.getElementById('editShortageHours').value = '0.0';
+            } catch (e) { toast('重置失败', 'error'); }
+        }
+
+        document.getElementById('editModal').addEventListener('click', e => { if (e.target.id === 'editModal') closeModal(); });
+
+        // ─── 配置 ───
+        const CFG = {
+            toggles: [
+                { key: 'dynamicPricingEnabled', label: '动态定价', desc: '所有价格调整的主开关' },
+                { key: 'useStockCurve', label: '库存曲线', desc: '库存增加时价格下降' },
+                { key: 'useTimeInflation', label: '时间通胀', desc: '零库存时价格随时间上升' },
+                { key: 'restrictBuyingAtZeroStock', label: '零库存禁止购买', desc: '库存为0时阻止购买' },
+                { key: 'logDynamicPricing', label: '调试日志', desc: '将定价计算记录到控制台' }
+            ],
+            numbers: [
+                { key: 'curveStrength', label: '曲线强度', step: 0.01, desc: '0-1，价格下降的激进程度' },
+                { key: 'maxStock', label: '最大库存', step: 1, desc: '曲线的标准化库存上限' },
+                { key: 'minPriceMultiplier', label: '最低价格倍数', step: 0.01, desc: '最低折扣（例如 0.01 = 1%）' },
+                { key: 'maxPriceMultiplier', label: '最高价格倍数', step: 0.1, desc: '最高溢价（例如 20 = 20倍）' },
+                { key: 'negativeStockPercentPerItem', label: '负库存%/单位', step: 0.1, desc: '每单位负库存的价格增幅' },
+                { key: 'hourlyIncreasePercent', label: '每小时上涨%', step: 0.1, desc: '零库存时的复合通胀' },
+                { key: 'shortageDecayPercentPerHour', label: '缺货衰减%/小时', step: 0.1, desc: '0 = 禁用' }
+            ],
+            economy: {
+                toggles: [],
+                numbers: [
+                    { key: 'sellTaxPercent', label: '出售税%', step: 1, desc: '玩家出售时收取的税（30 = 返还70%）' },
+                    { key: 'transactionCooldownMs', label: '交易冷却（毫秒）', step: 100, desc: '0 = 禁用' }
+                ]
+            },
+            shop: {
+                toggles: [
+                    { key: 'playerShopsEnabled', label: '玩家商店', desc: '启用/禁用玩家商店系统' }
+                ],
+                numbers: [
+                    { key: 'maxListingsPerPlayer', label: '每玩家最大列表数', step: 1, desc: '每个玩家商店的最大物品数' }
+                ]
+            },
+            web: {
+                toggles: [
+                    { key: 'webserverEnabled', label: '网页服务器', desc: '启用/禁用整个网页服务器（需重启）' },
+                    { key: 'webserverAdminEnabled', label: '管理面板', desc: '启用/禁用网页管理面板（需重启）' },
+                    { key: 'webserverCorsEnabled', label: 'CORS', desc: '允许跨域API请求' },
+                    { key: 'webserverForceUpdate', label: '强制更新文件', desc: '启动时从JAR重新提取网页文件' }
+                ],
+                numbers: [
+                    { key: 'webserverPort', label: '端口', step: 1, desc: '需重启' },
+                    { key: 'webserverBind', label: '绑定地址', step: 0, desc: '0.0.0.0 = 所有接口', isText: true },
+                    { key: 'webserverHostname', label: '主机名', step: 0, desc: '用于管理链接的公网IP/域名（留空自动检测）', isText: true }
+                ]
+            },
+            misc: {
+                toggles: [
+                    { key: 'restockEnabled', label: '自动补货', desc: '启用自动补货系统' },
+                    { key: 'crossServerEnabled', label: '跨服同步', desc: '启用服务器间P2P同步（需重启）' }
+                ],
+                numbers: [
+                    { key: 'shopMenuSize', label: '商店菜单大小', step: 9, desc: '必须是9的倍数（27-54）' },
+                    { key: 'maxRecentTransactions', label: '最大近期交易数', step: 1000, desc: '网页仪表板内存限制' },
+                    { key: 'crossServerPort', label: '跨服端口', step: 1, desc: 'JeroMQ 同步端口' },
+                    { key: 'crossServerSaveInterval', label: '跨服保存间隔', step: 1, desc: '秒数，将数据备份到shopdata.yml的频率' }
+                ]
+            }
+        };
+
+        function renderToggles(containerId, toggles) {
+            document.getElementById(containerId).innerHTML = toggles.map(t => `
+        <div class="toggle-row"><div><label>${t.label}</label><div class="desc">${t.desc}</div></div>
+        <label class="toggle"><input type="checkbox" data-key="${t.key}" ${currentConfig[t.key] ? 'checked' : ''}><span class="slider"></span></label></div>
+    `).join('');
+        }
+        function renderNumbers(containerId, numbers) {
+            document.getElementById(containerId).innerHTML = numbers.map(n => `
+        <div class="config-field"><label>${n.label}</label>
+        <input type="${n.isText ? 'text' : 'number'}" data-key="${n.key}" value="${currentConfig[n.key]}" ${n.isText ? '' : 'step="' + n.step + '"'}>
+        <div class="hint">${n.desc}</div></div>
+    `).join('');
+        }
+
+        async function loadConfig() {
+            currentConfig = await apiFetch('/api/admin/config');
+            renderToggles('configToggles', CFG.toggles);
+            renderNumbers('configNumbers', CFG.numbers);
+            renderToggles('economyToggles', CFG.economy.toggles);
+            renderNumbers('economyNumbers', CFG.economy.numbers);
+            renderToggles('shopToggles', CFG.shop.toggles);
+            renderNumbers('shopNumbers', CFG.shop.numbers);
+            renderToggles('webToggles', CFG.web.toggles);
+            renderNumbers('webNumbers', CFG.web.numbers);
+            renderToggles('miscToggles', CFG.misc.toggles);
+            renderNumbers('miscNumbers', CFG.misc.numbers);
+        }
+
+        async function saveConfig() {
+            const body = {};
+            document.querySelectorAll('#tab-config input[type=checkbox]').forEach(cb => body[cb.dataset.key] = cb.checked);
+            document.querySelectorAll('#tab-config input[type=number]').forEach(inp => body[inp.dataset.key] = +inp.value);
+            document.querySelectorAll('#tab-config input[type=text][data-key]').forEach(inp => body[inp.dataset.key] = inp.value);
+            try { await apiFetch('/api/admin/config', { method: 'POST', body: JSON.stringify(body) }); toast('配置已保存！', 'success'); }
+            catch (e) { toast('保存失败', 'error'); }
+        }
+
+        // ─── 操作 ───
+        async function resetAllShortage() {
+            if (!confirm('确定要重置所有缺货数据吗？')) return;
+            try { await apiFetch('/api/admin/resetshortage', { method: 'POST' }); toast('全部缺货已重置！', 'success'); setTimeout(loadCategories, 500); }
+            catch (e) { toast('重置失败', 'error'); }
+        }
+
+        async function setBulkStock() {
+            const amt = +document.getElementById('bulkStockAmount').value;
+            if (isNaN(amt)) { toast('无效数量', 'error'); return; }
+            if (!confirm(`将所有物品的库存设置为 ${amt} 吗？`)) return;
+            let ok = 0;
+            for (const item of allItems) {
+                try { await apiFetch('/api/admin/item/' + item.item, { method: 'POST', body: JSON.stringify({ stock: amt }) }); ok++; } catch (e) { }
+            }
+            toast(`已为 ${ok} 个物品设置库存`, 'success');
+            setTimeout(loadCategories, 1000);
+        }
+
+        // ─── 通知 ───
+        function toast(msg, type = 'info') {
+            const el = document.createElement('div');
+            el.className = 'toast ' + type;
+            el.textContent = msg;
+            document.getElementById('toasts').appendChild(el);
+            setTimeout(() => el.remove(), 3500);
+        }
+
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                if (accessDeniedActive) return;
+                closeAuthModal();
+                closeModal();
+            }
+        });
+
+        // ─── 审计日志 ───
+        async function loadAudit() {
+            const container = document.getElementById('auditLog');
+            container.innerHTML = '<div class="loading"><div class="spinner"></div>加载中...</div>';
+            try {
+                const entries = await apiFetch('/api/admin/audit');
+                if (!entries.length) {
+                    container.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text-muted);">暂无更改记录</div>';
+                    return;
+                }
+                container.innerHTML = entries.map(e => {
+                    const actionColors = {
+                        item_update: 'var(--accent)', config_update: 'var(--info)',
+                        shortage_reset: 'var(--warning)', account_created: 'var(--success)'
+                    };
+                    const actionLabels = {
+                        item_update: '📦 物品更新', config_update: '⚙️ 配置更新',
+                        shortage_reset: '⚠️ 缺货重置', account_created: '👤 账户创建'
+                    };
+                    const color = actionColors[e.action] || 'var(--text-muted)';
+                    const label = actionLabels[e.action] || e.action;
+                    return `<div style="padding:12px 0; border-bottom:1px solid var(--border); display:flex; gap:12px; align-items:flex-start;">
+                <div style="min-width:40px; text-align:center;">
+                    <div style="width:10px;height:10px;border-radius:50%;background:${color};margin:5px auto;"></div>
+                </div>
+                <div style="flex:1;">
+                    <div style="font-size:13px;font-weight:500;color:var(--text-primary);">${label} — <span style="color:${color};">${e.target}</span></div>
+                    <div style="font-size:12px;color:var(--text-muted);margin-top:2px;">${e.details}</div>
+                    <div style="font-size:11px;color:var(--text-muted);margin-top:4px;">操作人：${e.user} • ${e.time}</div>
+                </div>
+            </div>`;
+                }).join('');
+            } catch (e) { container.innerHTML = '<div style="color:var(--danger);padding:20px;">加载审计日志失败</div>'; }
+        }
+
+        document.querySelector('[data-tab="audit"]').addEventListener('click', () => loadAudit());
+
+        // ─── 启动 ───
+        if (window.location.protocol !== 'https:' && window.location.hostname !== 'localhost' && window.location.hostname !== '127.0.0.1') {
+            const warningHTML = `
+        <div style="background: rgba(239, 68, 68, 0.15); border: 1px solid var(--danger); color: #f87171; padding: 12px; border-radius: 8px; margin-bottom: 20px; font-size: 13px; text-align: left;">
+            <strong>⚠️ 检测到不安全连接</strong><br>
+            你正在通过未加密的 HTTP 连接访问管理面板。避免在公共网络下登录，以防止凭据被窃取。
+        </div>
+    `;
+            document.getElementById('authSecurityWarning').innerHTML = warningHTML;
+        }
+
+        init();
+
+        // ─── 特殊物品（权限/组/命令）─
+        let allSpecialItems = [];
+        let editingSpecialId = null;
+
+        async function loadSpecialItems() {
+            try {
+                allSpecialItems = await apiFetch('/api/admin/special-items');
+                renderSpecialItems();
+            } catch(e) {
+                document.getElementById('specialItemsBody').innerHTML =
+                    '<tr><td colspan="6" style="text-align:center;color:var(--danger);padding:32px;">加载失败</td></tr>';
+            }
+        }
+
+        function renderSpecialItems() {
+            const tbody = document.getElementById('specialItemsBody');
+            if (!allSpecialItems || allSpecialItems.length === 0) {
+                tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--text-muted);padding:40px;">暂无权限或组商店物品。点击 ✚ 添加权限/组 来创建。</td></tr>';
+                return;
+            }
+            tbody.innerHTML = allSpecialItems.map(item => {
+                const isGroup = item.type === 'group';
+                const typeBadge = isGroup
+                    ? `<span style="background:rgba(6,182,212,0.15);color:#06b6d4;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">组</span>`
+                    : `<span style="background:rgba(99,102,241,0.15);color:#818cf8;padding:2px 8px;border-radius:4px;font-size:11px;font-weight:600;">权限</span>`;
+                const value = isGroup ? (item.group || '—') : (item.permission || '—');
+                const gate = item.requiredPermission
+                    ? `<code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;font-size:11px;">${item.requiredPermission}</code>`
+                    : '<span style="color:var(--text-muted)">—</span>';
+                const matImg = `https://mc.nerothe.com/img/1.21/minecraft_${(item.displayMaterial||'enchanted_book').toLowerCase()}.png`;
+                return `<tr>
+                    <td>${typeBadge}</td>
+                    <td>
+                        <div class="item-cell">
+                            <img src="${matImg}" onerror="this.style.display='none'">
+                            <div>
+                                <div class="name">${escapeHtml(item.name||item.id)}</div>
+                                <div class="id">${escapeHtml(item.id)}</div>
+                            </div>
+                        </div>
+                    </td>
+                    <td><code style="background:rgba(0,0,0,0.3);padding:2px 6px;border-radius:4px;font-size:12px;">${escapeHtml(value)}</code></td>
+                    <td style="font-weight:600;color:var(--success);">${formatPrice(item.price)}</td>
+                    <td>${gate}</td>
+                    <td style="white-space:nowrap;">
+                        <button class="btn btn-ghost btn-sm" onclick="openEditSpecialItem('${item.id}')" style="margin-right:4px;">✏️ 编辑</button>
+                        <button class="btn btn-danger btn-sm" onclick="deleteSpecialItem('${item.id}')">🗑️ 删除</button>
+                    </td>
+                </tr>`;
+            }).join('');
+        }
+
+        function escapeHtml(str) {
+            if (!str) return '';
+            return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+        }
+
+        function formatPrice(p) {
+            if (p == null) return '—';
+            return '￥' + Number(p).toLocaleString(undefined, {minimumFractionDigits:0, maximumFractionDigits:2});
+        }
+
+        function onSiTypeChange() {
+            const type = document.getElementById('siType').value;
+            document.getElementById('siPermRow').style.display    = type === 'perm'    ? '' : 'none';
+            document.getElementById('siPermWorldRow').style.display = type === 'perm' ? '' : 'none';
+            document.getElementById('siGroupRow').style.display   = type === 'group'   ? '' : 'none';
+            document.getElementById('siGroupWorldRow').style.display = type === 'group' ? '' : 'none';
+            document.getElementById('siCommandRow').style.display = type === 'command' ? '' : 'none';
+            document.getElementById('siNameRow').style.display    = type === 'command' ? '' : 'none';
+        }
+
+        function openAddSpecialItem() {
+            editingSpecialId = null;
+            document.getElementById('specialModalTitle').textContent = '🔑 添加权限 / 组 / 命令';
+            document.getElementById('siType').value = 'perm';
+            document.getElementById('siType').disabled = false;
+            document.getElementById('siPermission').value = '';
+            document.getElementById('siPermWorld').value = '';
+            document.getElementById('siGroup').value = '';
+            document.getElementById('siGroupWorld').value = '';
+            document.getElementById('siCommand').value = '';
+            document.getElementById('siName').value = '';
+            document.getElementById('siPrice').value = '';
+            document.getElementById('siMaterial').value = '';
+            document.getElementById('siRequiredPerm').value = '';
+            onSiTypeChange();
+            showDialog(document.getElementById('editSpecialModal'));
+        }
+
+        function openEditSpecialItem(id) {
+            const item = allSpecialItems.find(i => i.id === id);
+            if (!item) return;
+            editingSpecialId = id;
+            document.getElementById('specialModalTitle').textContent = '✏️ 编辑 ' + (item.name || id);
+            document.getElementById('siType').value = item.type || 'perm';
+            document.getElementById('siType').disabled = true;
+            document.getElementById('siPermission').value = item.permission || '';
+            document.getElementById('siPermWorld').value = item.permissionWorld || '';
+            document.getElementById('siGroup').value = item.group || '';
+            document.getElementById('siGroupWorld').value = item.groupWorld || '';
+            document.getElementById('siCommand').value = item.command || '';
+            document.getElementById('siName').value = item.name || '';
+            document.getElementById('siPrice').value = item.price ?? '';
+            document.getElementById('siMaterial').value = item.displayMaterial || '';
+            document.getElementById('siRequiredPerm').value = item.requiredPermission || '';
+            onSiTypeChange();
+            showDialog(document.getElementById('editSpecialModal'));
+        }
+
+        function closeSpecialModal() {
+            hideDialog(document.getElementById('editSpecialModal'), () => {
+                document.getElementById('siType').disabled = false;
+            });
+        }
+
+        async function saveSpecialItem() {
+            const type = document.getElementById('siType').value;
+            const price = parseFloat(document.getElementById('siPrice').value);
+            const material = document.getElementById('siMaterial').value.trim().toUpperCase() || null;
+            const requiredPerm = document.getElementById('siRequiredPerm').value.trim() || null;
+
+            if (isNaN(price) || price < 0) { toast('价格必须为非负数', 'error'); return; }
+
+            let body = { price, requiredPermission: requiredPerm };
+            if (material) body.displayMaterial = material;
+
+            if (editingSpecialId) {
+                try {
+                    const res = await apiFetch('/api/admin/special-items/' + editingSpecialId, {
+                        method: 'POST', body: JSON.stringify(body)
+                    });
+                    if (res.error) { toast(res.error, 'error'); return; }
+                    toast('保存成功！', 'success');
+                    closeSpecialModal();
+                    loadSpecialItems();
+                } catch(e) { toast('保存失败', 'error'); }
+            } else {
+                if (type === 'perm') {
+                    const perm = document.getElementById('siPermission').value.trim();
+                    const permWorld = document.getElementById('siPermWorld').value.trim();
+                    if (!perm) { toast('权限节点是必填项', 'error'); return; }
+                    body.type = 'perm';
+                    body.permission = perm;
+                    if (permWorld) body.permissionWorld = permWorld;
+                } else if (type === 'command') {
+                    const cmd = document.getElementById('siCommand').value.trim();
+                    const name = document.getElementById('siName').value.trim();
+                    if (!cmd) { toast('控制台命令是必填项', 'error'); return; }
+                    if (!name) { toast('显示名称是必填项', 'error'); return; }
+                    body.type = 'command';
+                    body.command = cmd;
+                    body.name = name;
+                } else {
+                    const group = document.getElementById('siGroup').value.trim();
+                    const groupWorld = document.getElementById('siGroupWorld').value.trim();
+                    if (!group) { toast('组名是必填项', 'error'); return; }
+                    body.type = 'group';
+                    body.group = group;
+                    if (groupWorld) body.groupWorld = groupWorld;
+                }
+                try {
+                    const res = await apiFetch('/api/admin/special-items', {
+                        method: 'POST', body: JSON.stringify(body)
+                    });
+                    if (res.error) { toast(res.error, 'error'); return; }
+                    toast('创建成功！', 'success');
+                    closeSpecialModal();
+                    setTimeout(loadSpecialItems, 400);
+                } catch(e) { toast('创建失败', 'error'); }
+            }
+        }
+
+        async function deleteSpecialItem(id) {
+            if (!confirm('删除此物品后，玩家将无法再购买。确定吗？')) return;
+            try {
+                const res = await apiFetch('/api/admin/special-items/' + id, { method: 'DELETE' });
+                if (res.error) { toast(res.error, 'error'); return; }
+                toast('已删除', 'success');
+                loadSpecialItems();
+            } catch(e) { toast('删除失败', 'error'); }
+        }
+
+        // ─── 添加物品到分类 ───
+        function openAddItemModal() {
+            if (currentCategory === 'PERMISSIONS' || currentCategory === 'SERVER_SHOP') {
+                openAddSpecialItem();
+                return;
+            }
+            if (currentCategory === 'PLAYER_SHOPS') {
+                toast('玩家商店列表只能由玩家在游戏内创建。', 'info');
+                return;
+            }
+            const sel = document.getElementById('addItemCategory');
+            sel.innerHTML = '<option value="">自动检测</option>';
+            allCategories.forEach(c => {
+                if (c.id === 'PERMISSIONS' || c.id === 'SERVER_SHOP') return;
+                const opt = document.createElement('option');
+                opt.value = c.id;
+                opt.textContent = c.displayName + ' (' + c.id + ')';
+                if (currentCategory && currentCategory === c.id) opt.selected = true;
+                sel.appendChild(opt);
+            });
+            document.getElementById('addItemMaterial').value = '';
+            document.getElementById('addItemPrice').value = '';
+            document.getElementById('materialSuggestions').style.display = 'none';
+            showDialog(document.getElementById('addItemModal'));
+            setTimeout(() => document.getElementById('addItemMaterial').focus(), 100);
+        }
+
+        function closeAddItemModal() {
+            hideDialog(document.getElementById('addItemModal'), () => {
+                document.getElementById('materialSuggestions').style.display = 'none';
+            });
+        }
+
+        function filterMaterialSuggestions() {
+            const input = document.getElementById('addItemMaterial').value.trim().toUpperCase();
+            const box = document.getElementById('materialSuggestions');
+            if (!input || input.length < 2) { box.style.display = 'none'; return; }
+            const allMats = [...new Set(allItems.map(i => i.item))]
+                .filter(m => m.includes(input)).sort().slice(0, 20);
+            if (allMats.length === 0) { box.style.display = 'none'; return; }
+            box.style.display = 'block';
+            box.innerHTML = allMats.map(m =>
+                `<div style="padding:8px 14px;cursor:pointer;font-size:13px;display:flex;align-items:center;gap:10px;"
+                     onmouseover="this.style.background='var(--bg-card-hover)'" onmouseout="this.style.background=''"
+                     onclick="selectMaterial('${m}')">
+                    <img src="https://mc.nerothe.com/img/1.21/minecraft_${m.toLowerCase()}.png"
+                         style="width:22px;height:22px;image-rendering:pixelated;" onerror="this.style.display='none'">
+                    ${m}</div>`).join('');
+        }
+
+        function selectMaterial(mat) {
+            document.getElementById('addItemMaterial').value = mat;
+            document.getElementById('materialSuggestions').style.display = 'none';
+        }
+
+        async function submitAddItem() {
+            const material = document.getElementById('addItemMaterial').value.trim().toUpperCase();
+            const price = parseFloat(document.getElementById('addItemPrice').value);
+            const category = document.getElementById('addItemCategory').value || null;
+            if (!material) { toast('材料名称不能为空', 'error'); return; }
+            if (isNaN(price) || price <= 0) { toast('价格必须大于0', 'error'); return; }
+            const body = { material, basePrice: price };
+            if (category) body.category = category;
+            try {
+                const res = await apiFetch('/api/admin/items/create', { method: 'POST', body: JSON.stringify(body) });
+                if (res.error) { toast(res.error, 'error'); return; }
+                toast('✓ 已添加 ' + material + ' 到商店！', 'success');
+                closeAddItemModal();
+                allItems = await apiFetch('/api/admin/items');
+                if (currentCategory) openCategory(currentCategory);
+            } catch(e) { toast('添加物品失败', 'error'); }
+        }
+    </script>
+</body>
+
+</html>
