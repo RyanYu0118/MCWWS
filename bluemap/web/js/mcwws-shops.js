@@ -1263,23 +1263,119 @@
         applyNorthFlatView(cm, savedDistance, savedAngle);
     }
 
-    function adjustMapZoom(direction) {
-        const factor = direction > 0 ? 0.82 : 1.22;
-        const cm = getControlsManager();
-        const state = getMapViewState();
-        if (state === 'flat' && cm && Number.isFinite(Number(cm.distance))) {
-            cm.distance = Math.max(5, Math.min(8000, Number(cm.distance) * factor));
-            rememberFlatZoom();
+    const ZOOM_FRAME_MS = 16.666;
+    let zoomAnimFrame = 0;
+
+    /** 与 BlueMap MouseZoomControls 滚轮一致：deltaZoom += deltaY×0.01，distance *= pow(1.5, …) */
+    function findMouseZoomControl(cm) {
+        if (!cm?.controls || !Array.isArray(cm.controls)) {
+            return null;
+        }
+        return cm.controls.find((ctrl) => ctrl && typeof ctrl.onMouseWheel === 'function') || null;
+    }
+
+    function wheelDeltaZoomFromDirection(direction) {
+        const deltaY = direction > 0 ? -100 : 100;
+        return deltaY * 0.01;
+    }
+
+    function clampAngleAfterZoom(cm) {
+        if (!cm) return;
+        cm.angle = Math.min(
+            Number(cm.angle) || 0,
+            getMaxPerspectiveAngleForDistance(cm.distance)
+        );
+    }
+
+    /** 逐帧调用 MouseZoomControls.update，与滚轮相同的多帧缓动 */
+    function runZoomControlUntilSettled(zoom) {
+        if (zoomAnimFrame) {
+            cancelAnimationFrame(zoomAnimFrame);
+            zoomAnimFrame = 0;
+        }
+        const frameMs = ZOOM_FRAME_MS;
+        function tick(now) {
+            if (typeof zoom.update === 'function') {
+                zoom.update(frameMs, now);
+            }
+            const cm = zoom.manager || getControlsManager();
+            clampAngleAfterZoom(cm);
+            if (getMapViewState() === 'flat') {
+                rememberFlatZoom();
+            }
+            updatePinPositions();
+            if (Math.abs(Number(zoom.deltaZoom) || 0) > 1e-4) {
+                zoomAnimFrame = requestAnimationFrame(tick);
+                return;
+            }
+            zoomAnimFrame = 0;
             syncPageAddressFromControls();
+        }
+        zoomAnimFrame = requestAnimationFrame(tick);
+    }
+
+    function simulateWheelTargetDistance(startDist, direction) {
+        let d = Number(startDist) || 128;
+        let dz = wheelDeltaZoomFromDirection(direction);
+        for (let i = 0; i < 64 && Math.abs(dz) > 1e-4; i++) {
+            const blend = 0.2;
+            d *= Math.pow(1.5, dz * blend);
+            dz *= 1 - blend;
+        }
+        return Math.max(5, Math.min(8000, d));
+    }
+
+    function animateDistanceFallback(cm, direction) {
+        if (!cm || !Number.isFinite(Number(cm.distance))) {
             return;
         }
-        const view = parseHash();
-        if (!view) return;
-        const nextDist = Math.max(5, Math.min(8000, (Number(view.distance) || lastFlatHeight || 128) * factor));
-        view.distance = nextDist;
-        view.height = nextDist;
-        view.angle = Math.min(Number(view.angle) || 0, getMaxPerspectiveAngleForDistance(nextDist));
-        void applyBlueMapView(view, { modeDuration: 0, paramDuration: 220 });
+        if (zoomAnimFrame) {
+            cancelAnimationFrame(zoomAnimFrame);
+            zoomAnimFrame = 0;
+        }
+        const startDist = Number(cm.distance);
+        const targetDist = simulateWheelTargetDistance(startDist, direction);
+        const startAngle = Number(cm.angle) || 0;
+        const targetAngle = Math.min(startAngle, getMaxPerspectiveAngleForDistance(targetDist));
+        const duration = 320;
+        const t0 = performance.now();
+
+        function step(now) {
+            const t = Math.min(1, (now - t0) / duration);
+            const e = 1 - (1 - t) * (1 - t);
+            cm.distance = startDist + (targetDist - startDist) * e;
+            cm.angle = startAngle + (targetAngle - startAngle) * e;
+            if (getMapViewState() === 'flat') {
+                rememberFlatZoom();
+            }
+            updatePinPositions();
+            if (t < 1) {
+                zoomAnimFrame = requestAnimationFrame(step);
+                return;
+            }
+            zoomAnimFrame = 0;
+            syncPageAddressFromControls();
+        }
+        zoomAnimFrame = requestAnimationFrame(step);
+    }
+
+    function applyMapZoomLikeWheel(direction) {
+        const cm = getControlsManager();
+        const zoom = findMouseZoomControl(cm);
+        if (!zoom || !cm) {
+            return false;
+        }
+        zoom.deltaZoom = (Number(zoom.deltaZoom) || 0) + wheelDeltaZoomFromDirection(direction);
+        runZoomControlUntilSettled(zoom);
+        return true;
+    }
+
+    function adjustMapZoom(direction) {
+        if (applyMapZoomLikeWheel(direction)) {
+            return;
+        }
+        const cm = getControlsManager();
+        animateDistanceFallback(cm, direction);
     }
 
     function toggleMapViewMode() {
