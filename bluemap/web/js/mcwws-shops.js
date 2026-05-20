@@ -316,7 +316,10 @@
             case 'perspective': {
                 const view = parseHash();
                 if (view) {
-                    void applyBlueMapView({ ...view, mode: 'perspective', ortho: 0 });
+                    void applyBlueMapView(
+                        { ...view, mode: 'perspective', ortho: 0 },
+                        { keepControlsOrientation: true }
+                    );
                 } else {
                     setBlueMapViewMode('perspective');
                 }
@@ -558,7 +561,7 @@
             }
             const view = parseHashParts(savedHash.split(':'));
             if (view) {
-                void applyBlueMapView(view);
+                void applyBlueMapView(view, { keepControlsOrientation: false });
             }
             return;
         }
@@ -567,7 +570,7 @@
             window.location.href = marker.viewUrl;
             return;
         }
-        void applyBlueMapView({ ...target, mode: 'perspective' });
+        void applyBlueMapView({ ...target, mode: 'perspective' }, { keepControlsOrientation: false });
     }
 
     function openMarkerTopDown(marker) {
@@ -855,7 +858,7 @@
     }
 
     async function applyBlueMapView(view, options = {}) {
-        const v = normalizeViewForBlueMap(view);
+        let v = normalizeViewForBlueMap(view);
         if (!v) return false;
         const bm = getBlueMapApp();
         const modeMs = Number.isFinite(options.modeDuration)
@@ -872,10 +875,18 @@
         }
 
         cachedCamera = null;
-        await ensureMapForView(v, bm);
-
         const fromState = getMapViewState();
         const toState = v.mode || 'perspective';
+        if (options.keepControlsOrientation && fromState === 'flat' && toState === 'perspective') {
+            v = normalizeViewForBlueMap(mergeViewWithCurrentControls(v));
+        }
+        if (fromState !== 'flat' && toState === 'flat') {
+            v.rotation = 0;
+            v.tilt = 0;
+        }
+
+        await ensureMapForView(v, bm);
+
         const dist = clampMapDistance(v.distance ?? v.height);
 
         if (fromState !== toState && modeMs > 0) {
@@ -1024,6 +1035,29 @@
     function getControlsRotation() {
         const cm = getControlsManager();
         return Number(cm?.rotation) || 0;
+    }
+
+    /** 2D→3D 时保留当前相机方位/位置，避免 hash 里 rotation=0 导致回正 */
+    function mergeViewWithCurrentControls(view) {
+        const cm = getControlsManager();
+        if (!cm || !view) {
+            return view;
+        }
+        const merged = { ...view };
+        if (Number.isFinite(cm.rotation)) {
+            merged.rotation = cm.rotation;
+        }
+        if (Number.isFinite(cm.position?.x)) {
+            merged.x = cm.position.x;
+            merged.y = cm.position.y;
+            merged.z = cm.position.z;
+        }
+        const dist = Number(cm.distance);
+        if (Number.isFinite(dist)) {
+            merged.distance = dist;
+            merged.height = dist;
+        }
+        return merged;
     }
 
     /**
@@ -1254,7 +1288,10 @@
         const cm = getControlsManager();
         if (state === 'flat') {
             if (view) {
-                void applyBlueMapView({ ...view, mode: 'perspective', ortho: 0 });
+                void applyBlueMapView(
+                    { ...view, mode: 'perspective', ortho: 0 },
+                    { keepControlsOrientation: true }
+                );
             } else {
                 const bm = getBlueMapApp();
                 bm?.setPerspectiveView?.(0, 0);
@@ -1269,7 +1306,7 @@
                 mode: 'flat',
                 distance: dist,
                 height: dist,
-                rotation: Number(view.rotation) || 0,
+                rotation: 0,
                 angle: 0,
                 tilt: 0,
                 ortho: FLAT_ORTHO_ON
