@@ -734,13 +734,31 @@
         await waitForBlueMapViewAnimationAsync(bm);
     }
 
+    /** BlueMap 在 setFlatView/setPerspectiveView 结束时会 mapControls.reset() 并挂回 controls */
+    function restoreMapControls() {
+        const bm = getBlueMapApp();
+        const cm = getControlsManager();
+        if (!bm || !cm || cm.controls) {
+            return;
+        }
+        try {
+            if (typeof bm.mapControls?.reset === 'function') {
+                bm.mapControls.reset();
+            }
+            if (bm.mapControls) {
+                cm.controls = bm.mapControls;
+            }
+        } catch (err) {
+            console.warn('[mcwws-shops] restoreMapControls failed', err);
+        }
+    }
+
     function applyControlsFromView(view) {
         const bm = getBlueMapApp();
         const cm = getControlsManager();
         if (!cm || !view) {
             return;
         }
-        cm.controls = null;
         const dist = clampMapDistance(view.distance ?? view.height);
         cm.position.x = view.x;
         cm.position.y = view.y;
@@ -750,6 +768,7 @@
         cm.angle = view.angle ?? view.pitch ?? 0;
         cm.tilt = view.tilt ?? view.roll ?? 0;
         cm.ortho = view.ortho ?? view.fov ?? 0;
+        restoreMapControls();
         syncPageAddressFromControls();
         if (typeof bm?.mapViewer?.updateLoadedMapArea === 'function') {
             bm.mapViewer.updateLoadedMapArea();
@@ -800,7 +819,6 @@
             return;
         }
 
-        cm.controls = null;
         const startTime = performance.now();
         let frame = 0;
         await new Promise((resolve) => {
@@ -869,6 +887,8 @@
         }
 
         replaceLocationHash(formatViewHash(v));
+        restoreMapControls();
+        syncMapKeyboardPause();
         updatePinPositions();
         updateMapControlsState();
         return true;
