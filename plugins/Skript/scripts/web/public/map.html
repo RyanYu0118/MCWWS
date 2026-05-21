@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>地图系统 - 流浪世界服务</title>
     <meta name="description" content="流浪世界服务器 BlueMap 地图 — 商店标记与交易搜索">
-    <link rel="stylesheet" href="style.css?v=2.5.55">
+    <link rel="stylesheet" href="style.css?v=2.5.56">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,6 +15,8 @@
     <nav class="services-subnav glass">
         <a href="home.html" class="services-back-link">🏠 更多服务</a>
         <span class="services-subnav-title">流浪世界地图系统</span>
+        <span id="mapUserStatus" class="user-status services-map-user-status">未登录</span>
+        <button type="button" id="mapAuthButton" class="auth-button services-map-auth-button">登录 / 注册</button>
         <a href="#" class="services-open-map-btn" id="openMapBtn" target="_blank" rel="noopener">在新标签页打开地图</a>
     </nav>
 
@@ -29,7 +31,41 @@
         <div class="services-map-loading glass" id="mapLoading">正在加载地图…</div>
     </main>
 
+    <div id="authModal" class="modal">
+        <div class="modal-content glass">
+            <div class="modal-header">
+                <h2 id="authModalTitle">登录</h2>
+                <button type="button" class="modal-close" aria-label="关闭">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="auth-toggle">
+                    <button id="authModeLogin" type="button" class="auth-toggle-btn active">登录</button>
+                    <button id="authModeRegister" type="button" class="auth-toggle-btn">注册</button>
+                </div>
+                <form id="authForm">
+                    <div class="form-field">
+                        <label for="authUsername">用户名</label>
+                        <input type="text" id="authUsername" autocomplete="username" required>
+                    </div>
+                    <div class="form-field">
+                        <label for="authPassword">密码</label>
+                        <input type="password" id="authPassword" autocomplete="current-password" required>
+                    </div>
+                    <div class="form-field auth-register-only" style="display:none;">
+                        <label for="authPlayerId">游戏玩家 ID</label>
+                        <input type="text" id="authPlayerId" autocomplete="off">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="primary-btn">提交</button>
+                    </div>
+                    <p id="authMessage" class="auth-message"></p>
+                </form>
+            </div>
+        </div>
+    </div>
+
     <script src="services-config.js?v=1"></script>
+    <script src="mcwws-auth.js?v=1"></script>
     <script>
         (function () {
             const frame = document.getElementById('bluemapFrame');
@@ -57,6 +93,16 @@
                 return url.toString();
             }
 
+            function syncAuthToFrame() {
+                if (!frame?.contentWindow) return;
+                const auth = window.MCWWS_AUTH;
+                frame.contentWindow.postMessage({
+                    type: 'mcwws-auth',
+                    authToken: auth.getToken(),
+                    user: auth.getUser()
+                }, '*');
+            }
+
             function mountMap() {
                 const url = buildBluemapFrameUrl();
                 if (openBtn) openBtn.href = url;
@@ -65,6 +111,7 @@
                     frame.dataset.loaded = '1';
                     frame.addEventListener('load', () => {
                         if (loading) loading.hidden = true;
+                        syncAuthToFrame();
                     }, { once: true });
                 }
                 frame.src = url;
@@ -74,9 +121,18 @@
             window.addEventListener('mcwws-services-config', mountMap);
             window.setTimeout(mountMap, 500);
 
+            window.MCWWS_AUTH.onChange(syncAuthToFrame);
+            window.MCWWS_AUTH.init().then(syncAuthToFrame);
+
             window.addEventListener('message', (event) => {
-                if (event.data?.type !== 'mcwws-map-clean') return;
-                document.body.classList.toggle('services-map-clean', !!event.data.active);
+                const data = event.data || {};
+                if (data.type === 'mcwws-map-clean') {
+                    document.body.classList.toggle('services-map-clean', !!data.active);
+                    return;
+                }
+                if (data.type === 'mcwws-auth-required') {
+                    window.MCWWS_AUTH.openModal();
+                }
             });
         })();
     </script>

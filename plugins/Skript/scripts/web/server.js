@@ -71,6 +71,8 @@ const BLUEMAP_WEB_MAPS_DIR = path.join(__dirname, '..', '..', '..', '..', 'bluem
 const SERVER_ROOT = path.join(__dirname, '..', '..', '..', '..');
 const OVERWORLD_LEVEL_DAT = path.join(SERVER_ROOT, 'world', 'level.dat');
 const MC_DAY_TICKS = 24000;
+const ESSENTIALS_USERDATA_DIR = path.join(SERVER_ROOT, 'plugins', 'Essentials', 'userdata');
+const USERCACHE_PATH = path.join(SERVER_ROOT, 'usercache.json');
 const HTTPS_KEY_PATH = path.join(__dirname, 'certs', 'server.key');
 const HTTPS_CERT_PATH = path.join(__dirname, 'certs', 'server.crt');
 const HTTPS_ENABLED = process.env.HTTPS === '1';
@@ -747,6 +749,157 @@ app.get('/api/profile', (req, res) => {
     } catch (error) {
         console.error('获取用户信息失败:', error);
         res.status(500).json({ error: '获取用户信息失败。' });
+    }
+});
+
+let usercacheByName = null;
+let usercacheLoadedAt = 0;
+
+function loadUsercacheByName() {
+    const now = Date.now();
+    if (usercacheByName && now - usercacheLoadedAt < 60000) {
+        return usercacheByName;
+    }
+    const map = new Map();
+    if (fs.existsSync(USERCACHE_PATH)) {
+        try {
+            const entries = JSON.parse(fs.readFileSync(USERCACHE_PATH, 'utf8'));
+            if (Array.isArray(entries)) {
+                entries.forEach((entry) => {
+                    const name = String(entry?.name || '').trim().toLowerCase();
+                    const uuid = String(entry?.uuid || '').trim().toLowerCase();
+                    if (name && uuid) {
+                        map.set(name, uuid);
+                    }
+                });
+            }
+        } catch (error) {
+            console.warn('读取 usercache.json 失败:', error.message);
+        }
+    }
+    usercacheByName = map;
+    usercacheLoadedAt = now;
+    return map;
+}
+
+function resolvePlayerUuid(playerName) {
+    const norm = String(playerName || '').trim().toLowerCase();
+    if (!norm) {
+        return null;
+    }
+    const cached = loadUsercacheByName().get(norm);
+    if (cached) {
+        return cached;
+    }
+    if (!fs.existsSync(ESSENTIALS_USERDATA_DIR)) {
+        return null;
+    }
+    const files = fs.readdirSync(ESSENTIALS_USERDATA_DIR).filter((name) => name.endsWith('.yml'));
+    for (const file of files) {
+        try {
+            const data = yaml.load(fs.readFileSync(path.join(ESSENTIALS_USERDATA_DIR, file), 'utf8'));
+            const account = String(data?.['last-account-name'] || '').trim().toLowerCase();
+            if (account === norm) {
+                return file.replace(/\.yml$/i, '').toLowerCase();
+            }
+        } catch {
+            /* ignore */
+        }
+    }
+    return null;
+}
+
+function normalizeEssentialsWorldName(worldName) {
+    const value = String(worldName || 'world').trim();
+    if (!value) {
+        return 'world';
+    }
+    return value;
+}
+
+function readEssentialsLocationBlock(block) {
+    if (!block || typeof block !== 'object') {
+        return null;
+    }
+    const x = Number(block.x);
+    const y = Number(block.y);
+    const z = Number(block.z);
+    if (![x, y, z].every(Number.isFinite)) {
+        return null;
+    }
+    return {
+        map: normalizeEssentialsWorldName(block['world-name'] || block.world),
+        x,
+        y,
+        z,
+        yaw: Number.isFinite(Number(block.yaw)) ? Number(block.yaw) : null,
+        pitch: Number.isFinite(Number(block.pitch)) ? Number(block.pitch) : null
+    };
+}
+
+/** 离线/未在 BlueMap 实时列表时，使用 Essentials 保存的位置 */
+function readEssentialsSavedPlayerLocation(uuid) {
+    const file = path.join(ESSENTIALS_USERDATA_DIR, `${uuid}.yml`);
+    if (!fs.existsSync(file)) {
+        return null;
+    }
+    let data;
+    try {
+        data = yaml.load(fs.readFileSync(file, 'utf8'));
+    } catch {
+        return null;
+    }
+    const logout = readEssentialsLocationBlock(data?.logoutlocation);
+    const last = readEssentialsLocationBlock(data?.lastlocation);
+    const tsLogout = Number(data?.timestamps?.logout) || 0;
+    const tsLogin = Number(data?.timestamps?.login) || 0;
+    const offline = tsLogout >= tsLogin;
+    const chosen = offline && logout ? logout : (last || logout);
+    if (!chosen) {
+        return null;
+    }
+    return {
+        ...chosen,
+        source: offline && logout ? 'logout' : 'lastlocation',
+        accountName: String(data?.['last-account-name'] || '').trim() || null
+    };
+}
+
+app.get('/api/player-location', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录后才能定位玩家。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        if (!playerId) {
+            return res.status(400).json({ error: '账号未绑定游戏玩家 ID。' });
+        }
+        const uuid = resolvePlayerUuid(playerId);
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+        const saved = readEssentialsSavedPlayerLocation(uuid);
+        if (!saved) {
+            return res.status(404).json({ error: '未找到该玩家的已保存位置。' });
+        }
+        res.json({
+            playerId,
+            uuid,
+            username: user.username,
+            online: false,
+            source: saved.source,
+            map: saved.map,
+            x: saved.x,
+            y: saved.y,
+            z: saved.z,
+            yaw: saved.yaw,
+            pitch: saved.pitch,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('读取玩家位置失败:', error);
+        res.status(500).json({ error: '读取玩家位置失败。' });
     }
 });
 

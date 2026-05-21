@@ -42,6 +42,17 @@
     const WORLD_TIME_POLL_MS = 8000;
     const DAY_NIGHT_MANUAL_MS = 5 * 60 * 1000;
     const MC_DAY_TICKS = 24000;
+    const PLAYER_LOCATE_POLL_MS = 8000;
+    const PLAYER_EYE_OFFSET = 1.62;
+
+    let mapAuthToken = null;
+    let mapAuthUser = null;
+    let mapFollowExitBound = false;
+    let playerFollowActive = false;
+    let playerFollowApplying = false;
+    let playerFollowSource = '';
+    let cachedSavedPlayerLoc = null;
+    let cachedSavedPlayerLocAt = 0;
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1496,6 +1507,238 @@
         setCleanMode(!cleanModeActive);
     }
 
+    /** 登录态由父页面（8002）经 postMessage 同步，与商店/管理共用 authToken */
+    function applyExternalAuth(payload) {
+        if (!payload || typeof payload !== 'object') return;
+        const wasLoggedIn = !!mapAuthUser;
+        mapAuthToken = payload.authToken || null;
+        mapAuthUser = payload.user || null;
+        if (wasLoggedIn && !mapAuthUser) {
+            stopPlayerFollow();
+            cachedSavedPlayerLoc = null;
+        }
+        updateLocateAuthUi();
+    }
+
+    function authHeaders() {
+        if (!mapAuthToken) return {};
+        return { Authorization: `Bearer ${mapAuthToken}` };
+    }
+
+    function updateLocateAuthUi() {
+        const locateBtn = document.querySelector('.mcwws-ctrl-locate');
+        if (locateBtn) {
+            locateBtn.disabled = !mapAuthUser;
+            locateBtn.classList.toggle('is-disabled', !mapAuthUser);
+        }
+        updateMapControlsState();
+    }
+
+    function requestAuthFromParent() {
+        if (window.parent !== window) {
+            try {
+                window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
+            } catch {
+                /* ignore */
+            }
+        }
+    }
+
+    function initMapAuth() {
+        window.addEventListener('message', (event) => {
+            if (event.data?.type === 'mcwws-auth') {
+                applyExternalAuth(event.data);
+            }
+        });
+        updateLocateAuthUi();
+    }
+
+    function normalizePlayerKey(value) {
+        return String(value || '').trim().toLowerCase();
+    }
+
+    function findLivePlayerPosition(playerId) {
+        const target = normalizePlayerKey(playerId);
+        if (!target) return null;
+        const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
+        for (const set of markerSets) {
+            if (set.id !== 'bm-players') continue;
+            for (const marker of set.markers || []) {
+                const id = normalizePlayerKey(marker.data?.id || marker.id);
+                const label = normalizePlayerKey(marker.data?.label || marker.data?.name);
+                if (id !== target && label !== target) continue;
+                return {
+                    map: getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world',
+                    x: Number(marker.position?.x),
+                    y: Number(marker.position?.y),
+                    z: Number(marker.position?.z),
+                    online: true,
+                    source: 'live'
+                };
+            }
+        }
+        return null;
+    }
+
+    async function fetchSavedPlayerLocation() {
+        if (!mapAuthToken) return null;
+        if (cachedSavedPlayerLoc && Date.now() - cachedSavedPlayerLocAt < PLAYER_LOCATE_POLL_MS) {
+            return cachedSavedPlayerLoc;
+        }
+        try {
+            const res = await fetch(`${NODE_API}/api/player-location?t=${Date.now()}`, {
+                headers: authHeaders(),
+                cache: 'no-store'
+            });
+            if (!res.ok) return null;
+            const data = await res.json();
+            cachedSavedPlayerLoc = {
+                map: data.map || 'world',
+                x: Number(data.x),
+                y: Number(data.y) + PLAYER_EYE_OFFSET,
+                z: Number(data.z),
+                online: false,
+                source: data.source || 'saved'
+            };
+            cachedSavedPlayerLocAt = Date.now();
+            return cachedSavedPlayerLoc;
+        } catch {
+            return null;
+        }
+    }
+
+    async function resolvePlayerPosition() {
+        if (!mapAuthUser?.playerId) return null;
+        const live = findLivePlayerPosition(mapAuthUser.playerId);
+        if (live && [live.x, live.y, live.z].every(Number.isFinite)) {
+            playerFollowSource = 'live';
+            return live;
+        }
+        const saved = await fetchSavedPlayerLocation();
+        if (saved && [saved.x, saved.y, saved.z].every(Number.isFinite)) {
+            playerFollowSource = saved.source || 'saved';
+            return saved;
+        }
+        return null;
+    }
+
+    function buildFollowViewFromPosition(pos) {
+        const hash = parseHash();
+        const cm = getControlsManager();
+        const mode = getMapViewState();
+        const dist = clampMapDistance(cm?.distance ?? hash?.distance ?? lastFlatHeight);
+        const view = {
+            map: pos.map || hash?.map || 'world',
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+            distance: dist,
+            height: dist,
+            rotation: Number.isFinite(cm?.rotation) ? cm.rotation : (hash?.rotation ?? 0),
+            angle: Number.isFinite(cm?.angle) ? cm.angle : (hash?.angle ?? 0),
+            tilt: Number.isFinite(cm?.tilt) ? cm.tilt : (hash?.tilt ?? 0),
+            ortho: Number(cm?.ortho ?? hash?.ortho ?? 0),
+            mode
+        };
+        return normalizeViewForBlueMap(view);
+    }
+
+    function stopPlayerFollow() {
+        if (!playerFollowActive) return;
+        playerFollowActive = false;
+        playerFollowSource = '';
+        updateMapControlsState();
+    }
+
+    function bindMapFollowExitEvents() {
+        if (mapFollowExitBound) return;
+        mapFollowExitBound = true;
+
+        const isMapUiTarget = (target) => !!(
+            target?.closest?.('.mcwws-map-controls')
+            || target?.closest?.('#mcwws-shop-panel')
+        );
+
+        const onUserMapGesture = (event) => {
+            if (!playerFollowActive || playerFollowApplying) return;
+            if (isMapUiTarget(event.target)) return;
+            const app = document.getElementById('app');
+            if (app && !app.contains(event.target)) return;
+            stopPlayerFollow();
+        };
+
+        document.addEventListener('pointerdown', onUserMapGesture, true);
+        document.addEventListener('wheel', onUserMapGesture, { passive: true, capture: true });
+        document.addEventListener('keydown', (event) => {
+            if (!playerFollowActive || playerFollowApplying) return;
+            if (isDockTextInputFocused()) return;
+            const key = String(event.key || '').toLowerCase();
+            if (['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
+                stopPlayerFollow();
+            }
+        }, true);
+    }
+
+    async function centerCameraOnPlayer(pos, options = {}) {
+        const view = buildFollowViewFromPosition(pos);
+        if (!view) return false;
+        const bm = getBlueMapApp();
+        playerFollowApplying = true;
+        if (bm) {
+            await ensureMapForView(view, bm);
+        }
+        if (options.animate) {
+            await applyBlueMapView(view, { fast: false, paramDuration: 280, modeDuration: 0 });
+        } else {
+            applyControlsFromView(view);
+            replaceLocationHash(formatViewHash(view));
+            updatePinPositions();
+        }
+        playerFollowApplying = false;
+        return true;
+    }
+
+    async function tickPlayerFollowCenter() {
+        if (!playerFollowActive || !mapAuthUser) return;
+        const pos = await resolvePlayerPosition();
+        if (!pos) return;
+        const view = buildFollowViewFromPosition(pos);
+        const cm = getControlsManager();
+        const bm = getBlueMapApp();
+        if (!view || !cm) return;
+        playerFollowApplying = true;
+        if (bm && view.map) {
+            await ensureMapForView(view, bm);
+        }
+        cm.position.x = view.x;
+        cm.position.y = view.y;
+        cm.position.z = view.z;
+        if (tickFrame % 15 === 0) {
+            syncPageAddressFromControls();
+        }
+        updatePinPositions();
+        playerFollowApplying = false;
+        updateMapControlsState();
+    }
+
+    async function togglePlayerLocate() {
+        if (playerFollowActive) {
+            stopPlayerFollow();
+            return;
+        }
+        if (!mapAuthUser?.playerId) {
+            requestAuthFromParent();
+            return;
+        }
+        const pos = await resolvePlayerPosition();
+        if (!pos) {
+            return;
+        }
+        playerFollowActive = true;
+        await centerCameraOnPlayer(pos, { animate: true });
+        updateMapControlsState();
+    }
+
     function easeOutQuad(t) {
         return t * (2 - t);
     }
@@ -1700,6 +1943,18 @@
                     : `切换为日景${periodHint}（跟随主世界游戏时间）`;
             }
         }
+        const locateBtn = root.querySelector('.mcwws-ctrl-locate');
+        if (locateBtn) {
+            locateBtn.classList.toggle('is-active', playerFollowActive);
+            if (!mapAuthUser) {
+                locateBtn.title = '请先在顶栏登录后再定位玩家';
+            } else if (playerFollowActive) {
+                const modeLabel = playerFollowSource === 'live' ? '实时跟踪' : '已保存位置';
+                locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}）— 点击取消；拖动地图将退出定位`;
+            } else {
+                locateBtn.title = `定位到 ${mapAuthUser.playerId}（在线实时 / 离线用服务器存档位置）`;
+            }
+        }
     }
 
     function ensureMapControls() {
@@ -1740,6 +1995,11 @@
                         </g>
                     </svg>
                 </button>
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-locate" title="定位到已登录玩家（需先登录）" disabled>
+                    <svg class="mcwws-ctrl-locate-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
+                    </svg>
+                </button>
                 <div class="mcwws-ctrl-bottom-row">
                     <button type="button" class="mcwws-ctrl-layer" title="图层选择">
                         <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
@@ -1774,6 +2034,9 @@
         root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
         root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
         root.querySelector('.mcwws-ctrl-daynight')?.addEventListener('click', toggleMapDayNight);
+        root.querySelector('.mcwws-ctrl-locate')?.addEventListener('click', () => {
+            void togglePlayerLocate();
+        });
         root.querySelector('.mcwws-ctrl-fullscreen')?.addEventListener('click', toggleCleanMode);
         root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1974,6 +2237,8 @@
         updatePinPositions();
         loadMarkers();
         applySearchUiState();
+        initMapAuth();
+        bindMapFollowExitEvents();
         startDayNightSync();
         animationId = requestAnimationFrame(tickPins);
     }
@@ -1981,6 +2246,9 @@
     function tickPins() {
         updatePinPositions();
         tickFrame++;
+        if (playerFollowActive && tickFrame % 2 === 0) {
+            void tickPlayerFollowCenter();
+        }
         if (tickFrame % 10 === 0) {
             rememberFlatZoom();
         }

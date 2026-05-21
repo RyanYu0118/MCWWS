@@ -2702,6 +2702,17 @@ body {
     text-overflow: ellipsis;
 }
 
+.services-map-user-status {
+    max-width: min(320px, 36vw);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.services-map-auth-button {
+    flex-shrink: 0;
+}
+
 .services-open-map-btn {
     flex: 0 0 auto;
     padding: 0.4rem 0.85rem;
