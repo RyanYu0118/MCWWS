@@ -44,9 +44,6 @@
     const MC_DAY_TICKS = 24000;
     const PLAYER_LOCATE_POLL_MS = 8000;
     const PLAYER_EYE_OFFSET = 1.62;
-    /** 与 BlueMap PlayerMarker 一致：脚底 Y + 1.8 为头像锚点 */
-    const PLAYER_HEAD_OFFSET = 1.8;
-    const LIVE_PLAYERS_CACHE_MS = 2000;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -56,9 +53,6 @@
     let playerFollowSource = '';
     let cachedSavedPlayerLoc = null;
     let cachedSavedPlayerLocAt = 0;
-    let cachedLivePlayers = null;
-    let cachedLivePlayersMap = null;
-    let cachedLivePlayersAt = 0;
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1599,160 +1593,27 @@
         return String(value || '').trim().toLowerCase();
     }
 
-    function getCurrentMapId() {
-        return getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world';
-    }
-
-    async function fetchLivePlayersList(mapId) {
-        const id = mapId || getCurrentMapId();
-        if (
-            cachedLivePlayers
-            && cachedLivePlayersMap === id
-            && Date.now() - cachedLivePlayersAt < LIVE_PLAYERS_CACHE_MS
-        ) {
-            return cachedLivePlayers;
-        }
-        try {
-            const res = await fetch(
-                `maps/${encodeURIComponent(id)}/live/players.json?t=${Date.now()}`,
-                { cache: 'no-store' }
-            );
-            if (!res.ok) return null;
-            const data = await res.json();
-            const list = Array.isArray(data?.players) ? data.players : null;
-            cachedLivePlayers = list;
-            cachedLivePlayersMap = id;
-            cachedLivePlayersAt = Date.now();
-            return list;
-        } catch {
-            return null;
-        }
-    }
-
-    function matchLivePlayerEntry(entry, playerId) {
-        if (!entry || !playerId) return false;
+    function findLivePlayerPosition(playerId) {
         const target = normalizePlayerKey(playerId);
-        const name = normalizePlayerKey(entry.name);
-        if (name === target) return true;
-        const alt = normalizePlayerKey(entry.displayName || entry.playerName);
-        return alt === target;
-    }
-
-    function coordsFromLiveEntry(entry, mapId) {
-        const p = entry?.position || {};
-        const x = Number(p.x);
-        const y = Number(p.y);
-        const z = Number(p.z);
-        if (![x, y, z].every(Number.isFinite)) return null;
-        return {
-            map: mapId || getCurrentMapId(),
-            x,
-            y: y + PLAYER_HEAD_OFFSET,
-            z,
-            online: true,
-            source: 'live'
-        };
-    }
-
-    function coordsFromPlayerMarker(marker, mapId) {
-        const raw = marker?.data?.position || {};
-        const rx = Number(raw.x);
-        const ry = Number(raw.y);
-        const rz = Number(raw.z);
-        if ([rx, ry, rz].every(Number.isFinite)) {
-            return {
-                map: mapId || getCurrentMapId(),
-                x: rx,
-                y: ry + PLAYER_HEAD_OFFSET,
-                z: rz,
-                online: true,
-                source: 'live-marker'
-            };
-        }
-        const x = Number(marker?.position?.x);
-        const y = Number(marker?.position?.y);
-        const z = Number(marker?.position?.z);
-        if (![x, y, z].every(Number.isFinite)) return null;
-        return {
-            map: mapId || getCurrentMapId(),
-            x,
-            y,
-            z,
-            online: true,
-            source: 'live-marker'
-        };
-    }
-
-    async function findLivePlayerPosition(playerId) {
-        const mapId = getCurrentMapId();
-        const players = await fetchLivePlayersList(mapId);
-        if (players?.length) {
-            const entry = players.find((item) => matchLivePlayerEntry(item, playerId));
-            const fromJson = entry ? coordsFromLiveEntry(entry, mapId) : null;
-            if (fromJson) return fromJson;
-        }
+        if (!target) return null;
         const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
         for (const set of markerSets) {
             if (set.id !== 'bm-players') continue;
             for (const marker of set.markers || []) {
                 const id = normalizePlayerKey(marker.data?.id || marker.id);
-                const label = normalizePlayerKey(
-                    marker.data?.label || marker.data?.name || marker.data?.playerUuid
-                );
-                const target = normalizePlayerKey(playerId);
+                const label = normalizePlayerKey(marker.data?.label || marker.data?.name);
                 if (id !== target && label !== target) continue;
-                return coordsFromPlayerMarker(marker, mapId);
+                return {
+                    map: getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world',
+                    x: Number(marker.position?.x),
+                    y: Number(marker.position?.y),
+                    z: Number(marker.position?.z),
+                    online: true,
+                    source: 'live'
+                };
             }
         }
         return null;
-    }
-
-    function triggerControlsCameraUpdate(cm) {
-        const controls = cm || getControlsManager();
-        if (controls && typeof controls.updateCamera === 'function') {
-            controls.updateCamera();
-        }
-        getBlueMapApp()?.mapViewer?.redraw?.();
-    }
-
-    /** 根据头像在屏幕上的投影微调相机焦点，使玩家头像尽量位于正中 */
-    function nudgeFocusToScreenCenter(pos) {
-        const cm = getControlsManager();
-        const camera = getBlueMapCamera();
-        if (!cm || !camera || !pos) return pos;
-
-        const probe = { position: { x: pos.x, y: pos.y, z: pos.z } };
-        const screen = projectWithCamera(probe, camera);
-        if (!screen || screen.behind) return pos;
-
-        const dx = screen.x - window.innerWidth * 0.5;
-        const dy = screen.y - window.innerHeight * 0.5;
-        if (Math.hypot(dx, dy) < 12) return pos;
-
-        const rot = Number(cm.rotation) || 0;
-        const dist = Math.max(Number(cm.distance) || 128, 20);
-        const pxToWorld = dist / Math.max(window.innerHeight, 400);
-        const rightX = Math.cos(rot);
-        const rightZ = Math.sin(rot);
-        const forwardX = Math.sin(rot);
-        const forwardZ = -Math.cos(rot);
-
-        return {
-            ...pos,
-            x: pos.x - rightX * dx * pxToWorld - forwardX * dy * pxToWorld * 0.35,
-            y: pos.y - dy * pxToWorld * 0.25,
-            z: pos.z - rightZ * dx * pxToWorld - forwardZ * dy * pxToWorld * 0.35
-        };
-    }
-
-    function applyFollowCameraTarget(pos) {
-        const cm = getControlsManager();
-        if (!cm || !pos) return;
-        const adjusted = nudgeFocusToScreenCenter(pos);
-        cm.position.x = adjusted.x;
-        cm.position.y = adjusted.y;
-        cm.position.z = adjusted.z;
-        triggerControlsCameraUpdate(cm);
     }
 
     async function fetchSavedPlayerLocation() {
@@ -1869,7 +1730,6 @@
             replaceLocationHash(formatViewHash(view));
             updatePinPositions();
         }
-        applyFollowCameraTarget(pos);
         playerFollowApplying = false;
         return true;
     }
@@ -1886,7 +1746,9 @@
         if (bm && view.map) {
             await ensureMapForView(view, bm);
         }
-        applyFollowCameraTarget(pos);
+        cm.position.x = view.x;
+        cm.position.y = view.y;
+        cm.position.z = view.z;
         if (tickFrame % 15 === 0) {
             syncPageAddressFromControls();
         }
