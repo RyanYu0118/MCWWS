@@ -1,5 +1,6 @@
 const express = require('express');
 const fs = require('fs');
+const zlib = require('zlib');
 const https = require('https');
 const yaml = require('js-yaml');
 const cors = require('cors');
@@ -15,15 +16,15 @@ const HOST = process.env.HOST || '0.0.0.0';
 app.use(cors());
 app.use(express.json());
 
-// 【关键修改】开启静态文件托管，将 public 文件夹变成网站根目录！
-app.use(express.static(path.join(__dirname, 'public')));
-
+const PUBLIC_DIR = path.join(__dirname, 'public');
 const BLUEMAP_WEB_PORT = Number(process.env.BLUEMAP_PORT) || 8100;
 
-// 服务首页：流浪世界服务（商店系统 / 地图系统）
+// 须在 express.static 之前：否则 / 会先落到 public/index.html（经济仪表板）
 app.get('/', (req, res) => {
-    res.redirect('/home.html');
+    res.sendFile(path.join(PUBLIC_DIR, 'home.html'));
 });
+
+app.use(express.static(PUBLIC_DIR));
 
 app.get('/api/services-config', (req, res) => {
     const host = req.hostname || '127.0.0.1';
@@ -67,6 +68,9 @@ const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
 const ADMIN_ACCESS_PATH = path.join(DB_DIR, 'admin_access.yml');
 const SHOP_LOCATIONS_PATH = path.join(__dirname, 'mcwws', 'shop_locations.yml');
 const BLUEMAP_WEB_MAPS_DIR = path.join(__dirname, '..', '..', '..', '..', 'bluemap', 'web', 'maps');
+const SERVER_ROOT = path.join(__dirname, '..', '..', '..', '..');
+const OVERWORLD_LEVEL_DAT = path.join(SERVER_ROOT, 'world', 'level.dat');
+const MC_DAY_TICKS = 24000;
 const HTTPS_KEY_PATH = path.join(__dirname, 'certs', 'server.key');
 const HTTPS_CERT_PATH = path.join(__dirname, 'certs', 'server.crt');
 const HTTPS_ENABLED = process.env.HTTPS === '1';
@@ -773,6 +777,64 @@ app.get('/api/admin/shops', (req, res) => {
     } catch (error) {
         console.error('读取商店列表失败:', error);
         res.status(500).json({ error: '读取商店列表失败。' });
+    }
+});
+
+/** 从 world/level.dat 读取主世界 DayTime（0–23999 为一日内刻） */
+function readOverworldDayTime() {
+    if (!fs.existsSync(OVERWORLD_LEVEL_DAT)) {
+        return null;
+    }
+    const raw = zlib.gunzipSync(fs.readFileSync(OVERWORLD_LEVEL_DAT));
+    for (let offset = 0; offset < raw.length - 18; offset++) {
+        if (raw[offset] !== 4) {
+            continue;
+        }
+        if (raw.readUInt16BE(offset + 1) !== 7) {
+            continue;
+        }
+        if (raw.slice(offset + 3, offset + 10).toString('utf8') !== 'DayTime') {
+            continue;
+        }
+        const ticks = Number(raw.readBigInt64BE(offset + 10) % BigInt(MC_DAY_TICKS));
+        return ((ticks % MC_DAY_TICKS) + MC_DAY_TICKS) % MC_DAY_TICKS;
+    }
+    return null;
+}
+
+function sunlightStrengthFromDayTime(dayTime) {
+    const tick = ((Number(dayTime) % MC_DAY_TICKS) + MC_DAY_TICKS) % MC_DAY_TICKS;
+    return 0.625 + 0.375 * Math.cos((2 * Math.PI * (tick - 6000)) / MC_DAY_TICKS);
+}
+
+function describeDayPeriod(dayTime) {
+    const t = ((Number(dayTime) % MC_DAY_TICKS) + MC_DAY_TICKS) % MC_DAY_TICKS;
+    if (t < 1000 || t >= 23000) return '日出';
+    if (t < 11000) return '白天';
+    if (t < 13000) return '日落';
+    if (t < 23000) return '夜晚';
+    return '日出';
+}
+
+app.get('/api/world-time', (req, res) => {
+    try {
+        const dayTime = readOverworldDayTime();
+        if (dayTime == null) {
+            return res.status(503).json({ error: '无法读取主世界 level.dat 中的 DayTime。' });
+        }
+        const sunlightStrength = sunlightStrengthFromDayTime(dayTime);
+        res.json({
+            world: 'world',
+            dayTime,
+            dayTicks: MC_DAY_TICKS,
+            sunlightStrength: Math.round(sunlightStrength * 1000) / 1000,
+            isDay: sunlightStrength > 0.6,
+            period: describeDayPeriod(dayTime),
+            updatedAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('读取世界时间失败:', error);
+        res.status(500).json({ error: '读取世界时间失败。' });
     }
 });
 

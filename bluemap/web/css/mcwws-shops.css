@@ -633,6 +633,31 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     border-bottom: 1px solid #e5e7eb;
 }
 
+.mcwws-ctrl-daynight {
+    color: #f59e0b;
+}
+
+.mcwws-ctrl-daynight.is-night {
+    color: #6366f1;
+    background: #f5f3ff;
+}
+
+.mcwws-ctrl-daynight-icon {
+    display: block;
+}
+
+.mcwws-ctrl-daynight .mcwws-daynight-moon {
+    display: none;
+}
+
+.mcwws-ctrl-daynight.is-night .mcwws-daynight-sun {
+    display: none;
+}
+
+.mcwws-ctrl-daynight.is-night .mcwws-daynight-moon {
+    display: block;
+}
+
 .mcwws-ctrl-bottom-row {
     display: flex;
     align-items: flex-end;

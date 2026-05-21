@@ -30,6 +30,18 @@
     let mapControlsBound = false;
     let cleanModeActive = false;
     let layerMenuOpen = false;
+    let dayNightAnimToken = 0;
+    let dayNightManualUntil = 0;
+    let dayNightPeriod = '';
+    let dayNightDayTime = null;
+    let dayNightSyncStarted = false;
+    const DAY_NIGHT_STRENGTH_DAY = 1;
+    const DAY_NIGHT_STRENGTH_NIGHT = 0.25;
+    const DAY_NIGHT_THRESHOLD = 0.6;
+    const DAY_NIGHT_ANIM_MS = 300;
+    const WORLD_TIME_POLL_MS = 8000;
+    const DAY_NIGHT_MANUAL_MS = 5 * 60 * 1000;
+    const MC_DAY_TICKS = 24000;
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1484,6 +1496,131 @@
         setCleanMode(!cleanModeActive);
     }
 
+    function easeOutQuad(t) {
+        return t * (2 - t);
+    }
+
+    function getMapViewerUniforms() {
+        return getBlueMapApp()?.mapViewer?.data?.uniforms || null;
+    }
+
+    function getSunlightStrength() {
+        const value = getMapViewerUniforms()?.sunlightStrength?.value;
+        return Number.isFinite(value) ? value : DAY_NIGHT_STRENGTH_DAY;
+    }
+
+    function isMapDaylight() {
+        return getSunlightStrength() > DAY_NIGHT_THRESHOLD;
+    }
+
+    function redrawMapViewer() {
+        getBlueMapApp()?.mapViewer?.redraw?.();
+    }
+
+    function setSunlightStrengthImmediate(value) {
+        const uniforms = getMapViewerUniforms();
+        if (!uniforms?.sunlightStrength) return false;
+        uniforms.sunlightStrength.value = value;
+        redrawMapViewer();
+        return true;
+    }
+
+    function animateSunlightStrength(target, durationMs = DAY_NIGHT_ANIM_MS) {
+        const uniforms = getMapViewerUniforms();
+        if (!uniforms?.sunlightStrength) return Promise.resolve(false);
+        const from = getSunlightStrength();
+        if (Math.abs(from - target) < 0.002) {
+            setSunlightStrengthImmediate(target);
+            return Promise.resolve(true);
+        }
+        const token = ++dayNightAnimToken;
+        const start = performance.now();
+        return new Promise((resolve) => {
+            function frame(now) {
+                if (token !== dayNightAnimToken) {
+                    resolve(false);
+                    return;
+                }
+                const progress = Math.min(1, (now - start) / durationMs);
+                const eased = easeOutQuad(progress);
+                uniforms.sunlightStrength.value = from + (target - from) * eased;
+                redrawMapViewer();
+                if (progress < 1) {
+                    requestAnimationFrame(frame);
+                    return;
+                }
+                uniforms.sunlightStrength.value = target;
+                redrawMapViewer();
+                resolve(true);
+            }
+            requestAnimationFrame(frame);
+        });
+    }
+
+    /** 与 BlueMap DayNightSwitch 一致：>0.6 为日景，否则夜景；目标 1 / 0.25 */
+    function sunlightStrengthFromDayTime(dayTime) {
+        const tick = ((Number(dayTime) % MC_DAY_TICKS) + MC_DAY_TICKS) % MC_DAY_TICKS;
+        return 0.625 + 0.375 * Math.cos((2 * Math.PI * (tick - 6000)) / MC_DAY_TICKS);
+    }
+
+    function isDayNightManualActive() {
+        return Date.now() < dayNightManualUntil;
+    }
+
+    function toggleMapDayNight() {
+        const target = isMapDaylight() ? DAY_NIGHT_STRENGTH_NIGHT : DAY_NIGHT_STRENGTH_DAY;
+        dayNightManualUntil = Date.now() + DAY_NIGHT_MANUAL_MS;
+        animateSunlightStrength(target).then(() => updateMapControlsState());
+        updateMapControlsState();
+    }
+
+    async function syncMapDayNightFromServer() {
+        if (isDayNightManualActive()) {
+            return;
+        }
+        const uniforms = getMapViewerUniforms();
+        if (!uniforms?.sunlightStrength) {
+            return;
+        }
+        try {
+            const res = await fetch(`${NODE_API}/api/world-time?t=${Date.now()}`, { cache: 'no-store' });
+            if (!res.ok) return;
+            const data = await res.json();
+            if (isDayNightManualActive()) return;
+            const target = Number(data.sunlightStrength);
+            if (!Number.isFinite(target)) return;
+            dayNightPeriod = String(data.period || '');
+            dayNightDayTime = Number.isFinite(Number(data.dayTime)) ? Number(data.dayTime) : null;
+            const current = getSunlightStrength();
+            if (Math.abs(current - target) < 0.02) {
+                if (Math.abs(current - target) > 0.001) {
+                    setSunlightStrengthImmediate(target);
+                }
+                updateMapControlsState();
+                return;
+            }
+            await animateSunlightStrength(target);
+            updateMapControlsState();
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function startDayNightSync() {
+        if (dayNightSyncStarted) return;
+        dayNightSyncStarted = true;
+        const tick = () => syncMapDayNightFromServer();
+        const waitForBlueMap = () => {
+            if (getMapViewerUniforms()?.sunlightStrength) {
+                tick();
+                setInterval(tick, WORLD_TIME_POLL_MS);
+                return;
+            }
+            requestAnimationFrame(waitForBlueMap);
+        };
+        waitForBlueMap();
+    }
+
     function renderLayerMenu() {
         const menu = document.getElementById(MAP_CONTROLS_ID)?.querySelector('.mcwws-layer-menu');
         if (!menu) return;
@@ -1545,6 +1682,24 @@
             'title',
             cleanModeActive ? '退出全屏，还原功能模块' : '全屏，隐藏所有功能模块'
         );
+        const dayBtn = root.querySelector('.mcwws-ctrl-daynight');
+        if (dayBtn) {
+            const isDay = isMapDaylight();
+            dayBtn.classList.toggle('is-night', !isDay);
+            const manual = isDayNightManualActive();
+            const manualMin = manual ? Math.max(1, Math.ceil((dayNightManualUntil - Date.now()) / 60000)) : 0;
+            const timeHint = dayNightDayTime != null ? `，游戏刻 ${dayNightDayTime}` : '';
+            const periodHint = dayNightPeriod ? `（${dayNightPeriod}${timeHint}）` : (timeHint || '');
+            if (manual) {
+                dayBtn.title = isDay
+                    ? `当前为日景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间`
+                    : `当前为夜景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间`;
+            } else {
+                dayBtn.title = isDay
+                    ? `切换为夜景${periodHint}（跟随主世界游戏时间）`
+                    : `切换为日景${periodHint}（跟随主世界游戏时间）`;
+            }
+        }
     }
 
     function ensureMapControls() {
@@ -1577,6 +1732,14 @@
                     <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-in" title="放大">+</button>
                     <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-out" title="缩小">−</button>
                 </div>
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-daynight" title="切换日景 / 夜景">
+                    <svg class="mcwws-ctrl-daynight-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                        <circle class="mcwws-daynight-sun" cx="12" cy="12" r="4" fill="currentColor"/>
+                        <g class="mcwws-daynight-moon" fill="currentColor">
+                            <path d="M14.5 3.2a7.5 7.5 0 1 0 7.3 11.8A6.5 6.5 0 1 1 14.5 3.2z"/>
+                        </g>
+                    </svg>
+                </button>
                 <div class="mcwws-ctrl-bottom-row">
                     <button type="button" class="mcwws-ctrl-layer" title="图层选择">
                         <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
@@ -1610,6 +1773,7 @@
         });
         root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
         root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
+        root.querySelector('.mcwws-ctrl-daynight')?.addEventListener('click', toggleMapDayNight);
         root.querySelector('.mcwws-ctrl-fullscreen')?.addEventListener('click', toggleCleanMode);
         root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
             e.stopPropagation();
@@ -1810,6 +1974,7 @@
         updatePinPositions();
         loadMarkers();
         applySearchUiState();
+        startDayNightSync();
         animationId = requestAnimationFrame(tickPins);
     }
 
