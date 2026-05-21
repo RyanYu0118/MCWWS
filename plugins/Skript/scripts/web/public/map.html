@@ -103,6 +103,16 @@
                 }, '*');
             }
 
+            /** iframe 的 load 早于 mcwws-shops.js，需重试直到地图脚本就绪 */
+            function syncAuthToFrameWithRetry(attemptsLeft = 16, intervalMs = 400) {
+                syncAuthToFrame();
+                if (attemptsLeft <= 1) return;
+                window.setTimeout(
+                    () => syncAuthToFrameWithRetry(attemptsLeft - 1, intervalMs),
+                    intervalMs
+                );
+            }
+
             function mountMap() {
                 const url = buildBluemapFrameUrl();
                 if (openBtn) openBtn.href = url;
@@ -111,8 +121,10 @@
                     frame.dataset.loaded = '1';
                     frame.addEventListener('load', () => {
                         if (loading) loading.hidden = true;
-                        syncAuthToFrame();
-                    }, { once: true });
+                        syncAuthToFrameWithRetry();
+                    });
+                } else {
+                    syncAuthToFrameWithRetry();
                 }
                 frame.src = url;
             }
@@ -122,12 +134,16 @@
             window.setTimeout(mountMap, 500);
 
             window.MCWWS_AUTH.onChange(syncAuthToFrame);
-            window.MCWWS_AUTH.init().then(syncAuthToFrame);
+            window.MCWWS_AUTH.init().then(() => syncAuthToFrameWithRetry(8, 300));
 
             window.addEventListener('message', (event) => {
                 const data = event.data || {};
                 if (data.type === 'mcwws-map-clean') {
                     document.body.classList.toggle('services-map-clean', !!data.active);
+                    return;
+                }
+                if (data.type === 'mcwws-auth-request') {
+                    syncAuthToFrame();
                     return;
                 }
                 if (data.type === 'mcwws-auth-required') {

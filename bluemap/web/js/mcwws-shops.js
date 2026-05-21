@@ -1508,11 +1508,29 @@
     }
 
     /** 登录态由父页面（8002）经 postMessage 同步，与商店/管理共用 authToken */
-    function applyExternalAuth(payload) {
+    async function applyExternalAuth(payload) {
         if (!payload || typeof payload !== 'object') return;
         const wasLoggedIn = !!mapAuthUser;
         mapAuthToken = payload.authToken || null;
         mapAuthUser = payload.user || null;
+
+        if (mapAuthToken && !mapAuthUser) {
+            try {
+                const res = await fetch(`${NODE_API}/api/profile`, {
+                    headers: authHeaders(),
+                    cache: 'no-store'
+                });
+                if (res.ok) {
+                    mapAuthUser = await res.json();
+                } else {
+                    mapAuthToken = null;
+                }
+            } catch {
+                mapAuthToken = null;
+                mapAuthUser = null;
+            }
+        }
+
         if (wasLoggedIn && !mapAuthUser) {
             stopPlayerFollow();
             cachedSavedPlayerLoc = null;
@@ -1535,22 +1553,40 @@
     }
 
     function requestAuthFromParent() {
-        if (window.parent !== window) {
-            try {
-                window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
-            } catch {
-                /* ignore */
-            }
+        if (window.parent === window) return;
+        try {
+            window.parent.postMessage({ type: 'mcwws-auth-request' }, '*');
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function requestLoginModalFromParent() {
+        if (window.parent === window) return;
+        try {
+            window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
+        } catch {
+            /* ignore */
         }
     }
 
     function initMapAuth() {
         window.addEventListener('message', (event) => {
             if (event.data?.type === 'mcwws-auth') {
-                applyExternalAuth(event.data);
+                void applyExternalAuth(event.data);
             }
         });
         updateLocateAuthUi();
+        requestAuthFromParent();
+        let retries = 0;
+        const retryTimer = window.setInterval(() => {
+            retries += 1;
+            if (mapAuthUser || retries >= 12) {
+                window.clearInterval(retryTimer);
+                return;
+            }
+            requestAuthFromParent();
+        }, 500);
     }
 
     function normalizePlayerKey(value) {
@@ -1727,6 +1763,7 @@
             return;
         }
         if (!mapAuthUser?.playerId) {
+            requestLoginModalFromParent();
             requestAuthFromParent();
             return;
         }
