@@ -968,11 +968,58 @@
         return null;
     }
 
+    function refreshBlueMapCameraMatrices(camera) {
+        if (!camera) return null;
+        if (typeof camera.updateMatrixWorld === 'function') {
+            camera.updateMatrixWorld(true);
+        }
+        if (typeof camera.updateProjectionMatrix === 'function') {
+            camera.updateProjectionMatrix();
+        }
+        return camera;
+    }
+
     function getBlueMapCamera() {
-        if (cachedCamera?.projectionMatrix && cachedCamera?.matrixWorldInverse) return cachedCamera;
         const bluemap = getBlueMapApp();
+        const cm = getControlsManager();
+        if (playerFollowActive && cm && typeof cm.updateCamera === 'function') {
+            cm.updateCamera();
+            if (!cachedCamera?.projectionMatrix) {
+                cachedCamera = findCamera(bluemap);
+            }
+            return refreshBlueMapCameraMatrices(cachedCamera);
+        }
+        if (cachedCamera?.projectionMatrix && cachedCamera?.matrixWorldInverse) {
+            return cachedCamera;
+        }
         cachedCamera = findCamera(bluemap);
-        return cachedCamera;
+        return refreshBlueMapCameraMatrices(cachedCamera);
+    }
+
+    /** 跟随玩家时 URL hash 滞后于 controls，钉点须用当前相机状态投影 */
+    function getViewForPinProjection() {
+        if (!playerFollowActive) {
+            return parseHash();
+        }
+        const cm = getControlsManager();
+        const hash = parseHash();
+        if (!cm) return hash;
+        const dist = clampMapDistance(cm.distance ?? hash?.distance ?? lastFlatHeight);
+        return {
+            map: getCurrentMapId(),
+            x: cm.position.x,
+            y: cm.position.y,
+            z: cm.position.z,
+            distance: dist,
+            height: dist,
+            rotation: cm.rotation ?? 0,
+            angle: cm.angle ?? 0,
+            pitch: cm.angle ?? 0,
+            yaw: cm.rotation ?? 0,
+            tilt: cm.tilt ?? 0,
+            ortho: cm.ortho ?? 0,
+            mode: getMapViewState()
+        };
     }
 
     function getBlueMapApp() {
@@ -1753,6 +1800,9 @@
         if (controls && typeof controls.updateCamera === 'function') {
             controls.updateCamera();
         }
+        if (playerFollowActive) {
+            refreshBlueMapCameraMatrices(cachedCamera || findCamera(getBlueMapApp()));
+        }
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
@@ -2399,7 +2449,7 @@
 
     function updatePinPositions() {
         syncPinElements();
-        const view = parseHash();
+        const view = getViewForPinProjection();
         const camera = getBlueMapCamera();
         if (!view && !camera) return;
         markers.filter(shouldShowPin).forEach(marker => {
