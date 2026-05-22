@@ -640,6 +640,9 @@
 
     function handlePinClick(marker) {
         if (!marker) return;
+        if (playerFollowActive) {
+            stopPlayerFollow();
+        }
         if (selectedMarkerId === marker.id && selectedMarkerTopDown) {
             openMarker(marker);
             return;
@@ -1973,8 +1976,21 @@
     }
 
     async function centerCameraOnPlayer(pos, options = {}) {
-        const view = buildFollowViewFromPosition(pos);
+        let view = buildFollowViewFromPosition(pos);
         if (!view) return false;
+        if (options.preferFlat && view.mode !== 'flat') {
+            const dist = clampMapDistance(view.distance);
+            view = normalizeViewForBlueMap({
+                ...view,
+                mode: 'flat',
+                distance: dist,
+                height: dist,
+                rotation: 0,
+                angle: 0,
+                tilt: 0,
+                ortho: FLAT_ORTHO_ON
+            });
+        }
         const bm = getBlueMapApp();
         playerFollowApplying = true;
         if (bm) {
@@ -2014,7 +2030,7 @@
         playerFollowMapId = pos.map || getCurrentMapId();
         playerFollowLastPollAt = performance.now();
         playerFollowLastSmoothAt = performance.now();
-        await centerCameraOnPlayer(pos, { animate: true });
+        await centerCameraOnPlayer(pos, { animate: true, preferFlat: true });
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
         updateMapControlsState();
