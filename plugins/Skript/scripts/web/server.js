@@ -68,6 +68,7 @@ const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
 const ADMIN_ACCESS_PATH = path.join(DB_DIR, 'admin_access.yml');
 const SHOP_LOCATIONS_PATH = path.join(__dirname, 'mcwws', 'shop_locations.yml');
 const BLUEMAP_WEB_MAPS_DIR = path.join(__dirname, '..', '..', '..', '..', 'bluemap', 'web', 'maps');
+const BLUEMAP_LIVE_MAP_IDS = ['world', 'world_nether', 'world_the_end', 'dimensionalhome'];
 const SERVER_ROOT = path.join(__dirname, '..', '..', '..', '..');
 const OVERWORLD_LEVEL_DAT = path.join(SERVER_ROOT, 'world', 'level.dat');
 const MC_DAY_TICKS = 24000;
@@ -865,6 +866,51 @@ function readEssentialsSavedPlayerLocation(uuid) {
     };
 }
 
+/** BlueMap 写入的在线玩家坐标（与网页地图一致），避免误读 Three.js 动画中的 marker.position */
+function readBlueMapLivePlayerLocation(uuid, playerName) {
+    const normUuid = String(uuid || '').trim().toLowerCase();
+    const normName = String(playerName || '').trim().toLowerCase();
+    if (!normUuid && !normName) {
+        return null;
+    }
+    for (const mapId of BLUEMAP_LIVE_MAP_IDS) {
+        const file = path.join(BLUEMAP_WEB_MAPS_DIR, mapId, 'live', 'players.json');
+        if (!fs.existsSync(file)) {
+            continue;
+        }
+        try {
+            const raw = JSON.parse(fs.readFileSync(file, 'utf8'));
+            const list = Array.isArray(raw?.players) ? raw.players : [];
+            const hit = list.find((entry) => {
+                const u = String(entry?.uuid || '').toLowerCase();
+                const n = String(entry?.name || '').toLowerCase();
+                return (normUuid && u === normUuid) || (normName && n === normName);
+            });
+            if (!hit?.position) {
+                continue;
+            }
+            const x = Number(hit.position.x);
+            const y = Number(hit.position.y);
+            const z = Number(hit.position.z);
+            if (![x, y, z].every(Number.isFinite)) {
+                continue;
+            }
+            return {
+                map: mapId,
+                x,
+                y,
+                z,
+                yaw: Number.isFinite(Number(hit.rotation?.yaw)) ? Number(hit.rotation.yaw) : null,
+                pitch: Number.isFinite(Number(hit.rotation?.pitch)) ? Number(hit.rotation.pitch) : null,
+                source: 'bluemap-live'
+            };
+        } catch {
+            /* ignore */
+        }
+    }
+    return null;
+}
+
 app.get('/api/player-location', (req, res) => {
     try {
         const user = authenticate(req);
@@ -878,6 +924,23 @@ app.get('/api/player-location', (req, res) => {
         const uuid = resolvePlayerUuid(playerId);
         if (!uuid) {
             return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+        const live = readBlueMapLivePlayerLocation(uuid, playerId);
+        if (live) {
+            return res.json({
+                playerId,
+                uuid,
+                username: user.username,
+                online: true,
+                source: live.source,
+                map: live.map,
+                x: live.x,
+                y: live.y,
+                z: live.z,
+                yaw: live.yaw,
+                pitch: live.pitch,
+                updatedAt: new Date().toISOString()
+            });
         }
         const saved = readEssentialsSavedPlayerLocation(uuid);
         if (!saved) {

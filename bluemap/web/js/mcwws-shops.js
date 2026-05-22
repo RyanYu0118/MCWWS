@@ -43,7 +43,15 @@
     const DAY_NIGHT_MANUAL_MS = 5 * 60 * 1000;
     const MC_DAY_TICKS = 24000;
     const PLAYER_LOCATE_POLL_MS = 8000;
+    const LIVE_PLAYERS_CACHE_MS = 1500;
+    const PLAYER_FOLLOW_POLL_MS = 350;
+    const PLAYER_FOLLOW_LIVE_CACHE_MS = 280;
+    const PLAYER_FOLLOW_SMOOTH_MS = 200;
+    const PLAYER_FOLLOW_TELEPORT_BLOCKS = 48;
+    const PLAYER_FOLLOW_START_ANIM_MS = 380;
+    /** Essentials 存档为脚底；BlueMap 在线数据同为脚底，显示高度 +1.8 */
     const PLAYER_EYE_OFFSET = 1.62;
+    const PLAYER_HEAD_OFFSET = 1.8;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -51,8 +59,17 @@
     let playerFollowActive = false;
     let playerFollowApplying = false;
     let playerFollowSource = '';
-    let cachedSavedPlayerLoc = null;
-    let cachedSavedPlayerLocAt = 0;
+    let cachedPlayerLoc = null;
+    let cachedPlayerLocAt = 0;
+    let cachedLivePlayers = null;
+    let cachedLivePlayersMap = null;
+    let cachedLivePlayersAt = 0;
+    let playerFollowTarget = null;
+    let playerFollowMapId = null;
+    let playerFollowPollBusy = false;
+    let playerFollowLastPollAt = 0;
+    let playerFollowLastSmoothAt = 0;
+    let playerFollowTeleportToken = 0;
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1533,7 +1550,9 @@
 
         if (wasLoggedIn && !mapAuthUser) {
             stopPlayerFollow();
-            cachedSavedPlayerLoc = null;
+            cachedPlayerLoc = null;
+            cachedLivePlayers = null;
+            playerFollowTarget = null;
         }
         updateLocateAuthUi();
     }
@@ -1593,33 +1612,102 @@
         return String(value || '').trim().toLowerCase();
     }
 
-    function findLivePlayerPosition(playerId) {
+    function getCurrentMapId() {
+        return getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world';
+    }
+
+    function playerMarkerMatchesName(marker, playerId) {
+        const target = normalizePlayerKey(playerId);
+        const name = normalizePlayerKey(marker?.data?.name);
+        return !!target && name === target;
+    }
+
+    function coordsFromLivePayload(mapId, raw, source) {
+        const x = Number(raw?.x);
+        const y = Number(raw?.y);
+        const z = Number(raw?.z);
+        if (![x, y, z].every(Number.isFinite)) return null;
+        const atOrigin = Math.abs(x) < 0.01 && Math.abs(z) < 0.01 && Math.abs(y) < 1;
+        if (atOrigin) return null;
+        return {
+            map: mapId || getCurrentMapId(),
+            x,
+            y: y + PLAYER_HEAD_OFFSET,
+            z,
+            online: true,
+            source: source || 'live'
+        };
+    }
+
+    function getLivePlayersCacheMs() {
+        return playerFollowActive ? PLAYER_FOLLOW_LIVE_CACHE_MS : LIVE_PLAYERS_CACHE_MS;
+    }
+
+    function invalidatePlayerFollowCaches() {
+        cachedLivePlayersAt = 0;
+        cachedPlayerLocAt = 0;
+    }
+
+    async function fetchLivePlayersJson(mapId) {
+        const id = mapId || getCurrentMapId();
+        const cacheMs = getLivePlayersCacheMs();
+        if (
+            cachedLivePlayers
+            && cachedLivePlayersMap === id
+            && Date.now() - cachedLivePlayersAt < cacheMs
+        ) {
+            return cachedLivePlayers;
+        }
+        try {
+            const res = await fetch(
+                `maps/${encodeURIComponent(id)}/live/players.json?t=${Date.now()}`,
+                { cache: 'no-store' }
+            );
+            if (!res.ok) return null;
+            const data = await res.json();
+            const list = Array.isArray(data?.players) ? data.players : null;
+            cachedLivePlayers = list;
+            cachedLivePlayersMap = id;
+            cachedLivePlayersAt = Date.now();
+            return list;
+        } catch {
+            return null;
+        }
+    }
+
+    async function fetchLivePlayerFromBlueMap(playerId) {
         const target = normalizePlayerKey(playerId);
         if (!target) return null;
+
+        const mapId = getCurrentMapId();
+        const players = await fetchLivePlayersJson(mapId);
+        if (players?.length) {
+            const entry = players.find((p) => normalizePlayerKey(p?.name) === target);
+            if (entry?.position) {
+                const fromJson = coordsFromLivePayload(mapId, entry.position, 'live-json');
+                if (fromJson) return fromJson;
+            }
+        }
+
         const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
         for (const set of markerSets) {
             if (set.id !== 'bm-players') continue;
             for (const marker of set.markers || []) {
-                const id = normalizePlayerKey(marker.data?.id || marker.id);
-                const label = normalizePlayerKey(marker.data?.label || marker.data?.name);
-                if (id !== target && label !== target) continue;
-                return {
-                    map: getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world',
-                    x: Number(marker.position?.x),
-                    y: Number(marker.position?.y),
-                    z: Number(marker.position?.z),
-                    online: true,
-                    source: 'live'
-                };
+                if (!playerMarkerMatchesName(marker, playerId)) continue;
+                const raw = marker.data?.position;
+                if (raw && Number.isFinite(Number(raw.x))) {
+                    return coordsFromLivePayload(mapId, raw, 'live-data');
+                }
             }
         }
         return null;
     }
 
-    async function fetchSavedPlayerLocation() {
+    async function fetchPlayerLocationFromApi() {
         if (!mapAuthToken) return null;
-        if (cachedSavedPlayerLoc && Date.now() - cachedSavedPlayerLocAt < PLAYER_LOCATE_POLL_MS) {
-            return cachedSavedPlayerLoc;
+        const cacheMs = playerFollowActive ? PLAYER_FOLLOW_LIVE_CACHE_MS : PLAYER_LOCATE_POLL_MS;
+        if (cachedPlayerLoc && Date.now() - cachedPlayerLocAt < cacheMs) {
+            return cachedPlayerLoc;
         }
         try {
             const res = await fetch(`${NODE_API}/api/player-location?t=${Date.now()}`, {
@@ -1628,16 +1716,18 @@
             });
             if (!res.ok) return null;
             const data = await res.json();
-            cachedSavedPlayerLoc = {
+            const online = !!data.online;
+            const yOff = online ? PLAYER_HEAD_OFFSET : PLAYER_EYE_OFFSET;
+            cachedPlayerLoc = {
                 map: data.map || 'world',
                 x: Number(data.x),
-                y: Number(data.y) + PLAYER_EYE_OFFSET,
+                y: Number(data.y) + yOff,
                 z: Number(data.z),
-                online: false,
-                source: data.source || 'saved'
+                online,
+                source: data.source || (online ? 'live' : 'saved')
             };
-            cachedSavedPlayerLocAt = Date.now();
-            return cachedSavedPlayerLoc;
+            cachedPlayerLocAt = Date.now();
+            return cachedPlayerLoc;
         } catch {
             return null;
         }
@@ -1645,17 +1735,25 @@
 
     async function resolvePlayerPosition() {
         if (!mapAuthUser?.playerId) return null;
-        const live = findLivePlayerPosition(mapAuthUser.playerId);
-        if (live && [live.x, live.y, live.z].every(Number.isFinite)) {
-            playerFollowSource = 'live';
+        const live = await fetchLivePlayerFromBlueMap(mapAuthUser.playerId);
+        if (live) {
+            playerFollowSource = live.source || 'live';
             return live;
         }
-        const saved = await fetchSavedPlayerLocation();
-        if (saved && [saved.x, saved.y, saved.z].every(Number.isFinite)) {
-            playerFollowSource = saved.source || 'saved';
-            return saved;
+        const api = await fetchPlayerLocationFromApi();
+        if (api && [api.x, api.y, api.z].every(Number.isFinite)) {
+            playerFollowSource = api.online ? (api.source || 'live') : (api.source || 'saved');
+            return api;
         }
         return null;
+    }
+
+    function triggerControlsCameraUpdate(cm) {
+        const controls = cm || getControlsManager();
+        if (controls && typeof controls.updateCamera === 'function') {
+            controls.updateCamera();
+        }
+        getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
     function buildFollowViewFromPosition(pos) {
@@ -1683,7 +1781,116 @@
         if (!playerFollowActive) return;
         playerFollowActive = false;
         playerFollowSource = '';
+        playerFollowTarget = null;
+        playerFollowMapId = null;
+        playerFollowPollBusy = false;
+        playerFollowTeleportToken += 1;
         updateMapControlsState();
+    }
+
+    function followPositionDistance(a, b) {
+        if (!a || !b) return 0;
+        return Math.hypot(
+            Number(a.x) - Number(b.x),
+            Number(a.y) - Number(b.y),
+            Number(a.z) - Number(b.z)
+        );
+    }
+
+    async function applyFollowMapSwitch(pos) {
+        const bm = getBlueMapApp();
+        const view = buildFollowViewFromPosition(pos);
+        if (!bm || !view?.map) return;
+        if (playerFollowMapId === view.map) return;
+        playerFollowMapId = view.map;
+        playerFollowApplying = true;
+        try {
+            await ensureMapForView(view, bm);
+        } finally {
+            playerFollowApplying = false;
+        }
+    }
+
+    async function animateFollowTeleport(pos) {
+        const view = buildFollowViewFromPosition(pos);
+        const cm = getControlsManager();
+        if (!view || !cm) return;
+        const token = ++playerFollowTeleportToken;
+        playerFollowApplying = true;
+        try {
+            await applyFollowMapSwitch(pos);
+            if (token !== playerFollowTeleportToken) return;
+            await animateControlsToView(view, Math.min(PLAYER_FOLLOW_START_ANIM_MS, 420));
+            if (token !== playerFollowTeleportToken) return;
+            triggerControlsCameraUpdate(cm);
+            if (tickFrame % 3 === 0) {
+                syncPageAddressFromControls();
+            }
+        } finally {
+            playerFollowApplying = false;
+        }
+    }
+
+    async function pollPlayerFollowTarget() {
+        if (!playerFollowActive || !mapAuthUser || playerFollowPollBusy) return;
+        playerFollowPollBusy = true;
+        invalidatePlayerFollowCaches();
+        try {
+            const pos = await resolvePlayerPosition();
+            if (!pos || !playerFollowActive) return;
+
+            const prev = playerFollowTarget;
+            const jumped = prev && followPositionDistance(prev, pos) >= PLAYER_FOLLOW_TELEPORT_BLOCKS;
+            const mapChanged = prev && prev.map && pos.map && prev.map !== pos.map;
+
+            playerFollowTarget = pos;
+            playerFollowSource = pos.source || playerFollowSource;
+            updateMapControlsState();
+
+            if (mapChanged || jumped) {
+                void animateFollowTeleport(pos);
+            }
+        } finally {
+            playerFollowPollBusy = false;
+            playerFollowLastPollAt = performance.now();
+        }
+    }
+
+    function stepPlayerFollowSmooth(dtMs) {
+        if (!playerFollowActive || !playerFollowTarget || playerFollowApplying) return;
+        const cm = getControlsManager();
+        if (!cm) return;
+
+        const target = playerFollowTarget;
+        const dt = Math.max(8, Math.min(64, Number(dtMs) || 16));
+        const alpha = 1 - Math.exp(-dt / PLAYER_FOLLOW_SMOOTH_MS);
+
+        cm.position.x += (target.x - cm.position.x) * alpha;
+        cm.position.y += (target.y - cm.position.y) * alpha;
+        cm.position.z += (target.z - cm.position.z) * alpha;
+
+        triggerControlsCameraUpdate(cm);
+
+        if (tickFrame % 12 === 0) {
+            syncPageAddressFromControls();
+        }
+        updatePinPositions();
+    }
+
+    function tickPlayerFollow() {
+        if (!playerFollowActive) return;
+
+        const now = performance.now();
+        const dt = playerFollowLastSmoothAt
+            ? now - playerFollowLastSmoothAt
+            : 16;
+        playerFollowLastSmoothAt = now;
+
+        stepPlayerFollowSmooth(dt);
+
+        if (!playerFollowPollBusy && now - playerFollowLastPollAt >= PLAYER_FOLLOW_POLL_MS) {
+            void pollPlayerFollowTarget();
+        }
     }
 
     function bindMapFollowExitEvents() {
@@ -1724,7 +1931,11 @@
             await ensureMapForView(view, bm);
         }
         if (options.animate) {
-            await applyBlueMapView(view, { fast: false, paramDuration: 280, modeDuration: 0 });
+            await applyBlueMapView(view, {
+                fast: false,
+                paramDuration: PLAYER_FOLLOW_START_ANIM_MS,
+                modeDuration: 0
+            });
         } else {
             applyControlsFromView(view);
             replaceLocationHash(formatViewHash(view));
@@ -1732,29 +1943,6 @@
         }
         playerFollowApplying = false;
         return true;
-    }
-
-    async function tickPlayerFollowCenter() {
-        if (!playerFollowActive || !mapAuthUser) return;
-        const pos = await resolvePlayerPosition();
-        if (!pos) return;
-        const view = buildFollowViewFromPosition(pos);
-        const cm = getControlsManager();
-        const bm = getBlueMapApp();
-        if (!view || !cm) return;
-        playerFollowApplying = true;
-        if (bm && view.map) {
-            await ensureMapForView(view, bm);
-        }
-        cm.position.x = view.x;
-        cm.position.y = view.y;
-        cm.position.z = view.z;
-        if (tickFrame % 15 === 0) {
-            syncPageAddressFromControls();
-        }
-        updatePinPositions();
-        playerFollowApplying = false;
-        updateMapControlsState();
     }
 
     async function togglePlayerLocate() {
@@ -1772,7 +1960,13 @@
             return;
         }
         playerFollowActive = true;
+        playerFollowTarget = pos;
+        playerFollowMapId = pos.map || getCurrentMapId();
+        playerFollowLastPollAt = performance.now();
+        playerFollowLastSmoothAt = performance.now();
         await centerCameraOnPlayer(pos, { animate: true });
+        invalidatePlayerFollowCaches();
+        void pollPlayerFollowTarget();
         updateMapControlsState();
     }
 
@@ -2283,8 +2477,8 @@
     function tickPins() {
         updatePinPositions();
         tickFrame++;
-        if (playerFollowActive && tickFrame % 2 === 0) {
-            void tickPlayerFollowCenter();
+        if (playerFollowActive) {
+            tickPlayerFollow();
         }
         if (tickFrame % 10 === 0) {
             rememberFlatZoom();

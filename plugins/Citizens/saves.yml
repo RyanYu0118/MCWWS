@@ -428,12 +428,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: BROWN
       location:
-        bodyYaw: -117.28043
+        bodyYaw: -2.267784
         x: -445.5222
         y: 99.0
         z: -486.5301
-        yaw: -117.2804
-        pitch: 14.018
+        yaw: -2.2678
+        pitch: 0.6059
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: BROWN
@@ -486,12 +486,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: GREEN
       location:
-        bodyYaw: -123.48913
+        bodyYaw: -2.189911
         x: -441.3451
         y: 99.0
         z: -486.9891
-        yaw: -123.4891
-        pitch: 18.0556
+        yaw: -2.1899
+        pitch: 0.6059
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: GREEN
@@ -543,12 +543,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: BLUE
       location:
-        bodyYaw: -140.7766
+        bodyYaw: -2.1186447
         x: -437.4868
         y: 99.0
         z: -486.473
-        yaw: -140.7766
-        pitch: 22.8917
+        yaw: -2.1186
+        pitch: 0.606
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: BLUE
@@ -599,12 +599,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: CYAN
       location:
-        bodyYaw: -167.45961
+        bodyYaw: -2.0454483
         x: -433.5457
         y: 99.0
         z: -486.4848
-        yaw: -167.4596
-        pitch: 28.0576
+        yaw: -2.0454
+        pitch: 0.606
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: CYAN
@@ -653,12 +653,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: MAGENTA
       location:
-        bodyYaw: 47.417374
+        bodyYaw: 71.73479
         x: -425.5029
         y: 99.0
         z: -486.4966
-        yaw: 47.4174
-        pitch: 18.8484
+        yaw: 71.7348
+        pitch: -1.9674
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: MAGENTA
@@ -711,12 +711,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: PURPLE
       location:
-        bodyYaw: 58.036514
+        bodyYaw: 69.172775
         x: -421.5488
         y: 99.0
         z: -487.6352
-        yaw: 58.0365
-        pitch: -2.0442
+        yaw: 69.1728
+        pitch: -1.7924
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: PURPLE
@@ -826,7 +826,7 @@ npc:
         x: -413.4942
         y: 99.0
         z: -486.4422
-        yaw: 174.0313
+        yaw: -176.1299
         pitch: 15.022
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
@@ -937,7 +937,7 @@ npc:
         x: -417.5124
         y: 95.0
         z: -488.6074
-        yaw: 139.3796
+        yaw: 136.5535
         pitch: -7.5643
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
@@ -956,7 +956,7 @@ npc:
         - in.checked
         - in.eid_10
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -988,12 +988,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: LIGHT_BLUE
       location:
-        bodyYaw: -176.32121
+        bodyYaw: 61.902573
         x: -421.5153
         y: 95.0
         z: -488.4551
-        yaw: 178.0928
-        pitch: -8.4663
+        yaw: 61.9026
+        pitch: -23.1439
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: LIGHT_BLUE
@@ -1011,7 +1011,7 @@ npc:
         - in.eid_10
         - in.eid_7
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1043,12 +1043,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: LIME
       location:
-        bodyYaw: 105.255356
+        bodyYaw: 58.339478
         x: -425.4958
         y: 95.0
         z: -488.4561
-        yaw: 115.2554
-        pitch: -2.7366
+        yaw: 58.3395
+        pitch: -21.2047
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: LIME
@@ -1099,12 +1099,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: PINK
       location:
-        bodyYaw: -109.56661
+        bodyYaw: -2.2649689
         x: -445.4528
         y: 95.0
         z: -488.6174
-        yaw: -109.5666
-        pitch: -1.6234
+        yaw: -2.265
+        pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: PINK
@@ -1154,12 +1154,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: YELLOW
       location:
-        bodyYaw: -116.442856
+        bodyYaw: -2.191536
         x: -441.4878
         y: 95.0
         z: -488.4374
-        yaw: -116.4429
-        pitch: -2.1022
+        yaw: -2.1915
+        pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: YELLOW
@@ -1211,12 +1211,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: WHITE
       location:
-        bodyYaw: -162.46768
+        bodyYaw: -2.0436554
         x: -433.5216
         y: 95.0
         z: -488.5202
-        yaw: -162.4677
-        pitch: -4.5777
+        yaw: -2.0437
+        pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
         }
@@ -1267,12 +1267,12 @@ npc:
         direction: BOTTOM_UP
       woolcolor: ORANGE
       location:
-        bodyYaw: -130.73926
+        bodyYaw: -2.1171188
         x: -437.4777
         y: 95.0
         z: -488.4502
-        yaw: -130.7393
-        pitch: -3.0895
+        yaw: -2.1171
+        pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait:
         color: ORANGE
@@ -1339,11 +1339,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 90.00058
-        x: -430.1584
+        bodyYaw: 270.0019
+        x: -423.7801
         y: 95.0
         z: -496.5
-        yaw: 90.0005
+        yaw: 270.0051
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
@@ -1398,9 +1398,12 @@ npc:
         tags:
         - in.eid_2
         - in.checked
+        - in.eid_5
         - in.eid_6
         - in.eid_8
         - in.eid_9
+        - in.eid_14
+        - in.eid_13
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
     navigator:
