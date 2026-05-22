@@ -787,6 +787,7 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
 }
 
 .mcwws-ctrl-locate {
+    position: relative;
     color: #0ea5e9;
 }
 
@@ -794,6 +795,42 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     color: #fff;
     background: #0ea5e9;
     box-shadow: 0 2px 10px rgba(14, 165, 233, 0.45), 0 0 0 1px rgba(14, 165, 233, 0.2);
+}
+
+.mcwws-ctrl-locate-progress {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 44px;
+    height: 44px;
+    margin: -22px 0 0 -22px;
+    transform: rotate(-90deg);
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.15s ease;
+}
+
+.mcwws-ctrl-locate.is-drag-exit-pending .mcwws-ctrl-locate-progress {
+    opacity: 1;
+}
+
+.mcwws-ctrl-locate-progress-track {
+    fill: none;
+    stroke: rgba(14, 165, 233, 0.28);
+    stroke-width: 3;
+}
+
+.mcwws-ctrl-locate.is-active .mcwws-ctrl-locate-progress-track {
+    stroke: rgba(255, 255, 255, 0.35);
+}
+
+.mcwws-ctrl-locate-progress-bar {
+    fill: none;
+    stroke: #f97316;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
 }
 
 .mcwws-ctrl-locate.is-disabled,
@@ -806,4 +843,30 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
 
 .mcwws-ctrl-locate-icon {
     display: block;
+}
+
+/* 玩家定位开启时，拦截拖拽操作的底部提示 */
+.mcwws-player-follow-notice {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 10002;
+    max-width: min(520px, calc(100vw - 32px));
+    padding: 12px 18px;
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.92);
+    color: #f8fafc;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: center;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.mcwws-player-follow-notice.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
 }

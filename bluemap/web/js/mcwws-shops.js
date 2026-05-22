@@ -46,9 +46,13 @@
     const LIVE_PLAYERS_CACHE_MS = 1500;
     const PLAYER_FOLLOW_POLL_MS = 350;
     const PLAYER_FOLLOW_LIVE_CACHE_MS = 280;
-    const PLAYER_FOLLOW_SMOOTH_MS = 200;
+    const PLAYER_FOLLOW_SMOOTH_MS = 420;
+    const PLAYER_FOLLOW_SMOOTH_Y_MS = 560;
     const PLAYER_FOLLOW_TELEPORT_BLOCKS = 48;
     const PLAYER_FOLLOW_START_ANIM_MS = 380;
+    const PLAYER_FOLLOW_SNAP_BACK_MS = 400;
+    const PLAYER_FOLLOW_DRAG_EXIT_MS = 3000;
+    const LOCATE_PROGRESS_RING_LEN = 100;
     /** Essentials 存档为脚底；BlueMap 在线数据同为脚底，显示高度 +1.8 */
     const PLAYER_EYE_OFFSET = 1.62;
     const PLAYER_HEAD_OFFSET = 1.8;
@@ -70,6 +74,14 @@
     let playerFollowLastPollAt = 0;
     let playerFollowLastSmoothAt = 0;
     let playerFollowTeleportToken = 0;
+    let mapHeightUpdateSaved = null;
+    let playerFollowNoticeTimer = 0;
+    let playerFollowSmooth = null;
+    let playerFollowPanPointerId = null;
+    let playerFollowPanning = false;
+    let playerFollowPanHoldMs = 0;
+    let playerFollowSnapBackToken = 0;
+    const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1798,8 +1810,40 @@
         return null;
     }
 
+    function initPlayerFollowSmoothFromControls(cm) {
+        const controls = cm || getControlsManager();
+        if (!controls) return;
+        playerFollowSmooth = {
+            x: Number(controls.position.x),
+            y: Number(controls.position.y),
+            z: Number(controls.position.z)
+        };
+    }
+
+    function syncPlayerFollowSmoothFromControls(cm) {
+        const controls = cm || getControlsManager();
+        if (!controls || !playerFollowSmooth) return;
+        playerFollowSmooth.x = Number(controls.position.x);
+        playerFollowSmooth.y = Number(controls.position.y);
+        playerFollowSmooth.z = Number(controls.position.z);
+    }
+
+    function restorePlayerFollowSmoothedPosition(cm) {
+        const controls = cm || getControlsManager();
+        if (!playerFollowActive || !controls || !playerFollowSmooth) return;
+        if (playerFollowPanning) return;
+        if ([playerFollowSmooth.x, playerFollowSmooth.y, playerFollowSmooth.z].every(Number.isFinite)) {
+            controls.position.x = playerFollowSmooth.x;
+            controls.position.y = playerFollowSmooth.y;
+            controls.position.z = playerFollowSmooth.z;
+        }
+    }
+
     function triggerControlsCameraUpdate(cm) {
         const controls = cm || getControlsManager();
+        if (playerFollowActive) {
+            restorePlayerFollowSmoothedPosition(controls);
+        }
         if (controls && typeof controls.updateCamera === 'function') {
             controls.updateCamera();
         }
@@ -1830,6 +1874,139 @@
         return normalizeViewForBlueMap(view);
     }
 
+    function setPlayerFollowMapHeightBypass(enabled) {
+        const mapHeight = getBlueMapApp()?.mapControls?.mapHeight;
+        if (!mapHeight || typeof mapHeight.update !== 'function') {
+            return;
+        }
+        if (enabled) {
+            if (!mapHeightUpdateSaved) {
+                mapHeightUpdateSaved = mapHeight.update.bind(mapHeight);
+                mapHeight.update = function playerFollowMapHeightUpdate(dt, terrain) {
+                    mapHeightUpdateSaved.call(this, dt, terrain);
+                    if (playerFollowActive && !playerFollowPanning) {
+                        restorePlayerFollowSmoothedPosition(this.manager);
+                    }
+                };
+            }
+            return;
+        }
+        if (mapHeightUpdateSaved) {
+            mapHeight.update = mapHeightUpdateSaved;
+            mapHeightUpdateSaved = null;
+        }
+    }
+
+    function ensurePlayerFollowNotice() {
+        let el = document.getElementById('mcwws-player-follow-notice');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'mcwws-player-follow-notice';
+            el.className = 'mcwws-player-follow-notice';
+            el.setAttribute('role', 'status');
+            el.setAttribute('aria-live', 'polite');
+            document.body.appendChild(el);
+        }
+        return el;
+    }
+
+    function showPlayerFollowBlockNotice() {
+        const el = ensurePlayerFollowNotice();
+        el.textContent = PLAYER_FOLLOW_BLOCK_MSG;
+        el.classList.add('is-visible');
+        window.clearTimeout(playerFollowNoticeTimer);
+        playerFollowNoticeTimer = window.setTimeout(() => {
+            el.classList.remove('is-visible');
+        }, 3200);
+    }
+
+    function getBlueMapRootElement() {
+        return getBlueMapApp()?.mapControls?.rootElement || null;
+    }
+
+    function isBlueMapGestureTarget(target) {
+        if (!target) return false;
+        const root = getBlueMapRootElement();
+        if (root && (root === target || root.contains(target))) {
+            return true;
+        }
+        return target.tagName === 'CANVAS' || !!target.closest?.('canvas');
+    }
+
+    function findAuthPlayerMarker() {
+        if (!mapAuthUser?.playerId) return null;
+        const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
+        for (const set of markerSets) {
+            if (set.id !== 'bm-players') continue;
+            for (const marker of set.markers || []) {
+                if (playerMarkerMatchesName(marker, mapAuthUser.playerId)) {
+                    return marker;
+                }
+            }
+        }
+        return null;
+    }
+
+    /** 同步 BlueMap 玩家标记（脚底坐标），供 MapControls 每帧复制完整三维位置 */
+    function updateAuthPlayerMarkerPosition(pos) {
+        const marker = findAuthPlayerMarker();
+        if (!marker || !pos) return null;
+        const feetY = Number(pos.y) - PLAYER_HEAD_OFFSET;
+        const x = Number(pos.x);
+        const z = Number(pos.z);
+        if (![x, feetY, z].every(Number.isFinite)) return null;
+        if (marker.position?.set) {
+            marker.position.set(x, feetY, z);
+        } else if (marker.position) {
+            marker.position.x = x;
+            marker.position.y = feetY;
+            marker.position.z = z;
+        }
+        const dataPos = marker.data?.position;
+        if (dataPos) {
+            dataPos.x = x;
+            dataPos.y = feetY;
+            dataPos.z = z;
+        }
+        return marker;
+    }
+
+    function resetPlayerFollowPanState() {
+        playerFollowPanPointerId = null;
+        playerFollowPanning = false;
+        playerFollowPanHoldMs = 0;
+        updateLocateDragProgress(0);
+    }
+
+    function updateLocateDragProgress(ratio) {
+        const btn = document.querySelector('.mcwws-ctrl-locate');
+        const bar = btn?.querySelector('.mcwws-ctrl-locate-progress-bar');
+        if (!btn || !bar) return;
+        const clamped = Math.max(0, Math.min(1, Number(ratio) || 0));
+        btn.classList.toggle('is-drag-exit-pending', playerFollowPanning && clamped < 1);
+        bar.style.strokeDashoffset = String(LOCATE_PROGRESS_RING_LEN * (1 - clamped));
+    }
+
+    function migrateLocateProgressRing(root) {
+        const btn = root?.querySelector?.('.mcwws-ctrl-locate')
+            || document.querySelector('.mcwws-ctrl-locate');
+        if (!btn || btn.querySelector('.mcwws-ctrl-locate-progress')) return;
+        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        ring.setAttribute('class', 'mcwws-ctrl-locate-progress');
+        ring.setAttribute('viewBox', '0 0 40 40');
+        ring.setAttribute('aria-hidden', 'true');
+        ring.innerHTML = `
+            <circle class="mcwws-ctrl-locate-progress-track" cx="20" cy="20" r="17" pathLength="${LOCATE_PROGRESS_RING_LEN}" />
+            <circle class="mcwws-ctrl-locate-progress-bar" cx="20" cy="20" r="17" pathLength="${LOCATE_PROGRESS_RING_LEN}" />
+        `;
+        const icon = btn.querySelector('.mcwws-ctrl-locate-icon');
+        if (icon) {
+            btn.insertBefore(ring, icon);
+        } else {
+            btn.prepend(ring);
+        }
+    }
+
     function stopPlayerFollow() {
         if (!playerFollowActive) return;
         playerFollowActive = false;
@@ -1838,7 +2015,28 @@
         playerFollowMapId = null;
         playerFollowPollBusy = false;
         playerFollowTeleportToken += 1;
+        playerFollowSmooth = null;
+        playerFollowSnapBackToken += 1;
+        resetPlayerFollowPanState();
+        setPlayerFollowMapHeightBypass(false);
         updateMapControlsState();
+    }
+
+    async function snapBackPlayerFollowView() {
+        if (!playerFollowActive || !playerFollowTarget) return;
+        const view = buildFollowViewFromPosition(playerFollowTarget);
+        const cm = getControlsManager();
+        if (!view || !cm) return;
+        const token = ++playerFollowSnapBackToken;
+        playerFollowApplying = true;
+        try {
+            await animateControlsToView(view, PLAYER_FOLLOW_SNAP_BACK_MS);
+            if (token !== playerFollowSnapBackToken) return;
+            syncPlayerFollowSmoothFromControls(cm);
+            triggerControlsCameraUpdate(cm);
+        } finally {
+            playerFollowApplying = false;
+        }
     }
 
     function followPositionDistance(a, b) {
@@ -1898,6 +2096,7 @@
 
             playerFollowTarget = pos;
             playerFollowSource = pos.source || playerFollowSource;
+            updateAuthPlayerMarkerPosition(pos);
             updateMapControlsState();
 
             if (mapChanged || jumped) {
@@ -1910,24 +2109,45 @@
     }
 
     function stepPlayerFollowSmooth(dtMs) {
-        if (!playerFollowActive || !playerFollowTarget || playerFollowApplying) return;
+        if (!playerFollowActive || !playerFollowTarget || playerFollowApplying || playerFollowPanning) {
+            return;
+        }
         const cm = getControlsManager();
         if (!cm) return;
+        if (!playerFollowSmooth) {
+            initPlayerFollowSmoothFromControls(cm);
+        }
 
         const target = playerFollowTarget;
         const dt = Math.max(8, Math.min(64, Number(dtMs) || 16));
-        const alpha = 1 - Math.exp(-dt / PLAYER_FOLLOW_SMOOTH_MS);
+        const alphaXz = 1 - Math.exp(-dt / PLAYER_FOLLOW_SMOOTH_MS);
+        const alphaY = 1 - Math.exp(-dt / PLAYER_FOLLOW_SMOOTH_Y_MS);
 
-        cm.position.x += (target.x - cm.position.x) * alpha;
-        cm.position.y += (target.y - cm.position.y) * alpha;
-        cm.position.z += (target.z - cm.position.z) * alpha;
+        playerFollowSmooth.x += (Number(target.x) - playerFollowSmooth.x) * alphaXz;
+        playerFollowSmooth.y += (Number(target.y) - playerFollowSmooth.y) * alphaY;
+        playerFollowSmooth.z += (Number(target.z) - playerFollowSmooth.z) * alphaXz;
+
+        cm.position.x = playerFollowSmooth.x;
+        cm.position.y = playerFollowSmooth.y;
+        cm.position.z = playerFollowSmooth.z;
 
         triggerControlsCameraUpdate(cm);
+        updateAuthPlayerMarkerPosition(target);
 
         if (tickFrame % 12 === 0) {
             syncPageAddressFromControls();
         }
         updatePinPositions();
+    }
+
+    function tickPlayerFollowPanHold(dtMs) {
+        if (!playerFollowPanning || playerFollowPanPointerId == null) return;
+        playerFollowPanHoldMs += Math.max(0, Number(dtMs) || 0);
+        const ratio = playerFollowPanHoldMs / PLAYER_FOLLOW_DRAG_EXIT_MS;
+        updateLocateDragProgress(ratio);
+        if (playerFollowPanHoldMs >= PLAYER_FOLLOW_DRAG_EXIT_MS) {
+            stopPlayerFollow();
+        }
     }
 
     function tickPlayerFollow() {
@@ -1939,7 +2159,11 @@
             : 16;
         playerFollowLastSmoothAt = now;
 
-        stepPlayerFollowSmooth(dt);
+        if (playerFollowPanning) {
+            tickPlayerFollowPanHold(dt);
+        } else {
+            stepPlayerFollowSmooth(dt);
+        }
 
         if (!playerFollowPollBusy && now - playerFollowLastPollAt >= PLAYER_FOLLOW_POLL_MS) {
             void pollPlayerFollowTarget();
@@ -1953,24 +2177,44 @@
         const isMapUiTarget = (target) => !!(
             target?.closest?.('.mcwws-map-controls')
             || target?.closest?.('#mcwws-shop-panel')
+            || target?.closest?.('.mcwws-screen-pin')
+            || target?.closest?.('#mcwws-player-follow-notice')
         );
 
-        const onUserMapGesture = (event) => {
+        const onFollowPanPointerDown = (event) => {
             if (!playerFollowActive || playerFollowApplying) return;
+            if (event.button !== 0) return;
             if (isMapUiTarget(event.target)) return;
-            const app = document.getElementById('app');
-            if (app && !app.contains(event.target)) return;
-            stopPlayerFollow();
+            if (!isBlueMapGestureTarget(event.target)) return;
+            playerFollowPanPointerId = event.pointerId;
+            playerFollowPanning = true;
+            playerFollowPanHoldMs = 0;
+            updateLocateDragProgress(0);
         };
 
-        document.addEventListener('pointerdown', onUserMapGesture, true);
-        document.addEventListener('wheel', onUserMapGesture, { passive: true, capture: true });
+        const onFollowPanPointerUp = (event) => {
+            if (playerFollowPanPointerId == null || event.pointerId !== playerFollowPanPointerId) {
+                return;
+            }
+            const held = playerFollowPanHoldMs;
+            resetPlayerFollowPanState();
+            if (!playerFollowActive) return;
+            if (held < PLAYER_FOLLOW_DRAG_EXIT_MS) {
+                void snapBackPlayerFollowView();
+            }
+        };
+
+        document.addEventListener('pointerdown', onFollowPanPointerDown, true);
+        document.addEventListener('pointerup', onFollowPanPointerUp, true);
+        document.addEventListener('pointercancel', onFollowPanPointerUp, true);
         document.addEventListener('keydown', (event) => {
             if (!playerFollowActive || playerFollowApplying) return;
             if (isDockTextInputFocused()) return;
             const key = String(event.key || '').toLowerCase();
             if (['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
-                stopPlayerFollow();
+                event.preventDefault();
+                event.stopPropagation();
+                showPlayerFollowBlockNotice();
             }
         }, true);
     }
@@ -2007,6 +2251,7 @@
             replaceLocationHash(formatViewHash(view));
             updatePinPositions();
         }
+        syncPlayerFollowSmoothFromControls(getControlsManager());
         playerFollowApplying = false;
         return true;
     }
@@ -2030,7 +2275,11 @@
         playerFollowMapId = pos.map || getCurrentMapId();
         playerFollowLastPollAt = performance.now();
         playerFollowLastSmoothAt = performance.now();
+        setPlayerFollowMapHeightBypass(true);
+        initPlayerFollowSmoothFromControls(getControlsManager());
         await centerCameraOnPlayer(pos, { animate: true, preferFlat: true });
+        syncPlayerFollowSmoothFromControls(getControlsManager());
+        updateAuthPlayerMarkerPosition(pos);
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
         updateMapControlsState();
@@ -2247,7 +2496,7 @@
                 locateBtn.title = '请先在顶栏登录后再定位玩家';
             } else if (playerFollowActive) {
                 const modeLabel = playerFollowSource === 'live' ? '实时跟踪' : '已保存位置';
-                locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}）— 点击取消；拖动地图将退出定位`;
+                locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}）— 点击取消；可滚轮缩放；拖拽松手会回弹，按住拖拽约 3 秒可退出定位`;
             } else {
                 locateBtn.title = `定位到 ${mapAuthUser.playerId}（在线实时 / 离线用服务器存档位置）`;
             }
@@ -2258,6 +2507,7 @@
         let root = document.getElementById(MAP_CONTROLS_ID);
         if (root?.dataset.ready === '1') {
             migrateCompassDom(root);
+            migrateLocateProgressRing(root);
             updateMapControlsState();
             return root;
         }
@@ -2293,6 +2543,10 @@
                     </svg>
                 </button>
                 <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-locate" title="定位到已登录玩家（需先登录）" disabled>
+                    <svg class="mcwws-ctrl-locate-progress" viewBox="0 0 40 40" aria-hidden="true">
+                        <circle class="mcwws-ctrl-locate-progress-track" cx="20" cy="20" r="17" pathLength="100" />
+                        <circle class="mcwws-ctrl-locate-progress-bar" cx="20" cy="20" r="17" pathLength="100" />
+                    </svg>
                     <svg class="mcwws-ctrl-locate-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
                         <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
                     </svg>
@@ -2314,6 +2568,7 @@
         `;
         document.body.appendChild(root);
         bindMapControlEvents(root);
+        migrateLocateProgressRing(root);
         renderLayerMenu();
         updateMapControlsState();
         return root;
