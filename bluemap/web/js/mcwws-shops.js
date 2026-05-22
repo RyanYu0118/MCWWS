@@ -50,7 +50,7 @@
     const PLAYER_FOLLOW_SMOOTH_Y_MS = 560;
     const PLAYER_FOLLOW_TELEPORT_BLOCKS = 48;
     const PLAYER_FOLLOW_START_ANIM_MS = 380;
-    const PLAYER_FOLLOW_SNAP_BACK_MS = 400;
+    const PLAYER_FOLLOW_SNAP_BACK_MS = 620;
     const PLAYER_FOLLOW_DRAG_EXIT_MS = 3000;
     const LOCATE_PROGRESS_RING_LEN = 100;
     /** Essentials 存档为脚底；BlueMap 在线数据同为脚底，显示高度 +1.8 */
@@ -847,7 +847,7 @@
         return a + (b - a) * t;
     }
 
-    async function animateControlsToView(view, durationMs) {
+    async function animateControlsToView(view, durationMs, options = {}) {
         const cm = getControlsManager();
         if (!cm || !view || durationMs <= 0) {
             applyControlsFromView(view);
@@ -877,9 +877,13 @@
         const delta = Math.hypot(end.x - start.x, end.y - start.y, end.z - start.z)
             + Math.abs(end.distance - start.distance)
             + Math.abs(end.ortho - start.ortho) * 80
-            + Math.abs(end.angle - start.angle) * 40;
-        if (delta < 0.5) {
+            + Math.abs(end.angle - start.angle) * 40
+            + Math.abs(end.rotation - start.rotation) * 40;
+        if (!options.force && delta < 0.5) {
             applyControlsFromView(view);
+            if (options.syncFollowSmooth && playerFollowSmooth) {
+                syncPlayerFollowSmoothFromControls(cm);
+            }
             return;
         }
 
@@ -897,8 +901,16 @@
                 cm.angle = lerpNumber(start.angle, end.angle, e);
                 cm.tilt = lerpNumber(start.tilt, end.tilt, e);
                 cm.ortho = lerpNumber(start.ortho, end.ortho, e);
+                if (options.syncFollowSmooth && playerFollowSmooth) {
+                    playerFollowSmooth.x = cm.position.x;
+                    playerFollowSmooth.y = cm.position.y;
+                    playerFollowSmooth.z = cm.position.z;
+                }
+                if (options.refreshCameraEachFrame) {
+                    triggerControlsCameraUpdate(cm);
+                }
                 frame += 1;
-                if (frame % 3 === 0) {
+                if (frame % 2 === 0) {
                     updatePinPositions();
                 }
                 if (t < 1) {
@@ -906,6 +918,12 @@
                     return;
                 }
                 applyControlsFromView(view);
+                if (options.syncFollowSmooth && playerFollowSmooth) {
+                    syncPlayerFollowSmoothFromControls(cm);
+                }
+                if (options.refreshCameraEachFrame) {
+                    triggerControlsCameraUpdate(cm);
+                }
                 resolve();
             }
             requestAnimationFrame(step);
@@ -2026,14 +2044,23 @@
         if (!playerFollowActive || !playerFollowTarget) return;
         const view = buildFollowViewFromPosition(playerFollowTarget);
         const cm = getControlsManager();
-        if (!view || !cm) return;
+        if (!view || !cm) {
+            playerFollowApplying = false;
+            return;
+        }
         const token = ++playerFollowSnapBackToken;
         playerFollowApplying = true;
+        initPlayerFollowSmoothFromControls(cm);
         try {
-            await animateControlsToView(view, PLAYER_FOLLOW_SNAP_BACK_MS);
+            await animateControlsToView(view, PLAYER_FOLLOW_SNAP_BACK_MS, {
+                force: true,
+                syncFollowSmooth: true,
+                refreshCameraEachFrame: true
+            });
             if (token !== playerFollowSnapBackToken) return;
             syncPlayerFollowSmoothFromControls(cm);
             triggerControlsCameraUpdate(cm);
+            updatePinPositions();
         } finally {
             playerFollowApplying = false;
         }
@@ -2200,6 +2227,7 @@
             resetPlayerFollowPanState();
             if (!playerFollowActive) return;
             if (held < PLAYER_FOLLOW_DRAG_EXIT_MS) {
+                playerFollowApplying = true;
                 void snapBackPlayerFollowView();
             }
         };
