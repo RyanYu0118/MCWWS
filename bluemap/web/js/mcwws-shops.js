@@ -940,9 +940,15 @@
         const fromState = getMapViewState();
         const toState = view.mode || 'perspective';
         const flatToPerspective = fromState === 'flat' && toState === 'perspective';
-        let v = (options.keepControlsOrientation && flatToPerspective)
-            ? buildTopDownPerspectiveView(mergeViewWithCurrentControls(view))
-            : normalizeViewForBlueMap(view);
+        const perspectiveToFlat = fromState !== 'flat' && toState === 'flat';
+        let v;
+        if (options.keepControlsOrientation && flatToPerspective) {
+            v = buildTopDownPerspectiveView(mergeViewWithCurrentControls(view));
+        } else if (perspectiveToFlat) {
+            v = buildFlatViewFromCurrentControls(view);
+        } else {
+            v = normalizeViewForBlueMap(view);
+        }
         if (!v) return false;
         const modeMs = Number.isFinite(options.modeDuration)
             ? options.modeDuration
@@ -958,10 +964,6 @@
         }
 
         cachedCamera = null;
-        if (fromState !== 'flat' && toState === 'flat') {
-            v.rotation = 0;
-            v.tilt = 0;
-        }
 
         await ensureMapForView(v, bm);
 
@@ -1220,6 +1222,28 @@
             angle: 0,
             tilt: 0,
             preserveVerticalDown: true
+        });
+    }
+
+    /** 3D 切 2D：保留当前相机焦点（x/y/z）与缩放，仅切回正交俯视 */
+    function buildFlatViewFromCurrentControls(view) {
+        const cm = getControlsManager();
+        const merged = mergeViewWithCurrentControls({
+            map: getCurrentMapId(),
+            ...(view || parseHash() || {})
+        });
+        const dist = clampMapDistance(
+            Number.isFinite(cm?.distance) ? cm.distance : (merged.distance ?? lastFlatHeight)
+        );
+        return normalizeViewForBlueMap({
+            ...merged,
+            mode: 'flat',
+            distance: dist,
+            height: dist,
+            rotation: 0,
+            angle: 0,
+            tilt: 0,
+            ortho: FLAT_ORTHO_ON
         });
     }
 
@@ -1563,21 +1587,11 @@
             return;
         }
         rememberFlatZoom();
-        const dist = Number.isFinite(cm?.distance) ? cm.distance : lastFlatHeight;
-        if (view) {
-            void applyBlueMapView({
-                ...view,
-                mode: 'flat',
-                distance: dist,
-                height: dist,
-                rotation: 0,
-                angle: 0,
-                tilt: 0,
-                ortho: FLAT_ORTHO_ON
-            });
-        } else {
-            setBlueMapViewMode('flat');
-        }
+        void applyBlueMapView({
+            ...(view || {}),
+            map: getCurrentMapId(),
+            mode: 'flat'
+        });
     }
 
     function getAvailableMaps() {
