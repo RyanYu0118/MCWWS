@@ -52,6 +52,8 @@
     const PLAYER_FOLLOW_START_ANIM_MS = 380;
     const PLAYER_FOLLOW_SNAP_BACK_MS = 620;
     const PLAYER_FOLLOW_DRAG_EXIT_MS = 3000;
+    /** 按下后移动超过该像素才视为拖拽，避免左键按下瞬间停跟导致 Y 被地形逻辑拉偏 */
+    const PLAYER_FOLLOW_PAN_DRAG_PX = 6;
     const LOCATE_PROGRESS_RING_LEN = 100;
     /** Essentials 存档为脚底；BlueMap 在线数据同为脚底，显示高度 +1.8 */
     const PLAYER_EYE_OFFSET = 1.62;
@@ -78,8 +80,10 @@
     let playerFollowNoticeTimer = 0;
     let playerFollowSmooth = null;
     let playerFollowPanPointerId = null;
-    let playerFollowPanning = false;
+    let playerFollowPanDragging = false;
     let playerFollowPanHoldMs = 0;
+    let playerFollowPanStartX = 0;
+    let playerFollowPanStartY = 0;
     let playerFollowSnapBackToken = 0;
     const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
 
@@ -1849,7 +1853,7 @@
     function restorePlayerFollowSmoothedPosition(cm) {
         const controls = cm || getControlsManager();
         if (!playerFollowActive || !controls || !playerFollowSmooth) return;
-        if (playerFollowPanning) return;
+        if (playerFollowPanDragging) return;
         if ([playerFollowSmooth.x, playerFollowSmooth.y, playerFollowSmooth.z].every(Number.isFinite)) {
             controls.position.x = playerFollowSmooth.x;
             controls.position.y = playerFollowSmooth.y;
@@ -1902,7 +1906,7 @@
                 mapHeightUpdateSaved = mapHeight.update.bind(mapHeight);
                 mapHeight.update = function playerFollowMapHeightUpdate(dt, terrain) {
                     mapHeightUpdateSaved.call(this, dt, terrain);
-                    if (playerFollowActive && !playerFollowPanning) {
+                    if (playerFollowActive && !playerFollowPanDragging) {
                         restorePlayerFollowSmoothedPosition(this.manager);
                     }
                 };
@@ -1991,8 +1995,10 @@
 
     function resetPlayerFollowPanState() {
         playerFollowPanPointerId = null;
-        playerFollowPanning = false;
+        playerFollowPanDragging = false;
         playerFollowPanHoldMs = 0;
+        playerFollowPanStartX = 0;
+        playerFollowPanStartY = 0;
         updateLocateDragProgress(0);
     }
 
@@ -2001,7 +2007,7 @@
         const bar = btn?.querySelector('.mcwws-ctrl-locate-progress-bar');
         if (!btn || !bar) return;
         const clamped = Math.max(0, Math.min(1, Number(ratio) || 0));
-        btn.classList.toggle('is-drag-exit-pending', playerFollowPanning && clamped < 1);
+        btn.classList.toggle('is-drag-exit-pending', playerFollowPanPointerId != null && clamped < 1);
         bar.style.strokeDashoffset = String(LOCATE_PROGRESS_RING_LEN * (1 - clamped));
     }
 
@@ -2136,7 +2142,7 @@
     }
 
     function stepPlayerFollowSmooth(dtMs) {
-        if (!playerFollowActive || !playerFollowTarget || playerFollowApplying || playerFollowPanning) {
+        if (!playerFollowActive || !playerFollowTarget || playerFollowApplying || playerFollowPanDragging) {
             return;
         }
         const cm = getControlsManager();
@@ -2168,7 +2174,7 @@
     }
 
     function tickPlayerFollowPanHold(dtMs) {
-        if (!playerFollowPanning || playerFollowPanPointerId == null) return;
+        if (playerFollowPanPointerId == null) return;
         playerFollowPanHoldMs += Math.max(0, Number(dtMs) || 0);
         const ratio = playerFollowPanHoldMs / PLAYER_FOLLOW_DRAG_EXIT_MS;
         updateLocateDragProgress(ratio);
@@ -2186,9 +2192,10 @@
             : 16;
         playerFollowLastSmoothAt = now;
 
-        if (playerFollowPanning) {
+        if (playerFollowPanPointerId != null) {
             tickPlayerFollowPanHold(dt);
-        } else {
+        }
+        if (!playerFollowPanDragging) {
             stepPlayerFollowSmooth(dt);
         }
 
@@ -2214,9 +2221,25 @@
             if (isMapUiTarget(event.target)) return;
             if (!isBlueMapGestureTarget(event.target)) return;
             playerFollowPanPointerId = event.pointerId;
-            playerFollowPanning = true;
+            playerFollowPanDragging = false;
             playerFollowPanHoldMs = 0;
+            playerFollowPanStartX = event.clientX;
+            playerFollowPanStartY = event.clientY;
             updateLocateDragProgress(0);
+        };
+
+        const onFollowPanPointerMove = (event) => {
+            if (playerFollowPanPointerId == null || event.pointerId !== playerFollowPanPointerId) {
+                return;
+            }
+            if (!playerFollowActive || playerFollowPanDragging) return;
+            const moved = Math.hypot(
+                event.clientX - playerFollowPanStartX,
+                event.clientY - playerFollowPanStartY
+            );
+            if (moved < PLAYER_FOLLOW_PAN_DRAG_PX) return;
+            playerFollowPanDragging = true;
+            syncPlayerFollowSmoothFromControls(getControlsManager());
         };
 
         const onFollowPanPointerUp = (event) => {
@@ -2224,15 +2247,17 @@
                 return;
             }
             const held = playerFollowPanHoldMs;
+            const wasDragging = playerFollowPanDragging;
             resetPlayerFollowPanState();
             if (!playerFollowActive) return;
-            if (held < PLAYER_FOLLOW_DRAG_EXIT_MS) {
+            if (wasDragging && held < PLAYER_FOLLOW_DRAG_EXIT_MS) {
                 playerFollowApplying = true;
                 void snapBackPlayerFollowView();
             }
         };
 
         document.addEventListener('pointerdown', onFollowPanPointerDown, true);
+        document.addEventListener('pointermove', onFollowPanPointerMove, true);
         document.addEventListener('pointerup', onFollowPanPointerUp, true);
         document.addEventListener('pointercancel', onFollowPanPointerUp, true);
         document.addEventListener('keydown', (event) => {
