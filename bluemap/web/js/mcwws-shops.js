@@ -935,9 +935,15 @@
     }
 
     async function applyBlueMapView(view, options = {}) {
-        let v = normalizeViewForBlueMap(view);
-        if (!v) return false;
+        if (!view) return false;
         const bm = getBlueMapApp();
+        const fromState = getMapViewState();
+        const toState = view.mode || 'perspective';
+        const flatToPerspective = fromState === 'flat' && toState === 'perspective';
+        let v = (options.keepControlsOrientation && flatToPerspective)
+            ? buildTopDownPerspectiveView(mergeViewWithCurrentControls(view))
+            : normalizeViewForBlueMap(view);
+        if (!v) return false;
         const modeMs = Number.isFinite(options.modeDuration)
             ? options.modeDuration
             : VIEW_MODE_TRANSITION_MS;
@@ -952,11 +958,6 @@
         }
 
         cachedCamera = null;
-        const fromState = getMapViewState();
-        const toState = v.mode || 'perspective';
-        if (options.keepControlsOrientation && fromState === 'flat' && toState === 'perspective') {
-            v = normalizeViewForBlueMap(mergeViewWithCurrentControls(v));
-        }
         if (fromState !== 'flat' && toState === 'flat') {
             v.rotation = 0;
             v.tilt = 0;
@@ -969,11 +970,19 @@
         if (fromState !== toState && modeMs > 0) {
             if (toState === 'flat' && typeof bm.setFlatView === 'function') {
                 bm.setFlatView(modeMs, dist);
-            } else if (typeof bm.setPerspectiveView === 'function') {
+                await waitForBlueMapViewAnimationAsync(bm);
+                if (options.fast || paramMs <= 0) {
+                    applyControlsFromView(v);
+                } else {
+                    await animateControlsToView(v, paramMs);
+                }
+            } else if (toState === 'perspective' && typeof bm.setPerspectiveView === 'function') {
                 bm.setPerspectiveView(modeMs, 0);
+                await waitForBlueMapViewAnimationAsync(bm);
+                applyControlsFromView(v);
+            } else {
+                await animateControlsToView(v, paramMs);
             }
-            await waitForBlueMapViewAnimationAsync(bm);
-            await animateControlsToView(v, paramMs);
         } else if (options.fast || paramMs <= 0) {
             applyControlsFromView(v);
         } else {
@@ -1161,7 +1170,7 @@
         return Number(cm?.rotation) || 0;
     }
 
-    /** 2D→3D 时保留当前相机方位/位置，避免 hash 里 rotation=0 导致回正 */
+    /** 2D→3D 时保留当前相机方位/位置/俯仰，避免 hash 里 rotation=0、angle=0 导致歪斜再回弹 */
     function mergeViewWithCurrentControls(view) {
         const cm = getControlsManager();
         if (!cm || !view) {
@@ -1170,6 +1179,19 @@
         const merged = { ...view };
         if (Number.isFinite(cm.rotation)) {
             merged.rotation = cm.rotation;
+            merged.yaw = cm.rotation;
+        }
+        if (Number.isFinite(cm.angle)) {
+            merged.angle = cm.angle;
+            merged.pitch = cm.angle;
+        }
+        if (Number.isFinite(cm.tilt)) {
+            merged.tilt = cm.tilt;
+            merged.roll = cm.tilt;
+        }
+        if (Number.isFinite(cm.ortho)) {
+            merged.ortho = cm.ortho;
+            merged.fov = cm.ortho;
         }
         if (Number.isFinite(cm.position?.x)) {
             merged.x = cm.position.x;
@@ -1182,6 +1204,23 @@
             merged.height = dist;
         }
         return merged;
+    }
+
+    /** 2D 切 3D：与 2D 一致保持竖直向下（angle=0），不用斜视默认 -0.75 或轻微透视角 */
+    function buildTopDownPerspectiveView(view) {
+        const cm = getControlsManager();
+        const dist = clampMapDistance(view?.distance ?? view?.height ?? cm?.distance);
+        return normalizeViewForBlueMap({
+            ...view,
+            mode: 'perspective',
+            ortho: 0,
+            distance: dist,
+            height: dist,
+            rotation: Number.isFinite(view?.rotation) ? view.rotation : 0,
+            angle: 0,
+            tilt: 0,
+            preserveVerticalDown: true
+        });
     }
 
     /**
@@ -1272,8 +1311,13 @@
 
         v.distance = clampMapDistance(v.distance ?? v.height);
         v.rotation = Number.isFinite(Number(v.rotation)) ? Number(v.rotation) : 0;
-        v.tilt = Number.isFinite(Number(v.tilt)) ? Number(v.tilt) : 0;
+        v.tilt = 0;
         v.ortho = 0;
+        if (v.preserveVerticalDown) {
+            v.angle = 0;
+            delete v.preserveVerticalDown;
+            return v;
+        }
         const ang = Number(v.angle);
         if (!Number.isFinite(ang) || Math.abs(ang) < 0.05) {
             v.angle = -0.75;
