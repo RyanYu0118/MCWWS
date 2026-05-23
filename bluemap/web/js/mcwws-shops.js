@@ -97,12 +97,15 @@
     /** 离线定位时由前端注入的 BlueMap 玩家钉（在线后由 live 数据接管） */
     let playerFollowSyntheticMarker = false;
     let playerMarkerManagerPatched = false;
+    const AUTH_PLAYER_MARKER_CLASS = 'mcwws-auth-player-marker';
     const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
     const PLAYER_FOLLOW_3D_START_MSG = '已切换到 2D 俯视并开始定位玩家。';
     /** 自动切 2D / 飞到玩家期间，忽略指针移动，避免误报「拖拽」提示 */
     const PLAYER_FOLLOW_GESTURE_GUARD_MS = 1600;
     const PLAYER_FOLLOW_3D_EXIT_MSG = '已切换到 3D 模式，玩家定位跟踪已关闭。（定位跟踪仅支持 2D 俯视）';
     const PLAYER_FOLLOW_DRAG_HINT_MSG = '定位跟踪中：松手将回弹至玩家位置；持续拖拽约 2 秒可退出定位。';
+    const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT = '玩家当前离线，已定位到上一次离开服务器时的位置。';
+    const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_SAVED = '玩家当前离线，已定位到存档中的上次已知位置。';
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -2287,6 +2290,48 @@
         showPlayerFollowNotice(PLAYER_FOLLOW_BLOCK_MSG);
     }
 
+    function getPlayerOfflineLocateBannerText(pos) {
+        const source = String(pos?.source || playerFollowSource || '').toLowerCase();
+        if (source === 'logout') {
+            return PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT;
+        }
+        if (source === 'lastlocation' || source === 'saved') {
+            return PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_SAVED;
+        }
+        return PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT;
+    }
+
+    function ensurePlayerOfflineLocateBanner() {
+        let el = document.getElementById('mcwws-player-offline-locate-banner');
+        if (!el) {
+            el = document.createElement('div');
+            el.id = 'mcwws-player-offline-locate-banner';
+            el.className = 'mcwws-player-offline-locate-banner';
+            el.setAttribute('role', 'status');
+            el.setAttribute('aria-live', 'polite');
+            document.body.appendChild(el);
+        }
+        return el;
+    }
+
+    function updatePlayerOfflineLocateBanner() {
+        const el = ensurePlayerOfflineLocateBanner();
+        const show = !!(
+            playerFollowActive
+            && playerFollowTarget
+            && !playerFollowTarget.online
+        );
+        if (!show) {
+            el.classList.remove('is-visible');
+            el.textContent = '';
+            document.body.classList.remove('mcwws-offline-locate-active');
+            return;
+        }
+        el.textContent = getPlayerOfflineLocateBannerText(playerFollowTarget);
+        el.classList.add('is-visible');
+        document.body.classList.add('mcwws-offline-locate-active');
+    }
+
     function getBlueMapRootElement() {
         return getBlueMapApp()?.mapControls?.rootElement || null;
     }
@@ -2376,6 +2421,73 @@
         };
     }
 
+    function shouldStabilizeAuthPlayerMarker(pos) {
+        return !!(pos && !pos.online && (playerFollowActive || playerFollowSyntheticMarker));
+    }
+
+    function stabilizeAuthPlayerMarkerElement(marker) {
+        const el = marker?.element;
+        if (!el) return;
+        el.classList.add(AUTH_PLAYER_MARKER_CLASS);
+        el.setAttribute('distance-data', 'near');
+        const wrap = el.parentNode;
+        if (wrap?.style) {
+            wrap.style.opacity = '';
+        }
+        el.style.opacity = '';
+        const img = marker.playerHeadElement || el.querySelector('img');
+        if (img) img.style.opacity = '';
+        const nameEl = marker.playerNameElement || el.querySelector('.bm-player-name');
+        if (nameEl) nameEl.style.opacity = '';
+    }
+
+    function clearAuthPlayerMarkerStyling(marker) {
+        marker?.element?.classList?.remove(AUTH_PLAYER_MARKER_CLASS);
+    }
+
+    /** 避免 BlueMap 每秒 updateFromData 触发 1s 位移动画导致头像闪烁 */
+    function patchAuthPlayerMarkerBehavior(marker) {
+        if (!marker || marker._mcwwsAuthMarkerPatched) return;
+        marker._mcwwsAuthMarkerPatched = true;
+        const origUpdate = marker.updateFromData.bind(marker);
+        marker.updateFromData = function mcwwsAuthPlayerUpdateFromData(data) {
+            if (!marker.element?.classList?.contains(AUTH_PLAYER_MARKER_CLASS)) {
+                return origUpdate(data);
+            }
+            const pos = data.position || {};
+            const rot = data.rotation || {};
+            marker.position.set(pos.x || 0, (pos.y || 0) + 1.8, pos.z || 0);
+            marker.data.rotation.pitch = rot.pitch || 0;
+            marker.data.rotation.yaw = rot.yaw || 0;
+            const name = data.name || marker.data.playerUuid;
+            marker.data.name = name;
+            if (marker.playerNameElement && marker.playerNameElement.innerHTML !== name) {
+                marker.playerNameElement.innerHTML = name;
+            }
+            marker.data.foreign = !!data.foreign;
+            marker.visible = !data.foreign;
+            stabilizeAuthPlayerMarkerElement(marker);
+        };
+        const origBeforeRender = marker.onBeforeRender?.bind(marker);
+        marker.onBeforeRender = function mcwwsAuthPlayerBeforeRender(renderer, scene, camera) {
+            stabilizeAuthPlayerMarkerElement(marker);
+            if (origBeforeRender) {
+                origBeforeRender(renderer, scene, camera);
+            }
+            marker.element?.setAttribute('distance-data', 'near');
+        };
+    }
+
+    function removeAuthPlayerSyntheticMarker() {
+        const marker = findAuthPlayerMarker();
+        if (!marker) return;
+        clearAuthPlayerMarkerStyling(marker);
+        const set = getPlayerMarkerManager()?.getPlayerMarkerSet?.(false);
+        if (set?.remove) {
+            set.remove(marker);
+        }
+    }
+
     function applyAuthPlayerMarkerTransform(marker, pos) {
         if (!marker || !pos) return null;
         const feetY = playerPositionFeetY(pos);
@@ -2405,7 +2517,14 @@
                 marker.playerNameElement.textContent = name;
             }
         }
+        if (shouldStabilizeAuthPlayerMarker(pos)) {
+            patchAuthPlayerMarkerBehavior(marker);
+            stabilizeAuthPlayerMarkerElement(marker);
+        } else {
+            clearAuthPlayerMarkerStyling(marker);
+        }
         marker.visible = true;
+        marker.data.foreign = false;
         return marker;
     }
 
@@ -2421,33 +2540,27 @@
         if (marker) {
             if (pos.online) {
                 playerFollowSyntheticMarker = false;
+                clearAuthPlayerMarkerStyling(marker);
+            } else {
+                playerFollowSyntheticMarker = true;
             }
             return applyAuthPlayerMarkerTransform(marker, pos);
         }
         if (!pos.online) {
             playerFollowSyntheticMarker = true;
-            const pm = getPlayerMarkerManager();
-            if (pm?.update) {
-                void pm.update();
-            }
-            marker = findAuthPlayerMarker();
-            if (marker) {
+            const payload = buildBlueMapPlayerMarkerPayload(pos, mapAuthUser.playerId);
+            if (!payload) return null;
+            const set = getPlayerMarkerManager()?.getPlayerMarkerSet?.(true);
+            if (!set?.updatePlayerMarkerFromData) return null;
+            try {
+                marker = set.updatePlayerMarkerFromData(payload);
                 return applyAuthPlayerMarkerTransform(marker, pos);
+            } catch (err) {
+                console.warn('[mcwws-shops] ensureAuthPlayerMarkerVisible failed', err);
+                return null;
             }
         }
-        const payload = buildBlueMapPlayerMarkerPayload(pos, mapAuthUser.playerId);
-        if (!payload) return null;
-        const pm = getPlayerMarkerManager();
-        const set = pm?.getPlayerMarkerSet?.(true);
-        if (!set?.updatePlayerMarkerFromData) return null;
-        try {
-            marker = set.updatePlayerMarkerFromData(payload);
-            playerFollowSyntheticMarker = !pos.online;
-            return applyAuthPlayerMarkerTransform(marker, pos);
-        } catch (err) {
-            console.warn('[mcwws-shops] ensureAuthPlayerMarkerVisible failed', err);
-            return null;
-        }
+        return null;
     }
 
     function syncAuthPlayerMarkerPosition(pos) {
@@ -2514,6 +2627,7 @@
 
     function stopPlayerFollow() {
         if (!playerFollowActive) return;
+        const wasSynthetic = playerFollowSyntheticMarker;
         playerFollowActive = false;
         playerFollowSource = '';
         playerFollowTarget = null;
@@ -2524,8 +2638,12 @@
         playerFollowSnapBackToken += 1;
         playerFollowGestureGuardUntil = 0;
         playerFollowSyntheticMarker = false;
+        if (wasSynthetic) {
+            removeAuthPlayerSyntheticMarker();
+        }
         resetPlayerFollowPanState();
         setPlayerFollowMapHeightBypass(false);
+        updatePlayerOfflineLocateBanner();
         updateMapControlsState();
     }
 
@@ -2618,6 +2736,7 @@
                 ensurePlayerMarkerManagerOfflinePatch();
             }
             syncAuthPlayerMarkerPosition(pos);
+            updatePlayerOfflineLocateBanner();
             updateMapControlsState();
 
             if (mapChanged || jumped) {
@@ -2856,9 +2975,12 @@
         ensureAuthPlayerMarkerVisible(pos);
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
+        updatePlayerOfflineLocateBanner();
         updateMapControlsState();
         if (from3d) {
             showPlayerFollowNotice(PLAYER_FOLLOW_3D_START_MSG, 3600);
+        } else if (!pos.online) {
+            showPlayerFollowNotice(getPlayerOfflineLocateBannerText(pos), 4200);
         }
     }
 
@@ -3072,12 +3194,16 @@
             if (!mapAuthUser) {
                 locateBtn.title = '请先在顶栏登录后再定位玩家';
             } else if (playerFollowActive) {
-                const modeLabel = playerFollowSource === 'live' ? '实时跟踪' : '已保存位置';
+                const offline = playerFollowTarget && !playerFollowTarget.online;
+                const modeLabel = offline
+                    ? '离线 · 上次离开位置'
+                    : (playerFollowSource === 'live' ? '实时跟踪' : '已保存位置');
                 locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}，仅 2D）— 点击取消；可滚轮缩放；拖拽松手回弹，按住拖拽约 2 秒退出`;
             } else {
                 locateBtn.title = `定位到 ${mapAuthUser.playerId}（仅 2D 俯视；在线实时 / 离线用存档位置）`;
             }
         }
+        updatePlayerOfflineLocateBanner();
     }
 
     function ensureMapControls() {

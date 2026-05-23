@@ -870,3 +870,46 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     opacity: 1;
     transform: translate(-50%, 0);
 }
+
+/* 离线玩家定位：底部常驻说明（跟踪开启期间保持显示） */
+.mcwws-player-offline-locate-banner {
+    position: fixed;
+    left: 50%;
+    bottom: 24px;
+    z-index: 10001;
+    max-width: min(560px, calc(100vw - 32px));
+    padding: 11px 18px;
+    border-radius: 10px;
+    background: rgba(120, 53, 15, 0.94);
+    color: #fffbeb;
+    font-size: 14px;
+    line-height: 1.45;
+    text-align: center;
+    box-shadow: 0 8px 28px rgba(0, 0, 0, 0.28);
+    pointer-events: none;
+    opacity: 0;
+    transform: translate(-50%, 12px);
+    transition: opacity 0.22s ease, transform 0.22s ease;
+}
+
+.mcwws-player-offline-locate-banner.is-visible {
+    opacity: 1;
+    transform: translate(-50%, 0);
+}
+
+body.mcwws-offline-locate-active .mcwws-player-follow-notice {
+    bottom: 76px;
+}
+
+/* 离线定位注入的玩家钉：禁用 BlueMap 距离淡出与 opacity 过渡 */
+#map-container .bm-marker-player.mcwws-auth-player-marker,
+#map-container .bm-marker-player.mcwws-auth-player-marker img,
+#map-container .bm-marker-player.mcwws-auth-player-marker .bm-player-name {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+#map-container .bm-marker-player.mcwws-auth-player-marker[distance-data="med"] .bm-player-name,
+#map-container .bm-marker-player.mcwws-auth-player-marker[distance-data="far"] .bm-player-name {
+    opacity: 1 !important;
+}
