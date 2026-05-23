@@ -58,7 +58,7 @@
     const PLAYER_FOLLOW_TELEPORT_BLOCKS = 48;
     const PLAYER_FOLLOW_START_ANIM_MS = 380;
     const PLAYER_FOLLOW_SNAP_BACK_MS = 620;
-    const PLAYER_FOLLOW_DRAG_EXIT_MS = 3000;
+    const PLAYER_FOLLOW_DRAG_EXIT_MS = 2000;
     /** 按下后移动超过该像素才视为拖拽，避免左键按下瞬间停跟导致 Y 被地形逻辑拉偏 */
     const PLAYER_FOLLOW_PAN_DRAG_PX = 6;
     const LOCATE_PROGRESS_RING_LEN = 100;
@@ -92,7 +92,16 @@
     let playerFollowPanStartX = 0;
     let playerFollowPanStartY = 0;
     let playerFollowSnapBackToken = 0;
+    let playerFollowDragHintShown = false;
+    let playerFollowGestureGuardUntil = 0;
+    /** 离线定位时由前端注入的 BlueMap 玩家钉（在线后由 live 数据接管） */
+    let playerFollowSyntheticMarker = false;
     const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
+    const PLAYER_FOLLOW_3D_START_MSG = '已切换到 2D 俯视并开始定位玩家。';
+    /** 自动切 2D / 飞到玩家期间，忽略指针移动，避免误报「拖拽」提示 */
+    const PLAYER_FOLLOW_GESTURE_GUARD_MS = 1600;
+    const PLAYER_FOLLOW_3D_EXIT_MSG = '已切换到 3D 模式，玩家定位跟踪已关闭。（定位跟踪仅支持 2D 俯视）';
+    const PLAYER_FOLLOW_DRAG_HINT_MSG = '定位跟踪中：松手将回弹至玩家位置；持续拖拽约 2 秒可退出定位。';
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -1190,16 +1199,26 @@
         const restoreFlyOpts = restoreView
             ? { force: true, refreshCameraEachFrame: true, skipOrientationLerp: restoreToFlat }
             : undefined;
+        const followStart = !!options.followStart;
+        const followFlyMs = followStart
+            ? Math.max(paramMs, modeMs, VIEW_RESTORE_TRANSITION_MS)
+            : paramMs;
+        const followFlyOpts = followStart
+            ? { force: true, refreshCameraEachFrame: true, skipOrientationLerp: true }
+            : undefined;
 
         if (fromState !== toState && modeMs > 0) {
             if (toState === 'flat' && typeof bm.setFlatView === 'function') {
                 // minDistance 只用下限 5；传 B 的 distance 会触发 max(当前,B) 把镜头拉过头
-                callBlueMapSetFlatView(bm, modeMs, FLAT_VIEW_MIN_DISTANCE);
+                const flatModeMs = followStart ? Math.max(modeMs, VIEW_MODE_TRANSITION_MS) : modeMs;
+                callBlueMapSetFlatView(bm, flatModeMs, FLAT_VIEW_MIN_DISTANCE);
                 await waitForBlueMapViewAnimationAsync(bm);
                 if (options.fast || paramMs <= 0) {
                     applyControlsFromView(v);
                 } else {
-                    await animateControlsToView(v, restoreToFlat ? restoreFlyMs : paramMs, restoreFlyOpts);
+                    const flyMs = followStart ? followFlyMs : (restoreToFlat ? restoreFlyMs : paramMs);
+                    const flyOpts = followStart ? followFlyOpts : restoreFlyOpts;
+                    await animateControlsToView(v, flyMs, flyOpts);
                 }
             } else if (toState === 'perspective' && typeof bm.setPerspectiveView === 'function') {
                 bm.setPerspectiveView(modeMs, 0);
@@ -1220,7 +1239,11 @@
         } else if (options.fast || paramMs <= 0) {
             applyControlsFromView(v);
         } else {
-            await animateControlsToView(v, paramMs);
+            await animateControlsToView(
+                v,
+                followStart ? followFlyMs : paramMs,
+                followStart ? followFlyOpts : undefined
+            );
         }
 
         replaceLocationHash(formatViewHash(v));
@@ -1800,11 +1823,25 @@
         animateDistanceFallback(cm, direction);
     }
 
+    function isPlayerFollowAllowedMode() {
+        return getMapViewState() === 'flat';
+    }
+
+    function stopPlayerFollowFor3DMode() {
+        if (!playerFollowActive) return;
+        stopPlayerFollow();
+        showPlayerFollowNotice(PLAYER_FOLLOW_3D_EXIT_MSG);
+    }
+
     function toggleMapViewMode() {
         const state = getMapViewState();
         const view = parseHash();
         const cm = getControlsManager();
         if (state === 'flat') {
+            if (playerFollowActive) {
+                stopPlayerFollow();
+                showPlayerFollowNotice(PLAYER_FOLLOW_3D_EXIT_MSG);
+            }
             if (view) {
                 void applyBlueMapView(
                     { ...view, mode: 'perspective', ortho: 0 },
@@ -2007,7 +2044,8 @@
             y: y + PLAYER_HEAD_OFFSET,
             z,
             online: true,
-            source: source || 'live'
+            source: source || 'live',
+            uuid: raw?.uuid || null
         };
     }
 
@@ -2056,8 +2094,14 @@
         if (players?.length) {
             const entry = players.find((p) => normalizePlayerKey(p?.name) === target);
             if (entry?.position) {
-                const fromJson = coordsFromLivePayload(mapId, entry.position, 'live-json');
-                if (fromJson) return fromJson;
+                const fromJson = coordsFromLivePayload(mapId, {
+                    ...entry.position,
+                    uuid: entry.uuid
+                }, 'live-json');
+                if (fromJson) {
+                    fromJson.uuid = entry.uuid || fromJson.uuid;
+                    return fromJson;
+                }
             }
         }
 
@@ -2068,7 +2112,14 @@
                 if (!playerMarkerMatchesName(marker, playerId)) continue;
                 const raw = marker.data?.position;
                 if (raw && Number.isFinite(Number(raw.x))) {
-                    return coordsFromLivePayload(mapId, raw, 'live-data');
+                    const fromMarker = coordsFromLivePayload(mapId, {
+                        ...raw,
+                        uuid: marker.data?.playerUuid || marker.data?.uuid
+                    }, 'live-data');
+                    if (fromMarker) {
+                        fromMarker.uuid = marker.data?.playerUuid || marker.data?.uuid || fromMarker.uuid;
+                        return fromMarker;
+                    }
                 }
             }
         }
@@ -2096,7 +2147,8 @@
                 y: Number(data.y) + yOff,
                 z: Number(data.z),
                 online,
-                source: data.source || (online ? 'live' : 'saved')
+                source: data.source || (online ? 'live' : 'saved'),
+                uuid: data.uuid || null
             };
             cachedPlayerLocAt = Date.now();
             return cachedPlayerLoc;
@@ -2220,14 +2272,18 @@
         return el;
     }
 
-    function showPlayerFollowBlockNotice() {
+    function showPlayerFollowNotice(text, durationMs = 3200) {
         const el = ensurePlayerFollowNotice();
-        el.textContent = PLAYER_FOLLOW_BLOCK_MSG;
+        el.textContent = String(text || '');
         el.classList.add('is-visible');
         window.clearTimeout(playerFollowNoticeTimer);
         playerFollowNoticeTimer = window.setTimeout(() => {
             el.classList.remove('is-visible');
-        }, 3200);
+        }, Math.max(1200, Number(durationMs) || 3200));
+    }
+
+    function showPlayerFollowBlockNotice() {
+        showPlayerFollowNotice(PLAYER_FOLLOW_BLOCK_MSG);
     }
 
     function getBlueMapRootElement() {
@@ -2243,12 +2299,24 @@
         return target.tagName === 'CANVAS' || !!target.closest?.('canvas');
     }
 
+    function getPlayerMarkerManager() {
+        return getBlueMapApp()?.playerMarkerManager || null;
+    }
+
     function findAuthPlayerMarker() {
         if (!mapAuthUser?.playerId) return null;
+        const uuid = playerFollowTarget?.uuid || cachedPlayerLoc?.uuid;
+        const pm = getPlayerMarkerManager();
+        if (pm && uuid && typeof pm.getPlayerMarker === 'function') {
+            const byUuid = pm.getPlayerMarker(uuid);
+            if (byUuid) return byUuid;
+        }
         const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
         for (const set of markerSets) {
             if (set.id !== 'bm-players') continue;
-            for (const marker of set.markers || []) {
+            const list = set.markers;
+            const iterable = list instanceof Map ? list.values() : (list || []);
+            for (const marker of iterable) {
                 if (playerMarkerMatchesName(marker, mapAuthUser.playerId)) {
                     return marker;
                 }
@@ -2257,14 +2325,38 @@
         return null;
     }
 
-    /** 同步 BlueMap 玩家标记（脚底坐标），供 MapControls 每帧复制完整三维位置 */
-    function updateAuthPlayerMarkerPosition(pos) {
-        const marker = findAuthPlayerMarker();
-        if (!marker || !pos) return null;
-        const feetY = Number(pos.y) - PLAYER_HEAD_OFFSET;
+    function playerPositionFeetY(pos) {
+        if (!pos) return null;
+        const lift = pos.online ? PLAYER_HEAD_OFFSET : PLAYER_EYE_OFFSET;
+        const feetY = Number(pos.y) - lift;
+        return Number.isFinite(feetY) ? feetY : null;
+    }
+
+    function buildBlueMapPlayerMarkerPayload(pos, playerId) {
+        const uuid = String(pos?.uuid || cachedPlayerLoc?.uuid || '').trim();
+        if (!uuid) return null;
+        const feetY = playerPositionFeetY(pos);
         const x = Number(pos.x);
         const z = Number(pos.z);
-        if (![x, feetY, z].every(Number.isFinite)) return null;
+        if (feetY == null || ![x, z].every(Number.isFinite)) return null;
+        return {
+            uuid,
+            name: playerId || mapAuthUser?.playerId,
+            position: { x, y: feetY, z },
+            rotation: {
+                pitch: Number.isFinite(Number(pos.pitch)) ? Number(pos.pitch) : 0,
+                yaw: Number.isFinite(Number(pos.yaw)) ? Number(pos.yaw) : 0
+            },
+            foreign: false
+        };
+    }
+
+    function applyAuthPlayerMarkerTransform(marker, pos) {
+        if (!marker || !pos) return null;
+        const feetY = playerPositionFeetY(pos);
+        const x = Number(pos.x);
+        const z = Number(pos.z);
+        if (feetY == null || ![x, z].every(Number.isFinite)) return null;
         if (marker.position?.set) {
             marker.position.set(x, feetY, z);
         } else if (marker.position) {
@@ -2278,7 +2370,39 @@
             dataPos.y = feetY;
             dataPos.z = z;
         }
+        if (marker.data && mapAuthUser?.playerId) {
+            marker.data.name = mapAuthUser.playerId;
+        }
+        if (marker.playerNameElement && mapAuthUser?.playerId) {
+            marker.playerNameElement.innerHTML = mapAuthUser.playerId;
+        }
+        marker.visible = true;
         return marker;
+    }
+
+    /**
+     * 确保显示玩家头像与 ID：在线用 live 钉；离线则注入 BlueMap PlayerMarker。
+     */
+    function ensureAuthPlayerMarkerVisible(pos) {
+        if (!mapAuthUser?.playerId || !pos) return null;
+        let marker = findAuthPlayerMarker();
+        if (marker) {
+            playerFollowSyntheticMarker = false;
+            return applyAuthPlayerMarkerTransform(marker, pos);
+        }
+        const payload = buildBlueMapPlayerMarkerPayload(pos, mapAuthUser.playerId);
+        if (!payload) return null;
+        const pm = getPlayerMarkerManager();
+        const set = pm?.getPlayerMarkerSet?.(true);
+        if (!set?.updatePlayerMarkerFromData) return null;
+        try {
+            marker = set.updatePlayerMarkerFromData(payload);
+            playerFollowSyntheticMarker = !pos.online;
+            return applyAuthPlayerMarkerTransform(marker, pos);
+        } catch (err) {
+            console.warn('[mcwws-shops] ensureAuthPlayerMarkerVisible failed', err);
+            return null;
+        }
     }
 
     function resetPlayerFollowPanState() {
@@ -2287,7 +2411,19 @@
         playerFollowPanHoldMs = 0;
         playerFollowPanStartX = 0;
         playerFollowPanStartY = 0;
+        playerFollowDragHintShown = false;
         updateLocateDragProgress(0);
+    }
+
+    function armPlayerFollowGestureGuard(extraMs = 0) {
+        playerFollowGestureGuardUntil = performance.now()
+            + PLAYER_FOLLOW_GESTURE_GUARD_MS
+            + Math.max(0, Number(extraMs) || 0);
+        resetPlayerFollowPanState();
+    }
+
+    function isPlayerFollowGestureGuarded() {
+        return playerFollowApplying || performance.now() < playerFollowGestureGuardUntil;
     }
 
     function updateLocateDragProgress(ratio) {
@@ -2329,6 +2465,8 @@
         playerFollowTeleportToken += 1;
         playerFollowSmooth = null;
         playerFollowSnapBackToken += 1;
+        playerFollowGestureGuardUntil = 0;
+        playerFollowSyntheticMarker = false;
         resetPlayerFollowPanState();
         setPlayerFollowMapHeightBypass(false);
         updateMapControlsState();
@@ -2417,7 +2555,10 @@
 
             playerFollowTarget = pos;
             playerFollowSource = pos.source || playerFollowSource;
-            updateAuthPlayerMarkerPosition(pos);
+            if (pos.online) {
+                playerFollowSyntheticMarker = false;
+            }
+            ensureAuthPlayerMarkerVisible(pos);
             updateMapControlsState();
 
             if (mapChanged || jumped) {
@@ -2453,7 +2594,7 @@
         cm.position.z = playerFollowSmooth.z;
 
         triggerControlsCameraUpdate(cm);
-        updateAuthPlayerMarkerPosition(target);
+        ensureAuthPlayerMarkerVisible(target);
 
         if (tickFrame % 12 === 0) {
             syncPageAddressFromControls();
@@ -2473,6 +2614,10 @@
 
     function tickPlayerFollow() {
         if (!playerFollowActive) return;
+        if (!isPlayerFollowAllowedMode()) {
+            stopPlayerFollowFor3DMode();
+            return;
+        }
 
         const now = performance.now();
         const dt = playerFollowLastSmoothAt
@@ -2504,7 +2649,7 @@
         );
 
         const onFollowPanPointerDown = (event) => {
-            if (!playerFollowActive || playerFollowApplying) return;
+            if (!playerFollowActive || isPlayerFollowGestureGuarded()) return;
             if (event.button !== 0) return;
             if (isMapUiTarget(event.target)) return;
             if (!isBlueMapGestureTarget(event.target)) return;
@@ -2520,7 +2665,9 @@
             if (playerFollowPanPointerId == null || event.pointerId !== playerFollowPanPointerId) {
                 return;
             }
-            if (!playerFollowActive || playerFollowPanDragging) return;
+            if (!playerFollowActive || playerFollowPanDragging || isPlayerFollowGestureGuarded()) {
+                return;
+            }
             const moved = Math.hypot(
                 event.clientX - playerFollowPanStartX,
                 event.clientY - playerFollowPanStartY
@@ -2528,6 +2675,10 @@
             if (moved < PLAYER_FOLLOW_PAN_DRAG_PX) return;
             playerFollowPanDragging = true;
             syncPlayerFollowSmoothFromControls(getControlsManager());
+            if (!playerFollowDragHintShown) {
+                playerFollowDragHintShown = true;
+                showPlayerFollowNotice(PLAYER_FOLLOW_DRAG_HINT_MSG, 4500);
+            }
         };
 
         const onFollowPanPointerUp = (event) => {
@@ -2563,20 +2714,29 @@
     async function centerCameraOnPlayer(pos, options = {}) {
         let view = buildFollowViewFromPosition(pos);
         if (!view) return false;
-        if (options.preferFlat && view.mode !== 'flat') {
-            const dist = clampMapDistance(view.distance);
-            view = normalizeViewForBlueMap({
-                ...view,
-                mode: 'flat',
-                distance: dist,
-                height: dist,
-                rotation: 0,
-                angle: 0,
-                tilt: 0,
-                ortho: FLAT_ORTHO_ON
-            });
-        }
+        const dist = clampMapDistance(
+            view.distance ?? view.height ?? lastFlatHeight
+        );
+        view = normalizeViewForBlueMap({
+            ...view,
+            map: pos.map || view.map,
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+            mode: 'flat',
+            distance: dist,
+            height: dist,
+            rotation: 0,
+            angle: 0,
+            tilt: 0,
+            ortho: FLAT_ORTHO_ON
+        });
         const bm = getBlueMapApp();
+        const needsModeSwitch = getMapViewState() !== 'flat';
+        const flyMs = needsModeSwitch
+            ? Math.max(PLAYER_FOLLOW_START_ANIM_MS, VIEW_MODE_TRANSITION_MS, VIEW_RESTORE_TRANSITION_MS)
+            : Math.max(PLAYER_FOLLOW_START_ANIM_MS, VIEW_RESTORE_TRANSITION_MS);
+        armPlayerFollowGestureGuard(flyMs);
         playerFollowApplying = true;
         if (bm) {
             await ensureMapForView(view, bm);
@@ -2584,8 +2744,9 @@
         if (options.animate) {
             await applyBlueMapView(view, {
                 fast: false,
+                followStart: true,
                 paramDuration: PLAYER_FOLLOW_START_ANIM_MS,
-                modeDuration: 0
+                modeDuration: needsModeSwitch ? VIEW_MODE_TRANSITION_MS : 0
             });
         } else {
             applyControlsFromView(view);
@@ -2607,23 +2768,35 @@
             requestAuthFromParent();
             return;
         }
+        const from3d = !isPlayerFollowAllowedMode();
         const pos = await resolvePlayerPosition();
         if (!pos) {
             return;
         }
-        playerFollowActive = true;
         playerFollowTarget = pos;
         playerFollowMapId = pos.map || getCurrentMapId();
         playerFollowLastPollAt = performance.now();
         playerFollowLastSmoothAt = performance.now();
         setPlayerFollowMapHeightBypass(true);
         initPlayerFollowSmoothFromControls(getControlsManager());
-        await centerCameraOnPlayer(pos, { animate: true, preferFlat: true });
+        const centered = await centerCameraOnPlayer(pos, { animate: true });
+        if (!centered) {
+            playerFollowTarget = null;
+            playerFollowMapId = null;
+            playerFollowSmooth = null;
+            setPlayerFollowMapHeightBypass(false);
+            return;
+        }
+        playerFollowActive = true;
+        armPlayerFollowGestureGuard(480);
         syncPlayerFollowSmoothFromControls(getControlsManager());
-        updateAuthPlayerMarkerPosition(pos);
+        ensureAuthPlayerMarkerVisible(pos);
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
         updateMapControlsState();
+        if (from3d) {
+            showPlayerFollowNotice(PLAYER_FOLLOW_3D_START_MSG, 3600);
+        }
     }
 
     function easeOutQuad(t) {
@@ -2837,9 +3010,9 @@
                 locateBtn.title = '请先在顶栏登录后再定位玩家';
             } else if (playerFollowActive) {
                 const modeLabel = playerFollowSource === 'live' ? '实时跟踪' : '已保存位置';
-                locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}）— 点击取消；可滚轮缩放；拖拽松手会回弹，按住拖拽约 3 秒可退出定位`;
+                locateBtn.title = `正在定位 ${mapAuthUser.playerId}（${modeLabel}，仅 2D）— 点击取消；可滚轮缩放；拖拽松手回弹，按住拖拽约 2 秒退出`;
             } else {
-                locateBtn.title = `定位到 ${mapAuthUser.playerId}（在线实时 / 离线用服务器存档位置）`;
+                locateBtn.title = `定位到 ${mapAuthUser.playerId}（仅 2D 俯视；在线实时 / 离线用存档位置）`;
             }
         }
     }
