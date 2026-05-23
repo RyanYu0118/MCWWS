@@ -18,6 +18,9 @@
     let cachedCamera = null;
     let selectedMarkerId = null;
     let selectedMarkerTopDown = false;
+    /** 点击商店钉前的视角 B；再次点击回到 B */
+    let preShopPinView = null;
+    let shopPinAtViewA = false;
     let lastPanelMap = null;
     let lastFlatHeight = 128;
     let tickFrame = 0;
@@ -629,6 +632,154 @@
         void applyBlueMapView({ ...target, mode: 'perspective' }, { keepControlsOrientation: false });
     }
 
+    function isBrokenControlsWorldY(y) {
+        const n = Number(y);
+        return !Number.isFinite(n) || n < -500;
+    }
+
+    /** BlueMap 2D 每帧会改写 controls.position.y；hash / 跟随平滑态才是真实焦点坐标 */
+    function resolveCapturedWorldPosition(cm, hash) {
+        if (playerFollowActive && playerFollowSmooth) {
+            const { x, y, z } = playerFollowSmooth;
+            if ([x, y, z].every(Number.isFinite)) {
+                return { x, y, z };
+            }
+        }
+        const hx = Number(hash?.x);
+        const hy = Number(hash?.y);
+        const hz = Number(hash?.z);
+        const hashOk = [hx, hy, hz].every(Number.isFinite);
+        const cx = Number(cm?.position?.x);
+        const cy = Number(cm?.position?.y);
+        const cz = Number(cm?.position?.z);
+        const controlsOk = [cx, cy, cz].every(Number.isFinite);
+        const flat = getMapViewState() === 'flat';
+
+        if (hashOk && (flat || isBrokenControlsWorldY(cy) || !controlsOk)) {
+            return { x: hx, y: hy, z: hz };
+        }
+        if (controlsOk) {
+            return {
+                x: cx,
+                y: isBrokenControlsWorldY(cy) && hashOk ? hy : cy,
+                z: cz
+            };
+        }
+        if (hashOk) {
+            return { x: hx, y: hy, z: hz };
+        }
+        return null;
+    }
+
+    function captureViewFromControls() {
+        const bm = getBlueMapApp();
+        if (bm?.updatePageAddress) {
+            bm.updatePageAddress();
+        }
+        syncPageAddressFromControls();
+        const hash = parseHash();
+        const cm = getControlsManager();
+        const pos = resolveCapturedWorldPosition(cm, hash);
+        if (!pos) {
+            return hash ? { ...hash } : null;
+        }
+        const dist = clampMapDistance(
+            Number.isFinite(cm?.distance) ? cm.distance : (hash?.distance ?? lastFlatHeight)
+        );
+        return {
+            map: hash?.map || getCurrentMapId(),
+            x: pos.x,
+            y: pos.y,
+            z: pos.z,
+            distance: dist,
+            height: dist,
+            rotation: Number.isFinite(cm?.rotation) ? cm.rotation : (hash?.rotation ?? 0),
+            angle: Number.isFinite(cm?.angle) ? cm.angle : (hash?.angle ?? 0),
+            tilt: Number.isFinite(cm?.tilt) ? cm.tilt : (hash?.tilt ?? 0),
+            ortho: Number.isFinite(cm?.ortho) ? cm.ortho : (hash?.ortho ?? 0),
+            mode: getMapViewState()
+        };
+    }
+
+    /** 保存完整视角快照 B（含 2D/3D 模式与俯仰） */
+    function captureShopPinViewB() {
+        const raw = captureViewFromControls();
+        if (!raw) return null;
+        const dist = clampMapDistance(raw.distance ?? raw.height);
+        if (raw.mode === 'flat') {
+            return normalizeViewForBlueMap({
+                ...raw,
+                mode: 'flat',
+                distance: dist,
+                height: dist,
+                rotation: 0,
+                angle: 0,
+                tilt: 0,
+                ortho: FLAT_ORTHO_ON
+            });
+        }
+        const ang = Number(raw.angle);
+        if (Number.isFinite(ang) && ang >= 0 && ang < 0.05) {
+            return normalizeViewForBlueMap({
+                ...raw,
+                mode: 'perspective',
+                distance: dist,
+                height: dist,
+                ortho: 0,
+                angle: 0,
+                tilt: 0,
+                preserveVerticalDown: true
+            });
+        }
+        return normalizeViewForBlueMap({
+            ...raw,
+            mode: 'perspective',
+            distance: dist,
+            height: dist,
+            ortho: 0
+        });
+    }
+
+    /** 商店预设三维视角 A（管理页 viewUrl / 锚点） */
+    function getMarkerPresetViewA(marker) {
+        if (!marker) return null;
+        const savedHash = getMarkerSavedViewHash(marker);
+        if (savedHash) {
+            const parts = savedHash.split(':');
+            const view = parseHashParts(parts);
+            if (view) {
+                return normalizeViewForBlueMap({
+                    ...view,
+                    mode: 'perspective',
+                    ortho: 0
+                });
+            }
+        }
+        const target = parseViewUrl(marker.viewUrl);
+        if (target) {
+            return normalizeViewForBlueMap({
+                ...target,
+                mode: 'perspective',
+                ortho: 0
+            });
+        }
+        if (!marker.position || !marker.map) return null;
+        const dist = clampMapDistance(lastFlatHeight);
+        return normalizeViewForBlueMap({
+            map: marker.map,
+            x: Number(marker.position.x) + 0.5,
+            y: Number(marker.position.y),
+            z: Number(marker.position.z) + 0.5,
+            distance: dist,
+            height: dist,
+            mode: 'perspective',
+            ortho: 0,
+            rotation: 0,
+            angle: 0,
+            tilt: 0
+        });
+    }
+
     function openMarkerTopDown(marker) {
         if (!marker?.position || !marker.map) return;
         selectedMarkerId = marker.id;
@@ -659,8 +810,19 @@
         if (playerFollowActive) {
             stopPlayerFollow();
         }
-        if (selectedMarkerId === marker.id && selectedMarkerTopDown) {
-            openMarker(marker);
+        if (selectedMarkerId === marker.id && shopPinAtViewA && preShopPinView) {
+            shopPinAtViewA = false;
+            selectedMarkerTopDown = false;
+            void applyBlueMapView({ ...preShopPinView }, { useExactView: true });
+            return;
+        }
+        preShopPinView = captureShopPinViewB();
+        shopPinAtViewA = true;
+        selectedMarkerId = marker.id;
+        selectedMarkerTopDown = true;
+        const viewA = getMarkerPresetViewA(marker);
+        if (viewA) {
+            void applyBlueMapView(viewA, { keepControlsOrientation: false });
             return;
         }
         openMarkerTopDown(marker);
@@ -942,7 +1104,14 @@
         const flatToPerspective = fromState === 'flat' && toState === 'perspective';
         const perspectiveToFlat = fromState !== 'flat' && toState === 'flat';
         let v;
-        if (options.keepControlsOrientation && flatToPerspective) {
+        if (options.useExactView && view) {
+            const dist = clampMapDistance(view.distance ?? view.height);
+            v = {
+                ...view,
+                distance: dist,
+                height: dist
+            };
+        } else if (options.keepControlsOrientation && flatToPerspective) {
             v = buildTopDownPerspectiveView(mergeViewWithCurrentControls(view));
         } else if (perspectiveToFlat) {
             v = buildFlatViewFromCurrentControls(view);
