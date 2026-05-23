@@ -96,6 +96,7 @@
     let playerFollowGestureGuardUntil = 0;
     /** 离线定位时由前端注入的 BlueMap 玩家钉（在线后由 live 数据接管） */
     let playerFollowSyntheticMarker = false;
+    let playerMarkerManagerPatched = false;
     const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
     const PLAYER_FOLLOW_3D_START_MSG = '已切换到 2D 俯视并开始定位玩家。';
     /** 自动切 2D / 飞到玩家期间，忽略指针移动，避免误报「拖拽」提示 */
@@ -2303,6 +2304,30 @@
         return getBlueMapApp()?.playerMarkerManager || null;
     }
 
+    /** BlueMap 每秒拉 live/players.json；离线为空时会删掉玩家钉，需把离线玩家合并进列表 */
+    function mergeOfflinePlayerIntoLiveData(data) {
+        if (!playerFollowActive || !playerFollowSyntheticMarker || !playerFollowTarget) {
+            return data;
+        }
+        const entry = buildBlueMapPlayerMarkerPayload(playerFollowTarget, mapAuthUser?.playerId);
+        if (!entry) return data;
+        const players = Array.isArray(data?.players) ? [...data.players] : [];
+        if (!players.some((p) => String(p?.uuid || '') === entry.uuid)) {
+            players.push(entry);
+        }
+        return { ...(data && typeof data === 'object' ? data : {}), players };
+    }
+
+    function ensurePlayerMarkerManagerOfflinePatch() {
+        const pm = getPlayerMarkerManager();
+        if (!pm || playerMarkerManagerPatched) return;
+        playerMarkerManagerPatched = true;
+        const origUpdateFromData = pm.updateFromData.bind(pm);
+        pm.updateFromData = function mcwwsPlayerMarkerUpdateFromData(data) {
+            return origUpdateFromData(mergeOfflinePlayerIntoLiveData(data));
+        };
+    }
+
     function findAuthPlayerMarker() {
         if (!mapAuthUser?.playerId) return null;
         const uuid = playerFollowTarget?.uuid || cachedPlayerLoc?.uuid;
@@ -2357,11 +2382,12 @@
         const x = Number(pos.x);
         const z = Number(pos.z);
         if (feetY == null || ![x, z].every(Number.isFinite)) return null;
+        const displayY = feetY + PLAYER_HEAD_OFFSET;
         if (marker.position?.set) {
-            marker.position.set(x, feetY, z);
+            marker.position.set(x, displayY, z);
         } else if (marker.position) {
             marker.position.x = x;
-            marker.position.y = feetY;
+            marker.position.y = displayY;
             marker.position.z = z;
         }
         const dataPos = marker.data?.position;
@@ -2374,7 +2400,10 @@
             marker.data.name = mapAuthUser.playerId;
         }
         if (marker.playerNameElement && mapAuthUser?.playerId) {
-            marker.playerNameElement.innerHTML = mapAuthUser.playerId;
+            const name = mapAuthUser.playerId;
+            if (marker.playerNameElement.textContent !== name) {
+                marker.playerNameElement.textContent = name;
+            }
         }
         marker.visible = true;
         return marker;
@@ -2385,10 +2414,26 @@
      */
     function ensureAuthPlayerMarkerVisible(pos) {
         if (!mapAuthUser?.playerId || !pos) return null;
+        if (!pos.online) {
+            ensurePlayerMarkerManagerOfflinePatch();
+        }
         let marker = findAuthPlayerMarker();
         if (marker) {
-            playerFollowSyntheticMarker = false;
+            if (pos.online) {
+                playerFollowSyntheticMarker = false;
+            }
             return applyAuthPlayerMarkerTransform(marker, pos);
+        }
+        if (!pos.online) {
+            playerFollowSyntheticMarker = true;
+            const pm = getPlayerMarkerManager();
+            if (pm?.update) {
+                void pm.update();
+            }
+            marker = findAuthPlayerMarker();
+            if (marker) {
+                return applyAuthPlayerMarkerTransform(marker, pos);
+            }
         }
         const payload = buildBlueMapPlayerMarkerPayload(pos, mapAuthUser.playerId);
         if (!payload) return null;
@@ -2403,6 +2448,18 @@
             console.warn('[mcwws-shops] ensureAuthPlayerMarkerVisible failed', err);
             return null;
         }
+    }
+
+    function syncAuthPlayerMarkerPosition(pos) {
+        if (!mapAuthUser?.playerId || !pos) return null;
+        const marker = findAuthPlayerMarker();
+        if (!marker) {
+            if (playerFollowSyntheticMarker && !pos.online) {
+                return ensureAuthPlayerMarkerVisible(pos);
+            }
+            return null;
+        }
+        return applyAuthPlayerMarkerTransform(marker, pos);
     }
 
     function resetPlayerFollowPanState() {
@@ -2544,7 +2601,6 @@
     async function pollPlayerFollowTarget() {
         if (!playerFollowActive || !mapAuthUser || playerFollowPollBusy) return;
         playerFollowPollBusy = true;
-        invalidatePlayerFollowCaches();
         try {
             const pos = await resolvePlayerPosition();
             if (!pos || !playerFollowActive) return;
@@ -2557,8 +2613,11 @@
             playerFollowSource = pos.source || playerFollowSource;
             if (pos.online) {
                 playerFollowSyntheticMarker = false;
+            } else {
+                playerFollowSyntheticMarker = true;
+                ensurePlayerMarkerManagerOfflinePatch();
             }
-            ensureAuthPlayerMarkerVisible(pos);
+            syncAuthPlayerMarkerPosition(pos);
             updateMapControlsState();
 
             if (mapChanged || jumped) {
@@ -2594,7 +2653,7 @@
         cm.position.z = playerFollowSmooth.z;
 
         triggerControlsCameraUpdate(cm);
-        ensureAuthPlayerMarkerVisible(target);
+        syncAuthPlayerMarkerPosition(target);
 
         if (tickFrame % 12 === 0) {
             syncPageAddressFromControls();
@@ -2790,6 +2849,10 @@
         playerFollowActive = true;
         armPlayerFollowGestureGuard(480);
         syncPlayerFollowSmoothFromControls(getControlsManager());
+        if (!pos.online) {
+            playerFollowSyntheticMarker = true;
+            ensurePlayerMarkerManagerOfflinePatch();
+        }
         ensureAuthPlayerMarkerVisible(pos);
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
