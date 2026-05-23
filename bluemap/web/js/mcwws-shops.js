@@ -9,6 +9,10 @@
     const FLAT_ORTHO_ON = 1;
     const VIEW_MODE_TRANSITION_MS = 520;
     const VIEW_PARAMS_TRANSITION_MS = 420;
+    /** 商店钉回到 2D B：模式切换 + 飞回原点，略长于单次参数动画 */
+    const VIEW_RESTORE_TRANSITION_MS = 720;
+    /** BlueMap setFlatView(durationMs, minDistance)：第二参数是最小缩放，不是俯仰角 */
+    const FLAT_VIEW_MIN_DISTANCE = 5;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     let markers = [];
     let loading = true;
@@ -805,19 +809,18 @@
         });
     }
 
-    function handlePinClick(marker) {
-        if (!marker) return;
-        if (playerFollowActive) {
-            stopPlayerFollow();
-        }
-        if (selectedMarkerId === marker.id && shopPinAtViewA && preShopPinView) {
-            shopPinAtViewA = false;
-            selectedMarkerTopDown = false;
-            void applyBlueMapView({ ...preShopPinView }, { useExactView: true });
-            return;
-        }
-        preShopPinView = captureShopPinViewB();
-        shopPinAtViewA = true;
+    function restoreShopPinViewB() {
+        if (!preShopPinView) return;
+        shopPinAtViewA = false;
+        selectedMarkerTopDown = false;
+        selectedMarkerId = null;
+        void applyBlueMapView({ ...preShopPinView }, {
+            useExactView: true,
+            restoreTransition: true
+        });
+    }
+
+    function flyToShopPinViewA(marker) {
         selectedMarkerId = marker.id;
         selectedMarkerTopDown = true;
         const viewA = getMarkerPresetViewA(marker);
@@ -826,6 +829,24 @@
             return;
         }
         openMarkerTopDown(marker);
+    }
+
+    function handlePinClick(marker) {
+        if (!marker) return;
+        if (playerFollowActive) {
+            stopPlayerFollow();
+        }
+        if (shopPinAtViewA && preShopPinView) {
+            if (selectedMarkerId === marker.id) {
+                restoreShopPinViewB();
+                return;
+            }
+            flyToShopPinViewA(marker);
+            return;
+        }
+        preShopPinView = captureShopPinViewB();
+        shopPinAtViewA = true;
+        flyToShopPinViewA(marker);
     }
 
     function parseHash() {
@@ -965,6 +986,12 @@
     }
 
     /** BlueMap 在 setFlatView/setPerspectiveView 结束时会 mapControls.reset() 并挂回 controls */
+    function callBlueMapSetFlatView(bm, durationMs, minDistance = FLAT_VIEW_MIN_DISTANCE) {
+        if (typeof bm?.setFlatView === 'function') {
+            bm.setFlatView(durationMs, minDistance);
+        }
+    }
+
     function restoreMapControls() {
         const bm = getBlueMapApp();
         const cm = getControlsManager();
@@ -1045,6 +1072,13 @@
             + Math.abs(end.ortho - start.ortho) * 80
             + Math.abs(end.angle - start.angle) * 40
             + Math.abs(end.rotation - start.rotation) * 40;
+        const skipOrientationLerp = !!options.skipOrientationLerp;
+        if (skipOrientationLerp) {
+            cm.rotation = end.rotation;
+            cm.angle = end.angle;
+            cm.tilt = end.tilt;
+            cm.ortho = end.ortho;
+        }
         if (!options.force && delta < 0.5) {
             applyControlsFromView(view);
             if (options.syncFollowSmooth && playerFollowSmooth) {
@@ -1063,10 +1097,17 @@
                 cm.position.y = lerpNumber(start.y, end.y, e);
                 cm.position.z = lerpNumber(start.z, end.z, e);
                 cm.distance = lerpNumber(start.distance, end.distance, e);
-                cm.rotation = lerpNumber(start.rotation, end.rotation, e);
-                cm.angle = lerpNumber(start.angle, end.angle, e);
-                cm.tilt = lerpNumber(start.tilt, end.tilt, e);
-                cm.ortho = lerpNumber(start.ortho, end.ortho, e);
+                if (skipOrientationLerp) {
+                    cm.rotation = end.rotation;
+                    cm.angle = end.angle;
+                    cm.tilt = end.tilt;
+                    cm.ortho = end.ortho;
+                } else {
+                    cm.rotation = lerpNumber(start.rotation, end.rotation, e);
+                    cm.angle = lerpNumber(start.angle, end.angle, e);
+                    cm.tilt = lerpNumber(start.tilt, end.tilt, e);
+                    cm.ortho = lerpNumber(start.ortho, end.ortho, e);
+                }
                 if (options.syncFollowSmooth && playerFollowSmooth) {
                     playerFollowSmooth.x = cm.position.x;
                     playerFollowSmooth.y = cm.position.y;
@@ -1106,7 +1147,11 @@
         let v;
         if (options.useExactView && view) {
             const dist = clampMapDistance(view.distance ?? view.height);
-            v = {
+            v = normalizeViewForBlueMap({
+                ...view,
+                distance: dist,
+                height: dist
+            }) || {
                 ...view,
                 distance: dist,
                 height: dist
@@ -1136,24 +1181,42 @@
 
         await ensureMapForView(v, bm);
 
-        const dist = clampMapDistance(v.distance ?? v.height);
+        const restoreView = !!options.restoreTransition;
+        const restoreToFlat = restoreView && perspectiveToFlat;
+        const restorePerspective = restoreView && fromState === 'perspective' && toState === 'perspective';
+        const restoreFlyMs = restoreView
+            ? Math.max(modeMs, paramMs, VIEW_RESTORE_TRANSITION_MS)
+            : paramMs;
+        const restoreFlyOpts = restoreView
+            ? { force: true, refreshCameraEachFrame: true, skipOrientationLerp: restoreToFlat }
+            : undefined;
 
         if (fromState !== toState && modeMs > 0) {
             if (toState === 'flat' && typeof bm.setFlatView === 'function') {
-                bm.setFlatView(modeMs, dist);
+                // minDistance 只用下限 5；传 B 的 distance 会触发 max(当前,B) 把镜头拉过头
+                callBlueMapSetFlatView(bm, modeMs, FLAT_VIEW_MIN_DISTANCE);
                 await waitForBlueMapViewAnimationAsync(bm);
                 if (options.fast || paramMs <= 0) {
                     applyControlsFromView(v);
                 } else {
-                    await animateControlsToView(v, paramMs);
+                    await animateControlsToView(v, restoreToFlat ? restoreFlyMs : paramMs, restoreFlyOpts);
                 }
             } else if (toState === 'perspective' && typeof bm.setPerspectiveView === 'function') {
                 bm.setPerspectiveView(modeMs, 0);
                 await waitForBlueMapViewAnimationAsync(bm);
-                applyControlsFromView(v);
+                if (options.fast || paramMs <= 0) {
+                    applyControlsFromView(v);
+                } else {
+                    await animateControlsToView(v, paramMs, {
+                        force: true,
+                        refreshCameraEachFrame: true
+                    });
+                }
             } else {
                 await animateControlsToView(v, paramMs);
             }
+        } else if (restorePerspective) {
+            await animateControlsToView(v, restoreFlyMs, restoreFlyOpts);
         } else if (options.fast || paramMs <= 0) {
             applyControlsFromView(v);
         } else {
@@ -1250,10 +1313,8 @@
         const bluemap = getBlueMapApp();
         if (!bluemap) return;
         cachedCamera = null;
-        const cm = getControlsManager();
-        const dist = clampMapDistance(cm?.distance || lastFlatHeight);
         if (mode === 'flat' && typeof bluemap.setFlatView === 'function') {
-            bluemap.setFlatView(500, dist);
+            callBlueMapSetFlatView(bluemap, 500, FLAT_VIEW_MIN_DISTANCE);
         } else if (mode === 'perspective' && typeof bluemap.setPerspectiveView === 'function') {
             bluemap.setPerspectiveView(500, 0);
         }
@@ -1525,7 +1586,7 @@
         const mode = view?.mode || 'perspective';
         const dist = clampMapDistance(view?.distance ?? view?.height);
         if (mode === 'flat' && typeof bm?.setFlatView === 'function') {
-            bm.setFlatView(VIEW_MODE_TRANSITION_MS, dist);
+            callBlueMapSetFlatView(bm, VIEW_MODE_TRANSITION_MS, FLAT_VIEW_MIN_DISTANCE);
         } else if (typeof bm?.setPerspectiveView === 'function') {
             bm.setPerspectiveView(VIEW_MODE_TRANSITION_MS, 0);
         }
@@ -1607,7 +1668,7 @@
         }
 
         if (typeof bm.setFlatView === 'function') {
-            bm.setFlatView(500, savedDistance);
+            callBlueMapSetFlatView(bm, 500, savedDistance);
             waitForBlueMapViewAnimation(bm, () => {
                 if (orthoOn) {
                     cm.ortho = FLAT_ORTHO_ON;
