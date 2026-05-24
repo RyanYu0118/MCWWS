@@ -9,6 +9,10 @@
     const FLAT_ORTHO_ON = 1;
     const VIEW_MODE_TRANSITION_MS = 520;
     const VIEW_PARAMS_TRANSITION_MS = 420;
+    /** 右下角 2D/3D 按钮：短过渡，比全量 520/420 更快但仍可见动画 */
+    const VIEW_MODE_UI_TOGGLE_MS = 260;
+    const VIEW_MODE_UI_PARAM_MS = 220;
+    const VIEW_MODE_UI_ANIM_WAIT_FRAMES = 36;
     /** 商店钉回到 2D B：模式切换 + 飞回原点，略长于单次参数动画 */
     const VIEW_RESTORE_TRANSITION_MS = 720;
     /** BlueMap setFlatView(durationMs, minDistance)：第二参数是最小缩放，不是俯仰角 */
@@ -1096,6 +1100,10 @@
         if (!view?.map || !bm) return false;
         const target = String(view.map).trim();
         if (!target) return false;
+        const current = String(bm.mapViewer?.data?.map?.id || parseHash()?.map || '').trim();
+        if (current === target) {
+            return true;
+        }
         const ok = await blueMapSwitchMap(bm, target, false);
         if (ok) {
             await waitForBlueMapViewAnimationAsync(bm);
@@ -1318,12 +1326,16 @@
             ? { force: true, refreshCameraEachFrame: true, skipOrientationLerp: true }
             : undefined;
 
-        if (fromState !== toState && modeMs > 0) {
+        const animWaitFrames = Number.isFinite(options.animWaitFrames)
+            ? options.animWaitFrames
+            : ((options.fast || modeMs <= 0) ? 8 : 150);
+
+        if (fromState !== toState && modeMs >= 0) {
             if (toState === 'flat' && typeof bm.setFlatView === 'function') {
                 // minDistance 只用下限 5；传 B 的 distance 会触发 max(当前,B) 把镜头拉过头
                 const flatModeMs = followStart ? Math.max(modeMs, VIEW_MODE_TRANSITION_MS) : modeMs;
                 callBlueMapSetFlatView(bm, flatModeMs, FLAT_VIEW_MIN_DISTANCE);
-                await waitForBlueMapViewAnimationAsync(bm);
+                await waitForBlueMapViewAnimationAsync(bm, animWaitFrames);
                 if (options.fast || paramMs <= 0) {
                     applyControlsFromView(v);
                 } else {
@@ -1333,7 +1345,7 @@
                 }
             } else if (toState === 'perspective' && typeof bm.setPerspectiveView === 'function') {
                 bm.setPerspectiveView(modeMs, 0);
-                await waitForBlueMapViewAnimationAsync(bm);
+                await waitForBlueMapViewAnimationAsync(bm, animWaitFrames);
                 if (options.fast || paramMs <= 0) {
                     applyControlsFromView(v);
                 } else {
@@ -1948,7 +1960,11 @@
     function toggleMapViewMode() {
         const state = getMapViewState();
         const view = parseHash();
-        const cm = getControlsManager();
+        const uiToggle = {
+            modeDuration: VIEW_MODE_UI_TOGGLE_MS,
+            paramDuration: VIEW_MODE_UI_PARAM_MS,
+            animWaitFrames: VIEW_MODE_UI_ANIM_WAIT_FRAMES
+        };
         if (state === 'flat') {
             if (playerFollowActive) {
                 stopPlayerFollow();
@@ -1957,11 +1973,12 @@
             if (view) {
                 void applyBlueMapView(
                     { ...view, mode: 'perspective', ortho: 0 },
-                    { keepControlsOrientation: true }
+                    { keepControlsOrientation: true, ...uiToggle }
                 );
             } else {
                 const bm = getBlueMapApp();
                 bm?.setPerspectiveView?.(0, 0);
+                updateMapControlsState();
             }
             return;
         }
@@ -1970,7 +1987,7 @@
             ...(view || {}),
             map: getCurrentMapId(),
             mode: 'flat'
-        });
+        }, uiToggle);
     }
 
     function isShopHiddenMap(mapId) {
@@ -3521,7 +3538,6 @@
         root.querySelector('.mcwws-ctrl-compass')?.addEventListener('click', resetCompassNorth);
         root.querySelector('.mcwws-ctrl-mode')?.addEventListener('click', () => {
             toggleMapViewMode();
-            updateMapControlsState();
         });
         root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
         root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
