@@ -664,6 +664,11 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     gap: 8px;
 }
 
+.mcwws-ctrl-layer-wrap {
+    position: relative;
+    pointer-events: auto;
+}
+
 .mcwws-ctrl-layer,
 .mcwws-ctrl-fullscreen {
     border: 0;

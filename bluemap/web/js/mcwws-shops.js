@@ -120,7 +120,7 @@
         dimensionalhome: '维度家园'
     };
     const PLAYER_LOCATE_MAP_IDS = ['world', 'world_nether', 'world_the_end'];
-    /** 不在图层菜单中展示的地图（仍可在 BlueMap 配置中存在） */
+    /** 不在维度菜单中展示的地图（仍可在 BlueMap 配置中存在） */
     const SHOP_HIDDEN_MAP_IDS = ['dimensionalhome'];
 
     const MODULE_ROW_PRIMARY = [
@@ -1641,6 +1641,40 @@
         const shortScale = isFlat ? 1 : Math.max(0.2, Math.cos(elevation));
 
         return { bearingDeg, shortScale };
+    }
+
+    function migrateLayerMenuDom(root) {
+        if (!root) return;
+        const layerBtn = root.querySelector('.mcwws-ctrl-layer');
+        let menu = root.querySelector('.mcwws-layer-menu');
+        if (!layerBtn || !menu) return;
+
+        if (layerBtn.title === '图层选择') {
+            layerBtn.title = '维度选择';
+        }
+        const label = layerBtn.querySelector('.mcwws-ctrl-layer-text');
+        if (label && label.textContent.trim() === '图层') {
+            const icon = label.querySelector('.mcwws-ctrl-layer-icon');
+            label.textContent = '';
+            if (icon) label.appendChild(icon);
+            label.append(document.createTextNode('维度'));
+        }
+
+        let wrap = layerBtn.closest('.mcwws-ctrl-layer-wrap');
+        if (!wrap) {
+            wrap = document.createElement('div');
+            wrap.className = 'mcwws-ctrl-layer-wrap';
+            const bottomRow = layerBtn.closest('.mcwws-ctrl-bottom-row');
+            if (bottomRow) {
+                bottomRow.insertBefore(wrap, layerBtn);
+            } else {
+                root.insertBefore(wrap, root.firstChild);
+            }
+            wrap.appendChild(layerBtn);
+        }
+        if (menu.parentElement !== wrap) {
+            wrap.appendChild(menu);
+        }
     }
 
     function migrateCompassDom(root) {
@@ -3464,6 +3498,7 @@
         let root = document.getElementById(MAP_CONTROLS_ID);
         if (root?.dataset.ready === '1') {
             migrateCompassDom(root);
+            migrateLayerMenuDom(root);
             migrateLocateProgressRing(root);
             updateMapControlsState();
             return root;
@@ -3473,7 +3508,6 @@
         root.className = 'mcwws-map-controls';
         root.dataset.ready = '1';
         root.innerHTML = `
-            <div class="mcwws-layer-menu" hidden></div>
             <div class="mcwws-map-controls-stack">
                 <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
                     <span class="mcwws-compass-shell" aria-hidden="true">
@@ -3509,13 +3543,16 @@
                     </svg>
                 </button>
                 <div class="mcwws-ctrl-bottom-row">
-                    <button type="button" class="mcwws-ctrl-layer" title="图层选择">
-                        <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
-                        <span class="mcwws-ctrl-layer-text">
-                            <svg class="mcwws-ctrl-layer-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/></svg>
-                            图层
-                        </span>
-                    </button>
+                    <div class="mcwws-ctrl-layer-wrap">
+                        <button type="button" class="mcwws-ctrl-layer" title="维度选择">
+                            <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
+                            <span class="mcwws-ctrl-layer-text">
+                                <svg class="mcwws-ctrl-layer-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/></svg>
+                                维度
+                            </span>
+                        </button>
+                        <div class="mcwws-layer-menu" hidden></div>
+                    </div>
                     <button type="button" class="mcwws-ctrl-fullscreen" title="全屏，隐藏所有功能模块">
                         <svg class="mcwws-ctrl-fs-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z"/></svg>
                         <span class="mcwws-ctrl-fs-label">全屏</span>
@@ -3525,6 +3562,7 @@
         `;
         document.body.appendChild(root);
         bindMapControlEvents(root);
+        migrateLayerMenuDom(root);
         migrateLocateProgressRing(root);
         renderLayerMenu();
         updateMapControlsState();
