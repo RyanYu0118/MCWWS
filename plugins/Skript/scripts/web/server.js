@@ -815,6 +815,13 @@ function normalizeEssentialsWorldName(worldName) {
     if (!value) {
         return 'world';
     }
+    const lower = value.toLowerCase();
+    if (lower === 'overworld' || lower === 'minecraft:overworld') return 'world';
+    if (lower === 'the_nether' || lower === 'minecraft:the_nether' || lower === 'nether') return 'world_nether';
+    if (lower === 'the_end' || lower === 'minecraft:the_end' || lower === 'end') return 'world_the_end';
+    if (lower === 'dim-1' || lower === 'dim_1') return 'world_nether';
+    if (lower === 'dim1') return 'world_the_end';
+    if (lower.endsWith('_nether') && !lower.startsWith('world_')) return `world_${lower}`;
     return value;
 }
 

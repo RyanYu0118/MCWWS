@@ -115,6 +115,7 @@
         world_the_end: '末地',
         dimensionalhome: '维度家园'
     };
+    const PLAYER_LOCATE_MAP_IDS = ['world', 'world_nether', 'world_the_end', 'dimensionalhome'];
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -995,16 +996,74 @@
         });
     }
 
+    function getPlayerLocateMapIds() {
+        const ids = new Set(PLAYER_LOCATE_MAP_IDS.map(normalizePlayerMapId));
+        getAvailableMaps().forEach((entry) => {
+            if (entry?.id) ids.add(normalizePlayerMapId(entry.id));
+        });
+        const current = getCurrentMapId();
+        if (current) ids.add(normalizePlayerMapId(current));
+        return [...ids];
+    }
+
+    function waitForBlueMapMapLoaded(bm, mapId, maxMs = 12000) {
+        const app = bm || getBlueMapApp();
+        const target = normalizePlayerMapId(mapId);
+        if (!app?.mapViewer?.data) {
+            return Promise.resolve(false);
+        }
+        const start = performance.now();
+        return new Promise((resolve) => {
+            const step = () => {
+                const id = normalizePlayerMapId(app.mapViewer?.data?.map?.id);
+                const state = app.mapViewer?.data?.mapState;
+                if (id === target && state === 'loaded') {
+                    resolve(true);
+                    return;
+                }
+                if (performance.now() - start > maxMs) {
+                    resolve(id === target);
+                    return;
+                }
+                requestAnimationFrame(step);
+            };
+            step();
+        });
+    }
+
+    async function switchBlueMapToMap(mapId, bm, viewHint = null) {
+        const app = bm || getBlueMapApp();
+        if (!app || typeof app.setMap !== 'function') return false;
+        const target = normalizePlayerMapId(mapId);
+        if (!target) return false;
+        const current = normalizePlayerMapId(
+            app.mapViewer?.data?.map?.id || parseHash()?.map
+        );
+        const hashBase = viewHint || parseHash() || {
+            map: target,
+            x: 0,
+            y: 64,
+            z: 0,
+            distance: lastFlatHeight,
+            height: lastFlatHeight,
+            rotation: 0,
+            angle: 0,
+            tilt: 0,
+            ortho: FLAT_ORTHO_ON,
+            mode: getMapViewState()
+        };
+        replaceLocationHash(formatViewHash({ ...hashBase, map: target }));
+        if (!mapsMatchForFollow(current, target)) {
+            app.setMap(target);
+        }
+        await waitForBlueMapMapLoaded(app, target);
+        await waitForBlueMapViewAnimationAsync(app);
+        return normalizePlayerMapId(app.mapViewer?.data?.map?.id) === target;
+    }
+
     async function ensureMapForView(view, bm) {
-        if (!view?.map || !bm || typeof bm.setMap !== 'function') {
-            return;
-        }
-        const current = bm.mapViewer?.data?.map?.id || parseHash()?.map;
-        if (current === view.map) {
-            return;
-        }
-        bm.setMap(view.map);
-        await waitForBlueMapViewAnimationAsync(bm);
+        if (!view?.map) return false;
+        return switchBlueMapToMap(view.map, bm, view);
     }
 
     /** BlueMap 在 setFlatView/setPerspectiveView 结束时会 mapControls.reset() 并挂回 controls */
@@ -1495,8 +1554,8 @@
     function buildFlatViewFromCurrentControls(view) {
         const cm = getControlsManager();
         const merged = mergeViewWithCurrentControls({
-            map: getCurrentMapId(),
-            ...(view || parseHash() || {})
+            ...(view || parseHash() || {}),
+            map: normalizePlayerMapId(view?.map || parseHash()?.map || getCurrentMapId())
         });
         const dist = clampMapDistance(
             Number.isFinite(cm?.distance) ? cm.distance : (merged.distance ?? lastFlatHeight)
@@ -2051,6 +2110,8 @@
         if (lower === 'overworld' || lower === 'minecraft:overworld') return 'world';
         if (lower === 'the_nether' || lower === 'minecraft:the_nether' || lower === 'nether') return 'world_nether';
         if (lower === 'the_end' || lower === 'minecraft:the_end' || lower === 'end') return 'world_the_end';
+        if (lower === 'dim-1' || lower === 'dim_1') return 'world_nether';
+        if (lower === 'dim1') return 'world_the_end';
         return id;
     }
 
@@ -2091,11 +2152,12 @@
         cachedPlayerLocAt = 0;
     }
 
-    async function fetchLivePlayersJson(mapId) {
+    async function fetchLivePlayersJson(mapId, options = {}) {
         const id = mapId || getCurrentMapId();
         const cacheMs = getLivePlayersCacheMs();
         if (
-            cachedLivePlayers
+            !options.bypassCache
+            && cachedLivePlayers
             && cachedLivePlayersMap === id
             && Date.now() - cachedLivePlayersAt < cacheMs
         ) {
@@ -2118,51 +2180,42 @@
         }
     }
 
-    async function fetchLivePlayerFromBlueMap(playerId) {
+    async function fetchLivePlayerFromMap(playerId, mapId, options = {}) {
         const target = normalizePlayerKey(playerId);
         if (!target) return null;
+        const normalizedMap = normalizePlayerMapId(mapId);
+        const players = await fetchLivePlayersJson(normalizedMap, options);
+        if (!players?.length) return null;
+        const entry = players.find((p) => normalizePlayerKey(p?.name) === target);
+        if (!entry?.position) return null;
+        const fromJson = coordsFromLivePayload(normalizedMap, {
+            ...entry.position,
+            uuid: entry.uuid
+        }, 'live-json');
+        if (!fromJson) return null;
+        fromJson.uuid = entry.uuid || fromJson.uuid;
+        return fromJson;
+    }
 
-        const mapId = getCurrentMapId();
-        const players = await fetchLivePlayersJson(mapId);
-        if (players?.length) {
-            const entry = players.find((p) => normalizePlayerKey(p?.name) === target);
-            if (entry?.position) {
-                const fromJson = coordsFromLivePayload(mapId, {
-                    ...entry.position,
-                    uuid: entry.uuid
-                }, 'live-json');
-                if (fromJson) {
-                    fromJson.uuid = entry.uuid || fromJson.uuid;
-                    return fromJson;
-                }
-            }
-        }
-
-        const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets || [];
-        for (const set of markerSets) {
-            if (set.id !== 'bm-players') continue;
-            for (const marker of set.markers || []) {
-                if (!playerMarkerMatchesName(marker, playerId)) continue;
-                const raw = marker.data?.position;
-                if (raw && Number.isFinite(Number(raw.x))) {
-                    const fromMarker = coordsFromLivePayload(mapId, {
-                        ...raw,
-                        uuid: marker.data?.playerUuid || marker.data?.uuid
-                    }, 'live-data');
-                    if (fromMarker) {
-                        fromMarker.uuid = marker.data?.playerUuid || marker.data?.uuid || fromMarker.uuid;
-                        return fromMarker;
-                    }
-                }
-            }
+    /** 遍历所有 BlueMap 地图的 live/players.json，避免只看当前维度 */
+    async function fetchLivePlayerFromAllMaps(playerId, options = {}) {
+        const target = normalizePlayerKey(playerId);
+        if (!target) return null;
+        for (const mapId of getPlayerLocateMapIds()) {
+            const hit = await fetchLivePlayerFromMap(playerId, mapId, options);
+            if (hit) return hit;
         }
         return null;
     }
 
-    async function fetchPlayerLocationFromApi() {
+    async function fetchPlayerLocationFromApi(options = {}) {
         if (!mapAuthToken) return null;
         const cacheMs = playerFollowActive ? PLAYER_FOLLOW_LIVE_CACHE_MS : PLAYER_LOCATE_POLL_MS;
-        if (cachedPlayerLoc && Date.now() - cachedPlayerLocAt < cacheMs) {
+        if (
+            !options.bypassCache
+            && cachedPlayerLoc
+            && Date.now() - cachedPlayerLocAt < cacheMs
+        ) {
             return cachedPlayerLoc;
         }
         try {
@@ -2190,17 +2243,22 @@
         }
     }
 
-    async function resolvePlayerPosition() {
+    async function resolvePlayerPosition(options = {}) {
         if (!mapAuthUser?.playerId) return null;
-        const live = await fetchLivePlayerFromBlueMap(mapAuthUser.playerId);
+        const fetchOpts = { bypassCache: !!options.forceFresh };
+
+        if (mapAuthToken) {
+            const api = await fetchPlayerLocationFromApi(fetchOpts);
+            if (api && [api.x, api.y, api.z].every(Number.isFinite)) {
+                playerFollowSource = api.online ? (api.source || 'live') : (api.source || 'saved');
+                return { ...api, map: normalizePlayerMapId(api.map) };
+            }
+        }
+
+        const live = await fetchLivePlayerFromAllMaps(mapAuthUser.playerId, fetchOpts);
         if (live) {
             playerFollowSource = live.source || 'live';
             return live;
-        }
-        const api = await fetchPlayerLocationFromApi();
-        if (api && [api.x, api.y, api.z].every(Number.isFinite)) {
-            playerFollowSource = api.online ? (api.source || 'live') : (api.source || 'saved');
-            return api;
         }
         return null;
     }
@@ -2996,7 +3054,10 @@
         armPlayerFollowGestureGuard(flyMs);
         playerFollowApplying = true;
         if (bm) {
-            await ensureMapForView(view, bm);
+            const switched = await switchBlueMapToMap(view.map, bm, view);
+            if (!switched) {
+                console.warn('[mcwws-shops] switchBlueMapToMap failed', view.map);
+            }
         }
         if (options.animate) {
             await applyBlueMapView(view, {
@@ -3027,7 +3088,8 @@
             return;
         }
         const from3d = !isPlayerFollowAllowedMode();
-        const pos = await resolvePlayerPosition();
+        invalidatePlayerFollowCaches();
+        const pos = await resolvePlayerPosition({ forceFresh: true });
         if (!pos) {
             return;
         }
@@ -3062,7 +3124,6 @@
             ensurePlayerMarkerManagerOfflinePatch();
         }
         ensureAuthPlayerMarkerVisible(playerFollowTarget);
-        invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
         updatePlayerOfflineLocateBanner();
         updateMapControlsState();
