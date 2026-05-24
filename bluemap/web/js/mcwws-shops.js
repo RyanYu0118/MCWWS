@@ -97,6 +97,9 @@
     /** 离线定位时由前端注入的 BlueMap 玩家钉（在线后由 live 数据接管） */
     let playerFollowSyntheticMarker = false;
     let playerMarkerManagerPatched = false;
+    /** 开启定位前所在维度/视角，退出定位时还原 */
+    let playerFollowRestoreView = null;
+    let playerFollowRestoreToken = 0;
     const AUTH_PLAYER_MARKER_CLASS = 'mcwws-auth-player-marker';
     const PLAYER_FOLLOW_BLOCK_MSG = '玩家定位已开启时无法使用 WASD 移动地图，请先关闭定位。';
     const PLAYER_FOLLOW_3D_START_MSG = '已切换到 2D 俯视并开始定位玩家。';
@@ -106,6 +109,12 @@
     const PLAYER_FOLLOW_DRAG_HINT_MSG = '定位跟踪中：松手将回弹至玩家位置；持续拖拽约 2 秒可退出定位。';
     const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT = '玩家当前离线，已定位到上一次离开服务器时的位置。';
     const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_SAVED = '玩家当前离线，已定位到存档中的上次已知位置。';
+    const MAP_DIMENSION_LABELS = {
+        world: '主世界',
+        world_nether: '下界',
+        world_the_end: '末地',
+        dimensionalhome: '维度家园'
+    };
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -2029,6 +2038,26 @@
         return getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world';
     }
 
+    function formatMapDimensionLabel(mapId) {
+        const id = String(mapId || '').trim();
+        if (!id) return '未知维度';
+        return MAP_DIMENSION_LABELS[id] || id;
+    }
+
+    function normalizePlayerMapId(mapId) {
+        const id = String(mapId || '').trim();
+        if (!id) return getCurrentMapId();
+        const lower = id.toLowerCase();
+        if (lower === 'overworld' || lower === 'minecraft:overworld') return 'world';
+        if (lower === 'the_nether' || lower === 'minecraft:the_nether' || lower === 'nether') return 'world_nether';
+        if (lower === 'the_end' || lower === 'minecraft:the_end' || lower === 'end') return 'world_the_end';
+        return id;
+    }
+
+    function mapsMatchForFollow(a, b) {
+        return normalizePlayerMapId(a) === normalizePlayerMapId(b);
+    }
+
     function playerMarkerMatchesName(marker, playerId) {
         const target = normalizePlayerKey(playerId);
         const name = normalizePlayerKey(marker?.data?.name);
@@ -2043,7 +2072,7 @@
         const atOrigin = Math.abs(x) < 0.01 && Math.abs(z) < 0.01 && Math.abs(y) < 1;
         if (atOrigin) return null;
         return {
-            map: mapId || getCurrentMapId(),
+            map: normalizePlayerMapId(mapId || getCurrentMapId()),
             x,
             y: y + PLAYER_HEAD_OFFSET,
             z,
@@ -2146,7 +2175,7 @@
             const online = !!data.online;
             const yOff = online ? PLAYER_HEAD_OFFSET : PLAYER_EYE_OFFSET;
             cachedPlayerLoc = {
-                map: data.map || 'world',
+                map: normalizePlayerMapId(data.map || 'world'),
                 x: Number(data.x),
                 y: Number(data.y) + yOff,
                 z: Number(data.z),
@@ -2225,7 +2254,7 @@
         const mode = getMapViewState();
         const dist = clampMapDistance(cm?.distance ?? hash?.distance ?? lastFlatHeight);
         const view = {
-            map: pos.map || hash?.map || 'world',
+            map: normalizePlayerMapId(pos.map || hash?.map || 'world'),
             x: pos.x,
             y: pos.y,
             z: pos.z,
@@ -2628,6 +2657,8 @@
     function stopPlayerFollow() {
         if (!playerFollowActive) return;
         const wasSynthetic = playerFollowSyntheticMarker;
+        const restoreView = playerFollowRestoreView;
+        playerFollowRestoreView = null;
         playerFollowActive = false;
         playerFollowSource = '';
         playerFollowTarget = null;
@@ -2645,6 +2676,44 @@
         setPlayerFollowMapHeightBypass(false);
         updatePlayerOfflineLocateBanner();
         updateMapControlsState();
+        if (restoreView) {
+            void restorePlayerFollowPreviousMap(restoreView);
+        }
+    }
+
+    async function restorePlayerFollowPreviousMap(view) {
+        if (!view?.map) return;
+        const token = ++playerFollowRestoreToken;
+        const bm = getBlueMapApp();
+        if (!bm) return;
+        const dist = clampMapDistance(view.distance ?? view.height ?? lastFlatHeight);
+        const normalized = normalizeViewForBlueMap({
+            ...view,
+            map: normalizePlayerMapId(view.map),
+            distance: dist,
+            height: dist
+        });
+        if (!normalized) return;
+        try {
+            await ensureMapForView(normalized, bm);
+            if (token !== playerFollowRestoreToken) return;
+            await applyBlueMapView(normalized, {
+                useExactView: true,
+                fast: false,
+                paramDuration: VIEW_RESTORE_TRANSITION_MS,
+                modeDuration: normalized.mode !== getMapViewState() ? VIEW_MODE_TRANSITION_MS : 0
+            });
+            if (token !== playerFollowRestoreToken) return;
+            renderPanel();
+            syncPinElements();
+            updatePinPositions();
+            showPlayerFollowNotice(
+                `已恢复到${formatMapDimensionLabel(normalized.map)}地图。`,
+                3200
+            );
+        } catch (err) {
+            console.warn('[mcwws-shops] restorePlayerFollowPreviousMap failed', err);
+        }
     }
 
     async function snapBackPlayerFollowView() {
@@ -2686,11 +2755,12 @@
         const bm = getBlueMapApp();
         const view = buildFollowViewFromPosition(pos);
         if (!bm || !view?.map) return;
-        if (playerFollowMapId === view.map) return;
-        playerFollowMapId = view.map;
+        const targetMap = normalizePlayerMapId(view.map);
+        if (mapsMatchForFollow(playerFollowMapId, targetMap)) return;
+        playerFollowMapId = targetMap;
         playerFollowApplying = true;
         try {
-            await ensureMapForView(view, bm);
+            await ensureMapForView({ ...view, map: targetMap }, bm);
         } finally {
             playerFollowApplying = false;
         }
@@ -2725,9 +2795,12 @@
 
             const prev = playerFollowTarget;
             const jumped = prev && followPositionDistance(prev, pos) >= PLAYER_FOLLOW_TELEPORT_BLOCKS;
-            const mapChanged = prev && prev.map && pos.map && prev.map !== pos.map;
+            const mapChanged = prev && prev.map && pos.map && !mapsMatchForFollow(prev.map, pos.map);
 
-            playerFollowTarget = pos;
+            playerFollowTarget = {
+                ...pos,
+                map: normalizePlayerMapId(pos.map)
+            };
             playerFollowSource = pos.source || playerFollowSource;
             if (pos.online) {
                 playerFollowSyntheticMarker = false;
@@ -2740,7 +2813,13 @@
             updateMapControlsState();
 
             if (mapChanged || jumped) {
-                void animateFollowTeleport(pos);
+                if (mapChanged) {
+                    showPlayerFollowNotice(
+                        `玩家已进入${formatMapDimensionLabel(pos.map)}，已切换地图维度。`,
+                        3600
+                    );
+                }
+                void animateFollowTeleport(playerFollowTarget);
             }
         } finally {
             playerFollowPollBusy = false;
@@ -2897,7 +2976,7 @@
         );
         view = normalizeViewForBlueMap({
             ...view,
-            map: pos.map || view.map,
+            map: normalizePlayerMapId(pos.map || view.map),
             x: pos.x,
             y: pos.y,
             z: pos.z,
@@ -2941,6 +3020,7 @@
             stopPlayerFollow();
             return;
         }
+        playerFollowRestoreToken += 1;
         if (!mapAuthUser?.playerId) {
             requestLoginModalFromParent();
             requestAuthFromParent();
@@ -2951,16 +3031,25 @@
         if (!pos) {
             return;
         }
-        playerFollowTarget = pos;
-        playerFollowMapId = pos.map || getCurrentMapId();
+        const playerMapId = normalizePlayerMapId(pos.map || getCurrentMapId());
+        const currentMapId = getCurrentMapId();
+        const switchedDimension = !mapsMatchForFollow(playerMapId, currentMapId);
+        if (switchedDimension) {
+            playerFollowRestoreView = captureViewFromControls();
+        } else {
+            playerFollowRestoreView = null;
+        }
+        playerFollowTarget = { ...pos, map: playerMapId };
+        playerFollowMapId = playerMapId;
         playerFollowLastPollAt = performance.now();
         playerFollowLastSmoothAt = performance.now();
         setPlayerFollowMapHeightBypass(true);
         initPlayerFollowSmoothFromControls(getControlsManager());
-        const centered = await centerCameraOnPlayer(pos, { animate: true });
+        const centered = await centerCameraOnPlayer(playerFollowTarget, { animate: true });
         if (!centered) {
             playerFollowTarget = null;
             playerFollowMapId = null;
+            playerFollowRestoreView = null;
             playerFollowSmooth = null;
             setPlayerFollowMapHeightBypass(false);
             return;
@@ -2968,19 +3057,27 @@
         playerFollowActive = true;
         armPlayerFollowGestureGuard(480);
         syncPlayerFollowSmoothFromControls(getControlsManager());
-        if (!pos.online) {
+        if (!playerFollowTarget.online) {
             playerFollowSyntheticMarker = true;
             ensurePlayerMarkerManagerOfflinePatch();
         }
-        ensureAuthPlayerMarkerVisible(pos);
+        ensureAuthPlayerMarkerVisible(playerFollowTarget);
         invalidatePlayerFollowCaches();
         void pollPlayerFollowTarget();
         updatePlayerOfflineLocateBanner();
         updateMapControlsState();
         if (from3d) {
             showPlayerFollowNotice(PLAYER_FOLLOW_3D_START_MSG, 3600);
-        } else if (!pos.online) {
-            showPlayerFollowNotice(getPlayerOfflineLocateBannerText(pos), 4200);
+        }
+        if (switchedDimension) {
+            const dimMsg = `玩家在${formatMapDimensionLabel(playerMapId)}，已自动切换到该维度地图。`;
+            if (from3d) {
+                window.setTimeout(() => showPlayerFollowNotice(dimMsg, 4500), 3800);
+            } else {
+                showPlayerFollowNotice(dimMsg, 4500);
+            }
+        } else if (!playerFollowTarget.online) {
+            showPlayerFollowNotice(getPlayerOfflineLocateBannerText(playerFollowTarget), 4200);
         }
     }
 
