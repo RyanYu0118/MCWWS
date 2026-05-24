@@ -3385,8 +3385,14 @@
                 ? '复位朝北（2D 正交俯视，上北下南）'
                 : '复位朝北（3D 透视）';
         }
+        const modeBtn = root.querySelector('.mcwws-ctrl-mode');
         if (modeLabel) {
-            modeLabel.textContent = getMapViewState() === 'flat' ? '3D' : '2D';
+            modeLabel.textContent = isFlat ? '2D' : '3D';
+        }
+        if (modeBtn) {
+            modeBtn.title = isFlat
+                ? '当前为 2D 俯视，点击切换到 3D'
+                : '当前为 3D 透视，点击切换到 2D';
         }
         if (fsLabel) {
             fsLabel.textContent = cleanModeActive ? '退出' : '全屏';
@@ -3461,8 +3467,8 @@
                         </span>
                     </span>
                 </button>
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="切换 2D / 3D 视图">
-                    <span class="mcwws-ctrl-mode-label">2D</span>
+                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="当前为 3D 透视，点击切换到 2D">
+                    <span class="mcwws-ctrl-mode-label">3D</span>
                 </button>
                 <div class="mcwws-ctrl-zoom">
                     <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-in" title="放大">+</button>
