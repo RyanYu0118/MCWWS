@@ -115,7 +115,9 @@
         world_the_end: '末地',
         dimensionalhome: '维度家园'
     };
-    const PLAYER_LOCATE_MAP_IDS = ['world', 'world_nether', 'world_the_end', 'dimensionalhome'];
+    const PLAYER_LOCATE_MAP_IDS = ['world', 'world_nether', 'world_the_end'];
+    /** 不在图层菜单中展示的地图（仍可在 BlueMap 配置中存在） */
+    const SHOP_HIDDEN_MAP_IDS = ['dimensionalhome'];
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },
@@ -997,12 +999,18 @@
     }
 
     function getPlayerLocateMapIds() {
-        const ids = new Set(PLAYER_LOCATE_MAP_IDS.map(normalizePlayerMapId));
+        const ids = new Set(
+            PLAYER_LOCATE_MAP_IDS
+                .filter((id) => !isShopHiddenMap(id))
+                .map(normalizePlayerMapId)
+        );
         getAvailableMaps().forEach((entry) => {
             if (entry?.id) ids.add(normalizePlayerMapId(entry.id));
         });
         const current = getCurrentMapId();
-        if (current) ids.add(normalizePlayerMapId(current));
+        if (current && !isShopHiddenMap(current)) {
+            ids.add(normalizePlayerMapId(current));
+        }
         return [...ids];
     }
 
@@ -1965,11 +1973,17 @@
         });
     }
 
+    function isShopHiddenMap(mapId) {
+        const id = String(mapId || '').trim().toLowerCase();
+        return SHOP_HIDDEN_MAP_IDS.some((hidden) => hidden.toLowerCase() === id);
+    }
+
     function getAvailableMaps() {
         const bm = getBlueMapApp();
         const list = bm?.appState?.maps;
+        let maps;
         if (Array.isArray(list) && list.length) {
-            return list.map((entry) => {
+            maps = list.map((entry) => {
                 if (typeof entry === 'string') {
                     return { id: entry, name: entry };
                 }
@@ -1978,20 +1992,38 @@
                 if (!id) return null;
                 return { id: String(id), name: String(name || id) };
             }).filter(Boolean);
+        } else {
+            const ids = new Set();
+            markers.forEach((marker) => {
+                if (marker.map) ids.add(marker.map);
+            });
+            const current = parseHash()?.map;
+            if (current) ids.add(current);
+            if (!ids.size) ids.add('world');
+            maps = [...ids].map((id) => ({ id, name: id }));
         }
-        const ids = new Set();
-        markers.forEach((marker) => {
-            if (marker.map) ids.add(marker.map);
-        });
-        const current = parseHash()?.map;
-        if (current) ids.add(current);
-        if (!ids.size) ids.add('world');
-        return [...ids].map((id) => ({ id, name: id }));
+        return maps.filter((entry) => !isShopHiddenMap(entry.id));
+    }
+
+    function stopPlayerFollowForLayerSwitch(targetMapId) {
+        if (!playerFollowActive) return;
+        const followMap = playerFollowMapId || playerFollowTarget?.map;
+        const target = String(targetMapId || '').trim();
+        if (!followMap || !target || mapsMatchForFollow(followMap, target)) {
+            return;
+        }
+        playerFollowRestoreView = null;
+        stopPlayerFollow({ skipRestore: true });
+        showPlayerFollowNotice(
+            `已切换到${formatMapDimensionLabel(target)}，玩家定位已关闭。`,
+            4200
+        );
     }
 
     function switchMapLayer(mapId) {
-        if (!mapId) return;
+        if (!mapId || isShopHiddenMap(mapId)) return;
         const target = String(mapId).trim();
+        stopPlayerFollowForLayerSwitch(target);
         const view = parseHash();
         const nextView = view ? { ...view, map: target } : {
             map: target,
@@ -2751,10 +2783,10 @@
         }
     }
 
-    function stopPlayerFollow() {
+    function stopPlayerFollow(options = {}) {
         if (!playerFollowActive) return;
         const wasSynthetic = playerFollowSyntheticMarker;
-        const restoreView = playerFollowRestoreView;
+        const restoreView = options.skipRestore ? null : playerFollowRestoreView;
         playerFollowRestoreView = null;
         playerFollowActive = false;
         playerFollowSource = '';
