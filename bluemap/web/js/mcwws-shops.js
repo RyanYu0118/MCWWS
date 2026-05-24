@@ -1006,16 +1006,43 @@
         return [...ids];
     }
 
-    function waitForBlueMapMapLoaded(bm, mapId, maxMs = 12000) {
+    function resolveBlueMapId(mapId, normalizeDimension = false) {
+        const raw = String(mapId || '').trim();
+        if (!raw) return '';
+        return normalizeDimension ? normalizePlayerMapId(raw) : raw;
+    }
+
+    /** BlueMap 官方 API 为 switchMap(mapId, resetCamera)，无 setMap */
+    async function blueMapSwitchMap(bm, mapId, resetCamera = false) {
         const app = bm || getBlueMapApp();
-        const target = normalizePlayerMapId(mapId);
-        if (!app?.mapViewer?.data) {
+        const target = String(mapId || '').trim();
+        if (!app || !target || typeof app.switchMap !== 'function') {
+            return false;
+        }
+        const current = String(app.mapViewer?.data?.map?.id || '').trim();
+        if (current === target) {
+            return true;
+        }
+        try {
+            await app.switchMap(target, !!resetCamera);
+            await waitForBlueMapMapLoaded(app, target, 12000, false);
+            return String(app.mapViewer?.data?.map?.id || '').trim() === target;
+        } catch (err) {
+            console.warn('[mcwws-shops] blueMapSwitchMap failed', target, err);
+            return false;
+        }
+    }
+
+    function waitForBlueMapMapLoaded(bm, mapId, maxMs = 12000, normalizeDimension = false) {
+        const app = bm || getBlueMapApp();
+        const target = resolveBlueMapId(mapId, normalizeDimension);
+        if (!app?.mapViewer?.data || !target) {
             return Promise.resolve(false);
         }
         const start = performance.now();
         return new Promise((resolve) => {
             const step = () => {
-                const id = normalizePlayerMapId(app.mapViewer?.data?.map?.id);
+                const id = String(app.mapViewer?.data?.map?.id || '').trim();
                 const state = app.mapViewer?.data?.mapState;
                 if (id === target && state === 'loaded') {
                     resolve(true);
@@ -1031,14 +1058,11 @@
         });
     }
 
-    async function switchBlueMapToMap(mapId, bm, viewHint = null) {
+    /** 仅玩家定位：归一化维度 ID、先写 hash 再 switchMap */
+    async function switchBlueMapForPlayerFollow(mapId, bm, viewHint = null) {
         const app = bm || getBlueMapApp();
-        if (!app || typeof app.setMap !== 'function') return false;
-        const target = normalizePlayerMapId(mapId);
-        if (!target) return false;
-        const current = normalizePlayerMapId(
-            app.mapViewer?.data?.map?.id || parseHash()?.map
-        );
+        const target = resolveBlueMapId(mapId, true);
+        if (!app || !target) return false;
         const hashBase = viewHint || parseHash() || {
             map: target,
             x: 0,
@@ -1053,17 +1077,22 @@
             mode: getMapViewState()
         };
         replaceLocationHash(formatViewHash({ ...hashBase, map: target }));
-        if (!mapsMatchForFollow(current, target)) {
-            app.setMap(target);
-        }
-        await waitForBlueMapMapLoaded(app, target);
+        const ok = await blueMapSwitchMap(app, target, false);
+        if (!ok) return false;
         await waitForBlueMapViewAnimationAsync(app);
-        return normalizePlayerMapId(app.mapViewer?.data?.map?.id) === target;
+        return String(app.mapViewer?.data?.map?.id || '').trim() === target;
     }
 
+    /** 通用视角切换：使用 BlueMap switchMap，保留当前相机 */
     async function ensureMapForView(view, bm) {
-        if (!view?.map) return false;
-        return switchBlueMapToMap(view.map, bm, view);
+        if (!view?.map || !bm) return false;
+        const target = String(view.map).trim();
+        if (!target) return false;
+        const ok = await blueMapSwitchMap(bm, target, false);
+        if (ok) {
+            await waitForBlueMapViewAnimationAsync(bm);
+        }
+        return ok;
     }
 
     /** BlueMap 在 setFlatView/setPerspectiveView 结束时会 mapControls.reset() 并挂回 controls */
@@ -1260,7 +1289,9 @@
 
         cachedCamera = null;
 
-        await ensureMapForView(v, bm);
+        if (!options.skipMapEnsure) {
+            await ensureMapForView(v, bm);
+        }
 
         const restoreView = !!options.restoreTransition;
         const restoreToFlat = restoreView && perspectiveToFlat;
@@ -1553,9 +1584,10 @@
     /** 3D 切 2D：保留当前相机焦点（x/y/z）与缩放，仅切回正交俯视 */
     function buildFlatViewFromCurrentControls(view) {
         const cm = getControlsManager();
+        const base = view || parseHash() || {};
         const merged = mergeViewWithCurrentControls({
-            ...(view || parseHash() || {}),
-            map: normalizePlayerMapId(view?.map || parseHash()?.map || getCurrentMapId())
+            ...base,
+            map: base.map || getCurrentMapId()
         });
         const dist = clampMapDistance(
             Number.isFinite(cm?.distance) ? cm.distance : (merged.distance ?? lastFlatHeight)
@@ -1959,33 +1991,40 @@
 
     function switchMapLayer(mapId) {
         if (!mapId) return;
+        const target = String(mapId).trim();
         const view = parseHash();
-        if (view) {
-            view.map = mapId;
-            setViewHash(view);
-        } else {
-            setViewHash({
-                map: mapId,
-                x: 0,
-                y: 64,
-                z: 0,
-                distance: lastFlatHeight,
-                height: lastFlatHeight,
-                rotation: 0,
-                angle: 0,
-                tilt: 0,
-                ortho: FLAT_ORTHO_ON,
-                mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
-            });
-        }
-        const bm = getBlueMapApp();
-        if (bm && typeof bm.setMap === 'function') {
-            bm.setMap(mapId);
-        }
+        const nextView = view ? { ...view, map: target } : {
+            map: target,
+            x: 0,
+            y: 64,
+            z: 0,
+            distance: lastFlatHeight,
+            height: lastFlatHeight,
+            rotation: 0,
+            angle: 0,
+            tilt: 0,
+            ortho: FLAT_ORTHO_ON,
+            mode: getMapViewState() === 'flat' ? 'flat' : 'perspective'
+        };
+        replaceLocationHash(formatViewHash(nextView));
         layerMenuOpen = false;
         renderLayerMenu();
         renderPanel();
         syncPinElements();
+        void (async () => {
+            const bm = getBlueMapApp();
+            const ok = await blueMapSwitchMap(bm, target, false);
+            if (!ok && bm) {
+                await loadBlueMapPageAddress();
+            }
+            cachedCamera = null;
+            lastPanelMap = target;
+            updatePinPositions();
+            updateMapControlsState();
+            renderPanel();
+            syncPinElements();
+            if (layerMenuOpen) renderLayerMenu();
+        })();
     }
 
     function setCleanMode(active) {
@@ -2753,11 +2792,12 @@
         });
         if (!normalized) return;
         try {
-            await ensureMapForView(normalized, bm);
+            await switchBlueMapForPlayerFollow(normalized.map, bm, normalized);
             if (token !== playerFollowRestoreToken) return;
             await applyBlueMapView(normalized, {
                 useExactView: true,
                 fast: false,
+                skipMapEnsure: true,
                 paramDuration: VIEW_RESTORE_TRANSITION_MS,
                 modeDuration: normalized.mode !== getMapViewState() ? VIEW_MODE_TRANSITION_MS : 0
             });
@@ -2818,7 +2858,7 @@
         playerFollowMapId = targetMap;
         playerFollowApplying = true;
         try {
-            await ensureMapForView({ ...view, map: targetMap }, bm);
+            await switchBlueMapForPlayerFollow(targetMap, bm, { ...view, map: targetMap });
         } finally {
             playerFollowApplying = false;
         }
@@ -3054,15 +3094,16 @@
         armPlayerFollowGestureGuard(flyMs);
         playerFollowApplying = true;
         if (bm) {
-            const switched = await switchBlueMapToMap(view.map, bm, view);
+            const switched = await switchBlueMapForPlayerFollow(view.map, bm, view);
             if (!switched) {
-                console.warn('[mcwws-shops] switchBlueMapToMap failed', view.map);
+                console.warn('[mcwws-shops] switchBlueMapForPlayerFollow failed', view.map);
             }
         }
         if (options.animate) {
             await applyBlueMapView(view, {
                 fast: false,
                 followStart: true,
+                skipMapEnsure: true,
                 paramDuration: PLAYER_FOLLOW_START_ANIM_MS,
                 modeDuration: needsModeSwitch ? VIEW_MODE_TRANSITION_MS : 0
             });
