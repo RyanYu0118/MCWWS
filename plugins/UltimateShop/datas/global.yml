@@ -99,19 +99,30 @@ useTimes:
       totalSellUseTimes: 131
       lastBuyTime: '2026-05-10 02:06:40'
       lastSellTime: '2026-05-10 02:07:01'
+  farming:
+    A:
+      buyUseTimes: 8
+      totalBuyUseTimes: 8
+      sellUseTimes: 5
+      totalSellUseTimes: 5
+      lastBuyTime: '2026-05-15 16:41:04'
+      lastSellTime: '2026-05-15 23:02:07'
   minerals:
     A:
       buyUseTimes: 6
       totalBuyUseTimes: 6
+      sellUseTimes: 12
+      totalSellUseTimes: 12
       lastBuyTime: '2026-05-15 23:07:13'
+      lastSellTime: '2026-05-27 22:42:36'
     C:
       sellUseTimes: 49
       totalSellUseTimes: 49
       lastSellTime: '2026-05-10 23:47:12'
     B:
-      sellUseTimes: 43
-      totalSellUseTimes: 43
-      lastSellTime: '2026-05-15 23:02:06'
+      sellUseTimes: 61
+      totalSellUseTimes: 61
+      lastSellTime: '2026-05-27 22:42:42'
     G:
       buyUseTimes: 2
       totalBuyUseTimes: 2
@@ -141,16 +152,8 @@ useTimes:
       sellUseTimes: 64
       totalSellUseTimes: 64
       lastSellTime: '2026-05-10 02:06:05'
-  farming:
-    A:
-      buyUseTimes: 8
-      totalBuyUseTimes: 8
-      sellUseTimes: 5
-      totalSellUseTimes: 5
-      lastBuyTime: '2026-05-15 16:41:04'
-      lastSellTime: '2026-05-15 23:02:07'
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;C;;D;;F
-    refreshDoneTime: '2026-05-26 00:00:00'
+    nowValue: A;;B;;D;;E;;F
+    refreshDoneTime: '2026-05-28 00:00:00'
