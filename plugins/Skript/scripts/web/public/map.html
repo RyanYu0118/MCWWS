@@ -6,7 +6,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>地图系统 - 流浪世界服务</title>
     <meta name="description" content="流浪世界服务器 BlueMap 地图 — 商店标记与交易搜索">
-    <link rel="stylesheet" href="style.css?v=2.5.56">
+    <link rel="stylesheet" href="style.css?v=2.5.57">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -15,8 +15,19 @@
     <nav class="services-subnav glass">
         <a href="home.html" class="services-back-link">🏠 更多服务</a>
         <span class="services-subnav-title">流浪世界地图系统</span>
-        <span id="mapUserStatus" class="user-status services-map-user-status">未登录</span>
-        <button type="button" id="mapAuthButton" class="auth-button services-map-auth-button">登录 / 注册</button>
+        <div class="mcwws-auth-widget services-map-auth-widget" id="mapAuthWidget">
+            <button type="button" id="mapAuthButton" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
+                <img id="mapAuthAvatar" class="mcwws-auth-avatar-img" width="36" height="36" alt="" decoding="async" referrerpolicy="no-referrer">
+                <span class="mcwws-auth-avatar-fallback" aria-hidden="true">👤</span>
+            </button>
+            <div id="mapAuthPopover" class="mcwws-auth-popover" role="tooltip" aria-hidden="true">
+                <div class="mcwws-auth-popover-body">
+                    <p id="mapAuthPopoverTitle" class="mcwws-auth-popover-title">未登录</p>
+                    <p id="mapAuthPopoverMeta" class="mcwws-auth-popover-meta"></p>
+                    <button type="button" id="mapAuthPopoverAction" class="mcwws-auth-popover-action">登录 / 注册</button>
+                </div>
+            </div>
+        </div>
         <a href="#" class="services-open-map-btn" id="openMapBtn" target="_blank" rel="noopener">在新标签页打开地图</a>
     </nav>
 
@@ -65,7 +76,7 @@
     </div>
 
     <script src="services-config.js?v=1"></script>
-    <script src="mcwws-auth.js?v=1"></script>
+    <script src="mcwws-auth.js?v=2"></script>
     <script>
         (function () {
             const frame = document.getElementById('bluemapFrame');

@@ -57,26 +57,141 @@
         window.setTimeout(() => modal.classList.remove('closing'), 190);
     }
 
-    function updateStatusUi() {
+    const AVATAR_HEAD_API = 'https://mc-heads.net/avatar';
+
+    function playerAvatarUrl(playerId, size) {
+        const id = String(playerId || '').trim();
+        if (!id) return '';
+        return `${AVATAR_HEAD_API}/${encodeURIComponent(id)}/${size || 40}`;
+    }
+
+    function buildAuthWidgetHtml(buttonId, isMap) {
+        const avatarId = isMap ? 'mapAuthAvatar' : 'authAvatar';
+        const popoverId = isMap ? 'mapAuthPopover' : 'authPopover';
+        const titleId = isMap ? 'mapAuthPopoverTitle' : 'authPopoverTitle';
+        const metaId = isMap ? 'mapAuthPopoverMeta' : 'authPopoverMeta';
+        const actionId = isMap ? 'mapAuthPopoverAction' : 'authPopoverAction';
+        return `
+            <button type="button" id="${buttonId}" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
+                <img id="${avatarId}" class="mcwws-auth-avatar-img" width="36" height="36" alt="" decoding="async" referrerpolicy="no-referrer">
+                <span class="mcwws-auth-avatar-fallback" aria-hidden="true">👤</span>
+            </button>
+            <div id="${popoverId}" class="mcwws-auth-popover" role="tooltip" aria-hidden="true">
+                <div class="mcwws-auth-popover-body">
+                    <p id="${titleId}" class="mcwws-auth-popover-title">未登录</p>
+                    <p id="${metaId}" class="mcwws-auth-popover-meta"></p>
+                    <button type="button" id="${actionId}" class="mcwws-auth-popover-action">登录 / 注册</button>
+                </div>
+            </div>
+        `;
+    }
+
+    function getAuthWidgetRefs(widget) {
+        if (!widget) return null;
+        const isMap = widget.id === 'mapAuthWidget';
+        const btn = widget.querySelector('.mcwws-auth-avatar-btn');
+        return {
+            widget,
+            btn,
+            avatarImg: widget.querySelector('.mcwws-auth-avatar-img'),
+            popover: widget.querySelector('.mcwws-auth-popover'),
+            popoverTitle: document.getElementById(isMap ? 'mapAuthPopoverTitle' : 'authPopoverTitle'),
+            popoverMeta: document.getElementById(isMap ? 'mapAuthPopoverMeta' : 'authPopoverMeta'),
+            popoverAction: document.getElementById(isMap ? 'mapAuthPopoverAction' : 'authPopoverAction')
+        };
+    }
+
+    function ensureAuthWidgetDom() {
+        let widget = document.querySelector('.mcwws-auth-widget');
+        if (widget) return getAuthWidgetRefs(widget);
+
         const status = document.getElementById('userStatus')
             || document.getElementById('mapUserStatus');
         const btn = document.getElementById('authButton')
             || document.getElementById('mapAuthButton');
+        if (!btn) return null;
+
+        const isMap = btn.id === 'mapAuthButton';
+        widget = document.createElement('div');
+        widget.className = 'mcwws-auth-widget';
+        widget.id = isMap ? 'mapAuthWidget' : 'mcwwsAuthWidget';
+        widget.innerHTML = buildAuthWidgetHtml(btn.id, isMap);
+
         if (status) {
-            if (currentUser) {
-                status.textContent = `已登录：${currentUser.username}（${currentUser.playerId}）`;
-                status.classList.add('is-logged-in');
-            } else {
-                status.textContent = '未登录';
-                status.classList.remove('is-logged-in');
+            status.replaceWith(widget);
+            btn.remove();
+        } else {
+            btn.replaceWith(widget);
+        }
+        return getAuthWidgetRefs(widget);
+    }
+
+    function setAvatarImage(img, playerId) {
+        if (!img) return;
+        const url = playerAvatarUrl(playerId, 40);
+        img.onerror = () => {
+            img.hidden = true;
+        };
+        if (url) {
+            img.src = url;
+            img.alt = playerId ? `${playerId} 的头像` : '';
+            img.hidden = false;
+        } else {
+            img.removeAttribute('src');
+            img.alt = '';
+            img.hidden = true;
+        }
+    }
+
+    function closeAuthPopover(refs) {
+        if (!refs?.widget) return;
+        refs.widget.classList.remove('is-popover-open');
+        refs.btn?.setAttribute('aria-expanded', 'false');
+        refs.popover?.setAttribute('aria-hidden', 'true');
+    }
+
+    function updateStatusUi() {
+        const refs = ensureAuthWidgetDom();
+        if (!refs) return;
+
+        const { widget, btn, avatarImg, popoverTitle, popoverMeta, popoverAction } = refs;
+
+        if (currentUser) {
+            widget.classList.add('is-logged-in');
+            setAvatarImage(avatarImg, currentUser.playerId);
+            if (popoverTitle) {
+                popoverTitle.textContent = currentUser.username || currentUser.playerId || '已登录';
+            }
+            if (popoverMeta) {
+                popoverMeta.textContent = currentUser.playerId
+                    ? `游戏 ID：${currentUser.playerId}`
+                    : '';
+                popoverMeta.hidden = !currentUser.playerId;
+            }
+            if (popoverAction) {
+                popoverAction.textContent = '退出登录';
+                popoverAction.dataset.action = 'logout';
+            }
+            if (btn) {
+                btn.title = `${currentUser.username || currentUser.playerId} — 悬停查看账户`;
+            }
+        } else {
+            widget.classList.remove('is-logged-in');
+            setAvatarImage(avatarImg, '');
+            if (popoverTitle) popoverTitle.textContent = '未登录';
+            if (popoverMeta) {
+                popoverMeta.textContent = '登录后可定位玩家、使用商店等功能';
+                popoverMeta.hidden = false;
+            }
+            if (popoverAction) {
+                popoverAction.textContent = '登录 / 注册';
+                popoverAction.dataset.action = 'login';
+            }
+            if (btn) {
+                btn.title = '登录 / 注册（全站只需登录一次）';
             }
         }
-        if (btn) {
-            btn.textContent = currentUser ? '退出' : '登录 / 注册';
-            btn.title = currentUser
-                ? '退出登录（商店、地图、管理系统共用）'
-                : '登录 / 注册（全站只需登录一次）';
-        }
+        closeAuthPopover(refs);
     }
 
     function switchAuthMode(mode) {
@@ -208,19 +323,53 @@
         return currentUser;
     }
 
-    function bindDom() {
-        if (bound) return;
-        bound = true;
+    function bindAuthWidgetEvents(refs) {
+        if (!refs || refs.widget.dataset.bound === '1') return;
+        refs.widget.dataset.bound = '1';
 
-        const authBtn = document.getElementById('authButton')
-            || document.getElementById('mapAuthButton');
-        authBtn?.addEventListener('click', () => {
+        const { widget, btn, popoverAction } = refs;
+        const canHover = () => window.matchMedia('(hover: hover)').matches;
+
+        btn?.addEventListener('click', () => {
             if (currentUser) {
+                if (!canHover()) {
+                    widget.classList.toggle('is-popover-open');
+                    const open = widget.classList.contains('is-popover-open');
+                    btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                    refs.popover?.setAttribute('aria-hidden', open ? 'false' : 'true');
+                }
+                return;
+            }
+            openAuthModal();
+        });
+
+        popoverAction?.addEventListener('click', (e) => {
+            e.stopPropagation();
+            if (popoverAction.dataset.action === 'logout') {
                 void logout();
             } else {
                 openAuthModal();
             }
+            closeAuthPopover(refs);
         });
+
+        document.addEventListener('click', (e) => {
+            if (!widget.classList.contains('is-popover-open')) return;
+            if (widget.contains(e.target)) return;
+            closeAuthPopover(refs);
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') closeAuthPopover(refs);
+        });
+    }
+
+    function bindDom() {
+        if (bound) return;
+        bound = true;
+
+        const refs = ensureAuthWidgetDom();
+        bindAuthWidgetEvents(refs);
 
         document.getElementById('authModeLogin')?.addEventListener('click', () => switchAuthMode('login'));
         document.getElementById('authModeRegister')?.addEventListener('click', () => switchAuthMode('register'));
