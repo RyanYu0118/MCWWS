@@ -1,0 +1,153 @@
+/* MCWWS 统一登录：玩家头像 + 悬停账户卡片 */
+.mcwws-auth-widget {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.mcwws-auth-avatar-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, 0.14);
+    border-radius: 10px;
+    background: rgba(15, 23, 42, 0.65);
+    cursor: pointer;
+    overflow: hidden;
+    transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
+}
+
+.mcwws-auth-widget.is-logged-in .mcwws-auth-avatar-btn {
+    border-color: rgba(34, 211, 238, 0.45);
+    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12);
+}
+
+.mcwws-auth-avatar-btn:hover,
+.mcwws-auth-avatar-btn:focus-visible {
+    border-color: rgba(139, 92, 246, 0.75);
+    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28);
+    outline: none;
+}
+
+.mcwws-auth-avatar-img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    image-rendering: pixelated;
+    display: block;
+}
+
+.mcwws-auth-avatar-img[hidden] {
+    display: none;
+}
+
+.mcwws-auth-avatar-fallback {
+    font-size: 1.15rem;
+    line-height: 1;
+    opacity: 0.85;
+}
+
+.mcwws-auth-widget.is-logged-in .mcwws-auth-avatar-fallback {
+    display: none;
+}
+
+.mcwws-auth-widget:not(.is-logged-in) .mcwws-auth-avatar-img:not([src]) {
+    display: none;
+}
+
+.mcwws-auth-popover {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    z-index: 12000;
+    min-width: 200px;
+    max-width: 280px;
+    padding: 0;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-4px);
+    transition: opacity 0.16s, transform 0.16s, visibility 0.16s;
+    pointer-events: none;
+}
+
+.mcwws-auth-popover::before {
+    content: '';
+    position: absolute;
+    top: -6px;
+    right: 14px;
+    width: 10px;
+    height: 10px;
+    background: inherit;
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
+}
+
+.mcwws-auth-widget:hover .mcwws-auth-popover,
+.mcwws-auth-widget:focus-within .mcwws-auth-popover,
+.mcwws-auth-widget.is-popover-open .mcwws-auth-popover {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+    pointer-events: auto;
+}
+
+.mcwws-auth-popover-body {
+    position: relative;
+    z-index: 1;
+    padding: 12px 14px;
+}
+
+.mcwws-auth-popover-title {
+    margin: 0;
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: var(--text-primary, #f8fafc);
+    line-height: 1.35;
+}
+
+.mcwws-auth-popover-meta {
+    margin: 4px 0 0;
+    font-size: 0.8rem;
+    color: var(--text-secondary, #94a3b8);
+    line-height: 1.4;
+    word-break: break-all;
+}
+
+.mcwws-auth-popover-meta:empty,
+.mcwws-auth-popover-meta[hidden] {
+    display: none;
+}
+
+.mcwws-auth-popover-action {
+    display: block;
+    width: 100%;
+    margin-top: 10px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+    color: var(--text-primary, #f8fafc);
+    font-size: 0.85rem;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+
+.mcwws-auth-popover-action:hover {
+    background: rgba(139, 92, 246, 0.22);
+}
+
+.mcwws-auth-widget.is-logged-in .mcwws-auth-popover-action {
+    color: #fca5a5;
+    border-color: rgba(248, 113, 113, 0.25);
+}
+
+.mcwws-auth-widget.is-logged-in .mcwws-auth-popover-action:hover {
+    background: rgba(239, 68, 68, 0.15);
+}

@@ -10,9 +10,6 @@ let searchQuery = '';
 let letterFilter = ''; // A–Z 首字母筛选，空表示不限
 let sortReverse = false; // 逆序状态，默认关闭
 let hideUntradable = false; // 隐藏无 UltimateShop 上架（不可交易）的物品
-let currentUser = null;
-let authToken = localStorage.getItem('authToken') || null;
-let authMode = 'login';
 let currentPage = 1;
 let itemScope = 'all';
 const PAGE_SIZE = 60;
@@ -145,7 +142,9 @@ document.addEventListener('DOMContentLoaded', async () => {
     initItemsHeroCompass();
     loadItems();
     setupEventListeners();
-    loadUserProfile();
+    if (window.MCWWS_AUTH) {
+        void window.MCWWS_AUTH.init();
+    }
     ensureClockTimeTicker();
     ensurePointerBearingTicker();
 });
@@ -1440,171 +1439,6 @@ function renderPagination() {
             pageInput.placeholder = `1-${pageCount}`;
         }
     });
-}
-
-function updateAuthUi() {
-    const userStatus = document.getElementById('userStatus');
-    const authButton = document.getElementById('authButton');
-    if (!userStatus || !authButton) return;
-
-    if (currentUser) {
-        userStatus.textContent = `已登录：${currentUser.username}（${currentUser.playerId}）`;
-        authButton.textContent = '退出登录';
-        authButton.onclick = handleLogout;
-    } else {
-        userStatus.textContent = '未登录';
-        authButton.textContent = '登录 / 注册';
-        authButton.onclick = openAuthModal;
-    }
-}
-
-function openAuthModal() {
-    authMode = 'login';
-    switchAuthMode('login');
-    const modal = document.getElementById('authModal');
-    showDialog(modal);
-}
-
-function closeAuthModal() {
-    const modal = document.getElementById('authModal');
-    hideDialog(modal);
-    const message = document.getElementById('authMessage');
-    if (message) {
-        message.textContent = '';
-        message.style.color = '';
-    }
-    const form = document.getElementById('authForm');
-    if (form) {
-        form.reset();
-    }
-}
-
-function switchAuthMode(mode) {
-    authMode = mode;
-    const loginButton = document.getElementById('authModeLogin');
-    const registerButton = document.getElementById('authModeRegister');
-    const registerFields = document.querySelectorAll('.auth-register-only');
-    const title = document.getElementById('authModalTitle');
-    const authMessage = document.getElementById('authMessage');
-
-    if (loginButton && registerButton) {
-        loginButton.classList.toggle('active', mode === 'login');
-        registerButton.classList.toggle('active', mode === 'register');
-    }
-    if (title) {
-        title.textContent = mode === 'login' ? '登录' : '注册';
-    }
-    registerFields.forEach(field => {
-        field.style.display = mode === 'register' ? 'flex' : 'none';
-    });
-    if (authMessage) {
-        authMessage.textContent = '';
-        authMessage.style.color = '';
-    }
-}
-
-async function handleAuthSubmit(event) {
-    event.preventDefault();
-
-    const username = document.getElementById('authUsername')?.value.trim();
-    const password = document.getElementById('authPassword')?.value;
-    const playerId = document.getElementById('authPlayerId')?.value.trim();
-    const authMessage = document.getElementById('authMessage');
-
-    if (!username || !password) {
-        if (authMessage) authMessage.textContent = '请填写用户名和密码。';
-        return;
-    }
-
-    if (authMode === 'register' && !playerId) {
-        if (authMessage) authMessage.textContent = '注册时请填写游戏玩家ID。';
-        return;
-    }
-
-    const endpoint = authMode === 'register' ? '/api/register' : '/api/login';
-    const payload = authMode === 'register' ? { username, password, playerId } : { username, password };
-
-    try {
-        const response = await fetch(endpoint, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(payload)
-        });
-        const result = await response.json();
-
-        if (!response.ok) {
-            if (authMessage) {
-                authMessage.textContent = result.error || '操作失败，请重试。';
-                authMessage.style.color = 'var(--danger)';
-            }
-            return;
-        }
-
-        authToken = result.authToken;
-        localStorage.setItem('authToken', authToken);
-        currentUser = { username: result.username, playerId: result.playerId };
-        updateAuthUi();
-        closeAuthModal();
-        showToast(result.message || '登录成功', true);
-    } catch (error) {
-        console.error('Auth request failed:', error);
-        if (authMessage) {
-            authMessage.textContent = `网络错误：${error.message || '请检查服务器是否已启动。'}`;
-            authMessage.style.color = 'var(--danger)';
-        }
-    }
-}
-
-async function handleLogout() {
-    if (!authToken) {
-        currentUser = null;
-        updateAuthUi();
-        return;
-    }
-
-    try {
-        await fetch('/api/logout', {
-            method: 'POST',
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        });
-    } catch (error) {
-        console.warn('注销时发生错误', error);
-    }
-
-    authToken = null;
-    currentUser = null;
-    localStorage.removeItem('authToken');
-    updateAuthUi();
-    showToast('已退出登录。', true);
-}
-
-async function loadUserProfile() {
-    if (!authToken) {
-        currentUser = null;
-        updateAuthUi();
-        return;
-    }
-
-    try {
-        const response = await fetch('/api/profile', {
-            headers: {
-                Authorization: `Bearer ${authToken}`
-            }
-        });
-        if (!response.ok) {
-            throw new Error('未登录');
-        }
-        currentUser = await response.json();
-    } catch (error) {
-        authToken = null;
-        currentUser = null;
-        localStorage.removeItem('authToken');
-    }
-    updateAuthUi();
 }
 
 function initScrollingText(root) {

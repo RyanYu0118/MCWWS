@@ -375,10 +375,14 @@
         document.getElementById('authModeRegister')?.addEventListener('click', () => switchAuthMode('register'));
         document.getElementById('authForm')?.addEventListener('submit', handleAuthSubmit);
         document.querySelector('#authModal .modal-close')?.addEventListener('click', closeAuthModal);
+        document.querySelector('#authModal .btn-ghost')?.addEventListener('click', closeAuthModal);
         document.getElementById('authModal')?.addEventListener('click', (e) => {
             if (e.target.id === 'authModal') closeAuthModal();
         });
     }
+
+    window.openAuthModal = openAuthModal;
+    window.closeAuthModal = closeAuthModal;
 
     window.MCWWS_AUTH = {
         TOKEN_KEY,

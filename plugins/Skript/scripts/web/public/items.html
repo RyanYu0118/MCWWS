@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>物品目录 - 流浪世界服务器商店系统</title>
     <meta name="description" content="浏览所有商店物品及当前价格">
-    <link rel="stylesheet" href="style.css?v=2.5.54">
+    <link rel="stylesheet" href="style.css?v=2.5.57">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -39,8 +39,19 @@
             <span class="item-count" id="itemCount">-- 个物品</span>
             <button id="refreshButton" class="refresh-btn" type="button" title="刷新物品"><span class="refresh-icon">⟳</span></button>
             <div class="user-actions">
-                <span id="userStatus" class="user-status">未登录</span>
-                <button id="authButton" class="auth-button" type="button">登录 / 注册</button>
+                <div class="mcwws-auth-widget" id="mcwwsAuthWidget">
+                    <button type="button" id="authButton" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
+                        <img id="authAvatar" class="mcwws-auth-avatar-img" width="36" height="36" alt="" decoding="async" referrerpolicy="no-referrer">
+                        <span class="mcwws-auth-avatar-fallback" aria-hidden="true">👤</span>
+                    </button>
+                    <div id="authPopover" class="mcwws-auth-popover" role="tooltip" aria-hidden="true">
+                        <div class="mcwws-auth-popover-body">
+                            <p id="authPopoverTitle" class="mcwws-auth-popover-title">未登录</p>
+                            <p id="authPopoverMeta" class="mcwws-auth-popover-meta"></p>
+                            <button type="button" id="authPopoverAction" class="mcwws-auth-popover-action">登录 / 注册</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -166,14 +177,14 @@
         <div class="modal-content glass">
             <div class="modal-header">
                 <h2 id="authModalTitle">登录</h2>
-                <button class="modal-close" onclick="closeAuthModal()">×</button>
+                <button type="button" class="modal-close" aria-label="关闭">×</button>
             </div>
             <div class="modal-body">
                 <div class="auth-toggle">
-                    <button id="authModeLogin" type="button" class="auth-toggle-btn active" onclick="switchAuthMode('login')">登录</button>
-                    <button id="authModeRegister" type="button" class="auth-toggle-btn" onclick="switchAuthMode('register')">注册</button>
+                    <button id="authModeLogin" type="button" class="auth-toggle-btn active">登录</button>
+                    <button id="authModeRegister" type="button" class="auth-toggle-btn">注册</button>
                 </div>
-                <form id="authForm" onsubmit="handleAuthSubmit(event)">
+                <form id="authForm">
                     <div class="form-field">
                         <label for="authUsername">用户名</label>
                         <input type="text" id="authUsername" autocomplete="username" required>
@@ -206,6 +217,7 @@
         import * as THREE from 'three';
         window.THREE = THREE;
     </script>
+    <script src="mcwws-auth.js?v=3"></script>
     <script src="lang.js?v=2.5.9" defer></script>
     <script src="texture-mapper.js?v=2.5.76" defer></script>
     <script src="enchant-glint.js?v=2.5.28" defer></script>

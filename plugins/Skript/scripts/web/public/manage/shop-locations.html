@@ -7,6 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>管理 · UltimateShop 商店位置</title>
+    <link rel="stylesheet" href="../mcwws-auth.css?v=1">
     <style>
         @font-face {
             font-family: 'MinecraftAE';
@@ -1079,8 +1080,19 @@
         </div>
         <div class="nav-actions">
             <div class="user-actions">
-                <span id="userStatus" class="user-status">未登录</span>
-                <button id="authButton" class="auth-button" type="button">登录 / 注册</button>
+                <div class="mcwws-auth-widget" id="mcwwsAuthWidget">
+                    <button type="button" id="authButton" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
+                        <img id="authAvatar" class="mcwws-auth-avatar-img" width="36" height="36" alt="" decoding="async" referrerpolicy="no-referrer">
+                        <span class="mcwws-auth-avatar-fallback" aria-hidden="true">👤</span>
+                    </button>
+                    <div id="authPopover" class="mcwws-auth-popover" role="tooltip" aria-hidden="true">
+                        <div class="mcwws-auth-popover-body">
+                            <p id="authPopoverTitle" class="mcwws-auth-popover-title">未登录</p>
+                            <p id="authPopoverMeta" class="mcwws-auth-popover-meta"></p>
+                            <button type="button" id="authPopoverAction" class="mcwws-auth-popover-action">登录 / 注册</button>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </nav>
@@ -1098,10 +1110,10 @@
             <h2 id="authModalTitle">登录</h2>
             <div id="authSecurityWarning"></div>
             <div class="auth-toggle">
-                <button id="authModeLogin" type="button" class="auth-toggle-btn active" onclick="switchAuthMode('login')">登录</button>
-                <button id="authModeRegister" type="button" class="auth-toggle-btn" onclick="switchAuthMode('register')">注册</button>
+                <button id="authModeLogin" type="button" class="auth-toggle-btn active">登录</button>
+                <button id="authModeRegister" type="button" class="auth-toggle-btn">注册</button>
             </div>
-            <form id="authForm" onsubmit="handleAuthSubmit(event)">
+            <form id="authForm">
                 <div class="form-field">
                     <label for="authUsername">用户名</label>
                     <input type="text" id="authUsername" autocomplete="username" required>
