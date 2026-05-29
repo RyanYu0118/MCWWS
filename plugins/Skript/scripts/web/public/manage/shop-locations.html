@@ -7,7 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>管理 · UltimateShop 商店位置</title>
-    <link rel="stylesheet" href="../mcwws-auth.css?v=1">
+    <link rel="stylesheet" href="../mcwws-auth.css?v=2">
     <style>
         @font-face {
             font-family: 'MinecraftAE';
@@ -1183,11 +1183,11 @@
         </div>
     </div>
 
+    <script src="../mcwws-auth.js?v=3"></script>
     <script>
         // ─── 状态 ───
-        let authToken = localStorage.getItem('authToken') || null;
+        let authToken = null;
         let currentUser = null;
-        let authMode = 'login';
         let adminAccessTimer = null;
         let accessDeniedActive = false;
         let allShops = [];
@@ -1211,8 +1211,27 @@
             return res.json();
         }
 
+        function syncAuthFromModule() {
+            authToken = window.MCWWS_AUTH?.getToken() || null;
+            currentUser = window.MCWWS_AUTH?.getUser() || null;
+        }
+
         // ─── 认证流程 ───
         async function init() {
+            if (window.MCWWS_AUTH) {
+                window.MCWWS_AUTH.onChange(() => {
+                    syncAuthFromModule();
+                    if (!currentUser) {
+                        stopAdminAccessPolling();
+                        showAuthGate();
+                        return;
+                    }
+                    void loadUserProfile();
+                });
+                await window.MCWWS_AUTH.init();
+                return;
+            }
+            authToken = localStorage.getItem('authToken') || null;
             await loadUserProfile();
         }
 
@@ -1331,158 +1350,38 @@
             }
         }
 
-        function updateAuthUi() {
-            const userStatus = document.getElementById('userStatus');
-            const authButton = document.getElementById('authButton');
-            if (!userStatus || !authButton) return;
-
-            if (currentUser) {
-                userStatus.textContent = `已登录：${currentUser.username}（${currentUser.playerId}）`;
-                authButton.textContent = '退出登录';
-                authButton.onclick = handleLogout;
-            } else {
-                userStatus.textContent = '未登录';
-                authButton.textContent = '登录 / 注册';
-                authButton.onclick = openAuthModal;
-            }
-        }
-
         function openAuthModal() {
-            authMode = 'login';
-            switchAuthMode('login');
-            showDialog(document.getElementById('authModal'));
+            window.MCWWS_AUTH?.openModal();
         }
 
         function closeAuthModal() {
-            hideDialog(document.getElementById('authModal'));
-            const message = document.getElementById('authMessage');
-            if (message) {
-                message.textContent = '';
-                message.style.color = '';
-            }
-            document.getElementById('authForm')?.reset();
-        }
-
-        function switchAuthMode(mode) {
-            authMode = mode;
-            document.getElementById('authModeLogin')?.classList.toggle('active', mode === 'login');
-            document.getElementById('authModeRegister')?.classList.toggle('active', mode === 'register');
-            document.querySelectorAll('.auth-register-only').forEach(field => {
-                field.style.display = mode === 'register' ? 'flex' : 'none';
-            });
-            const title = document.getElementById('authModalTitle');
-            if (title) title.textContent = mode === 'login' ? '登录' : '注册';
-            const message = document.getElementById('authMessage');
-            if (message) {
-                message.textContent = '';
-                message.style.color = '';
-            }
-        }
-
-        async function handleAuthSubmit(event) {
-            event.preventDefault();
-            const username = document.getElementById('authUsername')?.value.trim();
-            const password = document.getElementById('authPassword')?.value;
-            const playerId = document.getElementById('authPlayerId')?.value.trim();
-            const message = document.getElementById('authMessage');
-
-            if (!username || !password) {
-                if (message) message.textContent = '请填写用户名和密码。';
-                return;
-            }
-            if (authMode === 'register' && !playerId) {
-                if (message) message.textContent = '注册时请填写游戏玩家ID。';
-                return;
-            }
-
-            const endpoint = authMode === 'register' ? '/api/register' : '/api/login';
-            const payload = authMode === 'register' ? { username, password, playerId } : { username, password };
-            try {
-                const response = await fetch(endpoint, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
-                });
-                const result = await response.json();
-                if (!response.ok) {
-                    if (message) {
-                        message.textContent = result.error || '操作失败，请重试。';
-                        message.style.color = 'var(--danger)';
-                    }
-                    return;
-                }
-
-                authToken = result.authToken;
-                localStorage.setItem('authToken', authToken);
-                currentUser = { username: result.username, playerId: result.playerId };
-                updateAuthUi();
-                closeAuthModal();
-                toast(authMode === 'register' ? '注册成功，已登录。' : '登录成功！', 'success');
-                await loadUserProfile();
-            } catch (error) {
-                if (message) {
-                    message.textContent = `网络错误：${error.message || '请检查服务器是否已启动。'}`;
-                    message.style.color = 'var(--danger)';
-                }
-            }
-        }
-
-        async function handleLogout() {
-            if (authToken) {
-                try {
-                    await fetch('/api/logout', {
-                        method: 'POST',
-                        headers: { Authorization: `Bearer ${authToken}` }
-                    });
-                } catch (error) { }
-            }
-            authToken = null;
-            currentUser = null;
-            localStorage.removeItem('authToken');
-            stopAdminAccessPolling();
-            updateAuthUi();
-            showAuthGate();
-            toast('已退出登录。', 'success');
+            window.MCWWS_AUTH?.closeModal();
         }
 
         async function handleExpiredAuth() {
-            authToken = null;
-            currentUser = null;
-            localStorage.removeItem('authToken');
+            if (window.MCWWS_AUTH) {
+                await window.MCWWS_AUTH.refresh();
+                syncAuthFromModule();
+            } else {
+                authToken = null;
+                currentUser = null;
+                localStorage.removeItem('authToken');
+            }
             stopAdminAccessPolling();
-            updateAuthUi();
             showAuthGate();
             toast('登录已过期，请重新登录。', 'error');
         }
 
         async function loadUserProfile() {
-            if (!authToken) {
-                currentUser = null;
-                updateAuthUi();
+            syncAuthFromModule();
+            if (!authToken || !currentUser) {
                 showAuthGate();
                 return;
             }
-            try {
-                const response = await fetch('/api/profile', {
-                    headers: { Authorization: `Bearer ${authToken}` }
-                });
-                if (!response.ok) {
-                    throw new Error('未登录');
-                }
-                currentUser = await response.json();
-                updateAuthUi();
-                if (!await checkAdminAccess()) {
-                    return;
-                }
-                showApp();
-            } catch (error) {
-                authToken = null;
-                currentUser = null;
-                localStorage.removeItem('authToken');
-                stopAdminAccessPolling();
-                updateAuthUi();
-                showAuthGate();
+            if (!await checkAdminAccess()) {
+                return;
             }
+            showApp();
         }
 
         // ─── UltimateShop 商店位置 ───
