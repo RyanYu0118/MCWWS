@@ -59,49 +59,57 @@
 
 .mcwws-auth-popover {
     position: absolute;
-    top: calc(100% + 8px);
+    top: 100%;
     right: 0;
     z-index: 12000;
     min-width: 200px;
     max-width: 280px;
-    padding: 0;
-    border-radius: 12px;
-    background: rgba(15, 23, 42, 0.97);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+  /* 透明上内边距：衔接头像与卡片，避免鼠标经过空隙时浮层消失 */
+    padding: 10px 0 0;
+    border: none;
+    background: transparent;
+    box-shadow: none;
     opacity: 0;
     visibility: hidden;
     transform: translateY(-4px);
-    transition: opacity 0.16s, transform 0.16s, visibility 0.16s;
+    transition:
+        opacity 0.15s ease,
+        transform 0.15s ease,
+        visibility 0s linear 0.28s;
     pointer-events: none;
 }
 
-.mcwws-auth-popover::before {
-    content: '';
-    position: absolute;
-    top: -6px;
-    right: 14px;
-    width: 10px;
-    height: 10px;
-    background: inherit;
-    border-left: 1px solid rgba(255, 255, 255, 0.1);
-    border-top: 1px solid rgba(255, 255, 255, 0.1);
-    transform: rotate(45deg);
-}
-
 .mcwws-auth-widget:hover .mcwws-auth-popover,
+.mcwws-auth-widget.is-popover-hover .mcwws-auth-popover,
 .mcwws-auth-widget:focus-within .mcwws-auth-popover,
 .mcwws-auth-widget.is-popover-open .mcwws-auth-popover {
     opacity: 1;
     visibility: visible;
     transform: translateY(0);
+    transition-delay: 0s;
     pointer-events: auto;
 }
 
 .mcwws-auth-popover-body {
     position: relative;
-    z-index: 1;
     padding: 12px 14px;
+    border-radius: 12px;
+    background: rgba(15, 23, 42, 0.97);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
+}
+
+.mcwws-auth-popover-body::before {
+    content: '';
+    position: absolute;
+    top: -5px;
+    right: 14px;
+    width: 10px;
+    height: 10px;
+    background: rgba(15, 23, 42, 0.97);
+    border-left: 1px solid rgba(255, 255, 255, 0.1);
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+    transform: rotate(45deg);
 }
 
 .mcwws-auth-popover-title {

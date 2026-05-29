@@ -143,11 +143,42 @@
         }
     }
 
+    const POPOVER_CLOSE_DELAY_MS = 320;
+
+    function clearAuthPopoverCloseTimer(widget) {
+        if (!widget) return;
+        if (widget._popoverCloseTimer) {
+            window.clearTimeout(widget._popoverCloseTimer);
+            widget._popoverCloseTimer = 0;
+        }
+    }
+
+    function showAuthPopover(refs) {
+        if (!refs?.widget) return;
+        clearAuthPopoverCloseTimer(refs.widget);
+        refs.widget.classList.add('is-popover-hover');
+        refs.btn?.setAttribute('aria-expanded', 'true');
+        refs.popover?.setAttribute('aria-hidden', 'false');
+    }
+
     function closeAuthPopover(refs) {
         if (!refs?.widget) return;
-        refs.widget.classList.remove('is-popover-open');
+        clearAuthPopoverCloseTimer(refs.widget);
+        refs.widget.classList.remove('is-popover-open', 'is-popover-hover');
         refs.btn?.setAttribute('aria-expanded', 'false');
         refs.popover?.setAttribute('aria-hidden', 'true');
+    }
+
+    function scheduleCloseAuthPopover(refs) {
+        if (!refs?.widget) return;
+        clearAuthPopoverCloseTimer(refs.widget);
+        refs.widget._popoverCloseTimer = window.setTimeout(() => {
+            refs.widget._popoverCloseTimer = 0;
+            if (refs.widget.classList.contains('is-popover-open')) return;
+            refs.widget.classList.remove('is-popover-hover');
+            refs.btn?.setAttribute('aria-expanded', 'false');
+            refs.popover?.setAttribute('aria-hidden', 'true');
+        }, POPOVER_CLOSE_DELAY_MS);
     }
 
     function updateStatusUi() {
@@ -327,8 +358,21 @@
         if (!refs || refs.widget.dataset.bound === '1') return;
         refs.widget.dataset.bound = '1';
 
-        const { widget, btn, popoverAction } = refs;
+        const { widget, btn, popover, popoverAction } = refs;
         const canHover = () => window.matchMedia('(hover: hover)').matches;
+
+        const bindHoverOpen = (el) => {
+            el?.addEventListener('mouseenter', () => {
+                if (!canHover()) return;
+                showAuthPopover(refs);
+            });
+            el?.addEventListener('mouseleave', () => {
+                if (!canHover()) return;
+                scheduleCloseAuthPopover(refs);
+            });
+        };
+        bindHoverOpen(widget);
+        bindHoverOpen(popover);
 
         btn?.addEventListener('click', () => {
             if (currentUser) {
