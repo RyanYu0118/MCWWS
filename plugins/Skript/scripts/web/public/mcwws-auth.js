@@ -70,6 +70,7 @@
         const popoverId = isMap ? 'mapAuthPopover' : 'authPopover';
         const titleId = isMap ? 'mapAuthPopoverTitle' : 'authPopoverTitle';
         const metaId = isMap ? 'mapAuthPopoverMeta' : 'authPopoverMeta';
+        const economyId = isMap ? 'mapAuthPopoverEconomy' : 'authPopoverEconomy';
         const actionId = isMap ? 'mapAuthPopoverAction' : 'authPopoverAction';
         return `
             <button type="button" id="${buttonId}" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
@@ -80,6 +81,21 @@
                 <div class="mcwws-auth-popover-body">
                     <p id="${titleId}" class="mcwws-auth-popover-title">未登录</p>
                     <p id="${metaId}" class="mcwws-auth-popover-meta"></p>
+                    <div id="${economyId}" class="mcwws-auth-popover-economy" hidden>
+                        <p class="mcwws-auth-popover-economy-heading">经济系统</p>
+                        <ul class="mcwws-auth-popover-economy-list">
+                            <li><span class="label">在线时长</span><span class="value" data-economy="playHours">-</span></li>
+                            <li><span class="label">当前零钱</span><span class="value" data-economy="balance">-</span></li>
+                            <li><span class="label">当前身份</span><span class="value" data-economy="role">-</span></li>
+                            <li class="has-progress">
+                                <span class="label">完成进度</span>
+                                <span class="value" data-economy="progress">-</span>
+                            </li>
+                        </ul>
+                        <div class="mcwws-auth-popover-progress" data-economy="progressBar" hidden>
+                            <div class="mcwws-auth-popover-progress-fill"></div>
+                        </div>
+                    </div>
                     <button type="button" id="${actionId}" class="mcwws-auth-popover-action">登录 / 注册</button>
                 </div>
             </div>
@@ -97,8 +113,39 @@
             popover: widget.querySelector('.mcwws-auth-popover'),
             popoverTitle: document.getElementById(isMap ? 'mapAuthPopoverTitle' : 'authPopoverTitle'),
             popoverMeta: document.getElementById(isMap ? 'mapAuthPopoverMeta' : 'authPopoverMeta'),
+            popoverEconomy: document.getElementById(isMap ? 'mapAuthPopoverEconomy' : 'authPopoverEconomy')
+                || widget.querySelector('.mcwws-auth-popover-economy'),
             popoverAction: document.getElementById(isMap ? 'mapAuthPopoverAction' : 'authPopoverAction')
         };
+    }
+
+    function ensureEconomyDom(widget) {
+        if (!widget) return null;
+        let economy = widget.querySelector('.mcwws-auth-popover-economy');
+        if (economy) return economy;
+        const body = widget.querySelector('.mcwws-auth-popover-body');
+        const action = widget.querySelector('.mcwws-auth-popover-action');
+        if (!body || !action) return null;
+        economy = document.createElement('div');
+        economy.className = 'mcwws-auth-popover-economy';
+        economy.hidden = true;
+        economy.innerHTML = `
+            <p class="mcwws-auth-popover-economy-heading">经济系统</p>
+            <ul class="mcwws-auth-popover-economy-list">
+                <li><span class="label">在线时长</span><span class="value" data-economy="playHours">-</span></li>
+                <li><span class="label">当前零钱</span><span class="value" data-economy="balance">-</span></li>
+                <li><span class="label">当前身份</span><span class="value" data-economy="role">-</span></li>
+                <li class="has-progress">
+                    <span class="label">完成进度</span>
+                    <span class="value" data-economy="progress">-</span>
+                </li>
+            </ul>
+            <div class="mcwws-auth-popover-progress" data-economy="progressBar" hidden>
+                <div class="mcwws-auth-popover-progress-fill"></div>
+            </div>
+        `;
+        body.insertBefore(economy, action);
+        return economy;
     }
 
     function ensureAuthWidgetDom() {
@@ -144,6 +191,154 @@
     }
 
     const POPOVER_CLOSE_DELAY_MS = 320;
+    const ECONOMY_CACHE_MS = 45000;
+    const EMPTY_VALUE = '-';
+
+    /** minecraftAE 未编码字符回退为 ASCII，避免显示乱码 */
+    function sanitizeMcFontText(text) {
+        return String(text ?? '')
+            .replace(/\u00a5/g, '￥')
+            .replace(/\u2014/g, '-')
+            .replace(/\u2013/g, '-')
+            .replace(/\u00b7/g, ' / ')
+            .replace(/\u00d7/g, 'x');
+    }
+    let economyCache = null;
+    let economyCacheAt = 0;
+    let economyFetchPromise = null;
+
+    function formatPlayHours(hours) {
+        if (hours == null || !Number.isFinite(Number(hours))) return EMPTY_VALUE;
+        return `${Math.floor(Number(hours))}h`;
+    }
+
+    function formatProgressText(progress, max) {
+        if (progress == null || !Number.isFinite(Number(progress))) return EMPTY_VALUE;
+        const limit = Number.isFinite(Number(max)) ? Number(max) : 100;
+        return `${Math.max(0, Math.floor(Number(progress)))}/${limit}`;
+    }
+
+    function renderEconomyUi(refs, data) {
+        const economy = refs?.popoverEconomy || ensureEconomyDom(refs?.widget);
+        if (!economy) return;
+
+        if (!currentUser) {
+            economy.hidden = true;
+            return;
+        }
+
+        economy.hidden = false;
+
+        if (!data) {
+            economy.querySelectorAll('.value[data-economy]').forEach((el) => {
+                el.textContent = EMPTY_VALUE;
+                el.classList.remove('is-op');
+            });
+            const progressBar = economy.querySelector('[data-economy="progressBar"]');
+            const progressFill = progressBar?.querySelector('.mcwws-auth-popover-progress-fill');
+            if (progressBar) progressBar.hidden = true;
+            if (progressFill) progressFill.style.width = '0%';
+            return;
+        }
+        const playHoursEl = economy.querySelector('[data-economy="playHours"]');
+        const balanceEl = economy.querySelector('[data-economy="balance"]');
+        const roleEl = economy.querySelector('[data-economy="role"]');
+        const progressEl = economy.querySelector('[data-economy="progress"]');
+        const progressBar = economy.querySelector('[data-economy="progressBar"]');
+        const progressFill = progressBar?.querySelector('.mcwws-auth-popover-progress-fill');
+
+        if (playHoursEl) playHoursEl.textContent = formatPlayHours(data.playHours);
+        if (balanceEl) {
+            const balanceText = data.balanceFormatted
+                || (data.balance != null ? String(data.balance) : EMPTY_VALUE);
+            balanceEl.textContent = sanitizeMcFontText(balanceText);
+        }
+        if (roleEl) {
+            roleEl.textContent = sanitizeMcFontText(
+                data.role || (data.isOp ? '管理员/服主' : '普通玩家')
+            );
+            roleEl.classList.toggle('is-op', Boolean(data.isOp));
+        }
+        if (progressEl) {
+            progressEl.textContent = formatProgressText(data.warningProgress, data.warningMax);
+        }
+
+        const hasProgress = data.warningProgress != null && Number.isFinite(Number(data.warningProgress));
+        if (progressBar && progressFill) {
+            progressBar.hidden = !hasProgress;
+            if (hasProgress) {
+                const max = Number.isFinite(Number(data.warningMax)) ? Number(data.warningMax) : 100;
+                const pct = Math.max(0, Math.min(100, (Number(data.warningProgress) / max) * 100));
+                progressFill.style.width = `${pct}%`;
+            } else {
+                progressFill.style.width = '0%';
+            }
+        }
+
+        const meta = refs?.popoverMeta;
+        if (meta && currentUser?.playerId) {
+            const parts = [`游戏 ID: ${currentUser.playerId}`];
+            if (data.online === true) parts.push('在线');
+            else if (data.online === false) parts.push('离线');
+            meta.textContent = parts.join(' / ');
+            meta.hidden = false;
+        }
+    }
+
+    function clearEconomyUi(refs) {
+        economyCache = null;
+        economyCacheAt = 0;
+        const economy = refs?.popoverEconomy || ensureEconomyDom(refs?.widget);
+        if (economy) economy.hidden = true;
+    }
+
+    async function fetchPlayerEconomy(force) {
+        if (!authToken || !currentUser?.playerId) {
+            return null;
+        }
+        const now = Date.now();
+        if (!force && economyCache && now - economyCacheAt < ECONOMY_CACHE_MS) {
+            return economyCache;
+        }
+        if (economyFetchPromise) {
+            return economyFetchPromise;
+        }
+        economyFetchPromise = fetch('/api/player-economy', {
+            headers: authHeaders(),
+            cache: 'no-store'
+        }).then(async (response) => {
+            if (!response.ok) {
+                throw new Error('economy fetch failed');
+            }
+            const data = await response.json();
+            economyCache = data;
+            economyCacheAt = Date.now();
+            return data;
+        }).catch(() => null).finally(() => {
+            economyFetchPromise = null;
+        });
+        return economyFetchPromise;
+    }
+
+    async function refreshEconomyForPopover(refs, force) {
+        if (!currentUser) {
+            clearEconomyUi(refs);
+            return;
+        }
+        ensureEconomyDom(refs?.widget);
+        const cached = !force && economyCache && Date.now() - economyCacheAt < ECONOMY_CACHE_MS
+            ? economyCache
+            : null;
+        if (cached) {
+            renderEconomyUi(refs, cached);
+            return;
+        }
+        renderEconomyUi(refs, economyCache);
+        const data = await fetchPlayerEconomy(force);
+        if (data) {
+            renderEconomyUi(refs, data);
+        }
+    }
 
     function clearAuthPopoverCloseTimer(widget) {
         if (!widget) return;
@@ -159,6 +354,9 @@
         refs.widget.classList.add('is-popover-hover');
         refs.btn?.setAttribute('aria-expanded', 'true');
         refs.popover?.setAttribute('aria-hidden', 'false');
+        if (currentUser) {
+            void refreshEconomyForPopover(refs);
+        }
     }
 
     function closeAuthPopover(refs) {
@@ -186,6 +384,7 @@
         if (!refs) return;
 
         const { widget, btn, avatarImg, popoverTitle, popoverMeta, popoverAction } = refs;
+        ensureEconomyDom(widget);
 
         if (currentUser) {
             widget.classList.add('is-logged-in');
@@ -194,21 +393,30 @@
                 popoverTitle.textContent = currentUser.username || currentUser.playerId || '已登录';
             }
             if (popoverMeta) {
-                popoverMeta.textContent = currentUser.playerId
-                    ? `游戏 ID：${currentUser.playerId}`
-                    : '';
-                popoverMeta.hidden = !currentUser.playerId;
+                const parts = [];
+                if (currentUser.playerId) {
+                    parts.push(`游戏 ID: ${currentUser.playerId}`);
+                }
+                if (economyCache?.online) {
+                    parts.push('在线');
+                } else if (economyCache && economyCache.online === false) {
+                    parts.push('离线');
+                }
+                popoverMeta.textContent = parts.join(' / ');
+                popoverMeta.hidden = parts.length === 0;
             }
             if (popoverAction) {
                 popoverAction.textContent = '退出登录';
                 popoverAction.dataset.action = 'logout';
             }
             if (btn) {
-                btn.title = `${currentUser.username || currentUser.playerId} — 悬停查看账户`;
+                btn.title = `${currentUser.username || currentUser.playerId} - 悬停查看账户`;
             }
+            renderEconomyUi(refs, economyCache);
         } else {
             widget.classList.remove('is-logged-in');
             setAvatarImage(avatarImg, '');
+            clearEconomyUi(refs);
             if (popoverTitle) popoverTitle.textContent = '未登录';
             if (popoverMeta) {
                 popoverMeta.textContent = '登录后可定位玩家、使用商店等功能';
@@ -298,9 +506,16 @@
             authToken = result.authToken;
             currentUser = { username: result.username, playerId: result.playerId };
             writeStoredToken(authToken);
+            economyCache = null;
+            economyCacheAt = 0;
             updateStatusUi();
             notify();
             closeAuthModal();
+            void fetchPlayerEconomy(true).then((data) => {
+                if (!data) return;
+                const refs = ensureAuthWidgetDom();
+                renderEconomyUi(refs, data);
+            });
         } catch (error) {
             if (message) {
                 message.textContent = `网络错误：${error.message || '请检查服务器是否已启动。'}`;
@@ -322,6 +537,8 @@
         }
         authToken = null;
         currentUser = null;
+        economyCache = null;
+        economyCacheAt = 0;
         writeStoredToken(null);
         updateStatusUi();
         notify();
@@ -344,6 +561,11 @@
                 throw new Error('未登录');
             }
             currentUser = await response.json();
+            void fetchPlayerEconomy(true).then((data) => {
+                if (!data) return;
+                const refs = ensureAuthWidgetDom();
+                renderEconomyUi(refs, data);
+            });
         } catch {
             authToken = null;
             currentUser = null;
@@ -381,6 +603,9 @@
                     const open = widget.classList.contains('is-popover-open');
                     btn.setAttribute('aria-expanded', open ? 'true' : 'false');
                     refs.popover?.setAttribute('aria-hidden', open ? 'false' : 'true');
+                    if (open) {
+                        void refreshEconomyForPopover(refs);
+                    }
                 }
                 return;
             }

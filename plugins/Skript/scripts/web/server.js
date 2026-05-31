@@ -8,6 +8,7 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const { createAnalyticsService } = require('./analytics');
+const nbt = require('prismarine-nbt');
 
 const app = express();
 const PORT = 8002;
@@ -73,7 +74,14 @@ const SERVER_ROOT = path.join(__dirname, '..', '..', '..', '..');
 const OVERWORLD_LEVEL_DAT = path.join(SERVER_ROOT, 'world', 'level.dat');
 const MC_DAY_TICKS = 24000;
 const ESSENTIALS_USERDATA_DIR = path.join(SERVER_ROOT, 'plugins', 'Essentials', 'userdata');
+const ESSENTIALS_CONFIG_PATH = path.join(SERVER_ROOT, 'plugins', 'Essentials', 'config.yml');
 const USERCACHE_PATH = path.join(SERVER_ROOT, 'usercache.json');
+const OPS_JSON_PATH = path.join(SERVER_ROOT, 'ops.json');
+const SCOREBOARD_DAT_PATH = path.join(SERVER_ROOT, 'world', 'data', 'scoreboard.dat');
+const WORLD_STATS_DIR = path.join(SERVER_ROOT, 'world', 'stats');
+const MC_PLAY_TIME_TICKS_PER_HOUR = 72000;
+const WARNING_OBJECTIVE = 'Warning';
+const WARNING_MAX = 100;
 const HTTPS_KEY_PATH = path.join(__dirname, 'certs', 'server.key');
 const HTTPS_CERT_PATH = path.join(__dirname, 'certs', 'server.crt');
 const HTTPS_ENABLED = process.env.HTTPS === '1';
@@ -750,6 +758,217 @@ app.get('/api/profile', (req, res) => {
     } catch (error) {
         console.error('获取用户信息失败:', error);
         res.status(500).json({ error: '获取用户信息失败。' });
+    }
+});
+
+let essentialsCurrencySymbol = '￥';
+let essentialsCurrencySuffix = false;
+let essentialsCurrencyLoadedAt = 0;
+
+function normalizeWebCurrencySymbol(symbol) {
+    const value = String(symbol ?? '￥').trim();
+    if (!value || value === '¥' || value === '\u00a5') {
+        return '￥';
+    }
+    return value;
+}
+
+function loadEssentialsCurrencyConfig() {
+    const now = Date.now();
+    if (essentialsCurrencyLoadedAt && now - essentialsCurrencyLoadedAt < 300000) {
+        return;
+    }
+    essentialsCurrencyLoadedAt = now;
+    if (!fs.existsSync(ESSENTIALS_CONFIG_PATH)) {
+        return;
+    }
+    try {
+        const config = yaml.load(fs.readFileSync(ESSENTIALS_CONFIG_PATH, 'utf8'));
+        essentialsCurrencySymbol = normalizeWebCurrencySymbol(config?.['currency-symbol']);
+        essentialsCurrencySuffix = Boolean(config?.['currency-symbol-suffix']);
+    } catch (error) {
+        console.warn('读取 Essentials 货币配置失败:', error.message);
+    }
+}
+
+function formatEssentialsBalance(amount) {
+    loadEssentialsCurrencyConfig();
+    const num = Number(amount);
+    if (!Number.isFinite(num)) {
+        return null;
+    }
+    const formatted = num.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2
+    });
+    const symbol = normalizeWebCurrencySymbol(essentialsCurrencySymbol);
+    if (essentialsCurrencySuffix) {
+        return `${formatted}${symbol}`;
+    }
+    return `${symbol}${formatted}`;
+}
+
+function readEssentialsBalance(uuid) {
+    const file = path.join(ESSENTIALS_USERDATA_DIR, `${uuid}.yml`);
+    if (!fs.existsSync(file)) {
+        return null;
+    }
+    try {
+        const data = yaml.load(fs.readFileSync(file, 'utf8'));
+        const money = data?.money;
+        if (money == null || money === '') {
+            return 0;
+        }
+        const num = Number(money);
+        return Number.isFinite(num) ? num : null;
+    } catch {
+        return null;
+    }
+}
+
+function readPlayerPlayHours(uuid) {
+    const file = path.join(WORLD_STATS_DIR, `${uuid}.json`);
+    if (!fs.existsSync(file)) {
+        return null;
+    }
+    try {
+        const stats = JSON.parse(fs.readFileSync(file, 'utf8'));
+        const ticks = stats?.stats?.['minecraft:custom']?.['minecraft:play_time'];
+        if (ticks == null) {
+            return null;
+        }
+        const hours = Number(ticks) / MC_PLAY_TIME_TICKS_PER_HOUR;
+        return Number.isFinite(hours) ? Math.floor(hours) : null;
+    } catch {
+        return null;
+    }
+}
+
+let opsUuidSet = null;
+let opsNameSet = null;
+let opsLoadedAt = 0;
+
+function loadOpsIndex() {
+    const now = Date.now();
+    if (opsUuidSet && now - opsLoadedAt < 60000) {
+        return;
+    }
+    const uuids = new Set();
+    const names = new Set();
+    if (fs.existsSync(OPS_JSON_PATH)) {
+        try {
+            const entries = JSON.parse(fs.readFileSync(OPS_JSON_PATH, 'utf8'));
+            if (Array.isArray(entries)) {
+                entries.forEach((entry) => {
+                    const uuid = String(entry?.uuid || '').trim().toLowerCase();
+                    const name = String(entry?.name || '').trim().toLowerCase();
+                    if (uuid) uuids.add(uuid);
+                    if (name) names.add(name);
+                });
+            }
+        } catch (error) {
+            console.warn('读取 ops.json 失败:', error.message);
+        }
+    }
+    opsUuidSet = uuids;
+    opsNameSet = names;
+    opsLoadedAt = now;
+}
+
+function isPlayerOp(uuid, playerName) {
+    loadOpsIndex();
+    const normUuid = String(uuid || '').trim().toLowerCase();
+    const normName = String(playerName || '').trim().toLowerCase();
+    return (normUuid && opsUuidSet.has(normUuid)) || (normName && opsNameSet.has(normName));
+}
+
+let scoreboardScoresCache = null;
+let scoreboardLoadedAt = 0;
+
+async function loadScoreboardScoresIndex() {
+    const now = Date.now();
+    if (scoreboardScoresCache && now - scoreboardLoadedAt < 30000) {
+        return scoreboardScoresCache;
+    }
+    const index = new Map();
+    if (fs.existsSync(SCOREBOARD_DAT_PATH)) {
+        try {
+            const { parsed } = await nbt.parse(fs.readFileSync(SCOREBOARD_DAT_PATH));
+            const scores = parsed?.value?.data?.value?.PlayerScores?.value?.value || [];
+            scores.forEach((entry) => {
+                const objective = String(entry.Objective?.value || '');
+                const name = String(entry.Name?.value || '').trim().toLowerCase();
+                const score = entry.Score?.value;
+                if (objective && name && score != null) {
+                    index.set(`${objective}:${name}`, Number(score));
+                }
+            });
+        } catch (error) {
+            console.warn('读取 scoreboard.dat 失败:', error.message);
+        }
+    }
+    scoreboardScoresCache = index;
+    scoreboardLoadedAt = now;
+    return index;
+}
+
+function lookupScoreboardScore(index, objective, playerName, uuid) {
+    const keys = [
+        `${objective}:${String(playerName || '').trim().toLowerCase()}`,
+        `${objective}:${String(uuid || '').trim().toLowerCase()}`
+    ];
+    for (const key of keys) {
+        if (index.has(key)) {
+            return index.get(key);
+        }
+    }
+    return null;
+}
+
+async function readPlayerEconomySnapshot(playerId, uuid) {
+    const scoreIndex = await loadScoreboardScoresIndex();
+    const balance = readEssentialsBalance(uuid);
+    const playHours = readPlayerPlayHours(uuid);
+    const op = isPlayerOp(uuid, playerId);
+    const warningProgress = lookupScoreboardScore(scoreIndex, WARNING_OBJECTIVE, playerId, uuid);
+    const online = Boolean(readBlueMapLivePlayerLocation(uuid, playerId));
+
+    return {
+        playerId,
+        uuid,
+        online,
+        playHours,
+        balance,
+        balanceFormatted: balance == null ? null : formatEssentialsBalance(balance),
+        role: op ? '管理员/服主' : '普通玩家',
+        isOp: op,
+        warningProgress,
+        warningMax: WARNING_MAX
+    };
+}
+
+app.get('/api/player-economy', async (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        if (!playerId) {
+            return res.status(400).json({ error: '账号未绑定游戏玩家 ID。' });
+        }
+        const uuid = resolvePlayerUuid(playerId);
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+        const snapshot = await readPlayerEconomySnapshot(playerId, uuid);
+        res.json({
+            ...snapshot,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('读取玩家经济信息失败:', error);
+        res.status(500).json({ error: '读取玩家经济信息失败。' });
     }
 });
 

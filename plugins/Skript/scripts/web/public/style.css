@@ -272,8 +272,8 @@ body {
     top: 100%;
     right: 0;
     z-index: 12000;
-    min-width: 200px;
-    max-width: 280px;
+    min-width: 220px;
+    max-width: 300px;
     padding: 10px 0 0;
     border: none;
     background: transparent;
@@ -367,6 +367,79 @@ body {
 
 .mcwws-auth-widget.is-logged-in .mcwws-auth-popover-action:hover {
     background: rgba(239, 68, 68, 0.15);
+}
+
+.mcwws-auth-popover-economy {
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mcwws-auth-popover-economy-heading {
+    margin: 0 0 8px;
+    font-size: 0.72rem;
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: #fbbf24;
+}
+
+.mcwws-auth-popover-economy-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.mcwws-auth-popover-economy-list li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    font-size: 0.8rem;
+    line-height: 1.35;
+}
+
+.mcwws-auth-popover-economy-list .label {
+    flex-shrink: 0;
+    color: #86efac;
+}
+
+.mcwws-auth-popover-economy-list .value {
+    text-align: right;
+    color: var(--text-primary, #f8fafc);
+    word-break: break-word;
+}
+
+.mcwws-auth-popover-economy-list .value[data-economy="balance"] {
+    color: #fde047;
+    font-weight: 600;
+}
+
+.mcwws-auth-popover-economy-list .value.is-op {
+    color: #fcd34d;
+}
+
+.mcwws-auth-popover-economy-list li.has-progress .value {
+    color: #67e8f9;
+}
+
+.mcwws-auth-popover-progress {
+    margin-top: 6px;
+    height: 5px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.08);
+    overflow: hidden;
+}
+
+.mcwws-auth-popover-progress-fill {
+    height: 100%;
+    width: 0;
+    border-radius: inherit;
+    background: linear-gradient(90deg, #22d3ee, #38bdf8);
+    transition: width 0.25s ease;
 }
 
 .services-map-auth-widget {
