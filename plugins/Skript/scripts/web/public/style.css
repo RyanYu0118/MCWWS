@@ -2725,6 +2725,44 @@ body {
     gap: 14px;
 }
 
+/* 上架位置弹窗、购物车：统一 MinecraftAE */
+#tradeModal .modal-content,
+#tradeModal .modal-header h2,
+#tradeModal .modal-body,
+#tradeModal .trade-modal-hint,
+#tradeModal .trade-offer-card,
+#tradeModal .trade-offer-card h4,
+#tradeModal .trade-offer-meta,
+#tradeModal .trade-offer-meta dt,
+#tradeModal .trade-offer-meta dd,
+#tradeModal .trade-map-link,
+#tradeModal .trade-map-missing,
+#tradeModal .cart-offer-add-btn,
+.cart-drawer,
+.cart-drawer-header,
+.cart-drawer-title,
+.cart-drawer-body,
+.cart-drawer-footer,
+.cart-line,
+.cart-line-name,
+.cart-line-shop,
+.cart-line-price,
+.cart-qty,
+.cart-qty-value,
+.cart-empty,
+.cart-drawer-total-row,
+.cart-drawer-hint,
+.cart-drawer-btn {
+    font-family: 'MinecraftAE', 'Segoe UI', sans-serif !important;
+    font-weight: normal !important;
+}
+
+.trade-modal-hint {
+    margin: 0 0 16px 0;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+
 .trade-offer-card {
     background: rgba(15, 23, 42, 0.65);
     border: 1px solid rgba(148, 163, 184, 0.2);
@@ -2753,7 +2791,6 @@ body {
 
 .trade-offer-meta dd {
     margin: 0;
-    font-family: ui-monospace, monospace;
     word-break: break-all;
 }
 

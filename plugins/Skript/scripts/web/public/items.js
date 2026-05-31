@@ -21,6 +21,18 @@ let pointerBearingX = null;
 let pointerBearingY = null;
 
 const POINTER_COMPASS_TILT_COS = Math.cos(Math.PI / 4);
+const MC_FONT_SEP = ' / ';
+const MC_EMPTY = '-';
+
+/** minecraftAE 未编码字符回退，避免显示乱码 */
+function sanitizeMcFontText(text) {
+    return String(text ?? '')
+        .replace(/\u00a5/g, '￥')
+        .replace(/\u2014/g, '-')
+        .replace(/\u2013/g, '-')
+        .replace(/\u00b7/g, MC_FONT_SEP)
+        .replace(/\u00d7/g, 'x');
+}
 
 const SORT_VALUES = new Set(['name', 'buyPrice', 'sellPrice', 'stock']);
 const ITEM_SCOPE_VALUES = new Set(['all', 'vanilla', 'custom']);
@@ -220,7 +232,7 @@ async function loadItems() {
 
 function formatUltimateShopPrice(val) {
     if (val === null || val === undefined) {
-        return '—';
+        return MC_EMPTY;
     }
     if (typeof val === 'number' && Number.isFinite(val)) {
         return `￥${val.toFixed(2)}`;
@@ -392,15 +404,15 @@ function renderCartDrawer() {
                 <div class="cart-line-icon" data-item-id="${escapeHtml(entry.itemId)}" data-item-name="${escapeHtml(entry.itemName)}"></div>
                 <div class="cart-line-main">
                     <p class="cart-line-name" title="${escapeHtml(entry.itemName)}">${escapeHtml(entry.itemName)}</p>
-                    <p class="cart-line-shop">${escapeHtml(entry.shopTitle)} · 槽位 ${escapeHtml(entry.slot)}</p>
-                    <div class="cart-line-price">￥${entry.unitBuyPrice.toFixed(2)} × ${entry.quantity} = ￥${subtotal.toFixed(2)}</div>
+                    <p class="cart-line-shop">${escapeHtml(entry.shopTitle)}${MC_FONT_SEP}槽位 ${escapeHtml(entry.slot)}</p>
+                    <div class="cart-line-price">￥${entry.unitBuyPrice.toFixed(2)} x ${entry.quantity} = ￥${subtotal.toFixed(2)}</div>
                     <div class="cart-qty">
-                        <button type="button" class="cart-qty-btn" data-cart-action="dec" data-cart-key="${safeKey}" aria-label="减少">−</button>
+                        <button type="button" class="cart-qty-btn" data-cart-action="dec" data-cart-key="${safeKey}" aria-label="减少">-</button>
                         <span class="cart-qty-value">${entry.quantity}</span>
                         <button type="button" class="cart-qty-btn" data-cart-action="inc" data-cart-key="${safeKey}" aria-label="增加">+</button>
                     </div>
                 </div>
-                <button type="button" class="cart-line-remove" data-cart-action="remove" data-cart-key="${safeKey}" aria-label="移除">×</button>
+                <button type="button" class="cart-line-remove" data-cart-action="remove" data-cart-key="${safeKey}" aria-label="移除">x</button>
             </div>
         `;
     }).join('');
@@ -730,7 +742,7 @@ function openCartOfferModal(item) {
         return;
     }
 
-    title.textContent = `加入购物车 · ${item.name}`;
+    title.textContent = sanitizeMcFontText(`加入购物车${MC_FONT_SEP}${item.name}`);
 
     const offers = item.ultimateShopOffers || [];
     const blocks = offers.map((o, idx) => {
@@ -745,8 +757,8 @@ function openCartOfferModal(item) {
             ? `<a class="trade-map-link" href="${escapeHtml(mapUrl)}" target="_blank" rel="noopener">在地图上查看</a>`
             : '<span class="trade-map-missing">未配置地图位置</span>';
         const locationText = isValidShopLocation(o.location)
-            ? `${o.location.description ? `${o.location.description} · ` : ''}${o.location.viewUrl}`
-            : '—';
+            ? sanitizeMcFontText(`${o.location.description ? `${o.location.description}${MC_FONT_SEP}` : ''}${o.location.viewUrl}`)
+            : MC_EMPTY;
         const offerKey = cartEntryKey(item.id, o);
         return `
             <div class="trade-offer-card" data-offer-key="${escapeHtml(offerKey)}">
@@ -774,7 +786,7 @@ function openCartOfferModal(item) {
     }).join('');
 
     body.innerHTML = `
-        <p style="margin:0 0 16px 0; color:#94a3b8; font-size:0.9rem;">
+        <p class="trade-modal-hint">
             该物品在多个商店上架，请选择要加入购物车的位置。
         </p>
         <div class="trade-offer-list">${blocks}</div>
