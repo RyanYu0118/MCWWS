@@ -1,4 +1,4 @@
-# 网页商城：在线玩家零钱扣款队列（Essentials eco take）
+# 网页商城：Essentials 零钱扣款队列（在线 eco take / 离线写 userdata）
 
 function mcwwsEcoQueueMaxId() :: number:
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
@@ -9,6 +9,46 @@ function mcwwsEcoQueueMaxId() :: number:
     if {_max} <= 1:
         return 0
     return {_max} - 1
+
+function mcwwsFormatEssentialsMoney(amount: number) :: text:
+    set {_t} to round({_amount} * 100)
+    set {_d} to floor({_t} / 100)
+    set {_c} to mod({_t}, 100)
+    if {_c} < 10:
+        return "%{_d}%.0%{_c}%"
+    return "%{_d}%.%{_c}%"
+
+function mcwwsIsPlayerOnline(playerId: text) :: boolean:
+    set {_key} to {_playerId} in lower case
+    loop all players:
+        if name of loop-player in lower case is {_key}:
+            return true
+    return false
+
+function mcwwsDeductEssentialsOffline(uuid: text, amount: number) :: boolean:
+    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
+    if yaml file {_path} exists:
+        load yaml {_path} as "eu"
+    else:
+        return false
+    set {_moneyRaw} to yaml value "money" from "eu"
+    set {_money} to {_moneyRaw} parsed as number
+    if {_money} is not set:
+        set {_money} to 0
+    if {_money} < {_amount}:
+        unload yaml "eu"
+        return false
+    set {_new} to {_money} - {_amount}
+    set yaml value "money" from "eu" to mcwwsFormatEssentialsMoney({_new})
+    save yaml "eu"
+    unload yaml "eu"
+    return true
+
+function mcwwsTryEcoTakeOnline(playerId: text, amount: number) :: boolean:
+    if mcwwsIsPlayerOnline({_playerId}) is false:
+        return false
+    execute console command "eco take %{_playerId}% %{_amount}%"
+    return true
 
 function mcwwsProcessEcoQueue():
     set {_limit} to mcwwsEcoQueueMaxId()
@@ -22,19 +62,21 @@ function mcwwsProcessEcoQueue():
         if "%{_status}%" is not "pending":
             continue
         set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
+        set {_uuid} to yaml value "pending.%{_id}%.uuid" from "econq"
         set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
         if {_pid} is not set:
             continue
+        if {_uuid} is not set:
+            continue
         if {_amount} is not set:
             continue
-        set {_found} to false
-        loop all players:
-            if name of loop-player in lower case is not {_pid} in lower case:
-                continue
-            set {_found} to true
-            execute console command "eco take %{_pid}% %{_amount}%"
-            exit loop
-        if {_found} is false:
+        set {_ok} to false
+        if mcwwsTryEcoTakeOnline({_pid}, {_amount}) is true:
+            set {_ok} to true
+        else if mcwwsIsPlayerOnline({_pid}) is false:
+            if mcwwsDeductEssentialsOffline({_uuid}, {_amount}) is true:
+                set {_ok} to true
+        if {_ok} is false:
             continue
         set yaml value "pending.%{_id}%.status" from "econq" to "done"
         set yaml value "pending.%{_id}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"

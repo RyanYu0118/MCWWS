@@ -1757,17 +1757,9 @@ app.post('/api/shop/checkout', (req, res) => {
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
 
-        const deduct = deductEssentialsBalance(uuid, playerId, total);
-        if (!deduct.ok) {
-            delete store.orders[String(numericId)];
-            savePendingOrdersStore(store);
-            return res.status(500).json({ error: deduct.error || '扣款失败，订单已取消。' });
-        }
-        if (deduct.mode === 'queue') {
-            enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId });
-        }
+        enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId });
 
-        const balanceAfter = deduct.newBalance;
+        const balanceAfter = Math.round((balance - total) * 100) / 100;
         res.json({
             orderId: numericId,
             orderUuid: orderId,
@@ -1777,9 +1769,7 @@ app.post('/api/shop/checkout', (req, res) => {
             balance: balanceAfter,
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             lineCount: resolvedLines.length,
-            message: deduct.mode === 'queue'
-                ? '订单已提交，零钱已排队扣除；玩家上线后物品将发放至 BetterBags。'
-                : '订单已提交，零钱已扣除；玩家上线后物品将发放至 BetterBags。',
+            message: '订单已提交，零钱将自动扣除；玩家上线后物品将发放至 BetterBags。',
             createdAt: now
         });
     } catch (error) {

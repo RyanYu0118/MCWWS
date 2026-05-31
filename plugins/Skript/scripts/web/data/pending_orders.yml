@@ -285,5 +285,31 @@ orders:
                 material: sugar_cane
                 shopTitle: 农作物商店
                 status: delivered
+    '12':
+        id: ea1707a9-3727-4862-8966-64ce6955071d
+        numericId: 12
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 2
+        createdAt: '2026-05-31T10:27:27.846Z'
+        updatedAt: '2026-05-31 18:27:30'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:27:30'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: magenta_concrete
+                shopId: concretes
+                slot: J
+                quantity: 1
+                unitBuyPrice: 2
+                lineTotal: 2
+                productAmount: 1
+                material: magenta_concrete
+                shopTitle: 混凝土商店
+                status: delivered
 
-next_id: 12
+next_id: 13
