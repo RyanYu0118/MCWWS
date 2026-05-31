@@ -1,0 +1,183 @@
+# MCWWS 网页商城：待领取订单 → UltimateShop quickbuy 发放（需 skript-yaml + UltimateShop + skript-reflect）
+import:
+    cn.superiormc.ultimateshop.api.ItemFinishTransactionEvent
+
+function mcwwsInitPendingOrders():
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    if yaml value "next_id" from "weborders" is not set:
+        set yaml value "next_id" from "weborders" to 1
+        save yaml "weborders"
+        send "§a[MCWWS] 已创建网页待领取订单 YAML。" to console
+    else:
+        send "§a[MCWWS] 网页待领取订单发放已启用。" to console
+    unload yaml "weborders"
+
+function mcwwsUuidKey(u: text) :: text:
+    set {_s} to "%{_u}%"
+    set {_s} to {_s} in lower case
+    return {_s}
+
+function mcwwsPlayerUuidKey(p: player) :: text:
+    return mcwwsUuidKey("%uuid of {_p}%")
+
+function mcwwsWebOrdersMaxId() :: number:
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_max} to yaml value "next_id" from "weborders"
+    unload yaml "weborders"
+    if {_max} is not set:
+        return 0
+    if {_max} <= 1:
+        return 0
+    return {_max} - 1
+
+function mcwwsResetStaleDelivering():
+    set {_limit} to mcwwsWebOrdersMaxId()
+    if {_limit} <= 0:
+        stop
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    loop {_limit} times:
+        set {_oid} to loop-number
+        set {_status} to yaml value "orders.%{_oid}%.status" from "weborders"
+        if "%{_status}%" is not "delivering":
+            continue
+        set {_started} to yaml value "orders.%{_oid}%.deliveringStartedAt" from "weborders"
+        if {_started} is not set:
+            continue
+        set {_elapsed} to difference between now and {_started}
+        if {_elapsed} <= 120 seconds:
+            continue
+        set yaml value "orders.%{_oid}%.status" from "weborders" to "pending"
+        set yaml value "orders.%{_oid}%.failureReason" from "weborders" to "发放超时，将在下次上线重试"
+        set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set {_ouuid} to yaml value "orders.%{_oid}%.playerUuid" from "weborders"
+        delete {mcwws.webdeliver.active::%mcwwsUuidKey({_ouuid})%}
+        delete {mcwws.webdeliver.line::%mcwwsUuidKey({_ouuid})%}
+    save yaml "weborders"
+    unload yaml "weborders"
+
+function mcwwsRunQuickbuyLine(p: player, oid: text, lineIdx: number):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_shop} to yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.shopId" from "weborders"
+    set {_slot} to yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.slot" from "weborders"
+    set {_qty} to yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.quantity" from "weborders"
+    unload yaml "weborders"
+    if {_shop} is not set:
+        stop
+    if {_slot} is not set:
+        stop
+    if {_qty} is not set:
+        set {_qty} to 1
+    set {mcwws.webdeliver.active::%mcwwsPlayerUuidKey({_p})%} to {_oid}
+    set {mcwws.webdeliver.line::%mcwwsPlayerUuidKey({_p})%} to {_lineIdx}
+    make {_p} execute command "/shop quickbuy %{_shop}% %{_slot}% %{_qty}%"
+
+function mcwwsAdvanceDelivery(p: player):
+    set {_uuid} to mcwwsPlayerUuidKey({_p})
+    set {_oid} to {mcwws.webdeliver.active::%{_uuid}%}
+    if {_oid} is not set:
+        mcwwsTryStartNextOrder({_p})
+        stop
+    set {_lineIdx} to {mcwws.webdeliver.line::%{_uuid}%}
+    if {_lineIdx} is not set:
+        set {_lineIdx} to 0
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_lineCount} to yaml value "orders.%{_oid}%.lineCount" from "weborders"
+    if {_lineCount} is not set:
+        set {_lineCount} to 1
+    add 1 to {_lineIdx}
+    if {_lineIdx} >= {_lineCount}:
+        set yaml value "orders.%{_oid}%.status" from "weborders" to "delivered"
+        set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set yaml value "orders.%{_oid}%.failureReason" from "weborders" to ""
+        save yaml "weborders"
+        unload yaml "weborders"
+        delete {mcwws.webdeliver.active::%{_uuid}%}
+        delete {mcwws.webdeliver.line::%{_uuid}%}
+        send "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已发放完成。" to {_p}
+        wait 5 ticks
+        mcwwsTryStartNextOrder({_p})
+        stop
+    set {mcwws.webdeliver.line::%{_uuid}%} to {_lineIdx}
+    set yaml value "orders.%{_oid}%.deliveringLine" from "weborders" to {_lineIdx}
+    save yaml "weborders"
+    unload yaml "weborders"
+    wait 8 ticks
+    mcwwsRunQuickbuyLine({_p}, {_oid}, {_lineIdx})
+
+function mcwwsTryStartNextOrder(p: player):
+    set {_uuid} to mcwwsPlayerUuidKey({_p})
+    if {mcwws.webdeliver.active::%{_uuid}%} is set:
+        stop
+    set {_limit} to mcwwsWebOrdersMaxId()
+    if {_limit} <= 0:
+        stop
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_target} to ""
+    loop {_limit} times:
+        set {_oid} to loop-number
+        set {_status} to yaml value "orders.%{_oid}%.status" from "weborders"
+        if "%{_status}%" is not "pending":
+            continue
+        set {_ouuid} to yaml value "orders.%{_oid}%.playerUuid" from "weborders"
+        if mcwwsUuidKey({_ouuid}) is not {_uuid}:
+            continue
+        set {_target} to "%{_oid}%"
+        exit loop
+    if {_target} is "":
+        unload yaml "weborders"
+        stop
+    set yaml value "orders.%{_target}%.status" from "weborders" to "delivering"
+    set yaml value "orders.%{_target}%.deliveringLine" from "weborders" to 0
+    set yaml value "orders.%{_target}%.deliveringStartedAt" from "weborders" to now
+    set yaml value "orders.%{_target}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
+    unload yaml "weborders"
+    send "§a[MCWWS] §f正在发放网页订单 §e#%{_target}% §f，请确保背包有足够空间..." to {_p}
+    wait 5 ticks
+    mcwwsRunQuickbuyLine({_p}, {_target}, 0)
+
+function mcwwsDeliverPendingFor(p: player):
+    mcwwsTryStartNextOrder({_p})
+
+on load:
+    mcwwsInitPendingOrders()
+
+on join:
+    wait 3 seconds
+    mcwwsDeliverPendingFor(player)
+
+every 15 seconds:
+    mcwwsResetStaleDelivering()
+    loop all players:
+        mcwwsDeliverPendingFor(loop-player)
+
+on ItemFinishTransactionEvent:
+    set {_p} to event.getPlayer()
+    if {_p} is not set:
+        stop
+    if event.isBuyOrSell() is not true:
+        stop
+    set {_uuid} to mcwwsPlayerUuidKey({_p})
+    set {_oid} to {mcwws.webdeliver.active::%{_uuid}%}
+    if {_oid} is not set:
+        stop
+    set {_lineIdx} to {mcwws.webdeliver.line::%{_uuid}%}
+    if {_lineIdx} is not set:
+        set {_lineIdx} to 0
+    set {_shop} to event.getShop().getShopName()
+    set {_product} to event.getItem().getProduct()
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_expectedShop} to yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.shopId" from "weborders"
+    set {_expectedSlot} to yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.slot" from "weborders"
+    if "%{_shop}%" is not "%{_expectedShop}%":
+        unload yaml "weborders"
+        stop
+    if "%{_product}%" is not "%{_expectedSlot}%":
+        unload yaml "weborders"
+        stop
+    set yaml value "orders.%{_oid}%.lines.%{_lineIdx}%.status" from "weborders" to "delivered"
+    set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
+    unload yaml "weborders"
+    wait 3 ticks
+    mcwwsAdvanceDelivery({_p})

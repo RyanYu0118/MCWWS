@@ -2682,7 +2682,8 @@ body {
 
 .cart-drawer-actions {
     display: flex;
-    gap: 10px;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .cart-drawer-btn {
@@ -2711,6 +2712,51 @@ body {
 
 .cart-drawer-btn--primary:hover {
     filter: brightness(1.06);
+}
+
+.cart-pending-orders {
+    margin-bottom: 12px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    background: rgba(34, 211, 238, 0.08);
+    border: 1px solid rgba(34, 211, 238, 0.18);
+}
+
+.cart-pending-title {
+    margin: 0 0 8px;
+    font-size: 0.82rem;
+    color: #67e8f9;
+}
+
+.cart-pending-list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+
+.cart-pending-list li {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 0.8rem;
+    color: #cbd5e1;
+}
+
+.cart-pending-id {
+    color: #f8fafc;
+    font-weight: 600;
+}
+
+.cart-pending-status {
+    color: #fbbf24;
+}
+
+.cart-pending-total {
+    margin-left: auto;
+    color: #fde047;
 }
 
 .cart-drawer-btn--primary:disabled {

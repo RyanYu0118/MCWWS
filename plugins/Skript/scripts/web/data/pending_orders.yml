@@ -1,0 +1,48 @@
+orders:
+    '1':
+        id: f4e6e759-da26-4559-a405-23c78325b07f
+        numericId: 1
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivering
+        total: 12.2
+        createdAt: '2026-05-31T07:35:40.444Z'
+        updatedAt: '2026-05-31 15:35:41'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: !skriptdate '2026-05-31T15:35:41.603+08:00'
+        lineCount: 3
+        lines:
+        -   itemId: andesite
+            shopId: blocks
+            slot: H
+            quantity: 3
+            unitBuyPrice: 1
+            lineTotal: 3
+            productAmount: 1
+            material: andesite
+            shopTitle: 方块商店
+            status: pending
+        -   itemId: birch_log
+            shopId: logs
+            slot: D
+            quantity: 1
+            unitBuyPrice: 7.2
+            lineTotal: 7.2
+            productAmount: 1
+            material: birch_log
+            shopTitle: 原木商店
+            status: pending
+        -   itemId: white_concrete
+            shopId: concretes
+            slot: P
+            quantity: 1
+            unitBuyPrice: 2
+            lineTotal: 2
+            productAmount: 1
+            material: white_concrete
+            shopTitle: 混凝土商店
+            status: pending
+
+next_id: 2

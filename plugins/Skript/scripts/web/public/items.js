@@ -287,6 +287,99 @@ function getCartTotalBuyPrice() {
     }, 0);
 }
 
+async function loadPendingOrdersUi() {
+    const box = document.getElementById('cartPendingOrders');
+    if (!box) return;
+    const auth = window.MCWWS_AUTH;
+    if (!auth?.getToken?.()) {
+        box.hidden = true;
+        box.innerHTML = '';
+        return;
+    }
+    try {
+        const res = await fetch('/api/shop/orders?limit=5', {
+            headers: auth.headers(),
+            cache: 'no-store'
+        });
+        if (!res.ok) {
+            box.hidden = true;
+            return;
+        }
+        const data = await res.json();
+        const active = (data.orders || []).filter((o) => o.status === 'pending' || o.status === 'delivering');
+        if (!active.length) {
+            box.hidden = true;
+            box.innerHTML = '';
+            return;
+        }
+        box.hidden = false;
+        box.innerHTML = `
+            <p class="cart-pending-title">待领取订单</p>
+            <ul class="cart-pending-list">
+                ${active.map((order) => `
+                    <li>
+                        <span class="cart-pending-id">#${escapeHtml(String(order.orderId))}</span>
+                        <span class="cart-pending-status">${escapeHtml(formatOrderStatus(order.status))}</span>
+                        <span class="cart-pending-total">${escapeHtml(order.totalFormatted || '')}</span>
+                    </li>
+                `).join('')}
+            </ul>
+        `;
+    } catch {
+        box.hidden = true;
+    }
+}
+
+function formatOrderStatus(status) {
+    if (status === 'delivering') return '发放中';
+    if (status === 'delivered') return '已完成';
+    if (status === 'failed') return '失败';
+    return '待领取';
+}
+
+async function submitCartCheckout() {
+    if (!shopCart.length) {
+        showToast('购物车是空的。', false);
+        return;
+    }
+    const auth = window.MCWWS_AUTH;
+    if (!auth?.getToken?.()) {
+        auth?.openModal?.();
+        showToast('请先登录后再提交订单。', false);
+        return;
+    }
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
+    if (checkoutBtn) checkoutBtn.disabled = true;
+    const lines = shopCart.map((entry) => ({
+        itemId: entry.itemId,
+        shopId: entry.shopId,
+        slot: entry.slot,
+        quantity: entry.quantity
+    }));
+    try {
+        const res = await fetch('/api/shop/checkout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                ...auth.headers()
+            },
+            body: JSON.stringify({ lines })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+            throw new Error(data.error || '提交订单失败');
+        }
+        clearShopCart();
+        showToast(`订单 #${data.orderId} 已提交，上线后自动扣款并发放物品。`, true);
+        await loadPendingOrdersUi();
+        closeCartDrawer();
+    } catch (error) {
+        showToast(error.message || '提交订单失败', false);
+    } finally {
+        if (checkoutBtn) checkoutBtn.disabled = false;
+    }
+}
+
 function updateCartBadge() {
     const badge = document.getElementById('cartBadge');
     if (!badge) return;
@@ -307,6 +400,7 @@ function openCartDrawer() {
     backdrop.setAttribute('aria-hidden', 'false');
     document.body.style.overflow = 'hidden';
     renderCartDrawer();
+    void loadPendingOrdersUi();
     syncItemsStateToUrl();
 }
 
@@ -387,12 +481,14 @@ function renderCartDrawer() {
     const body = document.getElementById('cartDrawerBody');
     const totalEl = document.getElementById('cartTotalPrice');
     const mapBtn = document.getElementById('cartMapBtn');
+    const checkoutBtn = document.getElementById('cartCheckoutBtn');
     if (!body) return;
 
     if (!shopCart.length) {
         body.innerHTML = '<div class="cart-empty">购物车是空的<br>浏览物品并点击「加入购物车」</div>';
         if (totalEl) totalEl.textContent = '￥0.00';
         if (mapBtn) mapBtn.disabled = true;
+        if (checkoutBtn) checkoutBtn.disabled = true;
         return;
     }
 
@@ -431,6 +527,9 @@ function renderCartDrawer() {
     }
     if (mapBtn) {
         mapBtn.disabled = false;
+    }
+    if (checkoutBtn) {
+        checkoutBtn.disabled = !window.MCWWS_AUTH?.getToken?.();
     }
 }
 
@@ -1534,6 +1633,9 @@ function setupEventListeners() {
         showToast('购物车已清空', true);
     });
     document.getElementById('cartMapBtn')?.addEventListener('click', openCartOnMap);
+    document.getElementById('cartCheckoutBtn')?.addEventListener('click', () => {
+        void submitCartCheckout();
+    });
 
     const cartDrawerBody = document.getElementById('cartDrawerBody');
     if (cartDrawerBody) {

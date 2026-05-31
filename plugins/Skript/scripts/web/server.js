@@ -63,6 +63,7 @@ const DB_DIR = path.join(__dirname, 'data');
 const USER_DB_FILE = path.join(DB_DIR, 'users.json');
 const TRANSACTIONS_CSV = path.join(DB_DIR, 'transactions.csv');
 const TRANSACTIONS_YAML = path.join(DB_DIR, 'transactions_store.yml');
+const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -96,6 +97,10 @@ if (!fs.existsSync(TRANSACTIONS_CSV)) {
         'id,playerUuid,playerName,type,shopId,productId,amount,timestamp\n',
         'utf8'
     );
+}
+
+if (!fs.existsSync(PENDING_ORDERS_PATH)) {
+    fs.writeFileSync(PENDING_ORDERS_PATH, 'next_id: 1\norders: {}\n', 'utf8');
 }
 
 const analytics = createAnalyticsService({
@@ -624,6 +629,126 @@ function buildUltimateShopCatalogByMaterial(priceData = {}) {
     });
 
     return catalog;
+}
+
+function loadPendingOrdersStore() {
+    const data = loadYamlFile(PENDING_ORDERS_PATH);
+    if (!data || typeof data !== 'object') {
+        return { next_id: 1, orders: {} };
+    }
+    if (!data.orders || typeof data.orders !== 'object') {
+        data.orders = {};
+    }
+    if (!Number.isFinite(Number(data.next_id))) {
+        data.next_id = 1;
+    }
+    return data;
+}
+
+function savePendingOrdersStore(data) {
+    saveYamlFile(PENDING_ORDERS_PATH, data);
+}
+
+function getShopProductDetails(shopId, slot) {
+    const file = path.join(ULTIMATE_SHOP_SHOPS_DIR, `${shopId}.yml`);
+    if (!fs.existsSync(file)) {
+        return null;
+    }
+    const doc = loadYamlFile(file);
+    const def = doc.items && doc.items[slot];
+    if (!def || typeof def !== 'object') {
+        return null;
+    }
+    const materials = collectProductMaterials(def.products);
+    let productAmount = 1;
+    if (def.products && typeof def.products === 'object') {
+        const firstKey = Object.keys(def.products).sort((a, b) => Number(a) - Number(b))[0];
+        const product = firstKey ? def.products[firstKey] : null;
+        const amount = Number(product && product.amount);
+        if (Number.isFinite(amount) && amount > 0) {
+            productAmount = amount;
+        }
+    }
+    const buyRaw = firstEconomyPriceAmount(def['buy-prices']);
+    return {
+        material: materials[0] || null,
+        productAmount,
+        buyRaw,
+        hasBuyPrice: buyRaw != null && buyRaw !== ''
+    };
+}
+
+function findUltimateShopOffer(catalog, itemId, shopId, slot) {
+    const normItemId = normalizeMaterialId(itemId);
+    const offers = normItemId ? (catalog[normItemId] || []) : [];
+    const normShopId = String(shopId || '').trim();
+    const normSlot = String(slot || '').trim();
+    return offers.find((offer) => offer.shopId === normShopId && String(offer.slot) === normSlot) || null;
+}
+
+function resolveCheckoutLine(rawLine, priceData, catalog) {
+    const itemId = normalizeMaterialId(rawLine && rawLine.itemId);
+    const shopId = String(rawLine && rawLine.shopId || '').trim();
+    const slot = String(rawLine && rawLine.slot || '').trim();
+    const quantity = Math.floor(Number(rawLine && rawLine.quantity));
+    if (!itemId || !shopId || !slot) {
+        return { error: '订单行缺少 itemId、shopId 或 slot。' };
+    }
+    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 9999) {
+        return { error: `无效数量：${rawLine && rawLine.itemId}` };
+    }
+    const offer = findUltimateShopOffer(catalog, itemId, shopId, slot);
+    if (!offer) {
+        return { error: `未找到上架位置：${itemId} / ${shopId} / ${slot}` };
+    }
+    const product = getShopProductDetails(shopId, slot);
+    if (!product || !product.hasBuyPrice) {
+        return { error: `该商品不可购买：${shopId} / ${slot}` };
+    }
+    if (product.material && product.material !== itemId) {
+        return { error: `物品与商店槽位不匹配：${itemId}` };
+    }
+    const unitBuyPrice = offer.buyAmountResolved != null
+        ? Number(offer.buyAmountResolved)
+        : resolveMcwwsPricePlaceholder(offer.buyAmount, priceData);
+    if (!Number.isFinite(unitBuyPrice) || unitBuyPrice < 0) {
+        return { error: `无法解析买入价：${itemId}` };
+    }
+    const lineTotal = Math.round(unitBuyPrice * quantity * 100) / 100;
+    return {
+        line: {
+            itemId,
+            shopId,
+            slot,
+            quantity,
+            unitBuyPrice,
+            lineTotal,
+            productAmount: product.productAmount,
+            material: product.material,
+            shopTitle: offer.shopTitleResolved || offer.shopTitle || shopId,
+            status: 'pending'
+        }
+    };
+}
+
+function listOrdersForUser(user, limit = 30) {
+    const store = loadPendingOrdersStore();
+    const playerId = String(user.playerId || '').trim().toLowerCase();
+    const username = String(user.username || '').trim().toLowerCase();
+    const uuid = resolvePlayerUuid(user.playerId);
+    const uuidKey = uuid ? String(uuid).trim().toLowerCase() : '';
+    const orders = Object.values(store.orders || {})
+        .filter((order) => {
+            const oid = String(order.playerId || '').trim().toLowerCase();
+            const ouser = String(order.username || '').trim().toLowerCase();
+            const ouuid = String(order.playerUuid || '').trim().toLowerCase();
+            return (playerId && oid === playerId)
+                || (username && ouser === username)
+                || (uuidKey && ouuid === uuidKey);
+        })
+        .sort((a, b) => String(b.createdAt || '').localeCompare(String(a.createdAt || '')))
+        .slice(0, limit);
+    return orders;
 }
 
 function generateToken() {
@@ -1423,6 +1548,132 @@ app.get('/api/shop/item/:item', (req, res) => {
     } catch (error) {
         console.error('读取物品详情失败:', error);
         res.status(500).json({ error: '读取失败' });
+    }
+});
+
+app.post('/api/shop/checkout', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录后才能提交订单。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        if (!playerId) {
+            return res.status(400).json({ error: '账号未绑定游戏玩家 ID。' });
+        }
+        const uuid = resolvePlayerUuid(playerId);
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+
+        const rawLines = Array.isArray(req.body && req.body.lines) ? req.body.lines : [];
+        if (!rawLines.length) {
+            return res.status(400).json({ error: '购物车为空。' });
+        }
+        if (rawLines.length > 50) {
+            return res.status(400).json({ error: '单次最多提交 50 种商品。' });
+        }
+
+        const priceData = loadPriceTables();
+        const catalog = buildUltimateShopCatalogByMaterial(priceData);
+        const resolvedLines = [];
+        for (let i = 0; i < rawLines.length; i += 1) {
+            const result = resolveCheckoutLine(rawLines[i], priceData, catalog);
+            if (result.error) {
+                return res.status(422).json({ error: result.error });
+            }
+            resolvedLines.push(result.line);
+        }
+
+        const total = Math.round(resolvedLines.reduce((sum, line) => sum + line.lineTotal, 0) * 100) / 100;
+        const balance = readEssentialsBalance(uuid);
+        if (balance == null) {
+            return res.status(404).json({ error: '未找到该玩家的 Essentials 经济存档。' });
+        }
+        if (balance < total) {
+            return res.status(402).json({
+                error: '零钱不足，无法提交订单。',
+                balance,
+                balanceFormatted: formatEssentialsBalance(balance),
+                total,
+                totalFormatted: formatEssentialsBalance(total)
+            });
+        }
+
+        const store = loadPendingOrdersStore();
+        const numericId = Number(store.next_id) || 1;
+        const orderId = crypto.randomUUID();
+        const now = new Date().toISOString();
+        store.orders[String(numericId)] = {
+            id: orderId,
+            numericId,
+            playerUuid: uuid,
+            playerId,
+            username: user.username,
+            status: 'pending',
+            total,
+            createdAt: now,
+            updatedAt: now,
+            failureReason: '',
+            deliveringLine: 0,
+            deliveringStartedAt: '',
+            lineCount: resolvedLines.length,
+            lines: resolvedLines
+        };
+        store.next_id = numericId + 1;
+        savePendingOrdersStore(store);
+
+        res.json({
+            orderId: numericId,
+            orderUuid: orderId,
+            status: 'pending',
+            total,
+            totalFormatted: formatEssentialsBalance(total),
+            balance,
+            balanceFormatted: formatEssentialsBalance(balance),
+            lineCount: resolvedLines.length,
+            message: '订单已提交。玩家上线后将通过 UltimateShop 自动扣款并发放物品。',
+            createdAt: now
+        });
+    } catch (error) {
+        console.error('提交网页订单失败:', error);
+        res.status(500).json({ error: '提交订单失败，请稍后重试。' });
+    }
+});
+
+app.get('/api/shop/orders', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const limit = Math.min(Number(req.query.limit) || 20, 50);
+        const orders = listOrdersForUser(user, limit).map((order) => ({
+            orderId: order.numericId,
+            orderUuid: order.id,
+            status: order.status,
+            total: order.total,
+            totalFormatted: formatEssentialsBalance(order.total),
+            createdAt: order.createdAt,
+            updatedAt: order.updatedAt,
+            failureReason: order.failureReason || '',
+            lineCount: Array.isArray(order.lines) ? order.lines.length : 0,
+            lines: (order.lines || []).map((line) => ({
+                itemId: line.itemId,
+                shopId: line.shopId,
+                slot: line.slot,
+                quantity: line.quantity,
+                unitBuyPrice: line.unitBuyPrice,
+                lineTotal: line.lineTotal,
+                shopTitle: line.shopTitle,
+                status: line.status || 'pending'
+            }))
+        }));
+        const pendingCount = orders.filter((o) => o.status === 'pending' || o.status === 'delivering').length;
+        res.json({ orders, pendingCount, updatedAt: new Date().toISOString() });
+    } catch (error) {
+        console.error('读取网页订单失败:', error);
+        res.status(500).json({ error: '读取订单失败。' });
     }
 });
 

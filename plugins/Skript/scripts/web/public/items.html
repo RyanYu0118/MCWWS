@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>物品目录 - 流浪世界服务器商店系统</title>
     <meta name="description" content="浏览所有商店物品及当前价格">
-    <link rel="stylesheet" href="style.css?v=2.5.61">
+    <link rel="stylesheet" href="style.css?v=2.5.62">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -191,10 +191,12 @@
                 <span>合计（系统买入价）</span>
                 <strong id="cartTotalPrice">￥0.00</strong>
             </div>
-            <p class="cart-drawer-hint">购物车仅用于记录采购清单；实际购买请在游戏内 UltimateShop 商店完成。</p>
+            <p class="cart-drawer-hint" id="cartDrawerHint">登录后可提交订单；扣款与发放在你上线时由 UltimateShop 自动完成。</p>
+            <div id="cartPendingOrders" class="cart-pending-orders" hidden></div>
             <div class="cart-drawer-actions">
                 <button type="button" id="cartClearBtn" class="cart-drawer-btn cart-drawer-btn--ghost">清空</button>
-                <button type="button" id="cartMapBtn" class="cart-drawer-btn cart-drawer-btn--primary">在地图上查看</button>
+                <button type="button" id="cartCheckoutBtn" class="cart-drawer-btn cart-drawer-btn--primary">提交订单</button>
+                <button type="button" id="cartMapBtn" class="cart-drawer-btn cart-drawer-btn--ghost">在地图上查看</button>
             </div>
         </div>
     </aside>
@@ -249,7 +251,7 @@
     <script src="enchant-glint.js?v=2.5.28" defer></script>
     <script src="texture-animation.js?v=2.5.65" defer></script>
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
-    <script src="items.js?v=2.5.64" defer></script>
+    <script src="items.js?v=2.5.65" defer></script>
 </body>
 
 </html>
