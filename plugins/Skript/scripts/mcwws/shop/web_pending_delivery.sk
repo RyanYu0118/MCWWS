@@ -1,6 +1,8 @@
-# MCWWS 网页商城：待领取订单 → UltimateShop quickbuy 发放（需 skript-yaml + UltimateShop + skript-reflect）
+# MCWWS 网页商城：待领取订单 → 直接写入 BetterBags（需 skript-yaml + skript-reflect + BetterBags）
 import:
-    cn.superiormc.ultimateshop.api.ItemFinishTransactionEvent
+    org.bukkit.Material
+    org.bukkit.inventory.ItemStack
+    cat.necko.bags.Plugin as BetterBagsPlugin
 
 function mcwwsInitPendingOrders():
     load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
@@ -73,11 +75,52 @@ function mcwwsReadLineValue(oid: text, lineIdx: number, field: text) :: text:
         add 1 to {_n}
     return ""
 
+function mcwwsParseLineNumber(raw: text, default: number) :: number:
+    set {_s} to "%{_raw}%"
+    if {_s} is "":
+        return {_default}
+    set {_n} to {_s} parsed as number
+    if {_n} is not set:
+        return {_default}
+    return {_n}
+
+function mcwwsDeliverItemToBetterBags(p: player, material: text, amount: number) :: boolean:
+    if {_amount} <= 0:
+        return false
+    set {_mat} to "%{_material}%"
+    if {_mat} is "":
+        return false
+    if {_mat} does not contain "minecraft:":
+        set {_mat} to "minecraft:%{_mat}%"
+    set {_bukkitMat} to Material.matchMaterial({_mat})
+    if {_bukkitMat} is not set:
+        set {_plain} to {_mat}
+        replace all "minecraft:" in {_plain} with ""
+        set {_bukkitMat} to Material.matchMaterial({_plain})
+    if {_bukkitMat} is not set:
+        return false
+    set {_stack} to new ItemStack({_bukkitMat}, {_amount})
+    set {_plugin} to BetterBagsPlugin.getInstance()
+    if {_plugin} is not set:
+        return false
+    set {_pd} to {_plugin}.getPlayerData(uuid of {_p})
+    if {_pd} is not set:
+        return false
+    set {_left} to {_pd}.addItem({_stack})
+    if {_left} is set:
+        if {_left}.isEmpty() is false:
+            return false
+    {_pd}.save()
+    execute console command "betterbags:bags save"
+    return true
+
 function mcwwsFailOrderDelivery(p: player, oid: text, reason: text):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
     set yaml value "orders.%{_oid}%.status" from "weborders" to "pending"
     set yaml value "orders.%{_oid}%.failureReason" from "weborders" to {_reason}
     set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
     save yaml "weborders"
+    unload yaml "weborders"
     delete {mcwws.webdeliver.active::%mcwwsPlayerUuidKey({_p})%}
     delete {mcwws.webdeliver.line::%mcwwsPlayerUuidKey({_p})%}
     send "§c[MCWWS] §f网页订单 §e#%{_oid}% §f发放失败：%{_reason}%" to {_p}
@@ -108,43 +151,42 @@ function mcwwsResetStaleDelivering():
     save yaml "weborders"
     unload yaml "weborders"
 
-function mcwwsRunQuickbuyLine(p: player, oid: text, lineIdx: number):
+function mcwwsDeliverOrderLine(p: player, oid: text, lineIdx: number):
     reload yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
-    set {_shop} to mcwwsReadLineValue({_oid}, {_lineIdx}, "shopId")
-    set {_slot} to mcwwsReadLineValue({_oid}, {_lineIdx}, "slot")
-    set {_qty} to mcwwsReadLineValue({_oid}, {_lineIdx}, "quantity")
-    if {_shop} is "":
-        mcwwsFailOrderDelivery({_p}, {_oid}, "无法读取商店 ID（YAML 行 %{_lineIdx}%）")
+    set {_material} to mcwwsReadLineValue({_oid}, {_lineIdx}, "material")
+    if {_material} is "":
+        set {_material} to mcwwsReadLineValue({_oid}, {_lineIdx}, "itemId")
+    if {_material} is "":
+        mcwwsFailOrderDelivery({_p}, {_oid}, "无法读取物品 ID（YAML 行 %{_lineIdx}%）")
         unload yaml "weborders"
         stop
-    if {_slot} is "":
-        mcwwsFailOrderDelivery({_p}, {_oid}, "无法读取商品槽位")
+    set {_qty} to mcwwsParseLineNumber(mcwwsReadLineValue({_oid}, {_lineIdx}, "quantity"), 1)
+    set {_per} to mcwwsParseLineNumber(mcwwsReadLineValue({_oid}, {_lineIdx}, "productAmount"), 1)
+    set {_total} to {_qty} * {_per}
+    set {_ok} to mcwwsDeliverItemToBetterBags({_p}, {_material}, {_total})
+    if {_ok} is false:
+        mcwwsFailOrderDelivery({_p}, {_oid}, "BetterBags 发放失败（未加载数据或容量不足），请重新登录后重试")
         unload yaml "weborders"
         stop
-    if {_qty} is "":
-        set {_qty} to 1
+    set {_lineKey} to mcwwsLineYamlIndex({_lineIdx})
+    set yaml value "orders.%{_oid}%.lines.%{_lineKey}%.status" from "weborders" to "delivered"
+    set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
     unload yaml "weborders"
-    set {mcwws.webdeliver.active::%mcwwsPlayerUuidKey({_p})%} to {_oid}
-    set {mcwws.webdeliver.line::%mcwwsPlayerUuidKey({_p})%} to {_lineIdx}
-    set {_pname} to name of {_p}
-    # 控制台代买：/shop quickbuy <shop> <slot> [amount] <player>（需 ultimateshop.quickbuy，由控制台执行）
-    execute console command "shop quickbuy %{_shop}% %{_slot}% %{_qty}% %{_pname}%"
+    add 1 to {_lineIdx}
+    wait 3 ticks
+    mcwwsAdvanceDelivery({_p}, {_oid}, {_lineIdx})
 
-function mcwwsAdvanceDelivery(p: player):
+function mcwwsAdvanceDelivery(p: player, oid: text, nextLineIdx: number):
     set {_uuid} to mcwwsPlayerUuidKey({_p})
-    set {_oid} to {mcwws.webdeliver.active::%{_uuid}%}
     if {_oid} is not set:
         mcwwsTryStartNextOrder({_p})
         stop
-    set {_lineIdx} to {mcwws.webdeliver.line::%{_uuid}%}
-    if {_lineIdx} is not set:
-        set {_lineIdx} to 0
     load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
     set {_lineCount} to yaml value "orders.%{_oid}%.lineCount" from "weborders"
     if {_lineCount} is not set:
         set {_lineCount} to 1
-    add 1 to {_lineIdx}
-    if {_lineIdx} >= {_lineCount}:
+    if {_nextLineIdx} >= {_lineCount}:
         set yaml value "orders.%{_oid}%.status" from "weborders" to "delivered"
         set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
         set yaml value "orders.%{_oid}%.failureReason" from "weborders" to ""
@@ -152,16 +194,16 @@ function mcwwsAdvanceDelivery(p: player):
         unload yaml "weborders"
         delete {mcwws.webdeliver.active::%{_uuid}%}
         delete {mcwws.webdeliver.line::%{_uuid}%}
-        send "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已发放完成。" to {_p}
+        send "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已发放至 BetterBags。" to {_p}
         wait 5 ticks
         mcwwsTryStartNextOrder({_p})
         stop
-    set {mcwws.webdeliver.line::%{_uuid}%} to {_lineIdx}
-    set yaml value "orders.%{_oid}%.deliveringLine" from "weborders" to {_lineIdx}
+    set {mcwws.webdeliver.line::%{_uuid}%} to {_nextLineIdx}
+    set yaml value "orders.%{_oid}%.deliveringLine" from "weborders" to {_nextLineIdx}
     save yaml "weborders"
     unload yaml "weborders"
     wait 10 ticks
-    mcwwsRunQuickbuyLine({_p}, {_oid}, {_lineIdx})
+    mcwwsDeliverOrderLine({_p}, {_oid}, {_nextLineIdx})
 
 function mcwwsTryStartNextOrder(p: player):
     set {_uuid} to mcwwsPlayerUuidKey({_p})
@@ -199,9 +241,11 @@ function mcwwsTryStartNextOrder(p: player):
     set yaml value "orders.%{_target}%.failureReason" from "weborders" to ""
     save yaml "weborders"
     unload yaml "weborders"
-    send "§a[MCWWS] §f正在发放网页订单 §e#%{_target}% §f，请确保背包有足够空间..." to {_p}
+    set {mcwws.webdeliver.active::%mcwwsPlayerUuidKey({_p})%} to {_target}
+    set {mcwws.webdeliver.line::%mcwwsPlayerUuidKey({_p})%} to 0
+    send "§a[MCWWS] §f正在发放网页订单 §e#%{_target}% §f至 BetterBags..." to {_p}
     wait 5 ticks
-    mcwwsRunQuickbuyLine({_p}, {_target}, 0)
+    mcwwsDeliverOrderLine({_p}, {_target}, 0)
 
 function mcwwsDeliverPendingFor(p: player):
     mcwwsTryStartNextOrder({_p})
@@ -218,36 +262,3 @@ every 15 seconds:
     loop all players:
         mcwwsDeliverPendingFor(loop-player)
 
-on ItemFinishTransactionEvent:
-    set {_p} to event.getPlayer()
-    if {_p} is not set:
-        stop
-    if event.isBuyOrSell() is not true:
-        stop
-    set {_uuid} to mcwwsPlayerUuidKey({_p})
-    set {_oid} to {mcwws.webdeliver.active::%{_uuid}%}
-    if {_oid} is not set:
-        stop
-    set {_lineIdx} to {mcwws.webdeliver.line::%{_uuid}%}
-    if {_lineIdx} is not set:
-        set {_lineIdx} to 0
-    set {_shop} to event.getShop().getShopName()
-    set {_product} to event.getItem().getProduct()
-    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
-    set {_expectedShop} to mcwwsReadLineValue({_oid}, {_lineIdx}, "shopId")
-    set {_expectedSlot} to mcwwsReadLineValue({_oid}, {_lineIdx}, "slot")
-    if {_expectedShop} is not "":
-        if "%{_shop}%" is not "%{_expectedShop}%":
-            unload yaml "weborders"
-            stop
-    if {_expectedSlot} is not "":
-        if "%{_product}%" is not "%{_expectedSlot}%":
-            unload yaml "weborders"
-            stop
-    set {_lineKey} to mcwwsLineYamlIndex({_lineIdx})
-    set yaml value "orders.%{_oid}%.lines.%{_lineKey}%.status" from "weborders" to "delivered"
-    set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
-    save yaml "weborders"
-    unload yaml "weborders"
-    wait 3 ticks
-    mcwwsAdvanceDelivery({_p})
