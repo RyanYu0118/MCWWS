@@ -320,6 +320,21 @@
         return economyFetchPromise;
     }
 
+    function applyEconomySnapshot(patch) {
+        if (!patch || (patch.balance == null && patch.balanceFormatted == null)) {
+            return;
+        }
+        economyCache = {
+            ...(economyCache || {}),
+            ...patch
+        };
+        economyCacheAt = Date.now();
+        const refs = ensureAuthWidgetDom();
+        if (refs) {
+            renderEconomyUi(refs, economyCache);
+        }
+    }
+
     async function refreshEconomyForPopover(refs, force) {
         if (!currentUser) {
             clearEconomyUi(refs);
@@ -666,6 +681,11 @@
         closeModal: closeAuthModal,
         logout,
         refresh: loadProfile,
+        applyEconomySnapshot,
+        refreshEconomy(force) {
+            const refs = ensureAuthWidgetDom();
+            return refreshEconomyForPopover(refs, Boolean(force));
+        },
         onChange(fn) {
             listeners.add(fn);
             return () => listeners.delete(fn);

@@ -1,4 +1,4 @@
-# 网页商城：Essentials 零钱扣款队列（在线 eco take / 离线写 userdata）
+# 网页商城：Essentials 零钱扣款队列（统一写 userdata，在线时用 eco set 同步内存）
 
 function mcwwsEcoQueueMaxId() :: number:
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
@@ -25,30 +25,81 @@ function mcwwsIsPlayerOnline(playerId: text) :: boolean:
             return true
     return false
 
-function mcwwsDeductEssentialsOffline(uuid: text, amount: number) :: boolean:
+function mcwwsReadEssentialsFileMoney(uuid: text) :: number:
+    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
+    if yaml file {_path} exists:
+        load yaml {_path} as "eu"
+    else:
+        return -1
+    set {_moneyRaw} to yaml value "money" from "eu"
+    unload yaml "eu"
+    set {_money} to {_moneyRaw} parsed as number
+    if {_money} is not set:
+        return 0
+    return {_money}
+
+function mcwwsWriteEssentialsFileMoney(uuid: text, amount: number) :: boolean:
     set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
     if yaml file {_path} exists:
         load yaml {_path} as "eu"
     else:
         return false
-    set {_moneyRaw} to yaml value "money" from "eu"
-    set {_money} to {_moneyRaw} parsed as number
-    if {_money} is not set:
-        set {_money} to 0
-    if {_money} < {_amount}:
-        unload yaml "eu"
-        return false
-    set {_new} to {_money} - {_amount}
-    set yaml value "money" from "eu" to mcwwsFormatEssentialsMoney({_new})
+    set yaml value "money" from "eu" to mcwwsFormatEssentialsMoney({_amount})
     save yaml "eu"
     unload yaml "eu"
     return true
 
-function mcwwsTryEcoTakeOnline(playerId: text, amount: number) :: boolean:
-    if mcwwsIsPlayerOnline({_playerId}) is false:
+function mcwwsDeductEssentialsOffline(uuid: text, amount: number) :: boolean:
+    set {_money} to mcwwsReadEssentialsFileMoney({_uuid})
+    if {_money} < 0:
         return false
-    execute console command "eco take %{_playerId}% %{_amount}%"
-    return true
+    if {_money} < {_amount}:
+        return false
+    set {_new} to {_money} - {_amount}
+    return mcwwsWriteEssentialsFileMoney({_uuid}, {_new})
+
+function mcwwsEcoSetFromFile(playerId: text, uuid: text):
+    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
+    if yaml file {_path} exists:
+        load yaml {_path} as "eu"
+    else:
+        stop
+    set {_moneyRaw} to yaml value "money" from "eu"
+    unload yaml "eu"
+    if {_moneyRaw} is not set:
+        stop
+    execute console command "eco set %{_playerId}% %{_moneyRaw}%"
+
+function mcwwsEcoBalanceMatchesTarget(uuid: text, targetRaw: text) :: boolean:
+    if {_targetRaw} is not set:
+        return false
+    if "%{_targetRaw}%" is "":
+        return false
+    set {_target} to {_targetRaw} parsed as number
+    if {_target} is not set:
+        return false
+    set {_current} to mcwwsReadEssentialsFileMoney({_uuid})
+    if {_current} < 0:
+        return false
+    set {_diff} to {_current} - {_target}
+    if {_diff} < 0:
+        set {_diff} to 0 - {_diff}
+    if {_diff} < 0.02:
+        return true
+    return false
+
+function mcwwsMarkEcoDeductionDone(id: number):
+    set yaml value "pending.%{_id}%.status" from "econq" to "done"
+    set yaml value "pending.%{_id}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+
+function mcwwsApplyEcoDeduction(id: number, pid: text, uuid: text, amount: number, targetRaw: text) :: boolean:
+    if mcwwsEcoBalanceMatchesTarget({_uuid}, {_targetRaw}) is true:
+        return true
+    if mcwwsDeductEssentialsOffline({_uuid}, {_amount}) is true:
+        return true
+    if mcwwsEcoBalanceMatchesTarget({_uuid}, {_targetRaw}) is true:
+        return true
+    return false
 
 function mcwwsProcessEcoQueue():
     set {_limit} to mcwwsEcoQueueMaxId()
@@ -64,22 +115,50 @@ function mcwwsProcessEcoQueue():
         set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
         set {_uuid} to yaml value "pending.%{_id}%.uuid" from "econq"
         set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
+        set {_target} to yaml value "pending.%{_id}%.balanceAfter" from "econq"
         if {_pid} is not set:
             continue
         if {_uuid} is not set:
             continue
         if {_amount} is not set:
             continue
-        set {_ok} to false
-        if mcwwsTryEcoTakeOnline({_pid}, {_amount}) is true:
-            set {_ok} to true
-        else if mcwwsIsPlayerOnline({_pid}) is false:
-            if mcwwsDeductEssentialsOffline({_uuid}, {_amount}) is true:
-                set {_ok} to true
-        if {_ok} is false:
+        if mcwwsApplyEcoDeduction({_id}, {_pid}, {_uuid}, {_amount}, {_target}) is false:
             continue
-        set yaml value "pending.%{_id}%.status" from "econq" to "done"
-        set yaml value "pending.%{_id}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        if mcwwsIsPlayerOnline({_pid}) is true:
+            mcwwsEcoSetFromFile({_pid}, {_uuid})
+        mcwwsMarkEcoDeductionDone({_id})
+        set {_changed} to true
+    if {_changed} is true:
+        save yaml "econq"
+    unload yaml "econq"
+
+function mcwwsProcessEcoQueueForUuid(uuid: text):
+    set {_key} to "%{_uuid}%" in lower case
+    set {_limit} to mcwwsEcoQueueMaxId()
+    if {_limit} <= 0:
+        stop
+    load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
+    set {_changed} to false
+    loop {_limit} times:
+        set {_id} to loop-number
+        set {_status} to yaml value "pending.%{_id}%.status" from "econq"
+        if "%{_status}%" is not "pending":
+            continue
+        set {_entryUuid} to yaml value "pending.%{_id}%.uuid" from "econq"
+        if "%{_entryUuid}%" in lower case is not {_key}:
+            continue
+        set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
+        set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
+        set {_target} to yaml value "pending.%{_id}%.balanceAfter" from "econq"
+        if {_pid} is not set:
+            continue
+        if {_amount} is not set:
+            continue
+        if mcwwsApplyEcoDeduction({_id}, {_pid}, {_entryUuid}, {_amount}, {_target}) is false:
+            continue
+        if mcwwsIsPlayerOnline({_pid}) is true:
+            mcwwsEcoSetFromFile({_pid}, {_entryUuid})
+        mcwwsMarkEcoDeductionDone({_id})
         set {_changed} to true
     if {_changed} is true:
         save yaml "econq"
@@ -90,3 +169,10 @@ on load:
 
 every 3 seconds:
     mcwwsProcessEcoQueue()
+
+on join:
+    wait 2 seconds
+    mcwwsProcessEcoQueueForUuid("%uuid of player%")
+
+on quit:
+    mcwwsProcessEcoQueueForUuid("%uuid of player%")

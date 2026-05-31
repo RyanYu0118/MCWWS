@@ -370,7 +370,17 @@ async function submitCartCheckout() {
             throw new Error(data.error || '提交订单失败');
         }
         clearShopCart();
-        showToast(`订单 #${data.orderId} 已提交，上线后自动扣款并发放物品。`, true);
+        if (data.balance != null || data.balanceFormatted) {
+            auth.applyEconomySnapshot?.({
+                balance: data.balance,
+                balanceFormatted: data.balanceFormatted
+            });
+        } else {
+            void auth.refreshEconomy?.(true);
+        }
+        const msg = data.message
+            || `订单 #${data.orderId} 已提交，零钱已扣除，物品将发放至 BetterBags。`;
+        showToast(msg, true);
         await loadPendingOrdersUi();
         closeCartDrawer();
     } catch (error) {

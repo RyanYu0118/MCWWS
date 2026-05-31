@@ -997,6 +997,39 @@ function readEssentialsBalance(uuid) {
     }
 }
 
+/** 尚未由 Skript 处理的网页扣款（status=pending） */
+function sumPendingEssentialsDeductions(uuid) {
+    const normUuid = String(uuid || '').trim().toLowerCase();
+    if (!normUuid) {
+        return 0;
+    }
+    const store = loadEconomyDeductionsStore();
+    let sum = 0;
+    for (const entry of Object.values(store.pending || {})) {
+        if (!entry || entry.status !== 'pending') {
+            continue;
+        }
+        if (String(entry.uuid || '').trim().toLowerCase() !== normUuid) {
+            continue;
+        }
+        const amount = Number(entry.amount);
+        if (Number.isFinite(amount) && amount > 0) {
+            sum += amount;
+        }
+    }
+    return Math.round(sum * 100) / 100;
+}
+
+/** 文件余额减去排队中的扣款，与游戏内 eco take 后的显示更一致 */
+function readEffectiveEssentialsBalance(uuid) {
+    const fileBalance = readEssentialsBalance(uuid);
+    if (fileBalance == null) {
+        return null;
+    }
+    const pending = sumPendingEssentialsDeductions(uuid);
+    return Math.round((fileBalance - pending) * 100) / 100;
+}
+
 function formatEssentialsMoneyValue(amount) {
     const rounded = Math.round(Number(amount) * 100) / 100;
     if (!Number.isFinite(rounded)) {
@@ -1043,10 +1076,10 @@ function saveEconomyDeductionsStore(data) {
     saveYamlFile(ECONOMY_DEDUCTIONS_PATH, data);
 }
 
-function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId }) {
+function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId, balanceAfter }) {
     const store = loadEconomyDeductionsStore();
     const numericId = Number(store.next_id) || 1;
-    store.pending[String(numericId)] = {
+    const entry = {
         id: numericId,
         uuid,
         playerId,
@@ -1055,13 +1088,17 @@ function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId }) {
         status: 'pending',
         createdAt: new Date().toISOString()
     };
+    if (balanceAfter != null && Number.isFinite(Number(balanceAfter))) {
+        entry.balanceAfter = Math.round(Number(balanceAfter) * 100) / 100;
+    }
+    store.pending[String(numericId)] = entry;
     store.next_id = numericId + 1;
     saveEconomyDeductionsStore(store);
     return numericId;
 }
 
 /**
- * 扣除 Essentials 零钱：离线直接写 userdata；在线写入扣款队列，由 Skript 执行 eco take。
+ * 扣除 Essentials 零钱：离线直接写 userdata；在线写入扣款队列，由 Skript 写 userdata 并 eco set 同步。
  */
 function deductEssentialsBalance(uuid, playerId, amount) {
     const normAmount = Math.round(Number(amount) * 100) / 100;
@@ -1186,7 +1223,7 @@ function lookupScoreboardScore(index, objective, playerName, uuid) {
 
 async function readPlayerEconomySnapshot(playerId, uuid) {
     const scoreIndex = await loadScoreboardScoresIndex();
-    const balance = readEssentialsBalance(uuid);
+    const balance = readEffectiveEssentialsBalance(uuid);
     const playHours = readPlayerPlayHours(uuid);
     const op = isPlayerOp(uuid, playerId);
     const warningProgress = lookupScoreboardScore(scoreIndex, WARNING_OBJECTIVE, playerId, uuid);
@@ -1720,7 +1757,7 @@ app.post('/api/shop/checkout', (req, res) => {
         }
 
         const total = Math.round(resolvedLines.reduce((sum, line) => sum + line.lineTotal, 0) * 100) / 100;
-        const balance = readEssentialsBalance(uuid);
+        const balance = readEffectiveEssentialsBalance(uuid);
         if (balance == null) {
             return res.status(404).json({ error: '未找到该玩家的 Essentials 经济存档。' });
         }
@@ -1757,9 +1794,8 @@ app.post('/api/shop/checkout', (req, res) => {
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
 
-        enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId });
-
         const balanceAfter = Math.round((balance - total) * 100) / 100;
+        enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId, balanceAfter });
         res.json({
             orderId: numericId,
             orderUuid: orderId,
