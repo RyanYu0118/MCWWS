@@ -1,4 +1,4 @@
-# 网页商城：Essentials 零钱扣款队列（统一写 userdata，在线时用 eco set 同步内存）
+# 网页商城：Node 已写 Essentials userdata；本脚本把在线玩家的游戏内余额与文件对齐（Vault + eco）
 
 function mcwwsEcoQueueMaxId() :: number:
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
@@ -10,7 +10,7 @@ function mcwwsEcoQueueMaxId() :: number:
         return 0
     return {_max} - 1
 
-function mcwwsFormatEssentialsMoney(amount: number) :: text:
+function mcwwsFormatMoney(amount: number) :: text:
     set {_t} to round({_amount} * 100)
     set {_d} to floor({_t} / 100)
     set {_c} to mod({_t}, 100)
@@ -38,70 +38,46 @@ function mcwwsReadEssentialsFileMoney(uuid: text) :: number:
         return 0
     return {_money}
 
-function mcwwsWriteEssentialsFileMoney(uuid: text, amount: number) :: boolean:
-    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
-    if yaml file {_path} exists:
-        load yaml {_path} as "eu"
-    else:
+function mcwwsEntryNeedsMemorySync(id: number) :: boolean:
+    set {_syncRaw} to yaml value "pending.%{_id}%.needsMemorySync" from "econq"
+    if {_syncRaw} is true:
+        return true
+    set {_syncText} to "%{_syncRaw}%"
+    if {_syncText} is "true":
+        return true
+    set {_syncedAt} to yaml value "pending.%{_id}%.memorySyncedAt" from "econq"
+    if {_syncedAt} is set:
         return false
-    set yaml value "money" from "eu" to mcwwsFormatEssentialsMoney({_amount})
-    save yaml "eu"
-    unload yaml "eu"
-    return true
-
-function mcwwsDeductEssentialsOffline(uuid: text, amount: number) :: boolean:
-    set {_money} to mcwwsReadEssentialsFileMoney({_uuid})
-    if {_money} < 0:
-        return false
-    if {_money} < {_amount}:
-        return false
-    set {_new} to {_money} - {_amount}
-    return mcwwsWriteEssentialsFileMoney({_uuid}, {_new})
-
-function mcwwsEcoSetFromFile(playerId: text, uuid: text):
-    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
-    if yaml file {_path} exists:
-        load yaml {_path} as "eu"
-    else:
-        stop
-    set {_moneyRaw} to yaml value "money" from "eu"
-    unload yaml "eu"
-    if {_moneyRaw} is not set:
-        stop
-    execute console command "eco set %{_playerId}% %{_moneyRaw}%"
-
-function mcwwsEcoBalanceMatchesTarget(uuid: text, targetRaw: text) :: boolean:
-    if {_targetRaw} is not set:
-        return false
-    if "%{_targetRaw}%" is "":
-        return false
-    set {_target} to {_targetRaw} parsed as number
-    if {_target} is not set:
-        return false
-    set {_current} to mcwwsReadEssentialsFileMoney({_uuid})
-    if {_current} < 0:
-        return false
-    set {_diff} to {_current} - {_target}
-    if {_diff} < 0:
-        set {_diff} to 0 - {_diff}
-    if {_diff} < 0.02:
+    set {_mode} to yaml value "pending.%{_id}%.mode" from "econq"
+    set {_modeText} to "%{_mode}%"
+    if {_modeText} contains "file":
         return true
     return false
 
-function mcwwsMarkEcoDeductionDone(id: number):
-    set yaml value "pending.%{_id}%.status" from "econq" to "done"
-    set yaml value "pending.%{_id}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
-
-function mcwwsApplyEcoDeduction(id: number, pid: text, uuid: text, amount: number, targetRaw: text) :: boolean:
-    if mcwwsEcoBalanceMatchesTarget({_uuid}, {_targetRaw}) is true:
-        return true
-    if mcwwsDeductEssentialsOffline({_uuid}, {_amount}) is true:
-        return true
-    if mcwwsEcoBalanceMatchesTarget({_uuid}, {_targetRaw}) is true:
+function mcwwsSyncInGameBalance(playerId: text, uuid: text) :: boolean:
+    set {_key} to {_playerId} in lower case
+    set {_file} to mcwwsReadEssentialsFileMoney({_uuid})
+    if {_file} < 0:
+        return false
+    loop all players:
+        if name of loop-player in lower case is not {_key}:
+            continue
+        set balance of loop-player to {_file}
+        set {_mem} to balance of loop-player
+        if {_mem} > {_file} + 0.01:
+            set {_delta} to {_mem} - {_file}
+            execute console command "eco take %{_playerId}% %mcwwsFormatMoney({_delta})%"
+        else if {_mem} < {_file} - 0.01:
+            set {_delta} to {_file} - {_mem}
+            execute console command "eco give %{_playerId}% %mcwwsFormatMoney({_delta})%"
         return true
     return false
 
-function mcwwsProcessEcoQueue():
+function mcwwsMarkMemorySynced(id: number):
+    set yaml value "pending.%{_id}%.needsMemorySync" from "econq" to false
+    set yaml value "pending.%{_id}%.memorySyncedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+
+function mcwwsProcessEcoMemorySync():
     set {_limit} to mcwwsEcoQueueMaxId()
     if {_limit} <= 0:
         stop
@@ -109,30 +85,26 @@ function mcwwsProcessEcoQueue():
     set {_changed} to false
     loop {_limit} times:
         set {_id} to loop-number
-        set {_status} to yaml value "pending.%{_id}%.status" from "econq"
-        if "%{_status}%" is not "pending":
+        if mcwwsEntryNeedsMemorySync({_id}) is false:
             continue
         set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
         set {_uuid} to yaml value "pending.%{_id}%.uuid" from "econq"
-        set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
-        set {_target} to yaml value "pending.%{_id}%.balanceAfter" from "econq"
         if {_pid} is not set:
             continue
         if {_uuid} is not set:
             continue
-        if {_amount} is not set:
+        if mcwwsIsPlayerOnline({_pid}) is false:
             continue
-        if mcwwsApplyEcoDeduction({_id}, {_pid}, {_uuid}, {_amount}, {_target}) is false:
+        if mcwwsSyncInGameBalance({_pid}, {_uuid}) is false:
             continue
-        if mcwwsIsPlayerOnline({_pid}) is true:
-            mcwwsEcoSetFromFile({_pid}, {_uuid})
-        mcwwsMarkEcoDeductionDone({_id})
+        mcwwsMarkMemorySynced({_id})
+        send "§a[MCWWS] 已同步玩家 %{_pid}% 游戏内零钱（订单扣款 #%{_id}%）" to console
         set {_changed} to true
     if {_changed} is true:
         save yaml "econq"
     unload yaml "econq"
 
-function mcwwsProcessEcoQueueForUuid(uuid: text):
+function mcwwsProcessEcoMemorySyncForUuid(uuid: text):
     set {_key} to "%{_uuid}%" in lower case
     set {_limit} to mcwwsEcoQueueMaxId()
     if {_limit} <= 0:
@@ -141,38 +113,33 @@ function mcwwsProcessEcoQueueForUuid(uuid: text):
     set {_changed} to false
     loop {_limit} times:
         set {_id} to loop-number
-        set {_status} to yaml value "pending.%{_id}%.status" from "econq"
-        if "%{_status}%" is not "pending":
-            continue
         set {_entryUuid} to yaml value "pending.%{_id}%.uuid" from "econq"
         if "%{_entryUuid}%" in lower case is not {_key}:
             continue
+        if mcwwsEntryNeedsMemorySync({_id}) is false:
+            continue
         set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
-        set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
-        set {_target} to yaml value "pending.%{_id}%.balanceAfter" from "econq"
         if {_pid} is not set:
             continue
-        if {_amount} is not set:
+        if mcwwsIsPlayerOnline({_pid}) is false:
             continue
-        if mcwwsApplyEcoDeduction({_id}, {_pid}, {_entryUuid}, {_amount}, {_target}) is false:
+        if mcwwsSyncInGameBalance({_pid}, {_entryUuid}) is false:
             continue
-        if mcwwsIsPlayerOnline({_pid}) is true:
-            mcwwsEcoSetFromFile({_pid}, {_entryUuid})
-        mcwwsMarkEcoDeductionDone({_id})
+        mcwwsMarkMemorySynced({_id})
+        send "§a[MCWWS] 已同步玩家 %{_pid}% 游戏内零钱（订单扣款 #%{_id}%）" to console
         set {_changed} to true
     if {_changed} is true:
         save yaml "econq"
     unload yaml "econq"
 
 on load:
-    send "§a[MCWWS] 网页零钱扣款队列已启用。" to console
+    send "§a[MCWWS] 网页零钱同步队列已启用。" to console
 
-every 3 seconds:
-    mcwwsProcessEcoQueue()
+every 2 seconds:
+    mcwwsProcessEcoMemorySync()
 
 on join:
-    wait 2 seconds
-    mcwwsProcessEcoQueueForUuid("%uuid of player%")
-
-on quit:
-    mcwwsProcessEcoQueueForUuid("%uuid of player%")
+    wait 5 ticks
+    mcwwsSyncInGameBalance(name of player, "%uuid of player%")
+    wait 1 second
+    mcwwsProcessEcoMemorySyncForUuid("%uuid of player%")

@@ -1044,9 +1044,15 @@ function writeEssentialsBalance(uuid, amount) {
         return false;
     }
     try {
-        const data = yaml.load(fs.readFileSync(file, 'utf8')) || {};
-        data.money = formatEssentialsMoneyValue(amount);
-        fs.writeFileSync(file, yaml.dump(data, { lineWidth: 120, noRefs: true }), 'utf8');
+        const formatted = formatEssentialsMoneyValue(amount);
+        let text = fs.readFileSync(file, 'utf8');
+        const moneyLine = `money: '${formatted}'`;
+        if (/^money:\s*.+$/m.test(text)) {
+            text = text.replace(/^money:\s*.+$/m, moneyLine);
+        } else {
+            text = `${text.trimEnd()}\n${moneyLine}\n`;
+        }
+        fs.writeFileSync(file, text, 'utf8');
         return true;
     } catch (error) {
         console.error(`写入 Essentials 零钱失败 (${uuid}):`, error);
@@ -1076,17 +1082,28 @@ function saveEconomyDeductionsStore(data) {
     saveYamlFile(ECONOMY_DEDUCTIONS_PATH, data);
 }
 
-function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId, balanceAfter }) {
+function enqueueEssentialsDeduction({
+    uuid,
+    playerId,
+    amount,
+    orderId,
+    balanceAfter,
+    needsMemorySync = false
+}) {
     const store = loadEconomyDeductionsStore();
     const numericId = Number(store.next_id) || 1;
+    const nowIso = new Date().toISOString();
     const entry = {
         id: numericId,
         uuid,
         playerId,
         amount: Math.round(Number(amount) * 100) / 100,
         orderId,
-        status: 'pending',
-        createdAt: new Date().toISOString()
+        status: 'done',
+        createdAt: nowIso,
+        processedAt: nowIso,
+        mode: 'file-checkout',
+        needsMemorySync: Boolean(needsMemorySync)
     };
     if (balanceAfter != null && Number.isFinite(Number(balanceAfter))) {
         entry.balanceAfter = Math.round(Number(balanceAfter) * 100) / 100;
@@ -1097,8 +1114,25 @@ function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId, balanceAf
     return numericId;
 }
 
+/** 结账时立即写入 Essentials userdata（在线/离线统一） */
+function applyCheckoutFileDeduction(uuid, amount) {
+    const normAmount = Math.round(Number(amount) * 100) / 100;
+    const fileBalance = readEssentialsBalance(uuid);
+    if (fileBalance == null) {
+        return { ok: false, error: '未找到 Essentials 经济存档。' };
+    }
+    if (fileBalance < normAmount) {
+        return { ok: false, error: '零钱不足。' };
+    }
+    const newBalance = Math.round((fileBalance - normAmount) * 100) / 100;
+    if (!writeEssentialsBalance(uuid, newBalance)) {
+        return { ok: false, error: '写入 Essentials 零钱失败。' };
+    }
+    return { ok: true, newBalance, mode: 'file-checkout' };
+}
+
 /**
- * 扣除 Essentials 零钱：离线直接写 userdata；在线写入扣款队列，由 Skript 写 userdata 并 eco set 同步。
+ * 扣除 Essentials 零钱：结账时 Node 写 userdata；Skript 对在线玩家执行 eco set 同步内存。
  */
 function deductEssentialsBalance(uuid, playerId, amount) {
     const normAmount = Math.round(Number(amount) * 100) / 100;
@@ -1771,6 +1805,15 @@ app.post('/api/shop/checkout', (req, res) => {
             });
         }
 
+        const fileBalance = readEssentialsBalance(uuid);
+        const balanceAfter = Math.round((fileBalance - total) * 100) / 100;
+        const fileDeduct = applyCheckoutFileDeduction(uuid, total);
+        if (!fileDeduct.ok) {
+            return res.status(500).json({
+                error: fileDeduct.error || '扣款写入失败，请稍后重试。'
+            });
+        }
+
         const store = loadPendingOrdersStore();
         const numericId = Number(store.next_id) || 1;
         const orderId = crypto.randomUUID();
@@ -1794,8 +1837,14 @@ app.post('/api/shop/checkout', (req, res) => {
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
 
-        const balanceAfter = Math.round((balance - total) * 100) / 100;
-        enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId, balanceAfter });
+        enqueueEssentialsDeduction({
+            uuid,
+            playerId,
+            amount: total,
+            orderId: numericId,
+            balanceAfter,
+            needsMemorySync: true
+        });
         res.json({
             orderId: numericId,
             orderUuid: orderId,
@@ -1805,7 +1854,8 @@ app.post('/api/shop/checkout', (req, res) => {
             balance: balanceAfter,
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             lineCount: resolvedLines.length,
-            message: '订单已提交，零钱将自动扣除；玩家上线后物品将发放至 BetterBags。',
+            deductionMode: fileDeduct.mode,
+            message: '订单已提交，零钱已扣除；若在游戏中余额未刷新，请等待几秒或重新登录。物品将发放至 BetterBags。',
             createdAt: now
         });
     } catch (error) {
