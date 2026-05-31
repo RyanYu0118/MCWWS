@@ -8,7 +8,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>物品目录 - 流浪世界服务器商店系统</title>
     <meta name="description" content="浏览所有商店物品及当前价格">
-    <link rel="stylesheet" href="style.css?v=2.5.58">
+    <link rel="stylesheet" href="style.css?v=2.5.59">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -38,6 +38,12 @@
         <div class="nav-actions">
             <span class="item-count" id="itemCount">-- 个物品</span>
             <button id="refreshButton" class="refresh-btn" type="button" title="刷新物品"><span class="refresh-icon">⟳</span></button>
+            <button type="button" id="cartToggleBtn" class="cart-nav-btn" title="购物车" aria-label="打开购物车">
+                <svg class="cart-nav-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                    <path fill="currentColor" d="M7 18c-1.1 0-1.99.9-1.99 2S5.9 22 7 22s2-.9 2-2-.9-2-2-2zm10 0c-1.1 0-1.99.9-1.99 2S15.9 22 17 22s2-.9 2-2-.9-2-2-2zM7.16 14h9.45c.75 0 1.41-.41 1.75-1.03l3.58-6.49A1 1 0 0 0 21.04 5H6.21L5.27 3H2v2h2l3.6 7.59-1.35 2.44C5.52 15.37 6.48 17 8 17h12v-2H8.42l1.74-1z"/>
+                </svg>
+                <span id="cartBadge" class="cart-nav-badge" hidden>0</span>
+            </button>
             <div class="user-actions">
                 <div class="mcwws-auth-widget" id="mcwwsAuthWidget">
                     <button type="button" id="authButton" class="mcwws-auth-avatar-btn" aria-label="账户" aria-expanded="false" aria-haspopup="true">
@@ -166,12 +172,32 @@
     <div id="tradeModal" class="modal">
         <div class="modal-content glass">
             <div class="modal-header">
-                <h2 id="tradeModalTitle">UltimateShop 交易信息</h2>
+                <h2 id="tradeModalTitle">选择上架位置</h2>
                 <button type="button" class="modal-close" onclick="closeTradeModal()">×</button>
             </div>
             <div id="tradeModalBody" class="modal-body"></div>
         </div>
     </div>
+
+    <div id="cartBackdrop" class="cart-backdrop" hidden aria-hidden="true"></div>
+    <aside id="cartDrawer" class="cart-drawer" aria-label="购物车" aria-hidden="true">
+        <div class="cart-drawer-header">
+            <h2 class="cart-drawer-title">购物车</h2>
+            <button type="button" id="cartCloseBtn" class="cart-drawer-close" aria-label="关闭购物车">×</button>
+        </div>
+        <div id="cartDrawerBody" class="cart-drawer-body"></div>
+        <div class="cart-drawer-footer">
+            <div class="cart-drawer-total-row">
+                <span>合计（系统买入价）</span>
+                <strong id="cartTotalPrice">￥0.00</strong>
+            </div>
+            <p class="cart-drawer-hint">购物车仅用于记录采购清单；实际购买请在游戏内 UltimateShop 商店完成。</p>
+            <div class="cart-drawer-actions">
+                <button type="button" id="cartClearBtn" class="cart-drawer-btn cart-drawer-btn--ghost">清空</button>
+                <button type="button" id="cartMapBtn" class="cart-drawer-btn cart-drawer-btn--primary">在地图上查看</button>
+            </div>
+        </div>
+    </aside>
 
     <div id="authModal" class="modal">
         <div class="modal-content glass">
@@ -223,7 +249,7 @@
     <script src="enchant-glint.js?v=2.5.28" defer></script>
     <script src="texture-animation.js?v=2.5.65" defer></script>
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
-    <script src="items.js?v=2.5.62" defer></script>
+    <script src="items.js?v=2.5.63" defer></script>
 </body>
 
 </html>
