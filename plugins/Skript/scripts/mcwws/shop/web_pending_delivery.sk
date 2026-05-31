@@ -35,16 +35,42 @@ function mcwwsWebOrdersMaxId() :: number:
         return 0
     return {_max} - 1
 
+# 从 skript-yaml 列表项的 loop-val 文本解析字段（形如 {shopId=flowers, slot=Q, ...}）
+function mcwwsParseLineMapField(raw: text, field: text) :: text:
+    set {_needle} to "%{_field}%="
+    if "%{_raw}%" does not contain {_needle}:
+        return ""
+    set {_parts::*} to {_raw} split at ", "
+    loop {_parts::*}:
+        if loop-value contains {_needle}:
+            set {_i} to index of {_needle} in loop-value
+            set {_start} to {_i} + length of {_needle}
+            set {_v} to subtext of loop-value from {_start} to length of loop-value
+            return {_v}
+    return ""
+
 function mcwwsReadLineValue(oid: text, lineIdx: number, field: text) :: text:
     set {_key} to mcwwsLineYamlIndex({_lineIdx})
-    set {_path} to "orders.%{_oid}%.lines.%{_key}%.%{_field}%"
+    set {_base} to "orders.%{_oid}%.lines"
+    set {_path} to "%{_base}%.%{_key}%.%{_field}%"
     set {_val} to yaml value {_path} from "weborders"
     if {_val} is set:
         return "%{_val}%"
-    set {_path2} to "orders.%{_oid}%.lines.%{_lineIdx}%.%{_field}%"
+    set {_path2} to "%{_base}%.%{_lineIdx}%.%{_field}%"
     set {_val2} to yaml value {_path2} from "weborders"
     if {_val2} is set:
         return "%{_val2}%"
+    # Node js-yaml 列表（- item）：loop-val 为 {shopId=..., slot=...}
+    if yaml node {_base} from "weborders" does not have list:
+        return ""
+    set {_n} to 0
+    loop yaml list {_base} from "weborders":
+        if {_n} is {_lineIdx}:
+            set {_parsed} to mcwwsParseLineMapField("%loop-val%", {_field})
+            if {_parsed} is not "":
+                return {_parsed}
+            stop loop
+        add 1 to {_n}
     return ""
 
 function mcwwsFailOrderDelivery(p: player, oid: text, reason: text):
@@ -83,7 +109,7 @@ function mcwwsResetStaleDelivering():
     unload yaml "weborders"
 
 function mcwwsRunQuickbuyLine(p: player, oid: text, lineIdx: number):
-    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    reload yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
     set {_shop} to mcwwsReadLineValue({_oid}, {_lineIdx}, "shopId")
     set {_slot} to mcwwsReadLineValue({_oid}, {_lineIdx}, "slot")
     set {_qty} to mcwwsReadLineValue({_oid}, {_lineIdx}, "quantity")
@@ -168,7 +194,7 @@ function mcwwsTryStartNextOrder(p: player):
         stop
     set yaml value "orders.%{_target}%.status" from "weborders" to "delivering"
     set yaml value "orders.%{_target}%.deliveringLine" from "weborders" to 0
-    set yaml value "orders.%{_target}%.deliveringStartedAt" from "weborders" to now
+    set yaml value "orders.%{_target}%.deliveringStartedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
     set yaml value "orders.%{_target}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
     set yaml value "orders.%{_target}%.failureReason" from "weborders" to ""
     save yaml "weborders"

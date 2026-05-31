@@ -55,6 +55,22 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-05-10 02:06:12'
+  logs:
+    D:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-05-31 16:56:44'
+    K:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 131
+      totalSellUseTimes: 131
+      lastBuyTime: '2026-05-10 02:06:40'
+      lastSellTime: '2026-05-10 02:07:01'
+    L:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-05-31 16:40:55'
   example:
     R:
       buyUseTimes: 2
@@ -91,14 +107,6 @@ useTimes:
       buyUseTimes: 3
       totalBuyUseTimes: 3
       lastBuyTime: '2026-05-11 00:00:32'
-  logs:
-    K:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      sellUseTimes: 131
-      totalSellUseTimes: 131
-      lastBuyTime: '2026-05-10 02:06:40'
-      lastSellTime: '2026-05-10 02:07:01'
   minerals:
     A:
       buyUseTimes: 6
@@ -131,6 +139,10 @@ useTimes:
       lastBuyTime: '2026-05-10 14:41:43'
       lastSellTime: '2026-05-10 14:41:45'
   flowers:
+    Q:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-05-31 16:49:08'
     P:
       sellUseTimes: 8
       totalSellUseTimes: 8

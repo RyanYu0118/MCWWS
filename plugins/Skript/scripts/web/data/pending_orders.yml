@@ -1,28 +1,55 @@
 orders:
     '1':
-        id: 70ad93ba-dbff-474c-9dc2-e3c3e40b29b4
+        id: 9260601b-bd88-4cd5-a379-d94074784a47
         numericId: 1
-        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        username: Ryan Yu
-        status: pending
-        total: 14.4
-        createdAt: '2026-05-31T07:39:22.567Z'
-        updatedAt: '2026-05-31 15:45:49'
-        failureReason: 无法读取商店 ID（YAML 行 0）
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 3
+        createdAt: '2026-05-31T08:46:54.990Z'
+        updatedAt: '2026-05-31 16:49:08'
+        failureReason: ''
         deliveringLine: 0
-        deliveringStartedAt: !skriptdate '2026-05-31T15:45:49.098+08:00'
+        deliveringStartedAt: '2026-05-31T16:49:08.480+08:00'
         lineCount: 1
         lines:
-        -   itemId: birch_log
-            shopId: logs
-            slot: D
-            quantity: 2
-            unitBuyPrice: 7.2
-            lineTotal: 14.4
-            productAmount: 1
-            material: birch_log
-            shopTitle: 原木商店
-            status: pending
+            '1':
+                itemId: oxeye_daisy
+                shopId: flowers
+                slot: Q
+                quantity: 3
+                unitBuyPrice: 1
+                lineTotal: 3
+                productAmount: 1
+                material: oxeye_daisy
+                shopTitle: 花卉商店
+                status: delivered
+    '2':
+        id: c15eb3aa-5d88-471c-af3d-a24cad5cd59a
+        numericId: 2
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 21.6
+        createdAt: '2026-05-31T08:56:34.710Z'
+        updatedAt: '2026-05-31 16:56:44'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 16:56:44'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: birch_log
+                shopId: logs
+                slot: D
+                quantity: 3
+                unitBuyPrice: 7.2
+                lineTotal: 21.6
+                productAmount: 1
+                material: birch_log
+                shopTitle: 原木商店
+                status: delivered
 
-next_id: 2
+next_id: 3

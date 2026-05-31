@@ -3,6 +3,13 @@ const fs = require('fs');
 const zlib = require('zlib');
 const https = require('https');
 const yaml = require('js-yaml');
+
+const SKRIPT_DATE_TAG = new yaml.Type('!skriptdate', {
+    kind: 'scalar',
+    construct: (data) => String(data)
+});
+const YAML_SCHEMA = yaml.DEFAULT_SCHEMA.extend([SKRIPT_DATE_TAG]);
+
 const cors = require('cors');
 const os = require('os');
 const path = require('path');
@@ -135,7 +142,7 @@ function loadYamlFile(filePath) {
     }
 
     try {
-        return yaml.load(fs.readFileSync(filePath, 'utf8')) || {};
+        return yaml.load(fs.readFileSync(filePath, 'utf8'), { schema: YAML_SCHEMA }) || {};
     } catch (error) {
         console.error(`读取 YAML 文件失败: ${filePath}`, error);
         return {};
@@ -631,6 +638,41 @@ function buildUltimateShopCatalogByMaterial(priceData = {}) {
     return catalog;
 }
 
+/** Node 数组 → Skript/skript-yaml 可读的 lines.1、lines.2 … */
+function linesToSkriptMap(lines) {
+    if (!lines) return {};
+    if (!Array.isArray(lines)) return lines;
+    const out = {};
+    lines.forEach((line, i) => {
+        if (line && typeof line === 'object') {
+            out[String(i + 1)] = line;
+        }
+    });
+    return out;
+}
+
+/** Skript 映射或历史数组 → API 用数组 */
+function linesToArray(lines) {
+    if (!lines) return [];
+    if (Array.isArray(lines)) return lines;
+    return Object.keys(lines)
+        .sort((a, b) => Number(a) - Number(b))
+        .map((k) => lines[k])
+        .filter((line) => line && typeof line === 'object');
+}
+
+function migratePendingOrdersLines(store) {
+    let changed = false;
+    Object.values(store.orders || {}).forEach((order) => {
+        if (!order || typeof order !== 'object' || !Array.isArray(order.lines)) {
+            return;
+        }
+        order.lines = linesToSkriptMap(order.lines);
+        changed = true;
+    });
+    return changed;
+}
+
 function loadPendingOrdersStore() {
     const data = loadYamlFile(PENDING_ORDERS_PATH);
     if (!data || typeof data !== 'object') {
@@ -641,6 +683,9 @@ function loadPendingOrdersStore() {
     }
     if (!Number.isFinite(Number(data.next_id))) {
         data.next_id = 1;
+    }
+    if (migratePendingOrdersLines(data)) {
+        savePendingOrdersStore(data);
     }
     return data;
 }
@@ -1618,7 +1663,7 @@ app.post('/api/shop/checkout', (req, res) => {
             deliveringLine: 0,
             deliveringStartedAt: '',
             lineCount: resolvedLines.length,
-            lines: resolvedLines
+            lines: linesToSkriptMap(resolvedLines)
         };
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
@@ -1657,8 +1702,8 @@ app.get('/api/shop/orders', (req, res) => {
             createdAt: order.createdAt,
             updatedAt: order.updatedAt,
             failureReason: order.failureReason || '',
-            lineCount: Array.isArray(order.lines) ? order.lines.length : 0,
-            lines: (order.lines || []).map((line) => ({
+            lineCount: linesToArray(order.lines).length,
+            lines: linesToArray(order.lines).map((line) => ({
                 itemId: line.itemId,
                 shopId: line.shopId,
                 slot: line.slot,
@@ -1748,10 +1793,14 @@ if (HTTPS_ENABLED && fs.existsSync(HTTPS_KEY_PATH) && fs.existsSync(HTTPS_CERT_P
     https.createServer({
         key: fs.readFileSync(HTTPS_KEY_PATH),
         cert: fs.readFileSync(HTTPS_CERT_PATH)
-    }, app).listen(PORT, HOST, () => logServerStart('https'));
+    }, app).listen(PORT, HOST, () => {
+        logServerStart('https');
+        loadPendingOrdersStore();
+    });
 } else {
     app.listen(PORT, HOST, () => {
         logServerStart('http');
+        loadPendingOrdersStore();
         if (!HTTPS_ENABLED) {
             console.log('ℹ️ 当前为 HTTP 模式；如需 HTTPS，可设置 HTTPS=1 后重启服务。');
         } else {
