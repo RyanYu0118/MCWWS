@@ -71,6 +71,7 @@ const USER_DB_FILE = path.join(DB_DIR, 'users.json');
 const TRANSACTIONS_CSV = path.join(DB_DIR, 'transactions.csv');
 const TRANSACTIONS_YAML = path.join(DB_DIR, 'transactions_store.yml');
 const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
+const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -996,6 +997,94 @@ function readEssentialsBalance(uuid) {
     }
 }
 
+function formatEssentialsMoneyValue(amount) {
+    const rounded = Math.round(Number(amount) * 100) / 100;
+    if (!Number.isFinite(rounded)) {
+        return '0.00';
+    }
+    return rounded.toFixed(2);
+}
+
+function writeEssentialsBalance(uuid, amount) {
+    const file = path.join(ESSENTIALS_USERDATA_DIR, `${uuid}.yml`);
+    if (!fs.existsSync(file)) {
+        return false;
+    }
+    try {
+        const data = yaml.load(fs.readFileSync(file, 'utf8')) || {};
+        data.money = formatEssentialsMoneyValue(amount);
+        fs.writeFileSync(file, yaml.dump(data, { lineWidth: 120, noRefs: true }), 'utf8');
+        return true;
+    } catch (error) {
+        console.error(`写入 Essentials 零钱失败 (${uuid}):`, error);
+        return false;
+    }
+}
+
+function isPlayerOnlineForEconomy(uuid, playerId) {
+    return Boolean(readBlueMapLivePlayerLocation(uuid, playerId));
+}
+
+function loadEconomyDeductionsStore() {
+    const data = loadYamlFile(ECONOMY_DEDUCTIONS_PATH);
+    if (!data || typeof data !== 'object') {
+        return { next_id: 1, pending: {} };
+    }
+    if (!data.pending || typeof data.pending !== 'object') {
+        data.pending = {};
+    }
+    if (!Number.isFinite(Number(data.next_id))) {
+        data.next_id = 1;
+    }
+    return data;
+}
+
+function saveEconomyDeductionsStore(data) {
+    saveYamlFile(ECONOMY_DEDUCTIONS_PATH, data);
+}
+
+function enqueueEssentialsDeduction({ uuid, playerId, amount, orderId }) {
+    const store = loadEconomyDeductionsStore();
+    const numericId = Number(store.next_id) || 1;
+    store.pending[String(numericId)] = {
+        id: numericId,
+        uuid,
+        playerId,
+        amount: Math.round(Number(amount) * 100) / 100,
+        orderId,
+        status: 'pending',
+        createdAt: new Date().toISOString()
+    };
+    store.next_id = numericId + 1;
+    saveEconomyDeductionsStore(store);
+    return numericId;
+}
+
+/**
+ * 扣除 Essentials 零钱：离线直接写 userdata；在线写入扣款队列，由 Skript 执行 eco take。
+ */
+function deductEssentialsBalance(uuid, playerId, amount) {
+    const normAmount = Math.round(Number(amount) * 100) / 100;
+    if (!Number.isFinite(normAmount) || normAmount <= 0) {
+        return { ok: false, error: '扣款金额无效。' };
+    }
+    const balance = readEssentialsBalance(uuid);
+    if (balance == null) {
+        return { ok: false, error: '未找到 Essentials 经济存档。' };
+    }
+    if (balance < normAmount) {
+        return { ok: false, error: '零钱不足。' };
+    }
+    const newBalance = Math.round((balance - normAmount) * 100) / 100;
+    if (isPlayerOnlineForEconomy(uuid, playerId)) {
+        return { ok: true, newBalance, mode: 'queue' };
+    }
+    if (!writeEssentialsBalance(uuid, newBalance)) {
+        return { ok: false, error: '写入 Essentials 零钱失败。' };
+    }
+    return { ok: true, newBalance, mode: 'file' };
+}
+
 function readPlayerPlayHours(uuid) {
     const file = path.join(WORLD_STATS_DIR, `${uuid}.json`);
     if (!fs.existsSync(file)) {
@@ -1668,16 +1757,29 @@ app.post('/api/shop/checkout', (req, res) => {
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
 
+        const deduct = deductEssentialsBalance(uuid, playerId, total);
+        if (!deduct.ok) {
+            delete store.orders[String(numericId)];
+            savePendingOrdersStore(store);
+            return res.status(500).json({ error: deduct.error || '扣款失败，订单已取消。' });
+        }
+        if (deduct.mode === 'queue') {
+            enqueueEssentialsDeduction({ uuid, playerId, amount: total, orderId: numericId });
+        }
+
+        const balanceAfter = deduct.newBalance;
         res.json({
             orderId: numericId,
             orderUuid: orderId,
             status: 'pending',
             total,
             totalFormatted: formatEssentialsBalance(total),
-            balance,
-            balanceFormatted: formatEssentialsBalance(balance),
+            balance: balanceAfter,
+            balanceFormatted: formatEssentialsBalance(balanceAfter),
             lineCount: resolvedLines.length,
-            message: '订单已提交。玩家上线后将通过 UltimateShop 自动扣款并发放物品。',
+            message: deduct.mode === 'queue'
+                ? '订单已提交，零钱已排队扣除；玩家上线后物品将发放至 BetterBags。'
+                : '订单已提交，零钱已扣除；玩家上线后物品将发放至 BetterBags。',
             createdAt: now
         });
     } catch (error) {

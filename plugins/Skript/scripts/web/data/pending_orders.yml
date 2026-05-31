@@ -103,5 +103,187 @@ orders:
                 material: white_tulip
                 shopTitle: 花卉商店
                 status: delivered
+    '5':
+        id: 4c12066c-d4bd-4ace-a8d9-b4d709c91227
+        numericId: 5
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 7.2
+        createdAt: '2026-05-31T10:13:12.111Z'
+        updatedAt: '2026-05-31 18:13:21'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:13:21'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: jungle_log
+                shopId: logs
+                slot: F
+                quantity: 1
+                unitBuyPrice: 7.2
+                lineTotal: 7.2
+                productAmount: 1
+                material: jungle_log
+                shopTitle: 原木商店
+                status: delivered
+    '6':
+        id: c4575037-13cc-4062-9242-966fe190cd21
+        numericId: 6
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 2.3
+        createdAt: '2026-05-31T10:13:32.519Z'
+        updatedAt: '2026-05-31 18:13:36'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:13:36'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: orange_stained_glass
+                shopId: glass
+                slot: B
+                quantity: 1
+                unitBuyPrice: 2.3
+                lineTotal: 2.3
+                productAmount: 1
+                material: orange_stained_glass
+                shopTitle: 玻璃商店
+                status: delivered
+    '7':
+        id: cfcd548c-6940-4b67-abdb-74692a4dae2d
+        numericId: 7
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 3
+        createdAt: '2026-05-31T10:14:23.056Z'
+        updatedAt: '2026-05-31 18:14:36'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:14:36'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: rooted_dirt
+                shopId: blocks
+                slot: D
+                quantity: 1
+                unitBuyPrice: 3
+                lineTotal: 3
+                productAmount: 1
+                material: rooted_dirt
+                shopTitle: 方块商店
+                status: delivered
+    '8':
+        id: e6b83033-f6cb-44a9-9c76-a37c902067a0
+        numericId: 8
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 500
+        createdAt: '2026-05-31T10:15:04.197Z'
+        updatedAt: '2026-05-31 18:15:06'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:15:06'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: heart_of_the_sea
+                shopId: special
+                slot: B
+                quantity: 1
+                unitBuyPrice: 500
+                lineTotal: 500
+                productAmount: 1
+                material: heart_of_the_sea
+                shopTitle: 特殊物品商店
+                status: delivered
+    '9':
+        id: 0798cc43-fa34-4877-854a-11122572a776
+        numericId: 9
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 500
+        createdAt: '2026-05-31T10:15:55.733Z'
+        updatedAt: '2026-05-31 18:16:08'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:16:08'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: heart_of_the_sea
+                shopId: special
+                slot: B
+                quantity: 1
+                unitBuyPrice: 500
+                lineTotal: 500
+                productAmount: 1
+                material: heart_of_the_sea
+                shopTitle: 特殊物品商店
+                status: delivered
+    '10':
+        id: db7fb50e-d68e-47d6-a273-64253b9de7ca
+        numericId: 10
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 1
+        createdAt: '2026-05-31T10:20:06.225Z'
+        updatedAt: '2026-05-31 18:20:08'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:20:08'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: sugar_cane
+                shopId: farming
+                slot: J
+                quantity: 1
+                unitBuyPrice: 1
+                lineTotal: 1
+                productAmount: 1
+                material: sugar_cane
+                shopTitle: 农作物商店
+                status: delivered
+    '11':
+        id: ce6b7f21-cb24-4003-af07-ab1857f029c3
+        numericId: 11
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 4
+        createdAt: '2026-05-31T10:22:44.208Z'
+        updatedAt: '2026-05-31 18:22:49'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-05-31 18:22:49'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: sugar_cane
+                shopId: farming
+                slot: J
+                quantity: 4
+                unitBuyPrice: 1
+                lineTotal: 4
+                productAmount: 1
+                material: sugar_cane
+                shopTitle: 农作物商店
+                status: delivered
 
-next_id: 5
+next_id: 12

@@ -1,0 +1,50 @@
+# 网页商城：在线玩家零钱扣款队列（Essentials eco take）
+
+function mcwwsEcoQueueMaxId() :: number:
+    load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
+    set {_max} to yaml value "next_id" from "econq"
+    unload yaml "econq"
+    if {_max} is not set:
+        return 0
+    if {_max} <= 1:
+        return 0
+    return {_max} - 1
+
+function mcwwsProcessEcoQueue():
+    set {_limit} to mcwwsEcoQueueMaxId()
+    if {_limit} <= 0:
+        stop
+    load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
+    set {_changed} to false
+    loop {_limit} times:
+        set {_id} to loop-number
+        set {_status} to yaml value "pending.%{_id}%.status" from "econq"
+        if "%{_status}%" is not "pending":
+            continue
+        set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
+        set {_amount} to yaml value "pending.%{_id}%.amount" from "econq"
+        if {_pid} is not set:
+            continue
+        if {_amount} is not set:
+            continue
+        set {_found} to false
+        loop all players:
+            if name of loop-player in lower case is not {_pid} in lower case:
+                continue
+            set {_found} to true
+            execute console command "eco take %{_pid}% %{_amount}%"
+            exit loop
+        if {_found} is false:
+            continue
+        set yaml value "pending.%{_id}%.status" from "econq" to "done"
+        set yaml value "pending.%{_id}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set {_changed} to true
+    if {_changed} is true:
+        save yaml "econq"
+    unload yaml "econq"
+
+on load:
+    send "§a[MCWWS] 网页零钱扣款队列已启用。" to console
+
+every 3 seconds:
+    mcwwsProcessEcoQueue()
