@@ -531,8 +531,8 @@ body.mcwws-gis-select-mode #map-container canvas {
     font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
 }
 
-.mcwws-gis-pin.is-selected .mcwws-gis-pin-label {
-    background: #b45309;
+.mcwws-gis-pin.is-dimmed {
+    opacity: 0.5;
 }
 
 .mcwws-gis-pin.is-offscreen {

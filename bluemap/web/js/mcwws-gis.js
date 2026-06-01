@@ -21,7 +21,8 @@
     let activeTool = 'select';
     let activeLayerId = 'roads';
     let project = null;
-    let selectedFeatureId = null;
+    /** @type {Set<string>} */
+    const selectedFeatureIds = new Set();
     let draftPoints = [];
     let draftHover = null;
     let layerDialogOpen = false;
@@ -46,9 +47,9 @@
     /** @type {{ startX: number, startY: number, moved: boolean, pointerId: number } | null} */
     let gisCanvasPointer = null;
     let gisLastMapDragAt = 0;
-    /** @type {Array<{ project: object, selectedFeatureId: string | null, activeLayerId: string }>} */
+    /** @type {Array<{ project: object, selectedFeatureIds: string[], activeLayerId: string }>} */
     let gisUndoStack = [];
-    /** @type {Array<{ project: object, selectedFeatureId: string | null, activeLayerId: string }>} */
+    /** @type {Array<{ project: object, selectedFeatureIds: string[], activeLayerId: string }>} */
     let gisRedoStack = [];
     let gisHistoryApplying = false;
 
@@ -952,6 +953,36 @@
         return null;
     }
 
+    function hasGisSelection() {
+        return selectedFeatureIds.size > 0;
+    }
+
+    function isFeatureSelected(id) {
+        return !!id && selectedFeatureIds.has(id);
+    }
+
+    function clearGisSelection() {
+        selectedFeatureIds.clear();
+    }
+
+    function setGisSelectionSingle(id) {
+        clearGisSelection();
+        if (id) {
+            selectedFeatureIds.add(id);
+        }
+    }
+
+    function applyGisSelectionFromState(state) {
+        clearGisSelection();
+        if (Array.isArray(state?.selectedFeatureIds)) {
+            state.selectedFeatureIds.forEach((id) => {
+                if (id) selectedFeatureIds.add(id);
+            });
+        } else if (state?.selectedFeatureId) {
+            selectedFeatureIds.add(state.selectedFeatureId);
+        }
+    }
+
     function featureColor(feature, layer) {
         const c = feature.properties?.color || layer?.color;
         return c && /^#[0-9a-fA-F]{3,8}$/i.test(c) ? c : '#3b82f6';
@@ -1099,7 +1130,7 @@
         }
         return {
             project: JSON.parse(JSON.stringify(project)),
-            selectedFeatureId: selectedFeatureId || null,
+            selectedFeatureIds: Array.from(selectedFeatureIds),
             activeLayerId: activeLayerId || project.layers?.[0]?.id || 'roads'
         };
     }
@@ -1110,7 +1141,7 @@
         }
         gisHistoryApplying = true;
         project = JSON.parse(JSON.stringify(state.project));
-        selectedFeatureId = state.selectedFeatureId || null;
+        applyGisSelectionFromState(state);
         activeLayerId = state.activeLayerId || project.layers?.[0]?.id || 'roads';
         draftPoints = [];
         draftHover = null;
@@ -1195,20 +1226,22 @@
         recordGisHistory();
         if (!Array.isArray(layer.features)) layer.features = [];
         layer.features.push(feature);
-        selectedFeatureId = feature.id;
+        setGisSelectionSingle(feature.id);
         markDirty();
         renderOverlay();
     }
 
     function deleteSelectedFeature() {
-        if (!selectedFeatureId || !project?.layers) return;
+        if (!hasGisSelection() || !project?.layers) return;
+        const ids = new Set(selectedFeatureIds);
         recordGisHistory();
         project.layers.forEach((layer) => {
-            layer.features = (layer.features || []).filter((f) => f.id !== selectedFeatureId);
+            layer.features = (layer.features || []).filter((f) => !ids.has(f.id));
         });
-        selectedFeatureId = null;
+        clearGisSelection();
         markDirty();
         renderOverlay();
+        renderPanel();
     }
 
     function finishDraft() {
@@ -1516,12 +1549,18 @@
         }
         if (isGisSelectMode()) {
             const fid = pickFeatureAtScreen(event.clientX, event.clientY);
-            selectedFeatureId = fid;
+            if (fid) {
+                if (selectedFeatureIds.has(fid)) {
+                    selectedFeatureIds.delete(fid);
+                } else {
+                    selectedFeatureIds.add(fid);
+                }
+                event.stopPropagation();
+            } else {
+                clearGisSelection();
+            }
             renderOverlay();
             renderPanel();
-            if (fid) {
-                event.stopPropagation();
-            }
             return;
         }
         if (!isGisDrawPointerActive()) {
@@ -1700,17 +1739,19 @@
         const camera = getGisBlueMapCamera();
 
         const fragments = [];
+        const selectionActive = hasGisSelection();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
-            const selected = feature.id === selectedFeatureId;
-            const width = selected ? 4 : 3;
+            const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            const strokeOpacity = dimmed ? 0.2 : 0.9;
+            const fillOpacity = dimmed ? 0.044 : 0.22;
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
                 const d = buildSvgPolylinePath(points, view, camera);
                 if (d) {
                     fragments.push(
-                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`
+                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="${strokeOpacity}"/>`
                     );
                 }
             }
@@ -1718,7 +1759,7 @@
                 const d = buildSvgPolygonPath(points, view, camera);
                 if (d) {
                     fragments.push(
-                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="${color}" fill-opacity="0.22" stroke="${color}" stroke-width="${width}"/>`
+                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="${color}" fill-opacity="${fillOpacity}" stroke="${color}" stroke-width="3" opacity="${strokeOpacity}"/>`
                     );
                 }
             }
@@ -1758,7 +1799,7 @@
                 <span class="mcwws-gis-pin-icon">${feature.type === 'Label' ? '🏷' : '📍'}</span>
                 <span class="mcwws-gis-pin-label">${escapeHtml(name)}</span>
             `;
-            pin.classList.toggle('is-selected', feature.id === selectedFeatureId);
+            pin.classList.toggle('is-dimmed', selectionActive && !isFeatureSelected(feature.id));
             const projected = projectGisPoint(point, view, camera, true);
             const off = !projected || projected.behind
                 || projected.x < -40 || projected.y < -40
@@ -1864,9 +1905,13 @@
 
     function renderGisEditorHtml() {
         const layer = getActiveLayer();
-        const selected = selectedFeatureId ? findFeatureById(selectedFeatureId) : null;
+        const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
-            ? (gisEditMode ? '2D 俯视下点击地图绘制；道路/区域双击结束' : '进入编辑后可在地图上标注')
+            ? (gisEditMode
+                ? (activeTool === 'select'
+                    ? '选择工具：连续点击多选，Esc 取消选中，Delete 删除'
+                    : '2D 俯视下点击地图绘制；道路/区域双击结束')
+                : '进入编辑后可在地图上标注')
             : '管理员登录后可编辑地理信息';
 
         return `
@@ -1903,7 +1948,7 @@
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="export">导出 GeoJSON</button>
                     <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--danger" data-action="delete"
-                        ${!selected ? 'disabled' : ''}>删除选中</button>
+                        ${selectedIds.length === 0 ? 'disabled' : ''}>删除选中${selectedIds.length > 1 ? ` (${selectedIds.length})` : ''}</button>
                 </div>
                 <p class="mcwws-gis-menu-section-title">标注图层 · ${escapeHtml(layer?.name || '—')}</p>
                 <div class="mcwws-gis-menu-layers">
@@ -1923,8 +1968,10 @@
                     `).join('')}
                 </div>
                 ${
-                    selected
-                        ? `<p class="mcwws-gis-menu-selected">选中：${escapeHtml(selected.feature.properties?.name || selected.feature.id)}</p>`
+                    selectedIds.length
+                        ? `<p class="mcwws-gis-menu-selected">${selectedIds.length === 1
+                            ? `选中：${escapeHtml(findFeatureById(selectedIds[0])?.feature.properties?.name || selectedIds[0])}`
+                            : `已选 ${selectedIds.length} 项`}</p>`
                         : ''
                 }
             </div>
@@ -2013,6 +2060,7 @@
             const toolBtn = e.target.closest('[data-tool]');
             if (toolBtn) {
                 activeTool = toolBtn.getAttribute('data-tool') || 'select';
+                clearGisSelection();
                 draftPoints = [];
                 draftHover = null;
                 syncDrawingClass();
@@ -2111,8 +2159,33 @@
         requestAnimationFrame(() => waitForMapControls(attemptsLeft - 1));
     }
 
+    function shouldBlockGisDeleteKey() {
+        return gisEditMode && gisCanEdit && !isInputFocused();
+    }
+
+    function onKeyDownCapture(event) {
+        if (!shouldBlockGisDeleteKey()) {
+            return;
+        }
+        if (event.key !== 'Delete' && event.key !== 'Backspace') {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        if (hasGisSelection()) {
+            deleteSelectedFeature();
+        }
+    }
+
     function onKeyDown(event) {
         if (event.key === 'Escape') {
+            if (gisEditMode && isGisSelectMode() && hasGisSelection()) {
+                clearGisSelection();
+                renderOverlay();
+                renderPanel();
+                event.preventDefault();
+                return;
+            }
             if (gisEditMode && (draftPoints.length || activeTool !== 'select')) {
                 cancelDraft();
                 return;
@@ -2144,9 +2217,6 @@
         }
         if (event.key === 'Enter' && draftPoints.length) {
             finishDraft();
-        }
-        if ((event.key === 'Delete' || event.key === 'Backspace') && selectedFeatureId) {
-            deleteSelectedFeature();
         }
     }
 
@@ -2183,6 +2253,7 @@
                 renderOverlay();
             }
         });
+        document.addEventListener('keydown', onKeyDownCapture, true);
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('dblclick', onDblClick, true);
         window.addEventListener('hashchange', () => {
