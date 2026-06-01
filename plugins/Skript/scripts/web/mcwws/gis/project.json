@@ -1,13 +1,71 @@
 {
   "version": 1,
-  "updatedAt": null,
+  "updatedAt": "2026-06-01T16:17:13.839Z",
   "layers": [
     {
       "id": "roads",
       "name": "道路",
       "color": "#f59e0b",
       "visible": true,
-      "features": []
+      "features": [
+        {
+          "id": "e2f4347616d24e97",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -460.5,
+              "y": 0,
+              "z": -115.5
+            },
+            {
+              "x": -397.5,
+              "y": 0,
+              "z": -194.5
+            },
+            {
+              "x": -358.5,
+              "y": 0,
+              "z": -80.5
+            },
+            {
+              "x": -670.5,
+              "y": 0,
+              "z": 16.5
+            },
+            {
+              "x": -741.5,
+              "y": 0,
+              "z": -87.5
+            },
+            {
+              "x": -749.5,
+              "y": 0,
+              "z": -69.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": ""
+          }
+        },
+        {
+          "id": "443d82bec25f4c7a",
+          "type": "Label",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": {
+            "x": -806.5,
+            "y": 0,
+            "z": -40.5
+          },
+          "properties": {
+            "name": "标注",
+            "description": "2"
+          }
+        }
+      ]
     },
     {
       "id": "labels",
