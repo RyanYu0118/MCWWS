@@ -144,6 +144,7 @@ const TRANSACTIONS_CSV = path.join(DB_DIR, 'transactions.csv');
 const TRANSACTIONS_YAML = path.join(DB_DIR, 'transactions_store.yml');
 const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
 const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
+const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -1154,13 +1155,28 @@ function saveEconomyDeductionsStore(data) {
     saveYamlFile(ECONOMY_DEDUCTIONS_PATH, data);
 }
 
+/** Skript 每秒读取并执行：eco take <玩家> <金额> <订单号> */
+function appendEcoTakeQueueLine(playerId, amount, orderId) {
+    const pid = String(playerId || '').trim();
+    const amt = Math.round(Number(amount) * 100) / 100;
+    const oid = String(orderId || '').trim();
+    if (!pid || !Number.isFinite(amt) || amt <= 0) {
+        return;
+    }
+    const line = `${pid}|${amt}|${oid}\n`;
+    try {
+        fs.appendFileSync(ECO_TAKE_QUEUE_PATH, line, 'utf8');
+    } catch (error) {
+        console.error('写入 eco_take_queue.txt 失败:', error);
+    }
+}
+
 function enqueueEssentialsDeduction({
     uuid,
     playerId,
     amount,
     orderId,
-    balanceAfter,
-    needsMemorySync = false
+    balanceAfter
 }) {
     const store = loadEconomyDeductionsStore();
     const numericId = Number(store.next_id) || 1;
@@ -1171,11 +1187,9 @@ function enqueueEssentialsDeduction({
         playerId,
         amount: Math.round(Number(amount) * 100) / 100,
         orderId,
-        status: 'done',
+        status: 'pending',
         createdAt: nowIso,
-        processedAt: nowIso,
-        mode: 'file-checkout',
-        needsMemorySync: Boolean(needsMemorySync)
+        mode: 'eco-take'
     };
     if (balanceAfter != null && Number.isFinite(Number(balanceAfter))) {
         entry.balanceAfter = Math.round(Number(balanceAfter) * 100) / 100;
@@ -1879,12 +1893,6 @@ app.post('/api/shop/checkout', (req, res) => {
 
         const fileBalance = readEssentialsBalance(uuid);
         const balanceAfter = Math.round((fileBalance - total) * 100) / 100;
-        const fileDeduct = applyCheckoutFileDeduction(uuid, total);
-        if (!fileDeduct.ok) {
-            return res.status(500).json({
-                error: fileDeduct.error || '扣款写入失败，请稍后重试。'
-            });
-        }
 
         const store = loadPendingOrdersStore();
         const numericId = Number(store.next_id) || 1;
@@ -1898,6 +1906,8 @@ app.post('/api/shop/checkout', (req, res) => {
             username: user.username,
             status: 'pending',
             total,
+            balanceAfter,
+            economyChargedInGame: false,
             createdAt: now,
             updatedAt: now,
             failureReason: '',
@@ -1914,9 +1924,9 @@ app.post('/api/shop/checkout', (req, res) => {
             playerId,
             amount: total,
             orderId: numericId,
-            balanceAfter,
-            needsMemorySync: true
+            balanceAfter
         });
+        appendEcoTakeQueueLine(playerId, total, numericId);
         res.json({
             orderId: numericId,
             orderUuid: orderId,
@@ -1926,8 +1936,8 @@ app.post('/api/shop/checkout', (req, res) => {
             balance: balanceAfter,
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             lineCount: resolvedLines.length,
-            deductionMode: fileDeduct.mode,
-            message: '订单已提交，零钱已扣除；若在游戏中余额未刷新，请等待几秒或重新登录。物品将发放至 BetterBags。',
+            deductionMode: 'eco-take',
+            message: '订单已提交，服务器将执行 eco take 扣款；进游戏后物品将发放至 BetterBags。',
             createdAt: now
         });
     } catch (error) {

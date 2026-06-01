@@ -1,145 +1,172 @@
-# 网页商城：Node 已写 Essentials userdata；本脚本把在线玩家的游戏内余额与文件对齐（Vault + eco）
-
-function mcwwsEcoQueueMaxId() :: number:
-    load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
-    set {_max} to yaml value "next_id" from "econq"
-    unload yaml "econq"
-    if {_max} is not set:
-        return 0
-    if {_max} <= 1:
-        return 0
-    return {_max} - 1
+# 网页商城扣款：eco take（Essentials 支持离线玩家）
+import:
+    org.bukkit.Bukkit
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
 
 function mcwwsFormatMoney(amount: number) :: text:
     set {_t} to round({_amount} * 100)
     set {_d} to floor({_t} / 100)
     set {_c} to mod({_t}, 100)
+    if {_c} is 0:
+        return "%{_d}%"
     if {_c} < 10:
         return "%{_d}%.0%{_c}%"
     return "%{_d}%.%{_c}%"
 
-function mcwwsIsPlayerOnline(playerId: text) :: boolean:
-    set {_key} to {_playerId} in lower case
-    loop all players:
-        if name of loop-player in lower case is {_key}:
-            return true
-    return false
+function mcwwsRunEcoTakeCommand(playerId: text, amount: number):
+    set {_money} to mcwwsFormatMoney({_amount})
+    set {_cmd} to "eco take %{_playerId}% %{_money}%"
+    send "§e[MCWWS] 执行: %{_cmd}%" to console
+    set {_sender} to Bukkit.getConsoleSender()
+    set {_ok} to Bukkit.dispatchCommand({_sender}, {_cmd})
+    if {_ok} is false:
+        send "§c[MCWWS] dispatch 失败，改用 execute console command" to console
+        execute console command {_cmd}
 
-function mcwwsReadEssentialsFileMoney(uuid: text) :: number:
-    set {_path} to "plugins/Essentials/userdata/%{_uuid}%.yml"
-    if yaml file {_path} exists:
-        load yaml {_path} as "eu"
-    else:
-        return -1
-    set {_moneyRaw} to yaml value "money" from "eu"
-    unload yaml "eu"
-    set {_money} to {_moneyRaw} parsed as number
-    if {_money} is not set:
+function mcwwsMarkWebOrderEconomyCharged(oid: text):
+    set {_key} to "%{_oid}%"
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set yaml value "orders.%{_key}%.economyChargedInGame" from "weborders" to true
+    set yaml value "orders.%{_key}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
+    unload yaml "weborders"
+
+# Node 结账时追加的文本队列（最可靠）
+function mcwwsProcessEcoTakeTextQueue() :: number:
+    set {_count} to 0
+    set {_rel} to "plugins/Skript/scripts/web/data/eco_take_queue.txt"
+    set {_file} to new File({_rel})
+    if {_file}.exists() is false:
         return 0
-    return {_money}
-
-function mcwwsEntryNeedsMemorySync(id: number) :: boolean:
-    set {_syncRaw} to yaml value "pending.%{_id}%.needsMemorySync" from "econq"
-    if {_syncRaw} is true:
-        return true
-    set {_syncText} to "%{_syncRaw}%"
-    if {_syncText} is "true":
-        return true
-    set {_syncedAt} to yaml value "pending.%{_id}%.memorySyncedAt" from "econq"
-    if {_syncedAt} is set:
-        return false
-    set {_mode} to yaml value "pending.%{_id}%.mode" from "econq"
-    set {_modeText} to "%{_mode}%"
-    if {_modeText} contains "file":
-        return true
-    return false
-
-function mcwwsSyncInGameBalance(playerId: text, uuid: text) :: boolean:
-    set {_key} to {_playerId} in lower case
-    set {_file} to mcwwsReadEssentialsFileMoney({_uuid})
-    if {_file} < 0:
-        return false
-    loop all players:
-        if name of loop-player in lower case is not {_key}:
+    set {_bytes} to Files.readAllBytes({_file}.toPath())
+    if {_bytes}.length is 0:
+        return 0
+    set {_text} to new String({_bytes}, StandardCharsets.UTF_8)
+    Files.delete({_file}.toPath())
+    set {_lines::*} to {_text} split at nl
+    loop {_lines::*}:
+        set {_line} to loop-value
+        if {_line} is "":
             continue
-        set balance of loop-player to {_file}
-        set {_mem} to balance of loop-player
-        if {_mem} > {_file} + 0.01:
-            set {_delta} to {_mem} - {_file}
-            execute console command "eco take %{_playerId}% %mcwwsFormatMoney({_delta})%"
-        else if {_mem} < {_file} - 0.01:
-            set {_delta} to {_file} - {_mem}
-            execute console command "eco give %{_playerId}% %mcwwsFormatMoney({_delta})%"
-        return true
-    return false
+        set {_parts::*} to {_line} split at "|"
+        if size of {_parts::*} < 2:
+            continue
+        set {_pid} to {_parts::1}
+        set {_amt} to {_parts::2} parsed as number
+        if {_amt} is not set:
+            continue
+        if {_amt} <= 0:
+            continue
+        mcwwsRunEcoTakeCommand({_pid}, {_amt})
+        if size of {_parts::*} >= 3:
+            set {_oid} to {_parts::3}
+            mcwwsMarkWebOrderEconomyCharged({_oid})
+        add 1 to {_count}
+    return {_count}
 
-function mcwwsMarkMemorySynced(id: number):
-    set yaml value "pending.%{_id}%.needsMemorySync" from "econq" to false
-    set yaml value "pending.%{_id}%.memorySyncedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
-
-function mcwwsProcessEcoMemorySync():
-    set {_limit} to mcwwsEcoQueueMaxId()
-    if {_limit} <= 0:
-        stop
+function mcwwsProcessEcoTakeYamlQueue() :: number:
+    set {_count} to 0
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
-    set {_changed} to false
-    loop {_limit} times:
-        set {_id} to loop-number
-        if mcwwsEntryNeedsMemorySync({_id}) is false:
+    set {_keys::*} to yaml nodes with keys "pending" from "econq"
+    if size of {_keys::*} is 0:
+        unload yaml "econq"
+        return 0
+    loop {_keys::*}:
+        set {_key} to loop-value
+        set {_statusRaw} to yaml value "pending.%{_key}%.status" from "econq"
+        set {_status} to "%{_statusRaw}%"
+        set {_modeRaw} to yaml value "pending.%{_key}%.mode" from "econq"
+        set {_mode} to "%{_modeRaw}%"
+        set {_needs} to false
+        if {_status} is "pending":
+            set {_needs} to true
+        if {_status} is "done":
+            if {_mode} contains "file":
+                set {_needs} to true
+        if {_needs} is false:
             continue
-        set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
-        set {_uuid} to yaml value "pending.%{_id}%.uuid" from "econq"
+        set {_pid} to yaml value "pending.%{_key}%.playerId" from "econq"
+        set {_amount} to yaml value "pending.%{_key}%.amount" from "econq"
         if {_pid} is not set:
             continue
-        if {_uuid} is not set:
+        if {_amount} is not set:
             continue
-        if mcwwsIsPlayerOnline({_pid}) is false:
+        set {_amt} to {_amount} parsed as number
+        if {_amt} is not set:
             continue
-        if mcwwsSyncInGameBalance({_pid}, {_uuid}) is false:
+        if {_amt} <= 0:
             continue
-        mcwwsMarkMemorySynced({_id})
-        send "§a[MCWWS] 已同步玩家 %{_pid}% 游戏内零钱（订单扣款 #%{_id}%）" to console
-        set {_changed} to true
-    if {_changed} is true:
-        save yaml "econq"
+        mcwwsRunEcoTakeCommand({_pid}, {_amt})
+        set yaml value "pending.%{_key}%.status" from "econq" to "done"
+        set yaml value "pending.%{_key}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set yaml value "pending.%{_key}%.mode" from "econq" to "eco-take"
+        set {_orderId} to yaml value "pending.%{_key}%.orderId" from "econq"
+        if {_orderId} is set:
+            mcwwsMarkWebOrderEconomyCharged("%{_orderId}%")
+        send "§a[MCWWS] YAML 队列已扣款 %{_pid}% ￥%mcwwsFormatMoney({_amt})%（#%{_orderId}%）" to console
+        add 1 to {_count}
+    save yaml "econq"
     unload yaml "econq"
+    return {_count}
 
-function mcwwsProcessEcoMemorySyncForUuid(uuid: text):
-    set {_key} to "%{_uuid}%" in lower case
-    set {_limit} to mcwwsEcoQueueMaxId()
-    if {_limit} <= 0:
-        stop
+function mcwwsIsEcoTakeDoneForOrder(oid: text) :: boolean:
+    set {_key} to "%{_oid}%"
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_charged} to yaml value "orders.%{_key}%.economyChargedInGame" from "weborders"
+    unload yaml "weborders"
+    if {_charged} is true:
+        return true
+    if "%{_charged}%" is "true":
+        return true
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
-    set {_changed} to false
-    loop {_limit} times:
-        set {_id} to loop-number
-        set {_entryUuid} to yaml value "pending.%{_id}%.uuid" from "econq"
-        if "%{_entryUuid}%" in lower case is not {_key}:
+    set {_keys::*} to yaml nodes with keys "pending" from "econq"
+    loop {_keys::*}:
+        set {_entryKey} to loop-value
+        set {_orderId} to yaml value "pending.%{_entryKey}%.orderId" from "econq"
+        if "%{_orderId}%" is not {_key}:
             continue
-        if mcwwsEntryNeedsMemorySync({_id}) is false:
-            continue
-        set {_pid} to yaml value "pending.%{_id}%.playerId" from "econq"
-        if {_pid} is not set:
-            continue
-        if mcwwsIsPlayerOnline({_pid}) is false:
-            continue
-        if mcwwsSyncInGameBalance({_pid}, {_entryUuid}) is false:
-            continue
-        mcwwsMarkMemorySynced({_id})
-        send "§a[MCWWS] 已同步玩家 %{_pid}% 游戏内零钱（订单扣款 #%{_id}%）" to console
-        set {_changed} to true
-    if {_changed} is true:
-        save yaml "econq"
+        set {_statusRaw} to yaml value "pending.%{_entryKey}%.status" from "econq"
+        set {_status} to "%{_statusRaw}%"
+        set {_modeRaw} to yaml value "pending.%{_entryKey}%.mode" from "econq"
+        set {_mode} to "%{_modeRaw}%"
+        if {_status} is "done":
+            if {_mode} contains "eco-take":
+                unload yaml "econq"
+                return true
     unload yaml "econq"
+    return false
+
+function mcwwsProcessEcoTakeQueue() :: number:
+    set {_textCount} to mcwwsProcessEcoTakeTextQueue()
+    set {_yamlCount} to mcwwsProcessEcoTakeYamlQueue()
+    set {_total} to {_textCount} + {_yamlCount}
+    if {_total} > 0:
+        send "§a[MCWWS] 扣款队列完成：文本 %{_textCount}% 条，YAML %{_yamlCount}% 条" to console
+    return {_total}
+
+command /mcwws-eco-test <player> <number>:
+    permission: op
+    trigger:
+        mcwwsRunEcoTakeCommand(name of arg-1, arg-2)
+        send "§a已执行 eco take，请看控制台 Essentials 提示。" to player
+
+command /mcwws-eco-run-queue:
+    permission: op
+    trigger:
+        send "§7[MCWWS] 手动触发扣款队列…" to console
+        set {_n} to mcwwsProcessEcoTakeQueue()
+        if {_n} <= 0:
+            send "§e[MCWWS] 队列里没有待扣款记录（文本队列 + YAML pending/file）" to console
+            send "§e没有待扣款记录；若刚下单请确认已重启 Node 网页服务。" to player
+        else:
+            send "§a已处理 %{_n}% 条扣款，请看控制台 Essentials 提示。" to player
 
 on load:
-    send "§a[MCWWS] 网页零钱同步队列已启用。" to console
+    send "§a[MCWWS] 网页零钱扣款队列已启用（eco take）。" to console
+    wait 2 seconds
+    mcwwsProcessEcoTakeQueue()
 
-every 2 seconds:
-    mcwwsProcessEcoMemorySync()
-
-on join:
-    wait 5 ticks
-    mcwwsSyncInGameBalance(name of player, "%uuid of player%")
-    wait 1 second
-    mcwwsProcessEcoMemorySyncForUuid("%uuid of player%")
+every 1 second:
+    mcwwsProcessEcoTakeQueue()

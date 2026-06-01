@@ -84,6 +84,57 @@ function mcwwsParseLineNumber(raw: text, default: number) :: number:
         return {_default}
     return {_n}
 
+# 金额格式使用 mcwws/economy/eco_queue.sk 中的 mcwwsFormatMoney
+
+# 发放前必须 eco take 成功（不信任旧的 file-checkout / 假 done 记录）
+function mcwwsEnsureOrderEconomyCharged(p: player, oid: text):
+    set {_uuid} to mcwwsPlayerUuidKey({_p})
+    set {mcwws.webdeliver.economyOk::%{_uuid}%} to true
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_chargedRaw} to yaml value "orders.%{_oid}%.economyChargedInGame" from "weborders"
+    set {_total} to yaml value "orders.%{_oid}%.total" from "weborders"
+    unload yaml "weborders"
+    set {_chargedText} to "%{_chargedRaw}%"
+    if {_chargedRaw} is true:
+        stop
+    if {_chargedText} is "true":
+        stop
+    set {_totalNum} to {_total} parsed as number
+    if {_totalNum} is not set:
+        set {_totalNum} to 0
+    if {_totalNum} <= 0:
+        stop
+    set {_pname} to name of {_p}
+    loop 8 times:
+        if mcwwsIsEcoTakeDoneForOrder({_oid}) is true:
+            stop
+        wait 1 second
+    mcwwsRunEcoTakeCommand({_pname}, {_totalNum})
+    wait 10 ticks
+    if yaml file "plugins/Skript/scripts/web/data/pending_orders.yml" exists:
+        load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+        set yaml value "orders.%{_oid}%.economyChargedInGame" from "weborders" to true
+        set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        save yaml "weborders"
+        unload yaml "weborders"
+    set {_path} to "plugins/Skript/scripts/web/data/economy_deductions.yml"
+    if yaml file {_path} exists:
+        reload yaml {_path} as "econq"
+        set {_max} to yaml value "next_id" from "econq"
+        if {_max} is set:
+            set {_limit} to {_max} - 1
+            loop {_limit} times:
+                set {_eid} to loop-number
+                set {_ek} to "%{_eid}%"
+                set {_eoid} to yaml value "pending.%{_ek}%.orderId" from "econq"
+                if "%{_eoid}%" is not "%{_oid}%":
+                    continue
+                set yaml value "pending.%{_ek}%.status" from "econq" to "done"
+                set yaml value "pending.%{_ek}%.mode" from "econq" to "eco-take"
+                set yaml value "pending.%{_ek}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+            save yaml "econq"
+        unload yaml "econq"
+
 function mcwwsDeliverItemToBetterBags(p: player, material: text, amount: number) :: boolean:
     if {_amount} <= 0:
         return false
@@ -234,6 +285,14 @@ function mcwwsTryStartNextOrder(p: player):
     if {_target} is "":
         unload yaml "weborders"
         stop
+    unload yaml "weborders"
+    delete {mcwws.webdeliver.economyOk::%{_uuid}%}
+    mcwwsEnsureOrderEconomyCharged({_p}, {_target})
+    if {mcwws.webdeliver.economyOk::%{_uuid}%} is false:
+        delete {mcwws.webdeliver.economyOk::%{_uuid}%}
+        stop
+    delete {mcwws.webdeliver.economyOk::%{_uuid}%}
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
     set yaml value "orders.%{_target}%.status" from "weborders" to "delivering"
     set yaml value "orders.%{_target}%.deliveringLine" from "weborders" to 0
     set yaml value "orders.%{_target}%.deliveringStartedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
