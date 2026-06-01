@@ -12,6 +12,7 @@
     const GIS_CHAIN_JOIN_EPS = 6;
     const GIS_DRAG_THRESHOLD_PX = 8;
     const GIS_SELECT_HIT_PX = 16;
+    const GIS_HISTORY_MAX = 100;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -45,6 +46,11 @@
     /** @type {{ startX: number, startY: number, moved: boolean, pointerId: number } | null} */
     let gisCanvasPointer = null;
     let gisLastMapDragAt = 0;
+    /** @type {Array<{ project: object, selectedFeatureId: string | null, activeLayerId: string }>} */
+    let gisUndoStack = [];
+    /** @type {Array<{ project: object, selectedFeatureId: string | null, activeLayerId: string }>} */
+    let gisRedoStack = [];
+    let gisHistoryApplying = false;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -1044,6 +1050,7 @@
             const data = await res.json();
             project = data.project || data;
             dirty = false;
+            resetGisHistory();
             setStatus('数据已加载', 'ok');
         } catch (err) {
             setStatus(`加载失败：${err.message}`, 'error');
@@ -1071,6 +1078,7 @@
             }
             project = data.project || project;
             dirty = false;
+            resetGisHistory();
             setStatus('已保存到服务器', 'ok');
         } catch (err) {
             setStatus(`保存失败：${err.message}`, 'error');
@@ -1085,6 +1093,95 @@
         renderPanel();
     }
 
+    function cloneGisProjectState() {
+        if (!project) {
+            return null;
+        }
+        return {
+            project: JSON.parse(JSON.stringify(project)),
+            selectedFeatureId: selectedFeatureId || null,
+            activeLayerId: activeLayerId || project.layers?.[0]?.id || 'roads'
+        };
+    }
+
+    function applyGisProjectState(state) {
+        if (!state?.project) {
+            return;
+        }
+        gisHistoryApplying = true;
+        project = JSON.parse(JSON.stringify(state.project));
+        selectedFeatureId = state.selectedFeatureId || null;
+        activeLayerId = state.activeLayerId || project.layers?.[0]?.id || 'roads';
+        draftPoints = [];
+        draftHover = null;
+        gisHistoryApplying = false;
+        dirty = true;
+        renderOverlay();
+        renderPanel();
+    }
+
+    function resetGisHistory() {
+        gisUndoStack = [];
+        gisRedoStack = [];
+    }
+
+    function canGisUndo() {
+        return gisUndoStack.length > 0;
+    }
+
+    function canGisRedo() {
+        return gisRedoStack.length > 0;
+    }
+
+    function recordGisHistory() {
+        if (gisHistoryApplying || !project || !gisEditMode || !gisCanEdit) {
+            return;
+        }
+        const snap = cloneGisProjectState();
+        if (!snap) {
+            return;
+        }
+        gisUndoStack.push(snap);
+        if (gisUndoStack.length > GIS_HISTORY_MAX) {
+            gisUndoStack.shift();
+        }
+        gisRedoStack = [];
+    }
+
+    function undoGisEdit() {
+        if (!canGisUndo()) {
+            setStatus('没有可撤销的操作', '');
+            return;
+        }
+        const current = cloneGisProjectState();
+        if (current) {
+            gisRedoStack.push(current);
+            if (gisRedoStack.length > GIS_HISTORY_MAX) {
+                gisRedoStack.shift();
+            }
+        }
+        const prev = gisUndoStack.pop();
+        applyGisProjectState(prev);
+        setStatus(`已撤销（还可撤销 ${gisUndoStack.length} 步）`, 'ok');
+    }
+
+    function redoGisEdit() {
+        if (!canGisRedo()) {
+            setStatus('没有可重做的操作', '');
+            return;
+        }
+        const current = cloneGisProjectState();
+        if (current) {
+            gisUndoStack.push(current);
+            if (gisUndoStack.length > GIS_HISTORY_MAX) {
+                gisUndoStack.shift();
+            }
+        }
+        const next = gisRedoStack.pop();
+        applyGisProjectState(next);
+        setStatus(`已重做（还可重做 ${gisRedoStack.length} 步）`, 'ok');
+    }
+
     function promptFeatureMeta(defaultName) {
         const name = window.prompt('名称（可留空）', defaultName || '');
         if (name === null) return null;
@@ -1095,6 +1192,7 @@
     function addFeature(feature) {
         const layer = getActiveLayer();
         if (!layer) return;
+        recordGisHistory();
         if (!Array.isArray(layer.features)) layer.features = [];
         layer.features.push(feature);
         selectedFeatureId = feature.id;
@@ -1104,6 +1202,7 @@
 
     function deleteSelectedFeature() {
         if (!selectedFeatureId || !project?.layers) return;
+        recordGisHistory();
         project.layers.forEach((layer) => {
             layer.features = (layer.features || []).filter((f) => f.id !== selectedFeatureId);
         });
@@ -1790,6 +1889,12 @@
                         ${!gisCanEdit || !dirty || saving ? 'disabled' : ''}>${saving ? '保存中…' : '保存'}</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="undo" title="Ctrl+Z"
+                        ${!gisEditMode || !canGisUndo() ? 'disabled' : ''}>撤销</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="redo" title="Ctrl+Y"
+                        ${!gisEditMode || !canGisRedo() ? 'disabled' : ''}>重做</button>
+                </div>
+                <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="finish-draft"
                         ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>完成绘制</button>
                     <button type="button" class="mcwws-gis-menu-action" data-action="cancel-draft"
@@ -1926,6 +2031,7 @@
                 const id = visInput.getAttribute('data-layer-visible');
                 const l = project?.layers?.find((x) => x.id === id);
                 if (l) {
+                    recordGisHistory();
                     l.visible = e.target.checked;
                     markDirty();
                     renderOverlay();
@@ -1977,6 +2083,10 @@
                 renderOverlay();
             } else if (action === 'save') {
                 void saveGisProject();
+            } else if (action === 'undo') {
+                undoGisEdit();
+            } else if (action === 'redo') {
+                redoGisEdit();
             } else if (action === 'finish-draft') {
                 finishDraft();
             } else if (action === 'cancel-draft') {
@@ -2018,10 +2128,24 @@
             return;
         }
         if (!gisEditMode) return;
+        if (isInputFocused()) return;
+        if (event.ctrlKey || event.metaKey) {
+            const key = String(event.key || '').toLowerCase();
+            if (key === 'z' && !event.shiftKey) {
+                event.preventDefault();
+                undoGisEdit();
+                return;
+            }
+            if (key === 'y' || (key === 'z' && event.shiftKey)) {
+                event.preventDefault();
+                redoGisEdit();
+                return;
+            }
+        }
         if (event.key === 'Enter' && draftPoints.length) {
             finishDraft();
         }
-        if ((event.key === 'Delete' || event.key === 'Backspace') && selectedFeatureId && !isInputFocused()) {
+        if ((event.key === 'Delete' || event.key === 'Backspace') && selectedFeatureId) {
             deleteSelectedFeature();
         }
     }
