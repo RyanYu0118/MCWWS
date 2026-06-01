@@ -75,7 +75,7 @@
     let gisVertexDrag = null;
     /** @type {Map<string, HTMLButtonElement>} */
     const vertexHandleElements = new Map();
-    /** @type {{ featureId: string, segmentIndex: number, insertIndex: number, world: object, screenX: number, screenY: number } | null} */
+    /** @type {{ featureId: string, segmentIndex: number, insertIndex: number, world: object, screenX: number, screenY: number, clientX: number, clientY: number } | null} */
     let gisHoverSegmentInsert = null;
     let segmentInsertHandleEl = null;
     let gisVertexGizmoEl = null;
@@ -1067,7 +1067,88 @@
         return vec3Add(rayOrigin, vec3Scale(rayDir, t));
     }
 
+    function lerpWorld3(p0, p1, t) {
+        return {
+            x: p0.x + t * (p1.x - p0.x),
+            y: p0.y + t * (p1.y - p0.y),
+            z: p0.z + t * (p1.z - p0.z)
+        };
+    }
+
+    /** 鼠标射线与 3D 线段最近点（透视下与屏幕悬停一致，勿用屏幕 t 插值世界坐标） */
+    function closestWorldPointOnSegmentToRay(ray, p0, p1) {
+        const u = vec3Sub(p1, p0);
+        const v = ray.dir;
+        const w0 = vec3Sub(ray.origin, p0);
+        const a = vec3Dot(u, u);
+        const b = vec3Dot(u, v);
+        const c = vec3Dot(v, v);
+        const d = vec3Dot(u, w0);
+        const e = vec3Dot(v, w0);
+        const denom = a * c - b * b;
+        let sc;
+        if (denom < 1e-8) {
+            sc = 0;
+        } else {
+            sc = (b * e - c * d) / denom;
+        }
+        sc = Math.max(0, Math.min(1, sc));
+        return { point: lerpWorld3(p0, p1, sc), t: sc };
+    }
+
+    /** 鼠标到线段（裁剪后屏幕几何）的最近点；用于悬停判定与 + 显示位置 */
+    function getScreenHitOnLineSegment(clientX, clientY, p0, p1, view, camera, maxPx) {
+        let bestDist = Infinity;
+        let bestHit = null;
+        iterClippedLineScreenSegments([p0, p1], view, camera, (a, b) => {
+            if (screenDist(a.x, a.y, b.x, b.y) < GIS_SEGMENT_MIN_SCREEN_LEN) {
+                return;
+            }
+            const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
+            if (d < bestDist) {
+                bestDist = d;
+                bestHit = closestPointOnScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
+            }
+        });
+        if (!bestHit || bestDist > maxPx) {
+            return null;
+        }
+        return { x: bestHit.x, y: bestHit.y, dist: bestDist };
+    }
+
+    function pickWorldOnSegmentAtScreen(clientX, clientY, p0, p1, view, camera) {
+        const ray = camera ? unprojectScreenToRay(clientX, clientY, camera) : null;
+        if (ray) {
+            return closestWorldPointOnSegmentToRay(ray, p0, p1).point;
+        }
+        const s0 = projectGisPoint(p0, view, null, false);
+        const s1 = projectGisPoint(p1, view, null, false);
+        if (!s0 || !s1) {
+            return null;
+        }
+        const hit = closestPointOnScreenSegment(clientX, clientY, s0.x, s0.y, s1.x, s1.y);
+        return lerpWorld3(p0, p1, hit.t);
+    }
+
     function coerceVertexPoint(raw) {
+        if (!raw) {
+            return null;
+        }
+        const x = Number(raw.x);
+        const y = Number(raw.y);
+        const z = Number(raw.z);
+        if (![x, y, z].every(Number.isFinite)) {
+            return null;
+        }
+        return {
+            x: Math.floor(x) + 0.5,
+            y: Math.floor(y) + 0.5,
+            z: Math.floor(z) + 0.5
+        };
+    }
+
+    /** 插入顶点：X/Z 对齐方块中心，Y 保留射线求交高度（避免道路折线高度被拉偏） */
+    function coerceInsertVertexPoint(raw) {
         if (!raw) {
             return null;
         }
@@ -1133,7 +1214,7 @@
         if (!['LineString', 'Polygon'].includes(feature.type)) {
             return;
         }
-        const next = coerceVertexPoint(point);
+        const next = coerceInsertVertexPoint(point);
         if (!next) {
             return;
         }
@@ -1458,42 +1539,87 @@
                 if (!p0 || !p1) {
                     continue;
                 }
-
-                iterClippedLineScreenSegments([p0, p1], view, camera, (a, b) => {
-                    if (screenDist(a.x, a.y, b.x, b.y) < GIS_SEGMENT_MIN_SCREEN_LEN) {
-                        return;
-                    }
-                    const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
-                    if (d >= bestDist) {
-                        return;
-                    }
-                    const midSx = (a.x + b.x) / 2;
-                    const midSy = (a.y + b.y) / 2;
-                    const s0 = projectGisPoint(p0, view, camera, false);
-                    const s1 = projectGisPoint(p1, view, camera, false);
-                    if (s0 && !s0.behind && screenDist(midSx, midSy, s0.x, s0.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
-                        return;
-                    }
-                    if (s1 && !s1.behind && screenDist(midSx, midSy, s1.x, s1.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
-                        return;
-                    }
-                    bestDist = d;
-                    best = {
-                        featureId: feature.id,
-                        segmentIndex: seg,
-                        insertIndex: seg + 1,
-                        world: {
-                            x: (p0.x + p1.x) / 2,
-                            y: (p0.y + p1.y) / 2,
-                            z: (p0.z + p1.z) / 2
-                        },
-                        screenX: midSx,
-                        screenY: midSy
-                    };
-                });
+                const screenHit = getScreenHitOnLineSegment(
+                    clientX,
+                    clientY,
+                    p0,
+                    p1,
+                    view,
+                    camera,
+                    GIS_SEGMENT_HIT_PX
+                );
+                if (!screenHit) {
+                    continue;
+                }
+                if (screenHit.dist >= bestDist) {
+                    continue;
+                }
+                const s0 = projectGisPoint(p0, view, camera, false);
+                const s1 = projectGisPoint(p1, view, camera, false);
+                if (s0 && !s0.behind && screenDist(screenHit.x, screenHit.y, s0.x, s0.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
+                    continue;
+                }
+                if (s1 && !s1.behind && screenDist(screenHit.x, screenHit.y, s1.x, s1.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
+                    continue;
+                }
+                const world = pickWorldOnSegmentAtScreen(clientX, clientY, p0, p1, view, camera);
+                if (!world) {
+                    continue;
+                }
+                bestDist = screenHit.dist;
+                best = {
+                    featureId: feature.id,
+                    segmentIndex: seg,
+                    insertIndex: seg + 1,
+                    world,
+                    screenX: screenHit.x,
+                    screenY: screenHit.y,
+                    clientX,
+                    clientY
+                };
             }
         });
         return best;
+    }
+
+    function refreshHoverSegmentInsertProjection(view, camera) {
+        const h = gisHoverSegmentInsert;
+        if (!h || !Number.isFinite(h.clientX) || !Number.isFinite(h.clientY)) {
+            return;
+        }
+        const found = findFeatureById(h.featureId);
+        if (!found) {
+            return;
+        }
+        const feature = found.feature;
+        const points = getFeatureVertexPoints(feature);
+        const seg = h.segmentIndex;
+        const i0 = seg;
+        const i1 = feature.type === 'Polygon' ? ((seg + 1) % points.length) : (seg + 1);
+        const p0 = points[i0];
+        const p1 = points[i1];
+        if (!p0 || !p1) {
+            return;
+        }
+        const screenHit = getScreenHitOnLineSegment(
+            h.clientX,
+            h.clientY,
+            p0,
+            p1,
+            view,
+            camera,
+            GIS_SEGMENT_HIT_PX
+        );
+        if (!screenHit) {
+            return;
+        }
+        const world = pickWorldOnSegmentAtScreen(h.clientX, h.clientY, p0, p1, view, camera);
+        if (!world) {
+            return;
+        }
+        h.world = world;
+        h.screenX = screenHit.x;
+        h.screenY = screenHit.y;
     }
 
     function updateGisHoverSegmentInsert(clientX, clientY) {
@@ -1738,23 +1864,25 @@
             }
             return;
         }
+        refreshHoverSegmentInsertProjection(view, camera);
         if (!segmentInsertHandleEl) {
             segmentInsertHandleEl = document.createElement('button');
             segmentInsertHandleEl.type = 'button';
             segmentInsertHandleEl.className = 'mcwws-gis-segment-insert-handle';
-            segmentInsertHandleEl.title = '点击在此段添加顶点';
+            segmentInsertHandleEl.title = '点击在当前位置添加顶点';
             segmentInsertHandleEl.setAttribute('aria-label', '添加顶点');
             layer.appendChild(segmentInsertHandleEl);
         }
-        const projected = projectGisPoint(gisHoverSegmentInsert.world, view, camera, false);
-        const off = !projected || projected.behind
-            || projected.x < -40 || projected.y < -40
-            || projected.x > window.innerWidth + 40
-            || projected.y > window.innerHeight + 40;
+        const sx = gisHoverSegmentInsert.screenX;
+        const sy = gisHoverSegmentInsert.screenY;
+        const off = sx == null || sy == null
+            || sx < -40 || sy < -40
+            || sx > window.innerWidth + 40
+            || sy > window.innerHeight + 40;
         segmentInsertHandleEl.hidden = off;
         segmentInsertHandleEl.classList.toggle('is-offscreen', off);
         if (!off) {
-            segmentInsertHandleEl.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
+            segmentInsertHandleEl.style.transform = `translate3d(${sx}px, ${sy}px, 0) translate(-50%, -50%)`;
         }
     }
 
@@ -2348,16 +2476,21 @@
         return Math.hypot(dx, dy);
     }
 
-    function distPointToScreenSegment(px, py, x1, y1, x2, y2) {
+    function closestPointOnScreenSegment(px, py, x1, y1, x2, y2) {
         const dx = x2 - x1;
         const dy = y2 - y1;
         const len2 = dx * dx + dy * dy;
         if (len2 < 1e-6) {
-            return screenDist(px, py, x1, y1);
+            return { x: x1, y: y1, t: 0 };
         }
         let t = ((px - x1) * dx + (py - y1) * dy) / len2;
         t = Math.max(0, Math.min(1, t));
-        return screenDist(px, py, x1 + t * dx, y1 + t * dy);
+        return { x: x1 + t * dx, y: y1 + t * dy, t };
+    }
+
+    function distPointToScreenSegment(px, py, x1, y1, x2, y2) {
+        const hit = closestPointOnScreenSegment(px, py, x1, y1, x2, y2);
+        return screenDist(px, py, hit.x, hit.y);
     }
 
     function pointInScreenPolygon(px, py, ring) {
@@ -2960,7 +3093,7 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '选中道路/区域后：橙色为顶点；鼠标移到线段上会显示可点击的中点以添加顶点；点击顶点可拖轴或输入坐标编辑'
+                ? '选中道路/区域后：橙色为顶点；鼠标移到线段上会显示可点击的「+」以在悬停处添加顶点；点击顶点可拖轴或输入坐标编辑'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
