@@ -256,14 +256,8 @@
             enabled = true;
         }
         gisInfoEnabled = !!enabled;
-        if (!gisInfoEnabled) {
-            gisEditorOpen = false;
-            if (gisEditMode) {
-                gisEditMode = false;
-                draftPoints = [];
-                draftHover = null;
-                syncDrawingClass();
-            }
+        if (!gisInfoEnabled && gisEditorOpen) {
+            closeGisEditorPanel();
         }
         if (persist) {
             saveLayerPrefs();
@@ -1065,9 +1059,8 @@
     async function refreshEditPermission() {
         gisCanEdit = false;
         if (!mapAuthToken) {
-            if (gisEditMode) {
-                gisEditMode = false;
-                draftPoints = [];
+            if (gisEditorOpen) {
+                closeGisEditorPanel();
             }
             renderPanel();
             return;
@@ -1081,9 +1074,8 @@
         } catch {
             gisCanEdit = false;
         }
-        if (!gisCanEdit && gisEditMode) {
-            gisEditMode = false;
-            draftPoints = [];
+        if (!gisCanEdit && gisEditorOpen) {
+            closeGisEditorPanel();
         }
         renderPanel();
         syncDrawingClass();
@@ -1901,6 +1893,24 @@
         }
     }
 
+    function closeGisEditorPanel() {
+        gisEditorOpen = false;
+        gisEditMode = false;
+        draftPoints = [];
+        draftHover = null;
+        clearGisSelection();
+        syncDrawingClass();
+    }
+
+    function openGisEditorPanel() {
+        gisEditorOpen = true;
+        if (gisCanEdit) {
+            gisEditMode = true;
+            syncDrawingClass();
+            renderOverlay();
+        }
+    }
+
     function mountGisAboveDimension(wrap, column) {
         const layerWrap = column.querySelector('.mcwws-ctrl-layer-wrap');
         if (layerWrap && wrap.nextElementSibling !== layerWrap) {
@@ -1983,11 +1993,9 @@
         const layer = getActiveLayer();
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
-            ? (gisEditMode
-                ? (activeTool === 'select'
-                    ? '选择工具：连续点击多选，Esc 取消选中，Delete 删除'
-                    : '2D 俯视下点击地图绘制；道路/区域双击结束')
-                : '进入编辑后可在地图上标注')
+            ? (activeTool === 'select'
+                ? '选择工具：连续点击多选，Esc 取消选中，Delete 删除'
+                : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
         return `
@@ -1997,29 +2005,27 @@
                     ${TOOLS.map((t) => `
                         <button type="button" class="mcwws-gis-menu-tool${activeTool === t.id ? ' is-active' : ''}"
                             data-tool="${t.id}" title="${escapeHtml(t.label)}"
-                            ${!gisEditMode || !gisCanEdit ? 'disabled' : ''}>
+                            ${!gisCanEdit ? 'disabled' : ''}>
                             <span class="mcwws-gis-menu-tool-icon" aria-hidden="true">${t.icon}</span>
                             <span class="mcwws-gis-menu-tool-label">${escapeHtml(t.label)}</span>
                         </button>
                     `).join('')}
                 </div>
                 <div class="mcwws-gis-menu-actions">
-                    <button type="button" class="mcwws-gis-menu-action" data-action="toggle-edit"
-                        ${!gisCanEdit ? 'disabled' : ''}>${gisEditMode ? '退出编辑' : '开始编辑'}</button>
                     <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--primary" data-action="save"
                         ${!gisCanEdit || !dirty || saving ? 'disabled' : ''}>${saving ? '保存中…' : '保存'}</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="undo" title="Ctrl+Z"
-                        ${!gisEditMode || !canGisUndo() ? 'disabled' : ''}>撤销</button>
+                        ${!canGisUndo() ? 'disabled' : ''}>撤销</button>
                     <button type="button" class="mcwws-gis-menu-action" data-action="redo" title="Ctrl+Y"
-                        ${!gisEditMode || !canGisRedo() ? 'disabled' : ''}>重做</button>
+                        ${!canGisRedo() ? 'disabled' : ''}>重做</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="finish-draft"
-                        ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>完成绘制</button>
+                        ${draftPoints.length === 0 ? 'disabled' : ''}>完成绘制</button>
                     <button type="button" class="mcwws-gis-menu-action" data-action="cancel-draft"
-                        ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>取消</button>
+                        ${draftPoints.length === 0 ? 'disabled' : ''}>取消</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="export">导出 GeoJSON</button>
@@ -2179,33 +2185,15 @@
                     }
                     return;
                 }
-                gisEditorOpen = !gisEditorOpen;
-                if (!gisEditorOpen) {
-                    gisEditMode = false;
-                    draftPoints = [];
-                    draftHover = null;
-                    syncDrawingClass();
+                if (gisEditorOpen) {
+                    closeGisEditorPanel();
+                } else {
+                    openGisEditorPanel();
                 }
                 renderLayerDialog();
                 return;
             }
-            if (action === 'toggle-edit') {
-                if (!gisCanEdit) {
-                    requestAuthFromParent();
-                    if (window.parent !== window) {
-                        window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
-                    }
-                    return;
-                }
-                gisEditMode = !gisEditMode;
-                if (!gisEditMode) {
-                    draftPoints = [];
-                    draftHover = null;
-                }
-                syncDrawingClass();
-                renderLayerDialog();
-                renderOverlay();
-            } else if (action === 'save') {
+            if (action === 'save') {
                 void saveGisProject();
             } else if (action === 'undo') {
                 undoGisEdit();
@@ -2267,11 +2255,7 @@
                 return;
             }
             if (gisEditorOpen) {
-                gisEditorOpen = false;
-                gisEditMode = false;
-                draftPoints = [];
-                draftHover = null;
-                syncDrawingClass();
+                closeGisEditorPanel();
                 renderLayerDialog();
             }
             return;
