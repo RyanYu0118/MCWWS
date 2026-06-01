@@ -662,6 +662,10 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     display: block;
 }
 
+.mcwws-ctrl-daynight.is-locked {
+    box-shadow: 0 0 0 2px #0d9488, 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
 .mcwws-ctrl-main-row {
     display: flex;
     align-items: flex-end;

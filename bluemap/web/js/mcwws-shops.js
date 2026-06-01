@@ -43,6 +43,10 @@
     let layerMenuOpen = false;
     let dayNightAnimToken = 0;
     let dayNightManualUntil = 0;
+    /** @type {null | 'day' | 'night'} */
+    let dayNightLock = null;
+    let dayNightLongPressTimer = 0;
+    let dayNightLongPressHandled = false;
     let dayNightPeriod = '';
     let dayNightDayTime = null;
     let dayNightSyncStarted = false;
@@ -52,6 +56,7 @@
     const DAY_NIGHT_ANIM_MS = 300;
     const WORLD_TIME_POLL_MS = 8000;
     const DAY_NIGHT_MANUAL_MS = 5 * 60 * 1000;
+    const DAY_NIGHT_LONG_PRESS_MS = 550;
     const MC_DAY_TICKS = 24000;
     const PLAYER_LOCATE_POLL_MS = 8000;
     const LIVE_PLAYERS_CACHE_MS = 1500;
@@ -3402,18 +3407,103 @@
         return 0.625 + 0.375 * Math.cos((2 * Math.PI * (tick - 6000)) / MC_DAY_TICKS);
     }
 
+    function isDayNightLocked() {
+        return dayNightLock === 'day' || dayNightLock === 'night';
+    }
+
+    function getDayNightLockStrength() {
+        return dayNightLock === 'night' ? DAY_NIGHT_STRENGTH_NIGHT : DAY_NIGHT_STRENGTH_DAY;
+    }
+
     function isDayNightManualActive() {
+        if (isDayNightLocked()) {
+            return true;
+        }
         return Date.now() < dayNightManualUntil;
     }
 
+    function enforceDayNightLock() {
+        if (!isDayNightLocked()) {
+            return;
+        }
+        const target = getDayNightLockStrength();
+        if (Math.abs(getSunlightStrength() - target) > 0.02) {
+            setSunlightStrengthImmediate(target);
+        }
+        updateMapControlsState();
+    }
+
     function toggleMapDayNight() {
+        if (isDayNightLocked()) {
+            return;
+        }
         const target = isMapDaylight() ? DAY_NIGHT_STRENGTH_NIGHT : DAY_NIGHT_STRENGTH_DAY;
         dayNightManualUntil = Date.now() + DAY_NIGHT_MANUAL_MS;
         animateSunlightStrength(target).then(() => updateMapControlsState());
         updateMapControlsState();
     }
 
+    function onDayNightLongPress() {
+        if (isDayNightLocked()) {
+            dayNightLock = null;
+            dayNightManualUntil = 0;
+            updateMapControlsState();
+            void syncMapDayNightFromServer();
+            return;
+        }
+        dayNightLock = isMapDaylight() ? 'day' : 'night';
+        dayNightManualUntil = 0;
+        const target = getDayNightLockStrength();
+        animateSunlightStrength(target).then(() => updateMapControlsState());
+        updateMapControlsState();
+    }
+
+    function bindDayNightControl(btn) {
+        if (!btn || btn.dataset.dayNightBound === '1') {
+            return;
+        }
+        btn.dataset.dayNightBound = '1';
+
+        const clearLongPress = () => {
+            if (dayNightLongPressTimer) {
+                window.clearTimeout(dayNightLongPressTimer);
+                dayNightLongPressTimer = 0;
+            }
+        };
+
+        btn.addEventListener('pointerdown', (e) => {
+            if (e.button !== 0) {
+                return;
+            }
+            dayNightLongPressHandled = false;
+            clearLongPress();
+            dayNightLongPressTimer = window.setTimeout(() => {
+                dayNightLongPressTimer = 0;
+                dayNightLongPressHandled = true;
+                onDayNightLongPress();
+            }, DAY_NIGHT_LONG_PRESS_MS);
+        });
+
+        btn.addEventListener('pointerup', clearLongPress);
+        btn.addEventListener('pointercancel', clearLongPress);
+        btn.addEventListener('pointerleave', clearLongPress);
+
+        btn.addEventListener('click', (e) => {
+            if (dayNightLongPressHandled) {
+                e.preventDefault();
+                e.stopPropagation();
+                dayNightLongPressHandled = false;
+                return;
+            }
+            toggleMapDayNight();
+        });
+    }
+
     async function syncMapDayNightFromServer() {
+        if (isDayNightLocked()) {
+            enforceDayNightLock();
+            return;
+        }
         if (isDayNightManualActive()) {
             return;
         }
@@ -3530,19 +3620,27 @@
         const dayBtn = root.querySelector('.mcwws-ctrl-daynight');
         if (dayBtn) {
             const isDay = isMapDaylight();
+            const locked = isDayNightLocked();
             dayBtn.classList.toggle('is-night', !isDay);
-            const manual = isDayNightManualActive();
-            const manualMin = manual ? Math.max(1, Math.ceil((dayNightManualUntil - Date.now()) / 60000)) : 0;
+            dayBtn.classList.toggle('is-locked', locked);
             const timeHint = dayNightDayTime != null ? `，游戏刻 ${dayNightDayTime}` : '';
             const periodHint = dayNightPeriod ? `（${dayNightPeriod}${timeHint}）` : (timeHint || '');
-            if (manual) {
+            if (locked) {
                 dayBtn.title = isDay
-                    ? `当前为日景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间`
-                    : `当前为夜景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间`;
+                    ? `已锁定日景${periodHint}；长按取消锁定并跟随游戏时间`
+                    : `已锁定夜景${periodHint}；长按取消锁定并跟随游戏时间`;
             } else {
-                dayBtn.title = isDay
-                    ? `切换为夜景${periodHint}（跟随主世界游戏时间）`
-                    : `切换为日景${periodHint}（跟随主世界游戏时间）`;
+                const manual = Date.now() < dayNightManualUntil;
+                const manualMin = manual ? Math.max(1, Math.ceil((dayNightManualUntil - Date.now()) / 60000)) : 0;
+                if (manual) {
+                    dayBtn.title = isDay
+                        ? `当前为日景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间；长按可锁定`
+                        : `当前为夜景${periodHint}；已手动切换，约 ${manualMin} 分钟后恢复跟随游戏时间；长按可锁定`;
+                } else {
+                    dayBtn.title = isDay
+                        ? `点击切换夜景${periodHint}（跟随主世界游戏时间）；长按锁定日景`
+                        : `点击切换日景${periodHint}（跟随主世界游戏时间）；长按锁定夜景`;
+                }
             }
         }
         const locateBtn = root.querySelector('.mcwws-ctrl-locate');
@@ -3654,7 +3752,7 @@
         });
         root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
         root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
-        root.querySelector('.mcwws-ctrl-daynight')?.addEventListener('click', toggleMapDayNight);
+        bindDayNightControl(root.querySelector('.mcwws-ctrl-daynight'));
         root.querySelector('.mcwws-ctrl-locate')?.addEventListener('click', () => {
             void togglePlayerLocate();
         });
