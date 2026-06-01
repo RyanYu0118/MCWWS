@@ -206,7 +206,10 @@
     }
 
     const POPOVER_CLOSE_DELAY_MS = 320;
-    const ECONOMY_CACHE_MS = 45000;
+    /** 悬停弹层等非轮询场景下的短时缓存 */
+    const ECONOMY_CACHE_MS = 8000;
+    /** 登录后自动轮询零钱（与游戏内 eco 扣款/入账对齐，约 1 秒内可见） */
+    const ECONOMY_POLL_MS = 500;
     const EMPTY_VALUE = '-';
 
     /** minecraftAE 未编码字符回退为 ASCII，避免显示乱码 */
@@ -221,6 +224,8 @@
     let economyCache = null;
     let economyCacheAt = 0;
     let economyFetchPromise = null;
+    let economyPollTimer = null;
+    let lastRenderedBalanceText = '';
 
     function formatPlayHours(hours) {
         if (hours == null || !Number.isFinite(Number(hours))) return EMPTY_VALUE;
@@ -266,7 +271,17 @@
         if (balanceEl) {
             const balanceText = data.balanceFormatted
                 || (data.balance != null ? String(data.balance) : EMPTY_VALUE);
-            balanceEl.textContent = sanitizeMcFontText(balanceText);
+            const displayBalance = sanitizeMcFontText(balanceText);
+            if (displayBalance !== lastRenderedBalanceText) {
+                if (lastRenderedBalanceText && displayBalance !== EMPTY_VALUE) {
+                    balanceEl.classList.add('is-balance-updated');
+                    window.setTimeout(() => {
+                        balanceEl.classList.remove('is-balance-updated');
+                    }, 700);
+                }
+                lastRenderedBalanceText = displayBalance;
+            }
+            balanceEl.textContent = displayBalance;
         }
         if (roleEl) {
             roleEl.textContent = sanitizeMcFontText(
@@ -303,8 +318,43 @@
     function clearEconomyUi(refs) {
         economyCache = null;
         economyCacheAt = 0;
+        lastRenderedBalanceText = '';
         const economy = refs?.popoverEconomy || ensureEconomyDom(refs?.widget);
         if (economy) economy.hidden = true;
+    }
+
+    function stopEconomyPolling() {
+        if (economyPollTimer) {
+            window.clearInterval(economyPollTimer);
+            economyPollTimer = null;
+        }
+    }
+
+    async function tickEconomyPoll() {
+        if (!authToken || !currentUser?.playerId || document.hidden) {
+            return;
+        }
+        const data = await fetchPlayerEconomy(true);
+        if (!data) return;
+        const refs = ensureAuthWidgetDom();
+        renderEconomyUi(refs, data);
+        if (refs?.popoverMeta && currentUser?.playerId) {
+            const parts = [`游戏 ID: ${currentUser.playerId}`];
+            if (data.online === true) parts.push('在线');
+            else if (data.online === false) parts.push('离线');
+            refs.popoverMeta.textContent = parts.join(' / ');
+        }
+    }
+
+    function startEconomyPolling() {
+        stopEconomyPolling();
+        if (!authToken || !currentUser?.playerId) {
+            return;
+        }
+        void tickEconomyPoll();
+        economyPollTimer = window.setInterval(() => {
+            void tickEconomyPoll();
+        }, ECONOMY_POLL_MS);
     }
 
     async function fetchPlayerEconomy(force) {
@@ -541,6 +591,7 @@
             updateStatusUi();
             notify();
             closeAuthModal();
+            startEconomyPolling();
             void fetchPlayerEconomy(true).then((data) => {
                 if (!data) return;
                 const refs = ensureAuthWidgetDom();
@@ -569,6 +620,7 @@
         currentUser = null;
         economyCache = null;
         economyCacheAt = 0;
+        stopEconomyPolling();
         writeStoredToken(null);
         updateStatusUi();
         notify();
@@ -578,6 +630,7 @@
         authToken = readStoredToken();
         if (!authToken) {
             currentUser = null;
+            stopEconomyPolling();
             updateStatusUi();
             notify();
             return null;
@@ -591,6 +644,7 @@
                 throw new Error('未登录');
             }
             currentUser = await response.json();
+            startEconomyPolling();
             void fetchPlayerEconomy(true).then((data) => {
                 if (!data) return;
                 const refs = ensureAuthWidgetDom();
@@ -599,6 +653,7 @@
         } catch {
             authToken = null;
             currentUser = null;
+            stopEconomyPolling();
             writeStoredToken(null);
         }
         updateStatusUi();
@@ -701,11 +756,23 @@
             const refs = ensureAuthWidgetDom();
             return refreshEconomyForPopover(refs, Boolean(force));
         },
+        startEconomyPolling,
+        stopEconomyPolling,
         onChange(fn) {
             listeners.add(fn);
             return () => listeners.delete(fn);
         }
     };
+
+    document.addEventListener('visibilitychange', () => {
+        if (document.hidden) {
+            return;
+        }
+        if (authToken && currentUser?.playerId) {
+            void tickEconomyPoll();
+            startEconomyPolling();
+        }
+    });
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
