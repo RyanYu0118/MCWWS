@@ -18,6 +18,8 @@
     const GIS_SELECT_HIT_PX_3D = 22;
     const GIS_VERTEX_HIT_PX = 14;
     const GIS_AXIS_DRAG_THRESHOLD_PX = 3;
+    /** 俯视时世界 Y 轴在屏幕上近乎一点，用固定屏幕向上方向拖动 */
+    const GIS_WORLD_UP_SCREEN_PX_PER_BLOCK = 10;
     const GIS_HISTORY_MAX = 100;
 
     let mapAuthToken = null;
@@ -393,10 +395,18 @@
         return { ...hash, distance: dist, height: dist };
     }
 
-    function projectGisWithCamera(point, camera, labelStyle) {
+    function resolveGisWorldY(point, labelStyle, useActualWorldY) {
+        const lift = labelStyle ? 1.2 : 0;
+        if (useActualWorldY && point && Number.isFinite(Number(point.y))) {
+            return Number(point.y) + lift;
+        }
+        return GIS_DISPLAY_Y + lift;
+    }
+
+    function projectGisWithCamera(point, camera, labelStyle, useActualWorldY = false) {
         const worldPoint = {
             x: point.x,
-            y: GIS_DISPLAY_Y + (labelStyle ? 1.2 : 0),
+            y: resolveGisWorldY(point, labelStyle, useActualWorldY),
             z: point.z,
             w: 1
         };
@@ -414,8 +424,8 @@
         };
     }
 
-    function projectGisMarker(point, view, labelStyle) {
-        const wy = GIS_DISPLAY_Y + (labelStyle ? 1.2 : 0);
+    function projectGisMarker(point, view, labelStyle, useActualWorldY = false) {
+        const wy = resolveGisWorldY(point, labelStyle, useActualWorldY);
         const dx = point.x - view.x;
         const dy = wy - view.y;
         const dz = point.z - view.z;
@@ -435,14 +445,14 @@
         };
     }
 
-    function projectGisPoint(point, view, camera, labelStyle) {
+    function projectGisPoint(point, view, camera, labelStyle, useActualWorldY = false) {
         if (!point) return null;
         const v = view || getViewForProjection();
         if (camera) {
-            return projectGisWithCamera(point, camera, labelStyle);
+            return projectGisWithCamera(point, camera, labelStyle, useActualWorldY);
         }
         if (!v) return null;
-        return projectGisMarker(point, v, labelStyle);
+        return projectGisMarker(point, v, labelStyle, useActualWorldY);
     }
 
     function lerpClip4(a, b, t) {
@@ -1038,7 +1048,11 @@
         return out;
     }
 
-    function getScreenAxisDir(originWorld, axis, view, camera) {
+    function getWorldUpScreenAxisDir() {
+        return { ux: 0, uy: -1, len: GIS_WORLD_UP_SCREEN_PX_PER_BLOCK, worldUpFallback: true };
+    }
+
+    function getScreenAxisDirFromProjection(originWorld, axis, view, camera) {
         const tip = { ...originWorld };
         if (axis === 'x') {
             tip.x += 1;
@@ -1047,18 +1061,29 @@
         } else {
             tip.z += 1;
         }
-        const o = projectGisPoint(originWorld, view, camera, false);
-        const t = projectGisPoint(tip, view, camera, false);
+        const o = projectGisPoint(originWorld, view, camera, false, true);
+        const t = projectGisPoint(tip, view, camera, false, true);
         if (!o || !t || o.behind || t.behind) {
             return null;
         }
         const dx = t.x - o.x;
         const dy = t.y - o.y;
         const len = Math.hypot(dx, dy);
-        if (len < 1e-3) {
+        if (len < 2) {
             return null;
         }
-        return { ux: dx / len, uy: dy / len, len };
+        return { ux: dx / len, uy: dy / len, len, worldUpFallback: false };
+    }
+
+    function getScreenAxisDir(originWorld, axis, view, camera) {
+        const projected = getScreenAxisDirFromProjection(originWorld, axis, view, camera);
+        if (projected) {
+            return projected;
+        }
+        if (axis === 'y') {
+            return getWorldUpScreenAxisDir();
+        }
+        return null;
     }
 
     function dragVertexAlongAxis(axis, startWorld, startClientX, startClientY, clientX, clientY, view, camera) {
@@ -1090,7 +1115,7 @@
         iterSelectedVertexFeatures().forEach(({ feature }) => {
             const pts = getFeatureVertexPoints(feature);
             pts.forEach((p, idx) => {
-                const s = projectGisPoint(p, view, camera, false);
+                const s = projectGisPoint(p, view, camera, false, true);
                 if (!s || s.behind) {
                     return;
                 }
@@ -1340,7 +1365,7 @@
                     && selectedVertex.featureId === feature.id
                     && selectedVertex.vertexIndex === idx;
                 handle.classList.toggle('is-active', !!active);
-                const projected = projectGisPoint(p, view, camera, false);
+                const projected = projectGisPoint(p, view, camera, false, true);
                 const off = !projected || projected.behind
                     || projected.x < -40 || projected.y < -40
                     || projected.x > window.innerWidth + 40
@@ -1370,7 +1395,7 @@
 
     function positionVertexGizmo(world, view, camera) {
         const gizmo = ensureVertexGizmo();
-        const projected = projectGisPoint(world, view, camera, false);
+        const projected = projectGisPoint(world, view, camera, false, true);
         if (!projected || projected.behind) {
             gizmo.hidden = true;
             return;
