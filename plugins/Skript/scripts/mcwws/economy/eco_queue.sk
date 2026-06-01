@@ -33,6 +33,29 @@ function mcwwsMarkWebOrderEconomyCharged(oid: text):
     save yaml "weborders"
     unload yaml "weborders"
 
+function mcwwsMarkEcoDeductionDoneForOrder(oid: text):
+    set {_key} to "%{_oid}%"
+    set {_path} to "plugins/Skript/scripts/web/data/economy_deductions.yml"
+    load yaml {_path} as "econq"
+    set {_keys::*} to yaml nodes with keys "pending" from "econq"
+    set {_changed} to false
+    loop {_keys::*}:
+        set {_entryKey} to loop-value
+        set {_orderId} to yaml value "pending.%{_entryKey}%.orderId" from "econq"
+        if "%{_orderId}%" is not {_key}:
+            continue
+        set {_statusRaw} to yaml value "pending.%{_entryKey}%.status" from "econq"
+        set {_status} to "%{_statusRaw}%"
+        if {_status} is "done":
+            continue
+        set yaml value "pending.%{_entryKey}%.status" from "econq" to "done"
+        set yaml value "pending.%{_entryKey}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set yaml value "pending.%{_entryKey}%.mode" from "econq" to "eco-take"
+        set {_changed} to true
+    if {_changed} is true:
+        save yaml "econq"
+    unload yaml "econq"
+
 # Node 结账时追加的文本队列（最可靠）
 function mcwwsProcessEcoTakeTextQueue() :: number:
     set {_count} to 0
@@ -63,6 +86,7 @@ function mcwwsProcessEcoTakeTextQueue() :: number:
         if size of {_parts::*} >= 3:
             set {_oid} to {_parts::3}
             mcwwsMarkWebOrderEconomyCharged({_oid})
+            mcwwsMarkEcoDeductionDoneForOrder({_oid})
         add 1 to {_count}
     return {_count}
 
