@@ -18,7 +18,7 @@
     let draftHover = null;
     let layerDialogOpen = false;
     let mapRenderMode = 'original';
-    let gisInfoEnabled = false;
+    let gisInfoEnabled = true;
     let gisEditorOpen = false;
     let gisControlsBound = false;
     const STORAGE_RENDER_MODE = 'mcwws-map-render-mode';
@@ -34,6 +34,8 @@
     let pinElements = new Map();
     let lastPickAt = 0;
     let lastPickKey = '';
+    let simplifiedPlaneBound = false;
+    let simplifiedPan = null;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -95,10 +97,10 @@
                 mapRenderMode = mode;
             }
             const gis = localStorage.getItem(STORAGE_GIS_ENABLED);
-            if (gis === '1') {
-                gisInfoEnabled = true;
-            } else if (gis === '0') {
+            if (gis === '0') {
                 gisInfoEnabled = false;
+            } else {
+                gisInfoEnabled = true;
             }
         } catch {
             /* ignore */
@@ -114,28 +116,266 @@
         }
     }
 
-    function applyMapRenderMode(mode, persist = true) {
-        mapRenderMode = mode === 'simplified' ? 'simplified' : 'original';
+    function isSimplifiedMapMode() {
+        return mapRenderMode === 'simplified';
+    }
+
+    function roundViewNumber(value) {
+        return Number(value).toFixed(4).replace(/\.?0+$/, '');
+    }
+
+    function formatViewHash(view) {
+        const distance = view.distance ?? view.height ?? 128;
+        return [
+            view.map,
+            roundViewNumber(view.x),
+            roundViewNumber(view.y),
+            roundViewNumber(view.z),
+            roundViewNumber(distance),
+            roundViewNumber(view.rotation ?? view.yaw ?? 0),
+            roundViewNumber(view.angle ?? view.pitch ?? 0),
+            roundViewNumber(view.tilt ?? 0),
+            roundViewNumber(view.ortho ?? view.fov ?? 1),
+            view.mode || 'flat'
+        ].join(':');
+    }
+
+    function replaceLocationHash(hash) {
+        const clean = String(hash || '').replace(/^#/, '');
+        const url = `${window.location.pathname}${window.location.search}#${clean}`;
+        window.history.replaceState(null, '', url);
+        if (window.parent !== window) {
+            try {
+                const parentUrl = new URL(window.parent.location.href);
+                parentUrl.hash = clean;
+                window.parent.history.replaceState(null, '', parentUrl.toString());
+            } catch {
+                /* ignore */
+            }
+        }
+    }
+
+    function applyViewState(view) {
+        const base = view || parseHash() || {
+            map: getCurrentMapId(),
+            x: 0,
+            y: 64,
+            z: 0,
+            distance: 128,
+            height: 128,
+            rotation: 0
+        };
+        const next = {
+            ...base,
+            map: base.map || getCurrentMapId(),
+            mode: isSimplifiedMapMode() ? 'flat' : (base.mode || 'flat'),
+            ortho: base.ortho ?? 1,
+            angle: isSimplifiedMapMode() ? 0 : (base.angle ?? 0),
+            pitch: isSimplifiedMapMode() ? 0 : (base.pitch ?? 0)
+        };
+        replaceLocationHash(formatViewHash(next));
+        const cm = getControlsManager();
+        if (cm) {
+            cm.position.x = next.x;
+            cm.position.y = next.y;
+            cm.position.z = next.z;
+            cm.distance = next.distance ?? next.height ?? 128;
+            if (isSimplifiedMapMode()) {
+                cm.angle = 0;
+            }
+            if (Number.isFinite(next.rotation)) {
+                cm.rotation = next.rotation;
+            }
+        }
+        const bm = getBlueMapApp();
+        bm?.mapViewer?.updateLoadedMapArea?.();
+    }
+
+    function ensureFlatForSimplifiedMode() {
+        if (!isSimplifiedMapMode()) {
+            return;
+        }
+        const bm = getBlueMapApp();
+        if (typeof bm?.setFlatView === 'function') {
+            bm.setFlatView(0, 5);
+        }
+        const view = parseHash() || {
+            map: getCurrentMapId(),
+            x: 0,
+            y: 64,
+            z: 0,
+            distance: 128,
+            height: 128,
+            rotation: 0
+        };
+        applyViewState({ ...view, mode: 'flat', ortho: 1, angle: 0, pitch: 0 });
+    }
+
+    function restoreOriginalMapRendering() {
         const bm = getBlueMapApp();
         const data = bm?.mapViewer?.data;
-        if (data) {
-            const settings = bm.settings || {};
-            const hiresMin = Number(settings.hiresSliderMin);
-            const hiresDefault = Number(settings.hiresSliderDefault);
-            const hiresMax = Number(settings.hiresSliderMax);
-            const lowresMin = Number(settings.lowresSliderMin);
-            const lowresDefault = Number(settings.lowresSliderDefault);
-            const lowresMax = Number(settings.lowresSliderMax);
-            if (mapRenderMode === 'original') {
-                data.loadedHiresViewDistance = Number.isFinite(hiresDefault) ? hiresDefault : 100;
-                data.loadedLowresViewDistance = Number.isFinite(lowresDefault) ? lowresDefault : 2000;
-            } else {
-                data.loadedHiresViewDistance = Number.isFinite(hiresMin) ? hiresMin : 0;
-                data.loadedLowresViewDistance = Number.isFinite(lowresMax) ? lowresMax : 7000;
-            }
-            bm.mapViewer?.updateLoadedMapArea?.();
-            bm.saveUserSettings?.();
+        if (!data) {
+            return;
         }
+        const settings = bm.settings || {};
+        const hiresDefault = Number(settings.hiresSliderDefault);
+        const lowresDefault = Number(settings.lowresSliderDefault);
+        data.loadedHiresViewDistance = Number.isFinite(hiresDefault) ? hiresDefault : 100;
+        data.loadedLowresViewDistance = Number.isFinite(lowresDefault) ? lowresDefault : 2000;
+        bm.mapViewer?.updateLoadedMapArea?.();
+        bm.saveUserSettings?.();
+    }
+
+    function syncMapRenderModeVisual() {
+        const simplified = isSimplifiedMapMode();
+        document.body.classList.toggle('mcwws-map-simplified-mode', simplified);
+        const mapContainer = document.getElementById('map-container');
+        if (mapContainer) {
+            mapContainer.style.display = simplified ? 'none' : '';
+        }
+        ensureSimplifiedPlane();
+        if (simplified) {
+            ensureFlatForSimplifiedMode();
+        }
+        renderOverlay();
+    }
+
+    function ensureSimplifiedPlane() {
+        let plane = document.getElementById('mcwws-simplified-plane');
+        if (!plane) {
+            plane = document.createElement('div');
+            plane.id = 'mcwws-simplified-plane';
+            plane.className = 'mcwws-simplified-plane';
+            plane.setAttribute('aria-hidden', 'true');
+            document.body.insertBefore(plane, document.body.firstChild);
+            bindSimplifiedPlaneEvents(plane);
+        }
+        plane.hidden = !isSimplifiedMapMode();
+        return plane;
+    }
+
+    function bindSimplifiedPlaneEvents(plane) {
+        if (simplifiedPlaneBound) {
+            return;
+        }
+        simplifiedPlaneBound = true;
+
+        plane.addEventListener('wheel', (e) => {
+            if (!isSimplifiedMapMode()) {
+                return;
+            }
+            e.preventDefault();
+            const view = getViewForProjection();
+            if (!view) {
+                return;
+            }
+            const factor = e.deltaY > 0 ? 1.1 : 0.9;
+            const dist = Math.max(5, Math.min(8000, (view.distance || 128) * factor));
+            applyViewState({ ...view, distance: dist, height: dist });
+            renderOverlay();
+        }, { passive: false });
+
+        plane.addEventListener('pointerdown', (e) => {
+            if (!isSimplifiedMapMode() || e.button !== 0) {
+                return;
+            }
+            if (gisEditMode && gisCanEdit && activeTool !== 'select') {
+                return;
+            }
+            simplifiedPan = {
+                lastX: e.clientX,
+                lastY: e.clientY,
+                pointerId: e.pointerId
+            };
+            plane.setPointerCapture(e.pointerId);
+        });
+
+        plane.addEventListener('pointermove', (e) => {
+            if (
+                isSimplifiedMapMode()
+                && gisEditMode
+                && (activeTool === 'line' || activeTool === 'polygon')
+            ) {
+                draftHover = pickWorldFromScreen(e.clientX, e.clientY);
+                renderOverlay();
+            }
+            if (!simplifiedPan || simplifiedPan.pointerId !== e.pointerId) {
+                return;
+            }
+            if (gisEditMode && gisCanEdit && activeTool !== 'select') {
+                return;
+            }
+            const view = getViewForProjection();
+            if (!view) {
+                return;
+            }
+            const prev = screenToWorld(simplifiedPan.lastX, simplifiedPan.lastY, view);
+            const curr = screenToWorld(e.clientX, e.clientY, view);
+            if (prev && curr) {
+                applyViewState({
+                    ...view,
+                    x: view.x - (curr.x - prev.x),
+                    z: view.z - (curr.z - prev.z)
+                });
+                renderOverlay();
+            }
+            simplifiedPan.lastX = e.clientX;
+            simplifiedPan.lastY = e.clientY;
+        });
+
+        plane.addEventListener('pointerup', (e) => {
+            if (!simplifiedPan || simplifiedPan.pointerId !== e.pointerId) {
+                return;
+            }
+            simplifiedPan = null;
+            try {
+                plane.releasePointerCapture(e.pointerId);
+            } catch {
+                /* ignore */
+            }
+        });
+
+        plane.addEventListener('pointercancel', () => {
+            simplifiedPan = null;
+        });
+
+        plane.addEventListener('click', (e) => {
+            if (!isSimplifiedMapMode()) {
+                return;
+            }
+            if (!gisInfoEnabled || !gisEditMode || !gisCanEdit || activeTool === 'select') {
+                return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            const point = pickWorldFromScreen(e.clientX, e.clientY);
+            if (point) {
+                handleMapPick(point);
+            }
+        });
+
+        plane.addEventListener('dblclick', (e) => {
+            if (!isSimplifiedMapMode()) {
+                return;
+            }
+            if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) {
+                return;
+            }
+            if (activeTool !== 'line' && activeTool !== 'polygon') {
+                return;
+            }
+            e.preventDefault();
+            e.stopPropagation();
+            finishDraft();
+        });
+    }
+
+    function applyMapRenderMode(mode, persist = true) {
+        mapRenderMode = mode === 'simplified' ? 'simplified' : 'original';
+        if (mapRenderMode === 'original') {
+            restoreOriginalMapRendering();
+        }
+        syncMapRenderModeVisual();
         if (persist) {
             saveLayerPrefs();
         }
@@ -162,7 +402,7 @@
 
     function tryApplyStoredMapRenderMode(attemptsLeft = 40) {
         const bm = getBlueMapApp();
-        if (bm?.mapViewer?.data) {
+        if (bm?.mapViewer?.data || isSimplifiedMapMode()) {
             applyMapRenderMode(mapRenderMode, false);
             return;
         }
@@ -202,7 +442,25 @@
     function getViewForProjection() {
         const cm = getControlsManager();
         const hash = parseHash();
-        if (!cm) return hash;
+        if (isSimplifiedMapMode()) {
+            const dist = Number(cm?.distance) || hash?.distance || hash?.height || 128;
+            return {
+                map: hash?.map || getCurrentMapId(),
+                x: Number(cm?.position?.x ?? hash?.x ?? 0),
+                y: Number(cm?.position?.y ?? hash?.y ?? 64),
+                z: Number(cm?.position?.z ?? hash?.z ?? 0),
+                distance: dist,
+                height: dist,
+                rotation: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
+                yaw: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
+                pitch: 0,
+                angle: 0,
+                mode: 'flat'
+            };
+        }
+        if (!cm) {
+            return hash;
+        }
         const dist = Number(cm.distance) || hash?.distance || 128;
         return {
             map: getCurrentMapId(),
@@ -217,6 +475,13 @@
             pitch: cm.angle ?? 0,
             mode: getMapViewState()
         };
+    }
+
+    function getProjectionCamera() {
+        if (isSimplifiedMapMode()) {
+            return null;
+        }
+        return getBlueMapCamera();
     }
 
     function applyMatrix4(point, matrix) {
@@ -250,6 +515,10 @@
     }
 
     function projectWorldPoint(point, camera, view) {
+        const v = view || getViewForProjection();
+        if (isSimplifiedMapMode()) {
+            camera = null;
+        }
         if (camera) {
             const worldPoint = { x: point.x, y: point.y + 0.8, z: point.z, w: 1 };
             const cameraPoint = applyMatrix4(worldPoint, camera.matrixWorldInverse);
@@ -264,18 +533,18 @@
                 behind: clipPoint.w < 0 || nz < -1 || nz > 1
             };
         }
-        if (!view) return null;
-        const dx = point.x - view.x;
-        const dy = point.y - view.y;
-        const dz = point.z - view.z;
-        const yaw = view.rotation ?? view.yaw ?? 0;
+        if (!v) return null;
+        const flatView = { ...v, mode: 'flat', pitch: 0, angle: 0 };
+        const dx = point.x - flatView.x;
+        const dy = point.y - flatView.y;
+        const dz = point.z - flatView.z;
+        const yaw = flatView.rotation ?? flatView.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const right = dx * cos - dz * sin;
         const forward = dx * sin + dz * cos;
-        const perspectiveBoost = view.mode === 'perspective' ? 1.35 : 1;
-        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, view.height * 2.2)) * perspectiveBoost));
-        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(view.pitch || -0.8))));
+        const scale = Math.max(2, Math.min(120, window.innerHeight / Math.max(10, flatView.height * 2.2)));
+        const pitchFactor = 1;
         const x = window.innerWidth / 2 + right * scale;
         const y = window.innerHeight / 2 + forward * scale * pitchFactor - dy * scale * 0.65;
         return { x, y, behind: false };
@@ -283,20 +552,25 @@
 
     function screenToWorld(screenX, screenY, view) {
         if (!view) return null;
-        const perspectiveBoost = view.mode === 'perspective' ? 1.35 : 1;
-        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, view.height * 2.2)) * perspectiveBoost));
-        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(view.pitch || -0.8))));
+        const flatView = isSimplifiedMapMode()
+            ? { ...view, mode: 'flat', pitch: 0, angle: 0 }
+            : view;
+        const perspectiveBoost = flatView.mode === 'perspective' ? 1.35 : 1;
+        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, flatView.height * 2.2)) * perspectiveBoost));
+        const pitchFactor = isSimplifiedMapMode()
+            ? 1
+            : Math.max(0.2, Math.min(1, Math.abs(Math.sin(flatView.pitch || -0.8))));
         const right = (screenX - window.innerWidth / 2) / scale;
         const forward = (screenY - window.innerHeight / 2) / (scale * pitchFactor);
-        const yaw = view.rotation ?? view.yaw ?? 0;
+        const yaw = flatView.rotation ?? flatView.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const dx = right * cos + forward * sin;
         const dz = -right * sin + forward * cos;
         return {
-            x: view.x + dx,
-            y: view.y,
-            z: view.z + dz
+            x: flatView.x + dx,
+            y: flatView.y,
+            z: flatView.z + dz
         };
     }
 
@@ -603,7 +877,7 @@
         }
         lastPickAt = now;
         lastPickKey = pickKey;
-        if (getMapViewState() !== 'flat') {
+        if (!isSimplifiedMapMode() && getMapViewState() !== 'flat') {
             setStatus('请切换到 2D 俯视后再绘制', 'error');
             return;
         }
@@ -737,7 +1011,7 @@
 
     function buildSvgPath(points, closed) {
         const view = getViewForProjection();
-        const camera = getBlueMapCamera();
+        const camera = getProjectionCamera();
         const screen = points
             .map((p) => projectWorldPoint(p, camera, view))
             .filter((p) => p && !p.behind);
@@ -830,7 +1104,7 @@
                 <span class="mcwws-gis-pin-label">${escapeHtml(name)}</span>
             `;
             pin.classList.toggle('is-selected', feature.id === selectedFeatureId);
-            const projected = projectWorldPoint(point, getBlueMapCamera(), getViewForProjection());
+            const projected = projectWorldPoint(point, getProjectionCamera(), getViewForProjection());
             const off = !projected || projected.behind
                 || projected.x < -40 || projected.y < -40
                 || projected.x > window.innerWidth + 40
@@ -850,10 +1124,9 @@
     }
 
     function syncDrawingClass() {
-        document.body.classList.toggle(
-            'mcwws-gis-drawing',
-            gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select'
-        );
+        const drawing = gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select';
+        document.body.classList.toggle('mcwws-gis-drawing', drawing);
+        document.body.classList.toggle('mcwws-gis-drawing-simplified', drawing && isSimplifiedMapMode());
     }
 
     function mountGisAboveDimension(wrap, column) {
@@ -1018,7 +1291,7 @@
                     data-map-mode="simplified">
                     <span class="mcwws-layer-mode-preview mcwws-layer-mode-preview--simplified" aria-hidden="true"></span>
                     <span class="mcwws-layer-mode-label">简化地图</span>
-                    <span class="mcwws-layer-mode-desc">低分辨率远景</span>
+                    <span class="mcwws-layer-mode-desc">纯白画布 · 仅标注</span>
                 </button>
             </div>
             <label class="mcwws-layer-gis-toggle">
@@ -1235,7 +1508,11 @@
         bindMapPicks();
         waitForMapControls();
         tryApplyStoredMapRenderMode();
-        void loadGisProject();
+        void loadGisProject().then(() => {
+            if (gisInfoEnabled) {
+                renderOverlay();
+            }
+        });
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('dblclick', onDblClick, true);
         window.addEventListener('hashchange', renderOverlay);
