@@ -6,6 +6,10 @@
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
     const GIS_DISPLAY_Y = 64;
+    const GIS_CLIP_W_EPS = 1e-4;
+    const GIS_NDC_LIMIT = 1.001;
+    const GIS_SCREEN_CLIP_PAD = 8000;
+    const GIS_CHAIN_JOIN_EPS = 6;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -411,6 +415,360 @@
         }
         if (!v) return null;
         return projectGisMarker(point, v, labelStyle);
+    }
+
+    function lerpClip4(a, b, t) {
+        return {
+            x: a.x + (b.x - a.x) * t,
+            y: a.y + (b.y - a.y) * t,
+            z: a.z + (b.z - a.z) * t,
+            w: a.w + (b.w - a.w) * t
+        };
+    }
+
+    function worldPointToClip(point, camera, labelStyle) {
+        const worldPoint = {
+            x: point.x,
+            y: GIS_DISPLAY_Y + (labelStyle ? 1.2 : 0),
+            z: point.z,
+            w: 1
+        };
+        const cameraPoint = applyMatrix4(worldPoint, camera.matrixWorldInverse);
+        return applyMatrix4(cameraPoint, camera.projectionMatrix);
+    }
+
+    /** 近裁剪面：丢弃相机后方线段，保留前方部分 */
+    function clipSegmentNearPlane(c0, c1) {
+        if (c0.w >= GIS_CLIP_W_EPS && c1.w >= GIS_CLIP_W_EPS) {
+            return [c0, c1];
+        }
+        if (c0.w < GIS_CLIP_W_EPS && c1.w < GIS_CLIP_W_EPS) {
+            return null;
+        }
+        const t = (GIS_CLIP_W_EPS - c0.w) / (c1.w - c0.w);
+        const p = lerpClip4(c0, c1, t);
+        if (c0.w < GIS_CLIP_W_EPS) {
+            return [p, c1];
+        }
+        return [c0, p];
+    }
+
+    /** NDC 方盒裁剪（视锥在屏幕上的投影），避免删掉屏外顶点导致折线乱跳 */
+    function clipSegmentNdcBox(n0x, n0y, n1x, n1y) {
+        let x0 = n0x;
+        let y0 = n0y;
+        let x1 = n1x;
+        let y1 = n1y;
+        const dx = x1 - x0;
+        const dy = y1 - y0;
+        let t0 = 0;
+        let t1 = 1;
+        const clip = (p, q) => {
+            if (p === 0) {
+                return q >= 0;
+            }
+            const r = q / p;
+            if (p < 0) {
+                if (r > t1) {
+                    return false;
+                }
+                if (r > t0) {
+                    t0 = r;
+                }
+            } else {
+                if (r < t0) {
+                    return false;
+                }
+                if (r < t1) {
+                    t1 = r;
+                }
+            }
+            return true;
+        };
+        if (!clip(-dx, x0 + GIS_NDC_LIMIT)) {
+            return null;
+        }
+        if (!clip(dx, GIS_NDC_LIMIT - x0)) {
+            return null;
+        }
+        if (!clip(-dy, y0 + GIS_NDC_LIMIT)) {
+            return null;
+        }
+        if (!clip(dy, GIS_NDC_LIMIT - y0)) {
+            return null;
+        }
+        if (t0 > t1) {
+            return null;
+        }
+        return [
+            { x: x0 + dx * t0, y: y0 + dy * t0 },
+            { x: x0 + dx * t1, y: y0 + dy * t1 }
+        ];
+    }
+
+    function ndcToScreen(ndc) {
+        return {
+            x: (ndc.x * 0.5 + 0.5) * window.innerWidth,
+            y: (-ndc.y * 0.5 + 0.5) * window.innerHeight
+        };
+    }
+
+    function clipClipSpaceSegmentToScreen(c0, c1) {
+        const near = clipSegmentNearPlane(c0, c1);
+        if (!near) {
+            return null;
+        }
+        const [a, b] = near;
+        const ndcSeg = clipSegmentNdcBox(
+            a.x / a.w,
+            a.y / a.w,
+            b.x / b.w,
+            b.y / b.w
+        );
+        if (!ndcSeg) {
+            return null;
+        }
+        return [ndcToScreen(ndcSeg[0]), ndcToScreen(ndcSeg[1])];
+    }
+
+    function screenOutCode(x, y, minX, minY, maxX, maxY) {
+        let code = 0;
+        if (x < minX) {
+            code |= 1;
+        } else if (x > maxX) {
+            code |= 2;
+        }
+        if (y < minY) {
+            code |= 4;
+        } else if (y > maxY) {
+            code |= 8;
+        }
+        return code;
+    }
+
+    function clipScreenSegment(p0, p1) {
+        const minX = -GIS_SCREEN_CLIP_PAD;
+        const minY = -GIS_SCREEN_CLIP_PAD;
+        const maxX = window.innerWidth + GIS_SCREEN_CLIP_PAD;
+        const maxY = window.innerHeight + GIS_SCREEN_CLIP_PAD;
+        let x0 = p0.x;
+        let y0 = p0.y;
+        let x1 = p1.x;
+        let y1 = p1.y;
+        let code0 = screenOutCode(x0, y0, minX, minY, maxX, maxY);
+        let code1 = screenOutCode(x1, y1, minX, minY, maxX, maxY);
+        while (true) {
+            if (!(code0 | code1)) {
+                return [{ x: x0, y: y0 }, { x: x1, y: y1 }];
+            }
+            if (code0 & code1) {
+                return null;
+            }
+            const codeOut = code0 || code1;
+            let x;
+            let y;
+            if (codeOut & 8) {
+                x = x0 + ((x1 - x0) * (maxY - y0)) / (y1 - y0);
+                y = maxY;
+            } else if (codeOut & 4) {
+                x = x0 + ((x1 - x0) * (minY - y0)) / (y1 - y0);
+                y = minY;
+            } else if (codeOut & 2) {
+                y = y0 + ((y1 - y0) * (maxX - x0)) / (x1 - x0);
+                x = maxX;
+            } else {
+                y = y0 + ((y1 - y0) * (minX - x0)) / (x1 - x0);
+                x = minX;
+            }
+            if (codeOut === code0) {
+                x0 = x;
+                y0 = y;
+                code0 = screenOutCode(x0, y0, minX, minY, maxX, maxY);
+            } else {
+                x1 = x;
+                y1 = y;
+                code1 = screenOutCode(x1, y1, minX, minY, maxX, maxY);
+            }
+        }
+    }
+
+    function screenPointsNear(a, b) {
+        const dx = a.x - b.x;
+        const dy = a.y - b.y;
+        return dx * dx + dy * dy <= GIS_CHAIN_JOIN_EPS * GIS_CHAIN_JOIN_EPS;
+    }
+
+    function appendClippedSegment(chains, seg) {
+        const [s0, s1] = seg;
+        if (!chains.length) {
+            chains.push([s0, s1]);
+            return;
+        }
+        const chain = chains[chains.length - 1];
+        const last = chain[chain.length - 1];
+        if (!screenPointsNear(last, s0)) {
+            chains.push([s0, s1]);
+            return;
+        }
+        if (!screenPointsNear(last, s1)) {
+            chain.push(s1);
+        }
+    }
+
+    function chainsToSvgPath(chains) {
+        const parts = [];
+        chains.forEach((chain) => {
+            if (chain.length < 2) {
+                return;
+            }
+            parts.push(
+                chain
+                    .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+                    .join(' ')
+            );
+        });
+        return parts.join(' ');
+    }
+
+    function clipPolygonAgainstPlane(input, insideFn, intersectFn) {
+        if (!input.length) {
+            return [];
+        }
+        const output = [];
+        for (let i = 0; i < input.length; i += 1) {
+            const curr = input[i];
+            const prev = input[(i + input.length - 1) % input.length];
+            const currIn = insideFn(curr);
+            const prevIn = insideFn(prev);
+            if (currIn) {
+                if (prevIn) {
+                    output.push(curr);
+                } else {
+                    output.push(intersectFn(prev, curr));
+                    output.push(curr);
+                }
+            } else if (prevIn) {
+                output.push(intersectFn(prev, curr));
+            }
+        }
+        return output;
+    }
+
+    function intersectClipPlane(a, b, valueFn) {
+        const va = valueFn(a);
+        const vb = valueFn(b);
+        const t = va / (va - vb);
+        return lerpClip4(a, b, t);
+    }
+
+    function clipPolygonHomogeneous(clipVerts) {
+        const planes = [
+            {
+                inside: (c) => c.w >= GIS_CLIP_W_EPS,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.w - GIS_CLIP_W_EPS)
+            },
+            {
+                inside: (c) => c.x + c.w >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.x + c.w)
+            },
+            {
+                inside: (c) => c.w - c.x >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.w - c.x)
+            },
+            {
+                inside: (c) => c.y + c.w >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.y + c.w)
+            },
+            {
+                inside: (c) => c.w - c.y >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.w - c.y)
+            },
+            {
+                inside: (c) => c.z + c.w >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.z + c.w)
+            },
+            {
+                inside: (c) => c.w - c.z >= 0,
+                intersect: (a, b) => intersectClipPlane(a, b, (c) => c.w - c.z)
+            }
+        ];
+        let poly = clipVerts;
+        for (const plane of planes) {
+            poly = clipPolygonAgainstPlane(poly, plane.inside, plane.intersect);
+            if (!poly.length) {
+                return [];
+            }
+        }
+        return poly;
+    }
+
+    function clipSpaceToScreen(c) {
+        if (!c || c.w < GIS_CLIP_W_EPS) {
+            return null;
+        }
+        const nx = c.x / c.w;
+        const ny = c.y / c.w;
+        if (
+            nx < -GIS_NDC_LIMIT || nx > GIS_NDC_LIMIT
+            || ny < -GIS_NDC_LIMIT || ny > GIS_NDC_LIMIT
+        ) {
+            return null;
+        }
+        return ndcToScreen({ x: nx, y: ny });
+    }
+
+    function clipScreenPolygon(points) {
+        const minX = -GIS_SCREEN_CLIP_PAD;
+        const minY = -GIS_SCREEN_CLIP_PAD;
+        const maxX = window.innerWidth + GIS_SCREEN_CLIP_PAD;
+        const maxY = window.innerHeight + GIS_SCREEN_CLIP_PAD;
+        const planes = [
+            {
+                inside: (p) => p.x >= minX,
+                intersect: (a, b) => ({
+                    x: a.x + ((b.x - a.x) * (minX - a.x)) / (b.x - a.x),
+                    y: a.y + ((b.y - a.y) * (minX - a.x)) / (b.x - a.x)
+                })
+            },
+            {
+                inside: (p) => p.x <= maxX,
+                intersect: (a, b) => ({
+                    x: a.x + ((b.x - a.x) * (maxX - a.x)) / (b.x - a.x),
+                    y: a.y + ((b.y - a.y) * (maxX - a.x)) / (b.x - a.x)
+                })
+            },
+            {
+                inside: (p) => p.y >= minY,
+                intersect: (a, b) => ({
+                    x: a.x + ((b.x - a.x) * (minY - a.y)) / (b.y - a.y),
+                    y: minY
+                })
+            },
+            {
+                inside: (p) => p.y <= maxY,
+                intersect: (a, b) => ({
+                    x: a.x + ((b.x - a.x) * (maxY - a.y)) / (b.y - a.y),
+                    y: maxY
+                })
+            }
+        ];
+        let poly = points;
+        for (const plane of planes) {
+            poly = clipPolygonAgainstPlane(poly, plane.inside, plane.intersect);
+            if (!poly.length) {
+                return [];
+            }
+        }
+        return poly;
+    }
+
+    function screenRingToSvgPath(screenVerts) {
+        if (screenVerts.length < 3) {
+            return '';
+        }
+        return `${screenVerts
+            .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+            .join(' ')} Z`;
     }
 
     function screenToWorld(screenX, screenY, view) {
@@ -865,14 +1223,63 @@
         return layer;
     }
 
-    function buildSvgPath(points, closed, view, camera) {
+    /** 开放折线：逐边裁剪，可产生多段不相连的 path */
+    function buildSvgPolylinePath(points, view, camera) {
+        if (!points || points.length < 2) {
+            return '';
+        }
         const v = view || getViewForProjection();
-        const screen = points
-            .map((p) => projectGisPoint(p, v, camera, false))
-            .filter((p) => p && !p.behind);
-        if (screen.length < 2) return '';
-        return screen.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')
-            + (closed ? ' Z' : '');
+        const chains = [];
+
+        for (let i = 0; i < points.length - 1; i += 1) {
+            let seg = null;
+            if (camera) {
+                const c0 = worldPointToClip(points[i], camera, false);
+                const c1 = worldPointToClip(points[i + 1], camera, false);
+                if (c0 && c1) {
+                    seg = clipClipSpaceSegmentToScreen(c0, c1);
+                }
+            } else if (v) {
+                const p0 = projectGisMarker(points[i], v, false);
+                const p1 = projectGisMarker(points[i + 1], v, false);
+                if (p0 && p1) {
+                    seg = clipScreenSegment(p0, p1);
+                }
+            }
+            if (seg) {
+                appendClippedSegment(chains, seg);
+            }
+        }
+
+        return chainsToSvgPath(chains);
+    }
+
+    /** 封闭多边形：整体 Sutherland–Hodgman，保持顶点顺序，避免拼出虚假三角形 */
+    function buildSvgPolygonPath(points, view, camera) {
+        if (!points || points.length < 3) {
+            return '';
+        }
+        const v = view || getViewForProjection();
+        let screenVerts = [];
+
+        if (camera) {
+            const clipVerts = points
+                .map((p) => worldPointToClip(p, camera, false))
+                .filter(Boolean);
+            if (clipVerts.length < 3) {
+                return '';
+            }
+            const clipped = clipPolygonHomogeneous(clipVerts);
+            screenVerts = clipped.map(clipSpaceToScreen).filter(Boolean);
+        } else if (v) {
+            const screenPts = points.map((p) => projectGisMarker(p, v, false)).filter(Boolean);
+            if (screenPts.length < 3) {
+                return '';
+            }
+            screenVerts = clipScreenPolygon(screenPts);
+        }
+
+        return screenRingToSvgPath(screenVerts);
     }
 
     function renderOverlay() {
@@ -898,7 +1305,7 @@
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                const d = buildSvgPath(points, false, view, camera);
+                const d = buildSvgPolylinePath(points, view, camera);
                 if (d) {
                     fragments.push(
                         `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`
@@ -906,7 +1313,7 @@
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const d = buildSvgPath(points, true, view, camera);
+                const d = buildSvgPolygonPath(points, view, camera);
                 if (d) {
                     fragments.push(
                         `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="${color}" fill-opacity="0.22" stroke="${color}" stroke-width="${width}"/>`
@@ -918,7 +1325,9 @@
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const draft = draftPoints.slice();
             if (draftHover) draft.push(draftHover);
-            const d = buildSvgPath(draft, activeTool === 'polygon' && draft.length >= 3, view, camera);
+            const d = activeTool === 'polygon' && draft.length >= 3
+                ? buildSvgPolygonPath(draft, view, camera)
+                : buildSvgPolylinePath(draft, view, camera);
             if (d) {
                 fragments.push(
                     `<path class="mcwws-gis-draft" d="${d}" fill="none" stroke="#14b8a6" stroke-width="2" stroke-dasharray="6 4"/>`
