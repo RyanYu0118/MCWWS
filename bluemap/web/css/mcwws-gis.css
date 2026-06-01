@@ -626,6 +626,46 @@ body.mcwws-map-simplified-mode #map-container {
     pointer-events: none;
 }
 
+.mcwws-gis-segment-insert-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 16px;
+    height: 16px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #22c55e;
+    border-radius: 3px;
+    background: #fff;
+    color: #16a34a;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2), 0 2px 8px rgba(34, 197, 94, 0.35);
+    pointer-events: auto;
+    cursor: crosshair;
+    z-index: 3;
+}
+
+.mcwws-gis-segment-insert-handle::before {
+    content: "+";
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    height: 100%;
+}
+
+.mcwws-gis-segment-insert-handle:hover {
+    background: #dcfce7;
+    border-color: #16a34a;
+}
+
+.mcwws-gis-segment-insert-handle.is-offscreen {
+    opacity: 0;
+    pointer-events: none;
+}
+
 .mcwws-gis-vertex-gizmo[hidden],
 .mcwws-gis-vertex-gizmo.is-hidden {
     display: none !important;

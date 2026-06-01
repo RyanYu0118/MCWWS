@@ -17,6 +17,9 @@
     const GIS_SELECT_HIT_PX = 16;
     const GIS_SELECT_HIT_PX_3D = 22;
     const GIS_VERTEX_HIT_PX = 14;
+    const GIS_SEGMENT_HIT_PX = 14;
+    const GIS_SEGMENT_MIN_SCREEN_LEN = 10;
+    const GIS_SEGMENT_VERTEX_CLEAR_PX = 10;
     const GIS_AXIS_DRAG_THRESHOLD_PX = 3;
     const GIS_GIZMO_AXES_SIZE = 52;
     const GIS_GIZMO_HUB = GIS_GIZMO_AXES_SIZE / 2;
@@ -72,6 +75,9 @@
     let gisVertexDrag = null;
     /** @type {Map<string, HTMLButtonElement>} */
     const vertexHandleElements = new Map();
+    /** @type {{ featureId: string, segmentIndex: number, insertIndex: number, world: object, screenX: number, screenY: number } | null} */
+    let gisHoverSegmentInsert = null;
+    let segmentInsertHandleEl = null;
     let gisVertexGizmoEl = null;
     let gisVertexGizmoBound = false;
     let gisVertexCoordHistoryPending = false;
@@ -1118,6 +1124,38 @@
         }
     }
 
+    function insertFeatureVertex(featureId, insertIndex, point) {
+        const found = findFeatureById(featureId);
+        if (!found) {
+            return;
+        }
+        const feature = found.feature;
+        if (!['LineString', 'Polygon'].includes(feature.type)) {
+            return;
+        }
+        const next = coerceVertexPoint(point);
+        if (!next) {
+            return;
+        }
+        const pts = getFeatureVertexPoints(feature);
+        const idx = Math.max(0, Math.min(insertIndex, pts.length));
+        recordGisHistory();
+        pts.splice(idx, 0, next);
+        setFeatureCoordinatesFromPoints(feature, pts);
+        dirty = true;
+        clearGisHoverSegmentInsert();
+        selectVertex(featureId, idx);
+        renderPanel();
+    }
+
+    function clearGisHoverSegmentInsert() {
+        gisHoverSegmentInsert = null;
+        if (segmentInsertHandleEl) {
+            segmentInsertHandleEl.hidden = true;
+            segmentInsertHandleEl.classList.add('is-offscreen');
+        }
+    }
+
     function hideVertexGizmo() {
         const gizmo = gisVertexGizmoEl || document.getElementById(VERTEX_GIZMO_ID);
         if (!gizmo) {
@@ -1391,6 +1429,88 @@
         return best;
     }
 
+    function pickSegmentInsertAtScreen(clientX, clientY) {
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        let best = null;
+        let bestDist = GIS_SEGMENT_HIT_PX;
+
+        iterSelectedVertexFeatures().forEach(({ feature }) => {
+            if (feature.type !== 'LineString' && feature.type !== 'Polygon') {
+                return;
+            }
+            const points = getFeatureVertexPoints(feature);
+            const segCount = feature.type === 'LineString'
+                ? points.length - 1
+                : points.length;
+            if (segCount < 1) {
+                return;
+            }
+
+            for (let seg = 0; seg < segCount; seg += 1) {
+                const i0 = seg;
+                const i1 = feature.type === 'Polygon' ? ((seg + 1) % points.length) : (seg + 1);
+                if (feature.type === 'LineString' && i1 >= points.length) {
+                    continue;
+                }
+                const p0 = points[i0];
+                const p1 = points[i1];
+                if (!p0 || !p1) {
+                    continue;
+                }
+
+                iterClippedLineScreenSegments([p0, p1], view, camera, (a, b) => {
+                    if (screenDist(a.x, a.y, b.x, b.y) < GIS_SEGMENT_MIN_SCREEN_LEN) {
+                        return;
+                    }
+                    const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
+                    if (d >= bestDist) {
+                        return;
+                    }
+                    const midSx = (a.x + b.x) / 2;
+                    const midSy = (a.y + b.y) / 2;
+                    const s0 = projectGisPoint(p0, view, camera, false);
+                    const s1 = projectGisPoint(p1, view, camera, false);
+                    if (s0 && !s0.behind && screenDist(midSx, midSy, s0.x, s0.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
+                        return;
+                    }
+                    if (s1 && !s1.behind && screenDist(midSx, midSy, s1.x, s1.y) < GIS_SEGMENT_VERTEX_CLEAR_PX) {
+                        return;
+                    }
+                    bestDist = d;
+                    best = {
+                        featureId: feature.id,
+                        segmentIndex: seg,
+                        insertIndex: seg + 1,
+                        world: {
+                            x: (p0.x + p1.x) / 2,
+                            y: (p0.y + p1.y) / 2,
+                            z: (p0.z + p1.z) / 2
+                        },
+                        screenX: midSx,
+                        screenY: midSy
+                    };
+                });
+            }
+        });
+        return best;
+    }
+
+    function updateGisHoverSegmentInsert(clientX, clientY) {
+        if (!shouldShowVertexHandles() || gisVertexDrag) {
+            clearGisHoverSegmentInsert();
+            return;
+        }
+        if (pickVertexAtScreen(clientX, clientY)) {
+            clearGisHoverSegmentInsert();
+            return;
+        }
+        gisHoverSegmentInsert = pickSegmentInsertAtScreen(clientX, clientY);
+        if (!gisHoverSegmentInsert) {
+            clearGisHoverSegmentInsert();
+        }
+    }
+
     function syncVertexGizmoInputs(point) {
         const gizmo = ensureVertexGizmo();
         if (!gizmo || !point || !selectedVertex || !shouldShowVertexHandles()) {
@@ -1509,6 +1629,17 @@
             if (!shouldShowVertexHandles()) {
                 return;
             }
+            const segHandle = event.target.closest('.mcwws-gis-segment-insert-handle');
+            if (segHandle && gisHoverSegmentInsert) {
+                event.preventDefault();
+                event.stopPropagation();
+                insertFeatureVertex(
+                    gisHoverSegmentInsert.featureId,
+                    gisHoverSegmentInsert.insertIndex,
+                    gisHoverSegmentInsert.world
+                );
+                return;
+            }
             const handle = event.target.closest('.mcwws-gis-vertex-handle');
             if (!handle) {
                 return;
@@ -1537,6 +1668,7 @@
             vertexHandleElements.forEach((el) => el.remove());
             vertexHandleElements.clear();
             clearSelectedVertex();
+            clearGisHoverSegmentInsert();
             hideVertexGizmo();
             return;
         }
@@ -1593,6 +1725,36 @@
             positionVertexGizmo(world, view, camera);
         } else {
             hideVertexGizmo();
+        }
+        renderSegmentInsertHandle(view, camera);
+    }
+
+    function renderSegmentInsertHandle(view, camera) {
+        const layer = ensureVertexLayer();
+        if (!gisHoverSegmentInsert || !shouldShowVertexHandles() || gisVertexDrag) {
+            if (segmentInsertHandleEl) {
+                segmentInsertHandleEl.hidden = true;
+                segmentInsertHandleEl.classList.add('is-offscreen');
+            }
+            return;
+        }
+        if (!segmentInsertHandleEl) {
+            segmentInsertHandleEl = document.createElement('button');
+            segmentInsertHandleEl.type = 'button';
+            segmentInsertHandleEl.className = 'mcwws-gis-segment-insert-handle';
+            segmentInsertHandleEl.title = '点击在此段添加顶点';
+            segmentInsertHandleEl.setAttribute('aria-label', '添加顶点');
+            layer.appendChild(segmentInsertHandleEl);
+        }
+        const projected = projectGisPoint(gisHoverSegmentInsert.world, view, camera, false);
+        const off = !projected || projected.behind
+            || projected.x < -40 || projected.y < -40
+            || projected.x > window.innerWidth + 40
+            || projected.y > window.innerHeight + 40;
+        segmentInsertHandleEl.hidden = off;
+        segmentInsertHandleEl.classList.toggle('is-offscreen', off);
+        if (!off) {
+            segmentInsertHandleEl.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
         }
     }
 
@@ -1746,6 +1908,11 @@
         pinElements.clear();
         vertexHandleElements.forEach((el) => el.remove());
         vertexHandleElements.clear();
+        if (segmentInsertHandleEl) {
+            segmentInsertHandleEl.remove();
+            segmentInsertHandleEl = null;
+        }
+        clearGisHoverSegmentInsert();
         clearSelectedVertex();
         hideVertexGizmo();
     }
@@ -1764,8 +1931,9 @@
             return;
         }
         const vtx = pickVertexAtScreen(clientX, clientY);
+        const segInsert = !!target?.closest?.('.mcwws-gis-segment-insert-handle') || !!gisHoverSegmentInsert;
         const fid = vtx ? vtx.featureId : pickFeatureAtScreen(clientX, clientY);
-        const hovering = !!(fid || vtx);
+        const hovering = !!(fid || vtx || segInsert);
         if (hovering !== !!gisHoverFeatureId) {
             gisHoverFeatureId = fid || (vtx ? vtx.featureId : null);
             document.body.classList.toggle('mcwws-gis-hover-feature', hovering);
@@ -2325,6 +2493,11 @@
             markGisPointerMoved(event.clientX, event.clientY);
         }
         updateGisSelectHoverCursor(event.clientX, event.clientY, event.target);
+        if (isGisSelectMode()) {
+            updateGisHoverSegmentInsert(event.clientX, event.clientY);
+        } else {
+            clearGisHoverSegmentInsert();
+        }
         if (gisCanvasPointer?.moved) {
             return;
         }
@@ -2787,7 +2960,7 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '选中要素后显示特征点；点击特征点出现坐标轴与 X/Y/Z，拖轴或输入数值编辑'
+                ? '选中道路/区域后：橙色为顶点；鼠标移到线段上会显示可点击的中点以添加顶点；点击顶点可拖轴或输入坐标编辑'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
