@@ -626,37 +626,59 @@ body.mcwws-map-simplified-mode #map-container {
     pointer-events: none;
 }
 
+.mcwws-gis-vertex-gizmo[hidden],
+.mcwws-gis-vertex-gizmo.is-hidden {
+    display: none !important;
+    pointer-events: none !important;
+}
+
 .mcwws-gis-vertex-gizmo {
     position: absolute;
     left: 0;
     top: 0;
     z-index: 10003;
+    pointer-events: none;
+    touch-action: none;
+    filter: drop-shadow(0 2px 8px rgba(0, 0, 0, 0.18));
+}
+
+.mcwws-gis-gizmo-anchor {
+    position: absolute;
+    left: 0;
+    top: 0;
     pointer-events: auto;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 8px;
-    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+    touch-action: none;
 }
 
 .mcwws-gis-gizmo-axes {
     position: relative;
-    width: 88px;
-    height: 88px;
+    width: 52px;
+    height: 52px;
+    pointer-events: auto;
+    touch-action: none;
 }
 
 .mcwws-gis-axis {
     position: absolute;
-    left: 50%;
-    top: 50%;
-    width: 52px;
-    height: 6px;
-    margin: -3px 0 0 -2px;
+    left: 26px;
+    top: 26px;
+    width: 24px;
+    height: 2px;
+    margin: -1px 0 0 0;
     padding: 0;
     border: 0;
-    border-radius: 3px;
-    transform-origin: 2px 50%;
+    border-radius: 1px;
+    transform-origin: 0 50%;
     cursor: grab;
+}
+
+.mcwws-gis-axis::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: -6px;
+    width: 100%;
+    height: 12px;
 }
 
 .mcwws-gis-axis:active {
@@ -668,7 +690,7 @@ body.mcwws-map-simplified-mode #map-container {
 }
 
 .mcwws-gis-axis--y {
-    background: linear-gradient(180deg, #4ade80, #16a34a);
+    background: linear-gradient(90deg, #4ade80, #16a34a);
     z-index: 3;
 }
 
@@ -677,16 +699,20 @@ body.mcwws-map-simplified-mode #map-container {
 }
 
 .mcwws-gis-gizmo-coords {
+    position: absolute;
+    left: 0;
+    top: 0;
+    pointer-events: auto;
     display: flex;
     flex-wrap: wrap;
-    gap: 6px;
+    gap: 4px;
     justify-content: center;
-    padding: 8px 10px;
+    padding: 6px 8px;
     background: rgba(255, 255, 255, 0.96);
-    border-radius: 10px;
+    border-radius: 8px;
     box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
     font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
-    font-size: 11px;
+    font-size: 10px;
 }
 
 .mcwws-gis-coord {
