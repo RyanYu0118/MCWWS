@@ -41,6 +41,11 @@
     let mapClickBound = false;
     let canvasClickBound = false;
     let pinElements = new Map();
+    /** @type {Map<string, SVGPathElement>} */
+    const svgPathElements = new Map();
+    /** @type {SVGPathElement | null} */
+    let svgDraftPathEl = null;
+    let gisHoverFeatureId = null;
     let lastPickAt = 0;
     let lastPickKey = '';
     let gisCachedCamera = null;
@@ -965,6 +970,43 @@
         selectedFeatureIds.clear();
     }
 
+    function clearGisSelectHover() {
+        gisHoverFeatureId = null;
+        document.body.classList.remove('mcwws-gis-hover-feature');
+    }
+
+    function clearGisOverlayDom() {
+        svgPathElements.forEach((el) => el.remove());
+        svgPathElements.clear();
+        if (svgDraftPathEl) {
+            svgDraftPathEl.remove();
+            svgDraftPathEl = null;
+        }
+        pinElements.forEach((pin) => pin.remove());
+        pinElements.clear();
+    }
+
+    function updateGisSelectHoverCursor(clientX, clientY, target) {
+        if (!isGisSelectMode()) {
+            if (gisHoverFeatureId !== null) {
+                clearGisSelectHover();
+            }
+            return;
+        }
+        if (target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog, .mcwws-map-controls')) {
+            if (gisHoverFeatureId !== null) {
+                clearGisSelectHover();
+            }
+            return;
+        }
+        const fid = pickFeatureAtScreen(clientX, clientY);
+        const hovering = !!fid;
+        if (hovering !== !!gisHoverFeatureId) {
+            gisHoverFeatureId = fid;
+            document.body.classList.toggle('mcwws-gis-hover-feature', hovering);
+        }
+    }
+
     function setGisSelectionSingle(id) {
         clearGisSelection();
         if (id) {
@@ -1518,6 +1560,7 @@
         if (gisCanvasPointer && event.pointerId === gisCanvasPointer.pointerId) {
             markGisPointerMoved(event.clientX, event.clientY);
         }
+        updateGisSelectHoverCursor(event.clientX, event.clientY, event.target);
         if (gisCanvasPointer?.moved) {
             return;
         }
@@ -1664,6 +1707,18 @@
         return layer;
     }
 
+    function ensureSvgFeaturePath(svg, key, featureId, geomKind) {
+        let path = svgPathElements.get(key);
+        if (!path) {
+            path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            path.setAttribute('data-fid', featureId);
+            path.classList.add('mcwws-gis-feature', geomKind);
+            svg.appendChild(path);
+            svgPathElements.set(key, path);
+        }
+        return path;
+    }
+
     /** 开放折线：逐边裁剪，可产生多段不相连的 path */
     function buildSvgPolylinePath(points, view, camera) {
         if (!points || points.length < 2) {
@@ -1729,39 +1784,50 @@
         if (!svg || !pinLayer) return;
 
         if (!gisInfoEnabled) {
-            svg.innerHTML = '';
-            pinElements.forEach((pin) => pin.remove());
-            pinElements.clear();
+            clearGisOverlayDom();
+            clearGisSelectHover();
             return;
         }
 
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
 
-        const fragments = [];
+        const neededPathKeys = new Set();
         const selectionActive = hasGisSelection();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
-            const strokeOpacity = dimmed ? 0.2 : 0.9;
-            const fillOpacity = dimmed ? 0.044 : 0.22;
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
                 const d = buildSvgPolylinePath(points, view, camera);
                 if (d) {
-                    fragments.push(
-                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="none" stroke="${color}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" opacity="${strokeOpacity}"/>`
-                    );
+                    const key = `${feature.id}:line`;
+                    neededPathKeys.add(key);
+                    const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
+                    path.setAttribute('d', d);
+                    path.setAttribute('stroke', color);
+                    path.classList.toggle('is-dimmed', dimmed);
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
                 const d = buildSvgPolygonPath(points, view, camera);
                 if (d) {
-                    fragments.push(
-                        `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="${color}" fill-opacity="${fillOpacity}" stroke="${color}" stroke-width="3" opacity="${strokeOpacity}"/>`
-                    );
+                    const key = `${feature.id}:polygon`;
+                    neededPathKeys.add(key);
+                    const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-polygon');
+                    path.setAttribute('d', d);
+                    path.setAttribute('fill', color);
+                    path.setAttribute('stroke', color);
+                    path.classList.toggle('is-dimmed', dimmed);
                 }
+            }
+        });
+
+        svgPathElements.forEach((path, key) => {
+            if (!neededPathKeys.has(key)) {
+                path.remove();
+                svgPathElements.delete(key);
             }
         });
 
@@ -1772,13 +1838,19 @@
                 ? buildSvgPolygonPath(draft, view, camera)
                 : buildSvgPolylinePath(draft, view, camera);
             if (d) {
-                fragments.push(
-                    `<path class="mcwws-gis-draft" d="${d}" fill="none" stroke="#14b8a6" stroke-width="2" stroke-dasharray="6 4"/>`
-                );
+                if (!svgDraftPathEl) {
+                    svgDraftPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                    svgDraftPathEl.classList.add('mcwws-gis-draft');
+                    svg.appendChild(svgDraftPathEl);
+                }
+                svgDraftPathEl.setAttribute('d', d);
+            } else if (svgDraftPathEl) {
+                svgDraftPathEl.removeAttribute('d');
             }
+        } else if (svgDraftPathEl) {
+            svgDraftPathEl.remove();
+            svgDraftPathEl = null;
         }
-
-        svg.innerHTML = fragments.join('');
 
         const pinIds = new Set();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
@@ -1822,7 +1894,11 @@
     function syncDrawingClass() {
         const drawing = isGisDrawPointerActive();
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
-        document.body.classList.toggle('mcwws-gis-select-mode', isGisSelectMode());
+        const selectMode = isGisSelectMode();
+        document.body.classList.toggle('mcwws-gis-select-mode', selectMode);
+        if (!selectMode) {
+            clearGisSelectHover();
+        }
     }
 
     function mountGisAboveDimension(wrap, column) {
@@ -2255,6 +2331,7 @@
         });
         document.addEventListener('keydown', onKeyDownCapture, true);
         document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('pointerleave', clearGisSelectHover);
         document.addEventListener('dblclick', onDblClick, true);
         window.addEventListener('hashchange', () => {
             gisCachedCamera = null;

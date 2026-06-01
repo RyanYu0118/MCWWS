@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-01T18:07:22.027Z",
+  "updatedAt": "2026-06-01T18:21:13.405Z",
   "layers": [
     {
       "id": "roads",
@@ -56,36 +56,6 @@
           }
         },
         {
-          "id": "23cd5d900a104bbc",
-          "type": "Point",
-          "map": "world",
-          "layerId": "roads",
-          "coordinates": {
-            "x": -620.5,
-            "y": 64,
-            "z": -21.5
-          },
-          "properties": {
-            "name": "点位",
-            "description": ""
-          }
-        },
-        {
-          "id": "65aca7d1262e46f6",
-          "type": "Point",
-          "map": "world",
-          "layerId": "roads",
-          "coordinates": {
-            "x": -753.5,
-            "y": 64,
-            "z": 102.5
-          },
-          "properties": {
-            "name": "点位",
-            "description": ""
-          }
-        },
-        {
           "id": "a9f3e9b03a53454b",
           "type": "Point",
           "map": "world",
@@ -112,28 +82,6 @@
           },
           "properties": {
             "name": "点位",
-            "description": ""
-          }
-        },
-        {
-          "id": "749a02988fb04fd4",
-          "type": "LineString",
-          "map": "world",
-          "layerId": "roads",
-          "coordinates": [
-            {
-              "x": -599.5,
-              "y": 64,
-              "z": -0.5
-            },
-            {
-              "x": -1073.5,
-              "y": 64,
-              "z": 36.5
-            }
-          ],
-          "properties": {
-            "name": "道路",
             "description": ""
           }
         },

@@ -471,24 +471,53 @@
     height: 100%;
 }
 
-#mcwws-gis-svg-layer path {
+#mcwws-gis-svg-layer path.mcwws-gis-feature {
     pointer-events: none;
+    stroke-width: 3;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.9;
+    fill: none;
+    transition: opacity 0.28s ease, fill-opacity 0.28s ease;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-polygon {
+    fill-opacity: 0.22;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-feature.is-dimmed {
+    opacity: 0.2;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-polygon.is-dimmed {
+    fill-opacity: 0.044;
+}
+
+body.mcwws-gis-select-mode #mcwws-gis-svg-layer path.mcwws-gis-line {
+    pointer-events: stroke;
+    cursor: pointer;
+}
+
+body.mcwws-gis-select-mode #mcwws-gis-svg-layer path.mcwws-gis-polygon {
+    pointer-events: visibleFill;
+    cursor: pointer;
 }
 
 #mcwws-gis-svg-layer .mcwws-gis-draft {
     pointer-events: none;
+    fill: none;
+    stroke: #14b8a6;
+    stroke-width: 2;
+    stroke-dasharray: 6 4;
 }
 
 body.mcwws-gis-drawing #mcwws-gis-pin-layer .mcwws-gis-pin {
     pointer-events: none;
 }
 
-body.mcwws-gis-select-mode {
-    cursor: default;
-}
-
-body.mcwws-gis-select-mode #map-container canvas {
-    cursor: default !important;
+body.mcwws-gis-select-mode.mcwws-gis-hover-feature,
+body.mcwws-gis-select-mode.mcwws-gis-hover-feature #map-container canvas {
+    cursor: pointer !important;
 }
 
 #mcwws-gis-pin-layer {
@@ -511,6 +540,8 @@ body.mcwws-gis-select-mode #map-container canvas {
     gap: 2px;
     max-width: 160px;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
+    opacity: 1;
+    transition: opacity 0.28s ease;
 }
 
 .mcwws-gis-pin-icon {
@@ -532,7 +563,7 @@ body.mcwws-gis-select-mode #map-container canvas {
 }
 
 .mcwws-gis-pin.is-dimmed {
-    opacity: 0.5;
+    opacity: 0.2;
 }
 
 .mcwws-gis-pin.is-offscreen {
