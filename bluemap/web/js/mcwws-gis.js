@@ -156,59 +156,43 @@
     }
 
     function applyViewState(view) {
-        const base = view || parseHash() || {
+        const current = getViewForProjection() || parseHash() || {
             map: getCurrentMapId(),
             x: 0,
             y: 64,
             z: 0,
             distance: 128,
             height: 128,
-            rotation: 0
+            rotation: 0,
+            angle: 0,
+            pitch: 0,
+            mode: 'flat'
         };
         const next = {
-            ...base,
-            map: base.map || getCurrentMapId(),
-            mode: isSimplifiedMapMode() ? 'flat' : (base.mode || 'flat'),
-            ortho: base.ortho ?? 1,
-            angle: isSimplifiedMapMode() ? 0 : (base.angle ?? 0),
-            pitch: isSimplifiedMapMode() ? 0 : (base.pitch ?? 0)
+            ...current,
+            ...(view || {}),
+            map: view?.map || current.map || getCurrentMapId()
         };
+        const dist = next.distance ?? next.height ?? current.distance ?? 128;
+        next.distance = dist;
+        next.height = dist;
         replaceLocationHash(formatViewHash(next));
         const cm = getControlsManager();
         if (cm) {
             cm.position.x = next.x;
             cm.position.y = next.y;
             cm.position.z = next.z;
-            cm.distance = next.distance ?? next.height ?? 128;
-            if (isSimplifiedMapMode()) {
-                cm.angle = 0;
-            }
+            cm.distance = dist;
             if (Number.isFinite(next.rotation)) {
                 cm.rotation = next.rotation;
+            }
+            const pitch = next.pitch ?? next.angle;
+            if (Number.isFinite(pitch)) {
+                cm.angle = pitch;
             }
         }
         const bm = getBlueMapApp();
         bm?.mapViewer?.updateLoadedMapArea?.();
-    }
-
-    function ensureFlatForSimplifiedMode() {
-        if (!isSimplifiedMapMode()) {
-            return;
-        }
-        const bm = getBlueMapApp();
-        if (typeof bm?.setFlatView === 'function') {
-            bm.setFlatView(0, 5);
-        }
-        const view = parseHash() || {
-            map: getCurrentMapId(),
-            x: 0,
-            y: 64,
-            z: 0,
-            distance: 128,
-            height: 128,
-            rotation: 0
-        };
-        applyViewState({ ...view, mode: 'flat', ortho: 1, angle: 0, pitch: 0 });
     }
 
     function restoreOriginalMapRendering() {
@@ -234,9 +218,6 @@
             mapContainer.style.display = simplified ? 'none' : '';
         }
         ensureSimplifiedPlane();
-        if (simplified) {
-            ensureFlatForSimplifiedMode();
-        }
         renderOverlay();
     }
 
@@ -439,138 +420,69 @@
         return parseHashParts(parts);
     }
 
+    /** 与 mcwws-shops 的 projectMarker 一致，两种渲染模式共用，避免切换时投影算法变化 */
     function getViewForProjection() {
         const cm = getControlsManager();
         const hash = parseHash();
-        if (isSimplifiedMapMode()) {
-            const dist = Number(cm?.distance) || hash?.distance || hash?.height || 128;
-            return {
-                map: hash?.map || getCurrentMapId(),
-                x: Number(cm?.position?.x ?? hash?.x ?? 0),
-                y: Number(cm?.position?.y ?? hash?.y ?? 64),
-                z: Number(cm?.position?.z ?? hash?.z ?? 0),
-                distance: dist,
-                height: dist,
-                rotation: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
-                yaw: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
-                pitch: 0,
-                angle: 0,
-                mode: 'flat'
-            };
-        }
-        if (!cm) {
-            return hash;
-        }
-        const dist = Number(cm.distance) || hash?.distance || 128;
+        const dist = Number(cm?.distance) || hash?.distance || hash?.height || 128;
+        const pitch = Number.isFinite(Number(cm?.angle))
+            ? Number(cm.angle)
+            : Number(hash?.angle ?? hash?.pitch ?? 0);
         return {
-            map: getCurrentMapId(),
-            x: cm.position.x,
-            y: cm.position.y,
-            z: cm.position.z,
+            map: hash?.map || getCurrentMapId(),
+            x: Number(cm?.position?.x ?? hash?.x ?? 0),
+            y: Number(cm?.position?.y ?? hash?.y ?? 64),
+            z: Number(cm?.position?.z ?? hash?.z ?? 0),
             distance: dist,
             height: dist,
-            rotation: cm.rotation ?? 0,
-            yaw: cm.rotation ?? 0,
-            angle: cm.angle ?? 0,
-            pitch: cm.angle ?? 0,
-            mode: getMapViewState()
+            rotation: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
+            yaw: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
+            angle: pitch,
+            pitch,
+            mode: getMapViewState() || hash?.mode || 'flat'
         };
     }
 
-    function getProjectionCamera() {
-        if (isSimplifiedMapMode()) {
+    function projectWorldPoint(point, view) {
+        const v = view || getViewForProjection();
+        if (!v || !point) {
             return null;
         }
-        return getBlueMapCamera();
-    }
-
-    function applyMatrix4(point, matrix) {
-        const e = matrix.elements || matrix;
-        const x = point.x;
-        const y = point.y;
-        const z = point.z;
-        const w = point.w == null ? 1 : point.w;
-        return {
-            x: e[0] * x + e[4] * y + e[8] * z + e[12] * w,
-            y: e[1] * x + e[5] * y + e[9] * z + e[13] * w,
-            z: e[2] * x + e[6] * y + e[10] * z + e[14] * w,
-            w: e[3] * x + e[7] * y + e[11] * z + e[15] * w
-        };
-    }
-
-    function findCamera(root, seen = new Set(), depth = 0) {
-        if (!root || typeof root !== 'object' || seen.has(root) || depth > 5) return null;
-        seen.add(root);
-        if (root.isCamera && root.projectionMatrix && root.matrixWorldInverse) return root;
-        for (const key of Object.keys(root)) {
-            if (key === 'parent' || key === 'children' || key === 'domElement') continue;
-            const camera = findCamera(root[key], seen, depth + 1);
-            if (camera) return camera;
-        }
-        return null;
-    }
-
-    function getBlueMapCamera() {
-        return findCamera(getBlueMapApp());
-    }
-
-    function projectWorldPoint(point, camera, view) {
-        const v = view || getViewForProjection();
-        if (isSimplifiedMapMode()) {
-            camera = null;
-        }
-        if (camera) {
-            const worldPoint = { x: point.x, y: point.y + 0.8, z: point.z, w: 1 };
-            const cameraPoint = applyMatrix4(worldPoint, camera.matrixWorldInverse);
-            const clipPoint = applyMatrix4(cameraPoint, camera.projectionMatrix);
-            if (!clipPoint.w) return null;
-            const nx = clipPoint.x / clipPoint.w;
-            const ny = clipPoint.y / clipPoint.w;
-            const nz = clipPoint.z / clipPoint.w;
-            return {
-                x: (nx * 0.5 + 0.5) * window.innerWidth,
-                y: (-ny * 0.5 + 0.5) * window.innerHeight,
-                behind: clipPoint.w < 0 || nz < -1 || nz > 1
-            };
-        }
-        if (!v) return null;
-        const flatView = { ...v, mode: 'flat', pitch: 0, angle: 0 };
-        const dx = point.x - flatView.x;
-        const dy = point.y - flatView.y;
-        const dz = point.z - flatView.z;
-        const yaw = flatView.rotation ?? flatView.yaw ?? 0;
+        const dx = point.x - v.x;
+        const dy = point.y - v.y;
+        const dz = point.z - v.z;
+        const yaw = v.rotation ?? v.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const right = dx * cos - dz * sin;
         const forward = dx * sin + dz * cos;
-        const scale = Math.max(2, Math.min(120, window.innerHeight / Math.max(10, flatView.height * 2.2)));
-        const pitchFactor = 1;
+        const perspectiveBoost = v.mode === 'perspective' ? 1.35 : 1;
+        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, v.height * 2.2)) * perspectiveBoost));
+        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(v.pitch || -0.8))));
         const x = window.innerWidth / 2 + right * scale;
         const y = window.innerHeight / 2 + forward * scale * pitchFactor - dy * scale * 0.65;
         return { x, y, behind: false };
     }
 
     function screenToWorld(screenX, screenY, view) {
-        if (!view) return null;
-        const flatView = isSimplifiedMapMode()
-            ? { ...view, mode: 'flat', pitch: 0, angle: 0 }
-            : view;
-        const perspectiveBoost = flatView.mode === 'perspective' ? 1.35 : 1;
-        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, flatView.height * 2.2)) * perspectiveBoost));
-        const pitchFactor = isSimplifiedMapMode()
-            ? 1
-            : Math.max(0.2, Math.min(1, Math.abs(Math.sin(flatView.pitch || -0.8))));
+        const v = view || getViewForProjection();
+        if (!v) {
+            return null;
+        }
+        const perspectiveBoost = v.mode === 'perspective' ? 1.35 : 1;
+        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, v.height * 2.2)) * perspectiveBoost));
+        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(v.pitch || -0.8))));
         const right = (screenX - window.innerWidth / 2) / scale;
         const forward = (screenY - window.innerHeight / 2) / (scale * pitchFactor);
-        const yaw = flatView.rotation ?? flatView.yaw ?? 0;
+        const yaw = v.rotation ?? v.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const dx = right * cos + forward * sin;
         const dz = -right * sin + forward * cos;
         return {
-            x: flatView.x + dx,
-            y: flatView.y,
-            z: flatView.z + dz
+            x: v.x + dx,
+            y: v.y,
+            z: v.z + dz
         };
     }
 
@@ -1011,9 +923,8 @@
 
     function buildSvgPath(points, closed) {
         const view = getViewForProjection();
-        const camera = getProjectionCamera();
         const screen = points
-            .map((p) => projectWorldPoint(p, camera, view))
+            .map((p) => projectWorldPoint(p, view))
             .filter((p) => p && !p.behind);
         if (screen.length < 2) return '';
         return screen.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')
@@ -1104,7 +1015,7 @@
                 <span class="mcwws-gis-pin-label">${escapeHtml(name)}</span>
             `;
             pin.classList.toggle('is-selected', feature.id === selectedFeatureId);
-            const projected = projectWorldPoint(point, getProjectionCamera(), getViewForProjection());
+            const projected = projectWorldPoint(point, getViewForProjection());
             const off = !projected || projected.behind
                 || projected.x < -40 || projected.y < -40
                 || projected.x > window.innerWidth + 40
