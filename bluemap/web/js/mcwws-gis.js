@@ -11,7 +11,9 @@
     const GIS_SCREEN_CLIP_PAD = 8000;
     const GIS_CHAIN_JOIN_EPS = 6;
     const GIS_DRAG_THRESHOLD_PX = 8;
+    const GIS_SELECT_DRAG_THRESHOLD_PX = 14;
     const GIS_SELECT_HIT_PX = 16;
+    const GIS_SELECT_HIT_PX_3D = 22;
     const GIS_HISTORY_MAX = 100;
 
     let mapAuthToken = null;
@@ -391,9 +393,10 @@
         const nx = clipPoint.x / clipPoint.w;
         const ny = clipPoint.y / clipPoint.w;
         const nz = clipPoint.z / clipPoint.w;
+        const vp = getGisScreenViewport();
         return {
-            x: (nx * 0.5 + 0.5) * window.innerWidth,
-            y: (-ny * 0.5 + 0.5) * window.innerHeight,
+            x: vp.left + (nx * 0.5 + 0.5) * vp.width,
+            y: vp.top + (-ny * 0.5 + 0.5) * vp.height,
             behind: clipPoint.w < 0 || nz < -1 || nz > 1
         };
     }
@@ -411,9 +414,10 @@
         const perspectiveBoost = view.mode === 'perspective' ? 1.35 : 1;
         const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, view.height * 2.2)) * perspectiveBoost));
         const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(view.pitch || -0.8))));
+        const vp = getPickViewport();
         return {
-            x: window.innerWidth / 2 + right * scale,
-            y: window.innerHeight / 2 + forward * scale * pitchFactor - dy * scale * 0.65,
+            x: vp.centerX + right * scale,
+            y: vp.centerY + forward * scale * pitchFactor - dy * scale * 0.65,
             behind: false
         };
     }
@@ -517,10 +521,29 @@
         ];
     }
 
-    function ndcToScreen(ndc) {
+    function getGisScreenViewport() {
+        const rect = getMapCanvasRect();
+        if (rect) {
+            return {
+                left: rect.left,
+                top: rect.top,
+                width: rect.width,
+                height: rect.height
+            };
+        }
         return {
-            x: (ndc.x * 0.5 + 0.5) * window.innerWidth,
-            y: (-ndc.y * 0.5 + 0.5) * window.innerHeight
+            left: 0,
+            top: 0,
+            width: window.innerWidth,
+            height: window.innerHeight
+        };
+    }
+
+    function ndcToScreen(ndc) {
+        const vp = getGisScreenViewport();
+        return {
+            x: vp.left + (ndc.x * 0.5 + 0.5) * vp.width,
+            y: vp.top + (-ndc.y * 0.5 + 0.5) * vp.height
         };
     }
 
@@ -558,10 +581,11 @@
     }
 
     function clipScreenSegment(p0, p1) {
-        const minX = -GIS_SCREEN_CLIP_PAD;
-        const minY = -GIS_SCREEN_CLIP_PAD;
-        const maxX = window.innerWidth + GIS_SCREEN_CLIP_PAD;
-        const maxY = window.innerHeight + GIS_SCREEN_CLIP_PAD;
+        const vp = getGisScreenViewport();
+        const minX = vp.left - GIS_SCREEN_CLIP_PAD;
+        const minY = vp.top - GIS_SCREEN_CLIP_PAD;
+        const maxX = vp.left + vp.width + GIS_SCREEN_CLIP_PAD;
+        const maxY = vp.top + vp.height + GIS_SCREEN_CLIP_PAD;
         let x0 = p0.x;
         let y0 = p0.y;
         let x1 = p1.x;
@@ -729,10 +753,11 @@
     }
 
     function clipScreenPolygon(points) {
-        const minX = -GIS_SCREEN_CLIP_PAD;
-        const minY = -GIS_SCREEN_CLIP_PAD;
-        const maxX = window.innerWidth + GIS_SCREEN_CLIP_PAD;
-        const maxY = window.innerHeight + GIS_SCREEN_CLIP_PAD;
+        const vp = getGisScreenViewport();
+        const minX = vp.left - GIS_SCREEN_CLIP_PAD;
+        const minY = vp.top - GIS_SCREEN_CLIP_PAD;
+        const maxX = vp.left + vp.width + GIS_SCREEN_CLIP_PAD;
+        const maxY = vp.top + vp.height + GIS_SCREEN_CLIP_PAD;
         const planes = [
             {
                 inside: (p) => p.x >= minX,
@@ -1436,18 +1461,16 @@
         return inside;
     }
 
-    function projectFeaturePointsForHit(points, view, camera, labelStyle) {
-        return points
-            .map((p) => projectGisPoint(p, view, camera, labelStyle))
-            .filter((p) => p && !p.behind);
+    function getGisSelectHitRadiusPx(camera) {
+        return camera ? GIS_SELECT_HIT_PX_3D : GIS_SELECT_HIT_PX;
     }
 
-    /** 屏幕空间命中检测（与每帧重绘 SVG 无关，选择工具可靠） */
+    /** 屏幕空间命中检测（裁剪后的屏幕几何与 SVG 绘制一致） */
     function pickFeatureAtScreen(clientX, clientY) {
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
         let bestId = null;
-        let bestDist = GIS_SELECT_HIT_PX;
+        let bestDist = getGisSelectHitRadiusPx(camera);
 
         iterVisibleFeatures().forEach(({ feature }) => {
             const points = coordsToPoints(feature.coordinates);
@@ -1470,23 +1493,18 @@
             }
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                for (let i = 0; i < points.length - 1; i += 1) {
-                    const a = projectGisPoint(points[i], view, camera, false);
-                    const b = projectGisPoint(points[i + 1], view, camera, false);
-                    if (!a || !b || a.behind || b.behind) {
-                        continue;
-                    }
+                iterClippedLineScreenSegments(points, view, camera, (a, b) => {
                     const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
                     if (d < bestDist) {
                         bestDist = d;
                         bestId = feature.id;
                     }
-                }
+                });
                 return;
             }
 
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const ring = projectFeaturePointsForHit(points, view, camera, false);
+                const ring = getClippedScreenRingForPolygon(points, view, camera);
                 if (ring.length < 3) {
                     return;
                 }
@@ -1522,7 +1540,8 @@
         }
         const dx = clientX - gisCanvasPointer.startX;
         const dy = clientY - gisCanvasPointer.startY;
-        if (dx * dx + dy * dy > GIS_DRAG_THRESHOLD_PX * GIS_DRAG_THRESHOLD_PX) {
+        const threshold = isGisSelectMode() ? GIS_SELECT_DRAG_THRESHOLD_PX : GIS_DRAG_THRESHOLD_PX;
+        if (dx * dx + dy * dy > threshold * threshold) {
             gisCanvasPointer.moved = true;
         }
     }
@@ -1711,14 +1730,12 @@
         return path;
     }
 
-    /** 开放折线：逐边裁剪，可产生多段不相连的 path */
-    function buildSvgPolylinePath(points, view, camera) {
+    /** 与 SVG 绘制相同的折线裁剪，供拾取与 path 生成共用 */
+    function iterClippedLineScreenSegments(points, view, camera, onSegment) {
         if (!points || points.length < 2) {
-            return '';
+            return;
         }
         const v = view || getViewForProjection();
-        const chains = [];
-
         for (let i = 0; i < points.length - 1; i += 1) {
             let seg = null;
             if (camera) {
@@ -1735,39 +1752,52 @@
                 }
             }
             if (seg) {
-                appendClippedSegment(chains, seg);
+                onSegment(seg[0], seg[1]);
             }
         }
-
-        return chainsToSvgPath(chains);
     }
 
-    /** 封闭多边形：整体 Sutherland–Hodgman，保持顶点顺序，避免拼出虚假三角形 */
-    function buildSvgPolygonPath(points, view, camera) {
+    /** 与 SVG 绘制相同的多边形屏幕环 */
+    function getClippedScreenRingForPolygon(points, view, camera) {
         if (!points || points.length < 3) {
-            return '';
+            return [];
         }
         const v = view || getViewForProjection();
-        let screenVerts = [];
-
         if (camera) {
             const clipVerts = points
                 .map((p) => worldPointToClip(p, camera, false))
                 .filter(Boolean);
             if (clipVerts.length < 3) {
-                return '';
+                return [];
             }
             const clipped = clipPolygonHomogeneous(clipVerts);
-            screenVerts = clipped.map(clipSpaceToScreen).filter(Boolean);
-        } else if (v) {
+            return clipped.map(clipSpaceToScreen).filter(Boolean);
+        }
+        if (v) {
             const screenPts = points.map((p) => projectGisMarker(p, v, false)).filter(Boolean);
             if (screenPts.length < 3) {
-                return '';
+                return [];
             }
-            screenVerts = clipScreenPolygon(screenPts);
+            return clipScreenPolygon(screenPts);
         }
+        return [];
+    }
 
-        return screenRingToSvgPath(screenVerts);
+    /** 开放折线：逐边裁剪，可产生多段不相连的 path */
+    function buildSvgPolylinePath(points, view, camera) {
+        if (!points || points.length < 2) {
+            return '';
+        }
+        const chains = [];
+        iterClippedLineScreenSegments(points, view, camera, (s0, s1) => {
+            appendClippedSegment(chains, [s0, s1]);
+        });
+        return chainsToSvgPath(chains);
+    }
+
+    /** 封闭多边形：整体 Sutherland–Hodgman，保持顶点顺序，避免拼出虚假三角形 */
+    function buildSvgPolygonPath(points, view, camera) {
+        return screenRingToSvgPath(getClippedScreenRingForPolygon(points, view, camera));
     }
 
     function renderOverlay() {
