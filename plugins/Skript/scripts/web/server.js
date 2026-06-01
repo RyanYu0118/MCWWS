@@ -1,6 +1,7 @@
 const express = require('express');
 const fs = require('fs');
 const zlib = require('zlib');
+const http = require('http');
 const https = require('https');
 const yaml = require('js-yaml');
 
@@ -41,6 +42,77 @@ app.get('/api/services-config', (req, res) => {
         bluemapPort: BLUEMAP_WEB_PORT,
         bluemapUrl: `${protocol}://${host}:${BLUEMAP_WEB_PORT}/`
     });
+});
+
+const AVATAR_FETCH_TIMEOUT_MS = 8000;
+const AVATAR_PLAYER_ID_RE = /^[a-zA-Z0-9_]{1,16}$/;
+
+function fetchRemoteAvatar(url, redirectCount = 0) {
+    return new Promise((resolve, reject) => {
+        if (redirectCount > 4) {
+            reject(new Error('too many redirects'));
+            return;
+        }
+        const client = url.startsWith('https:') ? https : http;
+        const req = client.get(
+            url,
+            { headers: { 'User-Agent': 'MCWWS-Avatar-Proxy/1.0', Accept: 'image/*' } },
+            (response) => {
+                const { statusCode, headers } = response;
+                if (statusCode >= 300 && statusCode < 400 && headers.location) {
+                    const next = headers.location.startsWith('http')
+                        ? headers.location
+                        : new URL(headers.location, url).toString();
+                    response.resume();
+                    fetchRemoteAvatar(next, redirectCount + 1).then(resolve).catch(reject);
+                    return;
+                }
+                const chunks = [];
+                response.on('data', (chunk) => chunks.push(chunk));
+                response.on('end', () => {
+                    resolve({
+                        statusCode: statusCode || 0,
+                        contentType: headers['content-type'] || 'image/png',
+                        body: Buffer.concat(chunks)
+                    });
+                });
+            }
+        );
+        req.on('error', reject);
+        req.setTimeout(AVATAR_FETCH_TIMEOUT_MS, () => {
+            req.destroy(new Error('avatar fetch timeout'));
+        });
+    });
+}
+
+function buildAvatarSourceUrls(playerId, size) {
+    const enc = encodeURIComponent(playerId);
+    return [
+        `https://minotar.net/helm/${enc}/${size}.png`,
+        `https://mc-heads.net/avatar/${enc}/${size}`,
+        `https://mc-heads.net/head/${enc}/${size}`
+    ];
+}
+
+app.get('/api/player-avatar/:playerId', async (req, res) => {
+    const playerId = String(req.params.playerId || '').trim();
+    const size = Math.min(Math.max(Number(req.query.size) || 40, 16), 128);
+    if (!playerId || !AVATAR_PLAYER_ID_RE.test(playerId)) {
+        return res.status(400).send('invalid player id');
+    }
+    for (const url of buildAvatarSourceUrls(playerId, size)) {
+        try {
+            const result = await fetchRemoteAvatar(url);
+            if (result.statusCode === 200 && result.body.length > 64) {
+                res.set('Content-Type', result.contentType.split(';')[0] || 'image/png');
+                res.set('Cache-Control', 'public, max-age=3600');
+                return res.send(result.body);
+            }
+        } catch (error) {
+            console.warn(`头像拉取失败 (${playerId} @ ${url}):`, error.message);
+        }
+    }
+    return res.status(404).send('avatar not found');
 });
 
 // 旧 /manage/* 商店页 → 根目录商店系统

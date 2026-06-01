@@ -53,6 +53,10 @@
     display: none;
 }
 
+.mcwws-auth-widget.is-logged-in .mcwws-auth-avatar-btn.is-avatar-fallback .mcwws-auth-avatar-fallback {
+    display: block;
+}
+
 .mcwws-auth-widget:not(.is-logged-in) .mcwws-auth-avatar-img:not([src]) {
     display: none;
 }

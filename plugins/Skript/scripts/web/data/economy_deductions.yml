@@ -1,4 +1,4 @@
-next_id: 10
+next_id: 11
 
 pending:
     '1':
@@ -111,3 +111,16 @@ pending:
         needsMemorySync: false
         balanceAfter: 8821.89
         memorySyncedAt: '2026-05-31 18:56:20'
+    '10':
+        id: 10
+        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        amount: 25
+        orderId: 21
+        status: done
+        createdAt: '2026-06-01T07:20:18.632Z'
+        processedAt: '2026-06-01T07:20:18.632Z'
+        mode: file-checkout
+        needsMemorySync: false
+        balanceAfter: 8799.39
+        memorySyncedAt: '2026-06-01 15:20:18'

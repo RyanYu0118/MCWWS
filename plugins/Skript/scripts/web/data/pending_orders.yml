@@ -519,5 +519,31 @@ orders:
                 material: magenta_stained_glass
                 shopTitle: 玻璃商店
                 status: delivered
+    '21':
+        id: d13b3922-aa82-4136-84d5-64ae8c80cf8e
+        numericId: 21
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        status: delivered
+        total: 25
+        createdAt: '2026-06-01T07:20:18.625Z'
+        updatedAt: '2026-06-01 15:20:28'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-01 15:20:27'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: obsidian
+                shopId: blocks
+                slot: T
+                quantity: 1
+                unitBuyPrice: 25
+                lineTotal: 25
+                productAmount: 1
+                material: obsidian
+                shopTitle: 方块商店
+                status: delivered
 
-next_id: 21
+next_id: 22

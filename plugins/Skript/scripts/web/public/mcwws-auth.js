@@ -57,12 +57,11 @@
         window.setTimeout(() => modal.classList.remove('closing'), 190);
     }
 
-    const AVATAR_HEAD_API = 'https://mc-heads.net/avatar';
-
     function playerAvatarUrl(playerId, size) {
         const id = String(playerId || '').trim();
         if (!id) return '';
-        return `${AVATAR_HEAD_API}/${encodeURIComponent(id)}/${size || 40}`;
+        const s = Math.min(Math.max(Number(size) || 40, 16), 128);
+        return `/api/player-avatar/${encodeURIComponent(id)}?size=${s}`;
     }
 
     function buildAuthWidgetHtml(buttonId, isMap) {
@@ -175,18 +174,34 @@
 
     function setAvatarImage(img, playerId) {
         if (!img) return;
-        const url = playerAvatarUrl(playerId, 40);
-        img.onerror = () => {
+        const btn = img.closest('.mcwws-auth-avatar-btn');
+        const fallback = btn?.querySelector('.mcwws-auth-avatar-fallback');
+        const clearFallbackState = () => {
+            btn?.classList.remove('is-avatar-fallback');
+            if (fallback) fallback.hidden = true;
+        };
+        const showFallback = () => {
             img.hidden = true;
+            img.removeAttribute('src');
+            btn?.classList.add('is-avatar-fallback');
+            if (fallback) fallback.hidden = false;
+        };
+        const url = playerAvatarUrl(playerId, 40);
+        img.onload = () => {
+            clearFallbackState();
+            img.hidden = false;
+        };
+        img.onerror = () => {
+            showFallback();
         };
         if (url) {
-            img.src = url;
             img.alt = playerId ? `${playerId} 的头像` : '';
             img.hidden = false;
+            clearFallbackState();
+            img.src = url;
         } else {
-            img.removeAttribute('src');
             img.alt = '';
-            img.hidden = true;
+            showFallback();
         }
     }
 
