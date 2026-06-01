@@ -150,6 +150,10 @@ const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database',
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
 const ADMIN_ACCESS_PATH = path.join(DB_DIR, 'admin_access.yml');
 const SHOP_LOCATIONS_PATH = path.join(__dirname, 'mcwws', 'shop_locations.yml');
+const GIS_PROJECT_PATH = path.join(__dirname, 'mcwws', 'gis', 'project.json');
+const GIS_MAX_FEATURES = 5000;
+const GIS_MAX_LAYERS = 32;
+const GIS_ALLOWED_MAPS = new Set(['world', 'world_nether', 'world_the_end', 'dimensionalhome']);
 const BLUEMAP_WEB_MAPS_DIR = path.join(__dirname, '..', '..', '..', '..', 'bluemap', 'web', 'maps');
 const BLUEMAP_LIVE_MAP_IDS = ['world', 'world_nether', 'world_the_end', 'dimensionalhome'];
 const SERVER_ROOT = path.join(__dirname, '..', '..', '..', '..');
@@ -1707,6 +1711,182 @@ function describeDayPeriod(dayTime) {
     if (t < 23000) return '夜晚';
     return '日出';
 }
+
+function defaultGisProject() {
+    return {
+        version: 1,
+        updatedAt: null,
+        layers: [
+            {
+                id: 'roads',
+                name: '道路',
+                color: '#f59e0b',
+                visible: true,
+                features: []
+            },
+            {
+                id: 'labels',
+                name: '标注',
+                color: '#3b82f6',
+                visible: true,
+                features: []
+            }
+        ]
+    };
+}
+
+function loadGisProject() {
+    const fallback = defaultGisProject();
+    const raw = loadJsonFile(GIS_PROJECT_PATH, fallback);
+    if (!raw || typeof raw !== 'object') {
+        return fallback;
+    }
+    return normalizeGisProject(raw);
+}
+
+function saveGisProject(project) {
+    const normalized = normalizeGisProject(project);
+    normalized.updatedAt = new Date().toISOString();
+    fs.mkdirSync(path.dirname(GIS_PROJECT_PATH), { recursive: true });
+    fs.writeFileSync(GIS_PROJECT_PATH, JSON.stringify(normalized, null, 2), 'utf8');
+    return normalized;
+}
+
+function normalizeGisCoord(value) {
+    const num = Number(value);
+    if (!Number.isFinite(num)) {
+        return null;
+    }
+    return Math.round(num * 1000) / 1000;
+}
+
+function normalizeGisPoint(raw) {
+    if (!raw || typeof raw !== 'object') {
+        return null;
+    }
+    const x = normalizeGisCoord(raw.x);
+    const y = normalizeGisCoord(raw.y);
+    const z = normalizeGisCoord(raw.z);
+    if (x == null || y == null || z == null) {
+        return null;
+    }
+    return { x, y, z };
+}
+
+function normalizeGisFeature(raw, layerId) {
+    if (!raw || typeof raw !== 'object') {
+        return null;
+    }
+    const type = String(raw.type || '').trim();
+    if (!['Point', 'LineString', 'Polygon', 'Label'].includes(type)) {
+        return null;
+    }
+    const map = String(raw.map || 'world').trim();
+    if (!GIS_ALLOWED_MAPS.has(map)) {
+        return null;
+    }
+    let coordinates = [];
+    if (type === 'Point' || type === 'Label') {
+        const point = normalizeGisPoint(raw.coordinates || raw.position);
+        if (!point) {
+            return null;
+        }
+        coordinates = point;
+    } else {
+        const list = Array.isArray(raw.coordinates) ? raw.coordinates : [];
+        coordinates = list.map(normalizeGisPoint).filter(Boolean);
+        if (type === 'LineString' && coordinates.length < 2) {
+            return null;
+        }
+        if (type === 'Polygon' && coordinates.length < 3) {
+            return null;
+        }
+    }
+    const props = raw.properties && typeof raw.properties === 'object' ? raw.properties : {};
+    const name = String(props.name || raw.name || '').trim().slice(0, 120);
+    const description = String(props.description || raw.description || '').trim().slice(0, 2000);
+    const color = String(props.color || raw.color || '').trim();
+    const safeColor = /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : '';
+    const id = String(raw.id || '').trim().slice(0, 64)
+        || `f_${crypto.randomBytes(8).toString('hex')}`;
+    return {
+        id,
+        type,
+        map,
+        layerId: String(raw.layerId || layerId || '').trim().slice(0, 64),
+        coordinates,
+        properties: {
+            name,
+            description,
+            ...(safeColor ? { color: safeColor } : {})
+        }
+    };
+}
+
+function normalizeGisProject(raw) {
+    const base = defaultGisProject();
+    const layersIn = Array.isArray(raw.layers) ? raw.layers.slice(0, GIS_MAX_LAYERS) : base.layers;
+    let featureCount = 0;
+    const layers = layersIn.map((layerRaw, index) => {
+        const layerId = String(layerRaw?.id || `layer_${index}`).trim().slice(0, 64)
+            || `layer_${index}`;
+        const name = String(layerRaw?.name || layerId).trim().slice(0, 80) || layerId;
+        const colorRaw = String(layerRaw?.color || '#3b82f6').trim();
+        const color = /^#[0-9a-fA-F]{3,8}$/.test(colorRaw) ? colorRaw : '#3b82f6';
+        const visible = layerRaw?.visible !== false;
+        const featuresIn = Array.isArray(layerRaw?.features) ? layerRaw.features : [];
+        const features = [];
+        featuresIn.forEach((featureRaw) => {
+            if (featureCount >= GIS_MAX_FEATURES) {
+                return;
+            }
+            const feature = normalizeGisFeature(featureRaw, layerId);
+            if (!feature) {
+                return;
+            }
+            feature.layerId = layerId;
+            features.push(feature);
+            featureCount += 1;
+        });
+        return { id: layerId, name, color, visible, features };
+    });
+    if (!layers.length) {
+        return base;
+    }
+    return {
+        version: 1,
+        updatedAt: raw.updatedAt || null,
+        layers
+    };
+}
+
+app.get('/api/gis', (req, res) => {
+    try {
+        const project = loadGisProject();
+        res.json({
+            updatedAt: project.updatedAt,
+            project
+        });
+    } catch (error) {
+        console.error('读取 GIS 数据失败:', error);
+        res.status(500).json({ error: '读取 GIS 数据失败。' });
+    }
+});
+
+app.put('/api/gis', (req, res) => {
+    try {
+        if (!requireAdmin(req, res)) {
+            return;
+        }
+        const body = req.body || {};
+        const project = body.project && typeof body.project === 'object' ? body.project : body;
+        const saved = saveGisProject(project);
+        res.json({ status: 'ok', updatedAt: saved.updatedAt, project: saved });
+    } catch (error) {
+        console.error('保存 GIS 数据失败:', error);
+        res.status(500).json({ error: '保存 GIS 数据失败。' });
+    }
+});
 
 app.get('/api/world-time', (req, res) => {
     try {
