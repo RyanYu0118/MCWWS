@@ -47,6 +47,8 @@
     let dayNightLock = null;
     let dayNightLongPressTimer = 0;
     let dayNightLongPressHandled = false;
+    let dayNightLockRafId = 0;
+    let dayNightStrengthInternalSet = false;
     let dayNightPeriod = '';
     let dayNightDayTime = null;
     let dayNightSyncStarted = false;
@@ -56,7 +58,9 @@
     const DAY_NIGHT_ANIM_MS = 300;
     const WORLD_TIME_POLL_MS = 8000;
     const DAY_NIGHT_MANUAL_MS = 5 * 60 * 1000;
-    const DAY_NIGHT_LONG_PRESS_MS = 550;
+    const DAY_NIGHT_LONG_PRESS_MS = 600;
+    const DAY_NIGHT_LOCK_RING_LEN = 100;
+    const STORAGE_DAY_NIGHT_LOCK = 'mcwws-daynight-lock';
     const MC_DAY_TICKS = 24000;
     const PLAYER_LOCATE_POLL_MS = 8000;
     const LIVE_PLAYERS_CACHE_MS = 1500;
@@ -3361,10 +3365,119 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
-    function setSunlightStrengthImmediate(value) {
+    function loadDayNightLockFromStorage() {
+        try {
+            const stored = localStorage.getItem(STORAGE_DAY_NIGHT_LOCK);
+            if (stored === 'day' || stored === 'night') {
+                dayNightLock = stored;
+            }
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function saveDayNightLockToStorage() {
+        try {
+            if (isDayNightLocked()) {
+                localStorage.setItem(STORAGE_DAY_NIGHT_LOCK, dayNightLock);
+            } else {
+                localStorage.removeItem(STORAGE_DAY_NIGHT_LOCK);
+            }
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function cancelSunlightAnimation() {
+        dayNightAnimToken += 1;
+    }
+
+    function writeSunlightStrengthValue(value) {
         const uniforms = getMapViewerUniforms();
-        if (!uniforms?.sunlightStrength) return false;
+        if (!uniforms?.sunlightStrength) {
+            return false;
+        }
+        dayNightStrengthInternalSet = true;
         uniforms.sunlightStrength.value = value;
+        dayNightStrengthInternalSet = false;
+        return true;
+    }
+
+    function installSunlightStrengthGuard() {
+        const uniform = getMapViewerUniforms()?.sunlightStrength;
+        if (!uniform || uniform.__mcwwsDayNightGuard) {
+            return;
+        }
+        let stored = uniform.value;
+        Object.defineProperty(uniform, 'value', {
+            get() {
+                return stored;
+            },
+            set(next) {
+                if (dayNightStrengthInternalSet) {
+                    stored = next;
+                    return;
+                }
+                if (isDayNightLocked()) {
+                    stored = getDayNightLockStrength();
+                    return;
+                }
+                stored = next;
+            },
+            configurable: true,
+            enumerable: true
+        });
+        uniform.__mcwwsDayNightGuard = true;
+    }
+
+    function stopDayNightLockGuard() {
+        if (dayNightLockRafId) {
+            cancelAnimationFrame(dayNightLockRafId);
+            dayNightLockRafId = 0;
+        }
+    }
+
+    function startDayNightLockGuard() {
+        stopDayNightLockGuard();
+        if (!isDayNightLocked()) {
+            return;
+        }
+        const tick = () => {
+            if (!isDayNightLocked()) {
+                dayNightLockRafId = 0;
+                return;
+            }
+            const target = getDayNightLockStrength();
+            if (Math.abs(getSunlightStrength() - target) > 0.001) {
+                writeSunlightStrengthValue(target);
+                redrawMapViewer();
+            }
+            dayNightLockRafId = requestAnimationFrame(tick);
+        };
+        dayNightLockRafId = requestAnimationFrame(tick);
+    }
+
+    function applyDayNightLockState(animate = true) {
+        if (!isDayNightLocked()) {
+            stopDayNightLockGuard();
+            return;
+        }
+        cancelSunlightAnimation();
+        const target = getDayNightLockStrength();
+        if (animate) {
+            animateSunlightStrength(target).then(() => updateMapControlsState());
+        } else {
+            writeSunlightStrengthValue(target);
+            redrawMapViewer();
+        }
+        startDayNightLockGuard();
+        updateMapControlsState();
+    }
+
+    function setSunlightStrengthImmediate(value) {
+        if (!writeSunlightStrengthValue(value)) {
+            return false;
+        }
         redrawMapViewer();
         return true;
     }
@@ -3372,6 +3485,9 @@
     function animateSunlightStrength(target, durationMs = DAY_NIGHT_ANIM_MS) {
         const uniforms = getMapViewerUniforms();
         if (!uniforms?.sunlightStrength) return Promise.resolve(false);
+        if (isDayNightLocked() && Math.abs(target - getDayNightLockStrength()) > 0.001) {
+            return Promise.resolve(false);
+        }
         const from = getSunlightStrength();
         if (Math.abs(from - target) < 0.002) {
             setSunlightStrengthImmediate(target);
@@ -3381,19 +3497,22 @@
         const start = performance.now();
         return new Promise((resolve) => {
             function frame(now) {
-                if (token !== dayNightAnimToken) {
+                if (token !== dayNightAnimToken || isDayNightLocked()) {
+                    if (isDayNightLocked()) {
+                        applyDayNightLockState(false);
+                    }
                     resolve(false);
                     return;
                 }
                 const progress = Math.min(1, (now - start) / durationMs);
                 const eased = easeOutQuad(progress);
-                uniforms.sunlightStrength.value = from + (target - from) * eased;
+                writeSunlightStrengthValue(from + (target - from) * eased);
                 redrawMapViewer();
                 if (progress < 1) {
                     requestAnimationFrame(frame);
                     return;
                 }
-                uniforms.sunlightStrength.value = target;
+                writeSunlightStrengthValue(target);
                 redrawMapViewer();
                 resolve(true);
             }
@@ -3426,11 +3545,7 @@
         if (!isDayNightLocked()) {
             return;
         }
-        const target = getDayNightLockStrength();
-        if (Math.abs(getSunlightStrength() - target) > 0.02) {
-            setSunlightStrengthImmediate(target);
-        }
-        updateMapControlsState();
+        applyDayNightLockState(false);
     }
 
     function toggleMapDayNight() {
@@ -3447,15 +3562,16 @@
         if (isDayNightLocked()) {
             dayNightLock = null;
             dayNightManualUntil = 0;
+            saveDayNightLockToStorage();
+            stopDayNightLockGuard();
             updateMapControlsState();
             void syncMapDayNightFromServer();
             return;
         }
         dayNightLock = isMapDaylight() ? 'day' : 'night';
         dayNightManualUntil = 0;
-        const target = getDayNightLockStrength();
-        animateSunlightStrength(target).then(() => updateMapControlsState());
-        updateMapControlsState();
+        saveDayNightLockToStorage();
+        applyDayNightLockState(true);
     }
 
     function bindDayNightControl(btn) {
@@ -3463,11 +3579,23 @@
             return;
         }
         btn.dataset.dayNightBound = '1';
+        migrateDayNightLockRing(btn);
 
         const clearLongPress = () => {
             if (dayNightLongPressTimer) {
                 window.clearTimeout(dayNightLongPressTimer);
                 dayNightLongPressTimer = 0;
+            }
+        };
+
+        const endLongPress = (e) => {
+            clearLongPress();
+            try {
+                if (btn.hasPointerCapture?.(e.pointerId)) {
+                    btn.releasePointerCapture(e.pointerId);
+                }
+            } catch {
+                /* ignore */
             }
         };
 
@@ -3477,6 +3605,11 @@
             }
             dayNightLongPressHandled = false;
             clearLongPress();
+            try {
+                btn.setPointerCapture(e.pointerId);
+            } catch {
+                /* ignore */
+            }
             dayNightLongPressTimer = window.setTimeout(() => {
                 dayNightLongPressTimer = 0;
                 dayNightLongPressHandled = true;
@@ -3484,9 +3617,8 @@
             }, DAY_NIGHT_LONG_PRESS_MS);
         });
 
-        btn.addEventListener('pointerup', clearLongPress);
-        btn.addEventListener('pointercancel', clearLongPress);
-        btn.addEventListener('pointerleave', clearLongPress);
+        btn.addEventListener('pointerup', endLongPress);
+        btn.addEventListener('pointercancel', endLongPress);
 
         btn.addEventListener('click', (e) => {
             if (dayNightLongPressHandled) {
@@ -3497,6 +3629,26 @@
             }
             toggleMapDayNight();
         });
+    }
+
+    function migrateDayNightLockRing(btn) {
+        if (!btn || btn.querySelector('.mcwws-ctrl-daynight-lock-ring')) {
+            return;
+        }
+        const ring = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        ring.setAttribute('class', 'mcwws-ctrl-daynight-lock-ring');
+        ring.setAttribute('viewBox', '0 0 40 40');
+        ring.setAttribute('aria-hidden', 'true');
+        ring.innerHTML = `
+            <circle class="mcwws-daynight-lock-ring-track" cx="20" cy="20" r="17" pathLength="${DAY_NIGHT_LOCK_RING_LEN}" />
+            <circle class="mcwws-daynight-lock-ring-bar" cx="20" cy="20" r="17" pathLength="${DAY_NIGHT_LOCK_RING_LEN}" />
+        `;
+        const icon = btn.querySelector('.mcwws-ctrl-daynight-icon');
+        if (icon) {
+            btn.insertBefore(ring, icon);
+        } else {
+            btn.prepend(ring);
+        }
     }
 
     async function syncMapDayNightFromServer() {
@@ -3515,7 +3667,13 @@
             const res = await fetch(`${NODE_API}/api/world-time?t=${Date.now()}`, { cache: 'no-store' });
             if (!res.ok) return;
             const data = await res.json();
-            if (isDayNightManualActive()) return;
+            if (isDayNightLocked()) {
+                enforceDayNightLock();
+                return;
+            }
+            if (Date.now() < dayNightManualUntil) {
+                return;
+            }
             const target = Number(data.sunlightStrength);
             if (!Number.isFinite(target)) return;
             dayNightPeriod = String(data.period || '');
@@ -3538,10 +3696,16 @@
     function startDayNightSync() {
         if (dayNightSyncStarted) return;
         dayNightSyncStarted = true;
+        loadDayNightLockFromStorage();
         const tick = () => syncMapDayNightFromServer();
         const waitForBlueMap = () => {
             if (getMapViewerUniforms()?.sunlightStrength) {
-                tick();
+                installSunlightStrengthGuard();
+                if (isDayNightLocked()) {
+                    applyDayNightLockState(false);
+                } else {
+                    tick();
+                }
                 setInterval(tick, WORLD_TIME_POLL_MS);
                 return;
             }
@@ -3668,6 +3832,8 @@
             migrateCompassDom(root);
             migrateLayerMenuDom(root);
             migrateLocateProgressRing(root);
+            migrateDayNightLockRing(root.querySelector('.mcwws-ctrl-daynight'));
+            bindDayNightControl(root.querySelector('.mcwws-ctrl-daynight'));
             updateMapControlsState();
             return root;
         }
@@ -3708,6 +3874,10 @@
                             <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-out" title="缩小">−</button>
                         </div>
                         <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-daynight" title="切换日景 / 夜景">
+                            <svg class="mcwws-ctrl-daynight-lock-ring" viewBox="0 0 40 40" aria-hidden="true">
+                                <circle class="mcwws-daynight-lock-ring-track" cx="20" cy="20" r="17" pathLength="100" />
+                                <circle class="mcwws-daynight-lock-ring-bar" cx="20" cy="20" r="17" pathLength="100" />
+                            </svg>
                             <svg class="mcwws-ctrl-daynight-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
                                 <circle class="mcwws-daynight-sun" cx="12" cy="12" r="4" fill="currentColor"/>
                                 <g class="mcwws-daynight-moon" fill="currentColor">
