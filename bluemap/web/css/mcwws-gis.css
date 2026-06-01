@@ -520,24 +520,8 @@ body.mcwws-map-simplified-mode {
 }
 
 body.mcwws-map-simplified-mode #map-container {
-    display: none !important;
-}
-
-.mcwws-simplified-plane {
-    position: fixed;
-    inset: 0;
-    z-index: 1;
-    background: #fff;
-    pointer-events: auto;
-    touch-action: none;
-}
-
-.mcwws-simplified-plane[hidden] {
-    display: none !important;
-}
-
-body.mcwws-gis-drawing-simplified .mcwws-simplified-plane {
-    cursor: crosshair;
+    opacity: 0 !important;
+    pointer-events: auto !important;
 }
 
 #mcwws-gis-svg-layer,

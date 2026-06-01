@@ -5,6 +5,7 @@
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
+    const GIS_DISPLAY_Y = 64;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -34,8 +35,7 @@
     let pinElements = new Map();
     let lastPickAt = 0;
     let lastPickKey = '';
-    let simplifiedPlaneBound = false;
-    let simplifiedPan = null;
+    let gisCachedCamera = null;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -211,144 +211,13 @@
     }
 
     function syncMapRenderModeVisual() {
-        const simplified = isSimplifiedMapMode();
-        document.body.classList.toggle('mcwws-map-simplified-mode', simplified);
+        document.body.classList.toggle('mcwws-map-simplified-mode', isSimplifiedMapMode());
         const mapContainer = document.getElementById('map-container');
         if (mapContainer) {
-            mapContainer.style.display = simplified ? 'none' : '';
+            mapContainer.style.display = '';
         }
-        ensureSimplifiedPlane();
+        gisCachedCamera = null;
         renderOverlay();
-    }
-
-    function ensureSimplifiedPlane() {
-        let plane = document.getElementById('mcwws-simplified-plane');
-        if (!plane) {
-            plane = document.createElement('div');
-            plane.id = 'mcwws-simplified-plane';
-            plane.className = 'mcwws-simplified-plane';
-            plane.setAttribute('aria-hidden', 'true');
-            document.body.insertBefore(plane, document.body.firstChild);
-            bindSimplifiedPlaneEvents(plane);
-        }
-        plane.hidden = !isSimplifiedMapMode();
-        return plane;
-    }
-
-    function bindSimplifiedPlaneEvents(plane) {
-        if (simplifiedPlaneBound) {
-            return;
-        }
-        simplifiedPlaneBound = true;
-
-        plane.addEventListener('wheel', (e) => {
-            if (!isSimplifiedMapMode()) {
-                return;
-            }
-            e.preventDefault();
-            const view = getViewForProjection();
-            if (!view) {
-                return;
-            }
-            const factor = e.deltaY > 0 ? 1.1 : 0.9;
-            const dist = Math.max(5, Math.min(8000, (view.distance || 128) * factor));
-            applyViewState({ ...view, distance: dist, height: dist });
-            renderOverlay();
-        }, { passive: false });
-
-        plane.addEventListener('pointerdown', (e) => {
-            if (!isSimplifiedMapMode() || e.button !== 0) {
-                return;
-            }
-            if (gisEditMode && gisCanEdit && activeTool !== 'select') {
-                return;
-            }
-            simplifiedPan = {
-                lastX: e.clientX,
-                lastY: e.clientY,
-                pointerId: e.pointerId
-            };
-            plane.setPointerCapture(e.pointerId);
-        });
-
-        plane.addEventListener('pointermove', (e) => {
-            if (
-                isSimplifiedMapMode()
-                && gisEditMode
-                && (activeTool === 'line' || activeTool === 'polygon')
-            ) {
-                draftHover = pickWorldFromScreen(e.clientX, e.clientY);
-                renderOverlay();
-            }
-            if (!simplifiedPan || simplifiedPan.pointerId !== e.pointerId) {
-                return;
-            }
-            if (gisEditMode && gisCanEdit && activeTool !== 'select') {
-                return;
-            }
-            const view = getViewForProjection();
-            if (!view) {
-                return;
-            }
-            const prev = screenToWorld(simplifiedPan.lastX, simplifiedPan.lastY, view);
-            const curr = screenToWorld(e.clientX, e.clientY, view);
-            if (prev && curr) {
-                applyViewState({
-                    ...view,
-                    x: view.x - (curr.x - prev.x),
-                    z: view.z - (curr.z - prev.z)
-                });
-                renderOverlay();
-            }
-            simplifiedPan.lastX = e.clientX;
-            simplifiedPan.lastY = e.clientY;
-        });
-
-        plane.addEventListener('pointerup', (e) => {
-            if (!simplifiedPan || simplifiedPan.pointerId !== e.pointerId) {
-                return;
-            }
-            simplifiedPan = null;
-            try {
-                plane.releasePointerCapture(e.pointerId);
-            } catch {
-                /* ignore */
-            }
-        });
-
-        plane.addEventListener('pointercancel', () => {
-            simplifiedPan = null;
-        });
-
-        plane.addEventListener('click', (e) => {
-            if (!isSimplifiedMapMode()) {
-                return;
-            }
-            if (!gisInfoEnabled || !gisEditMode || !gisCanEdit || activeTool === 'select') {
-                return;
-            }
-            e.preventDefault();
-            e.stopPropagation();
-            const point = pickWorldFromScreen(e.clientX, e.clientY);
-            if (point) {
-                handleMapPick(point);
-            }
-        });
-
-        plane.addEventListener('dblclick', (e) => {
-            if (!isSimplifiedMapMode()) {
-                return;
-            }
-            if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) {
-                return;
-            }
-            if (activeTool !== 'line' && activeTool !== 'polygon') {
-                return;
-            }
-            e.preventDefault();
-            e.stopPropagation();
-            finishDraft();
-        });
     }
 
     function applyMapRenderMode(mode, persist = true) {
@@ -420,48 +289,127 @@
         return parseHashParts(parts);
     }
 
-    /** 与 mcwws-shops 的 projectMarker 一致，两种渲染模式共用，避免切换时投影算法变化 */
-    function getViewForProjection() {
+    function findCamera(root, seen = new Set(), depth = 0) {
+        if (!root || typeof root !== 'object' || seen.has(root) || depth > 5) return null;
+        seen.add(root);
+        if (root.isCamera && root.projectionMatrix && root.matrixWorldInverse) return root;
+        for (const key of Object.keys(root)) {
+            if (key === 'parent' || key === 'children' || key === 'domElement') continue;
+            const camera = findCamera(root[key], seen, depth + 1);
+            if (camera) return camera;
+        }
+        return null;
+    }
+
+    function refreshBlueMapCameraMatrices(camera) {
+        if (!camera) return null;
+        if (typeof camera.updateMatrixWorld === 'function') {
+            camera.updateMatrixWorld(true);
+        }
+        if (typeof camera.updateProjectionMatrix === 'function') {
+            camera.updateProjectionMatrix();
+        }
+        return camera;
+    }
+
+    function getGisBlueMapCamera() {
         const cm = getControlsManager();
-        const hash = parseHash();
-        const dist = Number(cm?.distance) || hash?.distance || hash?.height || 128;
-        const pitch = Number.isFinite(Number(cm?.angle))
-            ? Number(cm.angle)
-            : Number(hash?.angle ?? hash?.pitch ?? 0);
+        if (cm && typeof cm.updateCamera === 'function') {
+            cm.updateCamera();
+        }
+        gisCachedCamera = findCamera(getBlueMapApp()) || gisCachedCamera;
+        return refreshBlueMapCameraMatrices(gisCachedCamera);
+    }
+
+    function applyMatrix4(point, matrix) {
+        const e = matrix.elements || matrix;
+        const x = point.x;
+        const y = point.y;
+        const z = point.z;
+        const w = point.w == null ? 1 : point.w;
         return {
-            map: hash?.map || getCurrentMapId(),
-            x: Number(cm?.position?.x ?? hash?.x ?? 0),
-            y: Number(cm?.position?.y ?? hash?.y ?? 64),
-            z: Number(cm?.position?.z ?? hash?.z ?? 0),
-            distance: dist,
-            height: dist,
-            rotation: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
-            yaw: Number(cm?.rotation ?? hash?.rotation ?? hash?.yaw ?? 0),
-            angle: pitch,
-            pitch,
-            mode: getMapViewState() || hash?.mode || 'flat'
+            x: e[0] * x + e[4] * y + e[8] * z + e[12] * w,
+            y: e[1] * x + e[5] * y + e[9] * z + e[13] * w,
+            z: e[2] * x + e[6] * y + e[10] * z + e[14] * w,
+            w: e[3] * x + e[7] * y + e[11] * z + e[15] * w
         };
     }
 
-    function projectWorldPoint(point, view) {
-        const v = view || getViewForProjection();
-        if (!v || !point) {
-            return null;
+    /** 与商店钉一致：有相机用 matrix 投影，否则回退 hash/controls 公式 */
+    function getViewForProjection() {
+        const cm = getControlsManager();
+        const hash = parseHash();
+        if (cm) {
+            const dist = Number(cm.distance) || hash?.distance || hash?.height || 128;
+            return {
+                map: getCurrentMapId(),
+                x: cm.position.x,
+                y: cm.position.y,
+                z: cm.position.z,
+                distance: dist,
+                height: dist,
+                rotation: cm.rotation ?? hash?.rotation ?? 0,
+                yaw: cm.rotation ?? hash?.yaw ?? 0,
+                angle: cm.angle ?? hash?.angle ?? 0,
+                pitch: cm.angle ?? hash?.pitch ?? 0,
+                tilt: cm.tilt ?? 0,
+                ortho: cm.ortho ?? 0,
+                mode: getMapViewState()
+            };
         }
-        const dx = point.x - v.x;
-        const dy = point.y - v.y;
-        const dz = point.z - v.z;
-        const yaw = v.rotation ?? v.yaw ?? 0;
+        if (!hash) return null;
+        const dist = hash.distance ?? hash.height ?? 128;
+        return { ...hash, distance: dist, height: dist };
+    }
+
+    function projectGisWithCamera(point, camera, labelStyle) {
+        const worldPoint = {
+            x: point.x,
+            y: GIS_DISPLAY_Y + (labelStyle ? 1.2 : 0),
+            z: point.z,
+            w: 1
+        };
+        const cameraPoint = applyMatrix4(worldPoint, camera.matrixWorldInverse);
+        const clipPoint = applyMatrix4(cameraPoint, camera.projectionMatrix);
+        if (!clipPoint.w) return null;
+        const nx = clipPoint.x / clipPoint.w;
+        const ny = clipPoint.y / clipPoint.w;
+        const nz = clipPoint.z / clipPoint.w;
+        return {
+            x: (nx * 0.5 + 0.5) * window.innerWidth,
+            y: (-ny * 0.5 + 0.5) * window.innerHeight,
+            behind: clipPoint.w < 0 || nz < -1 || nz > 1
+        };
+    }
+
+    function projectGisMarker(point, view, labelStyle) {
+        const wy = GIS_DISPLAY_Y + (labelStyle ? 1.2 : 0);
+        const dx = point.x - view.x;
+        const dy = wy - view.y;
+        const dz = point.z - view.z;
+        const yaw = view.rotation ?? view.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
         const right = dx * cos - dz * sin;
         const forward = dx * sin + dz * cos;
-        const perspectiveBoost = v.mode === 'perspective' ? 1.35 : 1;
-        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, v.height * 2.2)) * perspectiveBoost));
-        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(v.pitch || -0.8))));
-        const x = window.innerWidth / 2 + right * scale;
-        const y = window.innerHeight / 2 + forward * scale * pitchFactor - dy * scale * 0.65;
-        return { x, y, behind: false };
+        const perspectiveBoost = view.mode === 'perspective' ? 1.35 : 1;
+        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, view.height * 2.2)) * perspectiveBoost));
+        const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(view.pitch || -0.8))));
+        return {
+            x: window.innerWidth / 2 + right * scale,
+            y: window.innerHeight / 2 + forward * scale * pitchFactor - dy * scale * 0.65,
+            behind: false
+        };
+    }
+
+    function projectGisPoint(point, view, camera, labelStyle) {
+        if (!point) return null;
+        const v = view || getViewForProjection();
+        if (camera) {
+            return projectGisWithCamera(point, camera, labelStyle);
+        }
+        if (!v) return null;
+        return projectGisMarker(point, v, labelStyle);
     }
 
     function screenToWorld(screenX, screenY, view) {
@@ -490,7 +438,7 @@
         if (!raw) return null;
         return {
             x: Math.floor(raw.x) + 0.5,
-            y: Math.round(raw.y),
+            y: GIS_DISPLAY_Y,
             z: Math.floor(raw.z) + 0.5
         };
     }
@@ -789,11 +737,6 @@
         }
         lastPickAt = now;
         lastPickKey = pickKey;
-        if (!isSimplifiedMapMode() && getMapViewState() !== 'flat') {
-            setStatus('请切换到 2D 俯视后再绘制', 'error');
-            return;
-        }
-
         if (activeTool === 'select') {
             return;
         }
@@ -921,10 +864,10 @@
         return layer;
     }
 
-    function buildSvgPath(points, closed) {
-        const view = getViewForProjection();
+    function buildSvgPath(points, closed, view, camera) {
+        const v = view || getViewForProjection();
         const screen = points
-            .map((p) => projectWorldPoint(p, view))
+            .map((p) => projectGisPoint(p, v, camera, false))
             .filter((p) => p && !p.behind);
         if (screen.length < 2) return '';
         return screen.map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`).join(' ')
@@ -943,6 +886,9 @@
             return;
         }
 
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+
         const fragments = [];
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
@@ -951,7 +897,7 @@
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                const d = buildSvgPath(points, false);
+                const d = buildSvgPath(points, false, view, camera);
                 if (d) {
                     fragments.push(
                         `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="none" stroke="${color}" stroke-width="${width}" stroke-linecap="round" stroke-linejoin="round" opacity="0.9"/>`
@@ -959,7 +905,7 @@
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const d = buildSvgPath(points, true);
+                const d = buildSvgPath(points, true, view, camera);
                 if (d) {
                     fragments.push(
                         `<path data-fid="${escapeHtml(feature.id)}" d="${d}" fill="${color}" fill-opacity="0.22" stroke="${color}" stroke-width="${width}"/>`
@@ -971,7 +917,7 @@
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const draft = draftPoints.slice();
             if (draftHover) draft.push(draftHover);
-            const d = buildSvgPath(draft, activeTool === 'polygon' && draft.length >= 3);
+            const d = buildSvgPath(draft, activeTool === 'polygon' && draft.length >= 3, view, camera);
             if (d) {
                 fragments.push(
                     `<path class="mcwws-gis-draft" d="${d}" fill="none" stroke="#14b8a6" stroke-width="2" stroke-dasharray="6 4"/>`
@@ -1015,7 +961,7 @@
                 <span class="mcwws-gis-pin-label">${escapeHtml(name)}</span>
             `;
             pin.classList.toggle('is-selected', feature.id === selectedFeatureId);
-            const projected = projectWorldPoint(point, getViewForProjection());
+            const projected = projectGisPoint(point, view, camera, true);
             const off = !projected || projected.behind
                 || projected.x < -40 || projected.y < -40
                 || projected.x > window.innerWidth + 40
@@ -1037,7 +983,6 @@
     function syncDrawingClass() {
         const drawing = gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select';
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
-        document.body.classList.toggle('mcwws-gis-drawing-simplified', drawing && isSimplifiedMapMode());
     }
 
     function mountGisAboveDimension(wrap, column) {
@@ -1426,7 +1371,10 @@
         });
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('dblclick', onDblClick, true);
-        window.addEventListener('hashchange', renderOverlay);
+        window.addEventListener('hashchange', () => {
+            gisCachedCamera = null;
+            renderOverlay();
+        });
         window.addEventListener('resize', renderOverlay);
         animationId = requestAnimationFrame(tick);
     }
