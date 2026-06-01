@@ -16,8 +16,13 @@
     let selectedFeatureId = null;
     let draftPoints = [];
     let draftHover = null;
-    let gisMenuOpen = false;
+    let layerDialogOpen = false;
+    let mapRenderMode = 'original';
+    let gisInfoEnabled = false;
+    let gisEditorOpen = false;
     let gisControlsBound = false;
+    const STORAGE_RENDER_MODE = 'mcwws-map-render-mode';
+    const STORAGE_GIS_ENABLED = 'mcwws-gis-info-enabled';
     let dirty = false;
     let saving = false;
     let statusMessage = '';
@@ -81,6 +86,90 @@
 
     function getCurrentMapId() {
         return getBlueMapApp()?.mapViewer?.data?.map?.id || parseHash()?.map || 'world';
+    }
+
+    function loadLayerPrefs() {
+        try {
+            const mode = localStorage.getItem(STORAGE_RENDER_MODE);
+            if (mode === 'original' || mode === 'simplified') {
+                mapRenderMode = mode;
+            }
+            const gis = localStorage.getItem(STORAGE_GIS_ENABLED);
+            if (gis === '1') {
+                gisInfoEnabled = true;
+            } else if (gis === '0') {
+                gisInfoEnabled = false;
+            }
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function saveLayerPrefs() {
+        try {
+            localStorage.setItem(STORAGE_RENDER_MODE, mapRenderMode);
+            localStorage.setItem(STORAGE_GIS_ENABLED, gisInfoEnabled ? '1' : '0');
+        } catch {
+            /* ignore */
+        }
+    }
+
+    function applyMapRenderMode(mode, persist = true) {
+        mapRenderMode = mode === 'simplified' ? 'simplified' : 'original';
+        const bm = getBlueMapApp();
+        const data = bm?.mapViewer?.data;
+        if (data) {
+            const settings = bm.settings || {};
+            const hiresMin = Number(settings.hiresSliderMin);
+            const hiresDefault = Number(settings.hiresSliderDefault);
+            const hiresMax = Number(settings.hiresSliderMax);
+            const lowresMin = Number(settings.lowresSliderMin);
+            const lowresDefault = Number(settings.lowresSliderDefault);
+            const lowresMax = Number(settings.lowresSliderMax);
+            if (mapRenderMode === 'original') {
+                data.loadedHiresViewDistance = Number.isFinite(hiresDefault) ? hiresDefault : 100;
+                data.loadedLowresViewDistance = Number.isFinite(lowresDefault) ? lowresDefault : 2000;
+            } else {
+                data.loadedHiresViewDistance = Number.isFinite(hiresMin) ? hiresMin : 0;
+                data.loadedLowresViewDistance = Number.isFinite(lowresMax) ? lowresMax : 7000;
+            }
+            bm.mapViewer?.updateLoadedMapArea?.();
+            bm.saveUserSettings?.();
+        }
+        if (persist) {
+            saveLayerPrefs();
+        }
+        renderPanel();
+    }
+
+    function setGisInfoEnabled(enabled, persist = true) {
+        gisInfoEnabled = !!enabled;
+        if (!gisInfoEnabled) {
+            gisEditorOpen = false;
+            if (gisEditMode) {
+                gisEditMode = false;
+                draftPoints = [];
+                draftHover = null;
+                syncDrawingClass();
+            }
+        }
+        if (persist) {
+            saveLayerPrefs();
+        }
+        renderOverlay();
+        renderPanel();
+    }
+
+    function tryApplyStoredMapRenderMode(attemptsLeft = 40) {
+        const bm = getBlueMapApp();
+        if (bm?.mapViewer?.data) {
+            applyMapRenderMode(mapRenderMode, false);
+            return;
+        }
+        if (attemptsLeft <= 0) {
+            return;
+        }
+        requestAnimationFrame(() => tryApplyStoredMapRenderMode(attemptsLeft - 1));
     }
 
     function parseHashParts(parts) {
@@ -506,7 +595,7 @@
     }
 
     function handleMapPick(point) {
-        if (!gisEditMode || !gisCanEdit || !point) return;
+        if (!gisInfoEnabled || !gisEditMode || !gisCanEdit || !point) return;
         const pickKey = `${point.x},${point.y},${point.z}`;
         const now = Date.now();
         if (lastPickKey === pickKey && now - lastPickAt < 400) {
@@ -546,10 +635,10 @@
     }
 
     function onCanvasClick(event) {
-        if (!gisEditMode || !gisCanEdit) return;
+        if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
         if (activeTool === 'select') return;
         const target = event.target;
-        if (target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-gis-menu')) return;
+        if (target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) return;
         if (!target?.closest?.('canvas')) return;
         const point = pickWorldFromScreen(event.clientX, event.clientY);
         if (!point) return;
@@ -566,7 +655,7 @@
     }
 
     function onMapInteraction(event) {
-        if (!gisEditMode || !gisCanEdit) return;
+        if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
         const point = extractInteractionPoint(event.detail);
         if (point) {
             handleMapPick(point);
@@ -662,6 +751,13 @@
         const pinLayer = ensurePinLayer();
         if (!svg || !pinLayer) return;
 
+        if (!gisInfoEnabled) {
+            svg.innerHTML = '';
+            pinElements.forEach((pin) => pin.remove());
+            pinElements.clear();
+            return;
+        }
+
         const fragments = [];
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
@@ -754,7 +850,10 @@
     }
 
     function syncDrawingClass() {
-        document.body.classList.toggle('mcwws-gis-drawing', gisEditMode && gisCanEdit && activeTool !== 'select');
+        document.body.classList.toggle(
+            'mcwws-gis-drawing',
+            gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select'
+        );
     }
 
     function mountGisAboveDimension(wrap, column) {
@@ -778,21 +877,42 @@
             wrap.id = GIS_WRAP_ID;
             wrap.className = 'mcwws-ctrl-gis-wrap';
             wrap.innerHTML = `
-                <button type="button" class="mcwws-ctrl-gis" title="地图标注 GIS">
+                <button type="button" class="mcwws-ctrl-gis" title="图层与地图模式">
                     <span class="mcwws-ctrl-gis-thumb" aria-hidden="true"></span>
                     <span class="mcwws-ctrl-gis-text">
                         <svg class="mcwws-ctrl-gis-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true">
-                            <path fill="currentColor" d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5z"/>
+                            <path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/>
                         </svg>
-                        标注
+                        图层
                     </span>
                 </button>
-                <div class="mcwws-gis-menu" hidden></div>
+                <div class="mcwws-layer-dialog" hidden></div>
             `;
             mountGisAboveDimension(wrap, column);
             bindGisControlEvents(wrap);
         } else {
             mountGisAboveDimension(wrap, column);
+            let dialog = wrap.querySelector('.mcwws-layer-dialog');
+            const legacyMenu = wrap.querySelector('.mcwws-gis-menu');
+            if (!dialog && legacyMenu) {
+                legacyMenu.classList.replace('mcwws-gis-menu', 'mcwws-layer-dialog');
+                dialog = legacyMenu;
+            }
+            if (!dialog) {
+                dialog = document.createElement('div');
+                dialog.className = 'mcwws-layer-dialog';
+                dialog.hidden = true;
+                wrap.appendChild(dialog);
+            }
+            const textEl = wrap.querySelector('.mcwws-ctrl-gis-text');
+            if (textEl) {
+                const icon = textEl.querySelector('.mcwws-ctrl-gis-icon');
+                textEl.textContent = '';
+                if (icon) {
+                    textEl.appendChild(icon);
+                }
+                textEl.append(document.createTextNode('图层'));
+            }
         }
         return wrap;
     }
@@ -802,76 +922,117 @@
         if (!btn) {
             return;
         }
-        btn.classList.toggle('is-open', gisMenuOpen);
+        btn.classList.toggle('is-open', layerDialogOpen);
         btn.classList.toggle('is-editing', gisEditMode);
-        btn.title = gisEditMode
-            ? '地图标注：编辑中（2D 俯视绘制）'
-            : '地图标注 GIS';
+        btn.classList.toggle('is-gis-on', gisInfoEnabled);
+        let title = '图层与地图模式';
+        if (gisEditMode) {
+            title = '图层：地理标注编辑中（2D 俯视）';
+        } else if (gisInfoEnabled) {
+            title = '图层：地理信息已开启';
+        }
+        btn.title = title;
     }
 
-    function renderGisMenu() {
-        const wrap = ensureGisControls();
-        const menu = wrap?.querySelector('.mcwws-gis-menu');
-        if (!menu) {
-            return;
-        }
-        menu.hidden = !gisMenuOpen;
-
+    function renderGisEditorHtml() {
         const layer = getActiveLayer();
         const selected = selectedFeatureId ? findFeatureById(selectedFeatureId) : null;
         const editHint = gisCanEdit
-            ? (gisEditMode ? '2D 俯视下点击地图绘制；道路/区域双击结束' : '点「开始编辑」后在地图上标注')
-            : '管理员登录后可编辑';
+            ? (gisEditMode ? '2D 俯视下点击地图绘制；道路/区域双击结束' : '进入编辑后可在地图上标注')
+            : '管理员登录后可编辑地理信息';
 
-        menu.innerHTML = `
-            <p class="mcwws-gis-menu-hint">${escapeHtml(editHint)}</p>
-            <div class="mcwws-gis-menu-tools" role="toolbar" aria-label="绘制工具">
-                ${TOOLS.map((t) => `
-                    <button type="button" class="mcwws-gis-menu-tool${activeTool === t.id ? ' is-active' : ''}"
-                        data-tool="${t.id}" title="${escapeHtml(t.label)}"
-                        ${!gisEditMode || !gisCanEdit ? 'disabled' : ''}>
-                        <span class="mcwws-gis-menu-tool-icon" aria-hidden="true">${t.icon}</span>
-                        <span class="mcwws-gis-menu-tool-label">${escapeHtml(t.label)}</span>
-                    </button>
-                `).join('')}
-            </div>
-            <div class="mcwws-gis-menu-actions">
-                <button type="button" class="mcwws-gis-menu-action" data-action="toggle-edit"
-                    ${!gisCanEdit ? 'disabled' : ''}>${gisEditMode ? '退出编辑' : '开始编辑'}</button>
-                <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--primary" data-action="save"
-                    ${!gisCanEdit || !dirty || saving ? 'disabled' : ''}>${saving ? '保存中…' : '保存'}</button>
-            </div>
-            <div class="mcwws-gis-menu-actions">
-                <button type="button" class="mcwws-gis-menu-action" data-action="finish-draft"
-                    ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>完成绘制</button>
-                <button type="button" class="mcwws-gis-menu-action" data-action="cancel-draft"
-                    ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>取消</button>
-            </div>
-            <div class="mcwws-gis-menu-actions">
-                <button type="button" class="mcwws-gis-menu-action" data-action="export">导出 GeoJSON</button>
-                <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--danger" data-action="delete"
-                    ${!selected ? 'disabled' : ''}>删除选中</button>
-            </div>
-            <p class="mcwws-gis-menu-section-title">图层 · ${escapeHtml(layer?.name || '—')}</p>
-            <div class="mcwws-gis-menu-layers">
-                ${(project?.layers || []).map((l) => `
-                    <div class="mcwws-gis-menu-layer-row">
-                        <button type="button" class="mcwws-gis-menu-layer-pick${l.id === activeLayerId ? ' is-active' : ''}"
-                            data-layer-pick="${escapeHtml(l.id)}">
-                            <span class="mcwws-gis-menu-layer-thumb" style="background:${escapeHtml(l.color)}" aria-hidden="true"></span>
-                            <span class="mcwws-gis-menu-layer-name">${escapeHtml(l.name)}</span>
-                            <span class="mcwws-gis-menu-layer-count">${(l.features || []).length}</span>
+        return `
+            <div class="mcwws-layer-editor">
+                <p class="mcwws-gis-menu-hint">${escapeHtml(editHint)}</p>
+                <div class="mcwws-gis-menu-tools" role="toolbar" aria-label="绘制工具">
+                    ${TOOLS.map((t) => `
+                        <button type="button" class="mcwws-gis-menu-tool${activeTool === t.id ? ' is-active' : ''}"
+                            data-tool="${t.id}" title="${escapeHtml(t.label)}"
+                            ${!gisEditMode || !gisCanEdit ? 'disabled' : ''}>
+                            <span class="mcwws-gis-menu-tool-icon" aria-hidden="true">${t.icon}</span>
+                            <span class="mcwws-gis-menu-tool-label">${escapeHtml(t.label)}</span>
                         </button>
-                        <label class="mcwws-gis-menu-layer-vis" title="显示图层">
-                            <input type="checkbox" data-layer-visible="${escapeHtml(l.id)}" ${l.visible ? 'checked' : ''}>
-                            <span aria-hidden="true">👁</span>
-                        </label>
-                    </div>
-                `).join('')}
+                    `).join('')}
+                </div>
+                <div class="mcwws-gis-menu-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="toggle-edit"
+                        ${!gisCanEdit ? 'disabled' : ''}>${gisEditMode ? '退出编辑' : '开始编辑'}</button>
+                    <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--primary" data-action="save"
+                        ${!gisCanEdit || !dirty || saving ? 'disabled' : ''}>${saving ? '保存中…' : '保存'}</button>
+                </div>
+                <div class="mcwws-gis-menu-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="finish-draft"
+                        ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>完成绘制</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="cancel-draft"
+                        ${!gisEditMode || draftPoints.length === 0 ? 'disabled' : ''}>取消</button>
+                </div>
+                <div class="mcwws-gis-menu-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="export">导出 GeoJSON</button>
+                    <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--danger" data-action="delete"
+                        ${!selected ? 'disabled' : ''}>删除选中</button>
+                </div>
+                <p class="mcwws-gis-menu-section-title">标注图层 · ${escapeHtml(layer?.name || '—')}</p>
+                <div class="mcwws-gis-menu-layers">
+                    ${(project?.layers || []).map((l) => `
+                        <div class="mcwws-gis-menu-layer-row">
+                            <button type="button" class="mcwws-gis-menu-layer-pick${l.id === activeLayerId ? ' is-active' : ''}"
+                                data-layer-pick="${escapeHtml(l.id)}">
+                                <span class="mcwws-gis-menu-layer-thumb" style="background:${escapeHtml(l.color)}" aria-hidden="true"></span>
+                                <span class="mcwws-gis-menu-layer-name">${escapeHtml(l.name)}</span>
+                                <span class="mcwws-gis-menu-layer-count">${(l.features || []).length}</span>
+                            </button>
+                            <label class="mcwws-gis-menu-layer-vis" title="显示图层">
+                                <input type="checkbox" data-layer-visible="${escapeHtml(l.id)}" ${l.visible ? 'checked' : ''}>
+                                <span aria-hidden="true">👁</span>
+                            </label>
+                        </div>
+                    `).join('')}
+                </div>
+                ${
+                    selected
+                        ? `<p class="mcwws-gis-menu-selected">选中：${escapeHtml(selected.feature.properties?.name || selected.feature.id)}</p>`
+                        : ''
+                }
             </div>
+        `;
+    }
+
+    function renderLayerDialog() {
+        const wrap = ensureGisControls();
+        const dialog = wrap?.querySelector('.mcwws-layer-dialog');
+        if (!dialog) {
+            return;
+        }
+        dialog.hidden = !layerDialogOpen;
+
+        dialog.innerHTML = `
+            <p class="mcwws-layer-dialog-title">图层</p>
+            <div class="mcwws-layer-dialog-modes">
+                <button type="button" class="mcwws-layer-mode-card${mapRenderMode === 'original' ? ' is-active' : ''}"
+                    data-map-mode="original">
+                    <span class="mcwws-layer-mode-preview mcwws-layer-mode-preview--original" aria-hidden="true"></span>
+                    <span class="mcwws-layer-mode-label">原版地图</span>
+                    <span class="mcwws-layer-mode-desc">高清区块细节</span>
+                </button>
+                <button type="button" class="mcwws-layer-mode-card${mapRenderMode === 'simplified' ? ' is-active' : ''}"
+                    data-map-mode="simplified">
+                    <span class="mcwws-layer-mode-preview mcwws-layer-mode-preview--simplified" aria-hidden="true"></span>
+                    <span class="mcwws-layer-mode-label">简化地图</span>
+                    <span class="mcwws-layer-mode-desc">低分辨率远景</span>
+                </button>
+            </div>
+            <label class="mcwws-layer-gis-toggle">
+                <input type="checkbox" data-gis-info-toggle ${gisInfoEnabled ? 'checked' : ''}>
+                <span>开启地理信息</span>
+            </label>
             ${
-                selected
-                    ? `<p class="mcwws-gis-menu-selected">选中：${escapeHtml(selected.feature.properties?.name || selected.feature.id)}</p>`
+                gisInfoEnabled
+                    ? `
+                <button type="button" class="mcwws-layer-edit-entry" data-action="toggle-gis-editor">
+                    ${gisEditorOpen ? '收起地理标注编辑' : '编辑地理标注'}
+                </button>
+                ${gisEditorOpen ? renderGisEditorHtml() : ''}
+            `
                     : ''
             }
             <p class="mcwws-gis-menu-status${statusKind ? ` is-${statusKind}` : ''}">${escapeHtml(statusMessage)}${dirty ? ' · 未保存' : ''}</p>
@@ -880,7 +1041,7 @@
     }
 
     function renderPanel() {
-        renderGisMenu();
+        renderLayerDialog();
     }
 
     function bindGisControlEvents(wrap) {
@@ -891,31 +1052,41 @@
 
         wrap.querySelector('.mcwws-ctrl-gis')?.addEventListener('click', (e) => {
             e.stopPropagation();
-            gisMenuOpen = !gisMenuOpen;
-            if (gisMenuOpen) {
+            layerDialogOpen = !layerDialogOpen;
+            if (layerDialogOpen) {
                 const layerMenu = document.querySelector('.mcwws-layer-menu');
                 if (layerMenu) {
                     layerMenu.hidden = true;
                 }
             }
-            renderGisMenu();
+            renderLayerDialog();
         });
 
         wrap.addEventListener('click', (e) => {
+            const modeCard = e.target.closest('[data-map-mode]');
+            if (modeCard) {
+                applyMapRenderMode(modeCard.getAttribute('data-map-mode'));
+                return;
+            }
+            const gisToggle = e.target.closest('[data-gis-info-toggle]');
+            if (gisToggle && e.target.matches('input[type="checkbox"]')) {
+                setGisInfoEnabled(e.target.checked);
+                return;
+            }
             const toolBtn = e.target.closest('[data-tool]');
             if (toolBtn) {
                 activeTool = toolBtn.getAttribute('data-tool') || 'select';
                 draftPoints = [];
                 draftHover = null;
                 syncDrawingClass();
-                renderGisMenu();
+                renderLayerDialog();
                 renderOverlay();
                 return;
             }
             const layerPick = e.target.closest('[data-layer-pick]');
             if (layerPick) {
                 activeLayerId = layerPick.getAttribute('data-layer-pick') || activeLayerId;
-                renderGisMenu();
+                renderLayerDialog();
                 return;
             }
             const visInput = e.target.closest('[data-layer-visible]');
@@ -926,7 +1097,7 @@
                     l.visible = e.target.checked;
                     markDirty();
                     renderOverlay();
-                    renderGisMenu();
+                    renderLayerDialog();
                 }
                 return;
             }
@@ -935,6 +1106,24 @@
                 return;
             }
             const action = actionBtn.getAttribute('data-action');
+            if (action === 'toggle-gis-editor') {
+                if (!gisCanEdit) {
+                    requestAuthFromParent();
+                    if (window.parent !== window) {
+                        window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
+                    }
+                    return;
+                }
+                gisEditorOpen = !gisEditorOpen;
+                if (!gisEditorOpen) {
+                    gisEditMode = false;
+                    draftPoints = [];
+                    draftHover = null;
+                    syncDrawingClass();
+                }
+                renderLayerDialog();
+                return;
+            }
             if (action === 'toggle-edit') {
                 if (!gisCanEdit) {
                     requestAuthFromParent();
@@ -949,7 +1138,7 @@
                     draftHover = null;
                 }
                 syncDrawingClass();
-                renderGisMenu();
+                renderLayerDialog();
                 renderOverlay();
             } else if (action === 'save') {
                 void saveGisProject();
@@ -965,21 +1154,21 @@
         });
 
         document.addEventListener('click', (e) => {
-            if (!gisMenuOpen) {
+            if (!layerDialogOpen) {
                 return;
             }
             if (e.target.closest('.mcwws-ctrl-gis-wrap')) {
                 return;
             }
-            gisMenuOpen = false;
-            renderGisMenu();
+            layerDialogOpen = false;
+            renderLayerDialog();
         });
     }
 
     function waitForMapControls(attemptsLeft = 80) {
         const wrap = ensureGisControls();
         if (wrap) {
-            renderGisMenu();
+            renderLayerDialog();
             return;
         }
         if (attemptsLeft <= 0) {
@@ -989,10 +1178,27 @@
     }
 
     function onKeyDown(event) {
-        if (!gisEditMode) return;
         if (event.key === 'Escape') {
-            cancelDraft();
+            if (gisEditMode && (draftPoints.length || activeTool !== 'select')) {
+                cancelDraft();
+                return;
+            }
+            if (gisEditorOpen) {
+                gisEditorOpen = false;
+                gisEditMode = false;
+                draftPoints = [];
+                draftHover = null;
+                syncDrawingClass();
+                renderLayerDialog();
+                return;
+            }
+            if (layerDialogOpen) {
+                layerDialogOpen = false;
+                renderLayerDialog();
+            }
+            return;
         }
+        if (!gisEditMode) return;
         if (event.key === 'Enter' && draftPoints.length) {
             finishDraft();
         }
@@ -1002,7 +1208,7 @@
     }
 
     function onDblClick(event) {
-        if (!gisEditMode || !gisCanEdit) return;
+        if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
         if (activeTool !== 'line' && activeTool !== 'polygon') return;
         if (!event.target?.closest?.('canvas')) return;
         event.preventDefault();
@@ -1024,9 +1230,11 @@
         if (started) return;
         started = true;
         document.getElementById('mcwws-gis-panel')?.remove();
+        loadLayerPrefs();
         initMapAuth();
         bindMapPicks();
         waitForMapControls();
+        tryApplyStoredMapRenderMode();
         void loadGisProject();
         document.addEventListener('keydown', onKeyDown);
         document.addEventListener('dblclick', onDblClick, true);
