@@ -589,6 +589,139 @@ body.mcwws-map-simplified-mode #map-container {
     z-index: 9998;
 }
 
+#mcwws-gis-vertex-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 10002;
+    pointer-events: none;
+}
+
+.mcwws-gis-vertex-handle {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 12px;
+    height: 12px;
+    margin: 0;
+    padding: 0;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #f59e0b;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 2px 6px rgba(0, 0, 0, 0.25);
+    pointer-events: auto;
+    cursor: pointer;
+    z-index: 1;
+}
+
+.mcwws-gis-vertex-handle.is-active {
+    width: 14px;
+    height: 14px;
+    background: #ea580c;
+    border-color: #fff7ed;
+    z-index: 2;
+}
+
+.mcwws-gis-vertex-handle.is-offscreen {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.mcwws-gis-vertex-gizmo {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: 10003;
+    pointer-events: auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    filter: drop-shadow(0 4px 12px rgba(0, 0, 0, 0.2));
+}
+
+.mcwws-gis-gizmo-axes {
+    position: relative;
+    width: 88px;
+    height: 88px;
+}
+
+.mcwws-gis-axis {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 52px;
+    height: 6px;
+    margin: -3px 0 0 -2px;
+    padding: 0;
+    border: 0;
+    border-radius: 3px;
+    transform-origin: 2px 50%;
+    cursor: grab;
+}
+
+.mcwws-gis-axis:active {
+    cursor: grabbing;
+}
+
+.mcwws-gis-axis--x {
+    background: linear-gradient(90deg, #ef4444, #dc2626);
+}
+
+.mcwws-gis-axis--y {
+    background: linear-gradient(90deg, #22c55e, #16a34a);
+}
+
+.mcwws-gis-axis--z {
+    background: linear-gradient(90deg, #3b82f6, #2563eb);
+}
+
+.mcwws-gis-gizmo-coords {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+    justify-content: center;
+    padding: 8px 10px;
+    background: rgba(255, 255, 255, 0.96);
+    border-radius: 10px;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.08);
+    font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
+    font-size: 11px;
+}
+
+.mcwws-gis-coord {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    font-weight: 600;
+    min-width: 72px;
+}
+
+.mcwws-gis-coord--x {
+    color: #dc2626;
+}
+
+.mcwws-gis-coord--y {
+    color: #16a34a;
+}
+
+.mcwws-gis-coord--z {
+    color: #2563eb;
+}
+
+.mcwws-gis-coord input {
+    width: 72px;
+    padding: 4px 6px;
+    border: 1px solid rgba(0, 0, 0, 0.15);
+    border-radius: 6px;
+    font-size: 12px;
+    font-weight: 400;
+    color: #111;
+}
+
+body.mcwws-gis-vertex-dragging #map-container canvas {
+    cursor: grabbing !important;
+}
+
 .mcwws-map-controls {
     z-index: 10001;
 }

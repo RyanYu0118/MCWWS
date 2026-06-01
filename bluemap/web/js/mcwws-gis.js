@@ -5,6 +5,8 @@
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
+    const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
+    const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
     const GIS_DISPLAY_Y = 64;
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
@@ -14,6 +16,8 @@
     const GIS_SELECT_DRAG_THRESHOLD_PX = 14;
     const GIS_SELECT_HIT_PX = 16;
     const GIS_SELECT_HIT_PX_3D = 22;
+    const GIS_VERTEX_HIT_PX = 14;
+    const GIS_AXIS_DRAG_THRESHOLD_PX = 3;
     const GIS_HISTORY_MAX = 100;
 
     let mapAuthToken = null;
@@ -59,6 +63,15 @@
     /** @type {Array<{ project: object, selectedFeatureIds: string[], activeLayerId: string }>} */
     let gisRedoStack = [];
     let gisHistoryApplying = false;
+    /** @type {{ featureId: string, vertexIndex: number } | null} */
+    let selectedVertex = null;
+    /** @type {{ axis: string, featureId: string, vertexIndex: number, startWorld: object, startClientX: number, startClientY: number, pointerId: number, historyRecorded: boolean, moved: boolean } | null} */
+    let gisVertexDrag = null;
+    /** @type {Map<string, HTMLButtonElement>} */
+    const vertexHandleElements = new Map();
+    let gisVertexGizmoEl = null;
+    let gisVertexGizmoBound = false;
+    let gisVertexCoordHistoryPending = false;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -920,6 +933,467 @@
         };
     }
 
+    function coerceVertexPoint(raw) {
+        if (!raw) {
+            return null;
+        }
+        const x = Number(raw.x);
+        const y = Number(raw.y);
+        const z = Number(raw.z);
+        if (![x, y, z].every(Number.isFinite)) {
+            return null;
+        }
+        return {
+            x: Math.floor(x) + 0.5,
+            y: Math.floor(y) + 0.5,
+            z: Math.floor(z) + 0.5
+        };
+    }
+
+    function setFeatureCoordinatesFromPoints(feature, points) {
+        if (!feature || !points?.length) {
+            return;
+        }
+        feature.coordinates = points.map((p) => ({ x: p.x, y: p.y, z: p.z }));
+    }
+
+    function getFeatureVertexPoints(feature) {
+        return coordsToPoints(feature?.coordinates);
+    }
+
+    function getSelectedVertexWorld() {
+        if (!selectedVertex) {
+            return null;
+        }
+        const found = findFeatureById(selectedVertex.featureId);
+        if (!found) {
+            return null;
+        }
+        const pts = getFeatureVertexPoints(found.feature);
+        return pts[selectedVertex.vertexIndex] || null;
+    }
+
+    function setFeatureVertexPoint(feature, vertexIndex, point, options = {}) {
+        const pts = getFeatureVertexPoints(feature);
+        if (vertexIndex < 0 || vertexIndex >= pts.length) {
+            return;
+        }
+        const next = coerceVertexPoint(point);
+        if (!next) {
+            return;
+        }
+        pts[vertexIndex] = next;
+        setFeatureCoordinatesFromPoints(feature, pts);
+        dirty = true;
+        if (!options.skipPanel) {
+            renderPanel();
+        }
+    }
+
+    function clearSelectedVertex() {
+        selectedVertex = null;
+        gisVertexDrag = null;
+        gisVertexCoordHistoryPending = false;
+        document.body.classList.remove('mcwws-gis-vertex-dragging');
+        const gizmo = document.getElementById(VERTEX_GIZMO_ID);
+        if (gizmo) {
+            gizmo.hidden = true;
+        }
+    }
+
+    function selectVertex(featureId, vertexIndex) {
+        const found = findFeatureById(featureId);
+        if (!found) {
+            return;
+        }
+        const pts = getFeatureVertexPoints(found.feature);
+        if (vertexIndex < 0 || vertexIndex >= pts.length) {
+            return;
+        }
+        selectedVertex = { featureId, vertexIndex };
+        syncVertexGizmoInputs(pts[vertexIndex]);
+        renderOverlay();
+    }
+
+    function isGisVertexUiTarget(target) {
+        return !!target?.closest?.(`#${VERTEX_LAYER_ID}, #${VERTEX_GIZMO_ID}`);
+    }
+
+    function shouldShowVertexHandles() {
+        return isGisSelectMode() && hasGisSelection();
+    }
+
+    function featureSupportsVertices(feature) {
+        return feature && ['LineString', 'Polygon', 'Point', 'Label'].includes(feature.type);
+    }
+
+    function iterSelectedVertexFeatures() {
+        const out = [];
+        selectedFeatureIds.forEach((id) => {
+            const found = findFeatureById(id);
+            if (found && featureSupportsVertices(found.feature)) {
+                out.push(found);
+            }
+        });
+        return out;
+    }
+
+    function getScreenAxisDir(originWorld, axis, view, camera) {
+        const tip = { ...originWorld };
+        if (axis === 'x') {
+            tip.x += 1;
+        } else if (axis === 'y') {
+            tip.y += 1;
+        } else {
+            tip.z += 1;
+        }
+        const o = projectGisPoint(originWorld, view, camera, false);
+        const t = projectGisPoint(tip, view, camera, false);
+        if (!o || !t || o.behind || t.behind) {
+            return null;
+        }
+        const dx = t.x - o.x;
+        const dy = t.y - o.y;
+        const len = Math.hypot(dx, dy);
+        if (len < 1e-3) {
+            return null;
+        }
+        return { ux: dx / len, uy: dy / len, len };
+    }
+
+    function dragVertexAlongAxis(axis, startWorld, startClientX, startClientY, clientX, clientY, view, camera) {
+        const dir = getScreenAxisDir(startWorld, axis, view, camera);
+        if (!dir) {
+            return startWorld;
+        }
+        const along = (clientX - startClientX) * dir.ux + (clientY - startClientY) * dir.uy;
+        const delta = along / dir.len;
+        const next = { ...startWorld };
+        if (axis === 'x') {
+            next.x = startWorld.x + delta;
+        } else if (axis === 'y') {
+            next.y = startWorld.y + delta;
+        } else {
+            next.z = startWorld.z + delta;
+        }
+        return coerceVertexPoint(next) || startWorld;
+    }
+
+    function pickVertexAtScreen(clientX, clientY) {
+        if (!shouldShowVertexHandles()) {
+            return null;
+        }
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        let best = null;
+        let bestDist = GIS_VERTEX_HIT_PX;
+        iterSelectedVertexFeatures().forEach(({ feature }) => {
+            const pts = getFeatureVertexPoints(feature);
+            pts.forEach((p, idx) => {
+                const s = projectGisPoint(p, view, camera, false);
+                if (!s || s.behind) {
+                    return;
+                }
+                const d = screenDist(clientX, clientY, s.x, s.y);
+                if (d < bestDist) {
+                    bestDist = d;
+                    best = { featureId: feature.id, vertexIndex: idx };
+                }
+            });
+        });
+        return best;
+    }
+
+    function syncVertexGizmoInputs(point) {
+        const gizmo = ensureVertexGizmo();
+        if (!gizmo || !point) {
+            return;
+        }
+        const xIn = gizmo.querySelector('[data-coord="x"]');
+        const yIn = gizmo.querySelector('[data-coord="y"]');
+        const zIn = gizmo.querySelector('[data-coord="z"]');
+        if (document.activeElement !== xIn) {
+            xIn.value = String(point.x);
+        }
+        if (document.activeElement !== yIn) {
+            yIn.value = String(point.y);
+        }
+        if (document.activeElement !== zIn) {
+            zIn.value = String(point.z);
+        }
+        gizmo.hidden = false;
+    }
+
+    function applyVertexCoordInputsFromGizmo(recordHistory) {
+        if (!selectedVertex) {
+            return;
+        }
+        const found = findFeatureById(selectedVertex.featureId);
+        if (!found) {
+            return;
+        }
+        const gizmo = ensureVertexGizmo();
+        const point = coerceVertexPoint({
+            x: gizmo.querySelector('[data-coord="x"]')?.value,
+            y: gizmo.querySelector('[data-coord="y"]')?.value,
+            z: gizmo.querySelector('[data-coord="z"]')?.value
+        });
+        if (!point) {
+            return;
+        }
+        if (recordHistory && !gisVertexCoordHistoryPending) {
+            recordGisHistory();
+            gisVertexCoordHistoryPending = true;
+        }
+        setFeatureVertexPoint(found.feature, selectedVertex.vertexIndex, point);
+        renderOverlay();
+    }
+
+    function ensureVertexGizmo() {
+        if (gisVertexGizmoEl) {
+            return gisVertexGizmoEl;
+        }
+        gisVertexGizmoEl = document.createElement('div');
+        gisVertexGizmoEl.id = VERTEX_GIZMO_ID;
+        gisVertexGizmoEl.className = 'mcwws-gis-vertex-gizmo';
+        gisVertexGizmoEl.hidden = true;
+        gisVertexGizmoEl.innerHTML = `
+            <div class="mcwws-gis-gizmo-axes" aria-hidden="true">
+                <button type="button" class="mcwws-gis-axis mcwws-gis-axis--x" data-axis="x" title="沿 X 轴移动"></button>
+                <button type="button" class="mcwws-gis-axis mcwws-gis-axis--y" data-axis="y" title="沿 Y 轴移动"></button>
+                <button type="button" class="mcwws-gis-axis mcwws-gis-axis--z" data-axis="z" title="沿 Z 轴移动"></button>
+            </div>
+            <div class="mcwws-gis-gizmo-coords">
+                <label class="mcwws-gis-coord mcwws-gis-coord--x">X
+                    <input type="number" data-coord="x" step="0.5" inputmode="decimal">
+                </label>
+                <label class="mcwws-gis-coord mcwws-gis-coord--y">Y
+                    <input type="number" data-coord="y" step="0.5" inputmode="decimal">
+                </label>
+                <label class="mcwws-gis-coord mcwws-gis-coord--z">Z
+                    <input type="number" data-coord="z" step="0.5" inputmode="decimal">
+                </label>
+            </div>
+        `;
+        document.body.appendChild(gisVertexGizmoEl);
+        bindVertexGizmoEvents();
+        return gisVertexGizmoEl;
+    }
+
+    function bindVertexGizmoEvents() {
+        if (gisVertexGizmoBound || !gisVertexGizmoEl) {
+            return;
+        }
+        gisVertexGizmoBound = true;
+        gisVertexGizmoEl.addEventListener('pointerdown', (event) => {
+            const axisBtn = event.target.closest('[data-axis]');
+            if (!axisBtn || !selectedVertex) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            const world = getSelectedVertexWorld();
+            if (!world) {
+                return;
+            }
+            gisVertexDrag = {
+                axis: axisBtn.getAttribute('data-axis') || 'x',
+                featureId: selectedVertex.featureId,
+                vertexIndex: selectedVertex.vertexIndex,
+                startWorld: { ...world },
+                startClientX: event.clientX,
+                startClientY: event.clientY,
+                pointerId: event.pointerId,
+                historyRecorded: false,
+                moved: false
+            };
+            document.body.classList.add('mcwws-gis-vertex-dragging');
+            try {
+                axisBtn.setPointerCapture(event.pointerId);
+            } catch {
+                /* ignore */
+            }
+        });
+        gisVertexGizmoEl.addEventListener('input', (event) => {
+            if (!event.target.matches('[data-coord]')) {
+                return;
+            }
+            applyVertexCoordInputsFromGizmo(false);
+        });
+        gisVertexGizmoEl.addEventListener('change', (event) => {
+            if (!event.target.matches('[data-coord]')) {
+                return;
+            }
+            applyVertexCoordInputsFromGizmo(true);
+            gisVertexCoordHistoryPending = false;
+        });
+        gisVertexGizmoEl.addEventListener('pointerdown', (event) => {
+            if (event.target.matches('[data-coord]')) {
+                event.stopPropagation();
+            }
+        });
+        document.addEventListener('pointermove', onVertexAxisPointerMove);
+        document.addEventListener('pointerup', onVertexAxisPointerEnd);
+        document.addEventListener('pointercancel', onVertexAxisPointerEnd);
+    }
+
+    function onVertexAxisPointerMove(event) {
+        if (!gisVertexDrag || event.pointerId !== gisVertexDrag.pointerId) {
+            return;
+        }
+        const dx = event.clientX - gisVertexDrag.startClientX;
+        const dy = event.clientY - gisVertexDrag.startClientY;
+        if (!gisVertexDrag.moved && dx * dx + dy * dy < GIS_AXIS_DRAG_THRESHOLD_PX * GIS_AXIS_DRAG_THRESHOLD_PX) {
+            return;
+        }
+        gisVertexDrag.moved = true;
+        if (!gisVertexDrag.historyRecorded) {
+            recordGisHistory();
+            gisVertexDrag.historyRecorded = true;
+        }
+        const found = findFeatureById(gisVertexDrag.featureId);
+        if (!found) {
+            return;
+        }
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const next = dragVertexAlongAxis(
+            gisVertexDrag.axis,
+            gisVertexDrag.startWorld,
+            gisVertexDrag.startClientX,
+            gisVertexDrag.startClientY,
+            event.clientX,
+            event.clientY,
+            view,
+            camera
+        );
+        setFeatureVertexPoint(found.feature, gisVertexDrag.vertexIndex, next, { skipPanel: true });
+        syncVertexGizmoInputs(next);
+        renderOverlay();
+        event.preventDefault();
+    }
+
+    function onVertexAxisPointerEnd(event) {
+        if (!gisVertexDrag || event.pointerId !== gisVertexDrag.pointerId) {
+            return;
+        }
+        if (gisVertexDrag.moved) {
+            renderPanel();
+        }
+        gisVertexDrag = null;
+        document.body.classList.remove('mcwws-gis-vertex-dragging');
+    }
+
+    function bindVertexLayer(layer) {
+        layer.addEventListener('pointerdown', (event) => {
+            if (!shouldShowVertexHandles()) {
+                return;
+            }
+            const handle = event.target.closest('.mcwws-gis-vertex-handle');
+            if (!handle) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            selectVertex(handle.getAttribute('data-fid'), Number(handle.getAttribute('data-idx')));
+        });
+    }
+
+    function ensureVertexLayer() {
+        let layer = document.getElementById(VERTEX_LAYER_ID);
+        if (!layer) {
+            layer = document.createElement('div');
+            layer.id = VERTEX_LAYER_ID;
+            document.body.appendChild(layer);
+            bindVertexLayer(layer);
+        }
+        return layer;
+    }
+
+    function renderVertexHandles(view, camera) {
+        const layer = ensureVertexLayer();
+        if (!shouldShowVertexHandles()) {
+            layer.hidden = true;
+            vertexHandleElements.forEach((el) => el.remove());
+            vertexHandleElements.clear();
+            clearSelectedVertex();
+            return;
+        }
+        layer.hidden = false;
+        const needed = new Set();
+        iterSelectedVertexFeatures().forEach(({ feature }) => {
+            const pts = getFeatureVertexPoints(feature);
+            pts.forEach((p, idx) => {
+                const key = `${feature.id}:${idx}`;
+                needed.add(key);
+                let handle = vertexHandleElements.get(key);
+                if (!handle) {
+                    handle = document.createElement('button');
+                    handle.type = 'button';
+                    handle.className = 'mcwws-gis-vertex-handle';
+                    handle.setAttribute('data-fid', feature.id);
+                    handle.setAttribute('data-idx', String(idx));
+                    layer.appendChild(handle);
+                    vertexHandleElements.set(key, handle);
+                }
+                const active = selectedVertex
+                    && selectedVertex.featureId === feature.id
+                    && selectedVertex.vertexIndex === idx;
+                handle.classList.toggle('is-active', !!active);
+                const projected = projectGisPoint(p, view, camera, false);
+                const off = !projected || projected.behind
+                    || projected.x < -40 || projected.y < -40
+                    || projected.x > window.innerWidth + 40
+                    || projected.y > window.innerHeight + 40;
+                handle.classList.toggle('is-offscreen', off);
+                if (!off) {
+                    handle.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
+                }
+            });
+        });
+        vertexHandleElements.forEach((el, key) => {
+            if (!needed.has(key)) {
+                el.remove();
+                vertexHandleElements.delete(key);
+            }
+        });
+        if (selectedVertex) {
+            const world = getSelectedVertexWorld();
+            if (!world) {
+                clearSelectedVertex();
+                return;
+            }
+            syncVertexGizmoInputs(world);
+            positionVertexGizmo(world, view, camera);
+        }
+    }
+
+    function positionVertexGizmo(world, view, camera) {
+        const gizmo = ensureVertexGizmo();
+        const projected = projectGisPoint(world, view, camera, false);
+        if (!projected || projected.behind) {
+            gizmo.hidden = true;
+            return;
+        }
+        gizmo.hidden = false;
+        gizmo.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
+        ['x', 'y', 'z'].forEach((axis) => {
+            const dir = getScreenAxisDir(world, axis, view, camera);
+            const el = gizmo.querySelector(`.mcwws-gis-axis--${axis}`);
+            if (!el) {
+                return;
+            }
+            if (!dir) {
+                el.style.opacity = '0.25';
+                el.style.transform = 'rotate(0deg)';
+                return;
+            }
+            el.style.opacity = '1';
+            const deg = (Math.atan2(dir.uy, dir.ux) * 180) / Math.PI;
+            el.style.transform = `rotate(${deg.toFixed(2)}deg)`;
+        });
+    }
+
     function extractInteractionPoint(detail) {
         if (!detail || typeof detail !== 'object') return null;
         const candidates = [
@@ -987,6 +1461,22 @@
 
     function clearGisSelection() {
         selectedFeatureIds.clear();
+        clearSelectedVertex();
+    }
+
+    function validateSelectedVertex() {
+        if (!selectedVertex) {
+            return;
+        }
+        if (!selectedFeatureIds.has(selectedVertex.featureId)) {
+            clearSelectedVertex();
+            return;
+        }
+        const found = findFeatureById(selectedVertex.featureId);
+        const pts = found ? getFeatureVertexPoints(found.feature) : [];
+        if (!pts[selectedVertex.vertexIndex]) {
+            clearSelectedVertex();
+        }
     }
 
     function clearGisSelectHover() {
@@ -1003,6 +1493,9 @@
         }
         pinElements.forEach((pin) => pin.remove());
         pinElements.clear();
+        vertexHandleElements.forEach((el) => el.remove());
+        vertexHandleElements.clear();
+        clearSelectedVertex();
     }
 
     function updateGisSelectHoverCursor(clientX, clientY, target) {
@@ -1018,10 +1511,11 @@
             }
             return;
         }
-        const fid = pickFeatureAtScreen(clientX, clientY);
-        const hovering = !!fid;
+        const vtx = pickVertexAtScreen(clientX, clientY);
+        const fid = vtx ? vtx.featureId : pickFeatureAtScreen(clientX, clientY);
+        const hovering = !!(fid || vtx);
         if (hovering !== !!gisHoverFeatureId) {
-            gisHoverFeatureId = fid;
+            gisHoverFeatureId = fid || (vtx ? vtx.featureId : null);
             document.body.classList.toggle('mcwws-gis-hover-feature', hovering);
         }
     }
@@ -1412,7 +1906,8 @@
     function isGisMapInteractionTarget(target) {
         return isGisPickTarget(target)
             || !!target?.closest?.('#mcwws-gis-svg-layer [data-fid]')
-            || !!target?.closest?.('.mcwws-gis-pin');
+            || !!target?.closest?.('.mcwws-gis-pin')
+            || isGisVertexUiTarget(target);
     }
 
     function isGisEditorActive() {
@@ -1556,6 +2051,9 @@
         if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) {
             return;
         }
+        if (isGisVertexUiTarget(event.target)) {
+            return;
+        }
         if (!isGisMapInteractionTarget(event.target)) {
             return;
         }
@@ -1602,6 +2100,12 @@
             return;
         }
         if (isGisSelectMode()) {
+            const vtx = pickVertexAtScreen(event.clientX, event.clientY);
+            if (vtx) {
+                selectVertex(vtx.featureId, vtx.vertexIndex);
+                event.stopPropagation();
+                return;
+            }
             const fid = pickFeatureAtScreen(event.clientX, event.clientY);
             if (fid) {
                 if (selectedFeatureIds.has(fid)) {
@@ -1609,6 +2113,7 @@
                 } else {
                     selectedFeatureIds.add(fid);
                 }
+                validateSelectedVertex();
                 event.stopPropagation();
             } else {
                 clearGisSelection();
@@ -1911,6 +2416,9 @@
                 pinElements.delete(id);
             }
         });
+
+        renderVertexHandles(view, camera);
+        document.body.classList.toggle('mcwws-gis-vertex-edit', shouldShowVertexHandles());
     }
 
     function syncDrawingClass() {
@@ -2024,7 +2532,7 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '选择工具：连续点击多选，Esc 取消选中，Delete 删除'
+                ? '选中道路/区域后显示特征点；点击特征点可拖坐标轴或改 X/Y/Z'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
@@ -2273,6 +2781,12 @@
 
     function onKeyDown(event) {
         if (event.key === 'Escape') {
+            if (gisEditMode && isGisSelectMode() && selectedVertex) {
+                clearSelectedVertex();
+                renderOverlay();
+                event.preventDefault();
+                return;
+            }
             if (gisEditMode && isGisSelectMode() && hasGisSelection()) {
                 clearGisSelection();
                 renderOverlay();
