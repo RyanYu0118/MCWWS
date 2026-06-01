@@ -771,16 +771,98 @@
             .join(' ')} Z`;
     }
 
+    function getMapCanvasRect() {
+        const canvas = document.querySelector('#map-container canvas');
+        if (!canvas) {
+            return null;
+        }
+        const rect = canvas.getBoundingClientRect();
+        if (!rect.width || !rect.height) {
+            return null;
+        }
+        return rect;
+    }
+
+    function getPickViewport() {
+        const rect = getMapCanvasRect();
+        if (rect) {
+            return {
+                width: rect.width,
+                height: rect.height,
+                centerX: rect.left + rect.width / 2,
+                centerY: rect.top + rect.height / 2
+            };
+        }
+        return {
+            width: window.innerWidth,
+            height: window.innerHeight,
+            centerX: window.innerWidth / 2,
+            centerY: window.innerHeight / 2
+        };
+    }
+
+    function unprojectNdcToWorld(ndcX, ndcY, ndcZ, camera) {
+        if (!camera?.projectionMatrixInverse?.elements || !camera?.matrixWorld?.elements) {
+            return null;
+        }
+        refreshBlueMapCameraMatrices(camera);
+        const view = applyMatrix4(
+            { x: ndcX, y: ndcY, z: ndcZ, w: 1 },
+            camera.projectionMatrixInverse
+        );
+        const world = applyMatrix4(view, camera.matrixWorld);
+        if (Math.abs(world.w) < 1e-8) {
+            return null;
+        }
+        return {
+            x: world.x / world.w,
+            y: world.y / world.w,
+            z: world.z / world.w
+        };
+    }
+
+    /** 与渲染一致：鼠标射线与 y=GIS_DISPLAY_Y 平面求交 */
+    function pickWorldOnGisPlane(clientX, clientY, camera) {
+        const rect = getMapCanvasRect();
+        if (!rect || !camera) {
+            return null;
+        }
+        const ndcX = ((clientX - rect.left) / rect.width) * 2 - 1;
+        const ndcY = -((clientY - rect.top) / rect.height) * 2 + 1;
+        const near = unprojectNdcToWorld(ndcX, ndcY, -1, camera);
+        const far = unprojectNdcToWorld(ndcX, ndcY, 1, camera);
+        if (!near || !far) {
+            return null;
+        }
+        const dy = far.y - near.y;
+        if (Math.abs(dy) < 1e-6) {
+            return null;
+        }
+        const t = (GIS_DISPLAY_Y - near.y) / dy;
+        if (t < 0) {
+            return null;
+        }
+        return snapPoint({
+            x: near.x + (far.x - near.x) * t,
+            y: GIS_DISPLAY_Y,
+            z: near.z + (far.z - near.z) * t
+        });
+    }
+
     function screenToWorld(screenX, screenY, view) {
         const v = view || getViewForProjection();
         if (!v) {
             return null;
         }
+        const vp = getPickViewport();
         const perspectiveBoost = v.mode === 'perspective' ? 1.35 : 1;
-        const scale = Math.max(2, Math.min(120, (window.innerHeight / Math.max(10, v.height * 2.2)) * perspectiveBoost));
+        const scale = Math.max(
+            2,
+            Math.min(120, (vp.height / Math.max(10, v.height * 2.2)) * perspectiveBoost)
+        );
         const pitchFactor = Math.max(0.2, Math.min(1, Math.abs(Math.sin(v.pitch || -0.8))));
-        const right = (screenX - window.innerWidth / 2) / scale;
-        const forward = (screenY - window.innerHeight / 2) / (scale * pitchFactor);
+        const right = (screenX - vp.centerX) / scale;
+        const forward = (screenY - vp.centerY) / (scale * pitchFactor);
         const yaw = v.rotation ?? v.yaw ?? 0;
         const cos = Math.cos(yaw);
         const sin = Math.sin(yaw);
@@ -788,7 +870,7 @@
         const dz = -right * sin + forward * cos;
         return {
             x: v.x + dx,
-            y: v.y,
+            y: GIS_DISPLAY_Y,
             z: v.z + dz
         };
     }
@@ -1117,8 +1199,17 @@
     }
 
     function pickWorldFromScreen(clientX, clientY) {
+        const camera = getGisBlueMapCamera();
+        if (camera) {
+            const onPlane = pickWorldOnGisPlane(clientX, clientY, camera);
+            if (onPlane) {
+                return onPlane;
+            }
+        }
         const view = getViewForProjection();
-        if (!view) return null;
+        if (!view) {
+            return null;
+        }
         return snapPoint(screenToWorld(clientX, clientY, view));
     }
 
@@ -1138,12 +1229,17 @@
     function onCanvasMove(event) {
         if (!gisEditMode || draftPoints.length === 0) return;
         if (activeTool !== 'line' && activeTool !== 'polygon') return;
+        if (!event.target?.closest?.('canvas')) return;
         draftHover = pickWorldFromScreen(event.clientX, event.clientY);
         renderOverlay();
     }
 
     function onMapInteraction(event) {
         if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
+        // 3D 下由 canvas 射线拾取（与标注投影同一平面）；无相机时再回退 BlueMap 交点
+        if (getGisBlueMapCamera()) {
+            return;
+        }
         const point = extractInteractionPoint(event.detail);
         if (point) {
             handleMapPick(point);
