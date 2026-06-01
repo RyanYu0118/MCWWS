@@ -915,6 +915,20 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     display: block;
 }
 
+.mcwws-ctrl-fly {
+    color: #7c3aed;
+}
+
+.mcwws-ctrl-fly.is-active {
+    color: #fff;
+    background: #7c3aed;
+    box-shadow: 0 2px 10px rgba(124, 58, 237, 0.45), 0 0 0 1px rgba(124, 58, 237, 0.2);
+}
+
+.mcwws-ctrl-fly-icon {
+    display: block;
+}
+
 /* 玩家定位开启时，拦截拖拽操作的底部提示 */
 .mcwws-player-follow-notice {
     position: fixed;

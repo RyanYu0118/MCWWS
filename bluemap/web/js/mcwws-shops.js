@@ -119,6 +119,11 @@
     /** 自动切 2D / 飞到玩家期间，忽略指针移动，避免误报「拖拽」提示 */
     const PLAYER_FOLLOW_GESTURE_GUARD_MS = 1600;
     const PLAYER_FOLLOW_3D_EXIT_MSG = '已切换到 3D 模式，玩家定位跟踪已关闭。（定位跟踪仅支持 2D 俯视）';
+    const FREE_FLIGHT_TRANSITION_MS = 500;
+    const FREE_FLIGHT_EXIT_MIN_DISTANCE = 100;
+    const FREE_FLIGHT_ENTER_MSG = '已开启自由漫游：WASD 移动，空格/Shift 升降，按住右键环视。';
+    const FREE_FLIGHT_EXIT_MSG = '已退出自由漫游。';
+    const FREE_FLIGHT_FOLLOW_EXIT_MSG = '已开启自由漫游，玩家定位已关闭。';
     const PLAYER_FOLLOW_DRAG_HINT_MSG = '定位跟踪中：松手将回弹至玩家位置；持续拖拽约 2 秒可退出定位。';
     const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT = '玩家当前离线，已定位到上一次离开服务器时的位置。';
     const PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_SAVED = '玩家当前离线，已定位到存档中的上次已知位置。';
@@ -1708,7 +1713,8 @@
             '.mcwws-ctrl-mode',
             '.mcwws-ctrl-zoom',
             '.mcwws-ctrl-daynight',
-            '.mcwws-ctrl-locate'
+            '.mcwws-ctrl-locate',
+            '.mcwws-ctrl-fly'
         ].forEach((sel) => {
             const el = stack.querySelector(sel);
             if (el) {
@@ -2061,6 +2067,86 @@
 
     function isPlayerFollowAllowedMode() {
         return getMapViewState() === 'flat';
+    }
+
+    function isFreeFlightViewEnabled() {
+        const map = getBlueMapApp()?.mapViewer?.data?.map;
+        return !!map?.freeFlightView;
+    }
+
+    function createFreeFlightControlButton() {
+        const btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'mcwws-ctrl-btn mcwws-ctrl-fly';
+        btn.title = '自由漫游：WASD 移动，空格/Shift 升降，右键环视';
+        btn.innerHTML = `
+            <svg class="mcwws-ctrl-fly-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                <path fill="currentColor" d="M19.2 8.4c-.2-.4-.7-.7-1.2-.7h-1.6c-.4 0-.6-.3-.3-.6 0 0 .6-.7.6-1.6 0-1.7-1.4-3-3-3s-3 1.3-3 3c0 .9.6 1.6.6 1.6.3.3.1.6-.3.6l-1.6 0c-.4 0-.9.3-1.1.7l-.7.9c-.3.3-.8.4-1.2.2l-1.5-1c-.4-.2-.5-.8-.3-1.2l3.8-2.4c.3-.2.7-.2 1 0l3.8 2.4c.2.4.1 1-.3 1.2l-1.5 1c-.4.2-.9.1-1.2-.2l-.7-.9z"/>
+            </svg>
+        `;
+        return btn;
+    }
+
+    function bindFreeFlightControl(root) {
+        const btn = root?.querySelector('.mcwws-ctrl-fly');
+        if (!btn || btn.dataset.bound === '1') {
+            return;
+        }
+        btn.dataset.bound = '1';
+        btn.addEventListener('click', () => {
+            toggleFreeFlightView();
+        });
+    }
+
+    /** 旧版控件条缺少自由漫游按钮时，插入到定位与全屏之间 */
+    function migrateFreeFlightButton(root) {
+        const cluster = root?.querySelector('.mcwws-ctrl-tools-cluster');
+        if (!cluster || cluster.querySelector('.mcwws-ctrl-fly')) {
+            return;
+        }
+        const fs = cluster.querySelector('.mcwws-ctrl-fullscreen');
+        const btn = createFreeFlightControlButton();
+        if (fs) {
+            cluster.insertBefore(btn, fs);
+        } else {
+            const locate = cluster.querySelector('.mcwws-ctrl-locate');
+            if (locate) {
+                locate.insertAdjacentElement('afterend', btn);
+            } else {
+                cluster.appendChild(btn);
+            }
+        }
+        bindFreeFlightControl(root);
+    }
+
+    function toggleFreeFlightView() {
+        const bm = getBlueMapApp();
+        if (!bm || !isFreeFlightViewEnabled()) {
+            return;
+        }
+        const state = getMapViewState();
+        if (state === 'free') {
+            if (typeof bm.setPerspectiveView === 'function') {
+                bm.setPerspectiveView(FREE_FLIGHT_TRANSITION_MS, FREE_FLIGHT_EXIT_MIN_DISTANCE);
+            } else {
+                applyControlsViewFallback({ mode: 'perspective' });
+            }
+            showPlayerFollowNotice(FREE_FLIGHT_EXIT_MSG, 2800);
+            updatePinPositions();
+            updateMapControlsState();
+            return;
+        }
+        if (playerFollowActive) {
+            stopPlayerFollow();
+            showPlayerFollowNotice(FREE_FLIGHT_FOLLOW_EXIT_MSG, 3600);
+        }
+        if (typeof bm.setFreeFlight !== 'function') {
+            return;
+        }
+        bm.setFreeFlight(FREE_FLIGHT_TRANSITION_MS);
+        showPlayerFollowNotice(FREE_FLIGHT_ENTER_MSG, 4500);
+        updatePinPositions();
+        updateMapControlsState();
     }
 
     function stopPlayerFollowFor3DMode() {
@@ -3807,6 +3893,16 @@
                 }
             }
         }
+        const flyBtn = root.querySelector('.mcwws-ctrl-fly');
+        if (flyBtn) {
+            const flyAvailable = isFreeFlightViewEnabled();
+            flyBtn.hidden = !flyAvailable;
+            const isFree = getMapViewState() === 'free';
+            flyBtn.classList.toggle('is-active', isFree);
+            flyBtn.title = isFree
+                ? '正在自由漫游（WASD 移动，空格/Shift 升降，右键环视）— 点击退出'
+                : '自由漫游：第一人称飞行浏览地图';
+        }
         const locateBtn = root.querySelector('.mcwws-ctrl-locate');
         if (locateBtn) {
             locateBtn.classList.toggle('is-active', playerFollowActive);
@@ -3832,8 +3928,10 @@
             migrateCompassDom(root);
             migrateLayerMenuDom(root);
             migrateLocateProgressRing(root);
+            migrateFreeFlightButton(root);
             migrateDayNightLockRing(root.querySelector('.mcwws-ctrl-daynight'));
             bindDayNightControl(root.querySelector('.mcwws-ctrl-daynight'));
+            bindFreeFlightControl(root);
             updateMapControlsState();
             return root;
         }
@@ -3894,6 +3992,11 @@
                                 <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
                             </svg>
                         </button>
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-fly" title="自由漫游：WASD 移动，空格/Shift 升降，右键环视">
+                            <svg class="mcwws-ctrl-fly-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                                <path fill="currentColor" d="M19.2 8.4c-.2-.4-.7-.7-1.2-.7h-1.6c-.4 0-.6-.3-.3-.6 0 0 .6-.7.6-1.6 0-1.7-1.4-3-3-3s-3 1.3-3 3c0 .9.6 1.6.6 1.6.3.3.1.6-.3.6l-1.6 0c-.4 0-.9.3-1.1.7l-.7.9c-.3.3-.8.4-1.2.2l-1.5-1c-.4-.2-.5-.8-.3-1.2l3.8-2.4c.3-.2.7-.2 1 0l3.8 2.4c.2.4.1 1-.3 1.2l-1.5 1c-.4.2-.9.1-1.2-.2l-.7-.9z"/>
+                            </svg>
+                        </button>
                         <button type="button" class="mcwws-ctrl-fullscreen" title="全屏，隐藏所有功能模块">
                             <svg class="mcwws-ctrl-fs-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z"/></svg>
                             <span class="mcwws-ctrl-fs-label">全屏</span>
@@ -3907,7 +4010,9 @@
         migrateMapControlsLayout(root);
         migrateLayerMenuDom(root);
         migrateLocateProgressRing(root);
+        migrateFreeFlightButton(root);
         renderLayerMenu();
+        bindFreeFlightControl(root);
         updateMapControlsState();
         return root;
     }
@@ -3926,6 +4031,7 @@
         root.querySelector('.mcwws-ctrl-locate')?.addEventListener('click', () => {
             void togglePlayerLocate();
         });
+        bindFreeFlightControl(root);
         root.querySelector('.mcwws-ctrl-fullscreen')?.addEventListener('click', toggleCleanMode);
         root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
             e.stopPropagation();
