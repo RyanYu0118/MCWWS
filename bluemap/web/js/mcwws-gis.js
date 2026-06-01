@@ -97,11 +97,7 @@
                 mapRenderMode = mode;
             }
             const gis = localStorage.getItem(STORAGE_GIS_ENABLED);
-            if (gis === '0') {
-                gisInfoEnabled = false;
-            } else {
-                gisInfoEnabled = true;
-            }
+            gisInfoEnabled = mapRenderMode === 'simplified' || gis !== '0';
         } catch {
             /* ignore */
         }
@@ -224,6 +220,8 @@
         mapRenderMode = mode === 'simplified' ? 'simplified' : 'original';
         if (mapRenderMode === 'original') {
             restoreOriginalMapRendering();
+        } else {
+            setGisInfoEnabled(true, false);
         }
         syncMapRenderModeVisual();
         if (persist) {
@@ -233,6 +231,9 @@
     }
 
     function setGisInfoEnabled(enabled, persist = true) {
+        if (!enabled && isSimplifiedMapMode()) {
+            enabled = true;
+        }
         gisInfoEnabled = !!enabled;
         if (!gisInfoEnabled) {
             gisEditorOpen = false;
@@ -1150,20 +1151,22 @@
                     <span class="mcwws-layer-mode-desc">纯白画布 · 仅标注</span>
                 </button>
             </div>
-            <label class="mcwws-layer-gis-toggle">
-                <input type="checkbox" data-gis-info-toggle ${gisInfoEnabled ? 'checked' : ''}>
-                <span>开启地理信息</span>
+            <label class="mcwws-layer-gis-toggle${isSimplifiedMapMode() ? ' is-locked' : ''}">
+                <input type="checkbox" data-gis-info-toggle ${gisInfoEnabled ? 'checked' : ''}
+                    ${isSimplifiedMapMode() ? 'disabled' : ''}>
+                <span>开启地理信息${isSimplifiedMapMode() ? '（简化地图下始终开启）' : ''}</span>
             </label>
-            ${
-                gisInfoEnabled
-                    ? `
-                <button type="button" class="mcwws-layer-edit-entry" data-action="toggle-gis-editor">
-                    ${gisEditorOpen ? '收起地理标注编辑' : '编辑地理标注'}
-                </button>
-                ${gisEditorOpen ? renderGisEditorHtml() : ''}
-            `
-                    : ''
-            }
+            <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
+                data-action="toggle-gis-editor"
+                ${!gisInfoEnabled ? 'disabled' : ''}
+                title="${!gisInfoEnabled ? '请先开启地理信息' : ''}">
+                ${
+                    !gisInfoEnabled
+                        ? '编辑地理标注'
+                        : (gisEditorOpen ? '收起地理标注编辑' : '编辑地理标注')
+                }
+            </button>
+            ${gisInfoEnabled && gisEditorOpen ? renderGisEditorHtml() : ''}
             <p class="mcwws-gis-menu-status${statusKind ? ` is-${statusKind}` : ''}">${escapeHtml(statusMessage)}${dirty ? ' · 未保存' : ''}</p>
         `;
         updateGisButtonState();
@@ -1192,6 +1195,7 @@
         });
 
         wrap.addEventListener('click', (e) => {
+            e.stopPropagation();
             const modeCard = e.target.closest('[data-map-mode]');
             if (modeCard) {
                 applyMapRenderMode(modeCard.getAttribute('data-map-mode'));
@@ -1236,6 +1240,9 @@
             }
             const action = actionBtn.getAttribute('data-action');
             if (action === 'toggle-gis-editor') {
+                if (!gisInfoEnabled) {
+                    return;
+                }
                 if (!gisCanEdit) {
                     requestAuthFromParent();
                     if (window.parent !== window) {
@@ -1286,7 +1293,10 @@
             if (!layerDialogOpen) {
                 return;
             }
-            if (e.target.closest('.mcwws-ctrl-gis-wrap')) {
+            const insideGis = e.composedPath?.().some?.(
+                (node) => node instanceof Element && node.closest?.('.mcwws-ctrl-gis-wrap')
+            ) || e.target.closest?.('.mcwws-ctrl-gis-wrap');
+            if (insideGis) {
                 return;
             }
             layerDialogOpen = false;
