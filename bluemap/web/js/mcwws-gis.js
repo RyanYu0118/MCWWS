@@ -10,6 +10,7 @@
     const GIS_NDC_LIMIT = 1.001;
     const GIS_SCREEN_CLIP_PAD = 8000;
     const GIS_CHAIN_JOIN_EPS = 6;
+    const GIS_DRAG_THRESHOLD_PX = 8;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -40,6 +41,9 @@
     let lastPickAt = 0;
     let lastPickKey = '';
     let gisCachedCamera = null;
+    /** @type {{ startX: number, startY: number, moved: boolean, pointerId: number } | null} */
+    let gisCanvasPointer = null;
+    let gisLastMapDragAt = 0;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -1213,29 +1217,92 @@
         return snapPoint(screenToWorld(clientX, clientY, view));
     }
 
-    function onCanvasClick(event) {
-        if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
-        if (activeTool === 'select') return;
-        const target = event.target;
-        if (target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) return;
-        if (!target?.closest?.('canvas')) return;
-        const point = pickWorldFromScreen(event.clientX, event.clientY);
-        if (!point) return;
-        event.preventDefault();
-        event.stopPropagation();
-        handleMapPick(point);
+    function isGisPickTarget(target) {
+        return !!target?.closest?.('#map-container canvas');
     }
 
-    function onCanvasMove(event) {
-        if (!gisEditMode || draftPoints.length === 0) return;
-        if (activeTool !== 'line' && activeTool !== 'polygon') return;
-        if (!event.target?.closest?.('canvas')) return;
+    function isGisEditPointerActive() {
+        return gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select';
+    }
+
+    function markGisPointerMoved(clientX, clientY) {
+        if (!gisCanvasPointer || gisCanvasPointer.moved) {
+            return;
+        }
+        const dx = clientX - gisCanvasPointer.startX;
+        const dy = clientY - gisCanvasPointer.startY;
+        if (dx * dx + dy * dy > GIS_DRAG_THRESHOLD_PX * GIS_DRAG_THRESHOLD_PX) {
+            gisCanvasPointer.moved = true;
+        }
+    }
+
+    function onCanvasPointerDown(event) {
+        if (!isGisEditPointerActive()) {
+            return;
+        }
+        if (event.button !== 0) {
+            return;
+        }
+        if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) {
+            return;
+        }
+        if (!isGisPickTarget(event.target)) {
+            return;
+        }
+        gisCanvasPointer = {
+            startX: event.clientX,
+            startY: event.clientY,
+            moved: false,
+            pointerId: event.pointerId
+        };
+    }
+
+    function onCanvasPointerMove(event) {
+        if (gisCanvasPointer && event.pointerId === gisCanvasPointer.pointerId) {
+            markGisPointerMoved(event.clientX, event.clientY);
+        }
+        if (gisCanvasPointer?.moved) {
+            return;
+        }
+        if (!gisEditMode || draftPoints.length === 0) {
+            return;
+        }
+        if (activeTool !== 'line' && activeTool !== 'polygon') {
+            return;
+        }
+        if (!isGisPickTarget(event.target)) {
+            return;
+        }
         draftHover = pickWorldFromScreen(event.clientX, event.clientY);
         renderOverlay();
     }
 
+    function onCanvasPointerUp(event) {
+        if (!gisCanvasPointer || event.pointerId !== gisCanvasPointer.pointerId) {
+            return;
+        }
+        const wasDrag = gisCanvasPointer.moved;
+        gisCanvasPointer = null;
+        if (!isGisEditPointerActive()) {
+            return;
+        }
+        if (wasDrag) {
+            gisLastMapDragAt = Date.now();
+            return;
+        }
+        const point = pickWorldFromScreen(event.clientX, event.clientY);
+        if (!point) {
+            return;
+        }
+        event.stopPropagation();
+        handleMapPick(point);
+    }
+
     function onMapInteraction(event) {
         if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
+        if (gisCanvasPointer?.moved) {
+            return;
+        }
         // 3D 下由 canvas 射线拾取（与标注投影同一平面）；无相机时再回退 BlueMap 交点
         if (getGisBlueMapCamera()) {
             return;
@@ -1254,8 +1321,10 @@
         }
         if (!canvasClickBound) {
             canvasClickBound = true;
-            document.addEventListener('click', onCanvasClick, true);
-            document.addEventListener('mousemove', onCanvasMove, true);
+            document.addEventListener('pointerdown', onCanvasPointerDown, false);
+            document.addEventListener('pointermove', onCanvasPointerMove, false);
+            document.addEventListener('pointerup', onCanvasPointerUp, false);
+            document.addEventListener('pointercancel', onCanvasPointerUp, false);
         }
     }
 
@@ -1835,8 +1904,8 @@
     function onDblClick(event) {
         if (!gisInfoEnabled || !gisEditMode || !gisCanEdit) return;
         if (activeTool !== 'line' && activeTool !== 'polygon') return;
-        if (!event.target?.closest?.('canvas')) return;
-        event.preventDefault();
+        if (Date.now() - gisLastMapDragAt < 450) return;
+        if (!isGisPickTarget(event.target)) return;
         event.stopPropagation();
         finishDraft();
     }
