@@ -1075,27 +1075,6 @@
         };
     }
 
-    /** 鼠标射线与 3D 线段最近点（透视下与屏幕悬停一致，勿用屏幕 t 插值世界坐标） */
-    function closestWorldPointOnSegmentToRay(ray, p0, p1) {
-        const u = vec3Sub(p1, p0);
-        const v = ray.dir;
-        const w0 = vec3Sub(ray.origin, p0);
-        const a = vec3Dot(u, u);
-        const b = vec3Dot(u, v);
-        const c = vec3Dot(v, v);
-        const d = vec3Dot(u, w0);
-        const e = vec3Dot(v, w0);
-        const denom = a * c - b * b;
-        let sc;
-        if (denom < 1e-8) {
-            sc = 0;
-        } else {
-            sc = (b * e - c * d) / denom;
-        }
-        sc = Math.max(0, Math.min(1, sc));
-        return { point: lerpWorld3(p0, p1, sc), t: sc };
-    }
-
     /** 鼠标到线段（裁剪后屏幕几何）的最近点；用于悬停判定与 + 显示位置 */
     function getScreenHitOnLineSegment(clientX, clientY, p0, p1, view, camera, maxPx) {
         let bestDist = Infinity;
@@ -1116,10 +1095,66 @@
         return { x: bestHit.x, y: bestHit.y, dist: bestDist };
     }
 
+    /** 在 3D 线段上找投影最接近鼠标的 t（用于水平面拾取失败时的回退） */
+    function pickSegmentScreenParam(clientX, clientY, p0, p1, view, camera) {
+        const s0 = projectGisPoint(p0, view, camera, false);
+        const s1 = projectGisPoint(p1, view, camera, false);
+        if (!s0 || !s1 || s0.behind || s1.behind) {
+            return null;
+        }
+        return closestPointOnScreenSegment(clientX, clientY, s0.x, s0.y, s1.x, s1.y).t;
+    }
+
+    function pickWorldOnSegmentByScreenProjection(clientX, clientY, p0, p1, view, camera) {
+        let bestT = 0;
+        let bestDist = Infinity;
+        const steps = 40;
+        const distAt = (t) => {
+            const s = projectGisPoint(lerpWorld3(p0, p1, t), view, camera, false);
+            if (!s || s.behind) {
+                return Infinity;
+            }
+            return screenDist(clientX, clientY, s.x, s.y);
+        };
+        for (let i = 0; i <= steps; i += 1) {
+            const t = i / steps;
+            const d = distAt(t);
+            if (d < bestDist) {
+                bestDist = d;
+                bestT = t;
+            }
+        }
+        let lo = Math.max(0, bestT - 1 / steps);
+        let hi = Math.min(1, bestT + 1 / steps);
+        for (let k = 0; k < 14; k += 1) {
+            const m1 = lo + (hi - lo) / 3;
+            const m2 = hi - (hi - lo) / 3;
+            if (distAt(m1) < distAt(m2)) {
+                hi = m2;
+            } else {
+                lo = m1;
+            }
+        }
+        return snapPoint(lerpWorld3(p0, p1, (lo + hi) * 0.5));
+    }
+
+    /**
+     * 插入点世界坐标：与 + 同屏位置，取最近方块中心（与绘制拾取一致的水平面射线，勿用 3D 射线-线段最近点以免吸到邻点）
+     */
     function pickWorldOnSegmentAtScreen(clientX, clientY, p0, p1, view, camera) {
-        const ray = camera ? unprojectScreenToRay(clientX, clientY, camera) : null;
-        if (ray) {
-            return closestWorldPointOnSegmentToRay(ray, p0, p1).point;
+        if (!p0 || !p1) {
+            return null;
+        }
+        if (camera) {
+            const t = pickSegmentScreenParam(clientX, clientY, p0, p1, view, camera);
+            if (t != null) {
+                const planeY = p0.y + t * (p1.y - p0.y);
+                const onPlane = pickWorldOnHorizontalPlane(clientX, clientY, camera, planeY);
+                if (onPlane) {
+                    return onPlane;
+                }
+            }
+            return pickWorldOnSegmentByScreenProjection(clientX, clientY, p0, p1, view, camera);
         }
         const s0 = projectGisPoint(p0, view, null, false);
         const s1 = projectGisPoint(p1, view, null, false);
@@ -1127,7 +1162,7 @@
             return null;
         }
         const hit = closestPointOnScreenSegment(clientX, clientY, s0.x, s0.y, s1.x, s1.y);
-        return lerpWorld3(p0, p1, hit.t);
+        return snapPoint(lerpWorld3(p0, p1, hit.t));
     }
 
     function coerceVertexPoint(raw) {
@@ -1147,22 +1182,9 @@
         };
     }
 
-    /** 插入顶点：X/Z 对齐方块中心，Y 保留射线求交高度（避免道路折线高度被拉偏） */
+    /** 插入顶点：对齐到距拾取位置最近的方块中心 */
     function coerceInsertVertexPoint(raw) {
-        if (!raw) {
-            return null;
-        }
-        const x = Number(raw.x);
-        const y = Number(raw.y);
-        const z = Number(raw.z);
-        if (![x, y, z].every(Number.isFinite)) {
-            return null;
-        }
-        return {
-            x: Math.floor(x) + 0.5,
-            y: Math.floor(y) + 0.5,
-            z: Math.floor(z) + 0.5
-        };
+        return snapPoint(raw);
     }
 
     function setFeatureCoordinatesFromPoints(feature, points) {
