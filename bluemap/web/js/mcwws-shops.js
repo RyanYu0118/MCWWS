@@ -1664,8 +1664,11 @@
         if (!wrap) {
             wrap = document.createElement('div');
             wrap.className = 'mcwws-ctrl-layer-wrap';
+            const dimCol = layerBtn.closest('.mcwws-ctrl-dimension-column');
             const bottomRow = layerBtn.closest('.mcwws-ctrl-bottom-row');
-            if (bottomRow) {
+            if (dimCol) {
+                dimCol.insertBefore(wrap, layerBtn);
+            } else if (bottomRow) {
                 bottomRow.insertBefore(wrap, layerBtn);
             } else {
                 root.insertBefore(wrap, root.firstChild);
@@ -1675,6 +1678,72 @@
         if (menu.parentElement !== wrap) {
             wrap.appendChild(menu);
         }
+    }
+
+    /** 旧版纵向堆叠 → 左侧维度列 + 右侧工具条（指南针/2D/缩放/日夜/定位/全屏） */
+    function migrateMapControlsLayout(root) {
+        if (!root) return;
+        const stack = root.querySelector('.mcwws-map-controls-stack');
+        if (!stack || stack.querySelector('.mcwws-ctrl-main-row')) {
+            return;
+        }
+
+        const mainRow = document.createElement('div');
+        mainRow.className = 'mcwws-ctrl-main-row';
+
+        const cluster = document.createElement('div');
+        cluster.className = 'mcwws-ctrl-tools-cluster';
+
+        [
+            '.mcwws-ctrl-compass',
+            '.mcwws-ctrl-mode',
+            '.mcwws-ctrl-zoom',
+            '.mcwws-ctrl-daynight',
+            '.mcwws-ctrl-locate'
+        ].forEach((sel) => {
+            const el = stack.querySelector(sel);
+            if (el) {
+                cluster.appendChild(el);
+            }
+        });
+
+        const bottomRow = stack.querySelector('.mcwws-ctrl-bottom-row');
+        const fs = bottomRow?.querySelector('.mcwws-ctrl-fullscreen')
+            || stack.querySelector('.mcwws-ctrl-fullscreen');
+        if (fs) {
+            cluster.appendChild(fs);
+        }
+
+        let dimCol = bottomRow?.querySelector('.mcwws-ctrl-dimension-column')
+            || stack.querySelector('.mcwws-ctrl-dimension-column');
+        if (!dimCol) {
+            dimCol = document.createElement('div');
+            dimCol.className = 'mcwws-ctrl-dimension-column';
+            const layerWrap = bottomRow?.querySelector('.mcwws-ctrl-layer-wrap')
+                || stack.querySelector('.mcwws-ctrl-layer-wrap');
+            if (layerWrap) {
+                dimCol.appendChild(layerWrap);
+            } else if (root.querySelector('.mcwws-ctrl-layer')) {
+                migrateLayerMenuDom(root);
+                const wrap = root.querySelector('.mcwws-ctrl-layer-wrap');
+                if (wrap) {
+                    dimCol.appendChild(wrap);
+                }
+            }
+        }
+
+        const gisWrap = document.getElementById('mcwws-gis-wrap');
+        if (gisWrap && gisWrap.parentElement !== dimCol) {
+            dimCol.insertBefore(gisWrap, dimCol.firstChild);
+        }
+
+        mainRow.appendChild(dimCol);
+        mainRow.appendChild(cluster);
+
+        while (stack.firstChild) {
+            stack.removeChild(stack.firstChild);
+        }
+        stack.appendChild(mainRow);
     }
 
     function migrateCompassDom(root) {
@@ -3497,6 +3566,7 @@
     function ensureMapControls() {
         let root = document.getElementById(MAP_CONTROLS_ID);
         if (root?.dataset.ready === '1') {
+            migrateMapControlsLayout(root);
             migrateCompassDom(root);
             migrateLayerMenuDom(root);
             migrateLocateProgressRing(root);
@@ -3509,59 +3579,64 @@
         root.dataset.ready = '1';
         root.innerHTML = `
             <div class="mcwws-map-controls-stack">
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
-                    <span class="mcwws-compass-shell" aria-hidden="true">
-                        <span class="mcwws-compass-ellipse">
-                            <span class="mcwws-compass-dial">
-                                <span class="mcwws-compass-needle"></span>
-                            </span>
-                        </span>
-                    </span>
-                </button>
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="当前为 3D 透视，点击切换到 2D">
-                    <span class="mcwws-ctrl-mode-label">3D</span>
-                </button>
-                <div class="mcwws-ctrl-zoom">
-                    <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-in" title="放大">+</button>
-                    <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-out" title="缩小">−</button>
-                </div>
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-daynight" title="切换日景 / 夜景">
-                    <svg class="mcwws-ctrl-daynight-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-                        <circle class="mcwws-daynight-sun" cx="12" cy="12" r="4" fill="currentColor"/>
-                        <g class="mcwws-daynight-moon" fill="currentColor">
-                            <path d="M14.5 3.2a7.5 7.5 0 1 0 7.3 11.8A6.5 6.5 0 1 1 14.5 3.2z"/>
-                        </g>
-                    </svg>
-                </button>
-                <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-locate" title="定位到已登录玩家（需先登录）" disabled>
-                    <svg class="mcwws-ctrl-locate-progress" viewBox="0 0 40 40" aria-hidden="true">
-                        <circle class="mcwws-ctrl-locate-progress-track" cx="20" cy="20" r="17" pathLength="100" />
-                        <circle class="mcwws-ctrl-locate-progress-bar" cx="20" cy="20" r="17" pathLength="100" />
-                    </svg>
-                    <svg class="mcwws-ctrl-locate-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
-                        <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
-                    </svg>
-                </button>
-                <div class="mcwws-ctrl-bottom-row">
-                    <div class="mcwws-ctrl-layer-wrap">
-                        <button type="button" class="mcwws-ctrl-layer" title="维度选择">
-                            <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
-                            <span class="mcwws-ctrl-layer-text">
-                                <svg class="mcwws-ctrl-layer-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/></svg>
-                                维度
+                <div class="mcwws-ctrl-main-row">
+                    <div class="mcwws-ctrl-dimension-column">
+                        <div class="mcwws-ctrl-layer-wrap">
+                            <button type="button" class="mcwws-ctrl-layer" title="维度选择">
+                                <span class="mcwws-ctrl-layer-thumb" aria-hidden="true"></span>
+                                <span class="mcwws-ctrl-layer-text">
+                                    <svg class="mcwws-ctrl-layer-icon" viewBox="0 0 24 24" width="14" height="14" aria-hidden="true"><path fill="currentColor" d="M12 2 2 7l10 5 10-5-10-5zm0 8.5L2 6v2.5l10 5 10-5V6l-10 4.5zm0 4.5L2 10.5V13l10 5 10-5v-2.5L12 15z"/></svg>
+                                    维度
+                                </span>
+                            </button>
+                            <div class="mcwws-layer-menu" hidden></div>
+                        </div>
+                    </div>
+                    <div class="mcwws-ctrl-tools-cluster">
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
+                            <span class="mcwws-compass-shell" aria-hidden="true">
+                                <span class="mcwws-compass-ellipse">
+                                    <span class="mcwws-compass-dial">
+                                        <span class="mcwws-compass-needle"></span>
+                                    </span>
+                                </span>
                             </span>
                         </button>
-                        <div class="mcwws-layer-menu" hidden></div>
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-mode" title="当前为 3D 透视，点击切换到 2D">
+                            <span class="mcwws-ctrl-mode-label">3D</span>
+                        </button>
+                        <div class="mcwws-ctrl-zoom">
+                            <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-in" title="放大">+</button>
+                            <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-zoom-out" title="缩小">−</button>
+                        </div>
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-daynight" title="切换日景 / 夜景">
+                            <svg class="mcwws-ctrl-daynight-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                                <circle class="mcwws-daynight-sun" cx="12" cy="12" r="4" fill="currentColor"/>
+                                <g class="mcwws-daynight-moon" fill="currentColor">
+                                    <path d="M14.5 3.2a7.5 7.5 0 1 0 7.3 11.8A6.5 6.5 0 1 1 14.5 3.2z"/>
+                                </g>
+                            </svg>
+                        </button>
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-locate" title="定位到已登录玩家（需先登录）" disabled>
+                            <svg class="mcwws-ctrl-locate-progress" viewBox="0 0 40 40" aria-hidden="true">
+                                <circle class="mcwws-ctrl-locate-progress-track" cx="20" cy="20" r="17" pathLength="100" />
+                                <circle class="mcwws-ctrl-locate-progress-bar" cx="20" cy="20" r="17" pathLength="100" />
+                            </svg>
+                            <svg class="mcwws-ctrl-locate-icon" viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
+                                <path fill="currentColor" d="M12 2a7 7 0 0 0-7 7c0 5.25 7 13 7 13s7-7.75 7-13a7 7 0 0 0-7-7zm0 9.5A2.5 2.5 0 1 1 12 6a2.5 2.5 0 0 1 0 5.5z"/>
+                            </svg>
+                        </button>
+                        <button type="button" class="mcwws-ctrl-fullscreen" title="全屏，隐藏所有功能模块">
+                            <svg class="mcwws-ctrl-fs-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z"/></svg>
+                            <span class="mcwws-ctrl-fs-label">全屏</span>
+                        </button>
                     </div>
-                    <button type="button" class="mcwws-ctrl-fullscreen" title="全屏，隐藏所有功能模块">
-                        <svg class="mcwws-ctrl-fs-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M4 9V4h5V6H6v3H4zm0 11v-5h2v3h3v2H4zm16-11V6h-3V4h5v5h-2zm0 16h-5v-2h3v-3h2v5z"/></svg>
-                        <span class="mcwws-ctrl-fs-label">全屏</span>
-                    </button>
                 </div>
             </div>
         `;
         document.body.appendChild(root);
         bindMapControlEvents(root);
+        migrateMapControlsLayout(root);
         migrateLayerMenuDom(root);
         migrateLocateProgressRing(root);
         renderLayerMenu();

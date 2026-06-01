@@ -1,17 +1,6 @@
-/* MCWWS GIS — 与维度同列：标注在上、维度在下 */
+/* MCWWS GIS — 与维度同列：标注在上、维度在下（列布局见 mcwws-shops.css） */
 
-.mcwws-ctrl-dimension-column {
-    display: flex;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 8px;
-    position: relative;
-    width: 72px;
-    flex-shrink: 0;
-}
-
-.mcwws-ctrl-dimension-column .mcwws-ctrl-gis-wrap,
-.mcwws-ctrl-dimension-column .mcwws-ctrl-layer-wrap {
+.mcwws-ctrl-dimension-column .mcwws-ctrl-gis-wrap {
     width: 100%;
 }
 
@@ -312,10 +301,6 @@
 }
 
 @media (max-width: 520px) {
-    .mcwws-ctrl-dimension-column {
-        align-self: flex-end;
-    }
-
     .mcwws-gis-menu {
         right: 0;
         bottom: calc(100% + 8px);

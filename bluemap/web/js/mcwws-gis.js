@@ -757,24 +757,6 @@
         document.body.classList.toggle('mcwws-gis-drawing', gisEditMode && gisCanEdit && activeTool !== 'select');
     }
 
-    /** 与维度按钮同一列：标注在上、维度在下，全屏仍在右侧 */
-    function ensureDimensionColumn(bottomRow) {
-        const layerWrap = bottomRow.querySelector('.mcwws-ctrl-layer-wrap');
-        if (!layerWrap) {
-            return null;
-        }
-        let col = bottomRow.querySelector('.mcwws-ctrl-dimension-column');
-        if (!col) {
-            col = document.createElement('div');
-            col.className = 'mcwws-ctrl-dimension-column';
-            bottomRow.insertBefore(col, layerWrap);
-            col.appendChild(layerWrap);
-        } else if (layerWrap.parentElement !== col) {
-            col.appendChild(layerWrap);
-        }
-        return col;
-    }
-
     function mountGisAboveDimension(wrap, column) {
         const layerWrap = column.querySelector('.mcwws-ctrl-layer-wrap');
         if (layerWrap && wrap.nextElementSibling !== layerWrap) {
@@ -785,12 +767,7 @@
     }
 
     function ensureGisControls() {
-        const stack = document.querySelector(MAP_CONTROLS_STACK_SEL);
-        const bottomRow = stack?.querySelector('.mcwws-ctrl-bottom-row');
-        if (!bottomRow) {
-            return null;
-        }
-        const column = ensureDimensionColumn(bottomRow);
+        const column = document.querySelector('.mcwws-ctrl-dimension-column');
         if (!column) {
             return null;
         }
