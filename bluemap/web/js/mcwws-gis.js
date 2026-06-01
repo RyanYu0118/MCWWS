@@ -1288,20 +1288,6 @@
                 deleteSelectedFeature();
             }
         });
-
-        document.addEventListener('click', (e) => {
-            if (!layerDialogOpen) {
-                return;
-            }
-            const insideGis = e.composedPath?.().some?.(
-                (node) => node instanceof Element && node.closest?.('.mcwws-ctrl-gis-wrap')
-            ) || e.target.closest?.('.mcwws-ctrl-gis-wrap');
-            if (insideGis) {
-                return;
-            }
-            layerDialogOpen = false;
-            renderLayerDialog();
-        });
     }
 
     function waitForMapControls(attemptsLeft = 80) {
@@ -1328,11 +1314,6 @@
                 draftPoints = [];
                 draftHover = null;
                 syncDrawingClass();
-                renderLayerDialog();
-                return;
-            }
-            if (layerDialogOpen) {
-                layerDialogOpen = false;
                 renderLayerDialog();
             }
             return;
