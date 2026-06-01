@@ -545,5 +545,109 @@ orders:
                 material: obsidian
                 shopTitle: 方块商店
                 status: delivered
+    '22':
+        id: 0cf704b7-2b05-4376-b147-72bc47bcf76e
+        numericId: 22
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 6
+        createdAt: '2026-06-01T12:05:54.850Z'
+        updatedAt: '2026-06-01 20:11:43'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-01 20:11:42'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: birch_sapling
+                shopId: logs
+                slot: L
+                quantity: 3
+                unitBuyPrice: 2
+                lineTotal: 6
+                productAmount: 1
+                material: birch_sapling
+                shopTitle: 原木商店
+                status: delivered
+    '23':
+        id: 6606d353-ba5b-4aac-a428-56cb14a247ca
+        numericId: 23
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 6
+        createdAt: '2026-06-01T12:06:09.658Z'
+        updatedAt: '2026-06-01 20:11:44'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-01 20:11:43'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: birch_sapling
+                shopId: logs
+                slot: L
+                quantity: 3
+                unitBuyPrice: 2
+                lineTotal: 6
+                productAmount: 1
+                material: birch_sapling
+                shopTitle: 原木商店
+                status: delivered
+    '24':
+        id: 758825cc-169c-47fc-8a81-fa276c7039b6
+        numericId: 24
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 7.2
+        createdAt: '2026-06-01T12:13:22.535Z'
+        updatedAt: '2026-06-01 20:13:36'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-01 20:13:36'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: jungle_log
+                shopId: logs
+                slot: F
+                quantity: 1
+                unitBuyPrice: 7.2
+                lineTotal: 7.2
+                productAmount: 1
+                material: jungle_log
+                shopTitle: 原木商店
+                status: delivered
+    '25':
+        id: 43b89d0c-1c60-4de8-a28f-02cae9d3ad06
+        numericId: 25
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 61
+        createdAt: '2026-06-01T12:15:16.406Z'
+        updatedAt: '2026-06-01 20:24:04'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-01 20:24:04'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: powered_rail
+                shopId: transport
+                slot: B
+                quantity: 1
+                unitBuyPrice: 61
+                lineTotal: 61
+                productAmount: 1
+                material: powered_rail
+                shopTitle: 运输商店
+                status: delivered
 
-next_id: 22
+next_id: 26
