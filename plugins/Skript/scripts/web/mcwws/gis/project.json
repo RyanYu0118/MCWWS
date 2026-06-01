@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-01T16:17:13.839Z",
+  "updatedAt": "2026-06-01T17:22:45.811Z",
   "layers": [
     {
       "id": "roads",
@@ -51,18 +51,35 @@
           }
         },
         {
-          "id": "443d82bec25f4c7a",
-          "type": "Label",
+          "id": "73a1c1a8337442e9",
+          "type": "Polygon",
           "map": "world",
           "layerId": "roads",
-          "coordinates": {
-            "x": -806.5,
-            "y": 0,
-            "z": -40.5
-          },
+          "coordinates": [
+            {
+              "x": -492.5,
+              "y": 64,
+              "z": -124.5
+            },
+            {
+              "x": -416.5,
+              "y": 64,
+              "z": -185.5
+            },
+            {
+              "x": -446.5,
+              "y": 64,
+              "z": -232.5
+            },
+            {
+              "x": -510.5,
+              "y": 64,
+              "z": -169.5
+            }
+          ],
           "properties": {
-            "name": "标注",
-            "description": "2"
+            "name": "区域",
+            "description": ""
           }
         }
       ]

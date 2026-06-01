@@ -487,8 +487,8 @@
     }
 
     .mcwws-layer-menu {
-        right: 0;
-        bottom: calc(100% + 8px);
+        right: calc(100% + 8px);
+        bottom: 0;
         min-width: 140px;
     }
 }
@@ -768,10 +768,10 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
 
 .mcwws-layer-menu {
     position: absolute;
-    right: 0;
-    bottom: calc(100% + 10px);
+    right: calc(100% + 10px);
+    bottom: 0;
     min-width: 160px;
-    max-height: 240px;
+    max-height: min(240px, calc(100vh - 48px));
     overflow: auto;
     padding: 6px;
     border-radius: 10px;
