@@ -11,6 +11,7 @@
     const GIS_SCREEN_CLIP_PAD = 8000;
     const GIS_CHAIN_JOIN_EPS = 6;
     const GIS_DRAG_THRESHOLD_PX = 8;
+    const GIS_SELECT_HIT_PX = 16;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -1182,10 +1183,6 @@
         }
         lastPickAt = now;
         lastPickKey = pickKey;
-        if (activeTool === 'select') {
-            return;
-        }
-
         if (activeTool === 'point' || activeTool === 'label') {
             draftPoints = [point];
             placePointFeature(activeTool === 'label' ? 'Label' : 'Point');
@@ -1221,8 +1218,136 @@
         return !!target?.closest?.('#map-container canvas');
     }
 
-    function isGisEditPointerActive() {
-        return gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select';
+    function isGisMapInteractionTarget(target) {
+        return isGisPickTarget(target)
+            || !!target?.closest?.('#mcwws-gis-svg-layer [data-fid]')
+            || !!target?.closest?.('.mcwws-gis-pin');
+    }
+
+    function isGisEditorActive() {
+        return gisInfoEnabled && gisEditMode && gisCanEdit;
+    }
+
+    function isGisSelectMode() {
+        return isGisEditorActive() && activeTool === 'select';
+    }
+
+    function isGisDrawPointerActive() {
+        return isGisEditorActive() && activeTool !== 'select';
+    }
+
+    function screenDist(ax, ay, bx, by) {
+        const dx = ax - bx;
+        const dy = ay - by;
+        return Math.hypot(dx, dy);
+    }
+
+    function distPointToScreenSegment(px, py, x1, y1, x2, y2) {
+        const dx = x2 - x1;
+        const dy = y2 - y1;
+        const len2 = dx * dx + dy * dy;
+        if (len2 < 1e-6) {
+            return screenDist(px, py, x1, y1);
+        }
+        let t = ((px - x1) * dx + (py - y1) * dy) / len2;
+        t = Math.max(0, Math.min(1, t));
+        return screenDist(px, py, x1 + t * dx, y1 + t * dy);
+    }
+
+    function pointInScreenPolygon(px, py, ring) {
+        let inside = false;
+        for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+            const xi = ring[i].x;
+            const yi = ring[i].y;
+            const xj = ring[j].x;
+            const yj = ring[j].y;
+            const intersect = (yi > py) !== (yj > py)
+                && px < ((xj - xi) * (py - yi)) / (yj - yi + 1e-12) + xi;
+            if (intersect) {
+                inside = !inside;
+            }
+        }
+        return inside;
+    }
+
+    function projectFeaturePointsForHit(points, view, camera, labelStyle) {
+        return points
+            .map((p) => projectGisPoint(p, view, camera, labelStyle))
+            .filter((p) => p && !p.behind);
+    }
+
+    /** 屏幕空间命中检测（与每帧重绘 SVG 无关，选择工具可靠） */
+    function pickFeatureAtScreen(clientX, clientY) {
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        let bestId = null;
+        let bestDist = GIS_SELECT_HIT_PX;
+
+        iterVisibleFeatures().forEach(({ feature }) => {
+            const points = coordsToPoints(feature.coordinates);
+
+            if (feature.type === 'Point' || feature.type === 'Label') {
+                const p = points[0];
+                if (!p) {
+                    return;
+                }
+                const s = projectGisPoint(p, view, camera, true);
+                if (!s || s.behind) {
+                    return;
+                }
+                const d = screenDist(clientX, clientY, s.x, s.y);
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestId = feature.id;
+                }
+                return;
+            }
+
+            if (feature.type === 'LineString' && points.length >= 2) {
+                for (let i = 0; i < points.length - 1; i += 1) {
+                    const a = projectGisPoint(points[i], view, camera, false);
+                    const b = projectGisPoint(points[i + 1], view, camera, false);
+                    if (!a || !b || a.behind || b.behind) {
+                        continue;
+                    }
+                    const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestId = feature.id;
+                    }
+                }
+                return;
+            }
+
+            if (feature.type === 'Polygon' && points.length >= 3) {
+                const ring = projectFeaturePointsForHit(points, view, camera, false);
+                if (ring.length < 3) {
+                    return;
+                }
+                if (pointInScreenPolygon(clientX, clientY, ring)) {
+                    bestDist = 0;
+                    bestId = feature.id;
+                    return;
+                }
+                for (let i = 0; i < ring.length; i += 1) {
+                    const j = (i + 1) % ring.length;
+                    const d = distPointToScreenSegment(
+                        clientX,
+                        clientY,
+                        ring[i].x,
+                        ring[i].y,
+                        ring[j].x,
+                        ring[j].y
+                    );
+                    if (d < bestDist) {
+                        bestDist = d;
+                        bestId = feature.id;
+                    }
+                }
+            }
+        });
+
+        return bestId;
     }
 
     function markGisPointerMoved(clientX, clientY) {
@@ -1237,7 +1362,7 @@
     }
 
     function onCanvasPointerDown(event) {
-        if (!isGisEditPointerActive()) {
+        if (!isGisEditorActive()) {
             return;
         }
         if (event.button !== 0) {
@@ -1246,7 +1371,7 @@
         if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) {
             return;
         }
-        if (!isGisPickTarget(event.target)) {
+        if (!isGisMapInteractionTarget(event.target)) {
             return;
         }
         gisCanvasPointer = {
@@ -1283,11 +1408,24 @@
         }
         const wasDrag = gisCanvasPointer.moved;
         gisCanvasPointer = null;
-        if (!isGisEditPointerActive()) {
+        if (!isGisEditorActive()) {
             return;
         }
         if (wasDrag) {
             gisLastMapDragAt = Date.now();
+            return;
+        }
+        if (isGisSelectMode()) {
+            const fid = pickFeatureAtScreen(event.clientX, event.clientY);
+            selectedFeatureId = fid;
+            renderOverlay();
+            renderPanel();
+            if (fid) {
+                event.stopPropagation();
+            }
+            return;
+        }
+        if (!isGisDrawPointerActive()) {
             return;
         }
         const point = pickWorldFromScreen(event.clientX, event.clientY);
@@ -1501,14 +1639,6 @@
         }
 
         svg.innerHTML = fragments.join('');
-        svg.querySelectorAll('[data-fid]').forEach((el) => {
-            el.addEventListener('click', (e) => {
-                e.stopPropagation();
-                selectedFeatureId = el.getAttribute('data-fid');
-                renderOverlay();
-                renderPanel();
-            });
-        });
 
         const pinIds = new Set();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
@@ -1521,12 +1651,6 @@
                 pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'mcwws-gis-pin';
-                pin.addEventListener('click', (e) => {
-                    e.stopPropagation();
-                    selectedFeatureId = feature.id;
-                    renderOverlay();
-                    renderPanel();
-                });
                 pinLayer.appendChild(pin);
                 pinElements.set(feature.id, pin);
             }
@@ -1556,8 +1680,9 @@
     }
 
     function syncDrawingClass() {
-        const drawing = gisInfoEnabled && gisEditMode && gisCanEdit && activeTool !== 'select';
+        const drawing = isGisDrawPointerActive();
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
+        document.body.classList.toggle('mcwws-gis-select-mode', isGisSelectMode());
     }
 
     function mountGisAboveDimension(wrap, column) {
