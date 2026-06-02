@@ -3803,6 +3803,45 @@
         return camera ? GIS_SELECT_HIT_PX_3D : GIS_SELECT_HIT_PX;
     }
 
+    /** 与 SVG 绘制一致：双向道路在近距离显示车道线时，拾取也走车道/中心链 */
+    function iterLineStringScreenSegmentsForPick(feature, view, camera, onSegment) {
+        if (!feature || feature.type !== 'LineString') {
+            return;
+        }
+        const points = coordsToPoints(feature.coordinates);
+        if (points.length < 2) {
+            return;
+        }
+        if (isRoadDualCarriagewayEnabled(feature)) {
+            initDualLanesIfMissing(feature);
+            ensureMaxLaneStorage(feature);
+            if (hasAnyVertexDisplayedForLanes(feature)) {
+                ['left', 'right'].forEach((side) => {
+                    getRenderableLaneIndices(feature, side).forEach((laneIndex) => {
+                        getLaneRenderChains(feature, side, laneIndex).forEach((chain) => {
+                            if (chain.length >= 2) {
+                                iterClippedLineScreenSegments(chain, view, camera, onSegment);
+                            }
+                        });
+                    });
+                });
+                getCenterlineRenderChains(feature).forEach((chain) => {
+                    if (chain.length >= 2) {
+                        iterClippedLineScreenSegments(chain, view, camera, onSegment);
+                    }
+                });
+                return;
+            }
+        }
+        iterClippedLineScreenSegments(points, view, camera, onSegment);
+    }
+
+    function pickFeatureIdFromDomTarget(target) {
+        const el = target?.closest?.('#mcwws-gis-svg-layer [data-fid], .mcwws-gis-pin[data-fid]');
+        const fid = el?.getAttribute?.('data-fid');
+        return fid || null;
+    }
+
     /** 屏幕空间命中检测（裁剪后的屏幕几何与 SVG 绘制一致） */
     function pickFeatureAtScreen(clientX, clientY) {
         const view = getViewForProjection();
@@ -3831,7 +3870,7 @@
             }
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                iterClippedLineScreenSegments(points, view, camera, (a, b) => {
+                iterLineStringScreenSegmentsForPick(feature, view, camera, (a, b) => {
                     const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
                     if (d < bestDist) {
                         bestDist = d;
@@ -3946,7 +3985,7 @@
 
         if (feature.type === 'LineString' && points.length >= 2) {
             let hit = false;
-            iterClippedLineScreenSegments(points, view, camera, (a, b) => {
+            iterLineStringScreenSegmentsForPick(feature, view, camera, (a, b) => {
                 if (hit) {
                     return;
                 }
@@ -4322,7 +4361,8 @@
                 event.stopPropagation();
                 return;
             }
-            const fid = pickFeatureAtScreen(event.clientX, event.clientY);
+            const fid = pickFeatureIdFromDomTarget(event.target)
+                || pickFeatureAtScreen(event.clientX, event.clientY);
             if (fid) {
                 if (!(event.ctrlKey || event.metaKey)) {
                     clearSelectedVertices();

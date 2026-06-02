@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T09:13:31.333Z",
+  "updatedAt": "2026-06-02T11:39:20.617Z",
   "layers": [
     {
       "id": "roads",
@@ -64,7 +64,7 @@
             "name": "道路-分支2",
             "description": "",
             "dualCarriageway": true,
-            "dualSplitHeight": 512,
+            "defaultVertexDisplayHeight": 512,
             "vertexLaneCounts": {
               "0": {
                 "left": 2,
@@ -269,6 +269,38 @@
                 ]
               ]
             }
+          }
+        },
+        {
+          "id": "e0410e4d04954395",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -713.5,
+              "y": 64.5,
+              "z": 146.5
+            },
+            {
+              "x": -886.5,
+              "y": 98.5,
+              "z": 259.5
+            },
+            {
+              "x": -980.5,
+              "y": 64.5,
+              "z": 245.5
+            },
+            {
+              "x": -1011.5,
+              "y": 64.5,
+              "z": 111.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": ""
           }
         }
       ]
