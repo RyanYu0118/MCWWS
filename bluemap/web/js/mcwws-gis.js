@@ -34,7 +34,7 @@
     const GIS_HISTORY_MAX = 100;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
     const GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET = 3;
-    const GIS_LANE_ARROW_SPACING_PX = 44;
+    const GIS_LANE_ARROW_SPACING_PX = 88;
     /** 指向 +X 的实心箭头（右箭头）；左车道通过 rotate(180°) 得到左箭头 */
     const GIS_LANE_ARROW_SHAPE_D = 'M -6 -3.5 L 2 0 L -6 3.5 L -3.5 0 Z';
 

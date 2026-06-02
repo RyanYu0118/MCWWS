@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T07:43:45.076Z",
+  "updatedAt": "2026-06-02T08:00:35.034Z",
   "layers": [
     {
       "id": "roads",
@@ -8,43 +8,6 @@
       "color": "#f59e0b",
       "visible": true,
       "features": [
-        {
-          "id": "73a1c1a8337442e9",
-          "type": "Polygon",
-          "map": "world",
-          "layerId": "roads",
-          "coordinates": [
-            {
-              "x": -528.5,
-              "y": 63.5,
-              "z": -40.5
-            },
-            {
-              "x": -400.5,
-              "y": 63.5,
-              "z": -166.5
-            },
-            {
-              "x": -468.5,
-              "y": 116.5,
-              "z": -197.5
-            },
-            {
-              "x": -477.5,
-              "y": 39.5,
-              "z": -232.5
-            },
-            {
-              "x": -546.5,
-              "y": 39.5,
-              "z": -96.5
-            }
-          ],
-          "properties": {
-            "name": "区域",
-            "description": ""
-          }
-        },
         {
           "id": "d354e2211317412a",
           "type": "LineString",
@@ -97,7 +60,7 @@
             "description": "",
             "dualCarriageway": true,
             "dualSplitHeight": 512,
-            "laneOffset": 6
+            "laneOffset": 3
           }
         }
       ]
