@@ -21,9 +21,12 @@
     const GIS_SEGMENT_MIN_SCREEN_LEN = 10;
     const GIS_SEGMENT_VERTEX_CLEAR_PX = 10;
     const GIS_AXIS_DRAG_THRESHOLD_PX = 3;
-    const GIS_GIZMO_AXES_SIZE = 52;
+    const GIS_GIZMO_AXES_SIZE = 80;
     const GIS_GIZMO_HUB = GIS_GIZMO_AXES_SIZE / 2;
-    const GIS_GIZMO_COORDS_OFFSET_Y = 30;
+    const GIS_GIZMO_AXIS_WORLD_SPAN = 4;
+    const GIS_GIZMO_AXIS_MIN_WIDTH_PX = 42;
+    const GIS_GIZMO_AXIS_MAX_WIDTH_PX = 72;
+    const GIS_GIZMO_COORDS_OFFSET_Y = 34;
     const GIS_HISTORY_MAX = 100;
 
     let mapAuthToken = null;
@@ -69,8 +72,8 @@
     /** @type {Array<{ project: object, selectedFeatureIds: string[], activeLayerId: string }>} */
     let gisRedoStack = [];
     let gisHistoryApplying = false;
-    /** @type {{ featureId: string, vertexIndex: number } | null} */
-    let selectedVertex = null;
+    /** @type {Set<string>} 特征点多选，键为 featureId:vertexIndex */
+    const selectedVertices = new Set();
     /** @type {{ axis: string, featureId: string, vertexIndex: number, startWorld: object, startClientX: number, startClientY: number, pointerId: number, historyRecorded: boolean, moved: boolean, screenAxis: object | null, cleanup: (() => void) | null } | null} */
     let gisVertexDrag = null;
     /** @type {Map<string, HTMLButtonElement>} */
@@ -894,7 +897,7 @@
     }
 
     function getDefaultPickPlaneY() {
-        if (selectedVertex) {
+        if (hasSelectedVertices()) {
             const w = getSelectedVertexWorld();
             if (w && Number.isFinite(w.y)) {
                 return w.y;
@@ -1204,16 +1207,64 @@
         return coordsToPoints(feature?.coordinates);
     }
 
-    function getSelectedVertexWorld() {
-        if (!selectedVertex) {
+    function vertexSelectionKey(featureId, vertexIndex) {
+        return `${featureId}:${vertexIndex}`;
+    }
+
+    function parseVertexSelectionKey(key) {
+        if (!key) {
             return null;
         }
-        const found = findFeatureById(selectedVertex.featureId);
+        const sep = key.lastIndexOf(':');
+        if (sep < 0) {
+            return null;
+        }
+        const vertexIndex = Number(key.slice(sep + 1));
+        if (!Number.isFinite(vertexIndex)) {
+            return null;
+        }
+        return { featureId: key.slice(0, sep), vertexIndex };
+    }
+
+    function hasSelectedVertices() {
+        return selectedVertices.size > 0;
+    }
+
+    function isVertexSelected(featureId, vertexIndex) {
+        return selectedVertices.has(vertexSelectionKey(featureId, vertexIndex));
+    }
+
+    function getPrimarySelectedVertex() {
+        const key = selectedVertices.values().next().value;
+        return key ? parseVertexSelectionKey(key) : null;
+    }
+
+    function getVertexWorld(featureId, vertexIndex) {
+        const found = findFeatureById(featureId);
         if (!found) {
             return null;
         }
         const pts = getFeatureVertexPoints(found.feature);
-        return pts[selectedVertex.vertexIndex] || null;
+        return pts[vertexIndex] || null;
+    }
+
+    function getSelectedVertexWorld() {
+        const primary = getPrimarySelectedVertex();
+        if (!primary) {
+            return null;
+        }
+        return getVertexWorld(primary.featureId, primary.vertexIndex);
+    }
+
+    function syncGizmoFromVertexSelection() {
+        if (selectedVertices.size === 1) {
+            const world = getSelectedVertexWorld();
+            if (world) {
+                syncVertexGizmoInputs(world);
+            }
+            return;
+        }
+        hideVertexGizmo();
     }
 
     function setFeatureVertexPoint(feature, vertexIndex, point, options = {}) {
@@ -1285,15 +1336,36 @@
         gizmo.style.pointerEvents = 'auto';
     }
 
-    function clearSelectedVertex() {
+    function clearSelectedVertices() {
         endVertexAxisDrag(null);
-        selectedVertex = null;
+        selectedVertices.clear();
         gisVertexCoordHistoryPending = false;
         document.body.classList.remove('mcwws-gis-vertex-dragging');
         hideVertexGizmo();
     }
 
-    function selectVertex(featureId, vertexIndex) {
+    function validateSelectedVertices() {
+        if (!selectedVertices.size) {
+            return;
+        }
+        const next = new Set();
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            if (!sel || !selectedFeatureIds.has(sel.featureId)) {
+                return;
+            }
+            const found = findFeatureById(sel.featureId);
+            const pts = found ? getFeatureVertexPoints(found.feature) : [];
+            if (sel.vertexIndex >= 0 && sel.vertexIndex < pts.length) {
+                next.add(key);
+            }
+        });
+        selectedVertices.clear();
+        next.forEach((key) => selectedVertices.add(key));
+        syncGizmoFromVertexSelection();
+    }
+
+    function selectVertex(featureId, vertexIndex, options = {}) {
         const found = findFeatureById(featureId);
         if (!found) {
             return;
@@ -1302,8 +1374,19 @@
         if (vertexIndex < 0 || vertexIndex >= pts.length) {
             return;
         }
-        selectedVertex = { featureId, vertexIndex };
-        syncVertexGizmoInputs(pts[vertexIndex]);
+        const key = vertexSelectionKey(featureId, vertexIndex);
+        const additive = !!(options.additive || options.toggle);
+        if (additive) {
+            if (selectedVertices.has(key)) {
+                selectedVertices.delete(key);
+            } else {
+                selectedVertices.add(key);
+            }
+        } else {
+            selectedVertices.clear();
+            selectedVertices.add(key);
+        }
+        syncGizmoFromVertexSelection();
         renderOverlay();
     }
 
@@ -1332,12 +1415,13 @@
 
     function getScreenAxisDir(originWorld, axis, view, camera) {
         const tip = { ...originWorld };
+        const span = GIS_GIZMO_AXIS_WORLD_SPAN;
         if (axis === 'x') {
-            tip.x += 1;
+            tip.x += span;
         } else if (axis === 'y') {
-            tip.y += 1;
+            tip.y += span;
         } else {
-            tip.z += 1;
+            tip.z += span;
         }
         const o = projectGisPoint(originWorld, view, camera, false);
         const t = projectGisPoint(tip, view, camera, false);
@@ -1347,10 +1431,33 @@
         const dx = t.x - o.x;
         const dy = t.y - o.y;
         const len = Math.hypot(dx, dy);
-        if (len < 2) {
+        if (len < 1.5) {
             return null;
         }
-        return { ux: dx / len, uy: dy / len, len };
+        return {
+            ux: dx / len,
+            uy: dy / len,
+            len,
+            pixelsPerWorld: len / span
+        };
+    }
+
+    function dragVertexAlongAxisAtScreen(screenAxis, axis, startWorld, startClientX, startClientY, clientX, clientY) {
+        if (!screenAxis) {
+            return startWorld;
+        }
+        const along = (clientX - startClientX) * screenAxis.ux + (clientY - startClientY) * screenAxis.uy;
+        const ppw = screenAxis.pixelsPerWorld || screenAxis.len || 1;
+        const delta = ppw > 1e-6 ? along / ppw : 0;
+        const next = { ...startWorld };
+        if (axis === 'x') {
+            next.x = startWorld.x + delta;
+        } else if (axis === 'y') {
+            next.y = startWorld.y + delta;
+        } else {
+            next.z = startWorld.z + delta;
+        }
+        return coerceVertexPoint(next) || startWorld;
     }
 
     function dragVertexAlongAxis3D(axis, startWorld, clientX, clientY, camera) {
@@ -1388,23 +1495,6 @@
         }) || startWorld;
     }
 
-    function dragVertexAlongScreenAxis(axis, startWorld, startClientX, startClientY, clientX, clientY, screenAxis) {
-        if (!screenAxis) {
-            return startWorld;
-        }
-        const along = (clientX - startClientX) * screenAxis.ux + (clientY - startClientY) * screenAxis.uy;
-        const delta = along / screenAxis.len;
-        const next = { ...startWorld };
-        if (axis === 'x') {
-            next.x = startWorld.x + delta;
-        } else if (axis === 'y') {
-            next.y = startWorld.y + delta;
-        } else {
-            next.z = startWorld.z + delta;
-        }
-        return coerceVertexPoint(next) || startWorld;
-    }
-
     function endVertexAxisDrag(event) {
         if (!gisVertexDrag) {
             return;
@@ -1425,7 +1515,7 @@
     }
 
     function startVertexAxisDrag(axisBtn, event) {
-        if (!selectedVertex || event.button !== 0) {
+        if (!hasSelectedVertices() || event.button !== 0) {
             return;
         }
         const axis = axisBtn.getAttribute('data-axis') || 'x';
@@ -1441,6 +1531,17 @@
             setStatus('当前视角下该轴不可拖动，请调整视角后重试', 'error');
             return;
         }
+        const dragKeys = selectedVertices.size > 1
+            ? Array.from(selectedVertices)
+            : [getPrimarySelectedVertex()].filter(Boolean).map((s) => vertexSelectionKey(s.featureId, s.vertexIndex));
+        const dragTargets = dragKeys.map((key) => {
+            const sel = parseVertexSelectionKey(key);
+            const startWorld = getVertexWorld(sel.featureId, sel.vertexIndex);
+            return startWorld ? { featureId: sel.featureId, vertexIndex: sel.vertexIndex, startWorld: { ...startWorld } } : null;
+        }).filter(Boolean);
+        if (!dragTargets.length) {
+            return;
+        }
         event.preventDefault();
         event.stopPropagation();
         if (gisVertexDrag?.cleanup) {
@@ -1448,9 +1549,7 @@
         }
         gisVertexDrag = {
             axis,
-            featureId: selectedVertex.featureId,
-            vertexIndex: selectedVertex.vertexIndex,
-            startWorld: { ...world },
+            dragTargets,
             startClientX: event.clientX,
             startClientY: event.clientY,
             pointerId: event.pointerId,
@@ -1478,21 +1577,23 @@
                 recordGisHistory();
                 gisVertexDrag.historyRecorded = true;
             }
-            const found = findFeatureById(gisVertexDrag.featureId);
-            if (!found) {
-                return;
-            }
-            const next = dragVertexAlongScreenAxis(
-                gisVertexDrag.axis,
-                gisVertexDrag.startWorld,
-                gisVertexDrag.startClientX,
-                gisVertexDrag.startClientY,
-                e.clientX,
-                e.clientY,
-                gisVertexDrag.screenAxis
-            );
-            setFeatureVertexPoint(found.feature, gisVertexDrag.vertexIndex, next, { skipPanel: true });
-            syncVertexGizmoInputs(next);
+            gisVertexDrag.dragTargets.forEach((target) => {
+                const found = findFeatureById(target.featureId);
+                if (!found) {
+                    return;
+                }
+                const next = dragVertexAlongAxisAtScreen(
+                    gisVertexDrag.screenAxis,
+                    gisVertexDrag.axis,
+                    target.startWorld,
+                    gisVertexDrag.startClientX,
+                    gisVertexDrag.startClientY,
+                    e.clientX,
+                    e.clientY
+                );
+                setFeatureVertexPoint(found.feature, target.vertexIndex, next, { skipPanel: true });
+            });
+            syncGizmoFromVertexSelection();
             renderOverlay();
         };
         const onUp = (e) => {
@@ -1667,7 +1768,7 @@
 
     function syncVertexGizmoInputs(point) {
         const gizmo = ensureVertexGizmo();
-        if (!gizmo || !point || !selectedVertex || !shouldShowVertexHandles()) {
+        if (!gizmo || !point || selectedVertices.size !== 1 || !shouldShowVertexHandles()) {
             hideVertexGizmo();
             return;
         }
@@ -1686,10 +1787,11 @@
     }
 
     function applyVertexCoordInputsFromGizmo(recordHistory) {
-        if (!selectedVertex) {
+        const primary = getPrimarySelectedVertex();
+        if (!primary || selectedVertices.size !== 1) {
             return;
         }
-        const found = findFeatureById(selectedVertex.featureId);
+        const found = findFeatureById(primary.featureId);
         if (!found) {
             return;
         }
@@ -1706,7 +1808,7 @@
             recordGisHistory();
             gisVertexCoordHistoryPending = true;
         }
-        setFeatureVertexPoint(found.feature, selectedVertex.vertexIndex, point);
+        setFeatureVertexPoint(found.feature, primary.vertexIndex, point);
         renderOverlay();
     }
 
@@ -1800,7 +1902,11 @@
             }
             event.preventDefault();
             event.stopPropagation();
-            selectVertex(handle.getAttribute('data-fid'), Number(handle.getAttribute('data-idx')));
+            selectVertex(
+                handle.getAttribute('data-fid'),
+                Number(handle.getAttribute('data-idx')),
+                { additive: event.ctrlKey || event.metaKey }
+            );
         });
     }
 
@@ -1821,16 +1927,13 @@
             layer.hidden = true;
             vertexHandleElements.forEach((el) => el.remove());
             vertexHandleElements.clear();
-            clearSelectedVertex();
+            clearSelectedVertices();
             clearGisHoverSegmentInsert();
             hideVertexGizmo();
             return;
         }
         layer.hidden = false;
-        if (selectedVertex && !selectedFeatureIds.has(selectedVertex.featureId)) {
-            clearSelectedVertex();
-            hideVertexGizmo();
-        }
+        validateSelectedVertices();
         const needed = new Set();
         iterSelectedVertexFeatures().forEach(({ feature }) => {
             const pts = getFeatureVertexPoints(feature);
@@ -1847,10 +1950,7 @@
                     layer.appendChild(handle);
                     vertexHandleElements.set(key, handle);
                 }
-                const active = selectedVertex
-                    && selectedVertex.featureId === feature.id
-                    && selectedVertex.vertexIndex === idx;
-                handle.classList.toggle('is-active', !!active);
+                handle.classList.toggle('is-active', isVertexSelected(feature.id, idx));
                 const projected = projectGisPoint(p, view, camera, false);
                 const off = !projected || projected.behind
                     || projected.x < -40 || projected.y < -40
@@ -1868,10 +1968,10 @@
                 vertexHandleElements.delete(key);
             }
         });
-        if (selectedVertex) {
+        if (selectedVertices.size === 1) {
             const world = getSelectedVertexWorld();
             if (!world) {
-                clearSelectedVertex();
+                clearSelectedVertices();
                 hideVertexGizmo();
                 return;
             }
@@ -1919,7 +2019,7 @@
         if (gisVertexDrag) {
             return;
         }
-        if (!selectedVertex || !shouldShowVertexHandles()) {
+        if (selectedVertices.size !== 1 || !shouldShowVertexHandles()) {
             hideVertexGizmo();
             return;
         }
@@ -1956,8 +2056,13 @@
             }
             el.style.display = 'block';
             const deg = (Math.atan2(dir.uy, dir.ux) * 180) / Math.PI;
+            const widthPx = Math.max(
+                GIS_GIZMO_AXIS_MIN_WIDTH_PX,
+                Math.min(GIS_GIZMO_AXIS_MAX_WIDTH_PX, dir.len * GIS_GIZMO_AXIS_WORLD_SPAN)
+            );
             el.style.left = `${hub}px`;
             el.style.top = `${hub}px`;
+            el.style.width = `${widthPx}px`;
             el.style.transform = `rotate(${deg.toFixed(2)}deg)`;
         });
         showVertexGizmo();
@@ -2030,22 +2135,7 @@
 
     function clearGisSelection() {
         selectedFeatureIds.clear();
-        clearSelectedVertex();
-    }
-
-    function validateSelectedVertex() {
-        if (!selectedVertex) {
-            return;
-        }
-        if (!selectedFeatureIds.has(selectedVertex.featureId)) {
-            clearSelectedVertex();
-            return;
-        }
-        const found = findFeatureById(selectedVertex.featureId);
-        const pts = found ? getFeatureVertexPoints(found.feature) : [];
-        if (!pts[selectedVertex.vertexIndex]) {
-            clearSelectedVertex();
-        }
+        clearSelectedVertices();
     }
 
     function clearGisSelectHover() {
@@ -2069,7 +2159,7 @@
             segmentInsertHandleEl = null;
         }
         clearGisHoverSegmentInsert();
-        clearSelectedVertex();
+        clearSelectedVertices();
         hideVertexGizmo();
     }
 
@@ -2238,8 +2328,7 @@
             }
             project = data.project || project;
             dirty = false;
-            resetGisHistory();
-            setStatus('已保存到服务器', 'ok');
+            setStatus('已保存到服务器（仍可 Ctrl+Z 撤销）', 'ok');
         } catch (err) {
             setStatus(`保存失败：${err.message}`, 'error');
         } finally {
@@ -2260,6 +2349,7 @@
         return {
             project: JSON.parse(JSON.stringify(project)),
             selectedFeatureIds: Array.from(selectedFeatureIds),
+            selectedVertices: Array.from(selectedVertices),
             activeLayerId: activeLayerId || project.layers?.[0]?.id || 'roads'
         };
     }
@@ -2272,6 +2362,15 @@
         project = JSON.parse(JSON.stringify(state.project));
         applyGisSelectionFromState(state);
         activeLayerId = state.activeLayerId || project.layers?.[0]?.id || 'roads';
+        selectedVertices.clear();
+        if (Array.isArray(state.selectedVertices)) {
+            state.selectedVertices.forEach((key) => {
+                if (key) {
+                    selectedVertices.add(key);
+                }
+            });
+        }
+        syncGizmoFromVertexSelection();
         draftPoints = [];
         draftHover = null;
         gisHistoryApplying = false;
@@ -2383,37 +2482,59 @@
         return 1;
     }
 
-    /** 删除当前选中的特征点；点数不足时删除整个要素 */
-    function deleteSelectedVertex() {
-        if (!selectedVertex || !gisEditMode || !isGisSelectMode()) {
+    /** 删除当前选中的特征点（支持多选）；点数不足时删除整个要素 */
+    function deleteSelectedVertices() {
+        if (!hasSelectedVertices() || !gisEditMode || !isGisSelectMode()) {
             return false;
         }
-        const found = findFeatureById(selectedVertex.featureId);
-        if (!found) {
-            clearSelectedVertex();
-            return false;
-        }
-        const feature = found.feature;
-        const pts = getFeatureVertexPoints(feature);
-        const idx = selectedVertex.vertexIndex;
-        if (idx < 0 || idx >= pts.length) {
-            clearSelectedVertex();
-            return false;
-        }
-        const minVerts = minVerticesForFeatureType(feature.type);
-        if (pts.length <= minVerts) {
-            if (!selectedFeatureIds.has(feature.id)) {
-                selectedFeatureIds.add(feature.id);
+        const byFeature = new Map();
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            if (!sel) {
+                return;
             }
-            deleteSelectedFeature();
-            return true;
+            if (!byFeature.has(sel.featureId)) {
+                byFeature.set(sel.featureId, []);
+            }
+            byFeature.get(sel.featureId).push(sel.vertexIndex);
+        });
+        if (!byFeature.size) {
+            clearSelectedVertices();
+            return false;
         }
         recordGisHistory();
-        pts.splice(idx, 1);
-        setFeatureCoordinatesFromPoints(feature, pts);
-        const nextIdx = Math.min(idx, pts.length - 1);
-        selectedVertex = { featureId: feature.id, vertexIndex: nextIdx };
-        syncVertexGizmoInputs(pts[nextIdx]);
+        const deleteWholeFeatures = new Set();
+        byFeature.forEach((indices, featureId) => {
+            const found = findFeatureById(featureId);
+            if (!found) {
+                return;
+            }
+            const feature = found.feature;
+            const pts = getFeatureVertexPoints(feature);
+            const unique = [...new Set(indices)].filter((i) => i >= 0 && i < pts.length).sort((a, b) => b - a);
+            if (!unique.length) {
+                return;
+            }
+            const minVerts = minVerticesForFeatureType(feature.type);
+            if (pts.length - unique.length < minVerts) {
+                deleteWholeFeatures.add(featureId);
+                return;
+            }
+            unique.forEach((i) => pts.splice(i, 1));
+            setFeatureCoordinatesFromPoints(feature, pts);
+        });
+        clearSelectedVertices();
+        if (deleteWholeFeatures.size) {
+            deleteWholeFeatures.forEach((id) => selectedFeatureIds.add(id));
+            project.layers.forEach((layer) => {
+                layer.features = (layer.features || []).filter((f) => !deleteWholeFeatures.has(f.id));
+            });
+            selectedFeatureIds.forEach((id) => {
+                if (deleteWholeFeatures.has(id)) {
+                    selectedFeatureIds.delete(id);
+                }
+            });
+        }
         markDirty();
         renderOverlay();
         renderPanel();
@@ -2738,18 +2859,23 @@
         if (isGisSelectMode()) {
             const vtx = pickVertexAtScreen(event.clientX, event.clientY);
             if (vtx) {
-                selectVertex(vtx.featureId, vtx.vertexIndex);
+                selectVertex(vtx.featureId, vtx.vertexIndex, {
+                    additive: event.ctrlKey || event.metaKey
+                });
                 event.stopPropagation();
                 return;
             }
             const fid = pickFeatureAtScreen(event.clientX, event.clientY);
             if (fid) {
+                if (!(event.ctrlKey || event.metaKey)) {
+                    clearSelectedVertices();
+                }
                 if (selectedFeatureIds.has(fid)) {
                     selectedFeatureIds.delete(fid);
                 } else {
                     selectedFeatureIds.add(fid);
                 }
-                validateSelectedVertex();
+                validateSelectedVertices();
                 event.stopPropagation();
             } else {
                 clearGisSelection();
@@ -3168,7 +3294,7 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '选中道路/区域后：橙色为顶点；「+」可添加顶点；选中顶点后 Delete 删除该点，未选中顶点时 Delete 删除整段要素'
+                ? '橙色顶点可多选（Ctrl+点击）；Delete 删点 / 删整段；Ctrl+S 保存；保存后仍可 Ctrl+Z / Ctrl+Y'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
@@ -3187,6 +3313,7 @@
                 </div>
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action mcwws-gis-menu-action--primary" data-action="save"
+                        title="Ctrl+S"
                         ${!gisCanEdit || !dirty || saving ? 'disabled' : ''}>${saving ? '保存中…' : '保存'}</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
@@ -3397,12 +3524,21 @@
         requestAnimationFrame(() => waitForMapControls(attemptsLeft - 1));
     }
 
-    function shouldBlockGisDeleteKey() {
-        return gisEditMode && gisCanEdit && !isInputFocused();
+    function shouldHandleGisEditShortcut() {
+        return gisEditMode && gisCanEdit && gisEditorOpen && !isInputFocused();
     }
 
     function onKeyDownCapture(event) {
-        if (!shouldBlockGisDeleteKey()) {
+        if (!shouldHandleGisEditShortcut()) {
+            return;
+        }
+        const key = String(event.key || '').toLowerCase();
+        if ((event.ctrlKey || event.metaKey) && key === 's') {
+            event.preventDefault();
+            event.stopPropagation();
+            if (!saving) {
+                void saveGisProject();
+            }
             return;
         }
         if (event.key !== 'Delete' && event.key !== 'Backspace') {
@@ -3410,8 +3546,8 @@
         }
         event.preventDefault();
         event.stopPropagation();
-        if (isGisSelectMode() && selectedVertex) {
-            deleteSelectedVertex();
+        if (isGisSelectMode() && hasSelectedVertices()) {
+            deleteSelectedVertices();
             return;
         }
         if (hasGisSelection()) {
@@ -3421,8 +3557,8 @@
 
     function onKeyDown(event) {
         if (event.key === 'Escape') {
-            if (gisEditMode && isGisSelectMode() && selectedVertex) {
-                clearSelectedVertex();
+            if (gisEditMode && isGisSelectMode() && hasSelectedVertices()) {
+                clearSelectedVertices();
                 renderOverlay();
                 event.preventDefault();
                 return;
@@ -3447,13 +3583,20 @@
         if (!gisEditMode) return;
         if (isInputFocused()) return;
         if (event.ctrlKey || event.metaKey) {
-            const key = String(event.key || '').toLowerCase();
-            if (key === 'z' && !event.shiftKey) {
+            const modKey = String(event.key || '').toLowerCase();
+            if (modKey === 's') {
+                event.preventDefault();
+                if (!saving) {
+                    void saveGisProject();
+                }
+                return;
+            }
+            if (modKey === 'z' && !event.shiftKey) {
                 event.preventDefault();
                 undoGisEdit();
                 return;
             }
-            if (key === 'y' || (key === 'z' && event.shiftKey)) {
+            if (modKey === 'y' || (modKey === 'z' && event.shiftKey)) {
                 event.preventDefault();
                 redoGisEdit();
                 return;

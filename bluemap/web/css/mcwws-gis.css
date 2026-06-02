@@ -725,33 +725,34 @@ body.mcwws-map-render-no-transition #mcwws-gis-pin-layer {
 
 .mcwws-gis-gizmo-axes {
     position: relative;
-    width: 52px;
-    height: 52px;
+    width: 80px;
+    height: 80px;
     pointer-events: auto;
     touch-action: none;
 }
 
 .mcwws-gis-axis {
     position: absolute;
-    left: 26px;
-    top: 26px;
-    width: 24px;
-    height: 2px;
-    margin: -1px 0 0 0;
+    left: 40px;
+    top: 40px;
+    width: 42px;
+    height: 3px;
+    margin: -1.5px 0 0 0;
     padding: 0;
     border: 0;
-    border-radius: 1px;
+    border-radius: 1.5px;
     transform-origin: 0 50%;
     cursor: grab;
+    box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.12);
 }
 
 .mcwws-gis-axis::before {
     content: "";
     position: absolute;
     left: 0;
-    top: -6px;
+    top: -8px;
     width: 100%;
-    height: 12px;
+    height: 16px;
 }
 
 .mcwws-gis-axis:active {
