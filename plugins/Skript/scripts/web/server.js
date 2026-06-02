@@ -1812,81 +1812,32 @@ function normalizeGisFeature(raw, layerId) {
         description,
         ...(safeColor ? { color: safeColor } : {})
     };
-    if (type === 'LineString') {
-        if (props.dualCarriageway === true || props.dualCarriageway === 1 || props.dualCarriageway === '1') {
-            featureProps.dualCarriageway = true;
-        }
-        const defaultDisplayHeight = Number(props.defaultVertexDisplayHeight);
-        const legacySplitHeight = Number(props.dualSplitHeight);
-        const displayHeight = Number.isFinite(defaultDisplayHeight) && defaultDisplayHeight > 0
-            ? defaultDisplayHeight
-            : legacySplitHeight;
-        if (Number.isFinite(displayHeight) && displayHeight > 0) {
-            featureProps.defaultVertexDisplayHeight = Math.round(displayHeight);
-        }
-        const vdhRaw = props.vertexDisplayHeights;
-        if (vdhRaw && typeof vdhRaw === 'object' && !Array.isArray(vdhRaw)) {
-            const vertexDisplayHeights = {};
-            Object.keys(vdhRaw).slice(0, 512).forEach((key) => {
-                const h = Number(vdhRaw[key]);
-                if (Number.isFinite(h) && h > 0) {
-                    vertexDisplayHeights[String(key).slice(0, 8)] = Math.round(h);
-                }
-            });
-            if (Object.keys(vertexDisplayHeights).length) {
-                featureProps.vertexDisplayHeights = vertexDisplayHeights;
+    if (type === 'LineString' || type === 'Polygon') {
+        const vertexIdsRaw = props.vertexIds;
+        if (Array.isArray(vertexIdsRaw)) {
+            const vertexIds = vertexIdsRaw
+                .slice(0, 512)
+                .map((id) => String(id || '').trim().slice(0, 80))
+                .filter((id) => id.length > 0);
+            if (vertexIds.length) {
+                featureProps.vertexIds = vertexIds;
             }
         }
-        const lanesPerSide = Number(props.lanesPerSide);
-        if (Number.isFinite(lanesPerSide) && lanesPerSide >= 1) {
-            featureProps.lanesPerSide = Math.min(6, Math.round(lanesPerSide));
+        const strokeStyle = String(props.strokeStyle || '').trim().toLowerCase();
+        if (['solid', 'dashed', 'dotted', 'dashdot', 'dash-dot'].includes(strokeStyle)) {
+            featureProps.strokeStyle = strokeStyle === 'dash-dot' ? 'dashdot' : strokeStyle;
         }
-        const vlcRaw = props.vertexLaneCounts;
-        if (vlcRaw && typeof vlcRaw === 'object' && !Array.isArray(vlcRaw)) {
-            const vertexLaneCounts = {};
-            Object.keys(vlcRaw).slice(0, 512).forEach((key) => {
-                const entry = vlcRaw[key];
-                if (!entry || typeof entry !== 'object') {
-                    return;
-                }
-                const left = Number(entry.left);
-                const right = Number(entry.right);
-                const next = {};
-                if (Number.isFinite(left) && left >= 1) {
-                    next.left = Math.min(6, Math.round(left));
-                }
-                if (Number.isFinite(right) && right >= 1) {
-                    next.right = Math.min(6, Math.round(right));
-                }
-                if (Object.keys(next).length) {
-                    vertexLaneCounts[String(key).slice(0, 8)] = next;
-                }
-            });
-            if (Object.keys(vertexLaneCounts).length) {
-                featureProps.vertexLaneCounts = vertexLaneCounts;
-            }
+        const strokeWidth = Number(props.strokeWidth);
+        if (Number.isFinite(strokeWidth) && strokeWidth > 0) {
+            featureProps.strokeWidth = Math.min(24, Math.max(1, strokeWidth));
         }
-        const lanesRaw = props.lanes;
-        if (lanesRaw && typeof lanesRaw === 'object') {
-            const normalizeSide = (sideRaw) => {
-                if (!Array.isArray(sideRaw) || !sideRaw.length) {
-                    return null;
-                }
-                const first = sideRaw[0];
-                if (first && typeof first === 'object' && !Array.isArray(first)) {
-                    const poly = sideRaw.map(normalizeGisPoint).filter(Boolean);
-                    return poly.length >= 2 ? [poly] : null;
-                }
-                const polys = sideRaw.map((item) => {
-                    const list = Array.isArray(item) ? item : [];
-                    return list.map(normalizeGisPoint).filter(Boolean);
-                }).filter((poly) => poly.length >= 2);
-                return polys.length ? polys : null;
-            };
-            const left = normalizeSide(lanesRaw.left);
-            const right = normalizeSide(lanesRaw.right);
-            if (left && right) {
-                featureProps.lanes = { left, right };
+    }
+    if (type === 'Point' || type === 'Label') {
+        const vertexIdsRaw = props.vertexIds;
+        if (Array.isArray(vertexIdsRaw) && vertexIdsRaw.length) {
+            const id0 = String(vertexIdsRaw[0] || '').trim().slice(0, 80);
+            if (id0) {
+                featureProps.vertexIds = [id0];
             }
         }
     }

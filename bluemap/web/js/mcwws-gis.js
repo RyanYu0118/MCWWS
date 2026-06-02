@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-21';
+    const MCWWS_GIS_BUILD = '20260602-23';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -35,11 +35,6 @@
     const GIS_GIZMO_COORDS_OFFSET_Y = 34;
     const GIS_HISTORY_MAX = 100;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
-    const GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET = 3;
-    const GIS_ROAD_MAX_LANES_PER_SIDE = 6;
-    const GIS_LANE_ARROW_SPACING_PX = 88;
-    /** 指向 +X 的实心箭头（右箭头）；左车道通过 rotate(180°) 得到左箭头 */
-    const GIS_LANE_ARROW_SHAPE_D = 'M -6 -3.5 L 2 0 L -6 3.5 L -3.5 0 Z';
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -103,6 +98,7 @@
     /** @type {SVGPathElement | null} */
     let gisLassoPathEl = null;
     let gisLassoCaptureBound = false;
+    let mapContextMenuBound = false;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
@@ -1237,6 +1233,8 @@
             return;
         }
         feature.coordinates = points.map((p) => ({ x: p.x, y: p.y, z: p.z }));
+        ensureVertexIds(feature);
+        dirty = true;
     }
 
     function getFeatureVertexPoints(feature) {
@@ -1248,242 +1246,128 @@
             .map((p) => ({ x: p.x, y: p.y, z: p.z }));
     }
 
-    function parseLaneKey(laneKey) {
-        if (!laneKey || laneKey === 'center') {
-            return { side: 'center', index: 0 };
-        }
-        const m = /^(left|right)-(\d+)$/.exec(laneKey);
-        if (m) {
-            return { side: m[1], index: Number(m[2]) };
-        }
-        if (laneKey === 'left' || laneKey === 'right') {
-            return { side: laneKey, index: 0 };
-        }
-        return null;
+    function generateVertexId(featureId) {
+        const tag = typeof crypto !== 'undefined' && crypto.randomUUID
+            ? crypto.randomUUID().replace(/-/g, '').slice(0, 12)
+            : Math.random().toString(36).slice(2, 14);
+        return `${featureId}-v-${tag}`;
     }
 
-    function formatLaneKey(side, index) {
-        return `${side}-${index}`;
-    }
-
-    function migrateLanesStructure(feature) {
-        const lanes = feature?.properties?.lanes;
-        if (!lanes || typeof lanes !== 'object') {
+    function stripLegacyRoadLaneProps(feature) {
+        if (!feature?.properties) {
             return;
         }
-        ['left', 'right'].forEach((side) => {
-            const v = lanes[side];
-            if (!Array.isArray(v) || !v.length) {
-                return;
+        const p = feature.properties;
+        delete p.dualCarriageway;
+        delete p.lanesPerSide;
+        delete p.lanes;
+        delete p.vertexLaneCounts;
+        delete p.lodHeightCenterOnly;
+        delete p.lodHeightAllLanes;
+        delete p.lodMidLanes;
+        delete p.defaultVertexDisplayHeight;
+        delete p.defaultSegmentDisplayHeight;
+        delete p.vertexDisplayHeights;
+        delete p.segmentDisplayHeights;
+        delete p.dualSplitHeight;
+    }
+
+    function getFeatureVertexCount(feature) {
+        if (!feature) {
+            return 0;
+        }
+        if (feature.type === 'Point' || feature.type === 'Label') {
+            const pts = coordsToPoints(feature.coordinates);
+            return pts.length >= 1 ? 1 : 0;
+        }
+        if (feature.type === 'LineString' || feature.type === 'Polygon') {
+            return getFeatureVertexPoints(feature).length;
+        }
+        return 0;
+    }
+
+    function ensureVertexIds(feature) {
+        if (!feature?.id) {
+            return [];
+        }
+        const props = ensureFeatureProperties(feature);
+        const count = getFeatureVertexCount(feature);
+        if (!Array.isArray(props.vertexIds)) {
+            props.vertexIds = [];
+        }
+        while (props.vertexIds.length < count) {
+            props.vertexIds.push(generateVertexId(feature.id));
+        }
+        if (props.vertexIds.length > count) {
+            props.vertexIds.length = count;
+        }
+        for (let i = 0; i < props.vertexIds.length; i += 1) {
+            if (typeof props.vertexIds[i] !== 'string' || !props.vertexIds[i]) {
+                props.vertexIds[i] = generateVertexId(feature.id);
             }
-            const first = v[0];
-            if (first && typeof first === 'object' && !Array.isArray(first) && ('x' in first || 'y' in first)) {
-                lanes[side] = [v];
+        }
+        return props.vertexIds;
+    }
+
+    function getVertexIdAt(feature, vertexIndex) {
+        return ensureVertexIds(feature)[vertexIndex] || null;
+    }
+
+    function insertVertexIdAt(feature, insertIndex) {
+        ensureVertexIds(feature);
+        const idx = Math.max(0, Math.min(insertIndex, feature.properties.vertexIds.length));
+        feature.properties.vertexIds.splice(idx, 0, generateVertexId(feature.id));
+    }
+
+    function removeVertexIdsAt(feature, sortedIndicesDesc) {
+        ensureVertexIds(feature);
+        sortedIndicesDesc.forEach((i) => {
+            if (i >= 0 && i < feature.properties.vertexIds.length) {
+                feature.properties.vertexIds.splice(i, 1);
             }
         });
     }
 
-    function getRoadLanesPerSide(feature) {
-        const v = Number(feature?.properties?.lanesPerSide);
-        if (Number.isFinite(v) && v >= 1) {
-            return Math.min(GIS_ROAD_MAX_LANES_PER_SIDE, Math.round(v));
-        }
-        return 1;
-    }
-
-    function ensureVertexLaneCounts(feature) {
-        const props = ensureFeatureProperties(feature);
-        if (!props.vertexLaneCounts || typeof props.vertexLaneCounts !== 'object') {
-            props.vertexLaneCounts = {};
-        }
-        return props.vertexLaneCounts;
-    }
-
-    function getVertexLaneCountAt(feature, side, vertexIndex) {
-        const key = String(vertexIndex);
-        const entry = feature?.properties?.vertexLaneCounts?.[key];
-        const n = Number(entry?.[side]);
-        if (Number.isFinite(n) && n >= 1) {
-            return Math.min(GIS_ROAD_MAX_LANES_PER_SIDE, Math.round(n));
-        }
-        return getRoadLanesPerSide(feature);
-    }
-
-    function setVertexLaneCountAt(feature, vertexIndex, side, count) {
-        const c = Math.max(1, Math.min(GIS_ROAD_MAX_LANES_PER_SIDE, Math.round(count)));
-        const vlc = ensureVertexLaneCounts(feature);
-        const key = String(vertexIndex);
-        if (!vlc[key] || typeof vlc[key] !== 'object') {
-            vlc[key] = {};
-        }
-        vlc[key][side] = c;
-        return c;
-    }
-
-    function getMaxLaneCountOnSide(feature, side) {
-        const center = getFeatureVertexPoints(feature);
-        let max = getRoadLanesPerSide(feature);
-        for (let i = 0; i < center.length; i += 1) {
-            max = Math.max(max, getVertexLaneCountAt(feature, side, i));
-        }
-        return max;
-    }
-
-    /** 任一端有该车道即绘制 i→i+1 段（分岔增道、合流减道都会连线） */
-    function shouldDrawLaneSegment(countAtI, countAtI1, laneIndex) {
-        return laneIndex < countAtI || laneIndex < countAtI1;
-    }
-
-    function getSideLanePolylines(feature, side) {
-        migrateLanesStructure(feature);
-        const lanes = feature?.properties?.lanes;
-        const arr = lanes?.[side];
-        if (!Array.isArray(arr)) {
-            return [];
-        }
-        return arr.map((poly) => coordsToPoints(poly));
-    }
-
-    function hasPersistedLanes(feature) {
-        migrateLanesStructure(feature);
-        const left = getSideLanePolylines(feature, 'left');
-        const right = getSideLanePolylines(feature, 'right');
-        return left.some((pts) => pts.length >= 2) && right.some((pts) => pts.length >= 2);
-    }
-
-    function ensureSideLanePolylinesCount(feature, side, targetCount) {
-        migrateLanesStructure(feature);
-        const props = ensureFeatureProperties(feature);
-        if (!props.lanes || typeof props.lanes !== 'object') {
-            props.lanes = { left: [], right: [] };
-        }
-        if (!Array.isArray(props.lanes[side])) {
-            props.lanes[side] = [];
-        }
-        const arr = props.lanes[side];
-        const center = getFeatureVertexPoints(feature);
-        const sideSign = side === 'left' ? -1 : 1;
-        while (arr.length < targetCount) {
-            const k = arr.length;
-            const inner = k > 0 ? coordsToPoints(arr[k - 1]) : center;
-            const off = GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET;
-            const source = inner.length >= 2 ? inner : center;
-            arr.push(pointsToCoordList(offsetPolylineXZ(source, off, sideSign)));
-        }
-        while (arr.length > targetCount) {
-            arr.pop();
-        }
-    }
-
-    function padLanePolylineToCenterLength(points, centerLen) {
-        const pts = points.slice();
-        while (pts.length < centerLen && pts.length > 0) {
-            const last = pts[pts.length - 1];
-            pts.push({ x: last.x, y: last.y, z: last.z });
-        }
-        return pts;
-    }
-
-    function buildOuterLaneAtVertex(feature, side, laneIndex, fromVertexIndex) {
-        const props = ensureFeatureProperties(feature);
-        const center = getFeatureVertexPoints(feature);
-        const v = Math.max(0, Math.min(fromVertexIndex, center.length - 1));
-        const sideSign = side === 'left' ? -1 : 1;
-        const inner = laneIndex > 0
-            ? coordsToPoints(props.lanes[side][laneIndex - 1])
-            : center;
-        let newPts;
-        if (inner.length >= 2) {
-            const head = inner.slice(0, v);
-            const tail = inner.slice(v);
-            const tailOff = tail.length >= 2
-                ? offsetPolylineXZ(tail, GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET, sideSign)
-                : [];
-            newPts = head.concat(tailOff);
-        } else {
-            newPts = offsetPolylineXZ(center, GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET * (laneIndex + 1), sideSign);
-        }
-        return pointsToCoordList(padLanePolylineToCenterLength(newPts, center.length));
-    }
-
-    function ensureMaxLaneStorage(feature) {
-        if (!isRoadDualCarriagewayEnabled(feature)) {
+    function normalizeGisFeature(feature) {
+        if (!feature) {
             return;
         }
-        ensureSideLanePolylinesCount(feature, 'left', getMaxLaneCountOnSide(feature, 'left'));
-        ensureSideLanePolylinesCount(feature, 'right', getMaxLaneCountOnSide(feature, 'right'));
+        stripLegacyRoadLaneProps(feature);
+        ensureVertexIds(feature);
     }
 
-    function applyVertexLaneCountsAt(feature, vertexIndex, leftCount, rightCount) {
-        const prevLeft = getVertexLaneCountAt(feature, 'left', vertexIndex);
-        const prevRight = getVertexLaneCountAt(feature, 'right', vertexIndex);
-        const nextLeft = setVertexLaneCountAt(feature, vertexIndex, 'left', leftCount);
-        const nextRight = setVertexLaneCountAt(feature, vertexIndex, 'right', rightCount);
-        ensureMaxLaneStorage(feature);
-        migrateLanesStructure(feature);
-        const props = ensureFeatureProperties(feature);
-        if (nextLeft > prevLeft) {
-            for (let k = prevLeft; k < nextLeft; k += 1) {
-                props.lanes.left[k] = buildOuterLaneAtVertex(feature, 'left', k, vertexIndex);
-            }
-        }
-        if (nextRight > prevRight) {
-            for (let k = prevRight; k < nextRight; k += 1) {
-                props.lanes.right[k] = buildOuterLaneAtVertex(feature, 'right', k, vertexIndex);
-            }
-        }
+    function normalizeGisProject(projectData) {
+        (projectData?.layers || []).forEach((layer) => {
+            (layer.features || []).forEach(normalizeGisFeature);
+        });
     }
 
-    /** 仅在尚无车道几何时，按默认每侧车道数从母线生成一次 */
-    function initDualLanesIfMissing(feature) {
-        if (!feature || !isRoadDualCarriagewayEnabled(feature) || hasPersistedLanes(feature)) {
-            return;
-        }
-        const n = getRoadLanesPerSide(feature);
-        ensureSideLanePolylinesCount(feature, 'left', n);
-        ensureSideLanePolylinesCount(feature, 'right', n);
+    function parseLaneKey(laneKey) {
+        return { side: 'center', index: 0 };
     }
 
-    function getFeatureLanePoints(feature, laneKey) {
+    function getFeatureLanePoints(feature) {
         if (!feature) {
             return [];
         }
-        const center = getFeatureVertexPoints(feature);
-        const parsed = parseLaneKey(laneKey);
-        if (!isRoadDualCarriagewayEnabled(feature) || !parsed || parsed.side === 'center') {
-            return center;
+        if (feature.type === 'Point' || feature.type === 'Label') {
+            return coordsToPoints(feature.coordinates);
         }
-        initDualLanesIfMissing(feature);
-        migrateLanesStructure(feature);
-        ensureMaxLaneStorage(feature);
-        const arr = feature.properties?.lanes?.[parsed.side];
-        if (!Array.isArray(arr) || !arr[parsed.index]) {
-            return [];
+        return getFeatureVertexPoints(feature);
+    }
+
+    function setFeatureLanePoints(feature, laneKey, points) {
+        const next = pointsToCoordList(points);
+        if (!next.length) {
+            return;
         }
-        return coordsToPoints(arr[parsed.index]);
+        setFeatureCoordinatesFromPoints(feature, next);
     }
 
     function isLaneActiveAtVertex(feature, laneKey, vertexIndex) {
-        const parsed = parseLaneKey(laneKey);
-        if (!parsed || parsed.side === 'center') {
-            return true;
-        }
-        const side = parsed.side;
-        const laneIndex = parsed.index;
-        const centerLen = getFeatureVertexPoints(feature).length;
-        if (laneIndex < getVertexLaneCountAt(feature, side, vertexIndex)) {
-            return true;
-        }
-        if (vertexIndex > 0 && laneIndex < getVertexLaneCountAt(feature, side, vertexIndex - 1)) {
-            return true;
-        }
-        if (vertexIndex < centerLen - 1 && laneIndex < getVertexLaneCountAt(feature, side, vertexIndex + 1)) {
-            return true;
-        }
-        return false;
+        return true;
     }
 
-    /** 编辑手柄：始终显示（不按相机高度隐藏） */
     function isVertexDisplayedAtCamera(feature, vertexIndex) {
         return true;
     }
@@ -1493,119 +1377,16 @@
         if (!feature) {
             return [];
         }
-        if (shouldEditLanesSeparately(feature)) {
-            initDualLanesIfMissing(feature);
-            ensureMaxLaneStorage(feature);
-            const out = [];
-            ['left', 'right'].forEach((side) => {
-                const max = getMaxLaneCountOnSide(feature, side);
-                for (let i = 0; i < max; i += 1) {
-                    const laneKey = formatLaneKey(side, i);
-                    const points = getFeatureLanePoints(feature, laneKey);
-                    if (points.length >= 1) {
-                        out.push({ lane: laneKey, points });
-                    }
-                }
-            });
-            out.push({ lane: 'center', points: getFeatureVertexPoints(feature) });
-            return out;
+        if (feature.type === 'Point' || feature.type === 'Label') {
+            const pts = coordsToPoints(feature.coordinates);
+            return pts.length ? [{ lane: 'center', points: pts }] : [];
         }
-        return [{ lane: 'center', points: getFeatureVertexPoints(feature) }];
-    }
-
-    function setFeatureLanePoints(feature, laneKey, points) {
-        const next = pointsToCoordList(points);
-        if (next.length < 1) {
-            return;
-        }
-        const parsed = parseLaneKey(laneKey);
-        if (!isRoadDualCarriagewayEnabled(feature) || !parsed || parsed.side === 'center') {
-            setFeatureCoordinatesFromPoints(feature, next);
-        } else {
-            migrateLanesStructure(feature);
-            ensureMaxLaneStorage(feature);
-            const props = ensureFeatureProperties(feature);
-            if (!props.lanes || typeof props.lanes !== 'object') {
-                props.lanes = { left: [], right: [] };
-            }
-            if (!Array.isArray(props.lanes[parsed.side])) {
-                props.lanes[parsed.side] = [];
-            }
-            props.lanes[parsed.side][parsed.index] = next;
-        }
-        dirty = true;
+        const points = getFeatureVertexPoints(feature);
+        return points.length ? [{ lane: 'center', points }] : [];
     }
 
     function shouldEditLanesSeparately(feature) {
-        return isRoadDualCarriagewayEnabled(feature);
-    }
-
-    function getLaneRenderChains(feature, side, laneIndex) {
-        const laneKey = formatLaneKey(side, laneIndex);
-        const pts = getFeatureLanePoints(feature, laneKey);
-        const center = getFeatureVertexPoints(feature);
-        if (pts.length < 2 || center.length < 2) {
-            return [];
-        }
-        const chains = [];
-        let current = [];
-        for (let i = 0; i < center.length - 1; i += 1) {
-            const c0 = getVertexLaneCountAt(feature, side, i);
-            const c1 = getVertexLaneCountAt(feature, side, i + 1);
-            if (!shouldDrawLaneSegment(c0, c1, laneIndex)) {
-                if (current.length >= 2) {
-                    chains.push(current);
-                }
-                current = [];
-                continue;
-            }
-            const p0 = pts[i] || pts[Math.min(i, pts.length - 1)];
-            const p1 = pts[i + 1] || pts[Math.min(i + 1, pts.length - 1)];
-            if (!p0 || !p1) {
-                continue;
-            }
-            if (!current.length) {
-                current.push(p0);
-            }
-            current.push(p1);
-        }
-        if (current.length >= 2) {
-            chains.push(current);
-        }
-        return chains;
-    }
-
-    function buildSvgFromLaneChains(chains, view, camera) {
-        const allChains = [];
-        chains.forEach((points) => {
-            iterClippedLineScreenSegments(points, view, camera, (s0, s1) => {
-                appendClippedSegment(allChains, [s0, s1]);
-            });
-        });
-        return chainsToSvgPath(allChains);
-    }
-
-    function getCenterlineRenderChains(feature) {
-        const center = getFeatureVertexPoints(feature);
-        if (center.length < 2) {
-            return [];
-        }
-        if (!isRoadDualCarriagewayEnabled(feature)) {
-            return [center];
-        }
-        return [center];
-    }
-
-    function getRenderableLaneIndices(feature, side) {
-        const max = getMaxLaneCountOnSide(feature, side);
-        const indices = [];
-        for (let i = 0; i < max; i += 1) {
-            const chains = getLaneRenderChains(feature, side, i);
-            if (chains.some((c) => c.length >= 2)) {
-                indices.push(i);
-            }
-        }
-        return indices;
+        return false;
     }
 
     function getPrimaryRoadVertexSelection() {
@@ -1617,14 +1398,7 @@
         if (!sel || sel.featureId !== road.feature.id) {
             return null;
         }
-        const parsed = parseLaneKey(sel.lane);
-        if (parsed?.side === 'center') {
-            return { feature: road.feature, vertexIndex: sel.vertexIndex };
-        }
-        if (parsed && (parsed.side === 'left' || parsed.side === 'right')) {
-            return { feature: road.feature, vertexIndex: sel.vertexIndex };
-        }
-        return null;
+        return { feature: road.feature, vertexIndex: sel.vertexIndex };
     }
 
     function vertexSelectionKey(featureId, lane, vertexIndex) {
@@ -1794,6 +1568,7 @@
         const idx = Math.max(0, Math.min(insertIndex, pts.length));
         recordGisHistory();
         pts.splice(idx, 0, next);
+        insertVertexIdAt(feature, idx);
         setFeatureLanePoints(feature, laneId, pts);
         clearGisHoverSegmentInsert();
         selectVertex(featureId, laneId, idx);
@@ -2534,16 +2309,10 @@
     }
 
     function snapshotFeatureGeometry(feature) {
-        migrateLanesStructure(feature);
-        const snap = {
+        return {
             center: clonePointList(getFeatureVertexPoints(feature)),
-            lanes: null
+            vertexIds: JSON.parse(JSON.stringify(ensureVertexIds(feature)))
         };
-        const lanes = feature?.properties?.lanes;
-        if (lanes && typeof lanes === 'object') {
-            snap.lanes = JSON.parse(JSON.stringify(lanes));
-        }
-        return snap;
     }
 
     function snapshotSelectedFeatureCoordinates() {
@@ -2572,19 +2341,8 @@
             if (centerNext.length) {
                 setFeatureCoordinatesFromPoints(found.feature, centerNext);
             }
-            if (snap.lanes) {
-                const props = ensureFeatureProperties(found.feature);
-                const shiftSide = (side) => {
-                    const list = Array.isArray(snap.lanes[side]) ? snap.lanes[side] : [];
-                    return list.map((poly) => pointsToCoordList(shift(coordsToPoints(poly))));
-                };
-                props.lanes = {
-                    left: shiftSide('left'),
-                    right: shiftSide('right')
-                };
-                dirty = true;
-            } else if (isRoadDualCarriagewayEnabled(found.feature)) {
-                initDualLanesIfMissing(found.feature);
+            if (Array.isArray(snap.vertexIds) && snap.vertexIds.length === centerNext.length) {
+                found.feature.properties.vertexIds = snap.vertexIds.slice();
             }
         });
         validateSelectedVertices();
@@ -2630,21 +2388,14 @@
                     handle = document.createElement('button');
                     handle.type = 'button';
                     handle.className = 'mcwws-gis-vertex-handle';
-                    const parsedLane = parseLaneKey(lane);
-                    if (parsedLane?.side === 'left') {
-                        handle.classList.add('mcwws-gis-vertex-handle--lane-left');
-                        if (parsedLane.index > 0) {
-                            handle.classList.add(`mcwws-gis-vertex-handle--lane-outer-${parsedLane.index}`);
-                        }
-                    } else if (parsedLane?.side === 'right') {
-                        handle.classList.add('mcwws-gis-vertex-handle--lane-right');
-                        if (parsedLane.index > 0) {
-                            handle.classList.add(`mcwws-gis-vertex-handle--lane-outer-${parsedLane.index}`);
-                        }
-                    }
                     handle.setAttribute('data-fid', feature.id);
                     handle.setAttribute('data-lane', lane);
                     handle.setAttribute('data-idx', String(idx));
+                    const vid = getVertexIdAt(feature, idx);
+                    if (vid) {
+                        handle.setAttribute('data-vertex-id', vid);
+                        handle.title = `顶点 ${vid}`;
+                    }
                     layer.appendChild(handle);
                     vertexHandleElements.set(key, handle);
                 }
@@ -2942,126 +2693,6 @@
         return feature.properties;
     }
 
-    function isRoadDualCarriagewayEnabled(feature) {
-        return feature?.type === 'LineString' && !!feature.properties?.dualCarriageway;
-    }
-
-    function offsetPolylineXZ(points, offset, side) {
-        if (!points || points.length < 2 || !offset) {
-            return [];
-        }
-        const out = [];
-        for (let i = 0; i < points.length; i += 1) {
-            const prev = points[Math.max(0, i - 1)];
-            const curr = points[i];
-            const next = points[Math.min(points.length - 1, i + 1)];
-            let dx = 0;
-            let dz = 0;
-            if (i > 0) {
-                dx += curr.x - prev.x;
-                dz += curr.z - prev.z;
-            }
-            if (i < points.length - 1) {
-                dx += next.x - curr.x;
-                dz += next.z - curr.z;
-            }
-            const len = Math.hypot(dx, dz);
-            if (len < 1e-6) {
-                out.push({ x: curr.x, y: curr.y, z: curr.z });
-                continue;
-            }
-            const px = (-dz / len) * offset * side;
-            const pz = (dx / len) * offset * side;
-            out.push({
-                x: curr.x + px,
-                y: curr.y,
-                z: curr.z + pz
-            });
-        }
-        return out;
-    }
-
-    /** 沿车道折线按屏幕间距采样箭头位置；reverse 为 true 时箭头反向（左车道 ←） */
-    function collectLaneArrowPlacements(lanePoints, view, camera, reverse) {
-        const placements = [];
-        if (!lanePoints || lanePoints.length < 2) {
-            return placements;
-        }
-        let carry = 0;
-        for (let i = 0; i < lanePoints.length - 1; i += 1) {
-            const p0 = lanePoints[i];
-            const p1 = lanePoints[i + 1];
-            let segPlacements = [];
-            iterClippedLineScreenSegments([p0, p1], view, camera, (a, b) => {
-                let angle = Math.atan2(b.y - a.y, b.x - a.x);
-                if (reverse) {
-                    angle += Math.PI;
-                }
-                const segLen = Math.hypot(b.x - a.x, b.y - a.y);
-                if (segLen < 4) {
-                    return;
-                }
-                let dist = carry > 0 ? GIS_LANE_ARROW_SPACING_PX - carry : 0;
-                while (dist <= segLen) {
-                    const t = dist / segLen;
-                    segPlacements.push({
-                        x: a.x + (b.x - a.x) * t,
-                        y: a.y + (b.y - a.y) * t,
-                        angle
-                    });
-                    dist += GIS_LANE_ARROW_SPACING_PX;
-                }
-                carry = (carry + segLen) % GIS_LANE_ARROW_SPACING_PX;
-            });
-            placements.push(...segPlacements);
-        }
-        return placements;
-    }
-
-    function ensureLaneArrowGroup(svg, groupKey, featureId, laneSide) {
-        let group = svgLaneArrowGroups.get(groupKey);
-        if (!group) {
-            group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
-            group.setAttribute('data-fid', featureId);
-            group.classList.add('mcwws-gis-lane-arrow-group', `mcwws-gis-lane-arrow-group--${laneSide}`);
-            svg.appendChild(group);
-            svgLaneArrowGroups.set(groupKey, group);
-        }
-        while (group.firstChild) {
-            group.removeChild(group.firstChild);
-        }
-        return group;
-    }
-
-    /** 靠右行驶：右线沿母线方向 →；左线反向 ← */
-    function renderDualLaneDirectionArrows(svg, featureId, lanePoints, view, camera, color, laneSide, laneIndex, dimmed, neededGroupKeys) {
-        const groupKey = `${featureId}:arr-${laneSide}-${laneIndex}`;
-        const reverse = laneSide === 'left';
-        const placements = collectLaneArrowPlacements(lanePoints, view, camera, reverse);
-        if (!placements.length) {
-            const stale = svgLaneArrowGroups.get(groupKey);
-            if (stale) {
-                stale.remove();
-                svgLaneArrowGroups.delete(groupKey);
-            }
-            return;
-        }
-        neededGroupKeys.add(groupKey);
-        const group = ensureLaneArrowGroup(svg, groupKey, featureId, laneSide);
-        group.classList.toggle('is-dimmed', dimmed);
-        placements.forEach((p) => {
-            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-            arrow.setAttribute('d', GIS_LANE_ARROW_SHAPE_D);
-            arrow.setAttribute('fill', color);
-            const deg = (p.angle * 180) / Math.PI;
-            arrow.setAttribute(
-                'transform',
-                `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${deg.toFixed(2)})`
-            );
-            group.appendChild(arrow);
-        });
-    }
-
     function getSelectedLineStringRoad() {
         if (selectedFeatureIds.size !== 1) {
             return null;
@@ -3080,18 +2711,21 @@
             return '';
         }
         const props = ensureFeatureProperties(found.feature);
-        const dual = !!props.dualCarriageway;
         const strokeStyle = String(props.strokeStyle || 'solid');
         const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
         const strokeColor = String(props.color || '');
-        const lanesPerSide = getRoadLanesPerSide(found.feature);
         const vtxSel = getPrimaryRoadVertexSelection();
-        const vtxLeft = vtxSel ? getVertexLaneCountAt(found.feature, 'left', vtxSel.vertexIndex) : lanesPerSide;
-        const vtxRight = vtxSel ? getVertexLaneCountAt(found.feature, 'right', vtxSel.vertexIndex) : lanesPerSide;
         const vtxIdx = vtxSel ? vtxSel.vertexIndex : -1;
+        const vtxId = vtxSel ? getVertexIdAt(found.feature, vtxIdx) : '';
         const vtxLabel = vtxSel
             ? `第 ${vtxIdx + 1} 个特征点`
             : '请先选中一个特征点';
+        const vertexIdRow = vtxSel ? `
+                    <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--readonly">
+                        <span>顶点编号</span>
+                        <code class="mcwws-gis-vertex-id">${escapeHtml(vtxId || '')}</code>
+                    </label>
+        ` : '';
         return `
             <div class="mcwws-gis-road-props">
                 <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
@@ -3118,65 +2752,13 @@
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                 </div>
-                <label class="mcwws-gis-road-prop-row">
-                    <input type="checkbox" data-road-prop="dualCarriageway" ${dual ? 'checked' : ''}
-                        ${!gisCanEdit ? 'disabled' : ''}>
-                    <span>双向车道（放大后分多线）</span>
-                </label>
-                <label class="mcwws-gis-road-prop-row">
-                    <span>默认每侧车道数</span>
-                    <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="lanesPerSide"
-                        min="1" max="${GIS_ROAD_MAX_LANES_PER_SIDE}" step="1" value="${lanesPerSide}"
-                        title="整段道路默认车道数；可在特征点处单独增减实现分岔"
-                        ${!gisCanEdit || !dual ? 'disabled' : ''}>
-                </label>
-                ${dual ? `
                 <div class="mcwws-gis-road-vertex-lanes">
-                    <p class="mcwws-gis-menu-section-title">节点设置（${vtxLabel}）</p>
-                    <label class="mcwws-gis-road-prop-row">
-                        <span>左侧车道数</span>
-                        <input type="number" class="mcwws-gis-road-prop-input" data-vertex-lane="left"
-                            min="1" max="${GIS_ROAD_MAX_LANES_PER_SIDE}" step="1" value="${vtxLeft}"
-                            ${!gisCanEdit || !vtxSel ? 'disabled' : ''}>
-                    </label>
-                    <label class="mcwws-gis-road-prop-row">
-                        <span>右侧车道数</span>
-                        <input type="number" class="mcwws-gis-road-prop-input" data-vertex-lane="right"
-                            min="1" max="${GIS_ROAD_MAX_LANES_PER_SIDE}" step="1" value="${vtxRight}"
-                            ${!gisCanEdit || !vtxSel ? 'disabled' : ''}>
-                    </label>
-                    <p class="mcwws-gis-road-props-hint">增加车道时向路外侧新增一条线，可用于分岔</p>
+                    <p class="mcwws-gis-menu-section-title">特征点（${vtxLabel}）</p>
+                    ${vertexIdRow}
                 </div>
-                ` : ''}
-                <p class="mcwws-gis-road-props-hint">
-                    ${dual ? '所有车道线与特征点始终显示' : '未启用双向车道'}
-                </p>
+                <p class="mcwws-gis-road-props-hint">每个特征点有唯一 vertexIds 编号，保存在要素 properties 中</p>
             </div>
         `;
-    }
-
-    function applyVertexSettingsFromPanel() {
-        const vtxSel = getPrimaryRoadVertexSelection();
-        const found = getSelectedLineStringRoad();
-        if (!vtxSel || !found || !gisCanEdit) {
-            return;
-        }
-        const wrap = document.getElementById(GIS_WRAP_ID);
-        const leftInput = wrap?.querySelector('[data-vertex-lane="left"]');
-        const rightInput = wrap?.querySelector('[data-vertex-lane="right"]');
-        const vtxIdx = vtxSel.vertexIndex;
-        recordGisHistory();
-        if (leftInput && rightInput) {
-            applyVertexLaneCountsAt(
-                found.feature,
-                vtxIdx,
-                Number(leftInput.value),
-                Number(rightInput.value)
-            );
-        }
-        markDirty();
-        renderOverlay();
-        renderLayerDialog();
     }
 
     function applyRoadPropertyInput(input) {
@@ -3207,26 +2789,6 @@
         } else if (prop === 'strokeStyle') {
             const v = String(input.value || 'solid').trim().toLowerCase();
             props.strokeStyle = v || 'solid';
-        } else if (prop === 'dualCarriageway') {
-            props.dualCarriageway = !!input.checked;
-            if (props.dualCarriageway) {
-                if (!Number.isFinite(Number(props.lanesPerSide))) {
-                    props.lanesPerSide = 1;
-                }
-                initDualLanesIfMissing(found.feature);
-                ensureMaxLaneStorage(found.feature);
-            } else {
-                delete props.lanes;
-                delete props.vertexLaneCounts;
-            }
-        } else if (prop === 'lanesPerSide') {
-            props.lanesPerSide = Math.max(1, Math.min(
-                GIS_ROAD_MAX_LANES_PER_SIDE,
-                Math.round(Number(input.value) || 1)
-            ));
-            if (props.dualCarriageway) {
-                ensureMaxLaneStorage(found.feature);
-            }
         }
         markDirty();
         renderOverlay();
@@ -3323,6 +2885,7 @@
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             project = data.project || data;
+            normalizeGisProject(project);
             dirty = false;
             resetGisHistory();
             setStatus('数据已加载', 'ok');
@@ -3384,6 +2947,7 @@
         }
         gisHistoryApplying = true;
         project = JSON.parse(JSON.stringify(state.project));
+        normalizeGisProject(project);
         applyGisSelectionFromState(state);
         activeLayerId = state.activeLayerId || project.layers?.[0]?.id || 'roads';
         selectedVertices.clear();
@@ -3477,6 +3041,7 @@
         if (!layer) return;
         recordGisHistory();
         if (!Array.isArray(layer.features)) layer.features = [];
+        normalizeGisFeature(feature);
         layer.features.push(feature);
         setGisSelectionSingle(feature.id);
         markDirty();
@@ -3545,6 +3110,7 @@
                 deleteWholeFeatures.add(featureId);
                 return;
             }
+            removeVertexIdsAt(feature, unique);
             unique.forEach((i) => {
                 pts.splice(i, 1);
             });
@@ -3738,32 +3304,12 @@
         return camera ? GIS_SELECT_HIT_PX_3D : GIS_SELECT_HIT_PX;
     }
 
-    /** 与 SVG 绘制一致：双向道路在近距离显示车道线时，拾取也走车道/中心链 */
     function iterLineStringScreenSegmentsForPick(feature, view, camera, onSegment) {
         if (!feature || feature.type !== 'LineString') {
             return;
         }
         const points = coordsToPoints(feature.coordinates);
         if (points.length < 2) {
-            return;
-        }
-        if (isRoadDualCarriagewayEnabled(feature)) {
-            initDualLanesIfMissing(feature);
-            ensureMaxLaneStorage(feature);
-            ['left', 'right'].forEach((side) => {
-                getRenderableLaneIndices(feature, side).forEach((laneIndex) => {
-                    getLaneRenderChains(feature, side, laneIndex).forEach((chain) => {
-                        if (chain.length >= 2) {
-                            iterClippedLineScreenSegments(chain, view, camera, onSegment);
-                        }
-                    });
-                });
-            });
-            getCenterlineRenderChains(feature).forEach((chain) => {
-                if (chain.length >= 2) {
-                    iterClippedLineScreenSegments(chain, view, camera, onSegment);
-                }
-            });
             return;
         }
         iterClippedLineScreenSegments(points, view, camera, onSegment);
@@ -4190,6 +3736,35 @@
         finishGisLasso(event);
     }
 
+    function shouldAllowBrowserContextMenu(target) {
+        return !!target?.closest?.(
+            'input:not([type="button"]):not([type="submit"]):not([type="reset"]), textarea, select, [contenteditable="true"], .mcwws-layer-dialog'
+        );
+    }
+
+    function isMapViewContextMenuTarget(target) {
+        return !!target?.closest?.(
+            '#map-container, #mcwws-gis-svg-layer, #mcwws-gis-pin-layer, #mcwws-gis-vertex-layer, #mcwws-gis-lasso-layer'
+        );
+    }
+
+    function onSuppressMapContextMenu(event) {
+        if (shouldAllowBrowserContextMenu(event.target)) {
+            return;
+        }
+        if (gisLassoPointer || isMapViewContextMenuTarget(event.target)) {
+            event.preventDefault();
+        }
+    }
+
+    function bindMapContextMenuSuppression() {
+        if (mapContextMenuBound) {
+            return;
+        }
+        mapContextMenuBound = true;
+        document.addEventListener('contextmenu', onSuppressMapContextMenu, true);
+    }
+
     function bindGisLassoCapture() {
         if (gisLassoCaptureBound) {
             return;
@@ -4199,11 +3774,6 @@
         document.addEventListener('pointermove', onGisLassoPointerMoveCapture, true);
         document.addEventListener('pointerup', onGisLassoPointerUpCapture, true);
         document.addEventListener('pointercancel', onGisLassoPointerUpCapture, true);
-        document.addEventListener('contextmenu', (event) => {
-            if (gisLassoPointer) {
-                event.preventDefault();
-            }
-        }, true);
     }
 
     function markGisPointerMoved(clientX, clientY) {
@@ -4542,113 +4112,25 @@
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                if (isRoadDualCarriagewayEnabled(feature)) {
-                    initDualLanesIfMissing(feature);
-                    ensureMaxLaneStorage(feature);
-                    const centerChains = getCenterlineRenderChains(feature);
-                    centerChains.forEach((chain, ci) => {
-                        const d = buildSvgPolylinePath(chain, view, camera);
-                        if (!d) {
-                            return;
-                        }
-                        const key = `${feature.id}:line:${ci}`;
-                        neededPathKeys.add(key);
-                        const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line mcwws-gis-line--center');
-                        path.setAttribute('d', d);
-                        path.setAttribute('stroke', color);
-                        if (w != null) path.setAttribute('stroke-width', String(w));
-                        else path.removeAttribute('stroke-width');
-                        if (dash) path.setAttribute('stroke-dasharray', dash);
-                        else path.removeAttribute('stroke-dasharray');
-                        path.classList.toggle('is-dimmed', dimmed);
-
-                        const hitKey = `${key}:hit`;
-                        neededPathKeys.add(hitKey);
-                        const hit = ensureSvgHitPath(svg, hitKey, feature.id);
-                        hit.setAttribute('d', d);
-                        hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
-                        hit.classList.toggle('is-dimmed', dimmed);
-                    });
-                    ['left', 'right'].forEach((side) => {
-                            getRenderableLaneIndices(feature, side).forEach((laneIndex) => {
-                                const chains = getLaneRenderChains(feature, side, laneIndex);
-                                const d = buildSvgFromLaneChains(chains, view, camera);
-                                if (!d) {
-                                    return;
-                                }
-                                const pathKey = `${feature.id}:dual-${side}-${laneIndex}`;
-                                neededPathKeys.add(pathKey);
-                                const pathEl = ensureSvgFeaturePath(
-                                    svg,
-                                    pathKey,
-                                    feature.id,
-                                    `mcwws-gis-line mcwws-gis-line--dual mcwws-gis-line--dual-${side}`
-                                );
-                                pathEl.setAttribute('d', d);
-                                pathEl.setAttribute('stroke', color);
-                                if (w != null) pathEl.setAttribute('stroke-width', String(Math.max(1, w * 0.6)));
-                                else pathEl.removeAttribute('stroke-width');
-                                if (dash) pathEl.setAttribute('stroke-dasharray', dash);
-                                else pathEl.removeAttribute('stroke-dasharray');
-                                pathEl.classList.toggle('is-dimmed', dimmed);
-
-                                const hitKey = `${pathKey}:hit`;
-                                neededPathKeys.add(hitKey);
-                                const hit = ensureSvgHitPath(svg, hitKey, feature.id);
-                                hit.setAttribute('d', d);
-                                hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
-                                hit.classList.toggle('is-dimmed', dimmed);
-                                const mergedPts = [];
-                                chains.forEach((chain) => {
-                                    if (chain.length < 2) {
-                                        return;
-                                    }
-                                    if (mergedPts.length) {
-                                        mergedPts.push(chain[0]);
-                                    } else {
-                                        mergedPts.push(chain[0]);
-                                    }
-                                    for (let cj = 1; cj < chain.length; cj += 1) {
-                                        mergedPts.push(chain[cj]);
-                                    }
-                                });
-                                if (mergedPts.length >= 2) {
-                                    renderDualLaneDirectionArrows(
-                                        svg,
-                                        feature.id,
-                                        mergedPts,
-                                        view,
-                                        camera,
-                                        color,
-                                        side,
-                                        laneIndex,
-                                        dimmed,
-                                        neededArrowGroupKeys
-                                    );
-                                }
-                            });
-                        });
-                } else {
-                    const d = buildSvgPolylinePath(points, view, camera);
-                    if (d) {
-                        const key = `${feature.id}:line`;
-                        neededPathKeys.add(key);
-                        const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
-                        path.setAttribute('d', d);
-                        path.setAttribute('stroke', color);
+                const d = buildSvgPolylinePath(points, view, camera);
+                if (d) {
+                    const key = `${feature.id}:line`;
+                    neededPathKeys.add(key);
+                    const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
+                    path.setAttribute('d', d);
+                    path.setAttribute('stroke', color);
                     if (w != null) path.setAttribute('stroke-width', String(w));
                     else path.removeAttribute('stroke-width');
                     if (dash) path.setAttribute('stroke-dasharray', dash);
                     else path.removeAttribute('stroke-dasharray');
-                        path.classList.toggle('is-dimmed', dimmed);
+                    path.classList.toggle('is-dimmed', dimmed);
 
-                        const hitKey = `${key}:hit`;
-                        neededPathKeys.add(hitKey);
-                        const hit = ensureSvgHitPath(svg, hitKey, feature.id);
-                        hit.setAttribute('d', d);
-                        hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
-                        hit.classList.toggle('is-dimmed', dimmed);
-                    }
+                    const hitKey = `${key}:hit`;
+                    neededPathKeys.add(hitKey);
+                    const hit = ensureSvgHitPath(svg, hitKey, feature.id);
+                    hit.setAttribute('d', d);
+                    hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
+                    hit.classList.toggle('is-dimmed', dimmed);
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
@@ -5030,10 +4512,6 @@
                 applyRoadPropertyInput(roadInput);
                 return;
             }
-            if (e.target.matches('[data-vertex-lane]')) {
-                e.stopPropagation();
-                applyVertexSettingsFromPanel();
-            }
         });
 
         wrap.addEventListener('click', (e) => {
@@ -5253,6 +4731,7 @@
         loadLayerPrefs();
         initMapAuth();
         bindMapPicks();
+        bindMapContextMenuSuppression();
         waitForMapControls();
         tryApplyStoredMapRenderMode();
         syncMapRenderModeVisual();
