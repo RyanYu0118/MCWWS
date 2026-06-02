@@ -254,6 +254,23 @@
         bm.saveUserSettings?.();
     }
 
+    const MAP_BG_OPACITY_SELECTED = '0.7';
+
+    /** 选中 GIS 要素时压低 BlueMap 底图（含简化地图模式） */
+    function syncMapBackgroundOpacity(selectionActive) {
+        const active = !!selectionActive && gisInfoEnabled;
+        document.body.classList.toggle('mcwws-gis-has-selection', active);
+        const mapContainer = document.getElementById('map-container');
+        if (!mapContainer) {
+            return;
+        }
+        if (active) {
+            mapContainer.style.opacity = MAP_BG_OPACITY_SELECTED;
+        } else {
+            mapContainer.style.removeProperty('opacity');
+        }
+    }
+
     function syncMapRenderModeVisual() {
         document.body.classList.toggle('mcwws-map-simplified-mode', isSimplifiedMapMode());
         document.body.classList.toggle('mcwws-gis-overlay-visible', gisInfoEnabled);
@@ -3148,6 +3165,7 @@
         if (!gisInfoEnabled) {
             clearGisOverlayDom();
             clearGisSelectHover();
+            syncMapBackgroundOpacity(false);
             return;
         }
 
@@ -3254,6 +3272,7 @@
 
         renderVertexHandles(view, camera);
         document.body.classList.toggle('mcwws-gis-vertex-edit', shouldShowVertexHandles());
+        syncMapBackgroundOpacity(selectionActive);
     }
 
     function syncDrawingClass() {

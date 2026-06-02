@@ -585,6 +585,11 @@ body {
     will-change: opacity;
 }
 
+/* 选中 GIS 要素时压低底图，突出标注（原图 / 简化地图均生效） */
+body.mcwws-gis-has-selection #map-container {
+    opacity: 0.1;
+}
+
 body.mcwws-map-simplified-mode {
     background: #fff !important;
 }
@@ -592,6 +597,10 @@ body.mcwws-map-simplified-mode {
 body.mcwws-map-simplified-mode #map-container {
     opacity: 0;
     pointer-events: auto !important;
+}
+
+body.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
+    opacity: 0.7;
 }
 
 /* 仅控制显隐过渡；图层本身保持 pointer-events:none，由下方 path/钉 单独接管点击，避免挡住地图拖拽 */
@@ -611,6 +620,11 @@ body.mcwws-map-render-no-transition #map-container,
 body.mcwws-map-render-no-transition #mcwws-gis-svg-layer,
 body.mcwws-map-render-no-transition #mcwws-gis-pin-layer {
     transition: none !important;
+}
+
+body.mcwws-map-render-no-transition.mcwws-gis-has-selection #map-container,
+body.mcwws-map-render-no-transition.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
+    opacity: 0.7;
 }
 
 @media (prefers-reduced-motion: reduce) {
