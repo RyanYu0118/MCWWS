@@ -1831,6 +1831,14 @@ function normalizeGisFeature(raw, layerId) {
         if (Number.isFinite(strokeWidth) && strokeWidth > 0) {
             featureProps.strokeWidth = Math.min(24, Math.max(1, strokeWidth));
         }
+        if (type === 'LineString') {
+            const travelRaw = String(props.travelDirection || '').trim().toLowerCase();
+            if (travelRaw === 'dir1' || travelRaw === 'direction1' || travelRaw === '1') {
+                featureProps.travelDirection = 'dir1';
+            } else if (travelRaw === 'dir2' || travelRaw === 'direction2' || travelRaw === '2') {
+                featureProps.travelDirection = 'dir2';
+            }
+        }
         const vertCount = coordinates.length;
         const visRaw = props.vertexVisibility;
         const vertexVisibility = [];

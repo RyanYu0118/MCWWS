@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-32';
+    const MCWWS_GIS_BUILD = '20260602-33';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -36,6 +36,8 @@
     const GIS_HISTORY_MAX = 100;
     const GIS_PASTE_OFFSET_BLOCKS = 8;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
+    const GIS_ROAD_ARROW_SPACING_PX = 48;
+    const GIS_ROAD_ARROW_SIZE_PX = 9;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -1541,6 +1543,9 @@
         stripLegacyRoadLaneProps(feature);
         ensureVertexIds(feature);
         ensureVertexVisibility(feature);
+        if (feature.type === 'LineString') {
+            setRoadTravelDirection(feature, getRoadTravelDirection(feature));
+        }
     }
 
     function normalizeGisProject(projectData) {
@@ -3053,6 +3058,32 @@
         return null;
     }
 
+    /** @returns {'both'|'dir1'|'dir2'} */
+    function normalizeRoadTravelDirection(raw) {
+        const v = String(raw || '').trim().toLowerCase();
+        if (v === 'dir1' || v === 'direction1' || v === 'd1' || v === '1' || v === '方向1') {
+            return 'dir1';
+        }
+        if (v === 'dir2' || v === 'direction2' || v === 'd2' || v === '2' || v === '方向2') {
+            return 'dir2';
+        }
+        return 'both';
+    }
+
+    function getRoadTravelDirection(feature) {
+        return normalizeRoadTravelDirection(feature?.properties?.travelDirection);
+    }
+
+    function setRoadTravelDirection(feature, value) {
+        const props = ensureFeatureProperties(feature);
+        const dir = normalizeRoadTravelDirection(value);
+        if (dir === 'both') {
+            delete props.travelDirection;
+        } else {
+            props.travelDirection = dir;
+        }
+    }
+
     function getMapCameraHeight() {
         const view = getViewForProjection();
         if (!view) {
@@ -3090,6 +3121,7 @@
         const strokeStyle = String(props.strokeStyle || 'solid');
         const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
         const strokeColor = String(props.color || '');
+        const travelDir = getRoadTravelDirection(found.feature);
         const vtxTargets = getSelectedRoadVertexTargets();
         const vtxSel = vtxTargets.length === 1 ? vtxTargets[0] : null;
         const vtxIdx = vtxSel ? vtxSel.vertexIndex : -1;
@@ -3145,6 +3177,14 @@
             <div class="mcwws-gis-road-props">
                 <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
                 <div class="mcwws-gis-road-prop-grid">
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>行驶方向</span>
+                        <select class="mcwws-gis-road-prop-input" data-road-prop="travelDirection" ${!gisCanEdit ? 'disabled' : ''}>
+                            <option value="both" ${travelDir === 'both' ? 'selected' : ''}>双向（不显示箭头）</option>
+                            <option value="dir1" ${travelDir === 'dir1' ? 'selected' : ''}>方向 1（沿顶点顺序）</option>
+                            <option value="dir2" ${travelDir === 'dir2' ? 'selected' : ''}>方向 2（与方向 1 相反）</option>
+                        </select>
+                    </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>线型</span>
                         <select class="mcwws-gis-road-prop-input" data-road-prop="strokeStyle" ${!gisCanEdit ? 'disabled' : ''}>
@@ -3204,6 +3244,8 @@
         } else if (prop === 'strokeStyle') {
             const v = String(input.value || 'solid').trim().toLowerCase();
             props.strokeStyle = v || 'solid';
+        } else if (prop === 'travelDirection') {
+            setRoadTravelDirection(found.feature, input.value);
         } else {
             return false;
         }
@@ -4711,6 +4753,96 @@
         return path;
     }
 
+    function ensureSvgArrowGroup(svg, key, featureId) {
+        let group = svgLaneArrowGroups.get(key);
+        if (!group) {
+            group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('data-fid', featureId);
+            group.classList.add('mcwws-gis-lane-arrow-group');
+            svg.appendChild(group);
+            svgLaneArrowGroups.set(key, group);
+        }
+        return group;
+    }
+
+    function clearSvgGroupChildren(group) {
+        while (group.firstChild) {
+            group.removeChild(group.firstChild);
+        }
+    }
+
+    function appendRoadArrowMarkerAt(group, screenX, screenY, angleRad, fillColor) {
+        const size = GIS_ROAD_ARROW_SIZE_PX;
+        const cos = Math.cos(angleRad);
+        const sin = Math.sin(angleRad);
+        const tipX = screenX + cos * (size * 0.55);
+        const tipY = screenY + sin * (size * 0.55);
+        const backX = screenX - cos * (size * 0.45);
+        const backY = screenY - sin * (size * 0.45);
+        const wing = size * 0.38;
+        const lx = -sin * wing;
+        const ly = cos * wing;
+        const d = `M ${tipX.toFixed(2)} ${tipY.toFixed(2)} L ${(backX + lx).toFixed(2)} ${(backY + ly).toFixed(2)} L ${(backX - lx).toFixed(2)} ${(backY - ly).toFixed(2)} Z`;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', d);
+        path.setAttribute('fill', fillColor);
+        group.appendChild(path);
+    }
+
+    function placeRoadArrowsOnWorldSegment(group, pFrom, pTo, view, camera, fillColor) {
+        const s0 = projectGisPoint(pFrom, view, camera, false);
+        const s1 = projectGisPoint(pTo, view, camera, false);
+        if (!s0 || !s1 || s0.behind || s1.behind) {
+            return;
+        }
+        const dx = s1.x - s0.x;
+        const dy = s1.y - s0.y;
+        const len = Math.hypot(dx, dy);
+        if (len < GIS_ROAD_ARROW_SPACING_PX * 0.45) {
+            return;
+        }
+        const angle = Math.atan2(dy, dx);
+        const count = Math.max(1, Math.floor(len / GIS_ROAD_ARROW_SPACING_PX));
+        for (let k = 1; k <= count; k += 1) {
+            const t = k / (count + 1);
+            appendRoadArrowMarkerAt(
+                group,
+                s0.x + dx * t,
+                s0.y + dy * t,
+                angle,
+                fillColor
+            );
+        }
+    }
+
+    function renderRoadTravelDirectionArrows(svg, feature, view, camera, viewHeight, fillColor, dimmed, neededArrowGroupKeys) {
+        const dir = getRoadTravelDirection(feature);
+        if (dir === 'both') {
+            return;
+        }
+        const points = coordsToPoints(feature.coordinates);
+        const chains = buildVisiblePointChains(points, feature, viewHeight);
+        if (!chains.length) {
+            return;
+        }
+        const key = `${feature.id}:arrows`;
+        neededArrowGroupKeys.add(key);
+        const group = ensureSvgArrowGroup(svg, key, feature.id);
+        clearSvgGroupChildren(group);
+        group.classList.toggle('is-dimmed', dimmed);
+        chains.forEach((chain) => {
+            for (let i = 0; i < chain.length - 1; i += 1) {
+                const p0 = chain[i];
+                const p1 = chain[i + 1];
+                if (dir === 'dir1') {
+                    placeRoadArrowsOnWorldSegment(group, p0, p1, view, camera, fillColor);
+                } else {
+                    placeRoadArrowsOnWorldSegment(group, p1, p0, view, camera, fillColor);
+                }
+            }
+        });
+    }
+
     /** 与 SVG 绘制相同的折线裁剪，供拾取与 path 生成共用 */
     function iterClippedLineScreenSegments(points, view, camera, onSegment) {
         if (!points || points.length < 2) {
@@ -4865,6 +4997,17 @@
                     hit.setAttribute('d', d);
                     hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
                     hit.classList.toggle('is-dimmed', dimmed);
+
+                    renderRoadTravelDirectionArrows(
+                        svg,
+                        feature,
+                        view,
+                        camera,
+                        viewHeight,
+                        color,
+                        dimmed,
+                        neededArrowGroupKeys
+                    );
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
