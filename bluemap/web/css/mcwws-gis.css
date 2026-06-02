@@ -4,6 +4,14 @@
     width: 100%;
 }
 
+.mcwws-ctrl-dimension-column .mcwws-ctrl-gis-wrap {
+    order: 0;
+}
+
+.mcwws-ctrl-dimension-column .mcwws-ctrl-layer-wrap {
+    order: 1;
+}
+
 .mcwws-ctrl-gis-wrap {
     position: relative;
     pointer-events: auto;
