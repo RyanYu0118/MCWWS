@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T11:39:20.617Z",
+  "updatedAt": "2026-06-02T11:58:00.040Z",
   "layers": [
     {
       "id": "roads",
@@ -65,6 +65,9 @@
             "description": "",
             "dualCarriageway": true,
             "defaultVertexDisplayHeight": 512,
+            "vertexDisplayHeights": {
+              "0": 64
+            },
             "vertexLaneCounts": {
               "0": {
                 "left": 2,

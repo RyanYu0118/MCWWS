@@ -1,7 +1,8 @@
 (function () {
+    const MCWWS_GIS_BUILD = '20260602-15';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
-    console.info('[mcwws-gis] loaded', { ts: '2026-06-02T17:45+08:00' });
+    console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
     const GIS_WRAP_ID = 'mcwws-gis-wrap';
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
@@ -2994,6 +2995,26 @@
         return c && /^#[0-9a-fA-F]{3,8}$/i.test(c) ? c : '#3b82f6';
     }
 
+    function parseLineWidth(value, fallback) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) return fallback;
+        return Math.max(1, Math.min(24, n));
+    }
+
+    function getRoadStrokeWidth(feature) {
+        const w = parseLineWidth(feature?.properties?.strokeWidth, null);
+        return w == null ? null : w;
+    }
+
+    function getRoadStrokeDasharray(feature) {
+        const style = String(feature?.properties?.strokeStyle || 'solid').toLowerCase();
+        if (style === 'solid') return null;
+        if (style === 'dashed') return '10 6';
+        if (style === 'dotted') return '2 6';
+        if (style === 'dashdot' || style === 'dash-dot' || style === 'dash_dot') return '10 6 2 6';
+        return null;
+    }
+
     function getMapCameraHeight() {
         const view = getViewForProjection();
         if (!view) {
@@ -3149,6 +3170,9 @@
         }
         const props = ensureFeatureProperties(found.feature);
         const dual = !!props.dualCarriageway;
+        const strokeStyle = String(props.strokeStyle || 'solid');
+        const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
+        const strokeColor = String(props.color || '');
         const defaultDisplayHeight = getDefaultVertexDisplayHeight(found.feature);
         const camH = Math.round(getMapCameraHeight());
         const lanesVisible = hasAnyVertexDisplayedForLanes(found.feature);
@@ -3165,7 +3189,30 @@
             : '请先选中一个特征点';
         return `
             <div class="mcwws-gis-road-props">
-                <p class="mcwws-gis-menu-section-title">道路属性</p>
+                <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
+                <div class="mcwws-gis-road-prop-grid">
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>线型</span>
+                        <select class="mcwws-gis-road-prop-input" data-road-prop="strokeStyle" ${!gisCanEdit ? 'disabled' : ''}>
+                            <option value="solid" ${strokeStyle === 'solid' ? 'selected' : ''}>实线</option>
+                            <option value="dashed" ${strokeStyle === 'dashed' ? 'selected' : ''}>虚线</option>
+                            <option value="dotted" ${strokeStyle === 'dotted' ? 'selected' : ''}>点线</option>
+                            <option value="dashdot" ${(strokeStyle === 'dashdot' || strokeStyle === 'dash-dot') ? 'selected' : ''}>点划线</option>
+                        </select>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>粗细</span>
+                        <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="strokeWidth"
+                            min="1" max="24" step="0.5" value="${strokeWidth}" placeholder="默认"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>颜色</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="color"
+                            value="${escapeHtml(strokeColor)}" placeholder="#3b82f6（留空=图层默认）"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                </div>
                 <label class="mcwws-gis-road-prop-row">
                     <input type="checkbox" data-road-prop="dualCarriageway" ${dual ? 'checked' : ''}
                         ${!gisCanEdit ? 'disabled' : ''}>
@@ -3263,7 +3310,24 @@
         }
         const props = ensureFeatureProperties(found.feature);
         recordGisHistory();
-        if (prop === 'dualCarriageway') {
+        if (prop === 'color') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.color;
+            } else {
+                props.color = v;
+            }
+        } else if (prop === 'strokeWidth') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.strokeWidth;
+            } else {
+                props.strokeWidth = parseLineWidth(v, 3);
+            }
+        } else if (prop === 'strokeStyle') {
+            const v = String(input.value || 'solid').trim().toLowerCase();
+            props.strokeStyle = v || 'solid';
+        } else if (prop === 'dualCarriageway') {
             props.dualCarriageway = !!input.checked;
             if (props.dualCarriageway && !Number.isFinite(Number(props.defaultVertexDisplayHeight))) {
                 props.defaultVertexDisplayHeight = getDefaultVertexDisplayHeight(found.feature);
@@ -4589,6 +4653,8 @@
         const selectionActive = hasGisSelection();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
+            const dash = feature.type === 'LineString' ? getRoadStrokeDasharray(feature) : null;
+            const w = feature.type === 'LineString' ? getRoadStrokeWidth(feature) : null;
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
             const points = coordsToPoints(feature.coordinates);
 
@@ -4607,6 +4673,10 @@
                         const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line mcwws-gis-line--center');
                         path.setAttribute('d', d);
                         path.setAttribute('stroke', color);
+                        if (w != null) path.setAttribute('stroke-width', String(w));
+                        else path.removeAttribute('stroke-width');
+                        if (dash) path.setAttribute('stroke-dasharray', dash);
+                        else path.removeAttribute('stroke-dasharray');
                         path.classList.toggle('is-dimmed', dimmed);
                     });
                     if (hasAnyVertexDisplayedForLanes(feature)) {
@@ -4627,6 +4697,10 @@
                                 );
                                 pathEl.setAttribute('d', d);
                                 pathEl.setAttribute('stroke', color);
+                                if (w != null) pathEl.setAttribute('stroke-width', String(Math.max(1, w * 0.6)));
+                                else pathEl.removeAttribute('stroke-width');
+                                if (dash) pathEl.setAttribute('stroke-dasharray', dash);
+                                else pathEl.removeAttribute('stroke-dasharray');
                                 pathEl.classList.toggle('is-dimmed', dimmed);
                                 const mergedPts = [];
                                 chains.forEach((chain) => {
@@ -4667,6 +4741,10 @@
                         const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
                         path.setAttribute('d', d);
                         path.setAttribute('stroke', color);
+                    if (w != null) path.setAttribute('stroke-width', String(w));
+                    else path.removeAttribute('stroke-width');
+                    if (dash) path.setAttribute('stroke-dasharray', dash);
+                    else path.removeAttribute('stroke-dasharray');
                         path.classList.toggle('is-dimmed', dimmed);
                     }
                 }
@@ -4985,7 +5063,7 @@
         dialog.hidden = !layerDialogOpen;
 
         dialog.innerHTML = `
-            <p class="mcwws-layer-dialog-title">图层</p>
+            <p class="mcwws-layer-dialog-title">图层 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
             <div class="mcwws-layer-dialog-modes">
                 <button type="button" class="mcwws-layer-mode-card${mapRenderMode === 'original' ? ' is-active' : ''}"
                     data-map-mode="original">
