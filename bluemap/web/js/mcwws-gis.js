@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-33';
+    const MCWWS_GIS_BUILD = '20260602-34';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -36,8 +36,12 @@
     const GIS_HISTORY_MAX = 100;
     const GIS_PASTE_OFFSET_BLOCKS = 8;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
-    const GIS_ROAD_ARROW_SPACING_PX = 48;
-    const GIS_ROAD_ARROW_SIZE_PX = 9;
+    const GIS_ROAD_ARROW_SIZE_PX = 8;
+    const GIS_ROAD_ARROW_MAX_PER_SEGMENT = 3;
+    const GIS_ROAD_ARROW_RENDER_INTERVAL_MS = 360;
+    let gisArrowRenderAccumMs = 0;
+    let gisLastArrowRenderAt = 0;
+    let gisLastTickAt = 0;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -3321,6 +3325,7 @@
     /** 标记未保存但不重绘整个图层对话框（避免输入时滚动条跳顶） */
     function markDirtySoft() {
         dirty = true;
+        invalidateRoadArrowCache();
         updateGisMenuStatusLine();
     }
 
@@ -3498,6 +3503,7 @@
 
     function markDirty() {
         dirty = true;
+        invalidateRoadArrowCache();
         renderPanel();
     }
 
@@ -4789,20 +4795,43 @@
         group.appendChild(path);
     }
 
-    function placeRoadArrowsOnWorldSegment(group, pFrom, pTo, view, camera, fillColor) {
-        const s0 = projectGisPoint(pFrom, view, camera, false);
-        const s1 = projectGisPoint(pTo, view, camera, false);
-        if (!s0 || !s1 || s0.behind || s1.behind) {
-            return;
+    function getRoadArrowSpacingPx() {
+        const h = getMapCameraHeight();
+        if (!Number.isFinite(h)) {
+            return 140;
         }
+        return Math.max(100, Math.min(220, h * 0.75));
+    }
+
+    function getGisViewArrowSignature(view, camera) {
+        const h = Math.round(getMapCameraHeight() / 12) * 12;
+        if (camera?.matrixWorldInverse?.elements) {
+            const e = camera.matrixWorldInverse.elements;
+            return `c:${h}:${e[12].toFixed(0)}:${e[13].toFixed(0)}:${e[14].toFixed(0)}`;
+        }
+        const rot = Math.round((view?.rotation ?? 0) / 6) * 6;
+        return `v:${h}:${Math.round(view?.x ?? 0)}:${Math.round(view?.z ?? 0)}:${rot}`;
+    }
+
+    function invalidateRoadArrowCache() {
+        svgLaneArrowGroups.forEach((group) => {
+            delete group.dataset.arrowSig;
+        });
+    }
+
+    function placeRoadArrowsOnScreenSegment(group, s0, s1, fillColor) {
         const dx = s1.x - s0.x;
         const dy = s1.y - s0.y;
         const len = Math.hypot(dx, dy);
-        if (len < GIS_ROAD_ARROW_SPACING_PX * 0.45) {
+        const spacing = getRoadArrowSpacingPx();
+        if (len < spacing * 0.55) {
             return;
         }
         const angle = Math.atan2(dy, dx);
-        const count = Math.max(1, Math.floor(len / GIS_ROAD_ARROW_SPACING_PX));
+        const count = Math.min(
+            GIS_ROAD_ARROW_MAX_PER_SEGMENT,
+            Math.max(1, Math.floor(len / spacing))
+        );
         for (let k = 1; k <= count; k += 1) {
             const t = k / (count + 1);
             appendRoadArrowMarkerAt(
@@ -4815,7 +4844,7 @@
         }
     }
 
-    function renderRoadTravelDirectionArrows(svg, feature, view, camera, viewHeight, fillColor, dimmed, neededArrowGroupKeys) {
+    function populateRoadArrowGroup(group, feature, view, camera, viewHeight, fillColor, dimmed) {
         const dir = getRoadTravelDirection(feature);
         if (dir === 'both') {
             return;
@@ -4825,22 +4854,66 @@
         if (!chains.length) {
             return;
         }
-        const key = `${feature.id}:arrows`;
-        neededArrowGroupKeys.add(key);
-        const group = ensureSvgArrowGroup(svg, key, feature.id);
-        clearSvgGroupChildren(group);
         group.classList.toggle('is-dimmed', dimmed);
         chains.forEach((chain) => {
             for (let i = 0; i < chain.length - 1; i += 1) {
-                const p0 = chain[i];
-                const p1 = chain[i + 1];
-                if (dir === 'dir1') {
-                    placeRoadArrowsOnWorldSegment(group, p0, p1, view, camera, fillColor);
-                } else {
-                    placeRoadArrowsOnWorldSegment(group, p1, p0, view, camera, fillColor);
-                }
+                const from = dir === 'dir1' ? chain[i] : chain[i + 1];
+                const to = dir === 'dir1' ? chain[i + 1] : chain[i];
+                iterClippedLineScreenSegments([from, to], view, camera, (s0, s1) => {
+                    placeRoadArrowsOnScreenSegment(group, s0, s1, fillColor);
+                });
             }
         });
+    }
+
+    function renderRoadArrowsLayer() {
+        const svg = ensureSvgLayer();
+        if (!svg || !gisInfoEnabled) {
+            svgLaneArrowGroups.forEach((group) => group.remove());
+            svgLaneArrowGroups.clear();
+            return;
+        }
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const viewHeight = getMapCameraHeight();
+        const viewSig = getGisViewArrowSignature(view, camera);
+        const selectionActive = hasGisSelection();
+        const neededArrowGroupKeys = new Set();
+
+        iterVisibleFeatures().forEach(({ feature, layer }) => {
+            if (feature.type !== 'LineString') {
+                return;
+            }
+            const dir = getRoadTravelDirection(feature);
+            if (dir === 'both') {
+                return;
+            }
+            const points = coordsToPoints(feature.coordinates);
+            if (!buildVisiblePointChains(points, feature, viewHeight).length) {
+                return;
+            }
+            const color = featureColor(feature, layer);
+            const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            const key = `${feature.id}:arrows`;
+            neededArrowGroupKeys.add(key);
+            const group = ensureSvgArrowGroup(svg, key, feature.id);
+            const sig = `${viewSig}|${dir}|${dimmed ? 1 : 0}|${color}|${Math.round(viewHeight)}`;
+            if (group.dataset.arrowSig === sig) {
+                group.classList.toggle('is-dimmed', dimmed);
+                return;
+            }
+            group.dataset.arrowSig = sig;
+            clearSvgGroupChildren(group);
+            populateRoadArrowGroup(group, feature, view, camera, viewHeight, color, dimmed);
+        });
+
+        svgLaneArrowGroups.forEach((group, key) => {
+            if (!neededArrowGroupKeys.has(key)) {
+                group.remove();
+                svgLaneArrowGroups.delete(key);
+            }
+        });
+        gisLastArrowRenderAt = Date.now();
     }
 
     /** 与 SVG 绘制相同的折线裁剪，供拾取与 path 生成共用 */
@@ -4951,7 +5024,8 @@
         return chainsToSvgPath(chains);
     }
 
-    function renderOverlay() {
+    function renderOverlay(options = {}) {
+        const skipArrows = !!options.skipArrows;
         const svg = ensureSvgLayer();
         const pinLayer = ensurePinLayer();
         if (!svg || !pinLayer) return;
@@ -4968,7 +5042,6 @@
         const viewHeight = getMapCameraHeight();
 
         const neededPathKeys = new Set();
-        const neededArrowGroupKeys = new Set();
         const selectionActive = hasGisSelection();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
@@ -4997,17 +5070,6 @@
                     hit.setAttribute('d', d);
                     hit.setAttribute('stroke-width', String(Math.max(12, (w != null ? w : 3) + 10)));
                     hit.classList.toggle('is-dimmed', dimmed);
-
-                    renderRoadTravelDirectionArrows(
-                        svg,
-                        feature,
-                        view,
-                        camera,
-                        viewHeight,
-                        color,
-                        dimmed,
-                        neededArrowGroupKeys
-                    );
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
@@ -5036,12 +5098,9 @@
             }
         });
 
-        svgLaneArrowGroups.forEach((group, key) => {
-            if (!neededArrowGroupKeys.has(key)) {
-                group.remove();
-                svgLaneArrowGroups.delete(key);
-            }
-        });
+        if (!skipArrows) {
+            renderRoadArrowsLayer();
+        }
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const draft = draftPoints.slice();
@@ -5695,8 +5754,21 @@
         return tag === 'INPUT' || tag === 'TEXTAREA';
     }
 
-    function tick() {
-        renderOverlay();
+    function tick(now) {
+        if (!gisLastTickAt) {
+            gisLastTickAt = now || performance.now();
+        }
+        const t = now || performance.now();
+        const dt = Math.min(64, t - gisLastTickAt);
+        gisLastTickAt = t;
+
+        renderOverlay({ skipArrows: true });
+        gisArrowRenderAccumMs += dt;
+        if (gisArrowRenderAccumMs >= GIS_ROAD_ARROW_RENDER_INTERVAL_MS) {
+            gisArrowRenderAccumMs = 0;
+            renderRoadArrowsLayer();
+        }
+
         animationId = requestAnimationFrame(tick);
     }
 
@@ -5738,9 +5810,13 @@
         document.addEventListener('dblclick', onDblClick, true);
         window.addEventListener('hashchange', () => {
             gisCachedCamera = null;
+            invalidateRoadArrowCache();
             renderOverlay();
         });
-        window.addEventListener('resize', renderOverlay);
+        window.addEventListener('resize', () => {
+            invalidateRoadArrowCache();
+            renderOverlay();
+        });
         animationId = requestAnimationFrame(tick);
     }
 
