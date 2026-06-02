@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-28';
+    const MCWWS_GIS_BUILD = '20260602-29';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1376,19 +1376,135 @@
         return ensureVertexIds(feature)[vertexIndex] || null;
     }
 
+    function normalizeVisibilityEntry(raw) {
+        if (!raw || typeof raw !== 'object') {
+            return { min: null, max: null };
+        }
+        const minRaw = raw.min;
+        const maxRaw = raw.max;
+        const min = minRaw != null && minRaw !== '' && Number.isFinite(Number(minRaw)) ? Number(minRaw) : null;
+        const max = maxRaw != null && maxRaw !== '' && Number.isFinite(Number(maxRaw)) ? Number(maxRaw) : null;
+        return { min, max };
+    }
+
+    function ensureVertexVisibility(feature) {
+        if (!featureSupportsVertices(feature)) {
+            return [];
+        }
+        const props = ensureFeatureProperties(feature);
+        const count = getFeatureVertexCount(feature);
+        if (!Array.isArray(props.vertexVisibility)) {
+            props.vertexVisibility = [];
+        }
+        while (props.vertexVisibility.length < count) {
+            props.vertexVisibility.push({});
+        }
+        if (props.vertexVisibility.length > count) {
+            props.vertexVisibility.length = count;
+        }
+        for (let i = 0; i < props.vertexVisibility.length; i += 1) {
+            props.vertexVisibility[i] = normalizeVisibilityEntry(props.vertexVisibility[i]);
+        }
+        return props.vertexVisibility;
+    }
+
+    function getVertexVisibilityEntry(feature, vertexIndex) {
+        return normalizeVisibilityEntry(ensureVertexVisibility(feature)[vertexIndex]);
+    }
+
+    function formatVisibilityBoundForInput(entry, which) {
+        const v = entry?.[which];
+        return v == null ? '' : String(v);
+    }
+
+    function formatVisibilityRangeLabel(entry) {
+        const lo = entry.min == null ? '−∞' : String(entry.min);
+        const hi = entry.max == null ? '+∞' : String(entry.max);
+        return `${lo} < h ≤ ${hi}`;
+    }
+
+    /** 可视范围：a < 相机高度 ≤ b；未设 a 视为 −∞，未设 b 视为 +∞ */
+    function isVertexVisibleAtHeight(feature, vertexIndex, viewHeight) {
+        if (!Number.isFinite(viewHeight)) {
+            return true;
+        }
+        const { min, max } = getVertexVisibilityEntry(feature, vertexIndex);
+        const lo = min == null ? -Infinity : min;
+        const hi = max == null ? Infinity : max;
+        return lo < viewHeight && viewHeight <= hi;
+    }
+
+    function isSegmentVisibleAtHeight(feature, indexA, indexB, viewHeight) {
+        return isVertexVisibleAtHeight(feature, indexA, viewHeight)
+            && isVertexVisibleAtHeight(feature, indexB, viewHeight);
+    }
+
+    /** 连续可见顶点拆成折线段（用于道路分级显示） */
+    function buildVisiblePointChains(points, feature, viewHeight) {
+        if (!points?.length) {
+            return [];
+        }
+        const chains = [];
+        let current = [];
+        for (let i = 0; i < points.length; i += 1) {
+            if (isVertexVisibleAtHeight(feature, i, viewHeight)) {
+                current.push(points[i]);
+            } else if (current.length >= 2) {
+                chains.push(current);
+                current = [];
+            } else {
+                current = [];
+            }
+        }
+        if (current.length >= 2) {
+            chains.push(current);
+        }
+        return chains;
+    }
+
     function insertVertexIdAt(feature, insertIndex) {
         ensureVertexIds(feature);
+        ensureVertexVisibility(feature);
         const idx = Math.max(0, Math.min(insertIndex, feature.properties.vertexIds.length));
         feature.properties.vertexIds.splice(idx, 0, generateVertexId(feature.id));
+        feature.properties.vertexVisibility.splice(idx, 0, {});
     }
 
     function removeVertexIdsAt(feature, sortedIndicesDesc) {
         ensureVertexIds(feature);
+        ensureVertexVisibility(feature);
         sortedIndicesDesc.forEach((i) => {
             if (i >= 0 && i < feature.properties.vertexIds.length) {
                 feature.properties.vertexIds.splice(i, 1);
             }
+            if (i >= 0 && i < feature.properties.vertexVisibility.length) {
+                feature.properties.vertexVisibility.splice(i, 1);
+            }
         });
+    }
+
+    function setVertexVisibilityBound(feature, vertexIndex, which, rawValue) {
+        ensureVertexVisibility(feature);
+        const entry = { ...getVertexVisibilityEntry(feature, vertexIndex) };
+        const trimmed = String(rawValue ?? '').trim();
+        if (!trimmed) {
+            entry[which] = null;
+        } else {
+            const n = Number(trimmed);
+            if (!Number.isFinite(n)) {
+                return false;
+            }
+            entry[which] = n;
+        }
+        const next = {};
+        if (entry.min != null) {
+            next.min = entry.min;
+        }
+        if (entry.max != null) {
+            next.max = entry.max;
+        }
+        feature.properties.vertexVisibility[vertexIndex] = next;
+        return true;
     }
 
     function normalizeGisFeature(feature) {
@@ -1397,6 +1513,7 @@
         }
         stripLegacyRoadLaneProps(feature);
         ensureVertexIds(feature);
+        ensureVertexVisibility(feature);
     }
 
     function normalizeGisProject(projectData) {
@@ -2123,6 +2240,7 @@
     function pickSegmentInsertAtScreen(clientX, clientY) {
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
+        const viewHeight = getMapCameraHeight();
         let best = null;
         let bestDist = GIS_SEGMENT_HIT_PX;
 
@@ -2147,6 +2265,9 @@
                 const p0 = points[i0];
                 const p1 = points[i1];
                 if (!p0 || !p1) {
+                    continue;
+                }
+                if (!isSegmentVisibleAtHeight(feature, i0, i1, viewHeight)) {
                     continue;
                 }
                 const screenHit = getScreenHitOnLineSegment(
@@ -2566,6 +2687,7 @@
         }
         layer.hidden = false;
         validateSelectedVertices();
+        const viewHeight = getMapCameraHeight();
         const needed = new Set();
         iterSelectedVertexFeatures().forEach(({ feature }) => {
             getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
@@ -2592,8 +2714,15 @@
                     vertexHandleElements.set(key, handle);
                 }
                 handle.classList.toggle('is-active', isVertexSelected(feature.id, lane, idx));
+                const visEntry = getVertexVisibilityEntry(feature, idx);
+                const visHint = (visEntry.min != null || visEntry.max != null)
+                    ? ` · 可视 ${formatVisibilityRangeLabel(visEntry)}`
+                    : '';
+                const vid = getVertexIdAt(feature, idx);
+                handle.title = vid ? `顶点 ${vid}${visHint}` : `顶点${visHint}`;
                 const projected = projectGisPoint(p, view, camera, false);
-                const off = !projected || projected.behind
+                const notVisible = !isVertexVisibleAtHeight(feature, idx, viewHeight);
+                const off = notVisible || !projected || projected.behind
                     || projected.x < -40 || projected.y < -40
                     || projected.x > window.innerWidth + 40
                     || projected.y > window.innerHeight + 40;
@@ -2919,11 +3048,33 @@
         const vtxLabel = vtxSel
             ? `第 ${vtxIdx + 1} 个特征点`
             : '请先选中一个特征点';
+        const camH = getMapCameraHeight();
+        const visEntry = vtxSel ? getVertexVisibilityEntry(found.feature, vtxIdx) : { min: null, max: null };
+        const visVisibleNow = vtxSel ? isVertexVisibleAtHeight(found.feature, vtxIdx, camH) : false;
         const vertexIdRow = vtxSel ? `
                     <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--readonly">
                         <span>顶点编号</span>
                         <code class="mcwws-gis-vertex-id">${escapeHtml(vtxId || '')}</code>
                     </label>
+        ` : '';
+        const vertexVisRow = vtxSel ? `
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>可视下限 a</span>
+                        <input type="number" class="mcwws-gis-road-prop-input" data-vertex-vis="min"
+                            step="1" value="${escapeHtml(formatVisibilityBoundForInput(visEntry, 'min'))}"
+                            placeholder="留空 = −∞" ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>可视上限 b</span>
+                        <input type="number" class="mcwws-gis-road-prop-input" data-vertex-vis="max"
+                            step="1" value="${escapeHtml(formatVisibilityBoundForInput(visEntry, 'max'))}"
+                            placeholder="留空 = +∞" ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <p class="mcwws-gis-road-props-hint mcwws-gis-vertex-vis-hint">
+                        当前相机高度 <strong>${Number.isFinite(camH) ? Math.round(camH) : '—'}</strong>；
+                        可见条件 <code>a &lt; h ≤ b</code>（未设 a/b 视为无穷）；
+                        此点<strong>${visVisibleNow ? '可见' : '不可见'}</strong>
+                    </p>
         ` : '';
         return `
             <div class="mcwws-gis-road-props">
@@ -2954,8 +3105,9 @@
                 <div class="mcwws-gis-road-vertex-lanes">
                     <p class="mcwws-gis-menu-section-title">特征点（${vtxLabel}）</p>
                     ${vertexIdRow}
+                    ${vertexVisRow}
                 </div>
-                <p class="mcwws-gis-road-props-hint">每个特征点有唯一 vertexIds 编号，保存在要素 properties 中</p>
+                <p class="mcwws-gis-road-props-hint">vertexIds 与 vertexVisibility 按顶点顺序保存在 properties 中；缩放地图可预览分级显示</p>
             </div>
         `;
     }
@@ -2988,6 +3140,26 @@
         } else if (prop === 'strokeStyle') {
             const v = String(input.value || 'solid').trim().toLowerCase();
             props.strokeStyle = v || 'solid';
+        }
+        markDirty();
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    function applyVertexVisibilityInput(input) {
+        const which = input?.getAttribute?.('data-vertex-vis');
+        if (which !== 'min' && which !== 'max') {
+            return;
+        }
+        const vtxSel = getPrimaryRoadVertexSelection();
+        const found = getSelectedLineStringRoad();
+        if (!vtxSel || !found || !gisCanEdit) {
+            return;
+        }
+        recordGisHistory();
+        if (!setVertexVisibilityBound(found.feature, vtxSel.vertexIndex, which, input.value)) {
+            setStatus('可视范围须为有效数字', 'error');
+            return;
         }
         markDirty();
         renderOverlay();
@@ -3647,7 +3819,10 @@
         if (points.length < 2) {
             return;
         }
-        iterClippedLineScreenSegments(points, view, camera, onSegment);
+        const viewHeight = getMapCameraHeight();
+        buildVisiblePointChains(points, feature, viewHeight).forEach((chain) => {
+            iterClippedLineScreenSegments(chain, view, camera, onSegment);
+        });
     }
 
     function pickFeatureIdFromDomTarget(target) {
@@ -3695,29 +3870,47 @@
             }
 
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const ring = getClippedScreenRingForPolygon(points, view, camera);
-                if (ring.length < 3) {
-                    return;
-                }
-                if (pointInScreenPolygon(clientX, clientY, ring)) {
-                    bestDist = 0;
-                    bestId = feature.id;
-                    return;
-                }
-                for (let i = 0; i < ring.length; i += 1) {
-                    const j = (i + 1) % ring.length;
-                    const d = distPointToScreenSegment(
-                        clientX,
-                        clientY,
-                        ring[i].x,
-                        ring[i].y,
-                        ring[j].x,
-                        ring[j].y
-                    );
-                    if (d < bestDist) {
-                        bestDist = d;
-                        bestId = feature.id;
+                const viewHeight = getMapCameraHeight();
+                const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
+                if (allVisible) {
+                    const ring = getClippedScreenRingForPolygon(points, view, camera);
+                    if (ring.length < 3) {
+                        return;
                     }
+                    if (pointInScreenPolygon(clientX, clientY, ring)) {
+                        bestDist = 0;
+                        bestId = feature.id;
+                        return;
+                    }
+                    for (let i = 0; i < ring.length; i += 1) {
+                        const j = (i + 1) % ring.length;
+                        const d = distPointToScreenSegment(
+                            clientX,
+                            clientY,
+                            ring[i].x,
+                            ring[i].y,
+                            ring[j].x,
+                            ring[j].y
+                        );
+                        if (d < bestDist) {
+                            bestDist = d;
+                            bestId = feature.id;
+                        }
+                    }
+                    return;
+                }
+                for (let i = 0; i < points.length; i += 1) {
+                    const j = (i + 1) % points.length;
+                    if (!isSegmentVisibleAtHeight(feature, i, j, viewHeight)) {
+                        continue;
+                    }
+                    iterClippedLineScreenSegments([points[i], points[j]], view, camera, (a, b) => {
+                        const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
+                        if (d < bestDist) {
+                            bestDist = d;
+                            bestId = feature.id;
+                        }
+                    });
                 }
             }
         });
@@ -4424,9 +4617,47 @@
         return chainsToSvgPath(chains);
     }
 
+    function buildSvgPolylinePathWithVisibility(points, view, camera, feature, viewHeight) {
+        if (!points || points.length < 2) {
+            return '';
+        }
+        const visibleChains = buildVisiblePointChains(points, feature, viewHeight);
+        if (!visibleChains.length) {
+            return '';
+        }
+        const chains = [];
+        visibleChains.forEach((chain) => {
+            iterClippedLineScreenSegments(chain, view, camera, (s0, s1) => {
+                appendClippedSegment(chains, [s0, s1]);
+            });
+        });
+        return chainsToSvgPath(chains);
+    }
+
     /** 封闭多边形：整体 Sutherland–Hodgman，保持顶点顺序，避免拼出虚假三角形 */
     function buildSvgPolygonPath(points, view, camera) {
         return screenRingToSvgPath(getClippedScreenRingForPolygon(points, view, camera));
+    }
+
+    function buildSvgPolygonPathWithVisibility(points, view, camera, feature, viewHeight) {
+        if (!points || points.length < 3) {
+            return '';
+        }
+        const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
+        if (allVisible) {
+            return buildSvgPolygonPath(points, view, camera);
+        }
+        const chains = [];
+        for (let i = 0; i < points.length; i += 1) {
+            const j = (i + 1) % points.length;
+            if (!isSegmentVisibleAtHeight(feature, i, j, viewHeight)) {
+                continue;
+            }
+            iterClippedLineScreenSegments([points[i], points[j]], view, camera, (s0, s1) => {
+                appendClippedSegment(chains, [s0, s1]);
+            });
+        }
+        return chainsToSvgPath(chains);
     }
 
     function renderOverlay() {
@@ -4443,6 +4674,7 @@
 
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
+        const viewHeight = getMapCameraHeight();
 
         const neededPathKeys = new Set();
         const neededArrowGroupKeys = new Set();
@@ -4455,7 +4687,7 @@
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                const d = buildSvgPolylinePath(points, view, camera);
+                const d = buildSvgPolylinePathWithVisibility(points, view, camera, feature, viewHeight);
                 if (d) {
                     const key = `${feature.id}:line`;
                     neededPathKeys.add(key);
@@ -4477,14 +4709,19 @@
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const d = buildSvgPolygonPath(points, view, camera);
+                const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
+                const d = buildSvgPolygonPathWithVisibility(points, view, camera, feature, viewHeight);
                 if (d) {
                     const key = `${feature.id}:polygon`;
                     neededPathKeys.add(key);
                     const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-polygon');
                     path.setAttribute('d', d);
-                    path.setAttribute('fill', color);
                     path.setAttribute('stroke', color);
+                    if (allVisible) {
+                        path.setAttribute('fill', color);
+                    } else {
+                        path.removeAttribute('fill');
+                    }
                     path.classList.toggle('is-dimmed', dimmed);
                 }
             }
@@ -4873,6 +5110,11 @@
                 e.stopPropagation();
                 applyRoadPropertyInput(roadInput);
                 return;
+            }
+            const vtxVisInput = e.target.closest('[data-vertex-vis]');
+            if (vtxVisInput) {
+                e.stopPropagation();
+                applyVertexVisibilityInput(vtxVisInput);
             }
         });
 

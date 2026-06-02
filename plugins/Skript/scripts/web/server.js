@@ -1831,6 +1831,27 @@ function normalizeGisFeature(raw, layerId) {
         if (Number.isFinite(strokeWidth) && strokeWidth > 0) {
             featureProps.strokeWidth = Math.min(24, Math.max(1, strokeWidth));
         }
+        const visRaw = props.vertexVisibility;
+        if (Array.isArray(visRaw) && visRaw.length) {
+            const vertexVisibility = visRaw.slice(0, 512).map((entry) => {
+                if (!entry || typeof entry !== 'object') {
+                    return {};
+                }
+                const out = {};
+                const min = Number(entry.min);
+                const max = Number(entry.max);
+                if (Number.isFinite(min)) {
+                    out.min = min;
+                }
+                if (Number.isFinite(max)) {
+                    out.max = max;
+                }
+                return out;
+            });
+            if (vertexVisibility.length) {
+                featureProps.vertexVisibility = vertexVisibility;
+            }
+        }
     }
     if (type === 'Point' || type === 'Label') {
         const vertexIdsRaw = props.vertexIds;
