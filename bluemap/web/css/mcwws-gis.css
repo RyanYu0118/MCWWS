@@ -431,6 +431,54 @@
     height: 0;
 }
 
+.mcwws-gis-road-props {
+    margin: 8px 0 6px;
+    padding: 8px;
+    border-radius: 10px;
+    background: #f8fafc;
+    border: 1px solid #e5e7eb;
+}
+
+.mcwws-gis-road-prop-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: #374151;
+    cursor: pointer;
+}
+
+.mcwws-gis-road-prop-row:last-of-type {
+    margin-bottom: 0;
+}
+
+.mcwws-gis-road-prop-input {
+    width: 72px;
+    border: 1px solid #d1d5db;
+    border-radius: 6px;
+    padding: 4px 6px;
+    font-size: 11px;
+    text-align: right;
+}
+
+.mcwws-gis-road-prop-input:disabled {
+    opacity: 0.5;
+}
+
+.mcwws-gis-road-props-hint {
+    margin: 6px 0 0;
+    font-size: 10px;
+    line-height: 1.4;
+    color: #6b7280;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-line--dual {
+    stroke-width: 1.75;
+    stroke-linecap: round;
+}
+
 .mcwws-gis-menu-selected {
     margin: 0 0 4px;
     padding: 0 2px;

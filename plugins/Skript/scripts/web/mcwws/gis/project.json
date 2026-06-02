@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T07:15:02.153Z",
+  "updatedAt": "2026-06-02T07:43:45.076Z",
   "layers": [
     {
       "id": "roads",
@@ -94,7 +94,10 @@
           ],
           "properties": {
             "name": "道路",
-            "description": ""
+            "description": "",
+            "dualCarriageway": true,
+            "dualSplitHeight": 512,
+            "laneOffset": 6
           }
         }
       ]

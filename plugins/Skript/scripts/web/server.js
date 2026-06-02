@@ -1807,6 +1807,24 @@ function normalizeGisFeature(raw, layerId) {
     const description = String(props.description || raw.description || '').trim().slice(0, 2000);
     const color = String(props.color || raw.color || '').trim();
     const safeColor = /^#[0-9a-fA-F]{3,8}$/.test(color) ? color : '';
+    const featureProps = {
+        name,
+        description,
+        ...(safeColor ? { color: safeColor } : {})
+    };
+    if (type === 'LineString') {
+        if (props.dualCarriageway === true || props.dualCarriageway === 1 || props.dualCarriageway === '1') {
+            featureProps.dualCarriageway = true;
+        }
+        const splitHeight = Number(props.dualSplitHeight);
+        if (Number.isFinite(splitHeight) && splitHeight > 0) {
+            featureProps.dualSplitHeight = Math.round(splitHeight);
+        }
+        const laneOffset = Number(props.laneOffset);
+        if (Number.isFinite(laneOffset) && laneOffset > 0) {
+            featureProps.laneOffset = Math.round(laneOffset * 1000) / 1000;
+        }
+    }
     const id = String(raw.id || '').trim().slice(0, 64)
         || `f_${crypto.randomBytes(8).toString('hex')}`;
     return {
@@ -1815,11 +1833,7 @@ function normalizeGisFeature(raw, layerId) {
         map,
         layerId: String(raw.layerId || layerId || '').trim().slice(0, 64),
         coordinates,
-        properties: {
-            name,
-            description,
-            ...(safeColor ? { color: safeColor } : {})
-        }
+        properties: featureProps
     };
 }
 

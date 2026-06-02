@@ -32,6 +32,8 @@
     const GIS_GIZMO_AXIS_MAX_WIDTH_PX = 72;
     const GIS_GIZMO_COORDS_OFFSET_Y = 34;
     const GIS_HISTORY_MAX = 100;
+    const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
+    const GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET = 3;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -2425,6 +2427,158 @@
         return c && /^#[0-9a-fA-F]{3,8}$/i.test(c) ? c : '#3b82f6';
     }
 
+    function getMapCameraHeight() {
+        const view = getViewForProjection();
+        if (!view) {
+            return Infinity;
+        }
+        const h = Number(view.distance ?? view.height ?? 128);
+        return Number.isFinite(h) ? h : 128;
+    }
+
+    function ensureFeatureProperties(feature) {
+        if (!feature.properties || typeof feature.properties !== 'object') {
+            feature.properties = {};
+        }
+        return feature.properties;
+    }
+
+    function isRoadDualCarriagewayEnabled(feature) {
+        return feature?.type === 'LineString' && !!feature.properties?.dualCarriageway;
+    }
+
+    function getRoadDualSplitHeight(feature) {
+        const v = Number(feature?.properties?.dualSplitHeight);
+        return Number.isFinite(v) && v > 0 ? v : GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT;
+    }
+
+    function getRoadLaneOffset(feature) {
+        const v = Number(feature?.properties?.laneOffset);
+        return Number.isFinite(v) && v > 0 ? v : GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET;
+    }
+
+    /** 相机高度 ≤ 阈值时显示双车道（放大）；高于阈值显示母线（缩小） */
+    function shouldRenderRoadAsDualLines(feature) {
+        if (!isRoadDualCarriagewayEnabled(feature)) {
+            return false;
+        }
+        return getMapCameraHeight() <= getRoadDualSplitHeight(feature);
+    }
+
+    function offsetPolylineXZ(points, offset, side) {
+        if (!points || points.length < 2 || !offset) {
+            return [];
+        }
+        const out = [];
+        for (let i = 0; i < points.length; i += 1) {
+            const prev = points[Math.max(0, i - 1)];
+            const curr = points[i];
+            const next = points[Math.min(points.length - 1, i + 1)];
+            let dx = 0;
+            let dz = 0;
+            if (i > 0) {
+                dx += curr.x - prev.x;
+                dz += curr.z - prev.z;
+            }
+            if (i < points.length - 1) {
+                dx += next.x - curr.x;
+                dz += next.z - curr.z;
+            }
+            const len = Math.hypot(dx, dz);
+            if (len < 1e-6) {
+                out.push({ x: curr.x, y: curr.y, z: curr.z });
+                continue;
+            }
+            const px = (-dz / len) * offset * side;
+            const pz = (dx / len) * offset * side;
+            out.push({
+                x: curr.x + px,
+                y: curr.y,
+                z: curr.z + pz
+            });
+        }
+        return out;
+    }
+
+    function getSelectedLineStringRoad() {
+        if (selectedFeatureIds.size !== 1) {
+            return null;
+        }
+        const id = Array.from(selectedFeatureIds)[0];
+        const found = findFeatureById(id);
+        if (!found || found.feature.type !== 'LineString') {
+            return null;
+        }
+        return found;
+    }
+
+    function renderRoadPropertiesPanelHtml() {
+        const found = getSelectedLineStringRoad();
+        if (!found) {
+            return '';
+        }
+        const props = ensureFeatureProperties(found.feature);
+        const dual = !!props.dualCarriageway;
+        const splitHeight = getRoadDualSplitHeight(found.feature);
+        const laneOffset = getRoadLaneOffset(found.feature);
+        const camH = Math.round(getMapCameraHeight());
+        const dualActive = shouldRenderRoadAsDualLines(found.feature);
+        return `
+            <div class="mcwws-gis-road-props">
+                <p class="mcwws-gis-menu-section-title">道路属性</p>
+                <label class="mcwws-gis-road-prop-row">
+                    <input type="checkbox" data-road-prop="dualCarriageway" ${dual ? 'checked' : ''}
+                        ${!gisCanEdit ? 'disabled' : ''}>
+                    <span>双向车道（放大后分双线）</span>
+                </label>
+                <label class="mcwws-gis-road-prop-row">
+                    <span>分线高度阈值</span>
+                    <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="dualSplitHeight"
+                        min="1" step="1" value="${splitHeight}"
+                        title="相机高度 ≤ 此值（放大）时显示左右两线；高于此值显示母线"
+                        ${!gisCanEdit || !dual ? 'disabled' : ''}>
+                </label>
+                <label class="mcwws-gis-road-prop-row">
+                    <span>车道半宽（格）</span>
+                    <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="laneOffset"
+                        min="0.5" step="0.5" value="${laneOffset}"
+                        title="母线到单侧车道中心线的距离"
+                        ${!gisCanEdit || !dual ? 'disabled' : ''}>
+                </label>
+                <p class="mcwws-gis-road-props-hint">
+                    当前高度 ${camH} · ${dualActive ? '已分双线' : dual ? '显示母线' : '未启用'}
+                    （高度越小越近）
+                </p>
+            </div>
+        `;
+    }
+
+    function applyRoadPropertyInput(input) {
+        const prop = input?.getAttribute?.('data-road-prop');
+        if (!prop) {
+            return;
+        }
+        const found = getSelectedLineStringRoad();
+        if (!found || !gisCanEdit) {
+            return;
+        }
+        const props = ensureFeatureProperties(found.feature);
+        recordGisHistory();
+        if (prop === 'dualCarriageway') {
+            props.dualCarriageway = !!input.checked;
+            if (props.dualCarriageway && !Number.isFinite(Number(props.dualSplitHeight))) {
+                props.dualSplitHeight = GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT;
+            }
+        } else if (prop === 'dualSplitHeight') {
+            props.dualSplitHeight = Math.max(1, Math.round(Number(input.value) || GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT));
+        } else if (prop === 'laneOffset') {
+            props.laneOffset = Math.max(0.5, Number(input.value) || GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET);
+        }
+        markDirty();
+        renderOverlay();
+        renderLayerDialog();
+    }
+
     function coordsToPoints(coords) {
         if (!coords) return [];
         if (!Array.isArray(coords)) {
@@ -3568,12 +3722,16 @@
 
     function ensureSvgFeaturePath(svg, key, featureId, geomKind) {
         let path = svgPathElements.get(key);
+        const classNames = String(geomKind || 'mcwws-gis-line').split(/\s+/).filter(Boolean);
         if (!path) {
             path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
             path.setAttribute('data-fid', featureId);
-            path.classList.add('mcwws-gis-feature', geomKind);
+            path.classList.add('mcwws-gis-feature', ...classNames);
             svg.appendChild(path);
             svgPathElements.set(key, path);
+        } else {
+            path.classList.remove('mcwws-gis-line', 'mcwws-gis-polygon', 'mcwws-gis-line--dual');
+            path.classList.add('mcwws-gis-feature', ...classNames);
         }
         return path;
     }
@@ -3671,14 +3829,39 @@
             const points = coordsToPoints(feature.coordinates);
 
             if (feature.type === 'LineString' && points.length >= 2) {
-                const d = buildSvgPolylinePath(points, view, camera);
-                if (d) {
-                    const key = `${feature.id}:line`;
-                    neededPathKeys.add(key);
-                    const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
-                    path.setAttribute('d', d);
-                    path.setAttribute('stroke', color);
-                    path.classList.toggle('is-dimmed', dimmed);
+                const showDual = shouldRenderRoadAsDualLines(feature);
+                if (showDual) {
+                    const laneOff = getRoadLaneOffset(feature);
+                    const leftPts = offsetPolylineXZ(points, laneOff, -1);
+                    const rightPts = offsetPolylineXZ(points, laneOff, 1);
+                    const dLeft = buildSvgPolylinePath(leftPts, view, camera);
+                    const dRight = buildSvgPolylinePath(rightPts, view, camera);
+                    if (dLeft) {
+                        const keyL = `${feature.id}:dual-l`;
+                        neededPathKeys.add(keyL);
+                        const pathL = ensureSvgFeaturePath(svg, keyL, feature.id, 'mcwws-gis-line mcwws-gis-line--dual');
+                        pathL.setAttribute('d', dLeft);
+                        pathL.setAttribute('stroke', color);
+                        pathL.classList.toggle('is-dimmed', dimmed);
+                    }
+                    if (dRight) {
+                        const keyR = `${feature.id}:dual-r`;
+                        neededPathKeys.add(keyR);
+                        const pathR = ensureSvgFeaturePath(svg, keyR, feature.id, 'mcwws-gis-line mcwws-gis-line--dual');
+                        pathR.setAttribute('d', dRight);
+                        pathR.setAttribute('stroke', color);
+                        pathR.classList.toggle('is-dimmed', dimmed);
+                    }
+                } else {
+                    const d = buildSvgPolylinePath(points, view, camera);
+                    if (d) {
+                        const key = `${feature.id}:line`;
+                        neededPathKeys.add(key);
+                        const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-line');
+                        path.setAttribute('d', d);
+                        path.setAttribute('stroke', color);
+                        path.classList.toggle('is-dimmed', dimmed);
+                    }
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
@@ -3943,6 +4126,7 @@
                             : `已选 ${selectedIds.length} 项`}</p>`
                         : ''
                 }
+                ${renderRoadPropertiesPanelHtml()}
             </div>
         `;
     }
@@ -4012,6 +4196,14 @@
                 }
             }
             renderLayerDialog();
+        });
+
+        wrap.addEventListener('change', (e) => {
+            const roadInput = e.target.closest('[data-road-prop]');
+            if (roadInput) {
+                e.stopPropagation();
+                applyRoadPropertyInput(roadInput);
+            }
         });
 
         wrap.addEventListener('click', (e) => {
