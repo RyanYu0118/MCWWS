@@ -772,6 +772,20 @@ body.mcwws-map-render-no-transition #mcwws-gis-pin-layer {
     background: linear-gradient(90deg, #3b82f6, #2563eb);
 }
 
+.mcwws-gis-gizmo-hint {
+    flex: 0 0 100%;
+    text-align: center;
+    font-size: 10px;
+    font-weight: 600;
+    color: #64748b;
+    line-height: 1.2;
+    margin-bottom: 2px;
+}
+
+.mcwws-gis-vertex-gizmo.is-multi-vertex .mcwws-gis-gizmo-coords {
+    min-width: 160px;
+}
+
 .mcwws-gis-gizmo-coords {
     position: absolute;
     left: 0;

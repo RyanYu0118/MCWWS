@@ -1256,15 +1256,44 @@
         return getVertexWorld(primary.featureId, primary.vertexIndex);
     }
 
-    function syncGizmoFromVertexSelection() {
-        if (selectedVertices.size === 1) {
-            const world = getSelectedVertexWorld();
-            if (world) {
-                syncVertexGizmoInputs(world);
+    function getSelectedVerticesCentroid() {
+        let count = 0;
+        const sum = { x: 0, y: 0, z: 0 };
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            const world = sel ? getVertexWorld(sel.featureId, sel.vertexIndex) : null;
+            if (!world) {
+                return;
             }
+            sum.x += world.x;
+            sum.y += world.y;
+            sum.z += world.z;
+            count += 1;
+        });
+        if (!count) {
+            return null;
+        }
+        return { x: sum.x / count, y: sum.y / count, z: sum.z / count, count };
+    }
+
+    /** 单点：该点坐标；多点：选中点质心（gizmo 锚点） */
+    function getGizmoAnchorWorld() {
+        if (selectedVertices.size === 1) {
+            return getSelectedVertexWorld();
+        }
+        const centroid = getSelectedVerticesCentroid();
+        return centroid ? { x: centroid.x, y: centroid.y, z: centroid.z } : null;
+    }
+
+    function syncGizmoFromVertexSelection() {
+        if (!hasSelectedVertices()) {
+            hideVertexGizmo();
             return;
         }
-        hideVertexGizmo();
+        const world = getGizmoAnchorWorld();
+        if (world) {
+            syncVertexGizmoInputs(world);
+        }
     }
 
     function setFeatureVertexPoint(feature, vertexIndex, point, options = {}) {
@@ -1519,7 +1548,7 @@
             return;
         }
         const axis = axisBtn.getAttribute('data-axis') || 'x';
-        const world = getSelectedVertexWorld();
+        const world = getGizmoAnchorWorld();
         if (!world) {
             return;
         }
@@ -1531,9 +1560,7 @@
             setStatus('当前视角下该轴不可拖动，请调整视角后重试', 'error');
             return;
         }
-        const dragKeys = selectedVertices.size > 1
-            ? Array.from(selectedVertices)
-            : [getPrimarySelectedVertex()].filter(Boolean).map((s) => vertexSelectionKey(s.featureId, s.vertexIndex));
+        const dragKeys = Array.from(selectedVertices);
         const dragTargets = dragKeys.map((key) => {
             const sel = parseVertexSelectionKey(key);
             const startWorld = getVertexWorld(sel.featureId, sel.vertexIndex);
@@ -1768,9 +1795,16 @@
 
     function syncVertexGizmoInputs(point) {
         const gizmo = ensureVertexGizmo();
-        if (!gizmo || !point || selectedVertices.size !== 1 || !shouldShowVertexHandles()) {
+        if (!gizmo || !point || !hasSelectedVertices() || !shouldShowVertexHandles()) {
             hideVertexGizmo();
             return;
+        }
+        const multi = selectedVertices.size > 1;
+        gizmo.classList.toggle('is-multi-vertex', multi);
+        const hint = gizmo.querySelector('[data-gizmo-hint]');
+        if (hint) {
+            hint.hidden = !multi;
+            hint.textContent = multi ? `已选 ${selectedVertices.size} 点 · 中心` : '';
         }
         const xIn = gizmo.querySelector('[data-coord="x"]');
         const yIn = gizmo.querySelector('[data-coord="y"]');
@@ -1784,15 +1818,17 @@
         if (document.activeElement !== zIn) {
             zIn.value = String(point.z);
         }
+        const n = selectedVertices.size;
+        gizmo.querySelectorAll('.mcwws-gis-axis').forEach((btn) => {
+            const ax = (btn.getAttribute('data-axis') || 'x').toUpperCase();
+            btn.title = n > 1
+                ? `沿 ${ax} 轴移动已选 ${n} 个点`
+                : `沿 ${ax} 轴移动`;
+        });
     }
 
     function applyVertexCoordInputsFromGizmo(recordHistory) {
-        const primary = getPrimarySelectedVertex();
-        if (!primary || selectedVertices.size !== 1) {
-            return;
-        }
-        const found = findFeatureById(primary.featureId);
-        if (!found) {
+        if (!hasSelectedVertices()) {
             return;
         }
         const gizmo = ensureVertexGizmo();
@@ -1808,7 +1844,46 @@
             recordGisHistory();
             gisVertexCoordHistoryPending = true;
         }
-        setFeatureVertexPoint(found.feature, primary.vertexIndex, point);
+        if (selectedVertices.size === 1) {
+            const primary = getPrimarySelectedVertex();
+            const found = primary ? findFeatureById(primary.featureId) : null;
+            if (!found) {
+                return;
+            }
+            setFeatureVertexPoint(found.feature, primary.vertexIndex, point);
+            renderOverlay();
+            return;
+        }
+        const centroid = getSelectedVerticesCentroid();
+        if (!centroid) {
+            return;
+        }
+        const delta = {
+            x: point.x - centroid.x,
+            y: point.y - centroid.y,
+            z: point.z - centroid.z
+        };
+        if (Math.abs(delta.x) < 1e-9 && Math.abs(delta.y) < 1e-9 && Math.abs(delta.z) < 1e-9) {
+            return;
+        }
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            if (!sel) {
+                return;
+            }
+            const found = findFeatureById(sel.featureId);
+            const world = getVertexWorld(sel.featureId, sel.vertexIndex);
+            if (!found || !world) {
+                return;
+            }
+            setFeatureVertexPoint(found.feature, sel.vertexIndex, {
+                x: world.x + delta.x,
+                y: world.y + delta.y,
+                z: world.z + delta.z
+            }, { skipPanel: true });
+        });
+        dirty = true;
+        renderPanel();
         renderOverlay();
     }
 
@@ -1834,6 +1909,7 @@
                 </div>
             </div>
             <div class="mcwws-gis-gizmo-coords">
+                <span class="mcwws-gis-gizmo-hint" data-gizmo-hint hidden></span>
                 <label class="mcwws-gis-coord mcwws-gis-coord--x">X
                     <input type="number" data-coord="x" step="0.5" inputmode="decimal">
                 </label>
@@ -1968,8 +2044,8 @@
                 vertexHandleElements.delete(key);
             }
         });
-        if (selectedVertices.size === 1) {
-            const world = getSelectedVertexWorld();
+        if (hasSelectedVertices()) {
+            const world = getGizmoAnchorWorld();
             if (!world) {
                 clearSelectedVertices();
                 hideVertexGizmo();
@@ -2016,10 +2092,7 @@
 
     function positionVertexGizmo(world, view, camera) {
         const gizmo = ensureVertexGizmo();
-        if (gisVertexDrag) {
-            return;
-        }
-        if (selectedVertices.size !== 1 || !shouldShowVertexHandles()) {
+        if (!hasSelectedVertices() || !shouldShowVertexHandles()) {
             hideVertexGizmo();
             return;
         }
