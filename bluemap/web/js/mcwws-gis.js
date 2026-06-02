@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-23';
+    const MCWWS_GIS_BUILD = '20260602-25';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1660,6 +1660,24 @@
         return !!target?.closest?.(`#${VERTEX_LAYER_ID}, #${VERTEX_GIZMO_ID}`);
     }
 
+    function isPointerOverLayerDialog(clientX, clientY) {
+        if (!layerDialogOpen) {
+            return false;
+        }
+        const dialog = document.querySelector('.mcwws-layer-dialog:not([hidden])');
+        if (!dialog) {
+            return false;
+        }
+        const rect = dialog.getBoundingClientRect();
+        if (!rect.width || !rect.height) {
+            return false;
+        }
+        return clientX >= rect.left
+            && clientX <= rect.right
+            && clientY >= rect.top
+            && clientY <= rect.bottom;
+    }
+
     function shouldShowVertexHandles() {
         return isGisSelectMode() && hasGisSelection();
     }
@@ -1923,6 +1941,9 @@
 
     function pickVertexAtScreen(clientX, clientY) {
         if (!shouldShowVertexHandles()) {
+            return null;
+        }
+        if (isPointerOverLayerDialog(clientX, clientY)) {
             return null;
         }
         const view = getViewForProjection();
@@ -2405,8 +2426,10 @@
                     || projected.x < -40 || projected.y < -40
                     || projected.x > window.innerWidth + 40
                     || projected.y > window.innerHeight + 40;
-                handle.classList.toggle('is-offscreen', off);
-                if (!off) {
+                const underDialog = layerDialogOpen
+                    && isPointerOverLayerDialog(projected.x, projected.y);
+                handle.classList.toggle('is-offscreen', off || underDialog);
+                if (!off && !underDialog) {
                     handle.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
                 }
             });
@@ -2612,6 +2635,10 @@
     }
 
     function updateGisSelectHoverCursor(clientX, clientY, target) {
+        if (isPointerOverLayerDialog(clientX, clientY)) {
+            clearGisSelectHover();
+            return;
+        }
         if (!isGisSelectMode()) {
             if (gisHoverFeatureId !== null) {
                 clearGisSelectHover();
@@ -3798,7 +3825,10 @@
         if (gisVertexDrag) {
             return;
         }
-        if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) {
+        if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog, .mcwws-map-controls')) {
+            return;
+        }
+        if (isPointerOverLayerDialog(event.clientX, event.clientY)) {
             return;
         }
         if (isGisVertexUiTarget(event.target)) {
@@ -3858,7 +3888,9 @@
             return;
         }
         if (isGisSelectMode()) {
-            const vtx = pickVertexAtScreen(event.clientX, event.clientY);
+            const vtx = isPointerOverLayerDialog(event.clientX, event.clientY)
+                ? null
+                : pickVertexAtScreen(event.clientX, event.clientY);
             if (vtx) {
                 selectVertex(vtx.featureId, vtx.lane || 'center', vtx.vertexIndex);
                 event.stopPropagation();
@@ -4445,6 +4477,7 @@
             return;
         }
         dialog.hidden = !layerDialogOpen;
+        document.body.classList.toggle('mcwws-gis-layer-dialog-open', layerDialogOpen);
 
         dialog.innerHTML = `
             <p class="mcwws-layer-dialog-title">图层 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>

@@ -105,6 +105,13 @@
     pointer-events: auto;
     font-family: "Microsoft YaHei", "PingFang SC", "Segoe UI", sans-serif;
     color: #111827;
+    z-index: 10060;
+    isolation: isolate;
+}
+
+/* 图层菜单打开时：控件栏与对话框置于特征点手柄、移动 Gizmo 之上 */
+body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
+    z-index: 10070;
 }
 
 .mcwws-layer-dialog * {
