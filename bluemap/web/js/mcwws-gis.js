@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-20';
+    const MCWWS_GIS_BUILD = '20260602-21';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -3675,10 +3675,7 @@
     }
 
     function isGisMapInteractionTarget(target) {
-        return isGisPickTarget(target)
-            || !!target?.closest?.('#mcwws-gis-svg-layer [data-fid]')
-            || !!target?.closest?.('.mcwws-gis-pin')
-            || isGisVertexUiTarget(target);
+        return isGisPickTarget(target) || isGisVertexUiTarget(target);
     }
 
     function isGisEditorActive() {
