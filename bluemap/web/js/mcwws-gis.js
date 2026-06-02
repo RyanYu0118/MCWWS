@@ -96,7 +96,6 @@
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
-        { id: 'lasso', label: '套索', icon: '⭕' },
         { id: 'point', label: '点', icon: '📍' },
         { id: 'line', label: '道路', icon: '〰' },
         { id: 'polygon', label: '区域', icon: '▢' },
@@ -1303,17 +1302,44 @@
         return { x: sum.x / count, y: sum.y / count, z: sum.z / count, count };
     }
 
-    /** 单点：该点坐标；多点：选中点质心（gizmo 锚点） */
-    function getGizmoAnchorWorld() {
-        if (selectedVertices.size === 1) {
-            return getSelectedVertexWorld();
+    function getSelectedFeaturesCentroid() {
+        let count = 0;
+        const sum = { x: 0, y: 0, z: 0 };
+        iterSelectedVertexFeatures().forEach(({ feature }) => {
+            getFeatureVertexPoints(feature).forEach((p) => {
+                sum.x += p.x;
+                sum.y += p.y;
+                sum.z += p.z;
+                count += 1;
+            });
+        });
+        if (!count) {
+            return null;
         }
-        const centroid = getSelectedVerticesCentroid();
-        return centroid ? { x: centroid.x, y: centroid.y, z: centroid.z } : null;
+        return { x: sum.x / count, y: sum.y / count, z: sum.z / count, count };
+    }
+
+    function shouldShowGizmo() {
+        return shouldShowVertexHandles() && hasGisSelection();
+    }
+
+    /** 有点选点：点或点集质心；仅选几何体：几何体顶点质心 */
+    function getGizmoAnchorWorld() {
+        if (hasSelectedVertices()) {
+            if (selectedVertices.size === 1) {
+                return getSelectedVertexWorld();
+            }
+            const centroid = getSelectedVerticesCentroid();
+            return centroid ? { x: centroid.x, y: centroid.y, z: centroid.z } : null;
+        }
+        const featureCentroid = getSelectedFeaturesCentroid();
+        return featureCentroid
+            ? { x: featureCentroid.x, y: featureCentroid.y, z: featureCentroid.z }
+            : null;
     }
 
     function syncGizmoFromVertexSelection() {
-        if (!hasSelectedVertices()) {
+        if (!shouldShowGizmo()) {
             hideVertexGizmo();
             return;
         }
@@ -1431,15 +1457,12 @@
             return;
         }
         const key = vertexSelectionKey(featureId, vertexIndex);
-        const additive = !!(options.additive || options.toggle);
-        if (additive) {
-            if (selectedVertices.has(key)) {
-                selectedVertices.delete(key);
-            } else {
-                selectedVertices.add(key);
-            }
-        } else {
+        if (options.replace) {
             selectedVertices.clear();
+            selectedVertices.add(key);
+        } else if (selectedVertices.has(key)) {
+            selectedVertices.delete(key);
+        } else {
             selectedVertices.add(key);
         }
         syncGizmoFromVertexSelection();
@@ -1571,7 +1594,7 @@
     }
 
     function startVertexAxisDrag(axisBtn, event) {
-        if (!hasSelectedVertices() || event.button !== 0) {
+        if (!shouldShowGizmo() || event.button !== 0) {
             return;
         }
         const axis = axisBtn.getAttribute('data-axis') || 'x';
@@ -1587,14 +1610,26 @@
             setStatus('当前视角下该轴不可拖动，请调整视角后重试', 'error');
             return;
         }
-        const dragKeys = Array.from(selectedVertices);
-        const dragTargets = dragKeys.map((key) => {
-            const sel = parseVertexSelectionKey(key);
-            const startWorld = getVertexWorld(sel.featureId, sel.vertexIndex);
-            return startWorld ? { featureId: sel.featureId, vertexIndex: sel.vertexIndex, startWorld: { ...startWorld } } : null;
-        }).filter(Boolean);
-        if (!dragTargets.length) {
-            return;
+        const vertexMode = hasSelectedVertices();
+        let dragTargets = [];
+        let featureSnapshots = null;
+        if (vertexMode) {
+            const dragKeys = Array.from(selectedVertices);
+            dragTargets = dragKeys.map((key) => {
+                const sel = parseVertexSelectionKey(key);
+                const startWorld = getVertexWorld(sel.featureId, sel.vertexIndex);
+                return startWorld
+                    ? { featureId: sel.featureId, vertexIndex: sel.vertexIndex, startWorld: { ...startWorld } }
+                    : null;
+            }).filter(Boolean);
+            if (!dragTargets.length) {
+                return;
+            }
+        } else {
+            featureSnapshots = snapshotSelectedFeatureCoordinates();
+            if (!featureSnapshots.size) {
+                return;
+            }
         }
         event.preventDefault();
         event.stopPropagation();
@@ -1602,8 +1637,11 @@
             gisVertexDrag.cleanup();
         }
         gisVertexDrag = {
+            mode: vertexMode ? 'vertex' : 'feature',
             axis,
+            anchorWorld: { x: world.x, y: world.y, z: world.z },
             dragTargets,
+            featureSnapshots,
             startClientX: event.clientX,
             startClientY: event.clientY,
             pointerId: event.pointerId,
@@ -1631,24 +1669,38 @@
                 recordGisHistory();
                 gisVertexDrag.historyRecorded = true;
             }
-            gisVertexDrag.dragTargets.forEach((target) => {
-                const found = findFeatureById(target.featureId);
-                if (!found) {
-                    return;
-                }
-                const next = dragVertexAlongAxisAtScreen(
-                    gisVertexDrag.screenAxis,
-                    gisVertexDrag.axis,
-                    target.startWorld,
-                    gisVertexDrag.startClientX,
-                    gisVertexDrag.startClientY,
-                    e.clientX,
-                    e.clientY
-                );
-                setFeatureVertexPoint(found.feature, target.vertexIndex, next, { skipPanel: true });
-            });
+            const nextAnchor = dragVertexAlongAxisAtScreen(
+                gisVertexDrag.screenAxis,
+                gisVertexDrag.axis,
+                gisVertexDrag.anchorWorld,
+                gisVertexDrag.startClientX,
+                gisVertexDrag.startClientY,
+                e.clientX,
+                e.clientY
+            );
+            if (gisVertexDrag.mode === 'feature' && gisVertexDrag.featureSnapshots) {
+                const delta = {
+                    x: nextAnchor.x - gisVertexDrag.anchorWorld.x,
+                    y: nextAnchor.y - gisVertexDrag.anchorWorld.y,
+                    z: nextAnchor.z - gisVertexDrag.anchorWorld.z
+                };
+                applyFeatureTranslateDelta(gisVertexDrag.featureSnapshots, delta);
+            } else {
+                gisVertexDrag.dragTargets.forEach((target) => {
+                    const found = findFeatureById(target.featureId);
+                    if (!found) {
+                        return;
+                    }
+                    const next = {
+                        x: target.startWorld.x + (nextAnchor.x - gisVertexDrag.anchorWorld.x),
+                        y: target.startWorld.y + (nextAnchor.y - gisVertexDrag.anchorWorld.y),
+                        z: target.startWorld.z + (nextAnchor.z - gisVertexDrag.anchorWorld.z)
+                    };
+                    setFeatureVertexPoint(found.feature, target.vertexIndex, next, { skipPanel: true });
+                });
+                renderOverlay();
+            }
             syncGizmoFromVertexSelection();
-            renderOverlay();
         };
         const onUp = (e) => {
             endVertexAxisDrag(e);
@@ -1822,16 +1874,25 @@
 
     function syncVertexGizmoInputs(point) {
         const gizmo = ensureVertexGizmo();
-        if (!gizmo || !point || !hasSelectedVertices() || !shouldShowVertexHandles()) {
+        if (!gizmo || !point || !shouldShowGizmo()) {
             hideVertexGizmo();
             return;
         }
-        const multi = selectedVertices.size > 1;
+        const vertexMode = hasSelectedVertices();
+        const multi = vertexMode
+            ? selectedVertices.size > 1
+            : selectedFeatureIds.size > 1;
         gizmo.classList.toggle('is-multi-vertex', multi);
         const hint = gizmo.querySelector('[data-gizmo-hint]');
         if (hint) {
             hint.hidden = !multi;
-            hint.textContent = multi ? `已选 ${selectedVertices.size} 点 · 中心` : '';
+            if (!multi) {
+                hint.textContent = '';
+            } else if (vertexMode) {
+                hint.textContent = `已选 ${selectedVertices.size} 点 · 中心`;
+            } else {
+                hint.textContent = `已选 ${selectedFeatureIds.size} 项 · 中心`;
+            }
         }
         const xIn = gizmo.querySelector('[data-coord="x"]');
         const yIn = gizmo.querySelector('[data-coord="y"]');
@@ -1845,17 +1906,21 @@
         if (document.activeElement !== zIn) {
             zIn.value = String(point.z);
         }
-        const n = selectedVertices.size;
+        const n = vertexMode ? selectedVertices.size : selectedFeatureIds.size;
+        const unit = vertexMode ? '点' : '几何';
         gizmo.querySelectorAll('.mcwws-gis-axis').forEach((btn) => {
             const ax = (btn.getAttribute('data-axis') || 'x').toUpperCase();
             btn.title = n > 1
-                ? `沿 ${ax} 轴移动已选 ${n} 个点`
+                ? `沿 ${ax} 轴移动已选 ${n} ${unit}`
                 : `沿 ${ax} 轴移动`;
         });
     }
 
     function applyVertexCoordInputsFromGizmo(recordHistory) {
-        if (!hasSelectedVertices()) {
+        if (!shouldShowGizmo()) {
+            return;
+        }
+        if (!hasSelectedVertices() && !hasGisSelection()) {
             return;
         }
         const gizmo = ensureVertexGizmo();
@@ -1870,6 +1935,24 @@
         if (recordHistory && !gisVertexCoordHistoryPending) {
             recordGisHistory();
             gisVertexCoordHistoryPending = true;
+        }
+        if (!hasSelectedVertices()) {
+            const centroid = getSelectedFeaturesCentroid();
+            if (!centroid) {
+                return;
+            }
+            const snapshots = snapshotSelectedFeatureCoordinates();
+            const delta = {
+                x: point.x - centroid.x,
+                y: point.y - centroid.y,
+                z: point.z - centroid.z
+            };
+            if (Math.abs(delta.x) < 1e-9 && Math.abs(delta.y) < 1e-9 && Math.abs(delta.z) < 1e-9) {
+                return;
+            }
+            applyFeatureTranslateDelta(snapshots, delta);
+            renderPanel();
+            return;
         }
         if (selectedVertices.size === 1) {
             const primary = getPrimarySelectedVertex();
@@ -2007,10 +2090,44 @@
             event.stopPropagation();
             selectVertex(
                 handle.getAttribute('data-fid'),
-                Number(handle.getAttribute('data-idx')),
-                { additive: event.ctrlKey || event.metaKey }
+                Number(handle.getAttribute('data-idx'))
             );
         });
+    }
+
+    function cloneCoordinatePoints(feature) {
+        return getFeatureVertexPoints(feature).map((p) => ({ x: p.x, y: p.y, z: p.z }));
+    }
+
+    function snapshotSelectedFeatureCoordinates() {
+        const snapshots = new Map();
+        selectedFeatureIds.forEach((id) => {
+            const found = findFeatureById(id);
+            if (found) {
+                snapshots.set(id, cloneCoordinatePoints(found.feature));
+            }
+        });
+        return snapshots;
+    }
+
+    function applyFeatureTranslateDelta(snapshots, delta) {
+        snapshots.forEach((startPts, id) => {
+            const found = findFeatureById(id);
+            if (!found) {
+                return;
+            }
+            const next = startPts.map((p) => coerceVertexPoint({
+                x: p.x + delta.x,
+                y: p.y + delta.y,
+                z: p.z + delta.z
+            })).filter(Boolean);
+            if (next.length) {
+                setFeatureCoordinatesFromPoints(found.feature, next);
+            }
+        });
+        validateSelectedVertices();
+        markDirty();
+        renderOverlay();
     }
 
     function ensureVertexLayer() {
@@ -2071,15 +2188,14 @@
                 vertexHandleElements.delete(key);
             }
         });
-        if (hasSelectedVertices()) {
+        if (shouldShowGizmo()) {
             const world = getGizmoAnchorWorld();
             if (!world) {
-                clearSelectedVertices();
                 hideVertexGizmo();
-                return;
+            } else {
+                syncVertexGizmoInputs(world);
+                positionVertexGizmo(world, view, camera);
             }
-            syncVertexGizmoInputs(world);
-            positionVertexGizmo(world, view, camera);
         } else {
             hideVertexGizmo();
         }
@@ -2119,7 +2235,7 @@
 
     function positionVertexGizmo(world, view, camera) {
         const gizmo = ensureVertexGizmo();
-        if (!hasSelectedVertices() || !shouldShowVertexHandles()) {
+        if (!shouldShowGizmo()) {
             hideVertexGizmo();
             return;
         }
@@ -2762,12 +2878,13 @@
         return isGisEditorActive() && activeTool === 'select';
     }
 
-    function isGisLassoMode() {
-        return isGisEditorActive() && activeTool === 'lasso';
+    /** 选择工具下：中键拖动画套索（无单独套索按钮） */
+    function canUseGisLasso() {
+        return isGisSelectMode();
     }
 
     function isGisDrawPointerActive() {
-        return isGisEditorActive() && activeTool !== 'select' && activeTool !== 'lasso';
+        return isGisEditorActive() && activeTool !== 'select';
     }
 
     function screenDist(ax, ay, bx, by) {
@@ -3013,6 +3130,34 @@
         return ids;
     }
 
+    function collectVerticesInLassoRing(ring) {
+        const keys = [];
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        iterSelectedVertexFeatures().forEach(({ feature }) => {
+            const pts = getFeatureVertexPoints(feature);
+            pts.forEach((p, idx) => {
+                const s = projectGisPoint(p, view, camera, true);
+                if (s && !s.behind && screenPointInsideOrTouchesRing(s.x, s.y, ring)) {
+                    keys.push(vertexSelectionKey(feature.id, idx));
+                }
+            });
+        });
+        return keys;
+    }
+
+    function applyLassoVertexSelection(keys, additive) {
+        if (!keys.length) {
+            return false;
+        }
+        if (!additive) {
+            selectedVertices.clear();
+        }
+        keys.forEach((key) => selectedVertices.add(key));
+        syncGizmoFromVertexSelection();
+        return true;
+    }
+
     function lassoRingDiagonal(ring) {
         let minX = Infinity;
         let minY = Infinity;
@@ -3133,6 +3278,15 @@
         if (ring.length < GIS_LASSO_MIN_POINTS || lassoRingDiagonal(ring) < GIS_LASSO_MIN_DIAG_PX) {
             return;
         }
+        if (hasGisSelection()) {
+            const keys = collectVerticesInLassoRing(ring);
+            if (!applyLassoVertexSelection(keys, additive)) {
+                return;
+            }
+            renderOverlay();
+            renderPanel();
+            return;
+        }
         const ids = collectFeaturesInLassoRing(ring);
         if (!ids.length) {
             return;
@@ -3147,7 +3301,7 @@
     }
 
     function onGisLassoPointerDownCapture(event) {
-        if (!isGisLassoMode()) {
+        if (!canUseGisLasso()) {
             return;
         }
         if (event.button !== 1) {
@@ -3287,9 +3441,7 @@
         if (isGisSelectMode()) {
             const vtx = pickVertexAtScreen(event.clientX, event.clientY);
             if (vtx) {
-                selectVertex(vtx.featureId, vtx.vertexIndex, {
-                    additive: event.ctrlKey || event.metaKey
-                });
+                selectVertex(vtx.featureId, vtx.vertexIndex);
                 event.stopPropagation();
                 return;
             }
@@ -3582,6 +3734,7 @@
                 pin = document.createElement('button');
                 pin.type = 'button';
                 pin.className = 'mcwws-gis-pin';
+                pin.setAttribute('data-fid', feature.id);
                 pinLayer.appendChild(pin);
                 pinElements.set(feature.id, pin);
             }
@@ -3619,11 +3772,8 @@
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
         const selectMode = isGisSelectMode();
         document.body.classList.toggle('mcwws-gis-select-mode', selectMode);
-        document.body.classList.toggle('mcwws-gis-lasso-mode', isGisLassoMode());
         if (!selectMode) {
             clearGisSelectHover();
-        }
-        if (!isGisLassoMode()) {
             cancelGisLasso();
         }
     }
@@ -3730,10 +3880,8 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '橙色顶点可多选（Ctrl+点击）；Delete 删点 / 删整段；Ctrl+S 保存；保存后仍可 Ctrl+Z / Ctrl+Y'
-                : activeTool === 'lasso'
-                    ? '中键按住拖动画套索，松开后多选；Ctrl 追加选中；Delete 删除选中'
-                    : '2D 俯视下点击地图绘制；道路/区域双击结束')
+                ? '左键点选；选中后拖 XYZ 轴或改坐标移动；点多选无需 Ctrl；中键套索'
+                : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
         return `
@@ -4008,14 +4156,14 @@
                 event.preventDefault();
                 return;
             }
-            if (gisEditMode && (isGisSelectMode() || isGisLassoMode()) && hasGisSelection()) {
+            if (gisEditMode && isGisSelectMode() && hasGisSelection()) {
                 clearGisSelection();
                 renderOverlay();
                 renderPanel();
                 event.preventDefault();
                 return;
             }
-            if (gisEditMode && (draftPoints.length || (activeTool !== 'select' && activeTool !== 'lasso'))) {
+            if (gisEditMode && (draftPoints.length || activeTool !== 'select')) {
                 cancelDraft();
                 return;
             }
