@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-31';
+    const MCWWS_GIS_BUILD = '20260602-32';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -3242,14 +3242,54 @@
         return true;
     }
 
+    function buildVertexVisibilityHintInnerHtml() {
+        const targets = getSelectedRoadVertexTargets();
+        if (!targets.length) {
+            return '';
+        }
+        const camH = getMapCameraHeight();
+        const vtxSel = targets.length === 1 ? targets[0] : null;
+        const visVisibleNow = vtxSel
+            ? isVertexVisibleAtHeight(vtxSel.feature, vtxSel.vertexIndex, camH)
+            : false;
+        return `当前相机高度 <strong>${Number.isFinite(camH) ? Math.round(camH) : '—'}</strong>；
+                        可见条件 <code>a &lt; h ≤ b</code>（须 <strong>a &lt; b</strong>，留空为无穷）；
+                        ${targets.length > 1
+            ? '修改下限/上限将<strong>批量应用</strong>到所选点'
+            : `此点<strong>${visVisibleNow ? '可见' : '不可见'}</strong>`}`;
+    }
+
+    function refreshVertexVisibilityHintOnly() {
+        const hint = document.querySelector('.mcwws-gis-vertex-vis-hint');
+        if (!hint) {
+            return;
+        }
+        hint.innerHTML = buildVertexVisibilityHintInnerHtml();
+    }
+
+    function updateGisMenuStatusLine() {
+        const el = document.querySelector('.mcwws-gis-menu-status');
+        if (!el) {
+            return;
+        }
+        el.textContent = `${statusMessage || ''}${dirty ? ' · 未保存' : ''}`;
+        el.className = `mcwws-gis-menu-status${statusKind ? ` is-${statusKind}` : ''}`;
+    }
+
+    /** 标记未保存但不重绘整个图层对话框（避免输入时滚动条跳顶） */
+    function markDirtySoft() {
+        dirty = true;
+        updateGisMenuStatusLine();
+    }
+
     function applyVertexVisibilityInput(input) {
         if (!syncVertexVisibilityFromInput(input)) {
             return;
         }
         recordGisHistory();
-        markDirty();
+        markDirtySoft();
         renderOverlay();
-        renderLayerDialog();
+        refreshVertexVisibilityHintOnly();
     }
 
     function clearBatchVertexVisibility() {
@@ -5164,6 +5204,19 @@
         dialog.hidden = !layerDialogOpen;
         document.body.classList.toggle('mcwws-gis-layer-dialog-open', layerDialogOpen);
 
+        const scrollTop = dialog.scrollTop;
+        const activeEl = document.activeElement;
+        const focusRestore = activeEl?.closest?.('.mcwws-layer-dialog')
+            && activeEl.matches?.('[data-vertex-vis], [data-road-prop]')
+            ? {
+                selector: activeEl.matches('[data-vertex-vis]')
+                    ? `[data-vertex-vis="${activeEl.getAttribute('data-vertex-vis')}"]`
+                    : `[data-road-prop="${activeEl.getAttribute('data-road-prop')}"]`,
+                start: activeEl.selectionStart,
+                end: activeEl.selectionEnd
+            }
+            : null;
+
         dialog.innerHTML = `
             <p class="mcwws-layer-dialog-title">图层 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
             <div class="mcwws-layer-dialog-modes">
@@ -5198,6 +5251,20 @@
             ${gisInfoEnabled && gisEditorOpen ? renderGisEditorHtml() : ''}
             <p class="mcwws-gis-menu-status${statusKind ? ` is-${statusKind}` : ''}">${escapeHtml(statusMessage)}${dirty ? ' · 未保存' : ''}</p>
         `;
+        dialog.scrollTop = scrollTop;
+        if (focusRestore) {
+            const input = dialog.querySelector(focusRestore.selector);
+            if (input && typeof input.focus === 'function') {
+                input.focus();
+                if (typeof focusRestore.start === 'number' && typeof input.setSelectionRange === 'function') {
+                    try {
+                        input.setSelectionRange(focusRestore.start, focusRestore.end);
+                    } catch {
+                        /* ignore */
+                    }
+                }
+            }
+        }
         updateGisButtonState();
     }
 
@@ -5242,8 +5309,9 @@
             if (vtxVisInput) {
                 e.stopPropagation();
                 if (syncVertexVisibilityFromInput(vtxVisInput)) {
-                    markDirty();
+                    markDirtySoft();
                     renderOverlay();
+                    refreshVertexVisibilityHintOnly();
                 }
             }
         });
