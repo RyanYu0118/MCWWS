@@ -520,6 +520,26 @@ body.mcwws-gis-select-mode.mcwws-gis-hover-feature #map-container canvas {
     cursor: pointer !important;
 }
 
+#mcwws-gis-lasso-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 10003;
+    pointer-events: none;
+}
+
+.mcwws-gis-lasso-path {
+    fill: rgba(20, 184, 166, 0.18);
+    stroke: #0d9488;
+    stroke-width: 2;
+    stroke-dasharray: 7 5;
+    vector-effect: non-scaling-stroke;
+}
+
+body.mcwws-gis-lasso-mode #map-container canvas,
+body.mcwws-gis-lasso-active #map-container canvas {
+    cursor: crosshair !important;
+}
+
 #mcwws-gis-pin-layer {
     position: fixed;
     inset: 0;

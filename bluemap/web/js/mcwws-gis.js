@@ -3243,6 +3243,9 @@
     }
 
     function onCanvasPointerMove(event) {
+        if (gisLassoPointer) {
+            return;
+        }
         if (gisCanvasPointer && event.pointerId === gisCanvasPointer.pointerId) {
             markGisPointerMoved(event.clientX, event.clientY);
         }
@@ -3616,8 +3619,12 @@
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
         const selectMode = isGisSelectMode();
         document.body.classList.toggle('mcwws-gis-select-mode', selectMode);
+        document.body.classList.toggle('mcwws-gis-lasso-mode', isGisLassoMode());
         if (!selectMode) {
             clearGisSelectHover();
+        }
+        if (!isGisLassoMode()) {
+            cancelGisLasso();
         }
     }
 
@@ -3626,6 +3633,7 @@
         gisEditMode = false;
         draftPoints = [];
         draftHover = null;
+        cancelGisLasso();
         clearGisSelection();
         syncDrawingClass();
     }
@@ -3723,7 +3731,9 @@
         const editHint = gisCanEdit
             ? (activeTool === 'select'
                 ? '橙色顶点可多选（Ctrl+点击）；Delete 删点 / 删整段；Ctrl+S 保存；保存后仍可 Ctrl+Z / Ctrl+Y'
-                : '2D 俯视下点击地图绘制；道路/区域双击结束')
+                : activeTool === 'lasso'
+                    ? '中键按住拖动画套索，松开后多选；Ctrl 追加选中；Delete 删除选中'
+                    : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
         return `
@@ -3871,6 +3881,7 @@
             const toolBtn = e.target.closest('[data-tool]');
             if (toolBtn) {
                 activeTool = toolBtn.getAttribute('data-tool') || 'select';
+                cancelGisLasso();
                 clearGisSelection();
                 draftPoints = [];
                 draftHover = null;
@@ -3986,20 +3997,25 @@
 
     function onKeyDown(event) {
         if (event.key === 'Escape') {
+            if (gisLassoPointer) {
+                cancelGisLasso();
+                event.preventDefault();
+                return;
+            }
             if (gisEditMode && isGisSelectMode() && hasSelectedVertices()) {
                 clearSelectedVertices();
                 renderOverlay();
                 event.preventDefault();
                 return;
             }
-            if (gisEditMode && isGisSelectMode() && hasGisSelection()) {
+            if (gisEditMode && (isGisSelectMode() || isGisLassoMode()) && hasGisSelection()) {
                 clearGisSelection();
                 renderOverlay();
                 renderPanel();
                 event.preventDefault();
                 return;
             }
-            if (gisEditMode && (draftPoints.length || activeTool !== 'select')) {
+            if (gisEditMode && (draftPoints.length || (activeTool !== 'select' && activeTool !== 'lasso'))) {
                 cancelDraft();
                 return;
             }
