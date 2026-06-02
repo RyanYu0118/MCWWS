@@ -1245,6 +1245,31 @@
             .map((p) => ({ x: p.x, y: p.y, z: p.z }));
     }
 
+    function hasPersistedLanes(feature) {
+        const lanes = feature?.properties?.lanes;
+        const left = coordsToPoints(lanes?.left);
+        const right = coordsToPoints(lanes?.right);
+        return left.length >= 2 && right.length >= 2;
+    }
+
+    /** 仅在尚无车道几何时，用默认间距从母线生成一次；之后间距完全由左右车道节点决定 */
+    function initDualLanesIfMissing(feature) {
+        if (!feature || !isRoadDualCarriagewayEnabled(feature) || hasPersistedLanes(feature)) {
+            return;
+        }
+        const props = ensureFeatureProperties(feature);
+        const center = getFeatureVertexPoints(feature);
+        if (center.length < 2) {
+            return;
+        }
+        if (!props.lanes || typeof props.lanes !== 'object') {
+            props.lanes = {};
+        }
+        const off = GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET;
+        props.lanes.left = pointsToCoordList(offsetPolylineXZ(center, off, -1));
+        props.lanes.right = pointsToCoordList(offsetPolylineXZ(center, off, 1));
+    }
+
     function getFeatureLanePoints(feature, lane) {
         if (!feature) {
             return [];
@@ -1253,6 +1278,7 @@
         if (!isRoadDualCarriagewayEnabled(feature)) {
             return center;
         }
+        initDualLanesIfMissing(feature);
         const lanes = feature.properties?.lanes;
         if (lane === 'left' && Array.isArray(lanes?.left)) {
             return coordsToPoints(lanes.left);
@@ -1260,57 +1286,7 @@
         if (lane === 'right' && Array.isArray(lanes?.right)) {
             return coordsToPoints(lanes.right);
         }
-        const off = getRoadLaneOffset(feature);
-        if (lane === 'left') {
-            return offsetPolylineXZ(center, off, -1);
-        }
-        if (lane === 'right') {
-            return offsetPolylineXZ(center, off, 1);
-        }
         return center;
-    }
-
-    function ensureDualLanesFromCenter(feature) {
-        if (!feature || !isRoadDualCarriagewayEnabled(feature)) {
-            return;
-        }
-        const props = ensureFeatureProperties(feature);
-        const center = getFeatureVertexPoints(feature);
-        if (center.length < 2) {
-            return;
-        }
-        const off = getRoadLaneOffset(feature);
-        if (!props.lanes || typeof props.lanes !== 'object') {
-            props.lanes = {};
-        }
-        props.lanes.left = pointsToCoordList(offsetPolylineXZ(center, off, -1));
-        props.lanes.right = pointsToCoordList(offsetPolylineXZ(center, off, 1));
-    }
-
-    function syncCenterlineFromLanes(feature) {
-        if (!feature?.properties?.lanes) {
-            return;
-        }
-        const left = coordsToPoints(feature.properties.lanes.left);
-        const right = coordsToPoints(feature.properties.lanes.right);
-        if (left.length < 2 || right.length < 2) {
-            return;
-        }
-        const n = Math.min(left.length, right.length);
-        const center = [];
-        for (let i = 0; i < n; i += 1) {
-            const mid = coerceVertexPoint({
-                x: (left[i].x + right[i].x) / 2,
-                y: (left[i].y + right[i].y) / 2,
-                z: (left[i].z + right[i].z) / 2
-            });
-            if (mid) {
-                center.push(mid);
-            }
-        }
-        if (center.length >= 2) {
-            setFeatureCoordinatesFromPoints(feature, center);
-        }
     }
 
     function shouldEditLanesSeparately(feature) {
@@ -1323,7 +1299,7 @@
             return [];
         }
         if (shouldEditLanesSeparately(feature)) {
-            ensureDualLanesFromCenter(feature);
+            initDualLanesIfMissing(feature);
             return [
                 { lane: 'left', points: getFeatureLanePoints(feature, 'left') },
                 { lane: 'right', points: getFeatureLanePoints(feature, 'right') }
@@ -1339,16 +1315,12 @@
         }
         if (!isRoadDualCarriagewayEnabled(feature) || lane === 'center') {
             setFeatureCoordinatesFromPoints(feature, next);
-            if (isRoadDualCarriagewayEnabled(feature) && !shouldRenderRoadAsDualLines(feature)) {
-                ensureDualLanesFromCenter(feature);
-            }
         } else {
             const props = ensureFeatureProperties(feature);
             if (!props.lanes || typeof props.lanes !== 'object') {
                 props.lanes = {};
             }
             props.lanes[lane] = next;
-            syncCenterlineFromLanes(feature);
         }
         dirty = true;
     }
@@ -2304,7 +2276,7 @@
                 };
                 dirty = true;
             } else if (isRoadDualCarriagewayEnabled(found.feature)) {
-                ensureDualLanesFromCenter(found.feature);
+                initDualLanesIfMissing(found.feature);
             }
         });
         validateSelectedVertices();
@@ -2641,11 +2613,6 @@
         return Number.isFinite(v) && v > 0 ? v : GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT;
     }
 
-    function getRoadLaneOffset(feature) {
-        const v = Number(feature?.properties?.laneOffset);
-        return Number.isFinite(v) && v > 0 ? v : GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET;
-    }
-
     /** 相机高度 ≤ 阈值时显示双车道（放大）；高于阈值显示母线（缩小） */
     function shouldRenderRoadAsDualLines(feature) {
         if (!isRoadDualCarriagewayEnabled(feature)) {
@@ -2790,7 +2757,6 @@
         const props = ensureFeatureProperties(found.feature);
         const dual = !!props.dualCarriageway;
         const splitHeight = getRoadDualSplitHeight(found.feature);
-        const laneOffset = getRoadLaneOffset(found.feature);
         const camH = Math.round(getMapCameraHeight());
         const dualActive = shouldRenderRoadAsDualLines(found.feature);
         return `
@@ -2808,18 +2774,11 @@
                         title="相机高度 ≤ 此值（放大）时显示左右两线；高于此值显示母线"
                         ${!gisCanEdit || !dual ? 'disabled' : ''}>
                 </label>
-                <label class="mcwws-gis-road-prop-row">
-                    <span>车道半宽（格）</span>
-                    <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="laneOffset"
-                        min="0.5" step="0.5" value="${laneOffset}"
-                        title="母线到单侧车道中心线的距离"
-                        ${!gisCanEdit || !dual ? 'disabled' : ''}>
-                </label>
                 <p class="mcwws-gis-road-props-hint">
                     当前高度 ${camH} · ${dualActive
-                        ? '已分双线：左/右车道各有特征点，可分别拖动（右线→左线←）'
+                        ? '左右车道独立编辑，母线不变（右线→左线←）'
                         : dual
-                            ? '缩小地图时编辑母线；放大后可分别编辑左右车道'
+                            ? '放大后分双线编辑车道；缩小后编辑母线基准，互不影响'
                             : '未启用'}
                     （高度越小越近）
                 </p>
@@ -2844,17 +2803,12 @@
                 props.dualSplitHeight = GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT;
             }
             if (props.dualCarriageway) {
-                ensureDualLanesFromCenter(found.feature);
+                initDualLanesIfMissing(found.feature);
             } else {
                 delete props.lanes;
             }
         } else if (prop === 'dualSplitHeight') {
             props.dualSplitHeight = Math.max(1, Math.round(Number(input.value) || GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT));
-        } else if (prop === 'laneOffset') {
-            props.laneOffset = Math.max(0.5, Number(input.value) || GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET);
-            if (props.dualCarriageway) {
-                ensureDualLanesFromCenter(found.feature);
-            }
         }
         markDirty();
         renderOverlay();
@@ -4116,7 +4070,7 @@
             if (feature.type === 'LineString' && points.length >= 2) {
                 const showDual = shouldRenderRoadAsDualLines(feature);
                 if (showDual) {
-                    ensureDualLanesFromCenter(feature);
+                    initDualLanesIfMissing(feature);
                     const leftPts = getFeatureLanePoints(feature, 'left');
                     const rightPts = getFeatureLanePoints(feature, 'right');
                     const dLeft = buildSvgPolylinePath(leftPts, view, camera);
