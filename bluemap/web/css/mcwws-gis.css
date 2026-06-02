@@ -600,7 +600,7 @@ body.mcwws-map-simplified-mode #map-container {
 }
 
 body.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
-    opacity: 0.7;
+    opacity: 0.1;
 }
 
 /* 仅控制显隐过渡；图层本身保持 pointer-events:none，由下方 path/钉 单独接管点击，避免挡住地图拖拽 */
@@ -624,7 +624,7 @@ body.mcwws-map-render-no-transition #mcwws-gis-pin-layer {
 
 body.mcwws-map-render-no-transition.mcwws-gis-has-selection #map-container,
 body.mcwws-map-render-no-transition.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
-    opacity: 0.7;
+    opacity: 0.1;
 }
 
 @media (prefers-reduced-motion: reduce) {

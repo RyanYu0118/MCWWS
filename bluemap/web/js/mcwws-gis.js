@@ -7,6 +7,10 @@
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
     const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
     const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
+    const LASSO_LAYER_ID = 'mcwws-gis-lasso-layer';
+    const GIS_LASSO_POINT_MIN_DIST_PX = 5;
+    const GIS_LASSO_MIN_POINTS = 4;
+    const GIS_LASSO_MIN_DIAG_PX = 12;
     const GIS_DEFAULT_Y = 64;
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
@@ -84,9 +88,15 @@
     let gisVertexGizmoEl = null;
     let gisVertexGizmoBound = false;
     let gisVertexCoordHistoryPending = false;
+    /** @type {{ points: { x: number, y: number }[], pointerId: number, captureEl: Element | null } | null } */
+    let gisLassoPointer = null;
+    /** @type {SVGPathElement | null} */
+    let gisLassoPathEl = null;
+    let gisLassoCaptureBound = false;
 
     const TOOLS = [
         { id: 'select', label: '选择', icon: '↖' },
+        { id: 'lasso', label: '套索', icon: '⭕' },
         { id: 'point', label: '点', icon: '📍' },
         { id: 'line', label: '道路', icon: '〰' },
         { id: 'polygon', label: '区域', icon: '▢' },
@@ -254,7 +264,7 @@
         bm.saveUserSettings?.();
     }
 
-    const MAP_BG_OPACITY_SELECTED = '0.7';
+    const MAP_BG_OPACITY_SELECTED = '0.1';
 
     /** 选中 GIS 要素时压低 BlueMap 底图（含简化地图模式） */
     function syncMapBackgroundOpacity(selectionActive) {
@@ -2752,8 +2762,12 @@
         return isGisEditorActive() && activeTool === 'select';
     }
 
+    function isGisLassoMode() {
+        return isGisEditorActive() && activeTool === 'lasso';
+    }
+
     function isGisDrawPointerActive() {
-        return isGisEditorActive() && activeTool !== 'select';
+        return isGisEditorActive() && activeTool !== 'select' && activeTool !== 'lasso';
     }
 
     function screenDist(ax, ay, bx, by) {
@@ -2866,6 +2880,327 @@
         });
 
         return bestId;
+    }
+
+    function orient2d(ax, ay, bx, by, cx, cy) {
+        return (bx - ax) * (cy - ay) - (by - ay) * (cx - ax);
+    }
+
+    function pointOnSegment(ax, ay, bx, by, cx, cy) {
+        return Math.min(ax, bx) <= cx + 1e-6 && cx <= Math.max(ax, bx) + 1e-6
+            && Math.min(ay, by) <= cy + 1e-6 && cy <= Math.max(ay, by) + 1e-6;
+    }
+
+    function segmentsIntersect(ax, ay, bx, by, cx, cy, dx, dy) {
+        const o1 = orient2d(ax, ay, bx, by, cx, cy);
+        const o2 = orient2d(ax, ay, bx, by, dx, dy);
+        const o3 = orient2d(cx, cy, dx, dy, ax, ay);
+        const o4 = orient2d(cx, cy, dx, dy, bx, by);
+        if (o1 * o2 < 0 && o3 * o4 < 0) {
+            return true;
+        }
+        if (Math.abs(o1) < 1e-6 && pointOnSegment(ax, ay, bx, by, cx, cy)) {
+            return true;
+        }
+        if (Math.abs(o2) < 1e-6 && pointOnSegment(ax, ay, bx, by, dx, dy)) {
+            return true;
+        }
+        if (Math.abs(o3) < 1e-6 && pointOnSegment(cx, cy, dx, dy, ax, ay)) {
+            return true;
+        }
+        if (Math.abs(o4) < 1e-6 && pointOnSegment(cx, cy, dx, dy, bx, by)) {
+            return true;
+        }
+        return false;
+    }
+
+    function screenSegmentIntersectsRing(x1, y1, x2, y2, ring) {
+        if (pointInScreenPolygon(x1, y1, ring) || pointInScreenPolygon(x2, y2, ring)) {
+            return true;
+        }
+        for (let i = 0; i < ring.length; i += 1) {
+            const j = (i + 1) % ring.length;
+            if (segmentsIntersect(x1, y1, x2, y2, ring[i].x, ring[i].y, ring[j].x, ring[j].y)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function screenPointInsideOrTouchesRing(px, py, ring) {
+        if (pointInScreenPolygon(px, py, ring)) {
+            return true;
+        }
+        for (let i = 0; i < ring.length; i += 1) {
+            const j = (i + 1) % ring.length;
+            if (distPointToScreenSegment(px, py, ring[i].x, ring[i].y, ring[j].x, ring[j].y) < 2) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    function featureIntersectsLassoRing(feature, ring) {
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const points = coordsToPoints(feature.coordinates);
+
+        if (feature.type === 'Point' || feature.type === 'Label') {
+            const p = points[0];
+            if (!p) {
+                return false;
+            }
+            const s = projectGisPoint(p, view, camera, true);
+            return !!(s && !s.behind && screenPointInsideOrTouchesRing(s.x, s.y, ring));
+        }
+
+        if (feature.type === 'LineString' && points.length >= 2) {
+            let hit = false;
+            iterClippedLineScreenSegments(points, view, camera, (a, b) => {
+                if (hit) {
+                    return;
+                }
+                if (screenSegmentIntersectsRing(a.x, a.y, b.x, b.y, ring)) {
+                    hit = true;
+                }
+            });
+            return hit;
+        }
+
+        if (feature.type === 'Polygon' && points.length >= 3) {
+            const screenRing = getClippedScreenRingForPolygon(points, view, camera);
+            if (screenRing.length < 3) {
+                return false;
+            }
+            for (let i = 0; i < screenRing.length; i += 1) {
+                if (screenPointInsideOrTouchesRing(screenRing[i].x, screenRing[i].y, ring)) {
+                    return true;
+                }
+            }
+            for (let i = 0; i < screenRing.length; i += 1) {
+                const j = (i + 1) % screenRing.length;
+                if (screenSegmentIntersectsRing(
+                    screenRing[i].x,
+                    screenRing[i].y,
+                    screenRing[j].x,
+                    screenRing[j].y,
+                    ring
+                )) {
+                    return true;
+                }
+            }
+            let cx = 0;
+            let cy = 0;
+            screenRing.forEach((p) => {
+                cx += p.x;
+                cy += p.y;
+            });
+            cx /= screenRing.length;
+            cy /= screenRing.length;
+            return screenPointInsideOrTouchesRing(cx, cy, ring);
+        }
+
+        return false;
+    }
+
+    function collectFeaturesInLassoRing(ring) {
+        const ids = [];
+        iterVisibleFeatures().forEach(({ feature }) => {
+            if (feature?.id && featureIntersectsLassoRing(feature, ring)) {
+                ids.push(feature.id);
+            }
+        });
+        return ids;
+    }
+
+    function lassoRingDiagonal(ring) {
+        let minX = Infinity;
+        let minY = Infinity;
+        let maxX = -Infinity;
+        let maxY = -Infinity;
+        ring.forEach((p) => {
+            minX = Math.min(minX, p.x);
+            minY = Math.min(minY, p.y);
+            maxX = Math.max(maxX, p.x);
+            maxY = Math.max(maxY, p.y);
+        });
+        return Math.hypot(maxX - minX, maxY - minY);
+    }
+
+    function ensureLassoLayer() {
+        let svg = document.getElementById(LASSO_LAYER_ID);
+        if (!svg) {
+            svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.id = LASSO_LAYER_ID;
+            svg.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(svg);
+        }
+        svg.setAttribute('width', String(window.innerWidth));
+        svg.setAttribute('height', String(window.innerHeight));
+        return svg;
+    }
+
+    function updateLassoPathVisual() {
+        const svg = ensureLassoLayer();
+        const pts = gisLassoPointer?.points || [];
+        if (pts.length < 2) {
+            if (gisLassoPathEl) {
+                gisLassoPathEl.removeAttribute('d');
+            }
+            return;
+        }
+        if (!gisLassoPathEl) {
+            gisLassoPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            gisLassoPathEl.classList.add('mcwws-gis-lasso-path');
+            svg.appendChild(gisLassoPathEl);
+        }
+        let d = `M ${pts[0].x} ${pts[0].y}`;
+        for (let i = 1; i < pts.length; i += 1) {
+            d += ` L ${pts[i].x} ${pts[i].y}`;
+        }
+        if (pts.length >= 3) {
+            d += ' Z';
+        }
+        gisLassoPathEl.setAttribute('d', d);
+    }
+
+    function clearGisLassoVisual() {
+        if (gisLassoPathEl) {
+            gisLassoPathEl.remove();
+            gisLassoPathEl = null;
+        }
+        const svg = document.getElementById(LASSO_LAYER_ID);
+        if (svg) {
+            svg.remove();
+        }
+        document.body.classList.remove('mcwws-gis-lasso-active');
+    }
+
+    function cancelGisLasso() {
+        if (gisLassoPointer?.captureEl?.hasPointerCapture?.(gisLassoPointer.pointerId)) {
+            try {
+                gisLassoPointer.captureEl.releasePointerCapture(gisLassoPointer.pointerId);
+            } catch {
+                /* ignore */
+            }
+        }
+        gisLassoPointer = null;
+        clearGisLassoVisual();
+    }
+
+    function appendGisLassoPoint(clientX, clientY) {
+        if (!gisLassoPointer) {
+            return;
+        }
+        const pts = gisLassoPointer.points;
+        if (pts.length) {
+            const last = pts[pts.length - 1];
+            if (screenDist(clientX, clientY, last.x, last.y) < GIS_LASSO_POINT_MIN_DIST_PX) {
+                return;
+            }
+        }
+        pts.push({ x: clientX, y: clientY });
+        updateLassoPathVisual();
+    }
+
+    function startGisLasso(event) {
+        cancelGisLasso();
+        const captureEl = event.target?.closest?.('#map-container canvas') || document.getElementById('map-container');
+        gisLassoPointer = {
+            points: [{ x: event.clientX, y: event.clientY }],
+            pointerId: event.pointerId,
+            captureEl
+        };
+        document.body.classList.add('mcwws-gis-lasso-active');
+        updateLassoPathVisual();
+        if (captureEl?.setPointerCapture) {
+            try {
+                captureEl.setPointerCapture(event.pointerId);
+            } catch {
+                /* ignore */
+            }
+        }
+    }
+
+    function finishGisLasso(event) {
+        if (!gisLassoPointer) {
+            return;
+        }
+        appendGisLassoPoint(event.clientX, event.clientY);
+        const ring = gisLassoPointer.points.slice();
+        const additive = !!(event?.ctrlKey || event?.metaKey);
+        cancelGisLasso();
+        if (ring.length < GIS_LASSO_MIN_POINTS || lassoRingDiagonal(ring) < GIS_LASSO_MIN_DIAG_PX) {
+            return;
+        }
+        const ids = collectFeaturesInLassoRing(ring);
+        if (!ids.length) {
+            return;
+        }
+        if (!additive) {
+            clearGisSelection();
+        }
+        ids.forEach((id) => selectedFeatureIds.add(id));
+        validateSelectedVertices();
+        renderOverlay();
+        renderPanel();
+    }
+
+    function onGisLassoPointerDownCapture(event) {
+        if (!isGisLassoMode()) {
+            return;
+        }
+        if (event.button !== 1) {
+            return;
+        }
+        if (event.target?.closest?.('.mcwws-ctrl-gis-wrap, .mcwws-layer-dialog')) {
+            return;
+        }
+        if (!isGisPickTarget(event.target)) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        startGisLasso(event);
+    }
+
+    function onGisLassoPointerMoveCapture(event) {
+        if (!gisLassoPointer || event.pointerId !== gisLassoPointer.pointerId) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        appendGisLassoPoint(event.clientX, event.clientY);
+    }
+
+    function onGisLassoPointerUpCapture(event) {
+        if (!gisLassoPointer || event.pointerId !== gisLassoPointer.pointerId) {
+            return;
+        }
+        if (event.type !== 'pointercancel' && event.button !== 1) {
+            return;
+        }
+        event.preventDefault();
+        event.stopPropagation();
+        event.stopImmediatePropagation();
+        finishGisLasso(event);
+    }
+
+    function bindGisLassoCapture() {
+        if (gisLassoCaptureBound) {
+            return;
+        }
+        gisLassoCaptureBound = true;
+        document.addEventListener('pointerdown', onGisLassoPointerDownCapture, true);
+        document.addEventListener('pointermove', onGisLassoPointerMoveCapture, true);
+        document.addEventListener('pointerup', onGisLassoPointerUpCapture, true);
+        document.addEventListener('pointercancel', onGisLassoPointerUpCapture, true);
+        document.addEventListener('contextmenu', (event) => {
+            if (gisLassoPointer) {
+                event.preventDefault();
+            }
+        }, true);
     }
 
     function markGisPointerMoved(clientX, clientY) {
@@ -3013,6 +3348,7 @@
             document.addEventListener('pointerup', onCanvasPointerUp, false);
             document.addEventListener('pointercancel', onCanvasPointerUp, false);
         }
+        bindGisLassoCapture();
     }
 
     function exportGeoJson() {
