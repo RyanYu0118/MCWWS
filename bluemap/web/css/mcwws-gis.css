@@ -535,7 +535,6 @@
 
 #mcwws-gis-svg-layer path.mcwws-gis-line--center {
     stroke-width: 1.25;
-    stroke-dasharray: 6 4;
     opacity: 0.85;
 }
 
@@ -619,12 +618,23 @@
 body.mcwws-gis-select-mode #mcwws-gis-svg-layer path.mcwws-gis-line {
     pointer-events: stroke;
     cursor: pointer;
-    /* 编辑时加宽命中区（双向道路默认线宽较细） */
-    stroke-width: 8;
 }
 
 body.mcwws-gis-select-mode #mcwws-gis-svg-layer path.mcwws-gis-polygon {
     pointer-events: visibleFill;
+    cursor: pointer;
+}
+
+/* 命中专用：透明粗线，不改变可视线宽 */
+#mcwws-gis-svg-layer path.mcwws-gis-hit {
+    pointer-events: none;
+    stroke: transparent;
+    fill: none;
+    opacity: 0;
+}
+
+body.mcwws-gis-select-mode #mcwws-gis-svg-layer path.mcwws-gis-hit {
+    pointer-events: stroke;
     cursor: pointer;
 }
 
