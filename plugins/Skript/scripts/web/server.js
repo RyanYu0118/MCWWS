@@ -1831,11 +1831,14 @@ function normalizeGisFeature(raw, layerId) {
         if (Number.isFinite(strokeWidth) && strokeWidth > 0) {
             featureProps.strokeWidth = Math.min(24, Math.max(1, strokeWidth));
         }
+        const vertCount = coordinates.length;
         const visRaw = props.vertexVisibility;
-        if (Array.isArray(visRaw) && visRaw.length) {
-            const vertexVisibility = visRaw.slice(0, 512).map((entry) => {
+        const vertexVisibility = [];
+        if (Array.isArray(visRaw)) {
+            visRaw.slice(0, Math.min(512, vertCount)).forEach((entry) => {
                 if (!entry || typeof entry !== 'object') {
-                    return {};
+                    vertexVisibility.push({});
+                    return;
                 }
                 const out = {};
                 const min = Number(entry.min);
@@ -1846,11 +1849,23 @@ function normalizeGisFeature(raw, layerId) {
                 if (Number.isFinite(max)) {
                     out.max = max;
                 }
-                return out;
+                const lo = out.min == null ? -Infinity : out.min;
+                const hi = out.max == null ? Infinity : out.max;
+                if (lo < hi) {
+                    vertexVisibility.push(out);
+                } else {
+                    vertexVisibility.push({});
+                }
             });
-            if (vertexVisibility.length) {
-                featureProps.vertexVisibility = vertexVisibility;
-            }
+        }
+        while (vertexVisibility.length < vertCount) {
+            vertexVisibility.push({});
+        }
+        if (vertexVisibility.length > vertCount) {
+            vertexVisibility.length = vertCount;
+        }
+        if (vertCount > 0) {
+            featureProps.vertexVisibility = vertexVisibility;
         }
     }
     if (type === 'Point' || type === 'Label') {

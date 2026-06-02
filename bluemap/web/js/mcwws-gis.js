@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-29';
+    const MCWWS_GIS_BUILD = '20260602-31';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1387,6 +1387,32 @@
         return { min, max };
     }
 
+    /** 无效范围（如 min≥max、0~0）视为未设置，始终可见 */
+    function sanitizeVertexVisibilityEntry(raw) {
+        const { min, max } = normalizeVisibilityEntry(raw);
+        if (min == null && max == null) {
+            return {};
+        }
+        const lo = min == null ? -Infinity : min;
+        const hi = max == null ? Infinity : max;
+        if (!(lo < hi)) {
+            return {};
+        }
+        const out = {};
+        if (min != null) {
+            out.min = min;
+        }
+        if (max != null) {
+            out.max = max;
+        }
+        return out;
+    }
+
+    function hasActiveVisibilityRange(entry) {
+        const s = sanitizeVertexVisibilityEntry(entry);
+        return s.min != null || s.max != null;
+    }
+
     function ensureVertexVisibility(feature) {
         if (!featureSupportsVertices(feature)) {
             return [];
@@ -1403,13 +1429,13 @@
             props.vertexVisibility.length = count;
         }
         for (let i = 0; i < props.vertexVisibility.length; i += 1) {
-            props.vertexVisibility[i] = normalizeVisibilityEntry(props.vertexVisibility[i]);
+            props.vertexVisibility[i] = sanitizeVertexVisibilityEntry(props.vertexVisibility[i]);
         }
         return props.vertexVisibility;
     }
 
     function getVertexVisibilityEntry(feature, vertexIndex) {
-        return normalizeVisibilityEntry(ensureVertexVisibility(feature)[vertexIndex]);
+        return sanitizeVertexVisibilityEntry(ensureVertexVisibility(feature)[vertexIndex]);
     }
 
     function formatVisibilityBoundForInput(entry, which) {
@@ -1425,10 +1451,14 @@
 
     /** 可视范围：a < 相机高度 ≤ b；未设 a 视为 −∞，未设 b 视为 +∞ */
     function isVertexVisibleAtHeight(feature, vertexIndex, viewHeight) {
+        const entry = getVertexVisibilityEntry(feature, vertexIndex);
+        if (!hasActiveVisibilityRange(entry)) {
+            return true;
+        }
         if (!Number.isFinite(viewHeight)) {
             return true;
         }
-        const { min, max } = getVertexVisibilityEntry(feature, vertexIndex);
+        const { min, max } = entry;
         const lo = min == null ? -Infinity : min;
         const hi = max == null ? Infinity : max;
         return lo < viewHeight && viewHeight <= hi;
@@ -1496,12 +1526,9 @@
             }
             entry[which] = n;
         }
-        const next = {};
-        if (entry.min != null) {
-            next.min = entry.min;
-        }
-        if (entry.max != null) {
-            next.max = entry.max;
+        const next = sanitizeVertexVisibilityEntry(entry);
+        if (next.min != null && next.max != null && next.min >= next.max) {
+            return false;
         }
         feature.properties.vertexVisibility[vertexIndex] = next;
         return true;
@@ -1570,15 +1597,36 @@
     }
 
     function getPrimaryRoadVertexSelection() {
+        const targets = getSelectedRoadVertexTargets();
+        return targets.length === 1 ? targets[0] : null;
+    }
+
+    /** 当前选中道路上的特征点（支持多选批量编辑） */
+    function getSelectedRoadVertexTargets() {
         const road = getSelectedLineStringRoad();
-        if (!road || selectedVertices.size !== 1) {
-            return null;
+        if (!road || !selectedVertices.size) {
+            return [];
         }
-        const sel = parseVertexSelectionKey(selectedVertices.values().next().value);
-        if (!sel || sel.featureId !== road.feature.id) {
-            return null;
+        const targets = [];
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            if (!sel || sel.featureId !== road.feature.id) {
+                return;
+            }
+            targets.push({ feature: road.feature, vertexIndex: sel.vertexIndex });
+        });
+        targets.sort((a, b) => a.vertexIndex - b.vertexIndex);
+        return targets;
+    }
+
+    function getBatchVisibilityBoundDisplay(targets, which) {
+        const values = targets.map((t) => getVertexVisibilityEntry(t.feature, t.vertexIndex)[which]);
+        const keys = values.map((v) => (v == null ? '' : String(v)));
+        const uniq = [...new Set(keys)];
+        if (uniq.length === 1) {
+            return { value: formatVisibilityBoundForInput({ [which]: values[0] }, which), mixed: false };
         }
-        return { feature: road.feature, vertexIndex: sel.vertexIndex };
+        return { value: '', mixed: true };
     }
 
     function vertexSelectionKey(featureId, lane, vertexIndex) {
@@ -3042,14 +3090,22 @@
         const strokeStyle = String(props.strokeStyle || 'solid');
         const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
         const strokeColor = String(props.color || '');
-        const vtxSel = getPrimaryRoadVertexSelection();
+        const vtxTargets = getSelectedRoadVertexTargets();
+        const vtxSel = vtxTargets.length === 1 ? vtxTargets[0] : null;
         const vtxIdx = vtxSel ? vtxSel.vertexIndex : -1;
         const vtxId = vtxSel ? getVertexIdAt(found.feature, vtxIdx) : '';
-        const vtxLabel = vtxSel
-            ? `第 ${vtxIdx + 1} 个特征点`
-            : '请先选中一个特征点';
+        const vtxLabel = !vtxTargets.length
+            ? '请选中一个或多个特征点（套索/点击）'
+            : vtxTargets.length === 1
+                ? `第 ${vtxTargets[0].vertexIndex + 1} 个特征点`
+                : `已选 ${vtxTargets.length} 个特征点（批量）`;
         const camH = getMapCameraHeight();
-        const visEntry = vtxSel ? getVertexVisibilityEntry(found.feature, vtxIdx) : { min: null, max: null };
+        const visMinDisp = vtxTargets.length
+            ? getBatchVisibilityBoundDisplay(vtxTargets, 'min')
+            : { value: '', mixed: false };
+        const visMaxDisp = vtxTargets.length
+            ? getBatchVisibilityBoundDisplay(vtxTargets, 'max')
+            : { value: '', mixed: false };
         const visVisibleNow = vtxSel ? isVertexVisibleAtHeight(found.feature, vtxIdx, camH) : false;
         const vertexIdRow = vtxSel ? `
                     <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--readonly">
@@ -3057,23 +3113,32 @@
                         <code class="mcwws-gis-vertex-id">${escapeHtml(vtxId || '')}</code>
                     </label>
         ` : '';
-        const vertexVisRow = vtxSel ? `
+        const vertexVisRow = vtxTargets.length ? `
                     <label class="mcwws-gis-road-prop-row">
                         <span>可视下限 a</span>
                         <input type="number" class="mcwws-gis-road-prop-input" data-vertex-vis="min"
-                            step="1" value="${escapeHtml(formatVisibilityBoundForInput(visEntry, 'min'))}"
-                            placeholder="留空 = −∞" ${!gisCanEdit ? 'disabled' : ''}>
+                            step="1" value="${escapeHtml(visMinDisp.value)}"
+                            placeholder="${visMinDisp.mixed ? '多个值' : '留空 = −∞'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>可视上限 b</span>
                         <input type="number" class="mcwws-gis-road-prop-input" data-vertex-vis="max"
-                            step="1" value="${escapeHtml(formatVisibilityBoundForInput(visEntry, 'max'))}"
-                            placeholder="留空 = +∞" ${!gisCanEdit ? 'disabled' : ''}>
+                            step="1" value="${escapeHtml(visMaxDisp.value)}"
+                            placeholder="${visMaxDisp.mixed ? '多个值' : '留空 = +∞'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
+                    ${vtxTargets.length > 1 && gisCanEdit ? `
+                    <div class="mcwws-gis-menu-actions">
+                        <button type="button" class="mcwws-gis-menu-action" data-action="clear-vertex-vis">清除所选点可视范围</button>
+                    </div>
+                    ` : ''}
                     <p class="mcwws-gis-road-props-hint mcwws-gis-vertex-vis-hint">
                         当前相机高度 <strong>${Number.isFinite(camH) ? Math.round(camH) : '—'}</strong>；
-                        可见条件 <code>a &lt; h ≤ b</code>（未设 a/b 视为无穷）；
-                        此点<strong>${visVisibleNow ? '可见' : '不可见'}</strong>
+                        可见条件 <code>a &lt; h ≤ b</code>（须 <strong>a &lt; b</strong>，留空为无穷）；
+                        ${vtxTargets.length > 1
+                            ? '修改下限/上限将<strong>批量应用</strong>到所选点'
+                            : `此点<strong>${visVisibleNow ? '可见' : '不可见'}</strong>`}
                     </p>
         ` : '';
         return `
@@ -3112,17 +3177,16 @@
         `;
     }
 
-    function applyRoadPropertyInput(input) {
+    function syncRoadPropertyFromInput(input) {
         const prop = input?.getAttribute?.('data-road-prop');
         if (!prop) {
-            return;
+            return false;
         }
         const found = getSelectedLineStringRoad();
         if (!found || !gisCanEdit) {
-            return;
+            return false;
         }
         const props = ensureFeatureProperties(found.feature);
-        recordGisHistory();
         if (prop === 'color') {
             const v = String(input.value || '').trim();
             if (!v) {
@@ -3140,30 +3204,81 @@
         } else if (prop === 'strokeStyle') {
             const v = String(input.value || 'solid').trim().toLowerCase();
             props.strokeStyle = v || 'solid';
+        } else {
+            return false;
         }
+        return true;
+    }
+
+    function applyRoadPropertyInput(input) {
+        if (!syncRoadPropertyFromInput(input)) {
+            return;
+        }
+        recordGisHistory();
         markDirty();
         renderOverlay();
         renderLayerDialog();
     }
 
-    function applyVertexVisibilityInput(input) {
+    function syncVertexVisibilityFromInput(input) {
         const which = input?.getAttribute?.('data-vertex-vis');
         if (which !== 'min' && which !== 'max') {
-            return;
+            return false;
         }
-        const vtxSel = getPrimaryRoadVertexSelection();
-        const found = getSelectedLineStringRoad();
-        if (!vtxSel || !found || !gisCanEdit) {
+        const targets = getSelectedRoadVertexTargets();
+        if (!targets.length || !gisCanEdit) {
+            return false;
+        }
+        const trimmed = String(input.value ?? '').trim();
+        if (trimmed) {
+            const n = Number(trimmed);
+            if (!Number.isFinite(n)) {
+                return false;
+            }
+        }
+        targets.forEach(({ feature, vertexIndex }) => {
+            setVertexVisibilityBound(feature, vertexIndex, which, input.value);
+        });
+        return true;
+    }
+
+    function applyVertexVisibilityInput(input) {
+        if (!syncVertexVisibilityFromInput(input)) {
             return;
         }
         recordGisHistory();
-        if (!setVertexVisibilityBound(found.feature, vtxSel.vertexIndex, which, input.value)) {
-            setStatus('可视范围须为有效数字', 'error');
-            return;
-        }
         markDirty();
         renderOverlay();
         renderLayerDialog();
+    }
+
+    function clearBatchVertexVisibility() {
+        const targets = getSelectedRoadVertexTargets();
+        if (!targets.length || !gisCanEdit) {
+            return;
+        }
+        recordGisHistory();
+        targets.forEach(({ feature, vertexIndex }) => {
+            ensureVertexVisibility(feature);
+            feature.properties.vertexVisibility[vertexIndex] = {};
+        });
+        markDirty();
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    /** 保存前将面板输入写入内存模型（避免未触发 change 丢失） */
+    function flushGisPropertyInputsFromDom() {
+        const wrap = document.querySelector('.mcwws-layer-editor');
+        if (!wrap || !gisCanEdit) {
+            return;
+        }
+        wrap.querySelectorAll('[data-road-prop]').forEach((input) => {
+            syncRoadPropertyFromInput(input);
+        });
+        wrap.querySelectorAll('[data-vertex-vis]').forEach((input) => {
+            syncVertexVisibilityFromInput(input);
+        });
     }
 
     function coordsToPoints(coords) {
@@ -3269,6 +3384,8 @@
 
     async function saveGisProject() {
         if (!gisCanEdit || !project) return;
+        flushGisPropertyInputsFromDom();
+        normalizeGisProject(project);
         saving = true;
         renderPanel();
         try {
@@ -3285,12 +3402,14 @@
                 throw new Error(data.error || `HTTP ${res.status}`);
             }
             project = data.project || project;
+            normalizeGisProject(project);
             dirty = false;
             setStatus('已保存到服务器（仍可 Ctrl+Z 撤销）', 'ok');
         } catch (err) {
             setStatus(`保存失败：${err.message}`, 'error');
         } finally {
             saving = false;
+            renderOverlay();
             renderPanel();
         }
     }
@@ -5118,6 +5237,17 @@
             }
         });
 
+        wrap.addEventListener('input', (e) => {
+            const vtxVisInput = e.target.closest('[data-vertex-vis]');
+            if (vtxVisInput) {
+                e.stopPropagation();
+                if (syncVertexVisibilityFromInput(vtxVisInput)) {
+                    markDirty();
+                    renderOverlay();
+                }
+            }
+        });
+
         wrap.addEventListener('click', (e) => {
             e.stopPropagation();
             const modeCard = e.target.closest('[data-map-mode]');
@@ -5205,6 +5335,8 @@
                 pasteClipboardFeatures();
             } else if (action === 'delete') {
                 deleteSelectedFeature();
+            } else if (action === 'clear-vertex-vis') {
+                clearBatchVertexVisibility();
             }
         });
     }
