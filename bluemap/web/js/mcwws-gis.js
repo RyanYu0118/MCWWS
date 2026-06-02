@@ -253,6 +253,7 @@
 
     function syncMapRenderModeVisual() {
         document.body.classList.toggle('mcwws-map-simplified-mode', isSimplifiedMapMode());
+        document.body.classList.toggle('mcwws-gis-overlay-visible', gisInfoEnabled);
         const mapContainer = document.getElementById('map-container');
         if (mapContainer) {
             mapContainer.style.display = '';
@@ -262,11 +263,15 @@
     }
 
     function applyMapRenderMode(mode, persist = true) {
-        mapRenderMode = mode === 'simplified' ? 'simplified' : 'original';
-        if (mapRenderMode === 'original') {
-            restoreOriginalMapRendering();
-        } else {
-            setGisInfoEnabled(true, false);
+        const next = mode === 'simplified' ? 'simplified' : 'original';
+        const changed = next !== mapRenderMode;
+        mapRenderMode = next;
+        if (changed) {
+            if (mapRenderMode === 'original') {
+                restoreOriginalMapRendering();
+            } else {
+                setGisInfoEnabled(true, false);
+            }
         }
         syncMapRenderModeVisual();
         if (persist) {
@@ -280,6 +285,7 @@
             enabled = true;
         }
         gisInfoEnabled = !!enabled;
+        document.body.classList.toggle('mcwws-gis-overlay-visible', gisInfoEnabled);
         if (!gisInfoEnabled && gisEditorOpen) {
             closeGisEditorPanel();
         }
@@ -2367,6 +2373,53 @@
         renderPanel();
     }
 
+    function minVerticesForFeatureType(type) {
+        if (type === 'Polygon') {
+            return 3;
+        }
+        if (type === 'LineString') {
+            return 2;
+        }
+        return 1;
+    }
+
+    /** 删除当前选中的特征点；点数不足时删除整个要素 */
+    function deleteSelectedVertex() {
+        if (!selectedVertex || !gisEditMode || !isGisSelectMode()) {
+            return false;
+        }
+        const found = findFeatureById(selectedVertex.featureId);
+        if (!found) {
+            clearSelectedVertex();
+            return false;
+        }
+        const feature = found.feature;
+        const pts = getFeatureVertexPoints(feature);
+        const idx = selectedVertex.vertexIndex;
+        if (idx < 0 || idx >= pts.length) {
+            clearSelectedVertex();
+            return false;
+        }
+        const minVerts = minVerticesForFeatureType(feature.type);
+        if (pts.length <= minVerts) {
+            if (!selectedFeatureIds.has(feature.id)) {
+                selectedFeatureIds.add(feature.id);
+            }
+            deleteSelectedFeature();
+            return true;
+        }
+        recordGisHistory();
+        pts.splice(idx, 1);
+        setFeatureCoordinatesFromPoints(feature, pts);
+        const nextIdx = Math.min(idx, pts.length - 1);
+        selectedVertex = { featureId: feature.id, vertexIndex: nextIdx };
+        syncVertexGizmoInputs(pts[nextIdx]);
+        markDirty();
+        renderOverlay();
+        renderPanel();
+        return true;
+    }
+
     function finishDraft() {
         if (!draftPoints.length) return;
         const layer = getActiveLayer();
@@ -3115,7 +3168,7 @@
         const selectedIds = Array.from(selectedFeatureIds);
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '选中道路/区域后：橙色为顶点；鼠标移到线段上会显示可点击的「+」以在悬停处添加顶点；点击顶点可拖轴或输入坐标编辑'
+                ? '选中道路/区域后：橙色为顶点；「+」可添加顶点；选中顶点后 Delete 删除该点，未选中顶点时 Delete 删除整段要素'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
@@ -3357,6 +3410,10 @@
         }
         event.preventDefault();
         event.stopPropagation();
+        if (isGisSelectMode() && selectedVertex) {
+            deleteSelectedVertex();
+            return;
+        }
         if (hasGisSelection()) {
             deleteSelectedFeature();
         }
@@ -3426,19 +3483,29 @@
         animationId = requestAnimationFrame(tick);
     }
 
+    function enableMapRenderTransitions() {
+        document.body.classList.remove('mcwws-map-render-no-transition');
+    }
+
     function start() {
         if (started) return;
         started = true;
+        document.body.classList.add('mcwws-map-render-no-transition');
         document.getElementById('mcwws-gis-panel')?.remove();
         loadLayerPrefs();
         initMapAuth();
         bindMapPicks();
         waitForMapControls();
         tryApplyStoredMapRenderMode();
+        syncMapRenderModeVisual();
+        requestAnimationFrame(() => {
+            requestAnimationFrame(enableMapRenderTransitions);
+        });
         void loadGisProject().then(() => {
             if (gisInfoEnabled) {
                 renderOverlay();
             }
+            syncMapRenderModeVisual();
         });
         document.addEventListener('keydown', onKeyDownCapture, true);
         document.addEventListener('keydown', onKeyDown);

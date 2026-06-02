@@ -575,18 +575,51 @@ body.mcwws-gis-drawing canvas {
     cursor: crosshair !important;
 }
 
+body {
+    transition: background-color 0.48s ease;
+}
+
+#map-container {
+    opacity: 1;
+    transition: opacity 0.48s ease;
+    will-change: opacity;
+}
+
 body.mcwws-map-simplified-mode {
     background: #fff !important;
 }
 
 body.mcwws-map-simplified-mode #map-container {
-    opacity: 0 !important;
+    opacity: 0;
     pointer-events: auto !important;
 }
 
+/* 仅控制显隐过渡；图层本身保持 pointer-events:none，由下方 path/钉 单独接管点击，避免挡住地图拖拽 */
 #mcwws-gis-svg-layer,
 #mcwws-gis-pin-layer {
-    z-index: 9998;
+    opacity: 0;
+    transition: opacity 0.48s ease;
+}
+
+body.mcwws-gis-overlay-visible #mcwws-gis-svg-layer,
+body.mcwws-gis-overlay-visible #mcwws-gis-pin-layer {
+    opacity: 1;
+}
+
+body.mcwws-map-render-no-transition,
+body.mcwws-map-render-no-transition #map-container,
+body.mcwws-map-render-no-transition #mcwws-gis-svg-layer,
+body.mcwws-map-render-no-transition #mcwws-gis-pin-layer {
+    transition: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body,
+    #map-container,
+    #mcwws-gis-svg-layer,
+    #mcwws-gis-pin-layer {
+        transition: none !important;
+    }
 }
 
 #mcwws-gis-vertex-layer {
