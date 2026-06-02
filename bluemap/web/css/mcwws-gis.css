@@ -488,6 +488,12 @@
     stroke-linecap: round;
 }
 
+#mcwws-gis-svg-layer path.mcwws-gis-line--center {
+    stroke-width: 1.25;
+    stroke-dasharray: 6 4;
+    opacity: 0.85;
+}
+
 #mcwws-gis-svg-layer .mcwws-gis-lane-arrow-group {
     pointer-events: none;
 }

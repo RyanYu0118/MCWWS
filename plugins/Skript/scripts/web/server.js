@@ -1816,9 +1816,26 @@ function normalizeGisFeature(raw, layerId) {
         if (props.dualCarriageway === true || props.dualCarriageway === 1 || props.dualCarriageway === '1') {
             featureProps.dualCarriageway = true;
         }
-        const splitHeight = Number(props.dualSplitHeight);
-        if (Number.isFinite(splitHeight) && splitHeight > 0) {
-            featureProps.dualSplitHeight = Math.round(splitHeight);
+        const defaultDisplayHeight = Number(props.defaultVertexDisplayHeight);
+        const legacySplitHeight = Number(props.dualSplitHeight);
+        const displayHeight = Number.isFinite(defaultDisplayHeight) && defaultDisplayHeight > 0
+            ? defaultDisplayHeight
+            : legacySplitHeight;
+        if (Number.isFinite(displayHeight) && displayHeight > 0) {
+            featureProps.defaultVertexDisplayHeight = Math.round(displayHeight);
+        }
+        const vdhRaw = props.vertexDisplayHeights;
+        if (vdhRaw && typeof vdhRaw === 'object' && !Array.isArray(vdhRaw)) {
+            const vertexDisplayHeights = {};
+            Object.keys(vdhRaw).slice(0, 512).forEach((key) => {
+                const h = Number(vdhRaw[key]);
+                if (Number.isFinite(h) && h > 0) {
+                    vertexDisplayHeights[String(key).slice(0, 8)] = Math.round(h);
+                }
+            });
+            if (Object.keys(vertexDisplayHeights).length) {
+                featureProps.vertexDisplayHeights = vertexDisplayHeights;
+            }
         }
         const lanesPerSide = Number(props.lanesPerSide);
         if (Number.isFinite(lanesPerSide) && lanesPerSide >= 1) {
