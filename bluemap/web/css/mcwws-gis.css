@@ -673,6 +673,11 @@ body.mcwws-gis-select-mode.mcwws-gis-hover-feature #map-container canvas {
     cursor: pointer !important;
 }
 
+body.mcwws-gis-select-mode.mcwws-gis-ctrl-segment-insert #map-container canvas,
+body.mcwws-gis-select-mode.mcwws-gis-ctrl-segment-insert.mcwws-gis-hover-feature #map-container canvas {
+    cursor: crosshair !important;
+}
+
 #mcwws-gis-lasso-layer {
     position: fixed;
     inset: 0;

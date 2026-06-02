@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-25';
+    const MCWWS_GIS_BUILD = '20260602-28';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -34,6 +34,7 @@
     const GIS_GIZMO_AXIS_MAX_WIDTH_PX = 72;
     const GIS_GIZMO_COORDS_OFFSET_Y = 34;
     const GIS_HISTORY_MAX = 100;
+    const GIS_PASTE_OFFSET_BLOCKS = 8;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
 
     let mapAuthToken = null;
@@ -81,6 +82,9 @@
     /** @type {Array<{ project: object, selectedFeatureIds: string[], activeLayerId: string }>} */
     let gisRedoStack = [];
     let gisHistoryApplying = false;
+    /** @type {{ features: object[] } | null} */
+    let gisClipboard = null;
+    let gisClipboardPasteGen = 0;
     /** @type {Set<string>} 特征点多选，键为 featureId:vertexIndex */
     const selectedVertices = new Set();
     /** @type {{ axis: string, featureId: string, vertexIndex: number, startWorld: object, startClientX: number, startClientY: number, pointerId: number, historyRecorded: boolean, moved: boolean, screenAxis: object | null, cleanup: (() => void) | null } | null} */
@@ -90,6 +94,9 @@
     /** @type {{ featureId: string, segmentIndex: number, insertIndex: number, world: object, screenX: number, screenY: number, clientX: number, clientY: number } | null} */
     let gisHoverSegmentInsert = null;
     let segmentInsertHandleEl = null;
+    let gisSegmentInsertModifierHeld = false;
+    let gisLastPointerClientX = 0;
+    let gisLastPointerClientY = 0;
     let gisVertexGizmoEl = null;
     let gisVertexGizmoBound = false;
     let gisVertexCoordHistoryPending = false;
@@ -1286,25 +1293,81 @@
         return 0;
     }
 
+    function collectAllVertexIdsInProject() {
+        const used = new Set();
+        if (!project?.layers) {
+            return used;
+        }
+        project.layers.forEach((layer) => {
+            (layer.features || []).forEach((feature) => {
+                const ids = feature.properties?.vertexIds;
+                if (!Array.isArray(ids)) {
+                    return;
+                }
+                ids.forEach((vid) => {
+                    if (typeof vid === 'string' && vid) {
+                        used.add(vid);
+                    }
+                });
+            });
+        });
+        return used;
+    }
+
+    function assignFreshVertexIds(feature, usedIds) {
+        if (!feature?.id) {
+            return [];
+        }
+        const props = ensureFeatureProperties(feature);
+        const count = getFeatureVertexCount(feature);
+        props.vertexIds = [];
+        for (let i = 0; i < count; i += 1) {
+            props.vertexIds.push(generateUniqueVertexId(feature.id, usedIds));
+        }
+        return props.vertexIds;
+    }
+
+    function generateUniqueVertexId(featureId, usedIds) {
+        let vid;
+        let guard = 0;
+        do {
+            vid = generateVertexId(featureId);
+            guard += 1;
+        } while (usedIds.has(vid) && guard < 48);
+        usedIds.add(vid);
+        return vid;
+    }
+
     function ensureVertexIds(feature) {
         if (!feature?.id) {
             return [];
         }
         const props = ensureFeatureProperties(feature);
         const count = getFeatureVertexCount(feature);
+        const used = collectAllVertexIdsInProject();
         if (!Array.isArray(props.vertexIds)) {
             props.vertexIds = [];
         }
+        props.vertexIds.forEach((vid) => {
+            if (typeof vid === 'string' && vid) {
+                used.delete(vid);
+            }
+        });
         while (props.vertexIds.length < count) {
-            props.vertexIds.push(generateVertexId(feature.id));
+            props.vertexIds.push(generateUniqueVertexId(feature.id, used));
         }
         if (props.vertexIds.length > count) {
             props.vertexIds.length = count;
         }
+        const seenInFeature = new Set();
         for (let i = 0; i < props.vertexIds.length; i += 1) {
-            if (typeof props.vertexIds[i] !== 'string' || !props.vertexIds[i]) {
-                props.vertexIds[i] = generateVertexId(feature.id);
+            let vid = props.vertexIds[i];
+            if (typeof vid !== 'string' || !vid || seenInFeature.has(vid) || used.has(vid)) {
+                vid = generateUniqueVertexId(feature.id, used);
+                props.vertexIds[i] = vid;
             }
+            seenInFeature.add(vid);
+            used.add(vid);
         }
         return props.vertexIds;
     }
@@ -1550,7 +1613,91 @@
         }
     }
 
-    function insertFeatureVertex(featureId, lane, insertIndex, point) {
+    function isControlOrMetaKeyEvent(event) {
+        const key = event.key;
+        if (key === 'Control' || key === 'Meta' || key === 'OS') {
+            return true;
+        }
+        const code = event.code;
+        return typeof code === 'string'
+            && /^(Control|Meta)(Left|Right)?$/.test(code);
+    }
+
+    function isGisSegmentInsertModifierHeld(event) {
+        if (event && (event.ctrlKey || event.metaKey)) {
+            return true;
+        }
+        return gisSegmentInsertModifierHeld;
+    }
+
+    function syncGisSegmentInsertModifierFromEvent(event) {
+        if (!event) {
+            return;
+        }
+        gisSegmentInsertModifierHeld = !!(event.ctrlKey || event.metaKey);
+    }
+
+    function canShowSegmentInsertUi(event) {
+        return isGisSelectMode()
+            && shouldShowVertexHandles()
+            && isGisSegmentInsertModifierHeld(event);
+    }
+
+    function refreshSegmentInsertHoverAtLastPointer() {
+        if (!isGisSelectMode()) {
+            clearGisHoverSegmentInsert();
+            return;
+        }
+        updateGisHoverSegmentInsert(gisLastPointerClientX, gisLastPointerClientY);
+    }
+
+    function onGisSegmentInsertModifierKey(event) {
+        if (!isGisEditorActive()) {
+            return;
+        }
+        if (!isControlOrMetaKeyEvent(event)) {
+            return;
+        }
+        gisSegmentInsertModifierHeld = event.type === 'keydown'
+            ? true
+            : !!(event.ctrlKey || event.metaKey);
+        document.body.classList.toggle(
+            'mcwws-gis-ctrl-segment-insert',
+            gisSegmentInsertModifierHeld && shouldShowVertexHandles()
+        );
+        if (!gisSegmentInsertModifierHeld) {
+            clearGisHoverSegmentInsert();
+        } else {
+            refreshSegmentInsertHoverAtLastPointer();
+        }
+    }
+
+    function tryInsertSegmentAtScreen(clientX, clientY, event) {
+        if (!canShowSegmentInsertUi(event)) {
+            return false;
+        }
+        if (isPointerOverLayerDialog(clientX, clientY)) {
+            return false;
+        }
+        const seg = gisHoverSegmentInsert
+            || pickSegmentInsertAtScreen(clientX, clientY);
+        if (!seg) {
+            return false;
+        }
+        insertFeatureVertex(
+            seg.featureId,
+            seg.lane || 'center',
+            seg.insertIndex,
+            seg.world,
+            event
+        );
+        return true;
+    }
+
+    function insertFeatureVertex(featureId, lane, insertIndex, point, event) {
+        if (!isGisSegmentInsertModifierHeld(event)) {
+            return;
+        }
         const found = findFeatureById(featureId);
         if (!found) {
             return;
@@ -1572,6 +1719,8 @@
         setFeatureLanePoints(feature, laneId, pts);
         clearGisHoverSegmentInsert();
         selectVertex(featureId, laneId, idx);
+        markDirty();
+        renderOverlay();
         renderPanel();
     }
 
@@ -2085,8 +2234,12 @@
         h.screenY = screenHit.y;
     }
 
-    function updateGisHoverSegmentInsert(clientX, clientY) {
-        if (!shouldShowVertexHandles() || gisVertexDrag) {
+    function updateGisHoverSegmentInsert(clientX, clientY, event) {
+        if (!canShowSegmentInsertUi(event) || gisVertexDrag) {
+            clearGisHoverSegmentInsert();
+            return;
+        }
+        if (isPointerOverLayerDialog(clientX, clientY)) {
             clearGisHoverSegmentInsert();
             return;
         }
@@ -2098,6 +2251,20 @@
         if (!gisHoverSegmentInsert) {
             clearGisHoverSegmentInsert();
         }
+    }
+
+    function onDocumentPointerMoveCapture(event) {
+        if (!isGisSelectMode()) {
+            return;
+        }
+        gisLastPointerClientX = event.clientX;
+        gisLastPointerClientY = event.clientY;
+        syncGisSegmentInsertModifierFromEvent(event);
+        updateGisHoverSegmentInsert(event.clientX, event.clientY, event);
+        document.body.classList.toggle(
+            'mcwws-gis-ctrl-segment-insert',
+            isGisSegmentInsertModifierHeld(event) && shouldShowVertexHandles()
+        );
     }
 
     function syncVertexGizmoInputs(point) {
@@ -2301,13 +2468,17 @@
             }
             const segHandle = event.target.closest('.mcwws-gis-segment-insert-handle');
             if (segHandle && gisHoverSegmentInsert) {
+                if (!isGisSegmentInsertModifierHeld(event)) {
+                    return;
+                }
                 event.preventDefault();
                 event.stopPropagation();
                 insertFeatureVertex(
                     gisHoverSegmentInsert.featureId,
                     gisHoverSegmentInsert.lane || 'center',
                     gisHoverSegmentInsert.insertIndex,
-                    gisHoverSegmentInsert.world
+                    gisHoverSegmentInsert.world,
+                    event
                 );
                 return;
             }
@@ -2457,7 +2628,7 @@
 
     function renderSegmentInsertHandle(view, camera) {
         const layer = ensureVertexLayer();
-        if (!gisHoverSegmentInsert || !shouldShowVertexHandles() || gisVertexDrag) {
+        if (!gisHoverSegmentInsert || !canShowSegmentInsertUi(null) || gisVertexDrag) {
             if (segmentInsertHandleEl) {
                 segmentInsertHandleEl.hidden = true;
                 segmentInsertHandleEl.classList.add('is-offscreen');
@@ -2469,7 +2640,7 @@
             segmentInsertHandleEl = document.createElement('button');
             segmentInsertHandleEl.type = 'button';
             segmentInsertHandleEl.className = 'mcwws-gis-segment-insert-handle';
-            segmentInsertHandleEl.title = '点击在当前位置添加顶点';
+            segmentInsertHandleEl.title = '按住 Ctrl 点击添加顶点';
             segmentInsertHandleEl.setAttribute('aria-label', '添加顶点');
             layer.appendChild(segmentInsertHandleEl);
         }
@@ -2652,7 +2823,8 @@
             return;
         }
         const vtx = pickVertexAtScreen(clientX, clientY);
-        const segInsert = !!target?.closest?.('.mcwws-gis-segment-insert-handle') || !!gisHoverSegmentInsert;
+        const segInsert = isGisSegmentInsertModifierHeld(null)
+            && (!!target?.closest?.('.mcwws-gis-segment-insert-handle') || !!gisHoverSegmentInsert);
         const fid = vtx ? vtx.featureId : pickFeatureAtScreen(clientX, clientY);
         const hovering = !!(fid || vtx || segInsert);
         if (hovering !== !!gisHoverFeatureId) {
@@ -3086,6 +3258,142 @@
         markDirty();
         renderOverlay();
         renderPanel();
+    }
+
+    function getFeatureIdsForClipboard() {
+        if (selectedFeatureIds.size > 0) {
+            return Array.from(selectedFeatureIds);
+        }
+        if (selectedVertices.size > 0) {
+            const ids = new Set();
+            selectedVertices.forEach((key) => {
+                const sel = parseVertexSelectionKey(key);
+                if (sel?.featureId) {
+                    ids.add(sel.featureId);
+                }
+            });
+            return Array.from(ids);
+        }
+        return [];
+    }
+
+    function hasGisClipboard() {
+        return !!(gisClipboard?.features?.length);
+    }
+
+    function cloneFeaturesForClipboard(ids) {
+        const features = [];
+        ids.forEach((id) => {
+            const found = findFeatureById(id);
+            if (found) {
+                features.push(JSON.parse(JSON.stringify(found.feature)));
+            }
+        });
+        return features;
+    }
+
+    function copySelectedFeaturesToClipboard() {
+        const ids = getFeatureIdsForClipboard();
+        if (!ids.length) {
+            setStatus('请先选中要复制的要素（或特征点）', 'error');
+            return false;
+        }
+        const features = cloneFeaturesForClipboard(ids);
+        if (!features.length) {
+            setStatus('未找到可复制的要素', 'error');
+            return false;
+        }
+        gisClipboard = { features };
+        gisClipboardPasteGen = 0;
+        setStatus(`已复制 ${features.length} 项（Ctrl+V 粘贴）`, 'ok');
+        return true;
+    }
+
+    function pasteClipboardFeatures() {
+        if (!hasGisClipboard() || !project?.layers) {
+            setStatus('剪贴板为空', 'error');
+            return false;
+        }
+        const layer = getActiveLayer();
+        if (!layer) {
+            setStatus('请先选择目标图层', 'error');
+            return false;
+        }
+        gisClipboardPasteGen += 1;
+        const step = GIS_PASTE_OFFSET_BLOCKS * gisClipboardPasteGen;
+        const delta = { x: step, y: 0, z: step };
+        const usedVertexIds = collectAllVertexIdsInProject();
+        const usedFeatureIds = new Set();
+        project.layers.forEach((l) => {
+            (l.features || []).forEach((f) => {
+                if (f?.id) {
+                    usedFeatureIds.add(f.id);
+                }
+            });
+        });
+        recordGisHistory();
+        if (!Array.isArray(layer.features)) {
+            layer.features = [];
+        }
+        const newIds = [];
+        const mapId = getCurrentMapId();
+        gisClipboard.features.forEach((src) => {
+            const feature = JSON.parse(JSON.stringify(src));
+            let fid = newFeatureId();
+            while (usedFeatureIds.has(fid)) {
+                fid = newFeatureId();
+            }
+            usedFeatureIds.add(fid);
+            feature.id = fid;
+            feature.map = mapId;
+            feature.layerId = layer.id;
+            stripLegacyRoadLaneProps(feature);
+            const pts = getFeatureVertexPoints(feature);
+            if (pts.length) {
+                feature.coordinates = pts.map((p) => ({
+                    x: p.x + delta.x,
+                    y: p.y + delta.y,
+                    z: p.z + delta.z
+                }));
+            }
+            assignFreshVertexIds(feature, usedVertexIds);
+            normalizeGisFeature(feature);
+            layer.features.push(feature);
+            newIds.push(feature.id);
+        });
+        clearGisSelection();
+        newIds.forEach((id) => selectedFeatureIds.add(id));
+        markDirty();
+        renderOverlay();
+        renderPanel();
+        setStatus(`已粘贴 ${newIds.length} 项`, 'ok');
+        return true;
+    }
+
+    function cutSelectedFeatures() {
+        const ids = getFeatureIdsForClipboard();
+        if (!ids.length || !project?.layers) {
+            setStatus('请先选中要剪切的要素（或特征点）', 'error');
+            return false;
+        }
+        const features = cloneFeaturesForClipboard(ids);
+        if (!features.length) {
+            setStatus('未找到可剪切的要素', 'error');
+            return false;
+        }
+        const idSet = new Set(ids);
+        recordGisHistory();
+        project.layers.forEach((layer) => {
+            layer.features = (layer.features || []).filter((f) => !idSet.has(f.id));
+        });
+        gisClipboard = { features };
+        gisClipboardPasteGen = 0;
+        clearGisSelection();
+        markDirty();
+        renderOverlay();
+        renderPanel();
+        setStatus(`已剪切 ${features.length} 项（Ctrl+V 粘贴）`, 'ok');
+        return true;
     }
 
     function minVerticesForFeatureType(type) {
@@ -3853,11 +4161,6 @@
             markGisPointerMoved(event.clientX, event.clientY);
         }
         updateGisSelectHoverCursor(event.clientX, event.clientY, event.target);
-        if (isGisSelectMode()) {
-            updateGisHoverSegmentInsert(event.clientX, event.clientY);
-        } else {
-            clearGisHoverSegmentInsert();
-        }
         if (gisCanvasPointer?.moved) {
             return;
         }
@@ -3888,6 +4191,13 @@
             return;
         }
         if (isGisSelectMode()) {
+            syncGisSegmentInsertModifierFromEvent(event);
+            if ((event.ctrlKey || event.metaKey) && tryInsertSegmentAtScreen(event.clientX, event.clientY, event)) {
+                event.stopPropagation();
+                renderOverlay();
+                renderPanel();
+                return;
+            }
             const vtx = isPointerOverLayerDialog(event.clientX, event.clientY)
                 ? null
                 : pickVertexAtScreen(event.clientX, event.clientY);
@@ -3954,6 +4264,7 @@
             document.addEventListener('pointermove', onCanvasPointerMove, false);
             document.addEventListener('pointerup', onCanvasPointerUp, false);
             document.addEventListener('pointercancel', onCanvasPointerUp, false);
+            document.addEventListener('pointermove', onDocumentPointerMoveCapture, true);
         }
         bindGisLassoCapture();
     }
@@ -4253,8 +4564,15 @@
             }
         });
 
+        if (isGisSelectMode() && isGisSegmentInsertModifierHeld(null)) {
+            refreshSegmentInsertHoverAtLastPointer();
+        }
         renderVertexHandles(view, camera);
         document.body.classList.toggle('mcwws-gis-vertex-edit', shouldShowVertexHandles());
+        document.body.classList.toggle(
+            'mcwws-gis-ctrl-segment-insert',
+            isGisSegmentInsertModifierHeld(null) && shouldShowVertexHandles()
+        );
         syncMapBackgroundOpacity(selectionActive);
     }
 
@@ -4266,6 +4584,8 @@
         if (!selectMode) {
             clearGisSelectHover();
             cancelGisLasso();
+            clearGisHoverSegmentInsert();
+            document.body.classList.remove('mcwws-gis-ctrl-segment-insert');
         }
     }
 
@@ -4400,9 +4720,10 @@
     function renderGisEditorHtml() {
         const layer = getActiveLayer();
         const selectedIds = Array.from(selectedFeatureIds);
+        const clipboardSourceIds = getFeatureIdsForClipboard();
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '左键点选；选中后拖 XYZ 轴或改坐标移动；点多选无需 Ctrl；中键套索'
+                ? '左键点选；按住 Ctrl 移近线段显示绿点，Ctrl+点击或点绿点添加顶点；中键套索'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
@@ -4429,6 +4750,14 @@
                         ${!canGisUndo() ? 'disabled' : ''}>撤销</button>
                     <button type="button" class="mcwws-gis-menu-action" data-action="redo" title="Ctrl+Y"
                         ${!canGisRedo() ? 'disabled' : ''}>重做</button>
+                </div>
+                <div class="mcwws-gis-menu-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="copy" title="Ctrl+C"
+                        ${clipboardSourceIds.length === 0 ? 'disabled' : ''}>复制</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="cut" title="Ctrl+X"
+                        ${clipboardSourceIds.length === 0 ? 'disabled' : ''}>剪切</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="paste" title="Ctrl+V"
+                        ${!hasGisClipboard() ? 'disabled' : ''}>粘贴</button>
                 </div>
                 <div class="mcwws-gis-menu-actions">
                     <button type="button" class="mcwws-gis-menu-action" data-action="finish-draft"
@@ -4626,6 +4955,12 @@
                 cancelDraft();
             } else if (action === 'export') {
                 exportGeoJson();
+            } else if (action === 'copy') {
+                copySelectedFeaturesToClipboard();
+            } else if (action === 'cut') {
+                cutSelectedFeatures();
+            } else if (action === 'paste') {
+                pasteClipboardFeatures();
             } else if (action === 'delete') {
                 deleteSelectedFeature();
             }
@@ -4659,6 +4994,19 @@
             event.stopPropagation();
             if (!saving) {
                 void saveGisProject();
+            }
+            return;
+        }
+        const modKey = String(event.key || '').toLowerCase();
+        if ((event.ctrlKey || event.metaKey) && (modKey === 'c' || modKey === 'x' || modKey === 'v')) {
+            event.preventDefault();
+            event.stopPropagation();
+            if (modKey === 'c') {
+                copySelectedFeaturesToClipboard();
+            } else if (modKey === 'x') {
+                cutSelectedFeatures();
+            } else {
+                pasteClipboardFeatures();
             }
             return;
         }
@@ -4727,6 +5075,21 @@
                 redoGisEdit();
                 return;
             }
+            if (modKey === 'c') {
+                event.preventDefault();
+                copySelectedFeaturesToClipboard();
+                return;
+            }
+            if (modKey === 'x') {
+                event.preventDefault();
+                cutSelectedFeatures();
+                return;
+            }
+            if (modKey === 'v') {
+                event.preventDefault();
+                pasteClipboardFeatures();
+                return;
+            }
         }
         if (event.key === 'Enter' && draftPoints.length) {
             finishDraft();
@@ -4779,6 +5142,13 @@
         });
         document.addEventListener('keydown', onKeyDownCapture, true);
         document.addEventListener('keydown', onKeyDown);
+        document.addEventListener('keydown', onGisSegmentInsertModifierKey, true);
+        document.addEventListener('keyup', onGisSegmentInsertModifierKey, true);
+        window.addEventListener('blur', () => {
+            gisSegmentInsertModifierHeld = false;
+            document.body.classList.remove('mcwws-gis-ctrl-segment-insert');
+            clearGisHoverSegmentInsert();
+        });
         document.addEventListener('pointerleave', clearGisSelectHover);
         document.addEventListener('dblclick', onDblClick, true);
         window.addEventListener('hashchange', () => {
