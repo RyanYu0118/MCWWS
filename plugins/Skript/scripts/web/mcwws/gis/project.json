@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-02T08:00:35.034Z",
+  "updatedAt": "2026-06-02T08:40:44.004Z",
   "layers": [
     {
       "id": "roads",
@@ -9,13 +9,18 @@
       "visible": true,
       "features": [
         {
-          "id": "d354e2211317412a",
+          "id": "db68ff34981c4115",
           "type": "LineString",
           "map": "world",
           "layerId": "roads",
           "coordinates": [
             {
               "x": -1807.5,
+              "y": 64.5,
+              "z": -4.5
+            },
+            {
+              "x": -1140.5,
               "y": 64.5,
               "z": -4.5
             },
@@ -56,7 +61,7 @@
             }
           ],
           "properties": {
-            "name": "道路",
+            "name": "道路-分支2",
             "description": "",
             "dualCarriageway": true,
             "dualSplitHeight": 512,

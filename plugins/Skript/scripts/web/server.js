@@ -1824,6 +1824,16 @@ function normalizeGisFeature(raw, layerId) {
         if (Number.isFinite(laneOffset) && laneOffset > 0) {
             featureProps.laneOffset = Math.round(laneOffset * 1000) / 1000;
         }
+        const lanesRaw = props.lanes;
+        if (lanesRaw && typeof lanesRaw === 'object') {
+            const leftList = Array.isArray(lanesRaw.left) ? lanesRaw.left : [];
+            const rightList = Array.isArray(lanesRaw.right) ? lanesRaw.right : [];
+            const left = leftList.map(normalizeGisPoint).filter(Boolean);
+            const right = rightList.map(normalizeGisPoint).filter(Boolean);
+            if (left.length >= 2 && right.length >= 2) {
+                featureProps.lanes = { left, right };
+            }
+        }
     }
     const id = String(raw.id || '').trim().slice(0, 64)
         || `f_${crypto.randomBytes(8).toString('hex')}`;

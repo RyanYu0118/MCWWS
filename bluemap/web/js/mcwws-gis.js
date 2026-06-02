@@ -1240,31 +1240,158 @@
         return coordsToPoints(feature?.coordinates);
     }
 
-    function vertexSelectionKey(featureId, vertexIndex) {
-        return `${featureId}:${vertexIndex}`;
+    function pointsToCoordList(points) {
+        return (points || []).map((p) => coerceVertexPoint(p)).filter(Boolean)
+            .map((p) => ({ x: p.x, y: p.y, z: p.z }));
+    }
+
+    function getFeatureLanePoints(feature, lane) {
+        if (!feature) {
+            return [];
+        }
+        const center = getFeatureVertexPoints(feature);
+        if (!isRoadDualCarriagewayEnabled(feature)) {
+            return center;
+        }
+        const lanes = feature.properties?.lanes;
+        if (lane === 'left' && Array.isArray(lanes?.left)) {
+            return coordsToPoints(lanes.left);
+        }
+        if (lane === 'right' && Array.isArray(lanes?.right)) {
+            return coordsToPoints(lanes.right);
+        }
+        const off = getRoadLaneOffset(feature);
+        if (lane === 'left') {
+            return offsetPolylineXZ(center, off, -1);
+        }
+        if (lane === 'right') {
+            return offsetPolylineXZ(center, off, 1);
+        }
+        return center;
+    }
+
+    function ensureDualLanesFromCenter(feature) {
+        if (!feature || !isRoadDualCarriagewayEnabled(feature)) {
+            return;
+        }
+        const props = ensureFeatureProperties(feature);
+        const center = getFeatureVertexPoints(feature);
+        if (center.length < 2) {
+            return;
+        }
+        const off = getRoadLaneOffset(feature);
+        if (!props.lanes || typeof props.lanes !== 'object') {
+            props.lanes = {};
+        }
+        props.lanes.left = pointsToCoordList(offsetPolylineXZ(center, off, -1));
+        props.lanes.right = pointsToCoordList(offsetPolylineXZ(center, off, 1));
+    }
+
+    function syncCenterlineFromLanes(feature) {
+        if (!feature?.properties?.lanes) {
+            return;
+        }
+        const left = coordsToPoints(feature.properties.lanes.left);
+        const right = coordsToPoints(feature.properties.lanes.right);
+        if (left.length < 2 || right.length < 2) {
+            return;
+        }
+        const n = Math.min(left.length, right.length);
+        const center = [];
+        for (let i = 0; i < n; i += 1) {
+            const mid = coerceVertexPoint({
+                x: (left[i].x + right[i].x) / 2,
+                y: (left[i].y + right[i].y) / 2,
+                z: (left[i].z + right[i].z) / 2
+            });
+            if (mid) {
+                center.push(mid);
+            }
+        }
+        if (center.length >= 2) {
+            setFeatureCoordinatesFromPoints(feature, center);
+        }
+    }
+
+    function shouldEditLanesSeparately(feature) {
+        return isRoadDualCarriagewayEnabled(feature) && shouldRenderRoadAsDualLines(feature);
+    }
+
+    /** @returns {{ lane: string, points: object[] }[]} */
+    function getEditableLanesForFeature(feature) {
+        if (!feature) {
+            return [];
+        }
+        if (shouldEditLanesSeparately(feature)) {
+            ensureDualLanesFromCenter(feature);
+            return [
+                { lane: 'left', points: getFeatureLanePoints(feature, 'left') },
+                { lane: 'right', points: getFeatureLanePoints(feature, 'right') }
+            ];
+        }
+        return [{ lane: 'center', points: getFeatureVertexPoints(feature) }];
+    }
+
+    function setFeatureLanePoints(feature, lane, points) {
+        const next = pointsToCoordList(points);
+        if (next.length < 1) {
+            return;
+        }
+        if (!isRoadDualCarriagewayEnabled(feature) || lane === 'center') {
+            setFeatureCoordinatesFromPoints(feature, next);
+            if (isRoadDualCarriagewayEnabled(feature) && !shouldRenderRoadAsDualLines(feature)) {
+                ensureDualLanesFromCenter(feature);
+            }
+        } else {
+            const props = ensureFeatureProperties(feature);
+            if (!props.lanes || typeof props.lanes !== 'object') {
+                props.lanes = {};
+            }
+            props.lanes[lane] = next;
+            syncCenterlineFromLanes(feature);
+        }
+        dirty = true;
+    }
+
+    function vertexSelectionKey(featureId, lane, vertexIndex) {
+        return `${featureId}:${lane}:${vertexIndex}`;
     }
 
     function parseVertexSelectionKey(key) {
         if (!key) {
             return null;
         }
-        const sep = key.lastIndexOf(':');
-        if (sep < 0) {
+        const parts = key.split(':');
+        if (parts.length < 2) {
             return null;
         }
-        const vertexIndex = Number(key.slice(sep + 1));
+        const vertexIndex = Number(parts[parts.length - 1]);
         if (!Number.isFinite(vertexIndex)) {
             return null;
         }
-        return { featureId: key.slice(0, sep), vertexIndex };
+        if (parts.length >= 3) {
+            const lane = parts[parts.length - 2];
+            if (lane === 'left' || lane === 'right' || lane === 'center') {
+                return {
+                    featureId: parts.slice(0, -2).join(':'),
+                    lane,
+                    vertexIndex
+                };
+            }
+        }
+        return {
+            featureId: parts.slice(0, -1).join(':'),
+            lane: 'center',
+            vertexIndex
+        };
     }
 
     function hasSelectedVertices() {
         return selectedVertices.size > 0;
     }
 
-    function isVertexSelected(featureId, vertexIndex) {
-        return selectedVertices.has(vertexSelectionKey(featureId, vertexIndex));
+    function isVertexSelected(featureId, lane, vertexIndex) {
+        return selectedVertices.has(vertexSelectionKey(featureId, lane, vertexIndex));
     }
 
     function getPrimarySelectedVertex() {
@@ -1272,12 +1399,12 @@
         return key ? parseVertexSelectionKey(key) : null;
     }
 
-    function getVertexWorld(featureId, vertexIndex) {
+    function getVertexWorld(featureId, lane, vertexIndex) {
         const found = findFeatureById(featureId);
         if (!found) {
             return null;
         }
-        const pts = getFeatureVertexPoints(found.feature);
+        const pts = getFeatureLanePoints(found.feature, lane || 'center');
         return pts[vertexIndex] || null;
     }
 
@@ -1286,7 +1413,7 @@
         if (!primary) {
             return null;
         }
-        return getVertexWorld(primary.featureId, primary.vertexIndex);
+        return getVertexWorld(primary.featureId, primary.lane, primary.vertexIndex);
     }
 
     function getSelectedVerticesCentroid() {
@@ -1294,7 +1421,7 @@
         const sum = { x: 0, y: 0, z: 0 };
         selectedVertices.forEach((key) => {
             const sel = parseVertexSelectionKey(key);
-            const world = sel ? getVertexWorld(sel.featureId, sel.vertexIndex) : null;
+            const world = sel ? getVertexWorld(sel.featureId, sel.lane, sel.vertexIndex) : null;
             if (!world) {
                 return;
             }
@@ -1313,11 +1440,13 @@
         let count = 0;
         const sum = { x: 0, y: 0, z: 0 };
         iterSelectedVertexFeatures().forEach(({ feature }) => {
-            getFeatureVertexPoints(feature).forEach((p) => {
-                sum.x += p.x;
-                sum.y += p.y;
-                sum.z += p.z;
-                count += 1;
+            getEditableLanesForFeature(feature).forEach(({ points }) => {
+                points.forEach((p) => {
+                    sum.x += p.x;
+                    sum.y += p.y;
+                    sum.z += p.z;
+                    count += 1;
+                });
             });
         });
         if (!count) {
@@ -1356,8 +1485,9 @@
         }
     }
 
-    function setFeatureVertexPoint(feature, vertexIndex, point, options = {}) {
-        const pts = getFeatureVertexPoints(feature);
+    function setFeatureVertexPoint(feature, lane, vertexIndex, point, options = {}) {
+        const laneId = lane || 'center';
+        const pts = getFeatureLanePoints(feature, laneId).slice();
         if (vertexIndex < 0 || vertexIndex >= pts.length) {
             return;
         }
@@ -1366,14 +1496,13 @@
             return;
         }
         pts[vertexIndex] = next;
-        setFeatureCoordinatesFromPoints(feature, pts);
-        dirty = true;
+        setFeatureLanePoints(feature, laneId, pts);
         if (!options.skipPanel) {
             renderPanel();
         }
     }
 
-    function insertFeatureVertex(featureId, insertIndex, point) {
+    function insertFeatureVertex(featureId, lane, insertIndex, point) {
         const found = findFeatureById(featureId);
         if (!found) {
             return;
@@ -1386,14 +1515,14 @@
         if (!next) {
             return;
         }
-        const pts = getFeatureVertexPoints(feature);
+        const laneId = lane || 'center';
+        const pts = getFeatureLanePoints(feature, laneId).slice();
         const idx = Math.max(0, Math.min(insertIndex, pts.length));
         recordGisHistory();
         pts.splice(idx, 0, next);
-        setFeatureCoordinatesFromPoints(feature, pts);
-        dirty = true;
+        setFeatureLanePoints(feature, laneId, pts);
         clearGisHoverSegmentInsert();
-        selectVertex(featureId, idx);
+        selectVertex(featureId, laneId, idx);
         renderPanel();
     }
 
@@ -1444,7 +1573,7 @@
                 return;
             }
             const found = findFeatureById(sel.featureId);
-            const pts = found ? getFeatureVertexPoints(found.feature) : [];
+            const pts = found ? getFeatureLanePoints(found.feature, sel.lane || 'center') : [];
             if (sel.vertexIndex >= 0 && sel.vertexIndex < pts.length) {
                 next.add(key);
             }
@@ -1454,16 +1583,17 @@
         syncGizmoFromVertexSelection();
     }
 
-    function selectVertex(featureId, vertexIndex, options = {}) {
+    function selectVertex(featureId, lane, vertexIndex, options = {}) {
         const found = findFeatureById(featureId);
         if (!found) {
             return;
         }
-        const pts = getFeatureVertexPoints(found.feature);
+        const laneId = lane || 'center';
+        const pts = getFeatureLanePoints(found.feature, laneId);
         if (vertexIndex < 0 || vertexIndex >= pts.length) {
             return;
         }
-        const key = vertexSelectionKey(featureId, vertexIndex);
+        const key = vertexSelectionKey(featureId, laneId, vertexIndex);
         if (options.replace) {
             selectedVertices.clear();
             selectedVertices.add(key);
@@ -1624,9 +1754,17 @@
             const dragKeys = Array.from(selectedVertices);
             dragTargets = dragKeys.map((key) => {
                 const sel = parseVertexSelectionKey(key);
-                const startWorld = getVertexWorld(sel.featureId, sel.vertexIndex);
+                if (!sel) {
+                    return null;
+                }
+                const startWorld = getVertexWorld(sel.featureId, sel.lane, sel.vertexIndex);
                 return startWorld
-                    ? { featureId: sel.featureId, vertexIndex: sel.vertexIndex, startWorld: { ...startWorld } }
+                    ? {
+                        featureId: sel.featureId,
+                        lane: sel.lane || 'center',
+                        vertexIndex: sel.vertexIndex,
+                        startWorld: { ...startWorld }
+                    }
                     : null;
             }).filter(Boolean);
             if (!dragTargets.length) {
@@ -1703,7 +1841,13 @@
                         y: target.startWorld.y + (nextAnchor.y - gisVertexDrag.anchorWorld.y),
                         z: target.startWorld.z + (nextAnchor.z - gisVertexDrag.anchorWorld.z)
                     };
-                    setFeatureVertexPoint(found.feature, target.vertexIndex, next, { skipPanel: true });
+                    setFeatureVertexPoint(
+                        found.feature,
+                        target.lane || 'center',
+                        target.vertexIndex,
+                        next,
+                        { skipPanel: true }
+                    );
                 });
                 renderOverlay();
             }
@@ -1736,17 +1880,18 @@
         let best = null;
         let bestDist = GIS_VERTEX_HIT_PX;
         iterSelectedVertexFeatures().forEach(({ feature }) => {
-            const pts = getFeatureVertexPoints(feature);
-            pts.forEach((p, idx) => {
-                const s = projectGisPoint(p, view, camera, false);
-                if (!s || s.behind) {
-                    return;
-                }
-                const d = screenDist(clientX, clientY, s.x, s.y);
-                if (d < bestDist) {
-                    bestDist = d;
-                    best = { featureId: feature.id, vertexIndex: idx };
-                }
+            getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
+                points.forEach((p, idx) => {
+                    const s = projectGisPoint(p, view, camera, false);
+                    if (!s || s.behind) {
+                        return;
+                    }
+                    const d = screenDist(clientX, clientY, s.x, s.y);
+                    if (d < bestDist) {
+                        bestDist = d;
+                        best = { featureId: feature.id, lane, vertexIndex: idx };
+                    }
+                });
             });
         });
         return best;
@@ -1762,7 +1907,7 @@
             if (feature.type !== 'LineString' && feature.type !== 'Polygon') {
                 return;
             }
-            const points = getFeatureVertexPoints(feature);
+            getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
             const segCount = feature.type === 'LineString'
                 ? points.length - 1
                 : points.length;
@@ -1811,6 +1956,7 @@
                 bestDist = screenHit.dist;
                 best = {
                     featureId: feature.id,
+                    lane,
                     segmentIndex: seg,
                     insertIndex: seg + 1,
                     world,
@@ -1820,6 +1966,7 @@
                     clientY
                 };
             }
+            });
         });
         return best;
     }
@@ -1834,7 +1981,7 @@
             return;
         }
         const feature = found.feature;
-        const points = getFeatureVertexPoints(feature);
+        const points = getFeatureLanePoints(feature, h.lane || 'center');
         const seg = h.segmentIndex;
         const i0 = seg;
         const i1 = feature.type === 'Polygon' ? ((seg + 1) % points.length) : (seg + 1);
@@ -1967,7 +2114,7 @@
             if (!found) {
                 return;
             }
-            setFeatureVertexPoint(found.feature, primary.vertexIndex, point);
+            setFeatureVertexPoint(found.feature, primary.lane || 'center', primary.vertexIndex, point);
             renderOverlay();
             return;
         }
@@ -1989,11 +2136,11 @@
                 return;
             }
             const found = findFeatureById(sel.featureId);
-            const world = getVertexWorld(sel.featureId, sel.vertexIndex);
+            const world = getVertexWorld(sel.featureId, sel.lane, sel.vertexIndex);
             if (!found || !world) {
                 return;
             }
-            setFeatureVertexPoint(found.feature, sel.vertexIndex, {
+            setFeatureVertexPoint(found.feature, sel.lane || 'center', sel.vertexIndex, {
                 x: world.x + delta.x,
                 y: world.y + delta.y,
                 z: world.z + delta.z
@@ -2084,6 +2231,7 @@
                 event.stopPropagation();
                 insertFeatureVertex(
                     gisHoverSegmentInsert.featureId,
+                    gisHoverSegmentInsert.lane || 'center',
                     gisHoverSegmentInsert.insertIndex,
                     gisHoverSegmentInsert.world
                 );
@@ -2097,13 +2245,29 @@
             event.stopPropagation();
             selectVertex(
                 handle.getAttribute('data-fid'),
+                handle.getAttribute('data-lane') || 'center',
                 Number(handle.getAttribute('data-idx'))
             );
         });
     }
 
-    function cloneCoordinatePoints(feature) {
-        return getFeatureVertexPoints(feature).map((p) => ({ x: p.x, y: p.y, z: p.z }));
+    function clonePointList(points) {
+        return (points || []).map((p) => ({ x: p.x, y: p.y, z: p.z }));
+    }
+
+    function snapshotFeatureGeometry(feature) {
+        const snap = {
+            center: clonePointList(getFeatureVertexPoints(feature)),
+            lanes: null
+        };
+        const lanes = feature?.properties?.lanes;
+        if (lanes && typeof lanes === 'object') {
+            snap.lanes = {
+                left: clonePointList(coordsToPoints(lanes.left)),
+                right: clonePointList(coordsToPoints(lanes.right))
+            };
+        }
+        return snap;
     }
 
     function snapshotSelectedFeatureCoordinates() {
@@ -2111,25 +2275,36 @@
         selectedFeatureIds.forEach((id) => {
             const found = findFeatureById(id);
             if (found) {
-                snapshots.set(id, cloneCoordinatePoints(found.feature));
+                snapshots.set(id, snapshotFeatureGeometry(found.feature));
             }
         });
         return snapshots;
     }
 
     function applyFeatureTranslateDelta(snapshots, delta) {
-        snapshots.forEach((startPts, id) => {
+        snapshots.forEach((snap, id) => {
             const found = findFeatureById(id);
             if (!found) {
                 return;
             }
-            const next = startPts.map((p) => coerceVertexPoint({
+            const shift = (pts) => pts.map((p) => coerceVertexPoint({
                 x: p.x + delta.x,
                 y: p.y + delta.y,
                 z: p.z + delta.z
             })).filter(Boolean);
-            if (next.length) {
-                setFeatureCoordinatesFromPoints(found.feature, next);
+            const centerNext = shift(snap.center || []);
+            if (centerNext.length) {
+                setFeatureCoordinatesFromPoints(found.feature, centerNext);
+            }
+            if (snap.lanes) {
+                const props = ensureFeatureProperties(found.feature);
+                props.lanes = {
+                    left: pointsToCoordList(shift(snap.lanes.left || [])),
+                    right: pointsToCoordList(shift(snap.lanes.right || []))
+                };
+                dirty = true;
+            } else if (isRoadDualCarriagewayEnabled(found.feature)) {
+                ensureDualLanesFromCenter(found.feature);
             }
         });
         validateSelectedVertices();
@@ -2163,21 +2338,27 @@
         validateSelectedVertices();
         const needed = new Set();
         iterSelectedVertexFeatures().forEach(({ feature }) => {
-            const pts = getFeatureVertexPoints(feature);
-            pts.forEach((p, idx) => {
-                const key = `${feature.id}:${idx}`;
+            getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
+            points.forEach((p, idx) => {
+                const key = `${feature.id}:${lane}:${idx}`;
                 needed.add(key);
                 let handle = vertexHandleElements.get(key);
                 if (!handle) {
                     handle = document.createElement('button');
                     handle.type = 'button';
                     handle.className = 'mcwws-gis-vertex-handle';
+                    if (lane === 'left') {
+                        handle.classList.add('mcwws-gis-vertex-handle--lane-left');
+                    } else if (lane === 'right') {
+                        handle.classList.add('mcwws-gis-vertex-handle--lane-right');
+                    }
                     handle.setAttribute('data-fid', feature.id);
+                    handle.setAttribute('data-lane', lane);
                     handle.setAttribute('data-idx', String(idx));
                     layer.appendChild(handle);
                     vertexHandleElements.set(key, handle);
                 }
-                handle.classList.toggle('is-active', isVertexSelected(feature.id, idx));
+                handle.classList.toggle('is-active', isVertexSelected(feature.id, lane, idx));
                 const projected = projectGisPoint(p, view, camera, false);
                 const off = !projected || projected.behind
                     || projected.x < -40 || projected.y < -40
@@ -2187,6 +2368,7 @@
                 if (!off) {
                     handle.style.transform = `translate3d(${projected.x}px, ${projected.y}px, 0) translate(-50%, -50%)`;
                 }
+            });
             });
         });
         vertexHandleElements.forEach((el, key) => {
@@ -2634,7 +2816,11 @@
                         ${!gisCanEdit || !dual ? 'disabled' : ''}>
                 </label>
                 <p class="mcwws-gis-road-props-hint">
-                    当前高度 ${camH} · ${dualActive ? '已分双线（右线→左线←）' : dual ? '显示母线' : '未启用'}
+                    当前高度 ${camH} · ${dualActive
+                        ? '已分双线：左/右车道各有特征点，可分别拖动（右线→左线←）'
+                        : dual
+                            ? '缩小地图时编辑母线；放大后可分别编辑左右车道'
+                            : '未启用'}
                     （高度越小越近）
                 </p>
             </div>
@@ -2657,10 +2843,18 @@
             if (props.dualCarriageway && !Number.isFinite(Number(props.dualSplitHeight))) {
                 props.dualSplitHeight = GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT;
             }
+            if (props.dualCarriageway) {
+                ensureDualLanesFromCenter(found.feature);
+            } else {
+                delete props.lanes;
+            }
         } else if (prop === 'dualSplitHeight') {
             props.dualSplitHeight = Math.max(1, Math.round(Number(input.value) || GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT));
         } else if (prop === 'laneOffset') {
             props.laneOffset = Math.max(0.5, Number(input.value) || GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET);
+            if (props.dualCarriageway) {
+                ensureDualLanesFromCenter(found.feature);
+            }
         }
         markDirty();
         renderOverlay();
@@ -2945,30 +3139,31 @@
         if (!hasSelectedVertices() || !gisEditMode || !isGisSelectMode()) {
             return false;
         }
-        const byFeature = new Map();
+        const byFeatureLane = new Map();
         selectedVertices.forEach((key) => {
             const sel = parseVertexSelectionKey(key);
             if (!sel) {
                 return;
             }
-            if (!byFeature.has(sel.featureId)) {
-                byFeature.set(sel.featureId, []);
+            const laneKey = `${sel.featureId}:${sel.lane || 'center'}`;
+            if (!byFeatureLane.has(laneKey)) {
+                byFeatureLane.set(laneKey, { featureId: sel.featureId, lane: sel.lane || 'center', indices: [] });
             }
-            byFeature.get(sel.featureId).push(sel.vertexIndex);
+            byFeatureLane.get(laneKey).indices.push(sel.vertexIndex);
         });
-        if (!byFeature.size) {
+        if (!byFeatureLane.size) {
             clearSelectedVertices();
             return false;
         }
         recordGisHistory();
         const deleteWholeFeatures = new Set();
-        byFeature.forEach((indices, featureId) => {
+        byFeatureLane.forEach(({ featureId, lane, indices }) => {
             const found = findFeatureById(featureId);
             if (!found) {
                 return;
             }
             const feature = found.feature;
-            const pts = getFeatureVertexPoints(feature);
+            const pts = getFeatureLanePoints(feature, lane).slice();
             const unique = [...new Set(indices)].filter((i) => i >= 0 && i < pts.length).sort((a, b) => b - a);
             if (!unique.length) {
                 return;
@@ -2979,7 +3174,7 @@
                 return;
             }
             unique.forEach((i) => pts.splice(i, 1));
-            setFeatureCoordinatesFromPoints(feature, pts);
+            setFeatureLanePoints(feature, lane, pts);
         });
         clearSelectedVertices();
         if (deleteWholeFeatures.size) {
@@ -3377,12 +3572,13 @@
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
         iterSelectedVertexFeatures().forEach(({ feature }) => {
-            const pts = getFeatureVertexPoints(feature);
-            pts.forEach((p, idx) => {
-                const s = projectGisPoint(p, view, camera, true);
-                if (s && !s.behind && screenPointInsideOrTouchesRing(s.x, s.y, ring)) {
-                    keys.push(vertexSelectionKey(feature.id, idx));
-                }
+            getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
+                points.forEach((p, idx) => {
+                    const s = projectGisPoint(p, view, camera, true);
+                    if (s && !s.behind && screenPointInsideOrTouchesRing(s.x, s.y, ring)) {
+                        keys.push(vertexSelectionKey(feature.id, lane, idx));
+                    }
+                });
             });
         });
         return keys;
@@ -3683,7 +3879,7 @@
         if (isGisSelectMode()) {
             const vtx = pickVertexAtScreen(event.clientX, event.clientY);
             if (vtx) {
-                selectVertex(vtx.featureId, vtx.vertexIndex);
+                selectVertex(vtx.featureId, vtx.lane || 'center', vtx.vertexIndex);
                 event.stopPropagation();
                 return;
             }
@@ -3920,9 +4116,9 @@
             if (feature.type === 'LineString' && points.length >= 2) {
                 const showDual = shouldRenderRoadAsDualLines(feature);
                 if (showDual) {
-                    const laneOff = getRoadLaneOffset(feature);
-                    const leftPts = offsetPolylineXZ(points, laneOff, -1);
-                    const rightPts = offsetPolylineXZ(points, laneOff, 1);
+                    ensureDualLanesFromCenter(feature);
+                    const leftPts = getFeatureLanePoints(feature, 'left');
+                    const rightPts = getFeatureLanePoints(feature, 'right');
                     const dLeft = buildSvgPolylinePath(leftPts, view, camera);
                     const dRight = buildSvgPolylinePath(rightPts, view, camera);
                     if (dLeft) {
