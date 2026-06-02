@@ -777,6 +777,24 @@ body.mcwws-map-render-no-transition.mcwws-map-simplified-mode.mcwws-gis-has-sele
     background: #ca8a04;
 }
 
+.mcwws-gis-vertex-handle--lane-outer-1 {
+    width: 11px;
+    height: 11px;
+    opacity: 0.92;
+}
+
+.mcwws-gis-vertex-handle--lane-outer-2 {
+    width: 10px;
+    height: 10px;
+    opacity: 0.85;
+}
+
+.mcwws-gis-road-vertex-lanes {
+    margin-top: 8px;
+    padding-top: 8px;
+    border-top: 1px solid rgba(0, 0, 0, 0.08);
+}
+
 .mcwws-gis-vertex-handle.is-offscreen {
     opacity: 0;
     pointer-events: none;

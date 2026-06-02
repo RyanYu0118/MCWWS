@@ -1820,17 +1820,55 @@ function normalizeGisFeature(raw, layerId) {
         if (Number.isFinite(splitHeight) && splitHeight > 0) {
             featureProps.dualSplitHeight = Math.round(splitHeight);
         }
-        const laneOffset = Number(props.laneOffset);
-        if (Number.isFinite(laneOffset) && laneOffset > 0) {
-            featureProps.laneOffset = Math.round(laneOffset * 1000) / 1000;
+        const lanesPerSide = Number(props.lanesPerSide);
+        if (Number.isFinite(lanesPerSide) && lanesPerSide >= 1) {
+            featureProps.lanesPerSide = Math.min(6, Math.round(lanesPerSide));
+        }
+        const vlcRaw = props.vertexLaneCounts;
+        if (vlcRaw && typeof vlcRaw === 'object' && !Array.isArray(vlcRaw)) {
+            const vertexLaneCounts = {};
+            Object.keys(vlcRaw).slice(0, 512).forEach((key) => {
+                const entry = vlcRaw[key];
+                if (!entry || typeof entry !== 'object') {
+                    return;
+                }
+                const left = Number(entry.left);
+                const right = Number(entry.right);
+                const next = {};
+                if (Number.isFinite(left) && left >= 1) {
+                    next.left = Math.min(6, Math.round(left));
+                }
+                if (Number.isFinite(right) && right >= 1) {
+                    next.right = Math.min(6, Math.round(right));
+                }
+                if (Object.keys(next).length) {
+                    vertexLaneCounts[String(key).slice(0, 8)] = next;
+                }
+            });
+            if (Object.keys(vertexLaneCounts).length) {
+                featureProps.vertexLaneCounts = vertexLaneCounts;
+            }
         }
         const lanesRaw = props.lanes;
         if (lanesRaw && typeof lanesRaw === 'object') {
-            const leftList = Array.isArray(lanesRaw.left) ? lanesRaw.left : [];
-            const rightList = Array.isArray(lanesRaw.right) ? lanesRaw.right : [];
-            const left = leftList.map(normalizeGisPoint).filter(Boolean);
-            const right = rightList.map(normalizeGisPoint).filter(Boolean);
-            if (left.length >= 2 && right.length >= 2) {
+            const normalizeSide = (sideRaw) => {
+                if (!Array.isArray(sideRaw) || !sideRaw.length) {
+                    return null;
+                }
+                const first = sideRaw[0];
+                if (first && typeof first === 'object' && !Array.isArray(first)) {
+                    const poly = sideRaw.map(normalizeGisPoint).filter(Boolean);
+                    return poly.length >= 2 ? [poly] : null;
+                }
+                const polys = sideRaw.map((item) => {
+                    const list = Array.isArray(item) ? item : [];
+                    return list.map(normalizeGisPoint).filter(Boolean);
+                }).filter((poly) => poly.length >= 2);
+                return polys.length ? polys : null;
+            };
+            const left = normalizeSide(lanesRaw.left);
+            const right = normalizeSide(lanesRaw.right);
+            if (left && right) {
                 featureProps.lanes = { left, right };
             }
         }
