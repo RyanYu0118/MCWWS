@@ -10,6 +10,14 @@
     width: 72px;
 }
 
+.mcwws-ctrl-gis-wrap--floating {
+    position: fixed;
+    right: 16px;
+    bottom: 84px;
+    z-index: 10050;
+    width: 72px;
+}
+
 .mcwws-ctrl-gis {
     width: 72px;
     height: 72px;

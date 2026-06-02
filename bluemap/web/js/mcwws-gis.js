@@ -1,6 +1,7 @@
 (function () {
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+    console.info('[mcwws-gis] loaded', { ts: '2026-06-02T17:45+08:00' });
     const GIS_WRAP_ID = 'mcwws-gis-wrap';
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
@@ -4762,11 +4763,29 @@
         }
     }
 
-    function ensureGisControls() {
-        const column = document.querySelector('.mcwws-ctrl-dimension-column');
-        if (!column) {
+    function ensureGisControlsColumn() {
+        const existing = document.querySelector('.mcwws-ctrl-dimension-column');
+        if (existing) {
+            return existing;
+        }
+        const stack = document.querySelector(MAP_CONTROLS_STACK_SEL);
+        if (!stack) {
             return null;
         }
+        const column = document.createElement('div');
+        column.className = 'mcwws-ctrl-dimension-column';
+        // 尽量插到“维度所在的那一行”，避免跑到复位按钮上方
+        const mainRow = stack.querySelector('.mcwws-ctrl-main-row');
+        if (mainRow) {
+            mainRow.insertBefore(column, mainRow.firstChild);
+        } else {
+            stack.insertBefore(column, stack.firstChild);
+        }
+        return column;
+    }
+
+    function ensureGisControls() {
+        const column = ensureGisControlsColumn();
 
         let wrap = document.getElementById(GIS_WRAP_ID);
         if (!wrap) {
@@ -4785,10 +4804,23 @@
                 </button>
                 <div class="mcwws-layer-dialog" hidden></div>
             `;
-            mountGisAboveDimension(wrap, column);
+            if (column) {
+                mountGisAboveDimension(wrap, column);
+            } else {
+                wrap.classList.add('mcwws-ctrl-gis-wrap--floating');
+                document.body.appendChild(wrap);
+            }
             bindGisControlEvents(wrap);
         } else {
-            mountGisAboveDimension(wrap, column);
+            if (column) {
+                wrap.classList.remove('mcwws-ctrl-gis-wrap--floating');
+                mountGisAboveDimension(wrap, column);
+            } else {
+                wrap.classList.add('mcwws-ctrl-gis-wrap--floating');
+                if (!wrap.parentElement || wrap.parentElement !== document.body) {
+                    document.body.appendChild(wrap);
+                }
+            }
             let dialog = wrap.querySelector('.mcwws-layer-dialog');
             const legacyMenu = wrap.querySelector('.mcwws-gis-menu');
             if (!dialog && legacyMenu) {
@@ -5076,7 +5108,7 @@
             return;
         }
         if (attemptsLeft <= 0) {
-            console.warn('[mcwws-gis] 未找到地图控件栏，GIS 图层按钮未挂载（请确认 mcwws-shops.js 已加载）');
+            console.warn('[mcwws-gis] 未找到地图控件栏，已使用悬浮按钮模式（若仍不可见，请检查 CSS 是否加载）');
             return;
         }
         requestAnimationFrame(() => waitForMapControls(attemptsLeft - 1));
