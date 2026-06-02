@@ -34,6 +34,9 @@
     const GIS_HISTORY_MAX = 100;
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
     const GIS_ROAD_DUAL_DEFAULT_LANE_OFFSET = 3;
+    const GIS_LANE_ARROW_SPACING_PX = 44;
+    /** 指向 +X 的实心箭头（右箭头）；左车道通过 rotate(180°) 得到左箭头 */
+    const GIS_LANE_ARROW_SHAPE_D = 'M -6 -3.5 L 2 0 L -6 3.5 L -3.5 0 Z';
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -64,6 +67,8 @@
     let pinElements = new Map();
     /** @type {Map<string, SVGPathElement>} */
     const svgPathElements = new Map();
+    /** @type {Map<string, SVGGElement>} */
+    const svgLaneArrowGroups = new Map();
     /** @type {SVGPathElement | null} */
     let svgDraftPathEl = null;
     let gisHoverFeatureId = null;
@@ -2364,6 +2369,8 @@
     function clearGisOverlayDom() {
         svgPathElements.forEach((el) => el.remove());
         svgPathElements.clear();
+        svgLaneArrowGroups.forEach((el) => el.remove());
+        svgLaneArrowGroups.clear();
         if (svgDraftPathEl) {
             svgDraftPathEl.remove();
             svgDraftPathEl = null;
@@ -2500,6 +2507,87 @@
         return out;
     }
 
+    /** 沿车道折线按屏幕间距采样箭头位置；reverse 为 true 时箭头反向（左车道 ←） */
+    function collectLaneArrowPlacements(lanePoints, view, camera, reverse) {
+        const placements = [];
+        if (!lanePoints || lanePoints.length < 2) {
+            return placements;
+        }
+        let carry = 0;
+        for (let i = 0; i < lanePoints.length - 1; i += 1) {
+            const p0 = lanePoints[i];
+            const p1 = lanePoints[i + 1];
+            let segPlacements = [];
+            iterClippedLineScreenSegments([p0, p1], view, camera, (a, b) => {
+                let angle = Math.atan2(b.y - a.y, b.x - a.x);
+                if (reverse) {
+                    angle += Math.PI;
+                }
+                const segLen = Math.hypot(b.x - a.x, b.y - a.y);
+                if (segLen < 4) {
+                    return;
+                }
+                let dist = carry > 0 ? GIS_LANE_ARROW_SPACING_PX - carry : 0;
+                while (dist <= segLen) {
+                    const t = dist / segLen;
+                    segPlacements.push({
+                        x: a.x + (b.x - a.x) * t,
+                        y: a.y + (b.y - a.y) * t,
+                        angle
+                    });
+                    dist += GIS_LANE_ARROW_SPACING_PX;
+                }
+                carry = (carry + segLen) % GIS_LANE_ARROW_SPACING_PX;
+            });
+            placements.push(...segPlacements);
+        }
+        return placements;
+    }
+
+    function ensureLaneArrowGroup(svg, groupKey, featureId, laneSide) {
+        let group = svgLaneArrowGroups.get(groupKey);
+        if (!group) {
+            group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('data-fid', featureId);
+            group.classList.add('mcwws-gis-lane-arrow-group', `mcwws-gis-lane-arrow-group--${laneSide}`);
+            svg.appendChild(group);
+            svgLaneArrowGroups.set(groupKey, group);
+        }
+        while (group.firstChild) {
+            group.removeChild(group.firstChild);
+        }
+        return group;
+    }
+
+    /** 靠右行驶：右线沿母线方向 →；左线反向 ← */
+    function renderDualLaneDirectionArrows(svg, featureId, lanePoints, view, camera, color, laneSide, dimmed, neededGroupKeys) {
+        const groupKey = `${featureId}:arr-${laneSide}`;
+        const reverse = laneSide === 'left';
+        const placements = collectLaneArrowPlacements(lanePoints, view, camera, reverse);
+        if (!placements.length) {
+            const stale = svgLaneArrowGroups.get(groupKey);
+            if (stale) {
+                stale.remove();
+                svgLaneArrowGroups.delete(groupKey);
+            }
+            return;
+        }
+        neededGroupKeys.add(groupKey);
+        const group = ensureLaneArrowGroup(svg, groupKey, featureId, laneSide);
+        group.classList.toggle('is-dimmed', dimmed);
+        placements.forEach((p) => {
+            const arrow = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+            arrow.setAttribute('d', GIS_LANE_ARROW_SHAPE_D);
+            arrow.setAttribute('fill', color);
+            const deg = (p.angle * 180) / Math.PI;
+            arrow.setAttribute(
+                'transform',
+                `translate(${p.x.toFixed(2)} ${p.y.toFixed(2)}) rotate(${deg.toFixed(2)})`
+            );
+            group.appendChild(arrow);
+        });
+    }
+
     function getSelectedLineStringRoad() {
         if (selectedFeatureIds.size !== 1) {
             return null;
@@ -2546,7 +2634,7 @@
                         ${!gisCanEdit || !dual ? 'disabled' : ''}>
                 </label>
                 <p class="mcwws-gis-road-props-hint">
-                    当前高度 ${camH} · ${dualActive ? '已分双线' : dual ? '显示母线' : '未启用'}
+                    当前高度 ${camH} · ${dualActive ? '已分双线（右线→左线←）' : dual ? '显示母线' : '未启用'}
                     （高度越小越近）
                 </p>
             </div>
@@ -3822,6 +3910,7 @@
         const camera = getGisBlueMapCamera();
 
         const neededPathKeys = new Set();
+        const neededArrowGroupKeys = new Set();
         const selectionActive = hasGisSelection();
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
@@ -3852,6 +3941,12 @@
                         pathR.setAttribute('stroke', color);
                         pathR.classList.toggle('is-dimmed', dimmed);
                     }
+                    renderDualLaneDirectionArrows(
+                        svg, feature.id, leftPts, view, camera, color, 'left', dimmed, neededArrowGroupKeys
+                    );
+                    renderDualLaneDirectionArrows(
+                        svg, feature.id, rightPts, view, camera, color, 'right', dimmed, neededArrowGroupKeys
+                    );
                 } else {
                     const d = buildSvgPolylinePath(points, view, camera);
                     if (d) {
@@ -3882,6 +3977,13 @@
             if (!neededPathKeys.has(key)) {
                 path.remove();
                 svgPathElements.delete(key);
+            }
+        });
+
+        svgLaneArrowGroups.forEach((group, key) => {
+            if (!neededArrowGroupKeys.has(key)) {
+                group.remove();
+                svgLaneArrowGroups.delete(key);
             }
         });
 
