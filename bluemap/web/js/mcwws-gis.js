@@ -3585,13 +3585,14 @@
         });
     }
 
-    function waitForMapControls(attemptsLeft = 80) {
+    function waitForMapControls(attemptsLeft = 240) {
         const wrap = ensureGisControls();
         if (wrap) {
             renderLayerDialog();
             return;
         }
         if (attemptsLeft <= 0) {
+            console.warn('[mcwws-gis] 未找到地图控件栏，GIS 图层按钮未挂载（请确认 mcwws-shops.js 已加载）');
             return;
         }
         requestAnimationFrame(() => waitForMapControls(attemptsLeft - 1));
