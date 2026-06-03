@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-43';
+    const MCWWS_GIS_BUILD = '20260602-45';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1494,7 +1494,235 @@
         renderLayerDialog();
     }
 
+    function getVertexIndexById(feature, vertexId) {
+        if (!vertexId) {
+            return -1;
+        }
+        const ids = ensureVertexIds(feature);
+        return ids.indexOf(vertexId);
+    }
+
+    function normalizeRoadNameSegmentEntry(feature, raw) {
+        if (!raw || typeof raw !== 'object') {
+            return null;
+        }
+        const name = String(raw.name ?? '').trim();
+        if (!name) {
+            return null;
+        }
+        ensureVertexIds(feature);
+        const count = getFeatureVertexCount(feature);
+        if (count < 2) {
+            return null;
+        }
+        let fromIndex = getVertexIndexById(feature, raw.fromVertexId);
+        let toIndex = getVertexIndexById(feature, raw.toVertexId);
+        if (fromIndex < 0 && Number.isFinite(Number(raw.fromIndex))) {
+            fromIndex = Number(raw.fromIndex);
+        }
+        if (toIndex < 0 && Number.isFinite(Number(raw.toIndex))) {
+            toIndex = Number(raw.toIndex);
+        }
+        fromIndex = Math.max(0, Math.min(fromIndex, count - 1));
+        toIndex = Math.max(0, Math.min(toIndex, count - 1));
+        if (fromIndex >= toIndex) {
+            return null;
+        }
+        const ids = feature.properties.vertexIds;
+        return {
+            fromVertexId: ids[fromIndex],
+            toVertexId: ids[toIndex],
+            fromIndex,
+            toIndex,
+            name
+        };
+    }
+
+    function getRoadNameSegments(feature) {
+        if (!feature || feature.type !== 'LineString') {
+            return [];
+        }
+        ensureVertexIds(feature);
+        const count = getFeatureVertexCount(feature);
+        if (count < 2) {
+            return [];
+        }
+        const props = ensureFeatureProperties(feature);
+        const raw = props.roadNameSegments;
+        if (Array.isArray(raw) && raw.length) {
+            return raw
+                .map((entry) => normalizeRoadNameSegmentEntry(feature, entry))
+                .filter(Boolean)
+                .sort((a, b) => a.fromIndex - b.fromIndex);
+        }
+        const legacy = String(props.name || '').trim();
+        if (!legacy) {
+            return [];
+        }
+        const ids = props.vertexIds;
+        return [{
+            fromVertexId: ids[0],
+            toVertexId: ids[count - 1],
+            fromIndex: 0,
+            toIndex: count - 1,
+            name: legacy
+        }];
+    }
+
+    function getRoadNameSegmentsSignature(feature) {
+        return getRoadNameSegments(feature)
+            .map((seg) => `${seg.fromVertexId}-${seg.toVertexId}:${seg.name}`)
+            .join('|');
+    }
+
+    function featureHasAnyRoadName(feature) {
+        if (getRoadNameSegments(feature).length) {
+            return true;
+        }
+        return !!String(feature?.properties?.name || '').trim();
+    }
+
+    function persistRoadNameSegments(feature, segments) {
+        const props = ensureFeatureProperties(feature);
+        const next = (segments || [])
+            .map((seg) => normalizeRoadNameSegmentEntry(feature, seg))
+            .filter(Boolean)
+            .map(({ fromVertexId, toVertexId, name }) => ({ fromVertexId, toVertexId, name }));
+        if (!next.length) {
+            delete props.roadNameSegments;
+            delete props.name;
+            return;
+        }
+        props.roadNameSegments = next;
+        if (next.length === 1) {
+            props.name = next[0].name;
+        }
+    }
+
+    function reindexRoadNameSegments(feature) {
+        const props = ensureFeatureProperties(feature);
+        if (!Array.isArray(props.roadNameSegments) || !props.roadNameSegments.length) {
+            return;
+        }
+        persistRoadNameSegments(feature, props.roadNameSegments);
+    }
+
+    function setRoadNameSegmentName(feature, segmentIndex, name) {
+        const segments = getRoadNameSegments(feature);
+        if (segmentIndex < 0 || segmentIndex >= segments.length) {
+            return false;
+        }
+        const trimmed = String(name || '').trim();
+        const next = segments.map((seg, i) => ({
+            fromVertexId: seg.fromVertexId,
+            toVertexId: seg.toVertexId,
+            name: i === segmentIndex ? trimmed : seg.name
+        })).filter((seg) => seg.name);
+        persistRoadNameSegments(feature, next);
+        return true;
+    }
+
+    function splitRoadNameAtVertex(feature, vertexIndex) {
+        if (!feature || feature.type !== 'LineString') {
+            return false;
+        }
+        ensureVertexIds(feature);
+        const count = getFeatureVertexCount(feature);
+        if (vertexIndex <= 0 || vertexIndex >= count - 1) {
+            setStatus('请选择道路中间的特征点作为分界（不能是首尾端点）', 'error');
+            return false;
+        }
+        let segments = getRoadNameSegments(feature);
+        if (!segments.length) {
+            const ids = feature.properties.vertexIds;
+            segments = [{
+                fromIndex: 0,
+                toIndex: count - 1,
+                fromVertexId: ids[0],
+                toVertexId: ids[count - 1],
+                name: ''
+            }];
+        }
+        const segIdx = segments.findIndex((seg) => seg.fromIndex < vertexIndex && vertexIndex < seg.toIndex);
+        if (segIdx < 0) {
+            setStatus('该特征点不在可拆分的路名分段内（可能已是分界点）', 'error');
+            return false;
+        }
+        const seg = segments[segIdx];
+        const westDefault = seg.name || getRoadDisplayName(feature) || '';
+        const westName = window.prompt('分界点以西（含分界点）的路名', westDefault);
+        if (westName === null) {
+            return false;
+        }
+        const eastName = window.prompt('分界点以东（含分界点）的路名', '');
+        if (eastName === null) {
+            return false;
+        }
+        const ids = feature.properties.vertexIds;
+        const next = segments.slice();
+        next.splice(
+            segIdx,
+            1,
+            {
+                fromVertexId: ids[seg.fromIndex],
+                toVertexId: ids[vertexIndex],
+                name: String(westName).trim()
+            },
+            {
+                fromVertexId: ids[vertexIndex],
+                toVertexId: ids[seg.toIndex],
+                name: String(eastName).trim()
+            }
+        );
+        recordGisHistory();
+        persistRoadNameSegments(feature, next.filter((entry) => entry.name));
+        markDirty();
+        invalidateRoadLabelCache();
+        renderOverlay();
+        renderLayerDialog();
+        setStatus('已在此特征点拆分路名分段', 'ok');
+        return true;
+    }
+
+    function getRoadLabelWorldChainsForSegment(feature, segment, viewHeight) {
+        const all = coordsToPoints(feature.coordinates);
+        if (!all.length) {
+            return [];
+        }
+        const from = Math.max(0, segment.fromIndex);
+        const to = Math.min(all.length - 1, segment.toIndex);
+        if (from >= to) {
+            return [];
+        }
+        if (!isGisHeightVisibilityActive()) {
+            return [all.slice(from, to + 1)];
+        }
+        const chains = [];
+        let current = [];
+        for (let i = from; i <= to; i += 1) {
+            if (isVertexVisibleAtHeight(feature, i, viewHeight)) {
+                current.push(all[i]);
+            } else if (current.length >= 2) {
+                chains.push(current);
+                current = [];
+            } else {
+                current = [];
+            }
+        }
+        if (current.length >= 2) {
+            chains.push(current);
+        }
+        return chains;
+    }
+
     function getRoadDisplayName(feature) {
+        const segments = getRoadNameSegments(feature);
+        if (segments.length === 1) {
+            return segments[0].name;
+        }
+        if (segments.length > 1) {
+            return segments.map((seg) => seg.name).join(' / ');
+        }
         return String(feature?.properties?.name || '').trim();
     }
 
@@ -1505,7 +1733,7 @@
         if (feature.properties?.showRoadName === false) {
             return false;
         }
-        return !!getRoadDisplayName(feature);
+        return featureHasAnyRoadName(feature);
     }
 
     /** 可视范围：a < 相机高度 ≤ b；未设 a 视为 −∞，未设 b 视为 +∞ */
@@ -1946,6 +2174,7 @@
         pts.splice(idx, 0, next);
         insertVertexIdAt(feature, idx);
         setFeatureLanePoints(feature, laneId, pts);
+        reindexRoadNameSegments(feature);
         if (!options.skipSelect) {
             selectVertex(featureId, laneId, idx);
         }
@@ -3278,11 +3507,51 @@
         const strokeStyle = String(props.strokeStyle || 'solid');
         const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
         const strokeColor = String(props.color || '');
-        const roadName = getRoadDisplayName(found.feature);
+        const roadNameSegments = getRoadNameSegments(found.feature);
         const showRoadName = props.showRoadName !== false;
-        const travelDir = getRoadTravelDirection(found.feature);
         const vtxTargets = getSelectedRoadVertexTargets();
         const vtxSel = vtxTargets.length === 1 ? vtxTargets[0] : null;
+        const canSplitRoadName = gisCanEdit
+            && vtxSel
+            && vtxSel.vertexIndex > 0
+            && vtxSel.vertexIndex < getFeatureVertexCount(found.feature) - 1;
+        const roadNameSegmentsHtml = roadNameSegments.length ? `
+                    <div class="mcwws-gis-road-name-segments">
+                        <p class="mcwws-gis-menu-section-title">分段路名（特征点分界）</p>
+                        ${roadNameSegments.map((seg, i) => `
+                            <label class="mcwws-gis-road-prop-row mcwws-gis-road-name-seg-row">
+                                <span>第 ${seg.fromIndex + 1}–${seg.toIndex + 1} 点</span>
+                                <input type="text" class="mcwws-gis-road-prop-input" data-road-name-seg="${i}"
+                                    value="${escapeHtml(seg.name)}" placeholder="路名"
+                                    ${!gisCanEdit ? 'disabled' : ''}>
+                            </label>
+                        `).join('')}
+                        ${canSplitRoadName ? `
+                        <div class="mcwws-gis-menu-actions">
+                            <button type="button" class="mcwws-gis-menu-action" data-action="split-road-name-at-vertex">
+                                以选中特征点（第 ${vtxSel.vertexIndex + 1} 点）拆分路名
+                            </button>
+                        </div>
+                        ` : ''}
+                        <p class="mcwws-gis-road-props-hint">相邻分段在分界特征点相接；选中中间特征点可拆分为西路/东路等</p>
+                    </div>
+        ` : `
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>路名</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="name"
+                            value="${escapeHtml(String(props.name || '').trim())}" placeholder="如：繁华路（留空不显示）"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    ${canSplitRoadName ? `
+                    <div class="mcwws-gis-menu-actions">
+                        <button type="button" class="mcwws-gis-menu-action" data-action="split-road-name-at-vertex">
+                            以选中特征点（第 ${vtxSel.vertexIndex + 1} 点）拆分路名
+                        </button>
+                    </div>
+                    <p class="mcwws-gis-road-props-hint">设置路名后，可选中间特征点拆成多段（如繁华西路 / 繁华东路）</p>
+                    ` : ''}
+        `;
+        const travelDir = getRoadTravelDirection(found.feature);
         const vtxIdx = vtxSel ? vtxSel.vertexIndex : -1;
         const vtxId = vtxSel ? getVertexIdAt(found.feature, vtxIdx) : '';
         const vtxLabel = !vtxTargets.length
@@ -3339,12 +3608,7 @@
             <div class="mcwws-gis-road-props">
                 <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
                 <div class="mcwws-gis-road-prop-grid">
-                    <label class="mcwws-gis-road-prop-row">
-                        <span>路名</span>
-                        <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="name"
-                            value="${escapeHtml(roadName)}" placeholder="如：长安街（留空不显示沿路名）"
-                            ${!gisCanEdit ? 'disabled' : ''}>
-                    </label>
+                    ${roadNameSegmentsHtml}
                     <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--checkbox">
                         <span>沿路显示路名</span>
                         <input type="checkbox" data-road-prop="showRoadName" ${showRoadName ? 'checked' : ''}
@@ -3403,10 +3667,26 @@
         const props = ensureFeatureProperties(found.feature);
         if (prop === 'name') {
             const v = String(input.value || '').trim();
-            if (!v) {
-                delete props.name;
-            } else {
+            const segments = getRoadNameSegments(found.feature);
+            if (segments.length <= 1) {
+                if (!v) {
+                    delete props.name;
+                    delete props.roadNameSegments;
+                } else {
+                    ensureVertexIds(found.feature);
+                    const count = getFeatureVertexCount(found.feature);
+                    const ids = found.feature.properties.vertexIds;
+                    props.name = v;
+                    props.roadNameSegments = [{
+                        fromVertexId: ids[0],
+                        toVertexId: ids[count - 1],
+                        name: v
+                    }];
+                }
+            } else if (v) {
                 props.name = v;
+            } else {
+                delete props.name;
             }
         } else if (prop === 'showRoadName') {
             if (input.checked) {
@@ -3439,6 +3719,33 @@
         return true;
     }
 
+    function syncRoadNameSegmentFromInput(input) {
+        const idxRaw = input?.getAttribute?.('data-road-name-seg');
+        if (idxRaw == null) {
+            return false;
+        }
+        const found = getSelectedLineStringRoad();
+        if (!found || !gisCanEdit) {
+            return false;
+        }
+        const segmentIndex = Number(idxRaw);
+        if (!Number.isFinite(segmentIndex)) {
+            return false;
+        }
+        return setRoadNameSegmentName(found.feature, segmentIndex, input.value);
+    }
+
+    function applyRoadNameSegmentInput(input) {
+        if (!syncRoadNameSegmentFromInput(input)) {
+            return;
+        }
+        recordGisHistory();
+        markDirty();
+        invalidateRoadLabelCache();
+        renderOverlay();
+        renderLayerDialog();
+    }
+
     function applyRoadPropertyInput(input) {
         if (!syncRoadPropertyFromInput(input)) {
             return;
@@ -3447,7 +3754,8 @@
         markDirty();
         renderOverlay();
         if (input?.getAttribute?.('data-road-prop') === 'name'
-            || input?.getAttribute?.('data-road-prop') === 'showRoadName') {
+            || input?.getAttribute?.('data-road-prop') === 'showRoadName'
+            || input?.hasAttribute?.('data-road-name-seg')) {
             renderRoadNameLabelsLayer();
         }
         renderLayerDialog();
@@ -3648,6 +3956,19 @@
         wrap.querySelectorAll('[data-vertex-vis]').forEach((input) => {
             syncVertexVisibilityFromInput(input);
         });
+        wrap.querySelectorAll('[data-road-name-seg]').forEach((input) => {
+            syncRoadNameSegmentFromInput(input);
+        });
+    }
+
+    function splitRoadNameAtSelectedVertex() {
+        const road = getSelectedLineStringRoad();
+        const vtx = getPrimaryRoadVertexSelection();
+        if (!road || !vtx || vtx.feature.id !== road.feature.id) {
+            setStatus('请先选中该道路中间的一个特征点', 'error');
+            return;
+        }
+        splitRoadNameAtVertex(road.feature, vtx.vertexIndex);
     }
 
     function coordsToPoints(coords) {
@@ -4112,6 +4433,7 @@
                 pts.splice(i, 1);
             });
             setFeatureLanePoints(feature, lane, pts);
+            reindexRoadNameSegments(feature);
         });
         clearSelectedVertices();
         if (deleteWholeFeatures.size) {
@@ -5247,7 +5569,15 @@
     }
 
     function isRoadVisibleOnScreenForLabels(feature, view, camera, viewHeight) {
-        return getRoadVisibleScreenLength(feature, view, camera, viewHeight) >= GIS_ROAD_NAME_MIN_VISIBLE_PX;
+        return getRoadNameSegments(feature).some((segment) => {
+            if (!segment.name) {
+                return false;
+            }
+            return getRoadLabelWorldChainsForSegment(feature, segment, viewHeight).some((chain) => {
+                const spans = buildClippedScreenSpansFromWorldChain(chain, view, camera);
+                return spans.some((span) => screenSpanLength(span) >= GIS_ROAD_NAME_MIN_VISIBLE_PX);
+            });
+        });
     }
 
     function getRoadNameDisplayPolicy(viewHeight) {
@@ -5344,11 +5674,11 @@
         };
     }
 
-    function pickRoadNameAnchorOnScreen(feature, view, camera, viewHeight) {
-        const allSpans = collectRoadClippedScreenSpans(feature, view, camera, viewHeight);
+    function pickRoadNameAnchorForPoints(points, view, camera, labelName) {
+        const spans = buildClippedScreenSpansFromWorldChain(points, view, camera);
         let bestSpan = null;
         let bestLen = 0;
-        allSpans.forEach((span) => {
+        spans.forEach((span) => {
             const len = screenSpanLength(span);
             if (len > bestLen) {
                 bestLen = len;
@@ -5359,13 +5689,38 @@
             return null;
         }
         const slot = sampleScreenSpanAt(bestSpan, bestLen / 2);
-        return slot ? { ...slot, primary: true } : null;
+        return slot ? { ...slot, primary: true, name: labelName } : null;
+    }
+
+    function pickRoadNameAnchorsOnScreen(feature, view, camera, viewHeight) {
+        const anchors = [];
+        getRoadNameSegments(feature).forEach((segment) => {
+            if (!segment.name) {
+                return;
+            }
+            let bestAnchor = null;
+            let bestLen = 0;
+            getRoadLabelWorldChainsForSegment(feature, segment, viewHeight).forEach((chain) => {
+                const anchor = pickRoadNameAnchorForPoints(chain, view, camera, segment.name);
+                if (!anchor) {
+                    return;
+                }
+                const spans = buildClippedScreenSpansFromWorldChain(chain, view, camera);
+                const len = spans.reduce((sum, span) => sum + screenSpanLength(span), 0);
+                if (len > bestLen) {
+                    bestLen = len;
+                    bestAnchor = anchor;
+                }
+            });
+            if (bestAnchor) {
+                anchors.push(bestAnchor);
+            }
+        });
+        return anchors;
     }
 
     function getRoadNameAnchorStructSig(feature, policy, viewHeight) {
-        const chains = getRoadLabelWorldChains(feature, viewHeight);
-        const len = chains.reduce((sum, c) => sum + worldPolylineLengthXZ(c), 0);
-        return `${getRoadDisplayName(feature)}|${Math.round(len / 16)}|${policy.bucket}`;
+        return `${getRoadNameSegmentsSignature(feature)}|${policy.bucket}`;
     }
 
     function fitRoadNameFontSize(name, desiredFont, roadWidthPx, options = {}) {
@@ -5458,18 +5813,17 @@
         if (!policy.show) {
             return { policy, anchors: [] };
         }
-        const name = getRoadDisplayName(feature);
-        if (!name) {
+        if (!featureHasAnyRoadName(feature)) {
             return { policy, anchors: [] };
         }
         if (!isRoadVisibleOnScreenForLabels(feature, view, camera, viewHeight)) {
             return { policy, anchors: [] };
         }
-        const anchor = pickRoadNameAnchorOnScreen(feature, view, camera, viewHeight);
-        if (!anchor) {
+        const anchors = pickRoadNameAnchorsOnScreen(feature, view, camera, viewHeight);
+        if (!anchors.length) {
             return { policy, anchors: [] };
         }
-        return { policy, anchors: [anchor], name };
+        return { policy, anchors };
     }
 
     function ensureSvgNameGroup(svg, key, featureId) {
@@ -5484,55 +5838,64 @@
         return group;
     }
 
-    function rebuildRoadNameGroupStructure(group, anchors, name) {
+    function rebuildRoadNameGroupStructure(group, anchors) {
         clearSvgGroupChildren(group);
-        const anchor = anchors[0];
-        if (!anchor) {
-            return;
-        }
-        const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
-        text.classList.add('mcwws-gis-road-name');
-        text.setAttribute('data-ax', anchor.world.x.toFixed(3));
-        text.setAttribute('data-ay', anchor.world.y.toFixed(3));
-        text.setAttribute('data-az', anchor.world.z.toFixed(3));
-        text.setAttribute('text-anchor', 'middle');
-        text.setAttribute('dominant-baseline', 'middle');
-        text.textContent = name;
-        text.style.display = 'none';
-        group.appendChild(text);
+        anchors.forEach((anchor, index) => {
+            if (!anchor?.world || !anchor.name) {
+                return;
+            }
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.classList.add('mcwws-gis-road-name');
+            text.setAttribute('data-anchor-index', String(index));
+            text.setAttribute('data-ax', anchor.world.x.toFixed(3));
+            text.setAttribute('data-ay', anchor.world.y.toFixed(3));
+            text.setAttribute('data-az', anchor.world.z.toFixed(3));
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = anchor.name;
+            text.style.display = 'none';
+            group.appendChild(text);
+        });
     }
 
-    function syncRoadNameGroupPositions(group, anchors, policy, name, view, camera, dimmed, placedRects) {
+    function syncRoadNameGroupPositions(group, anchors, policy, view, camera, dimmed, placedRects) {
         group.classList.toggle('is-dimmed', dimmed);
-        const text = group.querySelector('.mcwws-gis-road-name');
-        const anchor = anchors[0];
-        if (!text || !anchor?.world) {
-            if (text) {
-                text.style.display = 'none';
+        const texts = group.querySelectorAll('.mcwws-gis-road-name');
+        anchors.forEach((anchor, index) => {
+            const text = texts[index];
+            const labelName = anchor?.name || '';
+            if (!text || !anchor?.world || !labelName) {
+                if (text) {
+                    text.style.display = 'none';
+                }
+                return;
             }
-            return;
+            const screen = projectGisPoint(anchor.world, view, camera, false);
+            if (!isRoadNameOnScreen(screen)) {
+                text.style.display = 'none';
+                return;
+            }
+            const roadWidthPx = estimateRoadWidthScreenPx(anchor.world, view, camera);
+            const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, roadWidthPx, { primary: true });
+            if (!fontSize) {
+                text.style.display = 'none';
+                return;
+            }
+            const deg = normalizeLabelRotationDeg(anchor.angleRad);
+            const rect = estimateRoadNameLabelRect(screen, labelName, fontSize, deg);
+            placedRects.push(rect);
+            const x = screen.x.toFixed(1);
+            const y = screen.y.toFixed(1);
+            text.style.display = '';
+            text.textContent = labelName;
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('font-size', String(fontSize));
+            text.setAttribute('transform', `rotate(${deg.toFixed(2)}, ${x}, ${y})`);
+        });
+        for (let i = anchors.length; i < texts.length; i += 1) {
+            texts[i].style.display = 'none';
         }
-        const screen = projectGisPoint(anchor.world, view, camera, false);
-        if (!isRoadNameOnScreen(screen)) {
-            text.style.display = 'none';
-            return;
-        }
-        const roadWidthPx = estimateRoadWidthScreenPx(anchor.world, view, camera);
-        const fontSize = fitRoadNameFontSize(name, policy.fontSize, roadWidthPx, { primary: true });
-        if (!fontSize) {
-            text.style.display = 'none';
-            return;
-        }
-        const deg = normalizeLabelRotationDeg(anchor.angleRad);
-        const rect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
-        placedRects.push(rect);
-        const x = screen.x.toFixed(1);
-        const y = screen.y.toFixed(1);
-        text.style.display = '';
-        text.setAttribute('x', x);
-        text.setAttribute('y', y);
-        text.setAttribute('font-size', String(fontSize));
-        text.setAttribute('transform', `rotate(${deg.toFixed(2)}, ${x}, ${y})`);
     }
 
     function renderRoadNameLabelsLayer() {
@@ -5564,30 +5927,29 @@
             if (!isRoadVisibleOnScreenForLabels(feature, view, camera, viewHeight)) {
                 return;
             }
-            const { anchors, name } = computeRoadNameAnchors(feature, view, camera, viewHeight);
-            if (!anchors.length || !name) {
+            const { anchors } = computeRoadNameAnchors(feature, view, camera, viewHeight);
+            if (!anchors.length) {
                 return;
             }
             roadCandidates.push({
                 feature,
                 anchors,
-                name,
-                priority: getRoadVisibleScreenLength(feature, view, camera, viewHeight)
+                priority: anchors.length
             });
         });
         roadCandidates.sort((a, b) => b.priority - a.priority);
 
-        roadCandidates.forEach(({ feature, anchors, name }) => {
+        roadCandidates.forEach(({ feature, anchors }) => {
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
             const key = `${feature.id}:names`;
             neededNameGroupKeys.add(key);
             const group = ensureSvgNameGroup(svg, key, feature.id);
-            const structSig = `${getRoadNameAnchorStructSig(feature, policy, viewHeight)}|${dimmed ? 1 : 0}`;
+            const structSig = `${getRoadNameAnchorStructSig(feature, policy, viewHeight)}|${dimmed ? 1 : 0}|${anchors.length}`;
             if (group.dataset.nameStructSig !== structSig) {
                 group.dataset.nameStructSig = structSig;
-                rebuildRoadNameGroupStructure(group, anchors, name);
+                rebuildRoadNameGroupStructure(group, anchors);
             }
-            syncRoadNameGroupPositions(group, anchors, policy, name, view, camera, dimmed, placedRects);
+            syncRoadNameGroupPositions(group, anchors, policy, view, camera, dimmed, placedRects);
         });
 
         svgLaneNameGroups.forEach((group, key) => {
@@ -6195,11 +6557,13 @@
         const scrollTop = dialog.scrollTop;
         const activeEl = document.activeElement;
         const focusRestore = activeEl?.closest?.('.mcwws-layer-dialog')
-            && activeEl.matches?.('[data-vertex-vis], [data-road-prop]')
+            && activeEl.matches?.('[data-vertex-vis], [data-road-prop], [data-road-name-seg]')
             ? {
                 selector: activeEl.matches('[data-vertex-vis]')
                     ? `[data-vertex-vis="${activeEl.getAttribute('data-vertex-vis')}"]`
-                    : `[data-road-prop="${activeEl.getAttribute('data-road-prop')}"]`,
+                    : activeEl.matches('[data-road-name-seg]')
+                        ? `[data-road-name-seg="${activeEl.getAttribute('data-road-name-seg')}"]`
+                        : `[data-road-prop="${activeEl.getAttribute('data-road-prop')}"]`,
                 start: activeEl.selectionStart,
                 end: activeEl.selectionEnd
             }
@@ -6229,7 +6593,7 @@
             <label class="mcwws-layer-gis-toggle mcwws-layer-gis-toggle--sub">
                 <input type="checkbox" data-gis-show-road-names ${gisShowRoadNames ? 'checked' : ''}
                     ${!gisInfoEnabled ? 'disabled' : ''}>
-                <span>沿路自动显示路名（每条可见道路仅 1 个，超远缩放自动隐藏）</span>
+                <span>沿路自动显示路名（每段可见路名各 1 个，超远缩放自动隐藏）</span>
             </label>
             <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
                 data-action="toggle-gis-editor"
@@ -6302,6 +6666,12 @@
                 applyRoadPropertyInput(roadInput);
                 return;
             }
+            const roadNameSegInput = e.target.closest('[data-road-name-seg]');
+            if (roadNameSegInput) {
+                e.stopPropagation();
+                applyRoadNameSegmentInput(roadNameSegInput);
+                return;
+            }
             const vtxVisInput = e.target.closest('[data-vertex-vis]');
             if (vtxVisInput) {
                 e.stopPropagation();
@@ -6324,6 +6694,16 @@
             if (roadNameInput) {
                 e.stopPropagation();
                 if (syncRoadPropertyFromInput(roadNameInput)) {
+                    markDirtySoft();
+                    invalidateRoadLabelCache();
+                    renderRoadNameLabelsLayer();
+                }
+                return;
+            }
+            const roadNameSegInput = e.target.closest('[data-road-name-seg]');
+            if (roadNameSegInput) {
+                e.stopPropagation();
+                if (syncRoadNameSegmentFromInput(roadNameSegInput)) {
                     markDirtySoft();
                     invalidateRoadLabelCache();
                     renderRoadNameLabelsLayer();
@@ -6430,6 +6810,8 @@
                 deleteSelectedFeature();
             } else if (action === 'clear-vertex-vis') {
                 clearBatchVertexVisibility();
+            } else if (action === 'split-road-name-at-vertex') {
+                splitRoadNameAtSelectedVertex();
             } else if (action === 'align-vertices') {
                 alignSelectedVertices(actionBtn.getAttribute('data-align-axis'));
             }

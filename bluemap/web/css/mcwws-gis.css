@@ -572,6 +572,19 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     align-items: flex-start;
 }
 
+.mcwws-gis-road-name-segments {
+    margin-bottom: 8px;
+}
+
+.mcwws-gis-road-name-seg-row span {
+    min-width: 88px;
+    font-size: 11px;
+}
+
+.mcwws-gis-road-name-segments .mcwws-gis-menu-section-title {
+    margin-top: 4px;
+}
+
 .mcwws-gis-road-prop-row--checkbox {
     justify-content: space-between;
 }
@@ -643,8 +656,8 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     font-weight: 600;
     letter-spacing: 0.02em;
     paint-order: stroke fill;
-    stroke: rgba(255, 255, 255, 0.94);
-    stroke-width: 3px;
+    stroke: rgba(255, 255, 255, 0.88);
+    stroke-width: 1.75px;
     stroke-linejoin: round;
 }
 
