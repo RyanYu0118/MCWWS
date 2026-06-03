@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-48';
+    const MCWWS_GIS_BUILD = '20260602-49';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -49,6 +49,7 @@
     const GIS_ROAD_NAME_SAME_NAME_MERGE_WORLD_XZ = 24;
     const GIS_ROAD_NAME_MAX_FONT_PX = 13;
     const GIS_ROAD_NAME_MIN_FONT_PX = 9;
+    const GIS_ROAD_NAME_FONT_HEIGHT_MIN = 140;
     const GIS_ROAD_NAME_MAX_TEXT_VS_ROAD = 1.65;
 
     let mapAuthToken = null;
@@ -5602,37 +5603,31 @@
         });
     }
 
+    function computeRoadNameFontSize(viewHeight) {
+        const h = Number.isFinite(viewHeight) ? viewHeight : getMapCameraHeight();
+        const minH = GIS_ROAD_NAME_FONT_HEIGHT_MIN;
+        const maxH = GIS_ROAD_NAME_MAX_VIEW_HEIGHT;
+        const clamped = Math.max(minH, Math.min(maxH, h));
+        const t = Math.log(clamped / minH) / Math.log(maxH / minH);
+        const size = GIS_ROAD_NAME_MAX_FONT_PX - t * (GIS_ROAD_NAME_MAX_FONT_PX - GIS_ROAD_NAME_MIN_FONT_PX);
+        return Math.max(
+            GIS_ROAD_NAME_MIN_FONT_PX,
+            Math.min(GIS_ROAD_NAME_MAX_FONT_PX, Math.round(size * 10) / 10)
+        );
+    }
+
     function getRoadNameDisplayPolicy(viewHeight) {
         const h = Number.isFinite(viewHeight) ? viewHeight : getMapCameraHeight();
         if (!Number.isFinite(h) || h > GIS_ROAD_NAME_MAX_VIEW_HEIGHT) {
-            return { show: false, bucket: 'off' };
+            return { show: false, bucket: 'off', fontSize: 0 };
         }
-        if (h > 3200) {
-            return {
-                show: true,
-                bucket: 'far',
-                fontSize: GIS_ROAD_NAME_MIN_FONT_PX
-            };
-        }
-        if (h > 900) {
-            return {
-                show: true,
-                bucket: 'mid',
-                fontSize: 11
-            };
-        }
-        if (h > 220) {
-            return {
-                show: true,
-                bucket: 'near',
-                fontSize: 12
-            };
-        }
-        return {
-            show: true,
-            bucket: 'close',
-            fontSize: GIS_ROAD_NAME_MAX_FONT_PX
-        };
+        const fontSize = computeRoadNameFontSize(h);
+        const minH = GIS_ROAD_NAME_FONT_HEIGHT_MIN;
+        const maxH = GIS_ROAD_NAME_MAX_VIEW_HEIGHT;
+        const clamped = Math.max(minH, Math.min(maxH, h));
+        const t = Math.log(clamped / minH) / Math.log(maxH / minH);
+        const bucket = t > 0.72 ? 'far' : t > 0.42 ? 'mid' : t > 0.18 ? 'near' : 'close';
+        return { show: true, bucket, fontSize };
     }
 
     function getRoadNameHeightBucket() {
@@ -5746,31 +5741,20 @@
     }
 
     function fitRoadNameFontSize(name, desiredFont, roadWidthPx, options = {}) {
-        if (options.primary) {
-            if (!roadWidthPx || roadWidthPx < 6) {
-                return desiredFont;
-            }
+        let size = desiredFont;
+        if (roadWidthPx > 0 && name) {
             const estText = Math.max(12, name.length * desiredFont * 0.55);
             const limit = roadWidthPx * GIS_ROAD_NAME_MAX_TEXT_VS_ROAD;
-            if (estText <= limit) {
-                return desiredFont;
+            if (limit > 0 && estText > limit) {
+                const scaled = Math.floor(desiredFont * (limit / estText));
+                size = Math.max(GIS_ROAD_NAME_MIN_FONT_PX, scaled || GIS_ROAD_NAME_MIN_FONT_PX);
             }
-            const scaled = Math.floor(desiredFont * (limit / estText));
-            return Math.max(GIS_ROAD_NAME_MIN_FONT_PX, scaled || GIS_ROAD_NAME_MIN_FONT_PX);
         }
-        if (!roadWidthPx || roadWidthPx < 6) {
-            return desiredFont;
-        }
-        const estText = Math.max(12, name.length * desiredFont * 0.55);
-        const limit = roadWidthPx * GIS_ROAD_NAME_MAX_TEXT_VS_ROAD;
-        if (estText <= limit) {
-            return desiredFont;
-        }
-        const scaled = Math.floor(desiredFont * (limit / estText));
-        if (scaled < GIS_ROAD_NAME_MIN_FONT_PX) {
+        size = Math.min(desiredFont, size);
+        if (!options.primary && size < GIS_ROAD_NAME_MIN_FONT_PX) {
             return 0;
         }
-        return scaled;
+        return Math.max(GIS_ROAD_NAME_MIN_FONT_PX, size);
     }
 
     function estimateRoadWidthScreenPx(world, view, camera) {
