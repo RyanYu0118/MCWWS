@@ -572,6 +572,22 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     align-items: flex-start;
 }
 
+.mcwws-gis-road-prop-row--checkbox {
+    justify-content: space-between;
+}
+
+.mcwws-gis-road-prop-row--checkbox input[type="checkbox"] {
+    width: auto;
+    margin: 0;
+}
+
+.mcwws-layer-gis-toggle--sub {
+    margin-top: -2px;
+    padding-left: 12px;
+    font-size: 11px;
+    opacity: 0.92;
+}
+
 .mcwws-gis-road-props-hint {
     margin: 6px 0 0;
     font-size: 10px;
@@ -615,6 +631,29 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
 
 #mcwws-gis-svg-layer .mcwws-gis-lane-arrow-group.is-dimmed path {
     opacity: 0.28;
+}
+
+#mcwws-gis-svg-layer .mcwws-gis-road-name-group {
+    pointer-events: none;
+}
+
+#mcwws-gis-svg-layer .mcwws-gis-road-name {
+    fill: #0f172a;
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    paint-order: stroke fill;
+    stroke: rgba(255, 255, 255, 0.94);
+    stroke-width: 3px;
+    stroke-linejoin: round;
+}
+
+#mcwws-gis-svg-layer .mcwws-gis-road-name-group.is-dimmed .mcwws-gis-road-name {
+    opacity: 0.38;
+}
+
+body.mcwws-gis-road-names-off #mcwws-gis-svg-layer .mcwws-gis-road-name-group {
+    display: none;
 }
 
 .mcwws-gis-menu-selected {

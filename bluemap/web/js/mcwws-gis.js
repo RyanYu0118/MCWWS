@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-38';
+    const MCWWS_GIS_BUILD = '20260602-39';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -38,12 +38,15 @@
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
     const GIS_ROAD_ARROW_SIZE_PX = 8;
     const GIS_ROAD_ARROW_MAX_PER_SEGMENT = 3;
+    const GIS_ROAD_NAME_MIN_CHAIN_PX = 52;
+    const GIS_ROAD_NAME_MAX_PER_CHAIN = 4;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
     let gisCanEdit = false;
     let gisEditMode = false;
     let gisIgnoreHeightClip = false;
+    let gisShowRoadNames = true;
     let activeTool = 'select';
     let activeLayerId = 'roads';
     let project = null;
@@ -59,6 +62,7 @@
     const STORAGE_RENDER_MODE = 'mcwws-map-render-mode';
     const STORAGE_GIS_ENABLED = 'mcwws-gis-info-enabled';
     const STORAGE_GIS_IGNORE_HEIGHT_CLIP = 'mcwws-gis-ignore-height-clip';
+    const STORAGE_GIS_SHOW_ROAD_NAMES = 'mcwws-gis-show-road-names';
     let dirty = false;
     let saving = false;
     let statusMessage = '';
@@ -72,6 +76,8 @@
     const svgPathElements = new Map();
     /** @type {Map<string, SVGGElement>} */
     const svgLaneArrowGroups = new Map();
+    /** @type {Map<string, SVGGElement>} */
+    const svgLaneNameGroups = new Map();
     /** @type {SVGPathElement | null} */
     let svgDraftPathEl = null;
     let gisHoverFeatureId = null;
@@ -173,6 +179,8 @@
             const gis = localStorage.getItem(STORAGE_GIS_ENABLED);
             gisInfoEnabled = mapRenderMode === 'simplified' || gis !== '0';
             gisIgnoreHeightClip = localStorage.getItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP) === '1';
+            const roadNames = localStorage.getItem(STORAGE_GIS_SHOW_ROAD_NAMES);
+            gisShowRoadNames = roadNames !== '0';
         } catch {
             /* ignore */
         }
@@ -183,6 +191,7 @@
             localStorage.setItem(STORAGE_RENDER_MODE, mapRenderMode);
             localStorage.setItem(STORAGE_GIS_ENABLED, gisInfoEnabled ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP, gisIgnoreHeightClip ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_SHOW_ROAD_NAMES, gisShowRoadNames ? '1' : '0');
         } catch {
             /* ignore */
         }
@@ -1467,6 +1476,29 @@
         document.body.classList.toggle('mcwws-gis-ignore-height-clip', gisEditMode && gisIgnoreHeightClip);
         renderOverlay();
         renderLayerDialog();
+    }
+
+    function setGisShowRoadNames(enabled) {
+        gisShowRoadNames = !!enabled;
+        saveLayerPrefs();
+        invalidateRoadLabelCache();
+        document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    function getRoadDisplayName(feature) {
+        return String(feature?.properties?.name || '').trim();
+    }
+
+    function shouldShowRoadNameOnFeature(feature) {
+        if (!gisShowRoadNames || !feature || feature.type !== 'LineString') {
+            return false;
+        }
+        if (feature.properties?.showRoadName === false) {
+            return false;
+        }
+        return !!getRoadDisplayName(feature);
     }
 
     /** 可视范围：a < 相机高度 ≤ b；未设 a 视为 −∞，未设 b 视为 +∞ */
@@ -3086,6 +3118,8 @@
         svgPathElements.clear();
         svgLaneArrowGroups.forEach((el) => el.remove());
         svgLaneArrowGroups.clear();
+        svgLaneNameGroups.forEach((el) => el.remove());
+        svgLaneNameGroups.clear();
         if (svgDraftPathEl) {
             svgDraftPathEl.remove();
             svgDraftPathEl = null;
@@ -3237,6 +3271,8 @@
         const strokeStyle = String(props.strokeStyle || 'solid');
         const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
         const strokeColor = String(props.color || '');
+        const roadName = getRoadDisplayName(found.feature);
+        const showRoadName = props.showRoadName !== false;
         const travelDir = getRoadTravelDirection(found.feature);
         const vtxTargets = getSelectedRoadVertexTargets();
         const vtxSel = vtxTargets.length === 1 ? vtxTargets[0] : null;
@@ -3297,6 +3333,17 @@
                 <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
                 <div class="mcwws-gis-road-prop-grid">
                     <label class="mcwws-gis-road-prop-row">
+                        <span>路名</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="name"
+                            value="${escapeHtml(roadName)}" placeholder="如：长安街（留空不显示沿路名）"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--checkbox">
+                        <span>沿路显示路名</span>
+                        <input type="checkbox" data-road-prop="showRoadName" ${showRoadName ? 'checked' : ''}
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
                         <span>行驶方向</span>
                         <select class="mcwws-gis-road-prop-input" data-road-prop="travelDirection" ${!gisCanEdit ? 'disabled' : ''}>
                             <option value="both" ${travelDir === 'both' ? 'selected' : ''}>双向（不显示箭头）</option>
@@ -3347,7 +3394,20 @@
             return false;
         }
         const props = ensureFeatureProperties(found.feature);
-        if (prop === 'color') {
+        if (prop === 'name') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.name;
+            } else {
+                props.name = v;
+            }
+        } else if (prop === 'showRoadName') {
+            if (input.checked) {
+                delete props.showRoadName;
+            } else {
+                props.showRoadName = false;
+            }
+        } else if (prop === 'color') {
             const v = String(input.value || '').trim();
             if (!v) {
                 delete props.color;
@@ -3379,6 +3439,10 @@
         recordGisHistory();
         markDirty();
         renderOverlay();
+        if (input?.getAttribute?.('data-road-prop') === 'name'
+            || input?.getAttribute?.('data-road-prop') === 'showRoadName') {
+            renderRoadNameLabelsLayer();
+        }
         renderLayerDialog();
     }
 
@@ -3442,6 +3506,7 @@
     function markDirtySoft() {
         dirty = true;
         invalidateRoadArrowCache();
+        invalidateRoadLabelCache();
         updateGisMenuStatusLine();
     }
 
@@ -3714,6 +3779,7 @@
     function markDirty() {
         dirty = true;
         invalidateRoadArrowCache();
+        invalidateRoadLabelCache();
         renderPanel();
     }
 
@@ -5031,6 +5097,197 @@
         });
     }
 
+    function invalidateRoadLabelCache() {
+        svgLaneNameGroups.forEach((group) => {
+            delete group.dataset.nameSig;
+        });
+    }
+
+    function sanitizeSvgDomId(raw) {
+        return String(raw || 'id').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 48);
+    }
+
+    function screenChainToSvgPath(chain) {
+        if (!chain || chain.length < 2) {
+            return '';
+        }
+        return chain
+            .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
+            .join(' ');
+    }
+
+    function polylineScreenLength(chain) {
+        if (!chain || chain.length < 2) {
+            return 0;
+        }
+        let len = 0;
+        for (let i = 1; i < chain.length; i += 1) {
+            len += Math.hypot(chain[i].x - chain[i - 1].x, chain[i].y - chain[i - 1].y);
+        }
+        return len;
+    }
+
+    function getRoadNameSpacingPx() {
+        const h = getMapCameraHeight();
+        if (!Number.isFinite(h)) {
+            return 240;
+        }
+        return Math.max(160, Math.min(420, h * 1.1));
+    }
+
+    function getRoadNameFontSizePx() {
+        const h = getMapCameraHeight();
+        if (!Number.isFinite(h)) {
+            return 12;
+        }
+        return Math.max(10, Math.min(14, 9 + h / 180));
+    }
+
+    function getRoadNameLabelOffsets(chain, spacing) {
+        const total = polylineScreenLength(chain);
+        if (total < GIS_ROAD_NAME_MIN_CHAIN_PX) {
+            return [];
+        }
+        const offsets = [];
+        if (total < spacing * 1.35) {
+            offsets.push(total / 2);
+            return offsets;
+        }
+        let pos = spacing / 2;
+        let count = 0;
+        while (pos < total && count < GIS_ROAD_NAME_MAX_PER_CHAIN) {
+            offsets.push(pos);
+            pos += spacing;
+            count += 1;
+        }
+        return offsets;
+    }
+
+    function buildVisibleScreenChainsForRoad(feature, view, camera, viewHeight) {
+        const points = coordsToPoints(feature.coordinates);
+        const visibleChains = buildVisiblePointChains(points, feature, viewHeight);
+        const screenChains = [];
+        visibleChains.forEach((worldChain) => {
+            const chains = [];
+            iterClippedLineScreenSegments(worldChain, view, camera, (s0, s1) => {
+                appendClippedSegment(chains, [s0, s1]);
+            });
+            chains.forEach((chain) => {
+                if (polylineScreenLength(chain) >= GIS_ROAD_NAME_MIN_CHAIN_PX) {
+                    screenChains.push(chain);
+                }
+            });
+        });
+        return screenChains;
+    }
+
+    function ensureSvgNameGroup(svg, key, featureId) {
+        let group = svgLaneNameGroups.get(key);
+        if (!group) {
+            group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('data-fid', featureId);
+            group.classList.add('mcwws-gis-road-name-group');
+            svg.appendChild(group);
+            svgLaneNameGroups.set(key, group);
+        }
+        return group;
+    }
+
+    function appendRoadNameAlongChain(group, featureId, chainIndex, chain, name, fontSize, spacing) {
+        const pathD = screenChainToSvgPath(chain);
+        const totalLen = polylineScreenLength(chain);
+        const offsets = getRoadNameLabelOffsets(chain, spacing);
+        if (!pathD || !offsets.length) {
+            return;
+        }
+        const pathId = `gis-rn-${sanitizeSvgDomId(featureId)}-${chainIndex}`;
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('id', pathId);
+        path.setAttribute('d', pathD);
+        path.setAttribute('fill', 'none');
+        path.setAttribute('stroke', 'none');
+        path.setAttribute('pathLength', totalLen.toFixed(2));
+        path.setAttribute('pointer-events', 'none');
+        group.appendChild(path);
+
+        offsets.forEach((offset) => {
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.classList.add('mcwws-gis-road-name');
+            text.setAttribute('font-size', String(fontSize));
+            const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
+            textPath.setAttribute('href', `#${pathId}`);
+            textPath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
+            textPath.setAttribute('startOffset', offset.toFixed(1));
+            textPath.setAttribute('text-anchor', 'middle');
+            textPath.setAttribute('dominant-baseline', 'middle');
+            textPath.textContent = name;
+            text.appendChild(textPath);
+            group.appendChild(text);
+        });
+    }
+
+    function populateRoadNameGroup(group, feature, view, camera, viewHeight, dimmed) {
+        const name = getRoadDisplayName(feature);
+        if (!name) {
+            return;
+        }
+        const screenChains = buildVisibleScreenChainsForRoad(feature, view, camera, viewHeight);
+        if (!screenChains.length) {
+            return;
+        }
+        group.classList.toggle('is-dimmed', dimmed);
+        const fontSize = getRoadNameFontSizePx();
+        const spacing = getRoadNameSpacingPx();
+        screenChains.forEach((chain, chainIndex) => {
+            appendRoadNameAlongChain(group, feature.id, chainIndex, chain, name, fontSize, spacing);
+        });
+    }
+
+    function renderRoadNameLabelsLayer() {
+        const svg = ensureSvgLayer();
+        if (!svg || !gisInfoEnabled || !gisShowRoadNames) {
+            svgLaneNameGroups.forEach((group) => group.remove());
+            svgLaneNameGroups.clear();
+            return;
+        }
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const viewHeight = getMapCameraHeight();
+        const viewSig = getGisViewArrowSignature(view, camera);
+        const selectionActive = hasGisSelection();
+        const neededNameGroupKeys = new Set();
+
+        iterVisibleFeatures().forEach(({ feature }) => {
+            if (!shouldShowRoadNameOnFeature(feature)) {
+                return;
+            }
+            const points = coordsToPoints(feature.coordinates);
+            if (!buildVisiblePointChains(points, feature, viewHeight).length) {
+                return;
+            }
+            const name = getRoadDisplayName(feature);
+            const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            const key = `${feature.id}:names`;
+            neededNameGroupKeys.add(key);
+            const group = ensureSvgNameGroup(svg, key, feature.id);
+            const sig = `${viewSig}|${dimmed ? 1 : 0}|${name}|${Math.round(viewHeight)}|${getRoadNameFontSizePx().toFixed(1)}`;
+            if (group.dataset.nameSig === sig) {
+                group.classList.toggle('is-dimmed', dimmed);
+                return;
+            }
+            group.dataset.nameSig = sig;
+            clearSvgGroupChildren(group);
+            populateRoadNameGroup(group, feature, view, camera, viewHeight, dimmed);
+        });
+
+        svgLaneNameGroups.forEach((group, key) => {
+            if (!neededNameGroupKeys.has(key)) {
+                group.remove();
+                svgLaneNameGroups.delete(key);
+            }
+        });
+    }
+
     function placeRoadArrowsOnScreenSegment(group, s0, s1, fillColor) {
         const dx = s1.x - s0.x;
         const dy = s1.y - s0.y;
@@ -5309,6 +5566,7 @@
         });
 
         renderRoadArrowsLayer();
+        renderRoadNameLabelsLayer();
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const draft = draftPoints.slice();
@@ -5658,6 +5916,11 @@
                     ${isSimplifiedMapMode() ? 'disabled' : ''}>
                 <span>开启地理信息${isSimplifiedMapMode() ? '（简化地图下始终开启）' : ''}</span>
             </label>
+            <label class="mcwws-layer-gis-toggle mcwws-layer-gis-toggle--sub">
+                <input type="checkbox" data-gis-show-road-names ${gisShowRoadNames ? 'checked' : ''}
+                    ${!gisInfoEnabled ? 'disabled' : ''}>
+                <span>沿路自动显示路名（读取道路「路名」属性）</span>
+            </label>
             <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
                 data-action="toggle-gis-editor"
                 ${!gisInfoEnabled ? 'disabled' : ''}
@@ -5717,6 +5980,12 @@
                 setGisIgnoreHeightClip(e.target.checked);
                 return;
             }
+            const roadNamesInput = e.target.closest('[data-gis-show-road-names]');
+            if (roadNamesInput && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisShowRoadNames(e.target.checked);
+                return;
+            }
             const roadInput = e.target.closest('[data-road-prop]');
             if (roadInput) {
                 e.stopPropagation();
@@ -5739,6 +6008,16 @@
                     renderOverlay();
                     refreshVertexVisibilityHintOnly();
                 }
+                return;
+            }
+            const roadNameInput = e.target.closest('[data-road-prop="name"]');
+            if (roadNameInput) {
+                e.stopPropagation();
+                if (syncRoadPropertyFromInput(roadNameInput)) {
+                    markDirtySoft();
+                    invalidateRoadLabelCache();
+                    renderRoadNameLabelsLayer();
+                }
             }
         });
 
@@ -5757,6 +6036,11 @@
             const heightClipToggle = e.target.closest('[data-gis-ignore-height-clip]');
             if (heightClipToggle && e.target.matches('input[type="checkbox"]')) {
                 setGisIgnoreHeightClip(e.target.checked);
+                return;
+            }
+            const roadNamesToggle = e.target.closest('[data-gis-show-road-names]');
+            if (roadNamesToggle && e.target.matches('input[type="checkbox"]')) {
+                setGisShowRoadNames(e.target.checked);
                 return;
             }
             const toolBtn = e.target.closest('[data-tool]');
@@ -6000,6 +6284,7 @@
         document.body.classList.add('mcwws-map-render-no-transition');
         document.getElementById('mcwws-gis-panel')?.remove();
         loadLayerPrefs();
+        document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
         initMapAuth();
         bindMapPicks();
         bindMapContextMenuSuppression();
@@ -6029,10 +6314,12 @@
         window.addEventListener('hashchange', () => {
             gisCachedCamera = null;
             invalidateRoadArrowCache();
+            invalidateRoadLabelCache();
             renderOverlay();
         });
         window.addEventListener('resize', () => {
             invalidateRoadArrowCache();
+            invalidateRoadLabelCache();
             renderOverlay();
         });
         animationId = requestAnimationFrame(tick);
