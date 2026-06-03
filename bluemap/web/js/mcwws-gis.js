@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-34';
+    const MCWWS_GIS_BUILD = '20260602-36';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -38,15 +38,12 @@
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
     const GIS_ROAD_ARROW_SIZE_PX = 8;
     const GIS_ROAD_ARROW_MAX_PER_SEGMENT = 3;
-    const GIS_ROAD_ARROW_RENDER_INTERVAL_MS = 360;
-    let gisArrowRenderAccumMs = 0;
-    let gisLastArrowRenderAt = 0;
-    let gisLastTickAt = 0;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
     let gisCanEdit = false;
     let gisEditMode = false;
+    let gisIgnoreHeightClip = false;
     let activeTool = 'select';
     let activeLayerId = 'roads';
     let project = null;
@@ -61,6 +58,7 @@
     let gisControlsBound = false;
     const STORAGE_RENDER_MODE = 'mcwws-map-render-mode';
     const STORAGE_GIS_ENABLED = 'mcwws-gis-info-enabled';
+    const STORAGE_GIS_IGNORE_HEIGHT_CLIP = 'mcwws-gis-ignore-height-clip';
     let dirty = false;
     let saving = false;
     let statusMessage = '';
@@ -174,6 +172,7 @@
             }
             const gis = localStorage.getItem(STORAGE_GIS_ENABLED);
             gisInfoEnabled = mapRenderMode === 'simplified' || gis !== '0';
+            gisIgnoreHeightClip = localStorage.getItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP) === '1';
         } catch {
             /* ignore */
         }
@@ -183,6 +182,7 @@
         try {
             localStorage.setItem(STORAGE_RENDER_MODE, mapRenderMode);
             localStorage.setItem(STORAGE_GIS_ENABLED, gisInfoEnabled ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP, gisIgnoreHeightClip ? '1' : '0');
         } catch {
             /* ignore */
         }
@@ -1455,8 +1455,25 @@
         return `${lo} < h ≤ ${hi}`;
     }
 
+    /** 编辑模式下是否按顶点可视范围裁切显示 */
+    function isGisHeightVisibilityActive() {
+        return !(gisEditMode && gisIgnoreHeightClip);
+    }
+
+    function setGisIgnoreHeightClip(enabled) {
+        gisIgnoreHeightClip = !!enabled;
+        saveLayerPrefs();
+        invalidateRoadArrowCache();
+        document.body.classList.toggle('mcwws-gis-ignore-height-clip', gisEditMode && gisIgnoreHeightClip);
+        renderOverlay();
+        renderLayerDialog();
+    }
+
     /** 可视范围：a < 相机高度 ≤ b；未设 a 视为 −∞，未设 b 视为 +∞ */
     function isVertexVisibleAtHeight(feature, vertexIndex, viewHeight) {
+        if (!isGisHeightVisibilityActive()) {
+            return true;
+        }
         const entry = getVertexVisibilityEntry(feature, vertexIndex);
         if (!hasActiveVisibilityRange(entry)) {
             return true;
@@ -3143,6 +3160,9 @@
             ? getBatchVisibilityBoundDisplay(vtxTargets, 'max')
             : { value: '', mixed: false };
         const visVisibleNow = vtxSel ? isVertexVisibleAtHeight(found.feature, vtxIdx, camH) : false;
+        const heightClipNote = gisIgnoreHeightClip
+            ? '<p class="mcwws-gis-road-props-hint">已开启<strong>忽视高度裁切</strong>，编辑时全部顶点/线段可见</p>'
+            : '';
         const vertexIdRow = vtxSel ? `
                     <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--readonly">
                         <span>顶点编号</span>
@@ -3215,6 +3235,7 @@
                     <p class="mcwws-gis-menu-section-title">特征点（${vtxLabel}）</p>
                     ${vertexIdRow}
                     ${vertexVisRow}
+                    ${heightClipNote}
                 </div>
                 <p class="mcwws-gis-road-props-hint">vertexIds 与 vertexVisibility 按顶点顺序保存在 properties 中；缩放地图可预览分级显示</p>
             </div>
@@ -4804,13 +4825,15 @@
     }
 
     function getGisViewArrowSignature(view, camera) {
-        const h = Math.round(getMapCameraHeight() / 12) * 12;
-        if (camera?.matrixWorldInverse?.elements) {
-            const e = camera.matrixWorldInverse.elements;
-            return `c:${h}:${e[12].toFixed(0)}:${e[13].toFixed(0)}:${e[14].toFixed(0)}`;
+        if (camera?.matrixWorldInverse?.elements && camera?.projectionMatrix?.elements) {
+            const wi = camera.matrixWorldInverse.elements;
+            const pj = camera.projectionMatrix.elements;
+            const snap = (n) => Number(n).toFixed(2);
+            return `c:${snap(wi[12])}:${snap(wi[13])}:${snap(wi[14])}:${snap(pj[0])}:${snap(pj[5])}`;
         }
-        const rot = Math.round((view?.rotation ?? 0) / 6) * 6;
-        return `v:${h}:${Math.round(view?.x ?? 0)}:${Math.round(view?.z ?? 0)}:${rot}`;
+        const rot = Number(view?.rotation ?? 0).toFixed(2);
+        const dist = Number(view?.distance ?? view?.height ?? 0).toFixed(1);
+        return `v:${Math.round(view?.x ?? 0)}:${Math.round(view?.z ?? 0)}:${rot}:${dist}`;
     }
 
     function invalidateRoadArrowCache() {
@@ -4913,7 +4936,6 @@
                 svgLaneArrowGroups.delete(key);
             }
         });
-        gisLastArrowRenderAt = Date.now();
     }
 
     /** 与 SVG 绘制相同的折线裁剪，供拾取与 path 生成共用 */
@@ -5024,8 +5046,7 @@
         return chainsToSvgPath(chains);
     }
 
-    function renderOverlay(options = {}) {
-        const skipArrows = !!options.skipArrows;
+    function renderOverlay() {
         const svg = ensureSvgLayer();
         const pinLayer = ensurePinLayer();
         if (!svg || !pinLayer) return;
@@ -5098,9 +5119,7 @@
             }
         });
 
-        if (!skipArrows) {
-            renderRoadArrowsLayer();
-        }
+        renderRoadArrowsLayer();
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const draft = draftPoints.slice();
@@ -5179,6 +5198,10 @@
         document.body.classList.toggle('mcwws-gis-drawing', drawing);
         const selectMode = isGisSelectMode();
         document.body.classList.toggle('mcwws-gis-select-mode', selectMode);
+        document.body.classList.toggle(
+            'mcwws-gis-ignore-height-clip',
+            gisEditMode && gisIgnoreHeightClip
+        );
         if (!selectMode) {
             clearGisSelectHover();
             cancelGisLasso();
@@ -5328,6 +5351,11 @@
         return `
             <div class="mcwws-layer-editor">
                 <p class="mcwws-gis-menu-hint">${escapeHtml(editHint)}</p>
+                <label class="mcwws-gis-edit-option">
+                    <input type="checkbox" data-gis-ignore-height-clip ${gisIgnoreHeightClip ? 'checked' : ''}
+                        ${!gisCanEdit ? 'disabled' : ''}>
+                    <span>忽视高度裁切（编辑时显示全部顶点与线段）</span>
+                </label>
                 <div class="mcwws-gis-menu-tools" role="toolbar" aria-label="绘制工具">
                     ${TOOLS.map((t) => `
                         <button type="button" class="mcwws-gis-menu-tool${activeTool === t.id ? ' is-active' : ''}"
@@ -5493,6 +5521,12 @@
         });
 
         wrap.addEventListener('change', (e) => {
+            const heightClipInput = e.target.closest('[data-gis-ignore-height-clip]');
+            if (heightClipInput && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisIgnoreHeightClip(e.target.checked);
+                return;
+            }
             const roadInput = e.target.closest('[data-road-prop]');
             if (roadInput) {
                 e.stopPropagation();
@@ -5528,6 +5562,11 @@
             const gisToggle = e.target.closest('[data-gis-info-toggle]');
             if (gisToggle && e.target.matches('input[type="checkbox"]')) {
                 setGisInfoEnabled(e.target.checked);
+                return;
+            }
+            const heightClipToggle = e.target.closest('[data-gis-ignore-height-clip]');
+            if (heightClipToggle && e.target.matches('input[type="checkbox"]')) {
+                setGisIgnoreHeightClip(e.target.checked);
                 return;
             }
             const toolBtn = e.target.closest('[data-tool]');
@@ -5754,21 +5793,8 @@
         return tag === 'INPUT' || tag === 'TEXTAREA';
     }
 
-    function tick(now) {
-        if (!gisLastTickAt) {
-            gisLastTickAt = now || performance.now();
-        }
-        const t = now || performance.now();
-        const dt = Math.min(64, t - gisLastTickAt);
-        gisLastTickAt = t;
-
-        renderOverlay({ skipArrows: true });
-        gisArrowRenderAccumMs += dt;
-        if (gisArrowRenderAccumMs >= GIS_ROAD_ARROW_RENDER_INTERVAL_MS) {
-            gisArrowRenderAccumMs = 0;
-            renderRoadArrowsLayer();
-        }
-
+    function tick() {
+        renderOverlay();
         animationId = requestAnimationFrame(tick);
     }
 

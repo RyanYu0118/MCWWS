@@ -716,6 +716,11 @@ function buildUltimateShopCatalogByMaterial(priceData = {}) {
     return catalog;
 }
 
+const ORDER_LINE_FIELD_NAMES = [
+    'itemId', 'shopId', 'slot', 'quantity', 'unitBuyPrice',
+    'lineTotal', 'productAmount', 'material', 'shopTitle', 'status'
+];
+
 /** Node 数组 → Skript/skript-yaml 可读的 lines.1、lines.2 … */
 function linesToSkriptMap(lines) {
     if (!lines) return {};
@@ -739,6 +744,70 @@ function linesToArray(lines) {
         .filter((line) => line && typeof line === 'object');
 }
 
+/**
+ * 修复 skript-yaml 误写导致的缩进：商品字段应在 lines.'1' 下（16 空格），而非与 '1' 同级（12 空格）。
+ */
+function repairPendingOrdersYamlText(text) {
+    if (!text || typeof text !== 'string') {
+        return text;
+    }
+    return text.split('\n').map((line) => {
+        for (const field of ORDER_LINE_FIELD_NAMES) {
+            if (line.startsWith(`            ${field}:`)) {
+                return `                ${line.slice(12)}`;
+            }
+        }
+        return line;
+    }).join('\n');
+}
+
+/** 将误挂在 lines 根上的字段合并进 lines.'1'，并统一为 Skript 映射格式 */
+function normalizeOrderLines(order) {
+    if (!order || typeof order !== 'object' || !order.lines || typeof order.lines !== 'object') {
+        return false;
+    }
+    let changed = false;
+    const raw = order.lines;
+
+    if (Array.isArray(raw)) {
+        order.lines = linesToSkriptMap(raw);
+        changed = true;
+    }
+
+    const lines = order.lines;
+    const numericKeys = Object.keys(lines).filter((k) => /^\d+$/.test(k));
+    const flatOnLines = ORDER_LINE_FIELD_NAMES.filter((f) => lines[f] != null);
+
+    if (flatOnLines.length && numericKeys.length) {
+        const firstKey = numericKeys.sort((a, b) => Number(a) - Number(b))[0];
+        const merged = { ...(lines[firstKey] && typeof lines[firstKey] === 'object' ? lines[firstKey] : {}) };
+        flatOnLines.forEach((f) => {
+            merged[f] = lines[f];
+            delete lines[f];
+        });
+        lines[firstKey] = merged;
+        changed = true;
+    }
+
+    const arr = linesToArray(lines);
+    if (order.lineCount !== arr.length) {
+        order.lineCount = arr.length;
+        changed = true;
+    }
+
+    return changed;
+}
+
+function normalizePendingOrdersStore(store) {
+    let changed = false;
+    Object.values(store.orders || {}).forEach((order) => {
+        if (normalizeOrderLines(order)) {
+            changed = true;
+        }
+    });
+    return changed;
+}
+
 function migratePendingOrdersLines(store) {
     let changed = false;
     Object.values(store.orders || {}).forEach((order) => {
@@ -751,18 +820,45 @@ function migratePendingOrdersLines(store) {
     return changed;
 }
 
-function loadPendingOrdersStore() {
-    const data = loadYamlFile(PENDING_ORDERS_PATH);
-    if (!data || typeof data !== 'object') {
-        return { next_id: 1, orders: {} };
+function loadPendingOrdersYaml() {
+    if (!fs.existsSync(PENDING_ORDERS_PATH)) {
+        return { data: { next_id: 1, orders: {} }, repaired: false };
     }
+    const rawText = fs.readFileSync(PENDING_ORDERS_PATH, 'utf8');
+    try {
+        return { data: yaml.load(rawText, { schema: YAML_SCHEMA }) || {}, repaired: false };
+    } catch (error) {
+        console.error('[MCWWS] pending_orders.yml 解析失败，尝试自动修复缩进:', error.message);
+        const repairedText = repairPendingOrdersYamlText(rawText);
+        try {
+            const data = yaml.load(repairedText, { schema: YAML_SCHEMA }) || {};
+            fs.writeFileSync(PENDING_ORDERS_PATH, repairedText, 'utf8');
+            console.warn('[MCWWS] pending_orders.yml 已自动修复缩进并写回');
+            return { data, repaired: true };
+        } catch (error2) {
+            console.error('[MCWWS] 修复后仍无法解析 pending_orders.yml', error2);
+            return { data: null, repaired: false };
+        }
+    }
+}
+
+function loadPendingOrdersStore() {
+    const { data: loaded, repaired } = loadPendingOrdersYaml();
+    const data = loaded && typeof loaded === 'object' ? loaded : { next_id: 1, orders: {} };
     if (!data.orders || typeof data.orders !== 'object') {
         data.orders = {};
     }
     if (!Number.isFinite(Number(data.next_id))) {
         data.next_id = 1;
     }
+    let changed = repaired;
     if (migratePendingOrdersLines(data)) {
+        changed = true;
+    }
+    if (normalizePendingOrdersStore(data)) {
+        changed = true;
+    }
+    if (changed) {
         savePendingOrdersStore(data);
     }
     return data;
