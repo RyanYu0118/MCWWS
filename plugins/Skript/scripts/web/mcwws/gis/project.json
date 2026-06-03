@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-03T18:06:27.705Z",
+  "updatedAt": "2026-06-03T18:31:41.592Z",
   "layers": [
     {
       "id": "roads",
@@ -225,6 +225,28 @@
               "db68ff34981c4115-v-cb1e5ae3400a"
             ],
             "strokeStyle": "solid",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "db68ff34981c4115-v-868fec59ae07",
+                "toVertexId": "db68ff34981c4115-v-dc8e1a5c5fc9",
+                "name": "繁华西路"
+              },
+              {
+                "fromVertexId": "db68ff34981c4115-v-dc8e1a5c5fc9",
+                "toVertexId": "db68ff34981c4115-v-36801dd70df1",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "db68ff34981c4115-v-36801dd70df1",
+                "toVertexId": "db68ff34981c4115-v-8f27f0a0e41e",
+                "name": "繁华东路"
+              },
+              {
+                "fromVertexId": "db68ff34981c4115-v-8f27f0a0e41e",
+                "toVertexId": "db68ff34981c4115-v-cb1e5ae3400a",
+                "name": "繁华东路大桥"
+              }
+            ],
             "vertexVisibility": [
               {
                 "min": 512
@@ -597,6 +619,48 @@
             ],
             "strokeStyle": "solid",
             "travelDirection": "dir2",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "35a6578504d64c3e-v-0ecd079fff3b",
+                "toVertexId": "35a6578504d64c3e-v-fac13f311307",
+                "name": "繁华西路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-fac13f311307",
+                "toVertexId": "35a6578504d64c3e-v-5651974f12d0",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-5651974f12d0",
+                "toVertexId": "35a6578504d64c3e-v-6ff5a545f0a0",
+                "name": "繁华中路地道"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-6ff5a545f0a0",
+                "toVertexId": "35a6578504d64c3e-v-0a06c7b862e7",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-0a06c7b862e7",
+                "toVertexId": "35a6578504d64c3e-v-cac74d8885e5",
+                "name": "繁华高架中路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-cac74d8885e5",
+                "toVertexId": "35a6578504d64c3e-v-bc01679893fa",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-bc01679893fa",
+                "toVertexId": "35a6578504d64c3e-v-5cc1d538ac45",
+                "name": "繁华东路"
+              },
+              {
+                "fromVertexId": "35a6578504d64c3e-v-5cc1d538ac45",
+                "toVertexId": "35a6578504d64c3e-v-e3f3cb24b750",
+                "name": "繁华东路大桥"
+              }
+            ],
             "vertexVisibility": [
               {
                 "max": 512
@@ -916,6 +980,48 @@
             ],
             "strokeStyle": "solid",
             "travelDirection": "dir1",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-25bf40884c86",
+                "toVertexId": "dfc3af97fd2541f4-v-1a49b7167c2f",
+                "name": "繁华西路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-1a49b7167c2f",
+                "toVertexId": "dfc3af97fd2541f4-v-d9ee0432133f",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-d9ee0432133f",
+                "toVertexId": "dfc3af97fd2541f4-v-0c3373f4c07c",
+                "name": "繁华中路地道"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-0c3373f4c07c",
+                "toVertexId": "dfc3af97fd2541f4-v-321e370b56c7",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-321e370b56c7",
+                "toVertexId": "dfc3af97fd2541f4-v-e36239a923c0",
+                "name": "繁华高架中路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-e36239a923c0",
+                "toVertexId": "dfc3af97fd2541f4-v-c9861698903a",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-c9861698903a",
+                "toVertexId": "dfc3af97fd2541f4-v-bbcca89d7be9",
+                "name": "繁华东路"
+              },
+              {
+                "fromVertexId": "dfc3af97fd2541f4-v-bbcca89d7be9",
+                "toVertexId": "dfc3af97fd2541f4-v-05876e2c4fc6",
+                "name": "繁华东路大桥"
+              }
+            ],
             "vertexVisibility": [
               {
                 "max": 512
@@ -1049,6 +1155,18 @@
             ],
             "strokeStyle": "solid",
             "travelDirection": "dir2",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "ae04355591bf4306-v-1467619d713d",
+                "toVertexId": "ae04355591bf4306-v-b8d9ea026a11",
+                "name": "繁华西路"
+              },
+              {
+                "fromVertexId": "ae04355591bf4306-v-b8d9ea026a11",
+                "toVertexId": "ae04355591bf4306-v-b816c2e376f0",
+                "name": "繁华中路"
+              }
+            ],
             "vertexVisibility": [
               {
                 "max": 128
@@ -1094,6 +1212,18 @@
             ],
             "strokeStyle": "solid",
             "travelDirection": "dir1",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "4966380161a04e85-v-51f937cdee01",
+                "toVertexId": "4966380161a04e85-v-52a1f55d5cf2",
+                "name": "繁华西路"
+              },
+              {
+                "fromVertexId": "4966380161a04e85-v-52a1f55d5cf2",
+                "toVertexId": "4966380161a04e85-v-56da566774e5",
+                "name": "繁华中路"
+              }
+            ],
             "vertexVisibility": [
               {
                 "max": 128
@@ -1244,6 +1374,23 @@
               "b34d5f59f1094afc-v-2d4681461e86",
               "b34d5f59f1094afc-v-395299712611",
               "b34d5f59f1094afc-v-ca045d3bfdd5"
+            ],
+            "roadNameSegments": [
+              {
+                "fromVertexId": "b34d5f59f1094afc-v-6d819956ccf5",
+                "toVertexId": "b34d5f59f1094afc-v-8ebeb174d3b7",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "b34d5f59f1094afc-v-8ebeb174d3b7",
+                "toVertexId": "b34d5f59f1094afc-v-a4f79f5c8c0b",
+                "name": "繁华东路"
+              },
+              {
+                "fromVertexId": "b34d5f59f1094afc-v-a4f79f5c8c0b",
+                "toVertexId": "b34d5f59f1094afc-v-ca045d3bfdd5",
+                "name": "繁华东路大桥"
+              }
             ],
             "vertexVisibility": [
               {
@@ -1449,6 +1596,23 @@
               "63bfa3cd11b841c0-v-6d533cb0c06a"
             ],
             "strokeStyle": "solid",
+            "roadNameSegments": [
+              {
+                "fromVertexId": "63bfa3cd11b841c0-v-5451249f8073",
+                "toVertexId": "63bfa3cd11b841c0-v-30772ce3c4f9",
+                "name": "繁华中路"
+              },
+              {
+                "fromVertexId": "63bfa3cd11b841c0-v-30772ce3c4f9",
+                "toVertexId": "63bfa3cd11b841c0-v-d06d64a24581",
+                "name": "繁华东路"
+              },
+              {
+                "fromVertexId": "63bfa3cd11b841c0-v-d06d64a24581",
+                "toVertexId": "63bfa3cd11b841c0-v-6d533cb0c06a",
+                "name": "繁华东路大桥"
+              }
+            ],
             "vertexVisibility": [
               {
                 "max": 128

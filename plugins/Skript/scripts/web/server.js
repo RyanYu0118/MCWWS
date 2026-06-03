@@ -1934,6 +1934,34 @@ function normalizeGisFeature(raw, layerId) {
             } else if (travelRaw === 'dir2' || travelRaw === 'direction2' || travelRaw === '2') {
                 featureProps.travelDirection = 'dir2';
             }
+            if (props.showRoadName === false) {
+                featureProps.showRoadName = false;
+            }
+            const segRaw = props.roadNameSegments;
+            if (Array.isArray(segRaw) && segRaw.length) {
+                const roadNameSegments = [];
+                segRaw.slice(0, 64).forEach((entry) => {
+                    if (!entry || typeof entry !== 'object') {
+                        return;
+                    }
+                    const segName = String(entry.name || '').trim().slice(0, 120);
+                    if (!segName) {
+                        return;
+                    }
+                    const fromVertexId = String(entry.fromVertexId || '').trim().slice(0, 80);
+                    const toVertexId = String(entry.toVertexId || '').trim().slice(0, 80);
+                    if (!fromVertexId || !toVertexId || fromVertexId === toVertexId) {
+                        return;
+                    }
+                    roadNameSegments.push({ fromVertexId, toVertexId, name: segName });
+                });
+                if (roadNameSegments.length) {
+                    featureProps.roadNameSegments = roadNameSegments;
+                    if (roadNameSegments.length === 1) {
+                        featureProps.name = roadNameSegments[0].name;
+                    }
+                }
+            }
         }
         const vertCount = coordinates.length;
         const visRaw = props.vertexVisibility;

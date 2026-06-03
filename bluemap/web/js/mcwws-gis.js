@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-45';
+    const MCWWS_GIS_BUILD = '20260602-46';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1649,13 +1649,19 @@
             return false;
         }
         const seg = segments[segIdx];
-        const westDefault = seg.name || getRoadDisplayName(feature) || '';
-        const westName = window.prompt('分界点以西（含分界点）的路名', westDefault);
-        if (westName === null) {
+        const defaultBefore = seg.name || getRoadDisplayName(feature) || '';
+        const beforeName = window.prompt(
+            `第 ${seg.fromIndex + 1}–${vertexIndex + 1} 点段路名（沿线路顶点顺序，含分界点）`,
+            defaultBefore
+        );
+        if (beforeName === null) {
             return false;
         }
-        const eastName = window.prompt('分界点以东（含分界点）的路名', '');
-        if (eastName === null) {
+        const afterName = window.prompt(
+            `第 ${vertexIndex + 1}–${seg.toIndex + 1} 点段路名（沿线路顶点顺序，含分界点）`,
+            ''
+        );
+        if (afterName === null) {
             return false;
         }
         const ids = feature.properties.vertexIds;
@@ -1666,12 +1672,12 @@
             {
                 fromVertexId: ids[seg.fromIndex],
                 toVertexId: ids[vertexIndex],
-                name: String(westName).trim()
+                name: String(beforeName).trim()
             },
             {
                 fromVertexId: ids[vertexIndex],
                 toVertexId: ids[seg.toIndex],
-                name: String(eastName).trim()
+                name: String(afterName).trim()
             }
         );
         recordGisHistory();
@@ -1833,6 +1839,7 @@
         ensureVertexVisibility(feature);
         if (feature.type === 'LineString') {
             setRoadTravelDirection(feature, getRoadTravelDirection(feature));
+            reindexRoadNameSegments(feature);
         }
     }
 
@@ -3533,7 +3540,7 @@
                             </button>
                         </div>
                         ` : ''}
-                        <p class="mcwws-gis-road-props-hint">相邻分段在分界特征点相接；选中中间特征点可拆分为西路/东路等</p>
+                        <p class="mcwws-gis-road-props-hint">相邻分段在分界特征点相接；按线路顶点顺序分段，与南北/东西走向无关</p>
                     </div>
         ` : `
                     <label class="mcwws-gis-road-prop-row">
@@ -3548,7 +3555,7 @@
                             以选中特征点（第 ${vtxSel.vertexIndex + 1} 点）拆分路名
                         </button>
                     </div>
-                    <p class="mcwws-gis-road-props-hint">设置路名后，可选中间特征点拆成多段（如繁华西路 / 繁华东路）</p>
+                    <p class="mcwws-gis-road-props-hint">设置路名后，可选中间特征点拆成多段（同一条路不同区段可设不同名称）</p>
                     ` : ''}
         `;
         const travelDir = getRoadTravelDirection(found.feature);
