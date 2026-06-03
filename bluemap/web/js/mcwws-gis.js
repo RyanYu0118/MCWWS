@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-36';
+    const MCWWS_GIS_BUILD = '20260602-38';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1885,34 +1885,105 @@
         return true;
     }
 
-    function insertFeatureVertex(featureId, lane, insertIndex, point, event) {
-        if (!isGisSegmentInsertModifierHeld(event)) {
-            return;
-        }
+    function insertFeatureVertexInternal(featureId, lane, insertIndex, point, options = {}) {
         const found = findFeatureById(featureId);
         if (!found) {
-            return;
+            return null;
         }
         const feature = found.feature;
         if (!['LineString', 'Polygon'].includes(feature.type)) {
-            return;
+            return null;
         }
         const next = coerceInsertVertexPoint(point);
         if (!next) {
-            return;
+            return null;
         }
         const laneId = lane || 'center';
         const pts = getFeatureLanePoints(feature, laneId).slice();
         const idx = Math.max(0, Math.min(insertIndex, pts.length));
-        recordGisHistory();
+        if (!options.skipHistory) {
+            recordGisHistory();
+        }
         pts.splice(idx, 0, next);
         insertVertexIdAt(feature, idx);
         setFeatureLanePoints(feature, laneId, pts);
+        if (!options.skipSelect) {
+            selectVertex(featureId, laneId, idx);
+        }
+        if (!options.skipDirty) {
+            markDirty();
+        }
+        if (!options.skipRender) {
+            renderOverlay();
+            renderPanel();
+        }
+        return idx;
+    }
+
+    function insertFeatureVertex(featureId, lane, insertIndex, point, event) {
+        if (!isGisSegmentInsertModifierHeld(event)) {
+            return;
+        }
         clearGisHoverSegmentInsert();
-        selectVertex(featureId, laneId, idx);
-        markDirty();
-        renderOverlay();
-        renderPanel();
+        insertFeatureVertexInternal(featureId, lane, insertIndex, point);
+    }
+
+    function getLineEndpointExtendConfig(primary) {
+        if (!primary) {
+            return null;
+        }
+        const found = findFeatureById(primary.featureId);
+        if (!found || found.feature.type !== 'LineString') {
+            return null;
+        }
+        const lane = primary.lane || 'center';
+        const pts = getFeatureLanePoints(found.feature, lane);
+        if (pts.length < 2) {
+            return null;
+        }
+        const idx = primary.vertexIndex;
+        const last = pts.length - 1;
+        if (idx !== 0 && idx !== last) {
+            return null;
+        }
+        return {
+            featureId: found.feature.id,
+            lane,
+            endpointIndex: idx,
+            end: idx === 0 ? 'start' : 'end'
+        };
+    }
+
+    function applyLineExtendInsert(extendConfig) {
+        const { featureId, lane, endpointIndex, end } = extendConfig;
+        const endpoint = getVertexWorld(featureId, lane, endpointIndex);
+        if (!endpoint) {
+            return null;
+        }
+        const found = findFeatureById(featureId);
+        if (!found) {
+            return null;
+        }
+        const pts = getFeatureLanePoints(found.feature, lane);
+        const insertIndex = end === 'end' ? pts.length : 0;
+        const idx = insertFeatureVertexInternal(
+            featureId,
+            lane,
+            insertIndex,
+            { ...endpoint },
+            { skipSelect: true, skipRender: true, skipDirty: true }
+        );
+        if (idx == null) {
+            return null;
+        }
+        clearGisHoverSegmentInsert();
+        selectVertex(featureId, lane, idx);
+        return {
+            featureId,
+            lane,
+            vertexIndex: idx,
+            startWorld: { ...endpoint }
+        };
     }
 
     function clearGisHoverSegmentInsert() {
@@ -2184,16 +2255,23 @@
                 return;
             }
         }
+        const extendCtrl = !!(event.ctrlKey || event.metaKey);
+        let extendConfig = null;
+        if (vertexMode && extendCtrl && dragTargets.length === 1) {
+            extendConfig = getLineEndpointExtendConfig(getPrimarySelectedVertex());
+        }
         event.preventDefault();
         event.stopPropagation();
         if (gisVertexDrag?.cleanup) {
             gisVertexDrag.cleanup();
         }
         gisVertexDrag = {
-            mode: vertexMode ? 'vertex' : 'feature',
+            mode: extendConfig ? 'extend' : (vertexMode ? 'vertex' : 'feature'),
             axis,
             anchorWorld: { x: world.x, y: world.y, z: world.z },
             dragTargets,
+            extendConfig,
+            extendPending: !!extendConfig,
             featureSnapshots,
             startClientX: event.clientX,
             startClientY: event.clientY,
@@ -2217,6 +2295,16 @@
             }
             if (!gisVertexDrag.moved) {
                 return;
+            }
+            if (gisVertexDrag.mode === 'extend' && gisVertexDrag.extendPending) {
+                const inserted = applyLineExtendInsert(gisVertexDrag.extendConfig);
+                if (!inserted) {
+                    endVertexAxisDrag(e);
+                    return;
+                }
+                gisVertexDrag.dragTargets = [inserted];
+                gisVertexDrag.extendPending = false;
+                gisVertexDrag.historyRecorded = true;
             }
             if (!gisVertexDrag.historyRecorded) {
                 recordGisHistory();
@@ -2498,11 +2586,18 @@
         }
         const n = vertexMode ? selectedVertices.size : selectedFeatureIds.size;
         const unit = vertexMode ? '点' : '几何';
+        const canExtendLine = vertexMode
+            && n === 1
+            && !!getLineEndpointExtendConfig(getPrimarySelectedVertex());
         gizmo.querySelectorAll('.mcwws-gis-axis').forEach((btn) => {
             const ax = (btn.getAttribute('data-axis') || 'x').toUpperCase();
-            btn.title = n > 1
-                ? `沿 ${ax} 轴移动已选 ${n} ${unit}`
-                : `沿 ${ax} 轴移动`;
+            if (canExtendLine) {
+                btn.title = `沿 ${ax} 轴移动；按住 Ctrl 拖动可延伸线段`;
+            } else if (n > 1) {
+                btn.title = `沿 ${ax} 轴移动已选 ${n} ${unit}`;
+            } else {
+                btn.title = `沿 ${ax} 轴移动`;
+            }
         });
     }
 
@@ -3358,6 +3453,100 @@
         markDirtySoft();
         renderOverlay();
         refreshVertexVisibilityHintOnly();
+    }
+
+    function getSelectedVertexAlignTargets() {
+        const targets = [];
+        selectedVertices.forEach((key) => {
+            const sel = parseVertexSelectionKey(key);
+            if (!sel) {
+                return;
+            }
+            const found = findFeatureById(sel.featureId);
+            if (!found) {
+                return;
+            }
+            const world = getVertexWorld(sel.featureId, sel.lane, sel.vertexIndex);
+            if (!world) {
+                return;
+            }
+            targets.push({
+                featureId: sel.featureId,
+                lane: sel.lane || 'center',
+                vertexIndex: sel.vertexIndex,
+                feature: found.feature,
+                world: { x: world.x, y: world.y, z: world.z }
+            });
+        });
+        return targets;
+    }
+
+    function alignSelectedVertices(axis) {
+        if (!gisCanEdit || selectedVertices.size < 2) {
+            return;
+        }
+        const axisKey = axis === 'x' || axis === 'y' || axis === 'z' ? axis : null;
+        if (!axisKey) {
+            return;
+        }
+        const targets = getSelectedVertexAlignTargets();
+        if (targets.length < 2) {
+            return;
+        }
+        let sum = 0;
+        targets.forEach((t) => {
+            sum += t.world[axisKey];
+        });
+        const aligned = sum / targets.length;
+        const needsChange = targets.some((t) => Math.abs(t.world[axisKey] - aligned) > 1e-9);
+        if (!needsChange) {
+            setStatus(`${axisKey.toUpperCase()} 轴已对齐`, 'info');
+            return;
+        }
+        recordGisHistory();
+        targets.forEach(({ feature, lane, vertexIndex, world }) => {
+            setFeatureVertexPoint(feature, lane, vertexIndex, {
+                ...world,
+                [axisKey]: aligned
+            }, { skipPanel: true });
+        });
+        markDirty();
+        renderOverlay();
+        syncGizmoFromVertexSelection();
+        renderLayerDialog();
+        setStatus(`已将 ${targets.length} 个点 ${axisKey.toUpperCase()} 对齐为 ${formatCoordForDisplay(aligned)}`, 'ok');
+    }
+
+    function formatCoordForDisplay(value) {
+        const n = Number(value);
+        if (!Number.isFinite(n)) {
+            return '—';
+        }
+        if (Math.abs(n - Math.round(n)) < 1e-9) {
+            return String(Math.round(n));
+        }
+        return n.toFixed(2);
+    }
+
+    function renderVertexAlignPanelHtml() {
+        if (selectedVertices.size < 2) {
+            return '';
+        }
+        const n = selectedVertices.size;
+        return `
+            <div class="mcwws-gis-vertex-align">
+                <p class="mcwws-gis-menu-section-title">对齐（${n} 点）</p>
+                <div class="mcwws-gis-vertex-align-actions">
+                    <button type="button" class="mcwws-gis-menu-action" data-action="align-vertices" data-align-axis="x"
+                        title="将所选点的 X 坐标对齐为平均值" ${!gisCanEdit ? 'disabled' : ''}>X 对齐</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="align-vertices" data-align-axis="y"
+                        title="将所选点的 Y 坐标对齐为平均值" ${!gisCanEdit ? 'disabled' : ''}>Y 对齐</button>
+                    <button type="button" class="mcwws-gis-menu-action" data-action="align-vertices" data-align-axis="z"
+                        title="将所选点的 Z 坐标对齐为平均值" ${!gisCanEdit ? 'disabled' : ''}>Z 对齐</button>
+                </div>
+                <p class="mcwws-gis-road-props-hint">各轴对齐为当前所选点的坐标平均值（与 Gizmo 中心一致）</p>
+            </div>
+        `;
     }
 
     function clearBatchVertexVisibility() {
@@ -5344,7 +5533,7 @@
         const clipboardSourceIds = getFeatureIdsForClipboard();
         const editHint = gisCanEdit
             ? (activeTool === 'select'
-                ? '左键点选；按住 Ctrl 移近线段显示绿点，Ctrl+点击或点绿点添加顶点；中键套索'
+                ? '左键点选；按住 Ctrl 移近线段显示绿点，Ctrl+点击或点绿点添加顶点；选中端点 Ctrl+拖坐标轴延伸线段；中键套索'
                 : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
 
@@ -5421,6 +5610,7 @@
                         : ''
                 }
                 ${renderRoadPropertiesPanelHtml()}
+                ${renderVertexAlignPanelHtml()}
             </div>
         `;
     }
@@ -5646,6 +5836,8 @@
                 deleteSelectedFeature();
             } else if (action === 'clear-vertex-vis') {
                 clearBatchVertexVisibility();
+            } else if (action === 'align-vertices') {
+                alignSelectedVertices(actionBtn.getAttribute('data-align-axis'));
             }
         });
     }

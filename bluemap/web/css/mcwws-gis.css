@@ -479,6 +479,23 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     height: 0;
 }
 
+.mcwws-gis-vertex-align {
+    margin: 6px 0 8px;
+    padding-top: 8px;
+    border-top: 1px solid #e5e7eb;
+}
+
+.mcwws-gis-vertex-align-actions {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 4px;
+}
+
+.mcwws-gis-vertex-align-actions .mcwws-gis-menu-action {
+    min-width: 0;
+    flex: 1;
+}
+
 .mcwws-gis-road-props {
     margin: 8px 0 6px;
     padding: 8px;
