@@ -1,11 +1,12 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-46';
+    const MCWWS_GIS_BUILD = '20260602-48';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
     const GIS_WRAP_ID = 'mcwws-gis-wrap';
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
+    const ROAD_NAME_SVG_LAYER_ID = 'mcwws-gis-road-name-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
     const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
     const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
@@ -44,6 +45,8 @@
     const GIS_ROAD_NAME_MIN_VISIBLE_PX = 3;
     const GIS_ROAD_NAME_SCREEN_MARGIN_PX = 48;
     const GIS_ROAD_NAME_DEDUP_PAD_PX = 10;
+    const GIS_ROAD_NAME_SAME_NAME_MERGE_SCREEN_PX = 100;
+    const GIS_ROAD_NAME_SAME_NAME_MERGE_WORLD_XZ = 24;
     const GIS_ROAD_NAME_MAX_FONT_PX = 13;
     const GIS_ROAD_NAME_MIN_FONT_PX = 9;
     const GIS_ROAD_NAME_MAX_TEXT_VS_ROAD = 1.65;
@@ -5331,6 +5334,18 @@
         return svg;
     }
 
+    function ensureSvgRoadNameLayer() {
+        let svg = document.getElementById(ROAD_NAME_SVG_LAYER_ID);
+        if (!svg) {
+            svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.id = ROAD_NAME_SVG_LAYER_ID;
+            document.body.appendChild(svg);
+        }
+        svg.setAttribute('width', String(window.innerWidth));
+        svg.setAttribute('height', String(window.innerHeight));
+        return svg;
+    }
+
     function ensurePinLayer() {
         let layer = document.getElementById(PIN_LAYER_ID);
         if (!layer) {
@@ -5804,6 +5819,103 @@
         return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
     }
 
+    function shouldMergeSameNameRoadLabels(a, b) {
+        if (String(a.name || '').trim() !== String(b.name || '').trim()) {
+            return false;
+        }
+        const screenDist = Math.hypot(a.screen.x - b.screen.x, a.screen.y - b.screen.y);
+        if (screenDist <= GIS_ROAD_NAME_SAME_NAME_MERGE_SCREEN_PX) {
+            return true;
+        }
+        const wa = a.anchor.world;
+        const wb = b.anchor.world;
+        const worldDist = Math.hypot(wa.x - wb.x, wa.z - wb.z);
+        return worldDist <= GIS_ROAD_NAME_SAME_NAME_MERGE_WORLD_XZ;
+    }
+
+    function mergeSameNameRoadLabelAnchors(items, view, camera) {
+        const nodes = [];
+        items.forEach((item) => {
+            const name = String(item.anchor?.name || '').trim();
+            if (!name || !item.anchor?.world) {
+                return;
+            }
+            const screen = projectGisPoint(item.anchor.world, view, camera, false);
+            if (!screen || screen.behind) {
+                return;
+            }
+            nodes.push({ ...item, name, screen });
+        });
+        if (!nodes.length) {
+            return [];
+        }
+        const parent = nodes.map((_, index) => index);
+        const find = (index) => {
+            if (parent[index] !== index) {
+                parent[index] = find(parent[index]);
+            }
+            return parent[index];
+        };
+        const unite = (a, b) => {
+            const ra = find(a);
+            const rb = find(b);
+            if (ra !== rb) {
+                parent[rb] = ra;
+            }
+        };
+        for (let i = 0; i < nodes.length; i += 1) {
+            for (let j = i + 1; j < nodes.length; j += 1) {
+                if (shouldMergeSameNameRoadLabels(nodes[i], nodes[j])) {
+                    unite(i, j);
+                }
+            }
+        }
+        const buckets = new Map();
+        nodes.forEach((node, index) => {
+            const root = find(index);
+            if (!buckets.has(root)) {
+                buckets.set(root, []);
+            }
+            buckets.get(root).push(node);
+        });
+        return [...buckets.values()].map((members) => {
+            const count = members.length;
+            const world = { x: 0, y: 0, z: 0 };
+            let cosSum = 0;
+            let sinSum = 0;
+            members.forEach(({ anchor }) => {
+                world.x += anchor.world.x;
+                world.y += anchor.world.y;
+                world.z += anchor.world.z;
+                cosSum += Math.cos(anchor.angleRad);
+                sinSum += Math.sin(anchor.angleRad);
+            });
+            const mergedDimmed = members.every((member) => member.dimmed);
+            return {
+                name: members[0].name,
+                world: {
+                    x: world.x / count,
+                    y: world.y / count,
+                    z: world.z / count
+                },
+                angleRad: Math.atan2(sinSum / count, cosSum / count),
+                primary: true,
+                dimmed: mergedDimmed,
+                mergeCount: count
+            };
+        });
+    }
+
+    function getMergedRoadNamesStructSig(anchors, policy, viewHeight, selectionActive) {
+        const anchorSig = anchors
+            .map((anchor) => {
+                const w = anchor.world;
+                return `${anchor.name}|${w.x.toFixed(2)},${w.y.toFixed(2)},${w.z.toFixed(2)}|${anchor.mergeCount || 1}|${anchor.dimmed ? 1 : 0}`;
+            })
+            .join(';');
+        return `${anchorSig}|${policy.bucket}|${Math.round(viewHeight)}|${selectionActive ? 1 : 0}`;
+    }
+
     function normalizeLabelRotationDeg(angleRad) {
         let deg = (angleRad * 180) / Math.PI;
         while (deg <= -90) {
@@ -5865,12 +5977,13 @@
         });
     }
 
-    function syncRoadNameGroupPositions(group, anchors, policy, view, camera, dimmed, placedRects) {
-        group.classList.toggle('is-dimmed', dimmed);
+    function syncRoadNameGroupPositions(group, anchors, policy, view, camera, groupDimmed, placedRects) {
+        group.classList.toggle('is-dimmed', !!groupDimmed);
         const texts = group.querySelectorAll('.mcwws-gis-road-name');
         anchors.forEach((anchor, index) => {
             const text = texts[index];
             const labelName = anchor?.name || '';
+            const dimmed = anchor?.dimmed ?? !!groupDimmed;
             if (!text || !anchor?.world || !labelName) {
                 if (text) {
                     text.style.display = 'none';
@@ -5880,12 +5993,14 @@
             const screen = projectGisPoint(anchor.world, view, camera, false);
             if (!isRoadNameOnScreen(screen)) {
                 text.style.display = 'none';
+                text.classList.remove('is-dimmed');
                 return;
             }
             const roadWidthPx = estimateRoadWidthScreenPx(anchor.world, view, camera);
             const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, roadWidthPx, { primary: true });
             if (!fontSize) {
                 text.style.display = 'none';
+                text.classList.remove('is-dimmed');
                 return;
             }
             const deg = normalizeLabelRotationDeg(anchor.angleRad);
@@ -5895,6 +6010,7 @@
             const y = screen.y.toFixed(1);
             text.style.display = '';
             text.textContent = labelName;
+            text.classList.toggle('is-dimmed', dimmed);
             text.setAttribute('x', x);
             text.setAttribute('y', y);
             text.setAttribute('font-size', String(fontSize));
@@ -5906,7 +6022,7 @@
     }
 
     function renderRoadNameLabelsLayer() {
-        const svg = ensureSvgLayer();
+        const svg = ensureSvgRoadNameLayer();
         if (!svg || !gisInfoEnabled || !gisShowRoadNames) {
             svgLaneNameGroups.forEach((group) => group.remove());
             svgLaneNameGroups.clear();
@@ -5926,7 +6042,7 @@
             return;
         }
 
-        const roadCandidates = [];
+        const flatCandidates = [];
         iterVisibleFeatures().forEach(({ feature }) => {
             if (!shouldShowRoadNameOnFeature(feature)) {
                 return;
@@ -5938,26 +6054,22 @@
             if (!anchors.length) {
                 return;
             }
-            roadCandidates.push({
-                feature,
-                anchors,
-                priority: anchors.length
+            const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            anchors.forEach((anchor) => {
+                flatCandidates.push({ feature, anchor, dimmed });
             });
         });
-        roadCandidates.sort((a, b) => b.priority - a.priority);
 
-        roadCandidates.forEach(({ feature, anchors }) => {
-            const dimmed = selectionActive && !isFeatureSelected(feature.id);
-            const key = `${feature.id}:names`;
-            neededNameGroupKeys.add(key);
-            const group = ensureSvgNameGroup(svg, key, feature.id);
-            const structSig = `${getRoadNameAnchorStructSig(feature, policy, viewHeight)}|${dimmed ? 1 : 0}|${anchors.length}`;
-            if (group.dataset.nameStructSig !== structSig) {
-                group.dataset.nameStructSig = structSig;
-                rebuildRoadNameGroupStructure(group, anchors);
-            }
-            syncRoadNameGroupPositions(group, anchors, policy, view, camera, dimmed, placedRects);
-        });
+        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const key = '__merged_road_names__';
+        neededNameGroupKeys.add(key);
+        const group = ensureSvgNameGroup(svg, key, '__merged__');
+        const structSig = getMergedRoadNamesStructSig(mergedAnchors, policy, viewHeight, selectionActive);
+        if (group.dataset.nameStructSig !== structSig) {
+            group.dataset.nameStructSig = structSig;
+            rebuildRoadNameGroupStructure(group, mergedAnchors);
+        }
+        syncRoadNameGroupPositions(group, mergedAnchors, policy, view, camera, false, placedRects);
 
         svgLaneNameGroups.forEach((group, key) => {
             if (!neededNameGroupKeys.has(key)) {
