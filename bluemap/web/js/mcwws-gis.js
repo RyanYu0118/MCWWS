@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-39';
+    const MCWWS_GIS_BUILD = '20260602-41';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -38,8 +38,15 @@
     const GIS_ROAD_DUAL_DEFAULT_SPLIT_HEIGHT = 80;
     const GIS_ROAD_ARROW_SIZE_PX = 8;
     const GIS_ROAD_ARROW_MAX_PER_SEGMENT = 3;
-    const GIS_ROAD_NAME_MIN_CHAIN_PX = 52;
-    const GIS_ROAD_NAME_MAX_PER_CHAIN = 4;
+    const GIS_ROAD_NAME_MIN_CHAIN_WORLD = 20;
+    const GIS_ROAD_NAME_TANGENT_WORLD = 8;
+    const GIS_ROAD_NAME_MAX_VIEW_HEIGHT = 9000;
+    const GIS_ROAD_NAME_MIN_SCREEN_CHAIN_PX = 32;
+    const GIS_ROAD_NAME_SCREEN_MARGIN_PX = 48;
+    const GIS_ROAD_NAME_DEDUP_PAD_PX = 10;
+    const GIS_ROAD_NAME_MAX_FONT_PX = 13;
+    const GIS_ROAD_NAME_MIN_FONT_PX = 9;
+    const GIS_ROAD_NAME_MAX_TEXT_VS_ROAD = 1.65;
 
     let mapAuthToken = null;
     let mapAuthUser = null;
@@ -5099,86 +5106,381 @@
 
     function invalidateRoadLabelCache() {
         svgLaneNameGroups.forEach((group) => {
-            delete group.dataset.nameSig;
+            delete group.dataset.nameStructSig;
         });
     }
 
-    function sanitizeSvgDomId(raw) {
-        return String(raw || 'id').replace(/[^a-zA-Z0-9_-]/g, '_').slice(0, 48);
-    }
-
-    function screenChainToSvgPath(chain) {
-        if (!chain || chain.length < 2) {
-            return '';
-        }
-        return chain
-            .map((p, i) => `${i === 0 ? 'M' : 'L'} ${p.x.toFixed(1)} ${p.y.toFixed(1)}`)
-            .join(' ');
-    }
-
-    function polylineScreenLength(chain) {
-        if (!chain || chain.length < 2) {
+    function worldPolylineLengthXZ(points) {
+        if (!points || points.length < 2) {
             return 0;
         }
         let len = 0;
-        for (let i = 1; i < chain.length; i += 1) {
-            len += Math.hypot(chain[i].x - chain[i - 1].x, chain[i].y - chain[i - 1].y);
+        for (let i = 1; i < points.length; i += 1) {
+            len += Math.hypot(points[i].x - points[i - 1].x, points[i].z - points[i - 1].z);
         }
         return len;
     }
 
-    function getRoadNameSpacingPx() {
-        const h = getMapCameraHeight();
-        if (!Number.isFinite(h)) {
-            return 240;
+    function sampleWorldPolylineAtDistance(points, distance) {
+        if (!points?.length) {
+            return null;
         }
-        return Math.max(160, Math.min(420, h * 1.1));
+        if (points.length === 1) {
+            return { point: { ...points[0] }, angleRad: 0 };
+        }
+        let acc = 0;
+        for (let i = 1; i < points.length; i += 1) {
+            const a = points[i - 1];
+            const b = points[i];
+            const segLen = Math.hypot(b.x - a.x, b.z - a.z);
+            if (segLen < 1e-9) {
+                continue;
+            }
+            if (acc + segLen >= distance) {
+                const t = (distance - acc) / segLen;
+                return {
+                    point: {
+                        x: a.x + (b.x - a.x) * t,
+                        y: a.y + (b.y - a.y) * t,
+                        z: a.z + (b.z - a.z) * t
+                    },
+                    angleRad: Math.atan2(b.z - a.z, b.x - a.x)
+                };
+            }
+            acc += segLen;
+        }
+        const last = points[points.length - 1];
+        const prev = points[points.length - 2];
+        return {
+            point: { x: last.x, y: last.y, z: last.z },
+            angleRad: Math.atan2(last.z - prev.z, last.x - prev.x)
+        };
     }
 
-    function getRoadNameFontSizePx() {
-        const h = getMapCameraHeight();
-        if (!Number.isFinite(h)) {
-            return 12;
+    function getRoadLabelWorldChain(feature) {
+        const points = coordsToPoints(feature.coordinates);
+        if (points.length < 2) {
+            return null;
         }
-        return Math.max(10, Math.min(14, 9 + h / 180));
+        return points;
     }
 
-    function getRoadNameLabelOffsets(chain, spacing) {
-        const total = polylineScreenLength(chain);
-        if (total < GIS_ROAD_NAME_MIN_CHAIN_PX) {
+    function getRoadNameDisplayPolicy(viewHeight) {
+        const h = Number.isFinite(viewHeight) ? viewHeight : getMapCameraHeight();
+        if (!Number.isFinite(h) || h > GIS_ROAD_NAME_MAX_VIEW_HEIGHT) {
+            return { show: false, bucket: 'off' };
+        }
+        if (h > 3200) {
+            return {
+                show: true,
+                bucket: 'far',
+                maxLabels: 1,
+                screenSpacing: 300,
+                worldSpacing: Math.max(220, h * 0.55),
+                fontSize: GIS_ROAD_NAME_MIN_FONT_PX
+            };
+        }
+        if (h > 900) {
+            return {
+                show: true,
+                bucket: 'mid',
+                maxLabels: 2,
+                screenSpacing: 210,
+                worldSpacing: Math.max(120, h * 0.38),
+                fontSize: 11
+            };
+        }
+        if (h > 220) {
+            return {
+                show: true,
+                bucket: 'near',
+                maxLabels: 3,
+                screenSpacing: 150,
+                worldSpacing: Math.max(72, h * 0.32),
+                fontSize: 12
+            };
+        }
+        return {
+            show: true,
+            bucket: 'close',
+            maxLabels: 4,
+            screenSpacing: 110,
+            worldSpacing: Math.max(48, h * 0.28),
+            fontSize: GIS_ROAD_NAME_MAX_FONT_PX
+        };
+    }
+
+    function getRoadNameHeightBucket() {
+        return getRoadNameDisplayPolicy(getMapCameraHeight()).bucket;
+    }
+
+    function isRoadNameOnScreen(screen) {
+        if (!screen || screen.behind) {
+            return false;
+        }
+        const m = GIS_ROAD_NAME_SCREEN_MARGIN_PX;
+        return screen.x >= -m
+            && screen.y >= -m
+            && screen.x <= window.innerWidth + m
+            && screen.y <= window.innerHeight + m;
+    }
+
+    function screenSpanLength(span) {
+        let len = 0;
+        for (let i = 1; i < span.length; i += 1) {
+            len += Math.hypot(
+                span[i].screen.x - span[i - 1].screen.x,
+                span[i].screen.y - span[i - 1].screen.y
+            );
+        }
+        return len;
+    }
+
+    function sampleScreenSpanAt(span, targetDist) {
+        let acc = 0;
+        for (let i = 1; i < span.length; i += 1) {
+            const a = span[i - 1];
+            const b = span[i];
+            const segLen = Math.hypot(b.screen.x - a.screen.x, b.screen.y - a.screen.y);
+            if (segLen < 1e-6) {
+                continue;
+            }
+            if (acc + segLen >= targetDist) {
+                const t = (targetDist - acc) / segLen;
+                return {
+                    world: {
+                        x: a.world.x + (b.world.x - a.world.x) * t,
+                        y: a.world.y + (b.world.y - a.world.y) * t,
+                        z: a.world.z + (b.world.z - a.world.z) * t
+                    },
+                    screen: {
+                        x: a.screen.x + (b.screen.x - a.screen.x) * t,
+                        y: a.screen.y + (b.screen.y - a.screen.y) * t
+                    },
+                    angleRad: Math.atan2(b.screen.y - a.screen.y, b.screen.x - a.screen.x)
+                };
+            }
+            acc += segLen;
+        }
+        const last = span[span.length - 1];
+        const prev = span[span.length - 2] || last;
+        return {
+            world: { ...last.world },
+            screen: { ...last.screen },
+            angleRad: Math.atan2(last.screen.y - prev.screen.y, last.screen.x - prev.screen.x)
+        };
+    }
+
+    function iterVisibleScreenSpansOnWorldChain(worldChain, view, camera, onSpan) {
+        let span = [];
+        worldChain.forEach((world) => {
+            const screen = projectGisPoint(world, view, camera, false);
+            if (isRoadNameOnScreen(screen)) {
+                span.push({ world, screen });
+            } else if (span.length >= 2) {
+                onSpan(span);
+                span = [];
+            } else {
+                span = [];
+            }
+        });
+        if (span.length >= 2) {
+            onSpan(span);
+        }
+    }
+
+    function getLabelSlotsForScreenSpan(span, policy) {
+        const len = screenSpanLength(span);
+        if (len < GIS_ROAD_NAME_MIN_SCREEN_CHAIN_PX) {
             return [];
         }
-        const offsets = [];
-        if (total < spacing * 1.35) {
-            offsets.push(total / 2);
-            return offsets;
+        const count = Math.min(
+            policy.maxLabels,
+            Math.max(1, Math.floor(len / policy.screenSpacing))
+        );
+        const slots = [];
+        for (let k = 0; k < count; k += 1) {
+            const target = ((k + 0.5) / count) * len;
+            const slot = sampleScreenSpanAt(span, target);
+            if (slot) {
+                slots.push(slot);
+            }
+        }
+        return slots;
+    }
+
+    function getWorldLabelDistancesForChain(worldChain, policy) {
+        const total = worldPolylineLengthXZ(worldChain);
+        if (total < GIS_ROAD_NAME_MIN_CHAIN_WORLD) {
+            return [];
+        }
+        const spacing = policy.worldSpacing;
+        const distances = [];
+        if (total < spacing * 1.25) {
+            distances.push(total / 2);
+            return distances;
         }
         let pos = spacing / 2;
         let count = 0;
-        while (pos < total && count < GIS_ROAD_NAME_MAX_PER_CHAIN) {
-            offsets.push(pos);
+        while (pos < total && count < policy.maxLabels) {
+            distances.push(pos);
             pos += spacing;
             count += 1;
         }
-        return offsets;
+        return distances;
     }
 
-    function buildVisibleScreenChainsForRoad(feature, view, camera, viewHeight) {
-        const points = coordsToPoints(feature.coordinates);
-        const visibleChains = buildVisiblePointChains(points, feature, viewHeight);
-        const screenChains = [];
-        visibleChains.forEach((worldChain) => {
-            const chains = [];
-            iterClippedLineScreenSegments(worldChain, view, camera, (s0, s1) => {
-                appendClippedSegment(chains, [s0, s1]);
-            });
-            chains.forEach((chain) => {
-                if (polylineScreenLength(chain) >= GIS_ROAD_NAME_MIN_CHAIN_PX) {
-                    screenChains.push(chain);
+    function getRoadNameAnchorStructSig(feature, policy) {
+        const chain = getRoadLabelWorldChain(feature);
+        const len = chain ? Math.round(worldPolylineLengthXZ(chain) / 16) : 0;
+        return `${getRoadDisplayName(feature)}|${len}|${policy.bucket}`;
+    }
+
+    function estimateRoadWidthScreenPx(world, view, camera) {
+        const center = projectGisPoint(world, view, camera, false);
+        if (!center || center.behind) {
+            return 0;
+        }
+        const offsets = [
+            { x: 4, z: 0 },
+            { x: -4, z: 0 },
+            { x: 0, z: 4 },
+            { x: 0, z: -4 }
+        ];
+        let best = 0;
+        offsets.forEach((off) => {
+            const edge = projectGisPoint({
+                x: world.x + off.x,
+                y: world.y,
+                z: world.z + off.z
+            }, view, camera, false);
+            if (!edge || edge.behind) {
+                return;
+            }
+            best = Math.max(best, Math.hypot(edge.x - center.x, edge.y - center.y) * 2);
+        });
+        return best;
+    }
+
+    function fitRoadNameFontSize(name, desiredFont, roadWidthPx) {
+        if (!roadWidthPx || roadWidthPx < 6) {
+            return desiredFont;
+        }
+        const estText = Math.max(12, name.length * desiredFont * 0.55);
+        const limit = roadWidthPx * GIS_ROAD_NAME_MAX_TEXT_VS_ROAD;
+        if (estText <= limit) {
+            return desiredFont;
+        }
+        const scaled = Math.floor(desiredFont * (limit / estText));
+        if (scaled < GIS_ROAD_NAME_MIN_FONT_PX) {
+            return 0;
+        }
+        return scaled;
+    }
+
+    function estimateRoadNameLabelRect(screen, name, fontSize, angleDeg) {
+        const estW = Math.max(18, name.length * fontSize * 0.55);
+        const estH = fontSize * 1.35;
+        const rad = (angleDeg * Math.PI) / 180;
+        const cos = Math.abs(Math.cos(rad));
+        const sin = Math.abs(Math.sin(rad));
+        const w = estW * cos + estH * sin;
+        const h = estW * sin + estH * cos;
+        return {
+            left: screen.x - w / 2 - GIS_ROAD_NAME_DEDUP_PAD_PX,
+            top: screen.y - h / 2 - GIS_ROAD_NAME_DEDUP_PAD_PX,
+            right: screen.x + w / 2 + GIS_ROAD_NAME_DEDUP_PAD_PX,
+            bottom: screen.y + h / 2 + GIS_ROAD_NAME_DEDUP_PAD_PX
+        };
+    }
+
+    function roadNameRectsOverlap(a, b) {
+        return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
+    }
+
+    function normalizeLabelRotationDeg(angleRad) {
+        let deg = (angleRad * 180) / Math.PI;
+        while (deg <= -90) {
+            deg += 180;
+        }
+        while (deg > 90) {
+            deg -= 180;
+        }
+        return deg;
+    }
+
+    function projectRoadNameAnchor(worldChain, distance, view, camera) {
+        const half = GIS_ROAD_NAME_TANGENT_WORLD;
+        const center = sampleWorldPolylineAtDistance(worldChain, distance);
+        if (!center) {
+            return null;
+        }
+        const screen = projectGisPoint(center.point, view, camera, false);
+        if (!isRoadNameOnScreen(screen)) {
+            return null;
+        }
+        const before = sampleWorldPolylineAtDistance(worldChain, Math.max(0, distance - half));
+        const after = sampleWorldPolylineAtDistance(
+            worldChain,
+            Math.min(worldPolylineLengthXZ(worldChain), distance + half)
+        );
+        const s0 = before ? projectGisPoint(before.point, view, camera, false) : null;
+        const s1 = after ? projectGisPoint(after.point, view, camera, false) : null;
+        let angleRad = center.angleRad;
+        if (s0 && s1 && !s0.behind && !s1.behind) {
+            const dx = s1.x - s0.x;
+            const dy = s1.y - s0.y;
+            if (dx * dx + dy * dy > 1) {
+                angleRad = Math.atan2(dy, dx);
+            }
+        }
+        return { world: center.point, screen, angleRad };
+    }
+
+    function computeRoadNameAnchors(feature, view, camera, viewHeight) {
+        const policy = getRoadNameDisplayPolicy(viewHeight);
+        if (!policy.show) {
+            return { policy, anchors: [] };
+        }
+        const worldChain = getRoadLabelWorldChain(feature);
+        if (!worldChain) {
+            return { policy, anchors: [] };
+        }
+        const name = getRoadDisplayName(feature);
+        const seen = new Set();
+        const anchors = [];
+        const pushAnchor = (slot) => {
+            if (!slot?.world || !slot.screen) {
+                return;
+            }
+            const key = `${Math.round(slot.world.x * 2)}:${Math.round(slot.world.z * 2)}`;
+            if (seen.has(key)) {
+                return;
+            }
+            seen.add(key);
+            anchors.push(slot);
+        };
+
+        iterVisibleScreenSpansOnWorldChain(worldChain, view, camera, (span) => {
+            getLabelSlotsForScreenSpan(span, policy).forEach(pushAnchor);
+        });
+
+        if (!anchors.length) {
+            getWorldLabelDistancesForChain(worldChain, policy).forEach((distance) => {
+                const slot = projectRoadNameAnchor(worldChain, distance, view, camera);
+                if (slot) {
+                    pushAnchor(slot);
                 }
             });
+        }
+
+        anchors.sort((a, b) => {
+            const la = estimateRoadWidthScreenPx(a.world, view, camera);
+            const lb = estimateRoadWidthScreenPx(b.world, view, camera);
+            return lb - la;
         });
-        return screenChains;
+
+        return { policy, anchors, name };
     }
 
     function ensureSvgNameGroup(svg, key, featureId) {
@@ -5193,54 +5495,63 @@
         return group;
     }
 
-    function appendRoadNameAlongChain(group, featureId, chainIndex, chain, name, fontSize, spacing) {
-        const pathD = screenChainToSvgPath(chain);
-        const totalLen = polylineScreenLength(chain);
-        const offsets = getRoadNameLabelOffsets(chain, spacing);
-        if (!pathD || !offsets.length) {
-            return;
-        }
-        const pathId = `gis-rn-${sanitizeSvgDomId(featureId)}-${chainIndex}`;
-        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('id', pathId);
-        path.setAttribute('d', pathD);
-        path.setAttribute('fill', 'none');
-        path.setAttribute('stroke', 'none');
-        path.setAttribute('pathLength', totalLen.toFixed(2));
-        path.setAttribute('pointer-events', 'none');
-        group.appendChild(path);
-
-        offsets.forEach((offset) => {
+    function rebuildRoadNameGroupStructure(group, anchors, name) {
+        clearSvgGroupChildren(group);
+        anchors.forEach((anchor, index) => {
             const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.classList.add('mcwws-gis-road-name');
-            text.setAttribute('font-size', String(fontSize));
-            const textPath = document.createElementNS('http://www.w3.org/2000/svg', 'textPath');
-            textPath.setAttribute('href', `#${pathId}`);
-            textPath.setAttributeNS('http://www.w3.org/1999/xlink', 'xlink:href', `#${pathId}`);
-            textPath.setAttribute('startOffset', offset.toFixed(1));
-            textPath.setAttribute('text-anchor', 'middle');
-            textPath.setAttribute('dominant-baseline', 'middle');
-            textPath.textContent = name;
-            text.appendChild(textPath);
+            text.setAttribute('data-anchor-index', String(index));
+            text.setAttribute('data-ax', anchor.world.x.toFixed(3));
+            text.setAttribute('data-ay', anchor.world.y.toFixed(3));
+            text.setAttribute('data-az', anchor.world.z.toFixed(3));
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = name;
+            text.style.display = 'none';
             group.appendChild(text);
         });
     }
 
-    function populateRoadNameGroup(group, feature, view, camera, viewHeight, dimmed) {
-        const name = getRoadDisplayName(feature);
-        if (!name) {
-            return;
-        }
-        const screenChains = buildVisibleScreenChainsForRoad(feature, view, camera, viewHeight);
-        if (!screenChains.length) {
-            return;
-        }
+    function syncRoadNameGroupPositions(group, anchors, policy, name, view, camera, dimmed, placedRects) {
         group.classList.toggle('is-dimmed', dimmed);
-        const fontSize = getRoadNameFontSizePx();
-        const spacing = getRoadNameSpacingPx();
-        screenChains.forEach((chain, chainIndex) => {
-            appendRoadNameAlongChain(group, feature.id, chainIndex, chain, name, fontSize, spacing);
+        const texts = group.querySelectorAll('.mcwws-gis-road-name');
+        anchors.forEach((anchor, index) => {
+            const text = texts[index];
+            if (!text || !anchor?.world) {
+                if (text) {
+                    text.style.display = 'none';
+                }
+                return;
+            }
+            const screen = projectGisPoint(anchor.world, view, camera, false);
+            if (!isRoadNameOnScreen(screen)) {
+                text.style.display = 'none';
+                return;
+            }
+            const roadWidthPx = estimateRoadWidthScreenPx(anchor.world, view, camera);
+            const fontSize = fitRoadNameFontSize(name, policy.fontSize, roadWidthPx);
+            if (!fontSize) {
+                text.style.display = 'none';
+                return;
+            }
+            const deg = normalizeLabelRotationDeg(anchor.angleRad);
+            const rect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
+            if (placedRects.some((r) => roadNameRectsOverlap(r, rect))) {
+                text.style.display = 'none';
+                return;
+            }
+            placedRects.push(rect);
+            const x = screen.x.toFixed(1);
+            const y = screen.y.toFixed(1);
+            text.style.display = '';
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('font-size', String(fontSize));
+            text.setAttribute('transform', `rotate(${deg.toFixed(2)}, ${x}, ${y})`);
         });
+        for (let i = anchors.length; i < texts.length; i += 1) {
+            texts[i].style.display = 'none';
+        }
     }
 
     function renderRoadNameLabelsLayer() {
@@ -5253,31 +5564,46 @@
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
         const viewHeight = getMapCameraHeight();
-        const viewSig = getGisViewArrowSignature(view, camera);
+        const policy = getRoadNameDisplayPolicy(viewHeight);
         const selectionActive = hasGisSelection();
         const neededNameGroupKeys = new Set();
+        const placedRects = [];
 
+        if (!policy.show) {
+            svgLaneNameGroups.forEach((group) => group.remove());
+            svgLaneNameGroups.clear();
+            return;
+        }
+
+        const roadCandidates = [];
         iterVisibleFeatures().forEach(({ feature }) => {
             if (!shouldShowRoadNameOnFeature(feature)) {
                 return;
             }
-            const points = coordsToPoints(feature.coordinates);
-            if (!buildVisiblePointChains(points, feature, viewHeight).length) {
+            const { anchors, name } = computeRoadNameAnchors(feature, view, camera, viewHeight);
+            if (!anchors.length || !name) {
                 return;
             }
-            const name = getRoadDisplayName(feature);
+            roadCandidates.push({
+                feature,
+                anchors,
+                name,
+                priority: worldPolylineLengthXZ(getRoadLabelWorldChain(feature))
+            });
+        });
+        roadCandidates.sort((a, b) => b.priority - a.priority);
+
+        roadCandidates.forEach(({ feature, anchors, name }) => {
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
             const key = `${feature.id}:names`;
             neededNameGroupKeys.add(key);
             const group = ensureSvgNameGroup(svg, key, feature.id);
-            const sig = `${viewSig}|${dimmed ? 1 : 0}|${name}|${Math.round(viewHeight)}|${getRoadNameFontSizePx().toFixed(1)}`;
-            if (group.dataset.nameSig === sig) {
-                group.classList.toggle('is-dimmed', dimmed);
-                return;
+            const structSig = `${getRoadNameAnchorStructSig(feature, policy)}|${dimmed ? 1 : 0}|${anchors.length}`;
+            if (group.dataset.nameStructSig !== structSig) {
+                group.dataset.nameStructSig = structSig;
+                rebuildRoadNameGroupStructure(group, anchors, name);
             }
-            group.dataset.nameSig = sig;
-            clearSvgGroupChildren(group);
-            populateRoadNameGroup(group, feature, view, camera, viewHeight, dimmed);
+            syncRoadNameGroupPositions(group, anchors, policy, name, view, camera, dimmed, placedRects);
         });
 
         svgLaneNameGroups.forEach((group, key) => {
@@ -5919,7 +6245,7 @@
             <label class="mcwws-layer-gis-toggle mcwws-layer-gis-toggle--sub">
                 <input type="checkbox" data-gis-show-road-names ${gisShowRoadNames ? 'checked' : ''}
                     ${!gisInfoEnabled ? 'disabled' : ''}>
-                <span>沿路自动显示路名（读取道路「路名」属性）</span>
+                <span>沿路自动显示路名（随视野分布，超远缩放自动隐藏）</span>
             </label>
             <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
                 data-action="toggle-gis-editor"
