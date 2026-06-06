@@ -9,7 +9,60 @@ const SKRIPT_DATE_TAG = new yaml.Type('!skriptdate', {
     kind: 'scalar',
     construct: (data) => String(data)
 });
-const YAML_SCHEMA = yaml.DEFAULT_SCHEMA.extend([SKRIPT_DATE_TAG]);
+
+function decodeSkriptTextComponent(dataField) {
+    if (!dataField) {
+        return '';
+    }
+    try {
+        const buf = Buffer.from(String(dataField), 'base64');
+        const text = buf.toString('latin1');
+        const matches = [...text.matchAll(/"((?:[^"\\]|\\.)*)"/g)];
+        for (let i = matches.length - 1; i >= 0; i -= 1) {
+            const candidate = matches[i][1];
+            if (candidate && !/json/i.test(candidate) && candidate.length <= 64) {
+                return candidate.replace(/\\"/g, '"').replace(/\\\\/g, '\\');
+            }
+        }
+    } catch (error) {
+        // ignore malformed skript serialization
+    }
+    return '';
+}
+
+function decodeSkriptClassValue(raw) {
+    if (raw == null) {
+        return raw;
+    }
+    if (typeof raw === 'string') {
+        return raw;
+    }
+    if (typeof raw !== 'object') {
+        return String(raw);
+    }
+    const type = String(raw.type || '').trim().toLowerCase();
+    if (type === 'textcomponent' && raw.data) {
+        const decoded = decodeSkriptTextComponent(raw.data);
+        if (decoded) {
+            return decoded;
+        }
+    }
+    if (raw.text != null) {
+        return String(raw.text);
+    }
+    if (raw.value != null) {
+        return String(raw.value);
+    }
+    return raw;
+}
+
+const SKRIPT_CLASS_TAG = new yaml.Type('!skriptclass', {
+    kind: 'mapping',
+    construct: (data) => decodeSkriptClassValue(data)
+});
+
+const YAML_SCHEMA = yaml.DEFAULT_SCHEMA.extend([SKRIPT_DATE_TAG, SKRIPT_CLASS_TAG]);
+const yamlFileCache = new Map();
 
 const cors = require('cors');
 const os = require('os');
@@ -220,9 +273,16 @@ function loadYamlFile(filePath) {
     }
 
     try {
-        return yaml.load(fs.readFileSync(filePath, 'utf8'), { schema: YAML_SCHEMA }) || {};
+        const stat = fs.statSync(filePath);
+        const cached = yamlFileCache.get(filePath);
+        if (cached && cached.mtimeMs === stat.mtimeMs) {
+            return cached.data;
+        }
+        const data = yaml.load(fs.readFileSync(filePath, 'utf8'), { schema: YAML_SCHEMA }) || {};
+        yamlFileCache.set(filePath, { mtimeMs: stat.mtimeMs, data });
+        return data;
     } catch (error) {
-        console.error(`读取 YAML 文件失败: ${filePath}`, error);
+        console.error(`读取 YAML 文件失败: ${filePath}`, error.message || error);
         return {};
     }
 }
@@ -230,6 +290,7 @@ function loadYamlFile(filePath) {
 function saveYamlFile(filePath, data) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
     fs.writeFileSync(filePath, yaml.dump(data || {}, { lineWidth: 120, noRefs: true }), 'utf8');
+    yamlFileCache.delete(filePath);
 }
 
 function loadPriceTables() {
@@ -272,6 +333,20 @@ function loadJsonFile(filePath, fallback) {
     }
 }
 
+function normalizePlayerNameField(value) {
+    if (value == null) {
+        return '';
+    }
+    if (typeof value === 'string') {
+        return value.trim();
+    }
+    if (typeof value === 'object') {
+        const decoded = decodeSkriptClassValue(value);
+        return typeof decoded === 'string' ? decoded.trim() : '';
+    }
+    return String(value).trim();
+}
+
 function userMatchesPlayerEntry(user, entryKey, entry = {}) {
     const userKeys = new Set([
         normalizePlayerKey(user && user.username),
@@ -279,7 +354,7 @@ function userMatchesPlayerEntry(user, entryKey, entry = {}) {
     ].filter(Boolean));
     const entryKeys = [
         entryKey,
-        entry.name,
+        normalizePlayerNameField(entry.name),
         entry.username,
         entry.playerId,
         entry.uuid
@@ -297,10 +372,14 @@ function userIsOp(user) {
 
 function entryHasEditorPermission(entry = {}) {
     const permissions = entry.permissions && typeof entry.permissions === 'object' ? entry.permissions : {};
+    const nestedUltimateShop = permissions.ultimateshop && typeof permissions.ultimateshop === 'object'
+        ? permissions.ultimateshop
+        : {};
     return entry.ultimateshopEditor === true
         || entry.ultimateshop_editor === true
         || entry['ultimateshop.editor'] === true
-        || permissions['ultimateshop.editor'] === true;
+        || permissions['ultimateshop.editor'] === true
+        || nestedUltimateShop.editor === true;
 }
 
 function userHasEditorPermission(user) {
