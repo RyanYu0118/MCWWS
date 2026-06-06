@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-52';
+    const MCWWS_GIS_BUILD = '20260602-54';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -16,6 +16,8 @@
     const GIS_LASSO_MIN_DIAG_PX = 12;
     const GIS_DEFAULT_Y = 64;
     const GIS_DEFAULT_ROAD_COLOR = '#C0CDD7';
+    const GIS_DEFAULT_REGION_COLOR = '#DFEAF3';
+    const GIS_VOLUME_SELECTION_STROKE = '#f59e0b';
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
     const GIS_SCREEN_CLIP_PAD = 8000;
@@ -59,8 +61,7 @@
         HEXAHEDRON: 'hexahedron'
     });
     const VOLUME_SHAPE_OPTIONS = [
-        { id: VOLUME_SHAPES.FLAT, label: '平面' },
-        { id: VOLUME_SHAPES.BOX, label: '盒体' },
+        { id: VOLUME_SHAPES.BOX, label: '柱状体' },
         { id: VOLUME_SHAPES.HEXAHEDRON, label: '六面体' }
     ];
     const VOLUME_DEFAULT_HEIGHT = 4;
@@ -73,7 +74,7 @@
     let gisIgnoreHeightClip = false;
     let gisShowRoadNames = true;
     let activeTool = 'select';
-    let activeVolumeShape = 'flat';
+    let activeVolumeShape = VOLUME_SHAPES.BOX;
     let draftVolumePhase = null;
     let activeLayerId = 'roads';
     let project = null;
@@ -107,6 +108,7 @@
     const svgLaneNameGroups = new Map();
     /** @type {SVGPathElement | null} */
     let svgDraftPathEl = null;
+    let svgDraftFillPathEl = null;
     let gisHoverFeatureId = null;
     let lastPickAt = 0;
     let lastPickKey = '';
@@ -1876,12 +1878,21 @@
         return { side: 'center', index: 0 };
     }
 
-    function getFeatureLanePoints(feature) {
+    function getFeatureLanePoints(feature, lane = 'center') {
         if (!feature) {
             return [];
         }
         if (feature.type === 'Point' || feature.type === 'Label') {
             return coordsToPoints(feature.coordinates);
+        }
+        if (feature.type === 'Polygon' && (lane === 'bottom' || lane === 'top')) {
+            const cfg = getVolume3dConfig(feature);
+            if (cfg?.shape === VOLUME_SHAPES.BOX) {
+                const footprint = getFeatureVertexPoints(feature);
+                const { minY, maxY } = resolveVolumeYRange(cfg, footprint);
+                const y = lane === 'bottom' ? minY : maxY;
+                return footprint.map((p) => ({ x: p.x, y, z: p.z }));
+            }
         }
         return getFeatureVertexPoints(feature);
     }
@@ -1890,6 +1901,34 @@
         const next = pointsToCoordList(points);
         if (!next.length) {
             return;
+        }
+        if (feature.type === 'Polygon' && (laneKey === 'bottom' || laneKey === 'top')) {
+            const cfg = getVolume3dConfig(feature);
+            if (cfg?.shape === VOLUME_SHAPES.BOX) {
+                const vol = ensureVolume3d(feature);
+                const footprint = getFeatureVertexPoints(feature).slice();
+                const count = Math.min(next.length, footprint.length);
+                const laneYs = next.slice(0, count).map((p) => p.y);
+                if (laneKey === 'bottom') {
+                    vol.minY = Math.min(...laneYs);
+                } else {
+                    vol.maxY = Math.max(...laneYs);
+                }
+                if (vol.maxY != null && vol.minY != null && vol.maxY - vol.minY < 0.5) {
+                    if (laneKey === 'top') {
+                        vol.maxY = vol.minY + VOLUME_DEFAULT_HEIGHT;
+                    } else {
+                        vol.minY = vol.maxY - VOLUME_DEFAULT_HEIGHT;
+                    }
+                }
+                for (let i = 0; i < count; i += 1) {
+                    footprint[i].x = next[i].x;
+                    footprint[i].z = next[i].z;
+                    footprint[i].y = vol.minY;
+                }
+                setFeatureCoordinatesFromPoints(feature, footprint);
+                return;
+            }
         }
         setFeatureCoordinatesFromPoints(feature, next);
     }
@@ -1910,6 +1949,22 @@
         if (feature.type === 'Point' || feature.type === 'Label') {
             const pts = coordsToPoints(feature.coordinates);
             return pts.length ? [{ lane: 'center', points: pts }] : [];
+        }
+        if (feature.type === 'Polygon') {
+            const cfg = getVolume3dConfig(feature);
+            if (cfg?.shape === VOLUME_SHAPES.BOX) {
+                const footprint = getFeatureVertexPoints(feature);
+                if (footprint.length < 3) {
+                    return [];
+                }
+                const { minY, maxY } = resolveVolumeYRange(cfg, footprint);
+                const bottom = footprint.map((p) => ({ x: p.x, y: minY, z: p.z }));
+                const top = footprint.map((p) => ({ x: p.x, y: maxY, z: p.z }));
+                return [
+                    { lane: 'bottom', points: bottom },
+                    { lane: 'top', points: top }
+                ];
+            }
         }
         const points = getFeatureVertexPoints(feature);
         return points.length ? [{ lane: 'center', points }] : [];
@@ -1970,7 +2025,7 @@
         }
         if (parts.length >= 3) {
             const lane = parts[parts.length - 2];
-            if (lane === 'center' || lane === 'left' || lane === 'right' || /^(left|right)-\d+$/.test(lane)) {
+            if (lane === 'center' || lane === 'bottom' || lane === 'top' || lane === 'left' || lane === 'right' || /^(left|right)-\d+$/.test(lane)) {
                 return {
                     featureId: parts.slice(0, -2).join(':'),
                     lane,
@@ -2195,7 +2250,7 @@
         if (!next) {
             return null;
         }
-        const laneId = lane || 'center';
+        const laneId = resolveVolumeEditLane(feature, lane || 'center');
         const pts = getFeatureLanePoints(feature, laneId).slice();
         const idx = Math.max(0, Math.min(insertIndex, pts.length));
         if (!options.skipHistory) {
@@ -2453,6 +2508,24 @@
         return coerceVertexPoint(next) || startWorld;
     }
 
+    function resolveAxisDragWorld(screenAxis, axis, anchorWorld, startClientX, startClientY, clientX, clientY, camera) {
+        const useScreen = screenAxis
+            && screenAxis.len >= 1.5
+            && (axis !== 'y' || screenAxis.pixelsPerWorld >= 0.35);
+        if (useScreen) {
+            return dragVertexAlongAxisAtScreen(
+                screenAxis,
+                axis,
+                anchorWorld,
+                startClientX,
+                startClientY,
+                clientX,
+                clientY
+            );
+        }
+        return dragVertexAlongAxis3D(axis, anchorWorld, clientX, clientY, camera);
+    }
+
     function dragVertexAlongAxis3D(axis, startWorld, clientX, clientY, camera) {
         const axisDir = axisUnit(axis);
         const ray = unprojectScreenToRay(clientX, clientY, camera);
@@ -2520,10 +2593,6 @@
         const camera = getGisBlueMapCamera();
         const screenAxis = getScreenAxisDir(world, axis, view, camera)
             || getScreenAxisDir(world, axis, view, null);
-        if (!screenAxis) {
-            setStatus('当前视角下该轴不可拖动，请调整视角后重试', 'error');
-            return;
-        }
         const vertexMode = hasSelectedVertices();
         let dragTargets = [];
         let featureSnapshots = null;
@@ -2608,14 +2677,15 @@
                 recordGisHistory();
                 gisVertexDrag.historyRecorded = true;
             }
-            const nextAnchor = dragVertexAlongAxisAtScreen(
+            const nextAnchor = resolveAxisDragWorld(
                 gisVertexDrag.screenAxis,
                 gisVertexDrag.axis,
                 gisVertexDrag.anchorWorld,
                 gisVertexDrag.startClientX,
                 gisVertexDrag.startClientY,
                 e.clientX,
-                e.clientY
+                e.clientY,
+                getGisBlueMapCamera()
             );
             if (gisVertexDrag.mode === 'feature' && gisVertexDrag.featureSnapshots) {
                 const delta = {
@@ -2709,6 +2779,9 @@
                 return;
             }
             getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
+            if (feature.type === 'Polygon' && lane === 'top' && getVolume3dConfig(feature)?.shape === VOLUME_SHAPES.BOX) {
+                return;
+            }
             const segCount = feature.type === 'LineString'
                 ? points.length - 1
                 : points.length;
@@ -3089,10 +3162,21 @@
     }
 
     function snapshotFeatureGeometry(feature) {
-        return {
+        const snap = {
             center: clonePointList(getFeatureVertexPoints(feature)),
             vertexIds: JSON.parse(JSON.stringify(ensureVertexIds(feature)))
         };
+        if (feature.type === 'Polygon') {
+            const vol = feature.properties?.volume3d;
+            if (vol && typeof vol === 'object') {
+                snap.volume3d = {
+                    shape: vol.shape,
+                    minY: vol.minY,
+                    maxY: vol.maxY
+                };
+            }
+        }
+        return snap;
     }
 
     function snapshotSelectedFeatureCoordinates() {
@@ -3123,6 +3207,21 @@
             }
             if (Array.isArray(snap.vertexIds) && snap.vertexIds.length === centerNext.length) {
                 found.feature.properties.vertexIds = snap.vertexIds.slice();
+            }
+            if (snap.volume3d && Math.abs(delta.y) > 1e-9) {
+                const vol = ensureVolume3d(found.feature);
+                const shape = normalizeVolumeShape(snap.volume3d.shape);
+                if (shape === VOLUME_SHAPES.BOX || shape === VOLUME_SHAPES.CYLINDER) {
+                    if (snap.volume3d.minY != null) {
+                        vol.minY = snap.volume3d.minY + delta.y;
+                    }
+                    if (snap.volume3d.maxY != null) {
+                        vol.maxY = snap.volume3d.maxY + delta.y;
+                    }
+                }
+            }
+            if (found.feature.type === 'Polygon') {
+                normalizeVolume3dFeature(found.feature);
             }
         });
         validateSelectedVertices();
@@ -3281,10 +3380,13 @@
         }
         const hub = GIS_GIZMO_HUB;
         ['x', 'y', 'z'].forEach((axis) => {
-            const dir = getScreenAxisDir(world, axis, view, camera);
+            let dir = getScreenAxisDir(world, axis, view, camera);
             const el = gizmo.querySelector(`.mcwws-gis-axis--${axis}`);
             if (!el) {
                 return;
+            }
+            if (!dir && axis === 'y') {
+                dir = { ux: 0, uy: -1, len: 42, pixelsPerWorld: 0.1 };
             }
             if (!dir) {
                 el.style.display = 'none';
@@ -3294,7 +3396,7 @@
             const deg = (Math.atan2(dir.uy, dir.ux) * 180) / Math.PI;
             const widthPx = Math.max(
                 GIS_GIZMO_AXIS_MIN_WIDTH_PX,
-                Math.min(GIS_GIZMO_AXIS_MAX_WIDTH_PX, dir.len * GIS_GIZMO_AXIS_WORLD_SPAN)
+                Math.min(GIS_GIZMO_AXIS_MAX_WIDTH_PX, Math.max(dir.len, 24) * (dir.len >= 1.5 ? GIS_GIZMO_AXIS_WORLD_SPAN : 1))
             );
             el.style.left = `${hub}px`;
             el.style.top = `${hub}px`;
@@ -3389,6 +3491,10 @@
         if (svgDraftPathEl) {
             svgDraftPathEl.remove();
             svgDraftPathEl = null;
+        }
+        if (svgDraftFillPathEl) {
+            svgDraftFillPathEl.remove();
+            svgDraftFillPathEl = null;
         }
         pinElements.forEach((pin) => pin.remove());
         pinElements.clear();
@@ -3531,17 +3637,19 @@
     }
 
     function isCreatableVolumeShape(shape) {
-        return shape === VOLUME_SHAPES.FLAT
-            || shape === VOLUME_SHAPES.BOX
+        return shape === VOLUME_SHAPES.BOX
             || shape === VOLUME_SHAPES.HEXAHEDRON;
     }
 
     function ensureVolume3d(feature) {
         const props = ensureFeatureProperties(feature);
         if (!props.volume3d || typeof props.volume3d !== 'object') {
-            props.volume3d = { shape: VOLUME_SHAPES.FLAT };
+            props.volume3d = { shape: VOLUME_SHAPES.BOX };
         }
         props.volume3d.shape = normalizeVolumeShape(props.volume3d.shape);
+        if (props.volume3d.shape === VOLUME_SHAPES.FLAT) {
+            props.volume3d.shape = VOLUME_SHAPES.BOX;
+        }
         return props.volume3d;
     }
 
@@ -3550,32 +3658,62 @@
             return null;
         }
         const raw = feature.properties?.volume3d;
+        let shape;
         if (!raw || typeof raw !== 'object') {
-            return null;
+            shape = VOLUME_SHAPES.BOX;
+        } else {
+            shape = normalizeVolumeShape(raw.shape);
+            if (shape === VOLUME_SHAPES.FLAT) {
+                shape = VOLUME_SHAPES.BOX;
+            }
         }
-        const shape = normalizeVolumeShape(raw.shape);
         if (shape === VOLUME_SHAPES.FLAT) {
             return null;
         }
         const cfg = { shape };
-        if (Number.isFinite(Number(raw.minY))) {
-            cfg.minY = Number(raw.minY);
+        const src = raw && typeof raw === 'object' ? raw : {};
+        if (Number.isFinite(Number(src.minY))) {
+            cfg.minY = Number(src.minY);
         }
-        if (Number.isFinite(Number(raw.maxY))) {
-            cfg.maxY = Number(raw.maxY);
+        if (Number.isFinite(Number(src.maxY))) {
+            cfg.maxY = Number(src.maxY);
         }
-        if (Number.isFinite(Number(raw.radius)) && Number(raw.radius) > 0) {
-            cfg.radius = Number(raw.radius);
+        if (Number.isFinite(Number(src.radius)) && Number(src.radius) > 0) {
+            cfg.radius = Number(src.radius);
         }
-        if (Number.isFinite(Number(raw.segments))) {
-            cfg.segments = Math.max(8, Math.min(64, Math.round(Number(raw.segments))));
+        if (Number.isFinite(Number(src.segments))) {
+            cfg.segments = Math.max(8, Math.min(64, Math.round(Number(src.segments))));
+        }
+        if (shape === VOLUME_SHAPES.BOX && cfg.minY == null && cfg.maxY == null) {
+            const points = coordsToPoints(feature.coordinates);
+            const ys = inferFootprintYs(points);
+            cfg.minY = ys.minY;
+            cfg.maxY = ys.maxY;
         }
         return cfg;
     }
 
     function getVolumeShape(feature) {
         const cfg = getVolume3dConfig(feature);
-        return cfg ? cfg.shape : VOLUME_SHAPES.FLAT;
+        return cfg ? cfg.shape : VOLUME_SHAPES.BOX;
+    }
+
+    function getRegionVolumeFillColor(feature) {
+        const c = feature?.properties?.color;
+        if (c && /^#[0-9a-fA-F]{3,8}$/i.test(c)) {
+            return c;
+        }
+        return GIS_DEFAULT_REGION_COLOR;
+    }
+
+    function resolveVolumeEditLane(feature, lane) {
+        if (feature?.type === 'Polygon' && lane === 'top') {
+            const cfg = getVolume3dConfig(feature);
+            if (cfg?.shape === VOLUME_SHAPES.BOX) {
+                return 'bottom';
+            }
+        }
+        return lane || 'center';
     }
 
     function inferFootprintYs(points) {
@@ -3700,8 +3838,76 @@
         return buildVolume3dEdgesFromSpec(cfg.shape, coordsToPoints(feature.coordinates), cfg);
     }
 
+    function buildVolumeSolidFaces(shape, points, cfg) {
+        const faces = [];
+        if (!shape || shape === VOLUME_SHAPES.FLAT || !points.length) {
+            return faces;
+        }
+        const { minY, maxY } = resolveVolumeYRange(cfg, points);
+        if (shape === VOLUME_SHAPES.BOX && points.length >= 3) {
+            const bottom = points.map((p) => ({ x: p.x, y: minY, z: p.z }));
+            const top = points.map((p) => ({ x: p.x, y: maxY, z: p.z }));
+            faces.push(bottom);
+            faces.push(top);
+            for (let i = 0; i < points.length; i += 1) {
+                const j = (i + 1) % points.length;
+                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+            }
+            return faces;
+        }
+        if (shape === VOLUME_SHAPES.HEXAHEDRON && points.length >= 8) {
+            const bottom = points.slice(0, 4).map((p) => ({ ...p }));
+            const top = points.slice(4, 8).map((p) => ({ ...p }));
+            faces.push(bottom);
+            faces.push(top);
+            for (let i = 0; i < 4; i += 1) {
+                const j = (i + 1) % 4;
+                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+            }
+            return faces;
+        }
+        if (shape === VOLUME_SHAPES.CYLINDER) {
+            const cr = getCylinderCenterRadius(null, points, cfg);
+            if (!cr) {
+                return faces;
+            }
+            const segments = cfg?.segments || VOLUME_CYLINDER_SEGMENTS;
+            const bottom = buildCylinderRing(cr.center, cr.radius, minY, segments);
+            const top = buildCylinderRing(cr.center, cr.radius, maxY, segments);
+            faces.push(bottom);
+            faces.push(top);
+            for (let i = 0; i < segments; i += 1) {
+                const j = (i + 1) % segments;
+                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+            }
+        }
+        return faces;
+    }
+
+    function buildSvgVolumeSolidFillPathFromSpec(shape, points, cfg, view, camera) {
+        const faces = buildVolumeSolidFaces(shape, points, cfg);
+        if (!faces.length) {
+            return '';
+        }
+        return faces.map((face) => buildSvgPolygonPath(face, view, camera)).filter(Boolean).join(' ');
+    }
+
+    function buildSvgVolumeSolidFillPath(feature, view, camera) {
+        const cfg = getVolume3dConfig(feature);
+        if (!cfg) {
+            return '';
+        }
+        return buildSvgVolumeSolidFillPathFromSpec(
+            cfg.shape,
+            coordsToPoints(feature.coordinates),
+            cfg,
+            view,
+            camera
+        );
+    }
+
     function buildDraftVolume3dEdges() {
-        if (activeTool !== 'polygon' || activeVolumeShape === VOLUME_SHAPES.FLAT) {
+        if (activeTool !== 'polygon') {
             return [];
         }
         const draft = draftPoints.slice();
@@ -3789,23 +3995,17 @@
             return buildSvgPolylinePath(draft, view, camera);
         }
         if (activeTool === 'polygon') {
-            if (activeVolumeShape !== VOLUME_SHAPES.FLAT) {
-                const wire = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
-                if (wire) {
-                    return wire;
-                }
-                const footprint = getDraftFootprintPreviewPoints(draft);
-                if (footprint.length >= 3) {
-                    return buildSvgPolygonPath(footprint, view, camera);
-                }
-                if (footprint.length >= 2) {
-                    return buildSvgPolylinePath(footprint, view, camera);
-                }
+            const wire = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
+            if (wire) {
+                return wire;
             }
-            if (draft.length >= 3) {
-                return buildSvgPolygonPath(draft, view, camera);
+            const footprint = getDraftFootprintPreviewPoints(draft);
+            if (footprint.length >= 3) {
+                return buildSvgPolygonPath(footprint, view, camera);
             }
-            return buildSvgPolylinePath(draft, view, camera);
+            if (footprint.length >= 2) {
+                return buildSvgPolylinePath(footprint, view, camera);
+            }
         }
         return '';
     }
@@ -3831,11 +4031,11 @@
     }
 
     function getVolumeDraftStatusText() {
-        if (activeTool !== 'polygon' || activeVolumeShape === VOLUME_SHAPES.FLAT) {
-            return `区域：已 ${draftPoints.length} 点 — 双击或点「完成」结束，Esc 取消`;
+        if (activeTool !== 'polygon') {
+            return '';
         }
         if (activeVolumeShape === VOLUME_SHAPES.BOX) {
-            return `盒体：已 ${draftPoints.length} 点底面 — 双击或「完成」结束（默认高度 ${VOLUME_DEFAULT_HEIGHT} 格）`;
+            return `柱状体：已 ${draftPoints.length} 点底面 — 双击或「完成」结束（默认高度 ${VOLUME_DEFAULT_HEIGHT} 格）`;
         }
         if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
             if (draftVolumePhase === 'bottom') {
@@ -3843,23 +4043,31 @@
             }
             return `六面体顶面：${Math.max(0, draftPoints.length - 4)}/4 点`;
         }
-        return '';
+        return `区域：已 ${draftPoints.length} 点 — 双击或点「完成」结束，Esc 取消`;
     }
 
     function normalizeVolume3dFeature(feature) {
         if (!feature || feature.type !== 'Polygon') {
             return;
         }
-        ensureVolume3d(feature);
+        const vol = ensureVolume3d(feature);
+        if (vol.shape === VOLUME_SHAPES.FLAT) {
+            vol.shape = VOLUME_SHAPES.BOX;
+        }
         const cfg = getVolume3dConfig(feature);
         if (!cfg) {
             return;
         }
         const points = coordsToPoints(feature.coordinates);
         const { minY, maxY } = resolveVolumeYRange(cfg, points);
-        const vol = ensureVolume3d(feature);
         vol.minY = minY;
         vol.maxY = maxY;
+        if (cfg.shape === VOLUME_SHAPES.BOX && points.length >= 3) {
+            setFeatureCoordinatesFromPoints(
+                feature,
+                points.map((p) => ({ x: p.x, y: minY, z: p.z }))
+            );
+        }
         if (cfg.shape === VOLUME_SHAPES.CYLINDER) {
             const cr = getCylinderCenterRadius(feature, points, cfg);
             if (cr) {
@@ -4172,7 +4380,7 @@
         }
         const batchCount = items.length;
         const feature = items[0].feature;
-        const shapeDisp = getBatchEnumPropDisplay(items, (f) => ensureVolume3d(f).shape || VOLUME_SHAPES.FLAT);
+        const shapeDisp = getBatchEnumPropDisplay(items, (f) => ensureVolume3d(f).shape || VOLUME_SHAPES.BOX);
         const shape = shapeDisp.mixed ? '' : shapeDisp.value;
         const minYDisp = getBatchNumberPropDisplay(items, (f) => {
             const pts = coordsToPoints(f.coordinates);
@@ -4196,7 +4404,7 @@
         `).join('');
         const legacyCylinder = !shapeDisp.mixed && shape === VOLUME_SHAPES.CYLINDER;
         const showCylinderRadius = legacyCylinder;
-        const showYRows = legacyCylinder || (!shapeDisp.mixed && shape !== VOLUME_SHAPES.FLAT) || shapeDisp.mixed;
+        const showYRows = legacyCylinder || (!shapeDisp.mixed && shape === VOLUME_SHAPES.BOX) || shapeDisp.mixed;
         const radiusRow = showCylinderRadius ? `
             <label class="mcwws-gis-road-prop-row">
                 <span>半径（格）</span>
@@ -4240,12 +4448,12 @@
         const hint = shapeDisp.mixed
             ? '所选区域 3D 形状不一致时，修改形状将统一应用到全部'
             : legacyCylinder
-                ? '圆柱为旧数据，仍可编辑；新建请选盒体或六面体'
+                ? '圆柱为旧数据，仍可编辑；新建请选柱状体或六面体'
                 : shape === VOLUME_SHAPES.BOX
-                    ? '盒体：底面轮廓 + 上下 Y 范围'
+                    ? '柱状体：底面轮廓 + 上下 Y 范围'
                     : shape === VOLUME_SHAPES.HEXAHEDRON
                         ? '六面体：前 4 点为底面，后 4 点为顶面（可拖拽顶点）'
-                        : '平面区域：仅 XZ 多边形';
+                        : '区域 3D 体';
         return `
             <div class="mcwws-gis-road-props">
                 <p class="mcwws-gis-menu-section-title">区域属性 · ${escapeHtml(nameDisp.mixed ? '多个名称' : (nameDisp.value || '区域'))}${renderBatchCountSuffix(batchCount)}</p>
@@ -4261,7 +4469,7 @@
                         <span>颜色</span>
                         <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="color"
                             value="${escapeHtml(colorDisp.value)}"
-                            placeholder="${colorDisp.mixed ? '多个值' : '#3b82f6（留空=图层默认）'}"
+                            placeholder="${colorDisp.mixed ? '多个值' : '#DFEAF3（留空=默认填充）'}"
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
@@ -4333,11 +4541,6 @@
                 return false;
             }
             vol.shape = next;
-            if (vol.shape === VOLUME_SHAPES.FLAT) {
-                delete vol.minY;
-                delete vol.maxY;
-                delete vol.radius;
-            }
         } else if (prop === 'minY' || prop === 'maxY') {
             const n = Number(String(input.value ?? '').trim());
             if (!Number.isFinite(n)) {
@@ -5197,9 +5400,11 @@
             if (!sel) {
                 return;
             }
-            const laneKey = `${sel.featureId}:${sel.lane || 'center'}`;
+            const laneKey = `${sel.featureId}:${resolveVolumeEditLane(findFeatureById(sel.featureId)?.feature, sel.lane || 'center')}`;
             if (!byFeatureLane.has(laneKey)) {
-                byFeatureLane.set(laneKey, { featureId: sel.featureId, lane: sel.lane || 'center', indices: [] });
+                const found = findFeatureById(sel.featureId);
+                const lane = resolveVolumeEditLane(found?.feature, sel.lane || 'center');
+                byFeatureLane.set(laneKey, { featureId: sel.featureId, lane, indices: [] });
             }
             byFeatureLane.get(laneKey).indices.push(sel.vertexIndex);
         });
@@ -5280,7 +5485,8 @@
         if (type === 'LineString') {
             properties.color = GIS_DEFAULT_ROAD_COLOR;
         }
-        if (type === 'Polygon' && activeVolumeShape !== VOLUME_SHAPES.FLAT) {
+        if (type === 'Polygon') {
+            properties.color = GIS_DEFAULT_REGION_COLOR;
             properties.volume3d = { shape: activeVolumeShape };
             if (activeVolumeShape === VOLUME_SHAPES.BOX) {
                 const ys = inferFootprintYs(draftPoints);
@@ -6184,7 +6390,7 @@
             svg.appendChild(path);
             svgPathElements.set(key, path);
         } else {
-            path.classList.remove('mcwws-gis-line', 'mcwws-gis-polygon', 'mcwws-gis-line--dual');
+            path.classList.remove('mcwws-gis-line', 'mcwws-gis-polygon', 'mcwws-gis-line--dual', 'mcwws-gis-volume3d', 'mcwws-gis-volume3d-fill');
             path.classList.add('mcwws-gis-feature', ...classNames);
         }
         return path;
@@ -7132,31 +7338,52 @@
                 }
             }
             if (feature.type === 'Polygon' && points.length >= 3) {
-                const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
-                const d = buildSvgPolygonPathWithVisibility(points, view, camera, feature, viewHeight);
-                if (d) {
-                    const key = `${feature.id}:polygon`;
-                    neededPathKeys.add(key);
-                    const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-polygon');
-                    path.setAttribute('d', d);
-                    path.setAttribute('stroke', color);
-                    if (allVisible) {
-                        path.setAttribute('fill', color);
-                    } else {
-                        path.removeAttribute('fill');
+                const volCfg = getVolume3dConfig(feature);
+                const hasVolumeSolid = volCfg && volCfg.shape !== VOLUME_SHAPES.FLAT;
+                const regionSelected = isFeatureSelected(feature.id) && gisEditMode;
+                const fillColor = getRegionVolumeFillColor(feature);
+                const edgeStroke = regionSelected ? GIS_VOLUME_SELECTION_STROKE : 'rgba(90, 110, 130, 0.35)';
+
+                if (hasVolumeSolid) {
+                    const fillD = buildSvgVolumeSolidFillPath(feature, view, camera);
+                    if (fillD) {
+                        const fillKey = `${feature.id}:volume-fill`;
+                        neededPathKeys.add(fillKey);
+                        const fillPath = ensureSvgFeaturePath(svg, fillKey, feature.id, 'mcwws-gis-volume3d-fill');
+                        fillPath.setAttribute('d', fillD);
+                        fillPath.setAttribute('fill', fillColor);
+                        fillPath.removeAttribute('stroke');
+                        fillPath.classList.toggle('is-dimmed', dimmed);
                     }
-                    path.classList.toggle('is-dimmed', dimmed);
-                }
-                const volEdges = buildVolume3dEdges(feature);
-                if (volEdges.length) {
-                    const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
-                    if (volD) {
-                        const volKey = `${feature.id}:volume3d`;
-                        neededPathKeys.add(volKey);
-                        const volPath = ensureSvgFeaturePath(svg, volKey, feature.id, 'mcwws-gis-volume3d');
-                        volPath.setAttribute('d', volD);
-                        volPath.setAttribute('stroke', color);
-                        volPath.classList.toggle('is-dimmed', dimmed);
+                    const volEdges = buildVolume3dEdges(feature);
+                    if (volEdges.length) {
+                        const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
+                        if (volD) {
+                            const volKey = `${feature.id}:volume3d`;
+                            neededPathKeys.add(volKey);
+                            const volPath = ensureSvgFeaturePath(svg, volKey, feature.id, 'mcwws-gis-volume3d');
+                            volPath.setAttribute('d', volD);
+                            volPath.setAttribute('stroke', edgeStroke);
+                            volPath.setAttribute('stroke-width', regionSelected ? '2.5' : '2');
+                            volPath.classList.toggle('is-dimmed', dimmed);
+                            volPath.classList.toggle('is-selected', regionSelected);
+                        }
+                    }
+                } else {
+                    const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
+                    const d = buildSvgPolygonPathWithVisibility(points, view, camera, feature, viewHeight);
+                    if (d) {
+                        const key = `${feature.id}:polygon`;
+                        neededPathKeys.add(key);
+                        const path = ensureSvgFeaturePath(svg, key, feature.id, 'mcwws-gis-polygon');
+                        path.setAttribute('d', d);
+                        path.setAttribute('stroke', color);
+                        if (allVisible) {
+                            path.setAttribute('fill', color);
+                        } else {
+                            path.removeAttribute('fill');
+                        }
+                        path.classList.toggle('is-dimmed', dimmed);
                     }
                 }
             }
@@ -7174,20 +7401,56 @@
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const d = buildDraftPreviewPath(view, camera);
+            if (activeTool === 'polygon' && activeVolumeShape === VOLUME_SHAPES.BOX) {
+                const draft = getDraftPreviewPoints();
+                if (draft.length >= 3) {
+                    const ys = inferFootprintYs(draft);
+                    const fillD = buildSvgVolumeSolidFillPathFromSpec(
+                        VOLUME_SHAPES.BOX,
+                        draft,
+                        { shape: VOLUME_SHAPES.BOX, minY: ys.minY, maxY: ys.maxY },
+                        view,
+                        camera
+                    );
+                    if (fillD) {
+                        if (!svgDraftFillPathEl) {
+                            svgDraftFillPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            svgDraftFillPathEl.classList.add('mcwws-gis-draft-fill');
+                            svg.insertBefore(svgDraftFillPathEl, svg.firstChild);
+                        }
+                        svgDraftFillPathEl.setAttribute('d', fillD);
+                        svgDraftFillPathEl.setAttribute('fill', GIS_DEFAULT_REGION_COLOR);
+                    } else if (svgDraftFillPathEl) {
+                        svgDraftFillPathEl.removeAttribute('d');
+                    }
+                } else if (svgDraftFillPathEl) {
+                    svgDraftFillPathEl.remove();
+                    svgDraftFillPathEl = null;
+                }
+            } else if (svgDraftFillPathEl) {
+                svgDraftFillPathEl.remove();
+                svgDraftFillPathEl = null;
+            }
             if (d) {
                 if (!svgDraftPathEl) {
                     svgDraftPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
                     svgDraftPathEl.classList.add('mcwws-gis-draft');
                     svg.appendChild(svgDraftPathEl);
                 }
-                svgDraftPathEl.classList.toggle('mcwws-gis-draft--volume3d', activeTool === 'polygon' && activeVolumeShape !== VOLUME_SHAPES.FLAT);
+                svgDraftPathEl.classList.toggle('mcwws-gis-draft--volume3d', activeTool === 'polygon');
                 svgDraftPathEl.setAttribute('d', d);
             } else if (svgDraftPathEl) {
                 svgDraftPathEl.removeAttribute('d');
             }
-        } else if (svgDraftPathEl) {
-            svgDraftPathEl.remove();
-            svgDraftPathEl = null;
+        } else {
+            if (svgDraftPathEl) {
+                svgDraftPathEl.remove();
+                svgDraftPathEl = null;
+            }
+            if (svgDraftFillPathEl) {
+                svgDraftFillPathEl.remove();
+                svgDraftFillPathEl = null;
+            }
         }
 
         const pinIds = new Set();
@@ -7393,7 +7656,7 @@
         const editHint = gisCanEdit
             ? (activeTool === 'select'
                 ? '左键点选；按住 Ctrl 移近线段显示绿点，Ctrl+点击或点绿点添加顶点；选中端点 Ctrl+拖坐标轴延伸线段；中键套索'
-                : activeTool === 'polygon' && activeVolumeShape !== VOLUME_SHAPES.FLAT
+                : activeTool === 'polygon'
                     ? `3D 区域（${VOLUME_SHAPE_OPTIONS.find((o) => o.id === activeVolumeShape)?.label || ''}）：${getVolumeDraftStatusText()}`
                     : '2D 俯视下点击地图绘制；道路/区域双击结束')
             : '管理员登录后可编辑地理信息';
