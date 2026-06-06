@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-68';
+    const MCWWS_GIS_BUILD = '20260602-70';
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -1542,6 +1542,11 @@
             return true;
         }
         return gisEditMode && gisShowVolume3dBuildings;
+    }
+
+    /** 简化地图编辑模式下才显示三维建筑线框；原版地图不显示线框 */
+    function shouldShowVolume3dWireframes() {
+        return isSimplifiedMapMode() && gisEditMode;
     }
 
     function setGisShowVolume3dBuildings(enabled) {
@@ -4843,9 +4848,11 @@
             return buildSvgPolylinePath(draft, view, camera);
         }
         if (activeTool === 'polygon') {
-            const wire = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
-            if (wire) {
-                return wire;
+            if (shouldShowVolume3dWireframes()) {
+                const wire = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
+                if (wire) {
+                    return wire;
+                }
             }
             const footprint = getDraftFootprintPreviewPoints(draft);
             if (footprint.length >= 3) {
@@ -8228,20 +8235,22 @@
                 const fillColor = getRegionVolumeFillColor(feature);
                 const edgeStroke = regionSelected ? GIS_VOLUME_SELECTION_STROKE : 'rgba(90, 110, 130, 0.35)';
 
-                if (hasVolumeSolid && showVolume3dSolids) {
-                    volumeMeshEntries.push({ feature, layer, dimmed });
-                    if (regionSelected) {
-                        const volEdges = buildVolume3dEdges(feature);
-                        if (volEdges.length) {
-                            const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
-                            if (volD) {
-                                volumeWireframeQueue.push({
-                                    featureId: feature.id,
-                                    volKey: `${feature.id}:volume3d`,
-                                    volD,
-                                    edgeStroke,
-                                    dimmed
-                                });
+                if (hasVolumeSolid) {
+                    if (showVolume3dSolids) {
+                        volumeMeshEntries.push({ feature, layer, dimmed });
+                        if (regionSelected && shouldShowVolume3dWireframes()) {
+                            const volEdges = buildVolume3dEdges(feature);
+                            if (volEdges.length) {
+                                const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
+                                if (volD) {
+                                    volumeWireframeQueue.push({
+                                        featureId: feature.id,
+                                        volKey: `${feature.id}:volume3d`,
+                                        volD,
+                                        edgeStroke,
+                                        dimmed
+                                    });
+                                }
                             }
                         }
                     }
@@ -8364,7 +8373,10 @@
                     svgDraftPathEl.classList.add('mcwws-gis-draft');
                     svg.appendChild(svgDraftPathEl);
                 }
-                svgDraftPathEl.classList.toggle('mcwws-gis-draft--volume3d', activeTool === 'polygon');
+                svgDraftPathEl.classList.toggle(
+                    'mcwws-gis-draft--volume3d',
+                    activeTool === 'polygon' && shouldShowVolume3dWireframes()
+                );
                 svgDraftPathEl.setAttribute('d', d);
             } else if (svgDraftPathEl) {
                 svgDraftPathEl.removeAttribute('d');
