@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-50';
+    const MCWWS_GIS_BUILD = '20260602-51';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -3785,47 +3785,157 @@
     }
 
     function getSelectedPolygonFeature() {
-        if (selectedFeatureIds.size !== 1) {
-            return null;
-        }
-        const id = Array.from(selectedFeatureIds)[0];
-        const found = findFeatureById(id);
-        if (!found || found.feature.type !== 'Polygon') {
-            return null;
-        }
-        return found;
+        const items = getSelectedPolygonFeatures();
+        return items.length === 1 ? items[0] : null;
     }
 
     function getSelectedLineStringRoad() {
-        if (selectedFeatureIds.size !== 1) {
+        const items = getSelectedLineStringFeatures();
+        return items.length === 1 ? items[0] : null;
+    }
+
+    function iterSelectedFeatures() {
+        const items = [];
+        selectedFeatureIds.forEach((id) => {
+            const found = findFeatureById(id);
+            if (found) {
+                items.push(found);
+            }
+        });
+        return items;
+    }
+
+    function getHomogeneousSelectedFeatures() {
+        const items = iterSelectedFeatures();
+        if (!items.length) {
             return null;
         }
-        const id = Array.from(selectedFeatureIds)[0];
-        const found = findFeatureById(id);
-        if (!found || found.feature.type !== 'LineString') {
+        const type = items[0].feature.type;
+        if (!items.every((entry) => entry.feature.type === type)) {
             return null;
         }
-        return found;
+        return { type, items };
+    }
+
+    function getSelectedFeaturesByType(type) {
+        const sel = getHomogeneousSelectedFeatures();
+        if (!sel || sel.type !== type) {
+            return [];
+        }
+        return sel.items;
+    }
+
+    function getSelectedLineStringFeatures() {
+        return getSelectedFeaturesByType('LineString');
+    }
+
+    function getSelectedPolygonFeatures() {
+        return getSelectedFeaturesByType('Polygon');
+    }
+
+    function getSelectedPinFeatures() {
+        const sel = getHomogeneousSelectedFeatures();
+        if (!sel || (sel.type !== 'Point' && sel.type !== 'Label')) {
+            return [];
+        }
+        return sel.items;
+    }
+
+    function getBatchStringPropDisplay(items, getter) {
+        const keys = items.map((entry) => {
+            const v = getter(entry.feature);
+            return v == null ? '' : String(v).trim();
+        });
+        const uniq = [...new Set(keys)];
+        if (uniq.length === 1) {
+            return { value: uniq[0], mixed: false };
+        }
+        return { value: '', mixed: true };
+    }
+
+    function getBatchNumberPropDisplay(items, getter) {
+        const keys = items.map((entry) => {
+            const v = getter(entry.feature);
+            return v == null || v === '' ? '' : String(v);
+        });
+        const uniq = [...new Set(keys)];
+        if (uniq.length === 1) {
+            return { value: uniq[0], mixed: false };
+        }
+        return { value: '', mixed: true };
+    }
+
+    function getBatchEnumPropDisplay(items, getter) {
+        const keys = items.map((entry) => String(getter(entry.feature) ?? ''));
+        const uniq = [...new Set(keys)];
+        if (uniq.length === 1) {
+            return { value: uniq[0], mixed: false };
+        }
+        return { value: '', mixed: true };
+    }
+
+    function getBatchBoolPropDisplay(items, getter) {
+        const keys = items.map((entry) => (getter(entry.feature) ? '1' : '0'));
+        const uniq = [...new Set(keys)];
+        if (uniq.length === 1) {
+            return { checked: uniq[0] === '1', mixed: false };
+        }
+        return { checked: false, mixed: true };
+    }
+
+    function renderBatchCountSuffix(count) {
+        return count > 1 ? ` · 已选 ${count} 项（批量）` : '';
+    }
+
+    function renderMixedSelectPlaceholder(mixed) {
+        return mixed ? '<option value="" disabled selected>多个值</option>' : '';
+    }
+
+    function renderSelectionTypeMismatchHintHtml() {
+        if (selectedFeatureIds.size <= 1) {
+            return '';
+        }
+        if (getHomogeneousSelectedFeatures()) {
+            return '';
+        }
+        return '<p class="mcwws-gis-road-props-hint">已选多种类型要素，请只选择相同类型（道路 / 区域 / 点 / 标注）以批量编辑属性</p>';
+    }
+
+    function applyCheckboxIndeterminateStates(root) {
+        if (!root) {
+            return;
+        }
+        root.querySelectorAll('input[type="checkbox"][data-mixed="1"]').forEach((input) => {
+            input.indeterminate = true;
+        });
     }
 
     function renderRoadPropertiesPanelHtml() {
-        const found = getSelectedLineStringRoad();
-        if (!found) {
+        const items = getSelectedLineStringFeatures();
+        if (!items.length) {
             return '';
         }
-        const props = ensureFeatureProperties(found.feature);
-        const strokeStyle = String(props.strokeStyle || 'solid');
-        const strokeWidth = Number.isFinite(Number(props.strokeWidth)) ? Number(props.strokeWidth) : '';
-        const strokeColor = String(props.color || '');
-        const roadNameSegments = getRoadNameSegments(found.feature);
-        const showRoadName = props.showRoadName !== false;
-        const vtxTargets = getSelectedRoadVertexTargets();
+        const batchCount = items.length;
+        const found = items[0];
+        const singleRoad = batchCount === 1;
+        const strokeStyleDisp = getBatchEnumPropDisplay(items, (f) => String(f.properties?.strokeStyle || 'solid'));
+        const strokeWidthDisp = getBatchNumberPropDisplay(items, (f) => {
+            const w = Number(f.properties?.strokeWidth);
+            return Number.isFinite(w) ? w : '';
+        });
+        const strokeColorDisp = getBatchStringPropDisplay(items, (f) => f.properties?.color || '');
+        const showRoadNameDisp = getBatchBoolPropDisplay(items, (f) => f.properties?.showRoadName !== false);
+        const travelDirDisp = getBatchEnumPropDisplay(items, (f) => getRoadTravelDirection(f));
+        const nameDisp = getBatchStringPropDisplay(items, (f) => String(f.properties?.name || '').trim());
+        const roadNameSegments = singleRoad ? getRoadNameSegments(found.feature) : [];
+        const showSegmentEditor = singleRoad && roadNameSegments.length > 0;
+        const vtxTargets = singleRoad ? getSelectedRoadVertexTargets() : [];
         const vtxSel = vtxTargets.length === 1 ? vtxTargets[0] : null;
-        const canSplitRoadName = gisCanEdit
+        const canSplitRoadName = gisCanEdit && singleRoad
             && vtxSel
             && vtxSel.vertexIndex > 0
             && vtxSel.vertexIndex < getFeatureVertexCount(found.feature) - 1;
-        const roadNameSegmentsHtml = roadNameSegments.length ? `
+        const roadNameSegmentsHtml = showSegmentEditor ? `
                     <div class="mcwws-gis-road-name-segments">
                         <p class="mcwws-gis-menu-section-title">分段路名（特征点分界）</p>
                         ${roadNameSegments.map((seg, i) => `
@@ -3849,10 +3959,10 @@
                     <label class="mcwws-gis-road-prop-row">
                         <span>路名</span>
                         <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="name"
-                            value="${escapeHtml(String(props.name || '').trim())}" placeholder="如：繁华路（留空不显示）"
+                            value="${escapeHtml(nameDisp.value)}" placeholder="${nameDisp.mixed ? '多个值' : '如：繁华路（留空不显示）'}"
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
-                    ${canSplitRoadName ? `
+                    ${singleRoad && canSplitRoadName ? `
                     <div class="mcwws-gis-menu-actions">
                         <button type="button" class="mcwws-gis-menu-action" data-action="split-road-name-at-vertex">
                             以选中特征点（第 ${vtxSel.vertexIndex + 1} 点）拆分路名
@@ -3860,8 +3970,8 @@
                     </div>
                     <p class="mcwws-gis-road-props-hint">设置路名后，可选中间特征点拆成多段（同一条路不同区段可设不同名称）</p>
                     ` : ''}
+                    ${batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量设置路名将应用到每条道路全程</p>' : ''}
         `;
-        const travelDir = getRoadTravelDirection(found.feature);
         const vtxIdx = vtxSel ? vtxSel.vertexIndex : -1;
         const vtxId = vtxSel ? getVertexIdAt(found.feature, vtxIdx) : '';
         const vtxLabel = !vtxTargets.length
@@ -3916,44 +4026,49 @@
         ` : '';
         return `
             <div class="mcwws-gis-road-props">
-                <p class="mcwws-gis-menu-section-title">道路属性 <span class="mcwws-gis-build-tag">v${MCWWS_GIS_BUILD}</span></p>
+                <p class="mcwws-gis-menu-section-title">道路属性${renderBatchCountSuffix(batchCount)}</p>
                 <div class="mcwws-gis-road-prop-grid">
                     ${roadNameSegmentsHtml}
                     <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--checkbox">
                         <span>沿路显示路名</span>
-                        <input type="checkbox" data-road-prop="showRoadName" ${showRoadName ? 'checked' : ''}
+                        <input type="checkbox" data-road-prop="showRoadName" data-mixed="${showRoadNameDisp.mixed ? '1' : '0'}"
+                            ${showRoadNameDisp.checked ? 'checked' : ''}
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>行驶方向</span>
                         <select class="mcwws-gis-road-prop-input" data-road-prop="travelDirection" ${!gisCanEdit ? 'disabled' : ''}>
-                            <option value="both" ${travelDir === 'both' ? 'selected' : ''}>双向（不显示箭头）</option>
-                            <option value="dir1" ${travelDir === 'dir1' ? 'selected' : ''}>方向 1（沿顶点顺序）</option>
-                            <option value="dir2" ${travelDir === 'dir2' ? 'selected' : ''}>方向 2（与方向 1 相反）</option>
+                            ${renderMixedSelectPlaceholder(travelDirDisp.mixed)}
+                            <option value="both" ${!travelDirDisp.mixed && travelDirDisp.value === 'both' ? 'selected' : ''}>双向（不显示箭头）</option>
+                            <option value="dir1" ${!travelDirDisp.mixed && travelDirDisp.value === 'dir1' ? 'selected' : ''}>方向 1（沿顶点顺序）</option>
+                            <option value="dir2" ${!travelDirDisp.mixed && travelDirDisp.value === 'dir2' ? 'selected' : ''}>方向 2（与方向 1 相反）</option>
                         </select>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>线型</span>
                         <select class="mcwws-gis-road-prop-input" data-road-prop="strokeStyle" ${!gisCanEdit ? 'disabled' : ''}>
-                            <option value="solid" ${strokeStyle === 'solid' ? 'selected' : ''}>实线</option>
-                            <option value="dashed" ${strokeStyle === 'dashed' ? 'selected' : ''}>虚线</option>
-                            <option value="dotted" ${strokeStyle === 'dotted' ? 'selected' : ''}>点线</option>
-                            <option value="dashdot" ${(strokeStyle === 'dashdot' || strokeStyle === 'dash-dot') ? 'selected' : ''}>点划线</option>
+                            ${renderMixedSelectPlaceholder(strokeStyleDisp.mixed)}
+                            <option value="solid" ${!strokeStyleDisp.mixed && strokeStyleDisp.value === 'solid' ? 'selected' : ''}>实线</option>
+                            <option value="dashed" ${!strokeStyleDisp.mixed && strokeStyleDisp.value === 'dashed' ? 'selected' : ''}>虚线</option>
+                            <option value="dotted" ${!strokeStyleDisp.mixed && strokeStyleDisp.value === 'dotted' ? 'selected' : ''}>点线</option>
+                            <option value="dashdot" ${!strokeStyleDisp.mixed && (strokeStyleDisp.value === 'dashdot' || strokeStyleDisp.value === 'dash-dot') ? 'selected' : ''}>点划线</option>
                         </select>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>粗细</span>
                         <input type="number" class="mcwws-gis-road-prop-input" data-road-prop="strokeWidth"
-                            min="1" max="24" step="0.5" value="${strokeWidth}" placeholder="默认"
+                            min="1" max="24" step="0.5" value="${escapeHtml(strokeWidthDisp.value)}"
+                            placeholder="${strokeWidthDisp.mixed ? '多个值' : '默认'}"
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>颜色</span>
                         <input type="text" class="mcwws-gis-road-prop-input" data-road-prop="color"
-                            value="${escapeHtml(strokeColor)}" placeholder="#3b82f6（留空=图层默认）"
+                            value="${escapeHtml(strokeColorDisp.value)}" placeholder="${strokeColorDisp.mixed ? '多个值' : '#3b82f6（留空=图层默认）'}"
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                 </div>
+                ${singleRoad ? `
                 <div class="mcwws-gis-road-vertex-lanes">
                     <p class="mcwws-gis-menu-section-title">特征点（${vtxLabel}）</p>
                     ${vertexIdRow}
@@ -3961,58 +4076,113 @@
                     ${heightClipNote}
                 </div>
                 <p class="mcwws-gis-road-props-hint">vertexIds 与 vertexVisibility 按顶点顺序保存在 properties 中；缩放地图可预览分级显示</p>
+                ` : batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量模式下修改线型 / 颜色 / 路名等将应用到全部所选道路；特征点请单选道路后编辑</p>' : ''}
             </div>
         `;
     }
 
     function renderPolygonVolumePanelHtml() {
-        const found = getSelectedPolygonFeature();
-        if (!found) {
+        const items = getSelectedPolygonFeatures();
+        if (!items.length) {
             return '';
         }
-        const feature = found.feature;
-        const vol = ensureVolume3d(feature);
-        const shape = vol.shape || VOLUME_SHAPES.FLAT;
-        const points = coordsToPoints(feature.coordinates);
-        const yRange = resolveVolumeYRange(getVolume3dConfig(feature) || { shape }, points);
-        const cr = shape === VOLUME_SHAPES.CYLINDER ? getCylinderCenterRadius(feature, points, getVolume3dConfig(feature) || {}) : null;
+        const batchCount = items.length;
+        const feature = items[0].feature;
+        const shapeDisp = getBatchEnumPropDisplay(items, (f) => ensureVolume3d(f).shape || VOLUME_SHAPES.FLAT);
+        const shape = shapeDisp.mixed ? '' : shapeDisp.value;
+        const minYDisp = getBatchNumberPropDisplay(items, (f) => {
+            const pts = coordsToPoints(f.coordinates);
+            return resolveVolumeYRange(getVolume3dConfig(f) || { shape: getVolumeShape(f) }, pts).minY;
+        });
+        const maxYDisp = getBatchNumberPropDisplay(items, (f) => {
+            const pts = coordsToPoints(f.coordinates);
+            return resolveVolumeYRange(getVolume3dConfig(f) || { shape: getVolumeShape(f) }, pts).maxY;
+        });
+        const radiusDisp = getBatchNumberPropDisplay(items, (f) => {
+            if (getVolumeShape(f) !== VOLUME_SHAPES.CYLINDER) {
+                return '';
+            }
+            const cr = getCylinderCenterRadius(f, coordsToPoints(f.coordinates), getVolume3dConfig(f) || {});
+            return cr ? Math.round(cr.radius * 100) / 100 : '';
+        });
+        const nameDisp = getBatchStringPropDisplay(items, (f) => f.properties?.name || '区域');
+        const colorDisp = getBatchStringPropDisplay(items, (f) => f.properties?.color || '');
         const shapeOptions = VOLUME_SHAPE_OPTIONS.map((opt) => `
-            <option value="${opt.id}" ${shape === opt.id ? 'selected' : ''}>${escapeHtml(opt.label)}</option>
+            <option value="${opt.id}" ${!shapeDisp.mixed && shape === opt.id ? 'selected' : ''}>${escapeHtml(opt.label)}</option>
         `).join('');
-        const radiusRow = shape === VOLUME_SHAPES.CYLINDER ? `
+        const showCylinderRadius = !shapeDisp.mixed && shape === VOLUME_SHAPES.CYLINDER;
+        const showYRows = !shapeDisp.mixed && shape !== VOLUME_SHAPES.FLAT;
+        const radiusRow = showCylinderRadius ? `
             <label class="mcwws-gis-road-prop-row">
                 <span>半径（格）</span>
                 <input type="number" class="mcwws-gis-road-prop-input" data-volume-prop="radius"
-                    min="0.5" step="0.5" value="${cr ? escapeHtml(String(Math.round(cr.radius * 100) / 100)) : ''}"
+                    min="0.5" step="0.5" value="${escapeHtml(String(radiusDisp.value))}"
+                    placeholder="${radiusDisp.mixed ? '多个值' : ''}"
                     ${!gisCanEdit ? 'disabled' : ''}>
             </label>
         ` : '';
-        const yRows = shape !== VOLUME_SHAPES.FLAT ? `
+        const yRows = showYRows ? `
             <label class="mcwws-gis-road-prop-row">
                 <span>底面 Y</span>
                 <input type="number" class="mcwws-gis-road-prop-input" data-volume-prop="minY"
-                    step="0.5" value="${escapeHtml(String(yRange.minY))}" ${!gisCanEdit ? 'disabled' : ''}>
+                    step="0.5" value="${escapeHtml(String(minYDisp.value))}"
+                    placeholder="${minYDisp.mixed ? '多个值' : ''}"
+                    ${!gisCanEdit ? 'disabled' : ''}>
             </label>
             <label class="mcwws-gis-road-prop-row">
                 <span>顶面 Y</span>
                 <input type="number" class="mcwws-gis-road-prop-input" data-volume-prop="maxY"
-                    step="0.5" value="${escapeHtml(String(yRange.maxY))}" ${!gisCanEdit ? 'disabled' : ''}>
+                    step="0.5" value="${escapeHtml(String(maxYDisp.value))}"
+                    placeholder="${maxYDisp.mixed ? '多个值' : ''}"
+                    ${!gisCanEdit ? 'disabled' : ''}>
+            </label>
+        ` : shapeDisp.mixed ? `
+            <label class="mcwws-gis-road-prop-row">
+                <span>底面 Y</span>
+                <input type="number" class="mcwws-gis-road-prop-input" data-volume-prop="minY"
+                    step="0.5" value="${escapeHtml(String(minYDisp.value))}"
+                    placeholder="${minYDisp.mixed ? '多个值' : ''}"
+                    ${!gisCanEdit ? 'disabled' : ''}>
+            </label>
+            <label class="mcwws-gis-road-prop-row">
+                <span>顶面 Y</span>
+                <input type="number" class="mcwws-gis-road-prop-input" data-volume-prop="maxY"
+                    step="0.5" value="${escapeHtml(String(maxYDisp.value))}"
+                    placeholder="${maxYDisp.mixed ? '多个值' : ''}"
+                    ${!gisCanEdit ? 'disabled' : ''}>
             </label>
         ` : '';
-        const hint = shape === VOLUME_SHAPES.BOX
-            ? '盒体：底面轮廓 + 上下 Y 范围'
-            : shape === VOLUME_SHAPES.CYLINDER
-                ? '圆柱：圆心 + 半径点；Y 范围为高度'
-                : shape === VOLUME_SHAPES.HEXAHEDRON
-                    ? '六面体：前 4 点为底面，后 4 点为顶面（可拖拽顶点）'
-                    : '平面区域：仅 XZ 多边形';
+        const hint = shapeDisp.mixed
+            ? '所选区域 3D 形状不一致时，修改形状将统一应用到全部'
+            : shape === VOLUME_SHAPES.BOX
+                ? '盒体：底面轮廓 + 上下 Y 范围'
+                : shape === VOLUME_SHAPES.CYLINDER
+                    ? '圆柱：圆心 + 半径点；Y 范围为高度'
+                    : shape === VOLUME_SHAPES.HEXAHEDRON
+                        ? '六面体：前 4 点为底面，后 4 点为顶面（可拖拽顶点）'
+                        : '平面区域：仅 XZ 多边形';
         return `
             <div class="mcwws-gis-road-props">
-                <p class="mcwws-gis-menu-section-title">区域属性 · ${escapeHtml(feature.properties?.name || '区域')}</p>
+                <p class="mcwws-gis-menu-section-title">区域属性 · ${escapeHtml(nameDisp.mixed ? '多个名称' : (nameDisp.value || '区域'))}${renderBatchCountSuffix(batchCount)}</p>
                 <div class="mcwws-gis-road-prop-grid">
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>名称</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="name"
+                            value="${escapeHtml(nameDisp.value)}"
+                            placeholder="${nameDisp.mixed ? '多个值' : '区域名称'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>颜色</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="color"
+                            value="${escapeHtml(colorDisp.value)}"
+                            placeholder="${colorDisp.mixed ? '多个值' : '#3b82f6（留空=图层默认）'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>3D 形状</span>
                         <select class="mcwws-gis-road-prop-input" data-volume-prop="shape" ${!gisCanEdit ? 'disabled' : ''}>
+                            ${renderMixedSelectPlaceholder(shapeDisp.mixed)}
                             ${shapeOptions}
                         </select>
                     </label>
@@ -4024,16 +4194,49 @@
         `;
     }
 
-    function syncVolumePropertyFromInput(input) {
-        const prop = input?.getAttribute?.('data-volume-prop');
-        if (!prop) {
-            return false;
+    function renderPinPropertiesPanelHtml() {
+        const items = getSelectedPinFeatures();
+        if (!items.length) {
+            return '';
         }
-        const found = getSelectedPolygonFeature();
-        if (!found || !gisCanEdit) {
-            return false;
-        }
-        const feature = found.feature;
+        const batchCount = items.length;
+        const pinType = items[0].feature.type;
+        const typeLabel = pinType === 'Label' ? '标注' : '点位';
+        const nameDisp = getBatchStringPropDisplay(items, (f) => f.properties?.name || '');
+        const descDisp = getBatchStringPropDisplay(items, (f) => f.properties?.description || '');
+        const colorDisp = getBatchStringPropDisplay(items, (f) => f.properties?.color || '');
+        return `
+            <div class="mcwws-gis-road-props">
+                <p class="mcwws-gis-menu-section-title">${typeLabel}属性${renderBatchCountSuffix(batchCount)}</p>
+                <div class="mcwws-gis-road-prop-grid">
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>名称</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="name"
+                            value="${escapeHtml(nameDisp.value)}"
+                            placeholder="${nameDisp.mixed ? '多个值' : '名称'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>说明</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="description"
+                            value="${escapeHtml(descDisp.value)}"
+                            placeholder="${descDisp.mixed ? '多个值' : '说明（可留空）'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row">
+                        <span>颜色</span>
+                        <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="color"
+                            value="${escapeHtml(colorDisp.value)}"
+                            placeholder="${colorDisp.mixed ? '多个值' : '#3b82f6（留空=图层默认）'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                </div>
+                ${batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">修改将批量应用到全部所选' + escapeHtml(typeLabel) + '</p>' : ''}
+            </div>
+        `;
+    }
+
+    function applyVolumePropertyToFeature(feature, prop, input) {
         const vol = ensureVolume3d(feature);
         if (prop === 'shape') {
             vol.shape = normalizeVolumeShape(input.value);
@@ -4063,6 +4266,19 @@
         return true;
     }
 
+    function syncVolumePropertyFromInput(input) {
+        const prop = input?.getAttribute?.('data-volume-prop');
+        if (!prop) {
+            return false;
+        }
+        const items = getSelectedPolygonFeatures();
+        if (!items.length || !gisCanEdit) {
+            return false;
+        }
+        items.forEach(({ feature }) => applyVolumePropertyToFeature(feature, prop, input));
+        return true;
+    }
+
     function applyVolumePropertyInput(input) {
         if (!syncVolumePropertyFromInput(input)) {
             return;
@@ -4073,27 +4289,74 @@
         renderLayerDialog();
     }
 
-    function syncRoadPropertyFromInput(input) {
-        const prop = input?.getAttribute?.('data-road-prop');
+    function applyPinPropertyToFeature(feature, prop, input) {
+        const props = ensureFeatureProperties(feature);
+        if (prop === 'name') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.name;
+            } else {
+                props.name = v;
+            }
+        } else if (prop === 'description') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.description;
+            } else {
+                props.description = v;
+            }
+        } else if (prop === 'color') {
+            const v = String(input.value || '').trim();
+            if (!v) {
+                delete props.color;
+            } else {
+                props.color = v;
+            }
+        } else {
+            return false;
+        }
+        return true;
+    }
+
+    function syncPinPropertyFromInput(input) {
+        const prop = input?.getAttribute?.('data-pin-prop');
         if (!prop) {
             return false;
         }
-        const found = getSelectedLineStringRoad();
-        if (!found || !gisCanEdit) {
+        let items = getSelectedPinFeatures();
+        if (!items.length) {
+            items = getSelectedPolygonFeatures();
+        }
+        if (!items.length || !gisCanEdit) {
             return false;
         }
-        const props = ensureFeatureProperties(found.feature);
+        items.forEach(({ feature }) => applyPinPropertyToFeature(feature, prop, input));
+        return true;
+    }
+
+    function applyPinPropertyInput(input) {
+        if (!syncPinPropertyFromInput(input)) {
+            return;
+        }
+        recordGisHistory();
+        markDirty();
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    function applyRoadPropertyToFeature(feature, prop, input) {
+        const props = ensureFeatureProperties(feature);
         if (prop === 'name') {
             const v = String(input.value || '').trim();
-            const segments = getRoadNameSegments(found.feature);
+            const segments = getRoadNameSegments(feature);
             if (segments.length <= 1) {
                 if (!v) {
                     delete props.name;
                     delete props.roadNameSegments;
                 } else {
-                    ensureVertexIds(found.feature);
-                    const count = getFeatureVertexCount(found.feature);
-                    const ids = found.feature.properties.vertexIds;
+                    ensureVertexIds(feature);
+                    const count = getFeatureVertexCount(feature);
+                    const ids = feature.properties.vertexIds;
                     props.name = v;
                     props.roadNameSegments = [{
                         fromVertexId: ids[0],
@@ -4130,10 +4393,23 @@
             const v = String(input.value || 'solid').trim().toLowerCase();
             props.strokeStyle = v || 'solid';
         } else if (prop === 'travelDirection') {
-            setRoadTravelDirection(found.feature, input.value);
+            setRoadTravelDirection(feature, input.value);
         } else {
             return false;
         }
+        return true;
+    }
+
+    function syncRoadPropertyFromInput(input) {
+        const prop = input?.getAttribute?.('data-road-prop');
+        if (!prop) {
+            return false;
+        }
+        const items = getSelectedLineStringFeatures();
+        if (!items.length || !gisCanEdit) {
+            return false;
+        }
+        items.forEach(({ feature }) => applyRoadPropertyToFeature(feature, prop, input));
         return true;
     }
 
@@ -4379,6 +4655,9 @@
         });
         wrap.querySelectorAll('[data-volume-prop]').forEach((input) => {
             syncVolumePropertyFromInput(input);
+        });
+        wrap.querySelectorAll('[data-pin-prop]').forEach((input) => {
+            syncPinPropertyFromInput(input);
         });
     }
 
@@ -7142,8 +7421,10 @@
                             : `已选 ${selectedIds.length} 项`}</p>`
                         : ''
                 }
+                ${renderSelectionTypeMismatchHintHtml()}
                 ${renderRoadPropertiesPanelHtml()}
                 ${renderPolygonVolumePanelHtml()}
+                ${renderPinPropertiesPanelHtml()}
                 ${renderVertexAlignPanelHtml()}
             </div>
         `;
@@ -7161,7 +7442,7 @@
         const scrollTop = dialog.scrollTop;
         const activeEl = document.activeElement;
         const focusRestore = activeEl?.closest?.('.mcwws-layer-dialog')
-            && activeEl.matches?.('[data-vertex-vis], [data-road-prop], [data-road-name-seg], [data-volume-prop]')
+            && activeEl.matches?.('[data-vertex-vis], [data-road-prop], [data-road-name-seg], [data-volume-prop], [data-pin-prop]')
             ? {
                 selector: activeEl.matches('[data-vertex-vis]')
                     ? `[data-vertex-vis="${activeEl.getAttribute('data-vertex-vis')}"]`
@@ -7169,7 +7450,9 @@
                         ? `[data-road-name-seg="${activeEl.getAttribute('data-road-name-seg')}"]`
                         : activeEl.matches('[data-volume-prop]')
                             ? `[data-volume-prop="${activeEl.getAttribute('data-volume-prop')}"]`
-                        : `[data-road-prop="${activeEl.getAttribute('data-road-prop')}"]`,
+                            : activeEl.matches('[data-pin-prop]')
+                                ? `[data-pin-prop="${activeEl.getAttribute('data-pin-prop')}"]`
+                                : `[data-road-prop="${activeEl.getAttribute('data-road-prop')}"]`,
                 start: activeEl.selectionStart,
                 end: activeEl.selectionEnd
             }
@@ -7215,6 +7498,7 @@
             <p class="mcwws-gis-menu-status${statusKind ? ` is-${statusKind}` : ''}">${escapeHtml(statusMessage)}${dirty ? ' · 未保存' : ''}</p>
         `;
         dialog.scrollTop = scrollTop;
+        applyCheckboxIndeterminateStates(dialog);
         if (focusRestore) {
             const input = dialog.querySelector(focusRestore.selector);
             if (input && typeof input.focus === 'function') {
@@ -7278,6 +7562,12 @@
                 applyVolumePropertyInput(volumePropChange);
                 return;
             }
+            const pinPropChange = e.target.closest('[data-pin-prop]');
+            if (pinPropChange) {
+                e.stopPropagation();
+                applyPinPropertyInput(pinPropChange);
+                return;
+            }
             const roadNameSegInput = e.target.closest('[data-road-name-seg]');
             if (roadNameSegInput) {
                 e.stopPropagation();
@@ -7326,6 +7616,15 @@
             if (volumePropInputLive) {
                 e.stopPropagation();
                 if (syncVolumePropertyFromInput(volumePropInputLive)) {
+                    markDirtySoft();
+                    renderOverlay();
+                }
+                return;
+            }
+            const pinPropInputLive = e.target.closest('[data-pin-prop]');
+            if (pinPropInputLive) {
+                e.stopPropagation();
+                if (syncPinPropertyFromInput(pinPropInputLive)) {
                     markDirtySoft();
                     renderOverlay();
                 }
