@@ -1,5 +1,6 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-55';
+    const MCWWS_GIS_BUILD = '20260602-56';
+    const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -3976,6 +3977,158 @@
         return buildVolume3dEdgesFromSpec(cfg.shape, coordsToPoints(feature.coordinates), cfg);
     }
 
+    function clipSpaceToScreenVolume(c) {
+        if (!c || c.w < GIS_CLIP_W_EPS) {
+            return null;
+        }
+        return ndcToScreen({ x: c.x / c.w, y: c.y / c.w });
+    }
+
+    function getClippedScreenRingForVolumeFace(points, view, camera) {
+        if (!points || points.length < 3) {
+            return [];
+        }
+        const v = view || getViewForProjection();
+        if (camera) {
+            const clipVerts = points
+                .map((p) => worldPointToClip(p, camera, false))
+                .filter(Boolean);
+            if (clipVerts.length < 3) {
+                return [];
+            }
+            const clipped = clipPolygonHomogeneous(clipVerts);
+            const screenPts = clipped.map(clipSpaceToScreenVolume).filter(Boolean);
+            if (screenPts.length < 3) {
+                return [];
+            }
+            return clipScreenPolygon(screenPts);
+        }
+        if (v) {
+            const screenPts = points.map((p) => projectGisMarker(p, v, false)).filter(Boolean);
+            if (screenPts.length < 3) {
+                return [];
+            }
+            return clipScreenPolygon(screenPts);
+        }
+        return [];
+    }
+
+    function faceCentroidWorld(ring) {
+        let x = 0;
+        let y = 0;
+        let z = 0;
+        ring.forEach((p) => {
+            x += p.x;
+            y += p.y;
+            z += p.z;
+        });
+        const n = ring.length || 1;
+        return { x: x / n, y: y / n, z: z / n };
+    }
+
+    function newellNormal(ring) {
+        let nx = 0;
+        let ny = 0;
+        let nz = 0;
+        for (let i = 0; i < ring.length; i += 1) {
+            const j = (i + 1) % ring.length;
+            nx += (ring[i].y - ring[j].y) * (ring[i].z + ring[j].z);
+            ny += (ring[i].z - ring[j].z) * (ring[i].x + ring[j].x);
+            nz += (ring[i].x - ring[j].x) * (ring[i].y + ring[j].y);
+        }
+        return { x: nx, y: ny, z: nz };
+    }
+
+    function computeVolumeFaceNormal(ring, kind, shapeCenter) {
+        let normal = newellNormal(ring);
+        if (kind === 'bottom' && normal.y > 0) {
+            normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+        } else if (kind === 'top' && normal.y < 0) {
+            normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+        } else if (kind === 'side' && shapeCenter) {
+            const c = faceCentroidWorld(ring);
+            const vx = c.x - shapeCenter.x;
+            const vy = c.y - shapeCenter.y;
+            const vz = c.z - shapeCenter.z;
+            const dot = normal.x * vx + normal.y * vy + normal.z * vz;
+            if (dot < 0) {
+                normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+            }
+        }
+        return normal;
+    }
+
+    function isVolumeFaceVisible(ring, normal, kind, camera, view) {
+        const len = Math.hypot(normal.x, normal.y, normal.z);
+        if (len < 1e-8) {
+            return false;
+        }
+        const nx = normal.x / len;
+        const ny = normal.y / len;
+        const nz = normal.z / len;
+        if (camera) {
+            const camPos = getCameraWorldPosition(camera);
+            if (!camPos) {
+                return true;
+            }
+            const c = faceCentroidWorld(ring);
+            const vx = camPos.x - c.x;
+            const vy = camPos.y - c.y;
+            const vz = camPos.z - c.z;
+            return nx * vx + ny * vy + nz * vz > 1e-6;
+        }
+        if (kind === 'top') {
+            return ny > 0.04;
+        }
+        if (kind === 'bottom') {
+            return ny < -0.04;
+        }
+        return Math.abs(ny) < 0.94;
+    }
+
+    function parseRegionHexColor(hex) {
+        const m = String(hex || '').match(/^#?([0-9a-f]{6})$/i);
+        if (!m) {
+            return { r: 223, g: 234, b: 243 };
+        }
+        const n = parseInt(m[1], 16);
+        return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function shadeRegionFaceColor(baseHex, normal) {
+        const base = parseRegionHexColor(baseHex);
+        const len = Math.hypot(normal.x, normal.y, normal.z) || 1;
+        const nx = normal.x / len;
+        const ny = normal.y / len;
+        const nz = normal.z / len;
+        const ndotl = Math.max(
+            0,
+            nx * GIS_VOLUME_LIGHT_DIR.x + ny * GIS_VOLUME_LIGHT_DIR.y + nz * GIS_VOLUME_LIGHT_DIR.z
+        );
+        const shade = 0.38 + 0.62 * ndotl;
+        const r = Math.min(255, Math.round(base.r * shade));
+        const g = Math.min(255, Math.round(base.g * shade));
+        const b = Math.min(255, Math.round(base.b * shade));
+        return `rgb(${r}, ${g}, ${b})`;
+    }
+
+    function faceDepthSortKey(ring, camera) {
+        const camPos = getCameraWorldPosition(camera);
+        if (!camPos) {
+            return 0;
+        }
+        const c = faceCentroidWorld(ring);
+        const dx = c.x - camPos.x;
+        const dy = c.y - camPos.y;
+        const dz = c.z - camPos.z;
+        return dx * dx + dy * dy + dz * dz;
+    }
+
+    function buildSvgClippedFacePath(ring, view, camera) {
+        const screenRing = getClippedScreenRingForVolumeFace(ring, view, camera);
+        return screenRingToSvgPath(screenRing);
+    }
+
     function buildVolumeSolidFaces(shape, points, cfg) {
         const faces = [];
         if (!shape || shape === VOLUME_SHAPES.FLAT || !points.length) {
@@ -3987,22 +4140,28 @@
             if (!rings || rings.n < 3) {
                 return faces;
             }
-            faces.push(rings.bottom);
-            faces.push(rings.top);
+            faces.push({ ring: rings.bottom, kind: 'bottom' });
+            faces.push({ ring: rings.top, kind: 'top' });
             for (let i = 0; i < rings.n; i += 1) {
                 const j = (i + 1) % rings.n;
-                faces.push([rings.bottom[i], rings.bottom[j], rings.top[j], rings.top[i]]);
+                faces.push({
+                    ring: [rings.bottom[i], rings.bottom[j], rings.top[j], rings.top[i]],
+                    kind: 'side'
+                });
             }
             return faces;
         }
         if (shape === VOLUME_SHAPES.HEXAHEDRON && points.length >= 8) {
             const bottom = points.slice(0, 4).map((p) => ({ ...p }));
             const top = points.slice(4, 8).map((p) => ({ ...p }));
-            faces.push(bottom);
-            faces.push(top);
+            faces.push({ ring: bottom, kind: 'bottom' });
+            faces.push({ ring: top, kind: 'top' });
             for (let i = 0; i < 4; i += 1) {
                 const j = (i + 1) % 4;
-                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+                faces.push({
+                    ring: [bottom[i], bottom[j], top[j], top[i]],
+                    kind: 'side'
+                });
             }
             return faces;
         }
@@ -4014,48 +4173,78 @@
             const segments = cfg?.segments || VOLUME_CYLINDER_SEGMENTS;
             const bottom = buildCylinderRing(cr.center, cr.radius, minY, segments);
             const top = buildCylinderRing(cr.center, cr.radius, maxY, segments);
-            faces.push(bottom);
-            faces.push(top);
+            faces.push({ ring: bottom, kind: 'bottom' });
+            faces.push({ ring: top, kind: 'top' });
             for (let i = 0; i < segments; i += 1) {
                 const j = (i + 1) % segments;
-                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+                faces.push({
+                    ring: [bottom[i], bottom[j], top[j], top[i]],
+                    kind: 'side'
+                });
             }
         }
         return faces;
     }
 
-    function buildSvgFacePathLenient(ring, view, camera) {
-        if (!ring || ring.length < 3) {
-            return '';
+    function computeVolumeShapeCenter(points) {
+        if (!points.length) {
+            return { x: 0, y: 0, z: 0 };
         }
-        const pts = ring
-            .map((p) => projectGisPoint(p, view, camera, false))
-            .filter((p) => p && !p.behind);
-        if (pts.length < 3) {
-            return '';
-        }
-        return pts.map((p, i) => `${i ? 'L' : 'M'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ') + ' Z';
+        let x = 0;
+        let y = 0;
+        let z = 0;
+        points.forEach((p) => {
+            x += p.x;
+            y += p.y;
+            z += p.z;
+        });
+        const n = points.length;
+        return { x: x / n, y: y / n, z: z / n };
     }
 
-    function buildSvgVolumeSolidFillPathFromSpec(shape, points, cfg, view, camera) {
-        const faces = buildVolumeSolidFaces(shape, points, cfg);
-        if (!faces.length) {
-            return '';
+    function buildVolumeFaceRenderItems(shape, points, cfg, view, camera, baseColor) {
+        const faceSpecs = buildVolumeSolidFaces(shape, points, cfg);
+        if (!faceSpecs.length) {
+            return [];
         }
-        return faces.map((face) => buildSvgFacePathLenient(face, view, camera)).filter(Boolean).join(' ');
+        const shapeCenter = computeVolumeShapeCenter(points);
+        const items = [];
+        faceSpecs.forEach((spec, index) => {
+            const normal = computeVolumeFaceNormal(spec.ring, spec.kind, shapeCenter);
+            if (!isVolumeFaceVisible(spec.ring, normal, spec.kind, camera, view)) {
+                return;
+            }
+            const d = buildSvgClippedFacePath(spec.ring, view, camera);
+            if (!d) {
+                return;
+            }
+            items.push({
+                index,
+                d,
+                fill: shadeRegionFaceColor(baseColor, normal),
+                depth: faceDepthSortKey(spec.ring, camera)
+            });
+        });
+        items.sort((a, b) => b.depth - a.depth);
+        return items;
+    }
+
+    function buildSvgVolumeSolidFillPathFromSpec(shape, points, cfg, view, camera, baseColor) {
+        return buildVolumeFaceRenderItems(shape, points, cfg, view, camera, baseColor || GIS_DEFAULT_REGION_COLOR);
     }
 
     function buildSvgVolumeSolidFillPath(feature, view, camera) {
         const cfg = getVolume3dConfig(feature);
         if (!cfg) {
-            return '';
+            return [];
         }
-        return buildSvgVolumeSolidFillPathFromSpec(
+        return buildVolumeFaceRenderItems(
             cfg.shape,
             coordsToPoints(feature.coordinates),
             cfg,
             view,
-            camera
+            camera,
+            getRegionVolumeFillColor(feature)
         );
     }
 
@@ -4167,16 +4356,13 @@
         if (!edges.length) {
             return '';
         }
-        let d = '';
+        const chains = [];
         edges.forEach(([a, b]) => {
-            const sa = projectGisPoint(a, view, camera, false);
-            const sb = projectGisPoint(b, view, camera, false);
-            if (!sa || !sb || sa.behind || sb.behind) {
-                return;
-            }
-            d += `M ${sa.x.toFixed(1)} ${sa.y.toFixed(1)} L ${sb.x.toFixed(1)} ${sb.y.toFixed(1)} `;
+            iterClippedLineScreenSegments([a, b], view, camera, (s0, s1) => {
+                appendClippedSegment(chains, [s0, s1]);
+            });
         });
-        return d.trim();
+        return chainsToSvgPath(chains);
     }
 
     function resetVolumeDraftState() {
@@ -7532,16 +7718,16 @@
                 const edgeStroke = regionSelected ? GIS_VOLUME_SELECTION_STROKE : 'rgba(90, 110, 130, 0.35)';
 
                 if (hasVolumeSolid) {
-                    const fillD = buildSvgVolumeSolidFillPath(feature, view, camera);
-                    if (fillD) {
-                        const fillKey = `${feature.id}:volume-fill`;
+                    const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
+                    faceItems.forEach((item) => {
+                        const fillKey = `${feature.id}:volume-fill:${item.index}`;
                         neededPathKeys.add(fillKey);
                         const fillPath = ensureSvgFeaturePath(svg, fillKey, feature.id, 'mcwws-gis-volume3d-fill');
-                        fillPath.setAttribute('d', fillD);
-                        fillPath.style.fill = fillColor;
+                        fillPath.setAttribute('d', item.d);
+                        fillPath.style.fill = item.fill;
                         fillPath.removeAttribute('stroke');
                         fillPath.classList.toggle('is-dimmed', dimmed);
-                    }
+                    });
                     if (regionSelected) {
                         const volEdges = buildVolume3dEdges(feature);
                         if (volEdges.length) {
@@ -7594,23 +7780,30 @@
                 const draft = getDraftPreviewPoints();
                 if (draft.length >= 3) {
                     const ys = inferFootprintYs(draft);
-                    const fillD = buildSvgVolumeSolidFillPathFromSpec(
+                    const draftFaces = buildVolumeFaceRenderItems(
                         VOLUME_SHAPES.BOX,
                         draft,
                         { shape: VOLUME_SHAPES.BOX, minY: ys.minY, maxY: ys.maxY },
                         view,
-                        camera
+                        camera,
+                        GIS_DEFAULT_REGION_COLOR
                     );
-                    if (fillD) {
+                    if (draftFaces.length) {
                         if (!svgDraftFillPathEl) {
-                            svgDraftFillPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-                            svgDraftFillPathEl.classList.add('mcwws-gis-draft-fill');
+                            svgDraftFillPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+                            svgDraftFillPathEl.classList.add('mcwws-gis-draft-fill-group');
                             svg.insertBefore(svgDraftFillPathEl, svg.firstChild);
                         }
-                        svgDraftFillPathEl.setAttribute('d', fillD);
-                        svgDraftFillPathEl.style.fill = GIS_DEFAULT_REGION_COLOR;
+                        svgDraftFillPathEl.replaceChildren();
+                        draftFaces.forEach((item) => {
+                            const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+                            path.setAttribute('d', item.d);
+                            path.style.fill = item.fill;
+                            path.classList.add('mcwws-gis-draft-fill');
+                            svgDraftFillPathEl.appendChild(path);
+                        });
                     } else if (svgDraftFillPathEl) {
-                        svgDraftFillPathEl.removeAttribute('d');
+                        svgDraftFillPathEl.replaceChildren();
                     }
                 } else if (svgDraftFillPathEl) {
                     svgDraftFillPathEl.remove();

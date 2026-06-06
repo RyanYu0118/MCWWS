@@ -735,15 +735,15 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill {
     stroke: none;
-    fill: #DFEAF3;
-    fill-opacity: 0.92;
+    fill-opacity: 1;
     opacity: 1;
     pointer-events: none;
     transition: opacity 0.28s ease, fill-opacity 0.28s ease;
 }
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill.is-dimmed {
-    fill-opacity: 0.22;
+    fill-opacity: 0.28;
+    opacity: 0.55;
 }
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d {
@@ -765,10 +765,13 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     opacity: 0.32;
 }
 
-#mcwws-gis-svg-layer path.mcwws-gis-draft-fill {
+#mcwws-gis-svg-layer .mcwws-gis-draft-fill-group {
     pointer-events: none;
-    fill: #DFEAF3;
-    fill-opacity: 0.55;
+}
+
+#mcwws-gis-svg-layer .mcwws-gis-draft-fill-group path.mcwws-gis-draft-fill {
+    pointer-events: none;
+    fill-opacity: 0.72;
     stroke: none;
 }
 
