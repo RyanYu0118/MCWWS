@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-06T09:59:52.289Z",
+  "updatedAt": "2026-06-06T15:33:06.124Z",
   "layers": [
     {
       "id": "roads",
@@ -1730,6 +1730,55 @@
               {},
               {}
             ]
+          }
+        },
+        {
+          "id": "173debb00a2b4046",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -799.5,
+              "y": 49.5,
+              "z": 56.5
+            },
+            {
+              "x": -770.5,
+              "y": 49.5,
+              "z": 55.5
+            },
+            {
+              "x": -806.5,
+              "y": 49.5,
+              "z": 83.5
+            },
+            {
+              "x": -823.5,
+              "y": 49.5,
+              "z": 75.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": "",
+            "vertexIds": [
+              "173debb00a2b4046-v-da895e1327ad",
+              "173debb00a2b4046-v-9e30c364595e",
+              "173debb00a2b4046-v-d1134e907708",
+              "173debb00a2b4046-v-80ba732b0878"
+            ],
+            "vertexVisibility": [
+              {},
+              {},
+              {},
+              {}
+            ],
+            "volume3d": {
+              "shape": "box",
+              "minY": 49.5,
+              "maxY": 56
+            }
           }
         }
       ]

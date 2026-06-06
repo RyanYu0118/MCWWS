@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-51';
+    const MCWWS_GIS_BUILD = '20260602-52';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -15,6 +15,7 @@
     const GIS_LASSO_MIN_POINTS = 4;
     const GIS_LASSO_MIN_DIAG_PX = 12;
     const GIS_DEFAULT_Y = 64;
+    const GIS_DEFAULT_ROAD_COLOR = '#C0CDD7';
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
     const GIS_SCREEN_CLIP_PAD = 8000;
@@ -60,7 +61,6 @@
     const VOLUME_SHAPE_OPTIONS = [
         { id: VOLUME_SHAPES.FLAT, label: '平面' },
         { id: VOLUME_SHAPES.BOX, label: '盒体' },
-        { id: VOLUME_SHAPES.CYLINDER, label: '圆柱' },
         { id: VOLUME_SHAPES.HEXAHEDRON, label: '六面体' }
     ];
     const VOLUME_DEFAULT_HEIGHT = 4;
@@ -3530,6 +3530,12 @@
         return VOLUME_SHAPES.FLAT;
     }
 
+    function isCreatableVolumeShape(shape) {
+        return shape === VOLUME_SHAPES.FLAT
+            || shape === VOLUME_SHAPES.BOX
+            || shape === VOLUME_SHAPES.HEXAHEDRON;
+    }
+
     function ensureVolume3d(feature) {
         const props = ensureFeatureProperties(feature);
         if (!props.volume3d || typeof props.volume3d !== 'object') {
@@ -3830,15 +3836,6 @@
         }
         if (activeVolumeShape === VOLUME_SHAPES.BOX) {
             return `盒体：已 ${draftPoints.length} 点底面 — 双击或「完成」结束（默认高度 ${VOLUME_DEFAULT_HEIGHT} 格）`;
-        }
-        if (activeVolumeShape === VOLUME_SHAPES.CYLINDER) {
-            if (draftPoints.length === 0) {
-                return '圆柱：点击圆心';
-            }
-            if (draftPoints.length === 1) {
-                return '圆柱：再点击一点确定半径；两点 Y 差为高度';
-            }
-            return '圆柱：已完成，正在提交…';
         }
         if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
             if (draftVolumePhase === 'bottom') {
@@ -4197,8 +4194,9 @@
         const shapeOptions = VOLUME_SHAPE_OPTIONS.map((opt) => `
             <option value="${opt.id}" ${!shapeDisp.mixed && shape === opt.id ? 'selected' : ''}>${escapeHtml(opt.label)}</option>
         `).join('');
-        const showCylinderRadius = !shapeDisp.mixed && shape === VOLUME_SHAPES.CYLINDER;
-        const showYRows = !shapeDisp.mixed && shape !== VOLUME_SHAPES.FLAT;
+        const legacyCylinder = !shapeDisp.mixed && shape === VOLUME_SHAPES.CYLINDER;
+        const showCylinderRadius = legacyCylinder;
+        const showYRows = legacyCylinder || (!shapeDisp.mixed && shape !== VOLUME_SHAPES.FLAT) || shapeDisp.mixed;
         const radiusRow = showCylinderRadius ? `
             <label class="mcwws-gis-road-prop-row">
                 <span>半径（格）</span>
@@ -4241,10 +4239,10 @@
         ` : '';
         const hint = shapeDisp.mixed
             ? '所选区域 3D 形状不一致时，修改形状将统一应用到全部'
-            : shape === VOLUME_SHAPES.BOX
-                ? '盒体：底面轮廓 + 上下 Y 范围'
-                : shape === VOLUME_SHAPES.CYLINDER
-                    ? '圆柱：圆心 + 半径点；Y 范围为高度'
+            : legacyCylinder
+                ? '圆柱为旧数据，仍可编辑；新建请选盒体或六面体'
+                : shape === VOLUME_SHAPES.BOX
+                    ? '盒体：底面轮廓 + 上下 Y 范围'
                     : shape === VOLUME_SHAPES.HEXAHEDRON
                         ? '六面体：前 4 点为底面，后 4 点为顶面（可拖拽顶点）'
                         : '平面区域：仅 XZ 多边形';
@@ -4268,10 +4266,14 @@
                     </label>
                     <label class="mcwws-gis-road-prop-row">
                         <span>3D 形状</span>
+                        ${legacyCylinder ? `
+                        <input type="text" class="mcwws-gis-road-prop-input" value="圆柱（旧数据）" readonly disabled>
+                        ` : `
                         <select class="mcwws-gis-road-prop-input" data-volume-prop="shape" ${!gisCanEdit ? 'disabled' : ''}>
                             ${renderMixedSelectPlaceholder(shapeDisp.mixed)}
                             ${shapeOptions}
                         </select>
+                        `}
                     </label>
                     ${yRows}
                     ${radiusRow}
@@ -4326,7 +4328,11 @@
     function applyVolumePropertyToFeature(feature, prop, input) {
         const vol = ensureVolume3d(feature);
         if (prop === 'shape') {
-            vol.shape = normalizeVolumeShape(input.value);
+            const next = normalizeVolumeShape(input.value);
+            if (!isCreatableVolumeShape(next)) {
+                return false;
+            }
+            vol.shape = next;
             if (vol.shape === VOLUME_SHAPES.FLAT) {
                 delete vol.minY;
                 delete vol.maxY;
@@ -5172,9 +5178,6 @@
             if (shape === VOLUME_SHAPES.HEXAHEDRON) {
                 return 8;
             }
-            if (shape === VOLUME_SHAPES.CYLINDER) {
-                return 2;
-            }
             return 3;
         }
         if (type === 'LineString') {
@@ -5274,18 +5277,15 @@
         if (!meta) return;
 
         const properties = { ...meta };
+        if (type === 'LineString') {
+            properties.color = GIS_DEFAULT_ROAD_COLOR;
+        }
         if (type === 'Polygon' && activeVolumeShape !== VOLUME_SHAPES.FLAT) {
             properties.volume3d = { shape: activeVolumeShape };
             if (activeVolumeShape === VOLUME_SHAPES.BOX) {
                 const ys = inferFootprintYs(draftPoints);
                 properties.volume3d.minY = ys.minY;
                 properties.volume3d.maxY = ys.maxY;
-            } else if (activeVolumeShape === VOLUME_SHAPES.CYLINDER) {
-                const c = draftPoints[0];
-                const r = draftPoints[1];
-                properties.volume3d.minY = Math.min(c.y, r.y);
-                properties.volume3d.maxY = Math.max(c.y, r.y);
-                properties.volume3d.radius = Math.hypot(r.x - c.x, r.z - c.z);
             }
         }
 
@@ -5347,16 +5347,6 @@
         }
 
         if (activeTool === 'line' || activeTool === 'polygon') {
-            if (activeTool === 'polygon' && activeVolumeShape === VOLUME_SHAPES.CYLINDER) {
-                draftPoints.push(point);
-                if (draftPoints.length >= 2) {
-                    finishDraft();
-                    return;
-                }
-                setStatus(getVolumeDraftStatusText(), '');
-                renderOverlay();
-                return;
-            }
             if (activeTool === 'polygon' && activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
                 draftPoints.push(point);
                 if (draftVolumePhase === 'bottom' && draftPoints.length >= 4) {
@@ -7736,7 +7726,11 @@
             }
             const volumeShapeBtn = e.target.closest('[data-volume-shape]');
             if (volumeShapeBtn) {
-                activeVolumeShape = normalizeVolumeShape(volumeShapeBtn.getAttribute('data-volume-shape'));
+                const nextShape = normalizeVolumeShape(volumeShapeBtn.getAttribute('data-volume-shape'));
+                if (!isCreatableVolumeShape(nextShape)) {
+                    return;
+                }
+                activeVolumeShape = nextShape;
                 draftPoints = [];
                 draftHover = null;
                 resetVolumeDraftState();
