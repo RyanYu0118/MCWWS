@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-06T08:48:47.060Z",
+  "updatedAt": "2026-06-06T09:07:33.592Z",
   "layers": [
     {
       "id": "roads",
@@ -186,8 +186,9 @@
             }
           ],
           "properties": {
-            "name": "道路-分支2",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "db68ff34981c4115-v-868fec59ae07",
               "db68ff34981c4115-v-dc8e1a5c5fc9",
@@ -534,8 +535,9 @@
             }
           ],
           "properties": {
-            "name": "道路-分支2",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "35a6578504d64c3e-v-0ecd079fff3b",
               "35a6578504d64c3e-v-fac13f311307",
@@ -897,8 +899,9 @@
             }
           ],
           "properties": {
-            "name": "道路-分支2",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "dfc3af97fd2541f4-v-25bf40884c86",
               "dfc3af97fd2541f4-v-1a49b7167c2f",
@@ -1102,8 +1105,9 @@
             }
           ],
           "properties": {
-            "name": "道路",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "ae04355591bf4306-v-1467619d713d",
               "ae04355591bf4306-v-b8d9ea026a11",
@@ -1159,8 +1163,9 @@
             }
           ],
           "properties": {
-            "name": "道路",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "4966380161a04e85-v-51f937cdee01",
               "4966380161a04e85-v-52a1f55d5cf2",
@@ -1306,8 +1311,9 @@
             }
           ],
           "properties": {
-            "name": "道路",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "b34d5f59f1094afc-v-6d819956ccf5",
               "b34d5f59f1094afc-v-44f88a0dfd65",
@@ -1331,6 +1337,8 @@
               "b34d5f59f1094afc-v-395299712611",
               "b34d5f59f1094afc-v-ca045d3bfdd5"
             ],
+            "strokeStyle": "solid",
+            "travelDirection": "dir2",
             "roadNameSegments": [
               {
                 "fromVertexId": "b34d5f59f1094afc-v-6d819956ccf5",
@@ -1526,8 +1534,9 @@
             }
           ],
           "properties": {
-            "name": "道路",
+            "name": "",
             "description": "",
+            "color": "#C0CDD7",
             "vertexIds": [
               "63bfa3cd11b841c0-v-5451249f8073",
               "63bfa3cd11b841c0-v-1674897188f3",
@@ -1552,6 +1561,7 @@
               "63bfa3cd11b841c0-v-6d533cb0c06a"
             ],
             "strokeStyle": "solid",
+            "travelDirection": "dir1",
             "roadNameSegments": [
               {
                 "fromVertexId": "63bfa3cd11b841c0-v-5451249f8073",
