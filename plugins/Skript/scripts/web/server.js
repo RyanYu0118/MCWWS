@@ -1974,7 +1974,12 @@ function normalizeGisFeature(raw, layerId) {
             return null;
         }
         if (type === 'Polygon' && coordinates.length < 3) {
-            return null;
+            const volShape = String(props.volume3d?.shape || '').trim().toLowerCase();
+            const cylinderOk = volShape === 'cylinder' && coordinates.length >= 2;
+            const hexaOk = (volShape === 'hexahedron' || volShape === 'hex') && coordinates.length >= 8;
+            if (!cylinderOk && !hexaOk) {
+                return null;
+            }
         }
     }
     const props = raw.properties && typeof raw.properties === 'object' ? raw.properties : {};
@@ -2077,6 +2082,41 @@ function normalizeGisFeature(raw, layerId) {
         }
         if (vertCount > 0) {
             featureProps.vertexVisibility = vertexVisibility;
+        }
+        if (type === 'Polygon') {
+            const volRaw = props.volume3d;
+            if (volRaw && typeof volRaw === 'object') {
+                let shape = String(volRaw.shape || 'flat').trim().toLowerCase();
+                if (shape === 'cuboid' || shape === 'cube') {
+                    shape = 'box';
+                }
+                if (shape === 'cyl') {
+                    shape = 'cylinder';
+                }
+                if (shape === 'hex' || shape === '6face') {
+                    shape = 'hexahedron';
+                }
+                if (['box', 'cylinder', 'hexahedron'].includes(shape)) {
+                    const volume3d = { shape };
+                    const minY = Number(volRaw.minY);
+                    const maxY = Number(volRaw.maxY);
+                    const radius = Number(volRaw.radius);
+                    const segments = Number(volRaw.segments);
+                    if (Number.isFinite(minY)) {
+                        volume3d.minY = minY;
+                    }
+                    if (Number.isFinite(maxY)) {
+                        volume3d.maxY = maxY;
+                    }
+                    if (Number.isFinite(radius) && radius > 0) {
+                        volume3d.radius = Math.min(4096, radius);
+                    }
+                    if (Number.isFinite(segments)) {
+                        volume3d.segments = Math.min(64, Math.max(8, Math.round(segments)));
+                    }
+                    featureProps.volume3d = volume3d;
+                }
+            }
         }
     }
     if (type === 'Point' || type === 'Label') {

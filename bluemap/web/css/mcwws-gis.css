@@ -733,6 +733,60 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     transition: opacity 0.28s ease, fill-opacity 0.28s ease;
 }
 
+#mcwws-gis-svg-layer path.mcwws-gis-volume3d {
+    fill: none;
+    stroke-width: 2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+    opacity: 0.92;
+    pointer-events: none;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-volume3d.is-dimmed {
+    opacity: 0.32;
+}
+
+#mcwws-gis-svg-layer path.mcwws-gis-draft.mcwws-gis-draft--volume3d {
+    fill: none;
+    stroke-dasharray: 6 4;
+}
+
+.mcwws-gis-volume-shapes {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 6px;
+    margin: 0 0 10px;
+    padding: 0 2px;
+}
+
+.mcwws-gis-volume-shapes-label {
+    font-size: 10px;
+    color: #6b7280;
+    margin-right: 2px;
+}
+
+.mcwws-gis-volume-shape-btn {
+    border: 1px solid #d1d5db;
+    background: #fff;
+    color: #374151;
+    border-radius: 6px;
+    padding: 3px 8px;
+    font-size: 11px;
+    cursor: pointer;
+}
+
+.mcwws-gis-volume-shape-btn.is-active {
+    border-color: #0d9488;
+    background: #ecfdf5;
+    color: #0f766e;
+}
+
+.mcwws-gis-volume-shape-btn:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
 #mcwws-gis-svg-layer path.mcwws-gis-polygon {
     fill-opacity: 0.22;
 }

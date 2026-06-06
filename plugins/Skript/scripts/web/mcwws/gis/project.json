@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-04T14:04:56.331Z",
+  "updatedAt": "2026-06-06T08:48:47.060Z",
   "layers": [
     {
       "id": "roads",
@@ -1631,6 +1631,94 @@
               {
                 "max": 128
               }
+            ]
+          }
+        },
+        {
+          "id": "22d0266c1ae6441f",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -941.5,
+              "y": 27.5,
+              "z": 95.5
+            },
+            {
+              "x": -824.5,
+              "y": 27.5,
+              "z": 98.5
+            },
+            {
+              "x": -834.5,
+              "y": 27.5,
+              "z": 139.5
+            },
+            {
+              "x": -953.5,
+              "y": 27.5,
+              "z": 136.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": "",
+            "vertexIds": [
+              "22d0266c1ae6441f-v-d703d33b7855",
+              "22d0266c1ae6441f-v-efa8ff66cb4c",
+              "22d0266c1ae6441f-v-9e5c5175adfb",
+              "22d0266c1ae6441f-v-361bf3ae74c5"
+            ],
+            "vertexVisibility": [
+              {},
+              {},
+              {},
+              {}
+            ]
+          }
+        },
+        {
+          "id": "712be67b398646af",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -988.5,
+              "y": 46.5,
+              "z": 199.5
+            },
+            {
+              "x": -923.5,
+              "y": 46.5,
+              "z": 281.5
+            },
+            {
+              "x": -951.5,
+              "y": 46.5,
+              "z": 301.5
+            },
+            {
+              "x": -1052.5,
+              "y": 46.5,
+              "z": 266.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": "",
+            "vertexIds": [
+              "712be67b398646af-v-a4c47c3bd12d",
+              "712be67b398646af-v-56bee362bd66",
+              "712be67b398646af-v-735fb1f090a1",
+              "712be67b398646af-v-007b1f0bb65d"
+            ],
+            "vertexVisibility": [
+              {},
+              {},
+              {},
+              {}
             ]
           }
         }
