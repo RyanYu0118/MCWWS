@@ -3644,7 +3644,7 @@
         }
         const { minY, maxY } = resolveVolumeYRange(cfg, points);
         if (shape === VOLUME_SHAPES.BOX) {
-            if (points.length < 3) {
+            if (points.length < 2) {
                 return edges;
             }
             const bottom = points.map((p) => ({ x: p.x, y: minY, z: p.z }));
@@ -3709,12 +3709,99 @@
             cfg.minY = Math.min(c.y, r.y);
             cfg.maxY = Math.max(c.y, r.y);
             cfg.radius = Math.hypot(r.x - c.x, r.z - c.z);
-        } else if (activeVolumeShape === VOLUME_SHAPES.BOX && draft.length >= 3) {
+            return buildVolume3dEdgesFromSpec(activeVolumeShape, draft, cfg);
+        }
+        if (activeVolumeShape === VOLUME_SHAPES.BOX && draft.length >= 2) {
             const ys = inferFootprintYs(draft);
             cfg.minY = ys.minY;
             cfg.maxY = ys.maxY;
+            return buildVolume3dEdgesFromSpec(activeVolumeShape, draft, cfg);
+        }
+        if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
+            if (draft.length >= 8) {
+                return buildVolume3dEdgesFromSpec(activeVolumeShape, draft, cfg);
+            }
+            const edges = [];
+            const phase = draftVolumePhase || 'bottom';
+            const bottomDraft = phase === 'top' ? draft.slice(0, 4) : draft;
+            const n = Math.min(bottomDraft.length, 4);
+            if (n >= 2) {
+                const ys = inferFootprintYs(draft);
+                const minY = ys.minY;
+                const maxY = ys.maxY;
+                const bottom = bottomDraft.slice(0, n).map((p) => ({ x: p.x, y: minY, z: p.z }));
+                appendRingEdges(edges, bottom, n >= 3 && (phase === 'top' || n >= 4));
+                if (n >= 4) {
+                    const top = bottomDraft.slice(0, 4).map((p) => ({ x: p.x, y: maxY, z: p.z }));
+                    appendRingEdges(edges, top, true);
+                    for (let i = 0; i < 4; i += 1) {
+                        edges.push([bottom[i], top[i]]);
+                    }
+                }
+            }
+            if (phase === 'top' && draft.length > 4) {
+                const topDraft = draft.slice(4);
+                const tn = Math.min(topDraft.length, 4);
+                if (tn >= 2) {
+                    const ys = inferFootprintYs(draft);
+                    const topRing = topDraft.slice(0, tn).map((p) => ({ x: p.x, y: ys.maxY, z: p.z }));
+                    appendRingEdges(edges, topRing, tn >= 3 && tn >= 4);
+                }
+            }
+            return edges;
         }
         return buildVolume3dEdgesFromSpec(activeVolumeShape, draft, cfg);
+    }
+
+    function getDraftPreviewPoints() {
+        const draft = draftPoints.slice();
+        if (draftHover) {
+            draft.push(draftHover);
+        }
+        return draft;
+    }
+
+    function getDraftFootprintPreviewPoints(draft) {
+        if (activeVolumeShape === VOLUME_SHAPES.CYLINDER) {
+            return draft.slice(0, Math.min(2, draft.length));
+        }
+        if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
+            if (draftVolumePhase === 'top' && draft.length > 4) {
+                return draft.slice(4, Math.min(draft.length, 8));
+            }
+            return draft.slice(0, Math.min(4, draft.length));
+        }
+        return draft;
+    }
+
+    function buildDraftPreviewPath(view, camera) {
+        const draft = getDraftPreviewPoints();
+        if (draft.length < 2) {
+            return '';
+        }
+        if (activeTool === 'line') {
+            return buildSvgPolylinePath(draft, view, camera);
+        }
+        if (activeTool === 'polygon') {
+            if (activeVolumeShape !== VOLUME_SHAPES.FLAT) {
+                const wire = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
+                if (wire) {
+                    return wire;
+                }
+                const footprint = getDraftFootprintPreviewPoints(draft);
+                if (footprint.length >= 3) {
+                    return buildSvgPolygonPath(footprint, view, camera);
+                }
+                if (footprint.length >= 2) {
+                    return buildSvgPolylinePath(footprint, view, camera);
+                }
+            }
+            if (draft.length >= 3) {
+                return buildSvgPolygonPath(draft, view, camera);
+            }
+            return buildSvgPolylinePath(draft, view, camera);
+        }
+        return '';
     }
 
     function buildSvgVolumeWireframePath(edges, view, camera) {
@@ -5920,20 +6007,17 @@
             markGisPointerMoved(event.clientX, event.clientY);
         }
         updateGisSelectHoverCursor(event.clientX, event.clientY, event.target);
-        if (gisCanvasPointer?.moved) {
-            return;
+        if (gisEditMode && draftPoints.length > 0
+            && (activeTool === 'line' || activeTool === 'polygon')
+            && isGisPickTarget(event.target)) {
+            draftHover = pickWorldFromScreen(event.clientX, event.clientY);
+            renderOverlay();
         }
-        if (!gisEditMode || draftPoints.length === 0) {
-            return;
+        if (isGisSelectMode()) {
+            updateGisHoverSegmentInsert(event.clientX, event.clientY);
+        } else {
+            clearGisHoverSegmentInsert();
         }
-        if (activeTool !== 'line' && activeTool !== 'polygon') {
-            return;
-        }
-        if (!isGisPickTarget(event.target)) {
-            return;
-        }
-        draftHover = pickWorldFromScreen(event.clientX, event.clientY);
-        renderOverlay();
     }
 
     function onCanvasPointerUp(event) {
@@ -7099,23 +7183,7 @@
         renderRoadNameLabelsLayer();
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
-            const draft = draftPoints.slice();
-            if (draftHover) draft.push(draftHover);
-            let d = '';
-            if (activeTool === 'polygon') {
-                if (activeVolumeShape === VOLUME_SHAPES.FLAT && draft.length >= 3) {
-                    d = buildSvgPolygonPath(draft, view, camera);
-                } else if (activeVolumeShape !== VOLUME_SHAPES.FLAT) {
-                    d = buildSvgVolumeWireframePath(buildDraftVolume3dEdges(), view, camera);
-                    if (!d && activeVolumeShape !== VOLUME_SHAPES.CYLINDER && draft.length >= 3) {
-                        d = buildSvgPolygonPath(draft.slice(0, activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON && draftVolumePhase === 'top' ? 4 : draft.length), view, camera);
-                    }
-                } else if (draft.length >= 3) {
-                    d = buildSvgPolygonPath(draft, view, camera);
-                }
-            } else {
-                d = buildSvgPolylinePath(draft, view, camera);
-            }
+            const d = buildDraftPreviewPath(view, camera);
             if (d) {
                 if (!svgDraftPathEl) {
                     svgDraftPathEl = document.createElementNS('http://www.w3.org/2000/svg', 'path');
