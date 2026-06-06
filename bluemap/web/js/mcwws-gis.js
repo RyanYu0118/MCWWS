@@ -1,5 +1,7 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-56';
+    const MCWWS_GIS_BUILD = '20260602-59';
+    const GIS_VOLUME_FACE_BACK_EPS = -0.015;
+    const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
@@ -4039,51 +4041,129 @@
         return { x: nx, y: ny, z: nz };
     }
 
-    function computeVolumeFaceNormal(ring, kind, shapeCenter) {
-        let normal = newellNormal(ring);
-        if (kind === 'bottom' && normal.y > 0) {
+    function ringSignedAreaXZ(ring) {
+        let area = 0;
+        for (let i = 0; i < ring.length; i += 1) {
+            const j = (i + 1) % ring.length;
+            area += ring[i].x * ring[j].z - ring[j].x * ring[i].z;
+        }
+        return area * 0.5;
+    }
+
+    function screenPolygonSignedArea(screenVerts) {
+        let area = 0;
+        for (let i = 0; i < screenVerts.length; i += 1) {
+            const j = (i + 1) % screenVerts.length;
+            area += screenVerts[i].x * screenVerts[j].y - screenVerts[j].x * screenVerts[i].y;
+        }
+        return area * 0.5;
+    }
+
+    function computeSideFaceNormal(bi, bj, ti, bottomRingCw) {
+        const e1 = vec3Sub(bj, bi);
+        const e2 = vec3Sub(ti, bi);
+        let normal = vec3Cross(e1, e2);
+        if (!bottomRingCw) {
             normal = { x: -normal.x, y: -normal.y, z: -normal.z };
-        } else if (kind === 'top' && normal.y < 0) {
-            normal = { x: -normal.x, y: -normal.y, z: -normal.z };
-        } else if (kind === 'side' && shapeCenter) {
-            const c = faceCentroidWorld(ring);
-            const vx = c.x - shapeCenter.x;
-            const vy = c.y - shapeCenter.y;
-            const vz = c.z - shapeCenter.z;
-            const dot = normal.x * vx + normal.y * vy + normal.z * vz;
-            if (dot < 0) {
-                normal = { x: -normal.x, y: -normal.y, z: -normal.z };
-            }
         }
         return normal;
     }
 
-    function isVolumeFaceVisible(ring, normal, kind, camera, view) {
+    function computeVolumeFaceNormal(ring, kind, bottomRingCw, sideCorners) {
+        if (kind === 'side' && sideCorners) {
+            return computeSideFaceNormal(sideCorners.bi, sideCorners.bj, sideCorners.ti, bottomRingCw);
+        }
+        let normal = newellNormal(ring);
+        // 底环/顶环与 XZ 俯视 CCW 一致：Newell 法线朝 +Y，底面外法线应朝 -Y，顶面朝 +Y
+        if (kind === 'bottom' && normal.y > 0) {
+            normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+        } else if (kind === 'top' && normal.y < 0) {
+            normal = { x: -normal.x, y: -normal.y, z: -normal.z };
+        }
+        return normal;
+    }
+
+    function faceFacingDotAtPoint(normal, point, camPos) {
         const len = Math.hypot(normal.x, normal.y, normal.z);
         if (len < 1e-8) {
-            return false;
+            return 1;
         }
         const nx = normal.x / len;
         const ny = normal.y / len;
         const nz = normal.z / len;
-        if (camera) {
-            const camPos = getCameraWorldPosition(camera);
-            if (!camPos) {
-                return true;
-            }
-            const c = faceCentroidWorld(ring);
-            const vx = camPos.x - c.x;
-            const vy = camPos.y - c.y;
-            const vz = camPos.z - c.z;
-            return nx * vx + ny * vy + nz * vz > 1e-6;
+        const vx = camPos.x - point.x;
+        const vy = camPos.y - point.y;
+        const vz = camPos.z - point.z;
+        const vlen = Math.hypot(vx, vy, vz);
+        if (vlen < 1e-6) {
+            return 1;
         }
+        return (nx * vx + ny * vy + nz * vz) / vlen;
+    }
+
+    /** 仅当面上所有采样点都明确背向相机时才剔除（避免旋转时侧面过早消失） */
+    function isVolumeFaceFacingCamera(ring, normal, camera) {
+        const camPos = getCameraWorldPosition(camera);
+        if (!camPos) {
+            return true;
+        }
+        const samples = ring.concat([faceCentroidWorld(ring)]);
+        let anyFront = false;
+        for (let i = 0; i < samples.length; i += 1) {
+            if (faceFacingDotAtPoint(normal, samples[i], camPos) > GIS_VOLUME_FACE_BACK_EPS) {
+                anyFront = true;
+                break;
+            }
+        }
+        return anyFront;
+    }
+
+    function isVolumeFaceVisibleFlat(normal, kind) {
+        const len = Math.hypot(normal.x, normal.y, normal.z);
+        if (len < 1e-8) {
+            return true;
+        }
+        const ny = normal.y / len;
         if (kind === 'top') {
-            return ny > 0.04;
+            return ny > 0.02;
         }
         if (kind === 'bottom') {
-            return ny < -0.04;
+            return ny < -0.02;
         }
-        return Math.abs(ny) < 0.94;
+        return Math.abs(ny) < 0.98;
+    }
+
+    function faceDepthAlongCameraView(ring, camera) {
+        const camPos = getCameraWorldPosition(camera);
+        if (!camPos) {
+            return 0;
+        }
+        const c = faceCentroidWorld(ring);
+        const dx = c.x - camPos.x;
+        const dy = c.y - camPos.y;
+        const dz = c.z - camPos.z;
+        const e = camera?.matrixWorld?.elements;
+        if (e) {
+            const fx = -e[8];
+            const fy = -e[9];
+            const fz = -e[10];
+            const flen = Math.hypot(fx, fy, fz) || 1;
+            return (dx * fx + dy * fy + dz * fz) / flen;
+        }
+        return Math.hypot(dx, dy, dz);
+    }
+
+    function getBottomRingCwFlag(shape, points, cfg) {
+        if (shape === VOLUME_SHAPES.BOX) {
+            const rings = getBoxPrismRings(points, cfg);
+            if (rings?.bottom?.length >= 3) {
+                return ringSignedAreaXZ(rings.bottom) < 0;
+            }
+        }
+        if (shape === VOLUME_SHAPES.HEXAHEDRON && points.length >= 4) {
+            return ringSignedAreaXZ(points.slice(0, 4)) < 0;
+        }
+        return false;
     }
 
     function parseRegionHexColor(hex) {
@@ -4113,15 +4193,7 @@
     }
 
     function faceDepthSortKey(ring, camera) {
-        const camPos = getCameraWorldPosition(camera);
-        if (!camPos) {
-            return 0;
-        }
-        const c = faceCentroidWorld(ring);
-        const dx = c.x - camPos.x;
-        const dy = c.y - camPos.y;
-        const dz = c.z - camPos.z;
-        return dx * dx + dy * dy + dz * dz;
+        return faceDepthAlongCameraView(ring, camera);
     }
 
     function buildSvgClippedFacePath(ring, view, camera) {
@@ -4146,7 +4218,12 @@
                 const j = (i + 1) % rings.n;
                 faces.push({
                     ring: [rings.bottom[i], rings.bottom[j], rings.top[j], rings.top[i]],
-                    kind: 'side'
+                    kind: 'side',
+                    sideCorners: {
+                        bi: rings.bottom[i],
+                        bj: rings.bottom[j],
+                        ti: rings.top[i]
+                    }
                 });
             }
             return faces;
@@ -4160,7 +4237,8 @@
                 const j = (i + 1) % 4;
                 faces.push({
                     ring: [bottom[i], bottom[j], top[j], top[i]],
-                    kind: 'side'
+                    kind: 'side',
+                    sideCorners: { bi: bottom[i], bj: bottom[j], ti: top[i] }
                 });
             }
             return faces;
@@ -4179,7 +4257,8 @@
                 const j = (i + 1) % segments;
                 faces.push({
                     ring: [bottom[i], bottom[j], top[j], top[i]],
-                    kind: 'side'
+                    kind: 'side',
+                    sideCorners: { bi: bottom[i], bj: bottom[j], ti: top[i] }
                 });
             }
         }
@@ -4207,14 +4286,25 @@
         if (!faceSpecs.length) {
             return [];
         }
-        const shapeCenter = computeVolumeShapeCenter(points);
+        const bottomRingCw = getBottomRingCwFlag(shape, points, cfg);
         const items = [];
         faceSpecs.forEach((spec, index) => {
-            const normal = computeVolumeFaceNormal(spec.ring, spec.kind, shapeCenter);
-            if (!isVolumeFaceVisible(spec.ring, normal, spec.kind, camera, view)) {
+            const screenRing = getClippedScreenRingForVolumeFace(spec.ring, view, camera);
+            if (screenRing.length < 3) {
                 return;
             }
-            const d = buildSvgClippedFacePath(spec.ring, view, camera);
+            if (Math.abs(screenPolygonSignedArea(screenRing)) < GIS_VOLUME_FACE_MIN_SCREEN_AREA) {
+                return;
+            }
+            const normal = computeVolumeFaceNormal(spec.ring, spec.kind, bottomRingCw, spec.sideCorners);
+            if (camera) {
+                if (!isVolumeFaceFacingCamera(spec.ring, normal, camera)) {
+                    return;
+                }
+            } else if (!isVolumeFaceVisibleFlat(normal, spec.kind)) {
+                return;
+            }
+            const d = screenRingToSvgPath(screenRing);
             if (!d) {
                 return;
             }
@@ -4222,7 +4312,7 @@
                 index,
                 d,
                 fill: shadeRegionFaceColor(baseColor, normal),
-                depth: faceDepthSortKey(spec.ring, camera)
+                depth: faceDepthAlongCameraView(spec.ring, camera)
             });
         });
         items.sort((a, b) => b.depth - a.depth);
