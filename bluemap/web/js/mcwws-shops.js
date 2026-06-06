@@ -162,8 +162,24 @@
 
     parseLaunchParams();
 
-    document.addEventListener('keydown', stopMapKeyboardBubble, false);
-    document.addEventListener('keyup', stopMapKeyboardBubble, false);
+    const MAP_KEYBOARD_MOVE_KEYS = new Set([
+        'w', 'a', 's', 'd', 'q', 'e',
+        'arrowup', 'arrowdown', 'arrowleft', 'arrowright', ' '
+    ]);
+    const NON_TEXT_INPUT_TYPES = new Set([
+        'checkbox', 'radio', 'button', 'submit', 'reset', 'file', 'hidden', 'image', 'range', 'color'
+    ]);
+
+    document.addEventListener('focusin', () => {
+        if (isTextInputFocused()) {
+            setMapKeyboardPaused(true);
+        }
+    }, true);
+    document.addEventListener('focusout', () => {
+        window.setTimeout(syncMapKeyboardPause, 0);
+    }, true);
+    document.addEventListener('keydown', stopMapKeyboardBubble, true);
+    document.addEventListener('keyup', stopMapKeyboardBubble, true);
 
     function economyBaseUrl() {
         return `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
@@ -548,7 +564,7 @@
         });
 
         panel.addEventListener('focusin', () => {
-            if (isDockTextInputFocused()) {
+            if (isTextInputFocused()) {
                 setMapKeyboardPaused(true);
             }
         });
@@ -1487,15 +1503,29 @@
 
     let mapKeyboardPaused = false;
 
-    function isDockTextInputFocused() {
-        const panel = document.getElementById(PANEL_ID);
+    function isTextInputFocused() {
         const active = document.activeElement;
-        if (!panel || !active || !panel.contains(active)) {
+        if (!active || active === document.body || active === document.documentElement) {
             return false;
         }
+        if (active.isContentEditable && active.getAttribute('contenteditable') !== 'false') {
+            return true;
+        }
         const tag = active.tagName;
-        return tag === 'INPUT' || tag === 'TEXTAREA' || active.isContentEditable;
+        if (tag === 'TEXTAREA') {
+            return !active.disabled;
+        }
+        if (tag !== 'INPUT') {
+            return false;
+        }
+        if (active.disabled) {
+            return false;
+        }
+        const type = String(active.type || 'text').toLowerCase();
+        return !NON_TEXT_INPUT_TYPES.has(type);
     }
+
+    window.mcwwsIsTextInputFocused = isTextInputFocused;
 
     /** BlueMap 在 window 上监听 WASD；搜索框聚焦时暂停键盘控制 */
     function setMapKeyboardPaused(paused) {
@@ -1520,12 +1550,16 @@
     }
 
     function syncMapKeyboardPause() {
-        setMapKeyboardPaused(isDockTextInputFocused());
+        setMapKeyboardPaused(isTextInputFocused());
     }
 
     function stopMapKeyboardBubble(e) {
-        if (!isDockTextInputFocused()) {
+        if (!isTextInputFocused()) {
             return;
+        }
+        const key = String(e.key || '').toLowerCase();
+        if (MAP_KEYBOARD_MOVE_KEYS.has(key)) {
+            e.preventDefault();
         }
         e.stopPropagation();
     }
@@ -3303,7 +3337,7 @@
         document.addEventListener('pointercancel', onFollowPanPointerUp, true);
         document.addEventListener('keydown', (event) => {
             if (!playerFollowActive || playerFollowApplying) return;
-            if (isDockTextInputFocused()) return;
+            if (isTextInputFocused()) return;
             const key = String(event.key || '').toLowerCase();
             if (['w', 'a', 's', 'd', 'q', 'e', 'arrowup', 'arrowdown', 'arrowleft', 'arrowright'].includes(key)) {
                 event.preventDefault();

@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-70';
+    const MCWWS_GIS_BUILD = '20260602-71';
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -9175,8 +9175,15 @@
     }
 
     function isInputFocused() {
-        const tag = document.activeElement?.tagName;
-        return tag === 'INPUT' || tag === 'TEXTAREA';
+        if (typeof window.mcwwsIsTextInputFocused === 'function') {
+            return window.mcwwsIsTextInputFocused();
+        }
+        const active = document.activeElement;
+        if (!active) {
+            return false;
+        }
+        const tag = active.tagName;
+        return tag === 'INPUT' || tag === 'TEXTAREA' || active.isContentEditable;
     }
 
     function tick() {
