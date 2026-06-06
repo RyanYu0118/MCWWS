@@ -229,6 +229,13 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     flex-shrink: 0;
 }
 
+.mcwws-gis-edit-option--hint {
+    cursor: default;
+    background: #f8fafc;
+    border-color: #e2e8f0;
+    color: #64748b;
+}
+
 .mcwws-layer-gis-toggle {
     display: flex;
     align-items: center;

@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-67';
+    const MCWWS_GIS_BUILD = '20260602-68';
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -76,6 +76,8 @@
     let gisEditMode = false;
     let gisIgnoreHeightClip = false;
     let gisShowRoadNames = true;
+    /** 原版地图编辑模式下是否显示区域三维立体填充 */
+    let gisShowVolume3dBuildings = true;
     let activeTool = 'select';
     let activeVolumeShape = VOLUME_SHAPES.BOX;
     let draftVolumePhase = null;
@@ -94,6 +96,7 @@
     const STORAGE_GIS_ENABLED = 'mcwws-gis-info-enabled';
     const STORAGE_GIS_IGNORE_HEIGHT_CLIP = 'mcwws-gis-ignore-height-clip';
     const STORAGE_GIS_SHOW_ROAD_NAMES = 'mcwws-gis-show-road-names';
+    const STORAGE_GIS_SHOW_VOLUME3D = 'mcwws-gis-show-volume3d';
     let dirty = false;
     let saving = false;
     let statusMessage = '';
@@ -219,6 +222,8 @@
             gisIgnoreHeightClip = localStorage.getItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP) === '1';
             const roadNames = localStorage.getItem(STORAGE_GIS_SHOW_ROAD_NAMES);
             gisShowRoadNames = roadNames !== '0';
+            const volume3d = localStorage.getItem(STORAGE_GIS_SHOW_VOLUME3D);
+            gisShowVolume3dBuildings = volume3d !== '0';
         } catch {
             /* ignore */
         }
@@ -230,6 +235,7 @@
             localStorage.setItem(STORAGE_GIS_ENABLED, gisInfoEnabled ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP, gisIgnoreHeightClip ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_ROAD_NAMES, gisShowRoadNames ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_SHOW_VOLUME3D, gisShowVolume3dBuildings ? '1' : '0');
         } catch {
             /* ignore */
         }
@@ -355,6 +361,7 @@
         }
         gisCachedCamera = null;
         gisThree = null;
+        syncVolume3dVisibilityClass();
         renderOverlay();
     }
 
@@ -1524,6 +1531,32 @@
         document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
         renderOverlay();
         renderLayerDialog();
+    }
+
+    /** 简化地图：始终显示；原版地图：仅编辑模式且开关开启时显示 */
+    function shouldShowVolume3dSolids() {
+        if (!gisInfoEnabled) {
+            return false;
+        }
+        if (isSimplifiedMapMode()) {
+            return true;
+        }
+        return gisEditMode && gisShowVolume3dBuildings;
+    }
+
+    function setGisShowVolume3dBuildings(enabled) {
+        gisShowVolume3dBuildings = !!enabled;
+        saveLayerPrefs();
+        document.body.classList.toggle(
+            'mcwws-gis-volume3d-visible',
+            shouldShowVolume3dSolids()
+        );
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    function syncVolume3dVisibilityClass() {
+        document.body.classList.toggle('mcwws-gis-volume3d-visible', shouldShowVolume3dSolids());
     }
 
     function getVertexIndexById(feature, vertexId) {
@@ -8154,6 +8187,8 @@
 
         const neededPathKeys = new Set();
         const selectionActive = hasGisSelection();
+        const showVolume3dSolids = shouldShowVolume3dSolids();
+        syncVolume3dVisibilityClass();
         const volumeFacePaintQueue = [];
         const volumeWireframeQueue = [];
         const volumeMeshEntries = [];
@@ -8193,7 +8228,7 @@
                 const fillColor = getRegionVolumeFillColor(feature);
                 const edgeStroke = regionSelected ? GIS_VOLUME_SELECTION_STROKE : 'rgba(90, 110, 130, 0.35)';
 
-                if (hasVolumeSolid) {
+                if (hasVolumeSolid && showVolume3dSolids) {
                     volumeMeshEntries.push({ feature, layer, dimmed });
                     if (regionSelected) {
                         const volEdges = buildVolume3dEdges(feature);
@@ -8286,7 +8321,7 @@
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const d = buildDraftPreviewPath(view, camera);
-            if (activeTool === 'polygon' && activeVolumeShape === VOLUME_SHAPES.BOX) {
+            if (activeTool === 'polygon' && activeVolumeShape === VOLUME_SHAPES.BOX && shouldShowVolume3dSolids()) {
                 const draft = getDraftPreviewPoints();
                 if (draft.length >= 3) {
                     const ys = inferFootprintYs(draft);
@@ -8421,6 +8456,8 @@
         cancelGisLasso();
         clearGisSelection();
         syncDrawingClass();
+        syncVolume3dVisibilityClass();
+        renderOverlay();
     }
 
     function openGisEditorPanel() {
@@ -8428,6 +8465,7 @@
         if (gisCanEdit) {
             gisEditMode = true;
             syncDrawingClass();
+            syncVolume3dVisibilityClass();
             renderOverlay();
         }
     }
@@ -8561,6 +8599,15 @@
                         ${!gisCanEdit ? 'disabled' : ''}>
                     <span>忽视高度裁切（编辑时显示全部顶点与线段）</span>
                 </label>
+                ${isSimplifiedMapMode() ? `
+                <p class="mcwws-gis-edit-option mcwws-gis-edit-option--hint">简化地图模式下始终显示三维建筑物</p>
+                ` : `
+                <label class="mcwws-gis-edit-option">
+                    <input type="checkbox" data-gis-show-volume3d ${gisShowVolume3dBuildings ? 'checked' : ''}
+                        ${!gisCanEdit ? 'disabled' : ''}>
+                    <span>显示三维建筑物</span>
+                </label>
+                `}
                 <div class="mcwws-gis-menu-tools" role="toolbar" aria-label="绘制工具">
                     ${TOOLS.map((t) => `
                         <button type="button" class="mcwws-gis-menu-tool${activeTool === t.id ? ' is-active' : ''}"
@@ -8763,6 +8810,12 @@
                 setGisShowRoadNames(e.target.checked);
                 return;
             }
+            const volume3dInput = e.target.closest('[data-gis-show-volume3d]');
+            if (volume3dInput && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisShowVolume3dBuildings(e.target.checked);
+                return;
+            }
             const roadInput = e.target.closest('[data-road-prop]');
             if (roadInput) {
                 e.stopPropagation();
@@ -8864,6 +8917,11 @@
             const roadNamesToggle = e.target.closest('[data-gis-show-road-names]');
             if (roadNamesToggle && e.target.matches('input[type="checkbox"]')) {
                 setGisShowRoadNames(e.target.checked);
+                return;
+            }
+            const volume3dToggle = e.target.closest('[data-gis-show-volume3d]');
+            if (volume3dToggle && e.target.matches('input[type="checkbox"]')) {
+                setGisShowVolume3dBuildings(e.target.checked);
                 return;
             }
             const toolBtn = e.target.closest('[data-tool]');
@@ -9125,6 +9183,7 @@
         document.getElementById('mcwws-gis-panel')?.remove();
         loadLayerPrefs();
         document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
+        syncVolume3dVisibilityClass();
         initMapAuth();
         bindMapPicks();
         bindMapContextMenuSuppression();
