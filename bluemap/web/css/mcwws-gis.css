@@ -753,6 +753,10 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     opacity: 0.55;
 }
 
+body.mcwws-gis-volumes-webgl #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill {
+    display: none !important;
+}
+
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d {
     fill: none;
     stroke-width: 2;

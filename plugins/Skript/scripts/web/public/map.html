@@ -140,6 +140,17 @@
                 frame.src = url;
             }
 
+            window.mcwwsGisVolumeDiag = function () {
+                const fn = frame?.contentWindow?.mcwwsGisVolumeDiag;
+                if (typeof fn === 'function') {
+                    return fn();
+                }
+                return {
+                    error: '地图 iframe 尚未就绪',
+                    hint: '请等待地图加载完成，或在 DevTools Console 顶部的 iframe 上下文里运行'
+                };
+            };
+
             mountMap();
             window.addEventListener('mcwws-services-config', mountMap);
             window.setTimeout(mountMap, 500);
@@ -149,6 +160,13 @@
 
             window.addEventListener('message', (event) => {
                 const data = event.data || {};
+                if (data.type === 'mcwws-gis-ready') {
+                    window.mcwwsGisVolumeDiag = function () {
+                        const fn = frame?.contentWindow?.mcwwsGisVolumeDiag;
+                        return typeof fn === 'function' ? fn() : { error: 'map iframe diag unavailable' };
+                    };
+                    return;
+                }
                 if (data.type === 'mcwws-map-clean') {
                     document.body.classList.toggle('services-map-clean', !!data.active);
                     return;
