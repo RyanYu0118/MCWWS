@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-59';
+    const MCWWS_GIS_BUILD = '20260602-60';
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -4134,11 +4134,17 @@
     }
 
     function faceDepthAlongCameraView(ring, camera) {
+        const c = faceCentroidWorld(ring);
+        if (camera) {
+            const clip = worldPointToClip(c, camera, false);
+            if (clip && clip.w > GIS_CLIP_W_EPS) {
+                return clip.z / clip.w;
+            }
+        }
         const camPos = getCameraWorldPosition(camera);
         if (!camPos) {
             return 0;
         }
-        const c = faceCentroidWorld(ring);
         const dx = c.x - camPos.x;
         const dy = c.y - camPos.y;
         const dz = c.z - camPos.z;
@@ -4151,6 +4157,15 @@
             return (dx * fx + dy * fy + dz * fz) / flen;
         }
         return Math.hypot(dx, dy, dz);
+    }
+
+    function applySvgPathPaintOrder(svg, orderedKeys) {
+        orderedKeys.forEach((key) => {
+            const el = svgPathElements.get(key);
+            if (el && el.parentNode === svg) {
+                svg.appendChild(el);
+            }
+        });
     }
 
     function getBottomRingCwFlag(shape, points, cfg) {
@@ -7771,6 +7786,8 @@
 
         const neededPathKeys = new Set();
         const selectionActive = hasGisSelection();
+        const volumeFacePaintQueue = [];
+        const volumeWireframeQueue = [];
         iterVisibleFeatures().forEach(({ feature, layer }) => {
             const color = featureColor(feature, layer);
             const dash = feature.type === 'LineString' ? getRoadStrokeDasharray(feature) : null;
@@ -7810,27 +7827,25 @@
                 if (hasVolumeSolid) {
                     const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
                     faceItems.forEach((item) => {
-                        const fillKey = `${feature.id}:volume-fill:${item.index}`;
-                        neededPathKeys.add(fillKey);
-                        const fillPath = ensureSvgFeaturePath(svg, fillKey, feature.id, 'mcwws-gis-volume3d-fill');
-                        fillPath.setAttribute('d', item.d);
-                        fillPath.style.fill = item.fill;
-                        fillPath.removeAttribute('stroke');
-                        fillPath.classList.toggle('is-dimmed', dimmed);
+                        volumeFacePaintQueue.push({
+                            featureId: feature.id,
+                            fillKey: `${feature.id}:volume-fill:${item.index}`,
+                            item,
+                            dimmed
+                        });
                     });
                     if (regionSelected) {
                         const volEdges = buildVolume3dEdges(feature);
                         if (volEdges.length) {
                             const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
                             if (volD) {
-                                const volKey = `${feature.id}:volume3d`;
-                                neededPathKeys.add(volKey);
-                                const volPath = ensureSvgFeaturePath(svg, volKey, feature.id, 'mcwws-gis-volume3d');
-                                volPath.setAttribute('d', volD);
-                                volPath.setAttribute('stroke', edgeStroke);
-                                volPath.setAttribute('stroke-width', '2.5');
-                                volPath.classList.toggle('is-dimmed', dimmed);
-                                volPath.classList.add('is-selected');
+                                volumeWireframeQueue.push({
+                                    featureId: feature.id,
+                                    volKey: `${feature.id}:volume3d`,
+                                    volD,
+                                    edgeStroke,
+                                    dimmed
+                                });
                             }
                         }
                     }
@@ -7852,6 +7867,33 @@
                     }
                 }
             }
+        });
+
+        volumeFacePaintQueue.sort((a, b) => {
+            const depthDiff = b.item.depth - a.item.depth;
+            if (Math.abs(depthDiff) > 1e-6) {
+                return depthDiff;
+            }
+            return a.fillKey.localeCompare(b.fillKey);
+        });
+        volumeFacePaintQueue.forEach(({ featureId, fillKey, item, dimmed }) => {
+            neededPathKeys.add(fillKey);
+            const fillPath = ensureSvgFeaturePath(svg, fillKey, featureId, 'mcwws-gis-volume3d-fill');
+            fillPath.setAttribute('d', item.d);
+            fillPath.style.fill = item.fill;
+            fillPath.removeAttribute('stroke');
+            fillPath.classList.toggle('is-dimmed', dimmed);
+        });
+        applySvgPathPaintOrder(svg, volumeFacePaintQueue.map((entry) => entry.fillKey));
+
+        volumeWireframeQueue.forEach(({ featureId, volKey, volD, edgeStroke, dimmed }) => {
+            neededPathKeys.add(volKey);
+            const volPath = ensureSvgFeaturePath(svg, volKey, featureId, 'mcwws-gis-volume3d');
+            volPath.setAttribute('d', volD);
+            volPath.setAttribute('stroke', edgeStroke);
+            volPath.setAttribute('stroke-width', '2.5');
+            volPath.classList.toggle('is-dimmed', dimmed);
+            volPath.classList.add('is-selected');
         });
 
         svgPathElements.forEach((path, key) => {
