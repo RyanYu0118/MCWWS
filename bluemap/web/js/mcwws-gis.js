@@ -1,5 +1,7 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-77';
+    const MCWWS_GIS_BUILD = '20260602-80';
+    /** BlueMap 暂不支持直接挂载原始 Mesh 稳定显示，关闭 WebGL 体积，统一走 SVG */
+    const GIS_VOLUME_WEBGL_ENABLED = false;
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -127,6 +129,7 @@
     let volumeMeshRoot = null;
     /** @type {Map<string, { sig: string, group: object }>} */
     const volumeFeatureMeshes = new Map();
+    const volumeWebGlFailedFeatureIds = new Set();
     /** @type {null | { Mesh: Function, BufferGeometry: Function, Float32BufferAttribute: Function, MeshBasicMaterial: Function, Group: Function, FrontSide: number }} */
     let gisThree = null;
     /** @type {{ startX: number, startY: number, moved: boolean, pointerId: number } | null} */
@@ -3648,8 +3651,11 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
-    /** 原版地图有 3D 相机时一律走 WebGL 深度；仅简化白底画布用 SVG */
+    /** 原版地图：WebGL 实验路径；当前关闭，三维建筑统一 SVG 渲染 */
     function shouldRenderVolumesWithWebGl() {
+        if (!GIS_VOLUME_WEBGL_ENABLED) {
+            return false;
+        }
         if (isSimplifiedMapMode() || !gisInfoEnabled) {
             return false;
         }
@@ -3657,32 +3663,31 @@
     }
 
     function resolveVolumeMeshParent(mv) {
-        const bm = getBlueMapApp();
-        const candidates = [
-            mv?.map?.hiresTileManager?.scene,
-            mv?.map?.lowresTileManager?.[0]?.scene,
-            mv?.markers
-        ];
-        for (let i = 0; i < candidates.length; i += 1) {
-            const node = candidates[i];
-            if (node && typeof node.add === 'function') {
-                return node;
-            }
+        const markers = mv?.markers;
+        if (markers && typeof markers.add === 'function') {
+            return markers;
         }
         let markerSetRoot = null;
-        const visit = (root) => {
-            root?.traverse?.((obj) => {
-                if (!markerSetRoot && obj?.isMarkerSet && typeof obj.add === 'function') {
-                    markerSetRoot = obj;
-                }
-            });
-        };
-        visit(mv?.markers);
-        visit(mv?.map?.hiresTileManager?.scene);
-        if (markerSetRoot) {
-            return markerSetRoot;
+        markers?.traverse?.((obj) => {
+            if (!markerSetRoot && obj?.isMarkerSet && typeof obj.add === 'function') {
+                markerSetRoot = obj;
+            }
+        });
+        return markerSetRoot;
+    }
+
+    function getVolumeMeshParentLabel(mv) {
+        const parent = resolveVolumeMeshParent(mv);
+        if (!parent) {
+            return 'none';
         }
-        return findNamedThreeClass(bm, 'Scene') ? mv?.map?.hiresTileManager?.scene || null : null;
+        if (parent === mv?.markers) {
+            return 'markers';
+        }
+        if (parent?.isMarkerSet) {
+            return 'marker-set';
+        }
+        return parent.name || parent.type || 'object3d';
     }
 
     function findThreeGroupCtor(mv, sample) {
@@ -3724,6 +3729,30 @@
             : null;
     }
 
+    function collectThreeSampleFromScene(mv) {
+        let sample = null;
+        let basicMaterial = null;
+        const tryRoot = (root) => {
+            root?.traverse?.((obj) => {
+                if (!obj?.isMesh || !obj.geometry?.attributes?.position) {
+                    return;
+                }
+                if (!sample) {
+                    sample = obj;
+                }
+                if (!basicMaterial && obj.material?.isMeshBasicMaterial) {
+                    basicMaterial = obj.material;
+                }
+            });
+        };
+        tryRoot(mv?.markers);
+        tryRoot(mv?.map?.hiresTileManager?.scene);
+        if (!sample && mv?.map?.lowresTileManager?.length) {
+            tryRoot(mv.map.lowresTileManager[0].scene);
+        }
+        return { sample, basicMaterial };
+    }
+
     function resolveGisThree() {
         if (gisThree) {
             return gisThree;
@@ -3737,21 +3766,26 @@
         if (!camera) {
             return null;
         }
-        const MeshBasicMaterialCtor = findNamedThreeClass(bm, 'MeshBasicMaterial');
-        const BufferGeometryCtor = findNamedThreeClass(bm, 'BufferGeometry');
-        const Float32BufferAttributeCtor = findNamedThreeClass(bm, 'Float32BufferAttribute');
-        const MeshCtor = findNamedThreeClass(bm, 'Mesh');
-        const GroupCtor = findNamedThreeClass(bm, 'Group') || findNamedThreeClass(bm, 'Object3D');
-        if (!MeshBasicMaterialCtor || !BufferGeometryCtor || !Float32BufferAttributeCtor || !MeshCtor) {
+        const { sample, basicMaterial } = collectThreeSampleFromScene(mv);
+        if (!sample) {
+            return null;
+        }
+        const MeshCtor = sample.constructor;
+        const BufferGeometryCtor = sample.geometry.constructor;
+        const Float32AttrCtor = sample.geometry.attributes.position.constructor;
+        const MeshBasicMaterialCtor = basicMaterial?.constructor || null;
+        const groupCtor = findThreeGroupCtor(mv, sample) || findThreeObject3DCtor(MeshCtor) || MeshCtor;
+        if (!MeshCtor || !BufferGeometryCtor || !Float32AttrCtor) {
             return null;
         }
         gisThree = {
             Mesh: MeshCtor,
             BufferGeometry: BufferGeometryCtor,
-            Float32BufferAttribute: Float32BufferAttributeCtor,
+            Float32BufferAttribute: Float32AttrCtor,
             MeshBasicMaterial: MeshBasicMaterialCtor,
-            Group: GroupCtor || MeshCtor,
-            Object3D: GroupCtor || MeshCtor,
+            materialSample: basicMaterial || sample.material,
+            Group: groupCtor,
+            Object3D: groupCtor,
             FrontSide: 0,
             DoubleSide: 2
         };
@@ -3765,6 +3799,12 @@
         }
         if (volumeMeshRoot && volumeMeshRoot.parent === parent) {
             return volumeMeshRoot;
+        }
+        if (volumeFeatureMeshes.size) {
+            volumeFeatureMeshes.forEach((entry) => {
+                disposeVolumeMeshObject(entry.group);
+            });
+            volumeFeatureMeshes.clear();
         }
         if (volumeMeshRoot?.parent) {
             volumeMeshRoot.parent.remove(volumeMeshRoot);
@@ -3797,22 +3837,32 @@
     }
 
     function createVolumeMeshMaterial(three) {
-        const MaterialCtor = three?.MeshBasicMaterial;
-        if (!MaterialCtor) {
-            return null;
-        }
         try {
-            return new MaterialCtor({
-                vertexColors: true,
-                transparent: false,
-                opacity: 1,
-                depthTest: true,
-                depthWrite: true,
-                side: three.FrontSide ?? 0,
-                polygonOffset: true,
-                polygonOffsetFactor: 1,
-                polygonOffsetUnits: 1
-            });
+            if (three.MeshBasicMaterial) {
+                return new three.MeshBasicMaterial({
+                    vertexColors: true,
+                    transparent: false,
+                    opacity: 1,
+                    depthTest: true,
+                    depthWrite: true,
+                    side: three.DoubleSide ?? 2
+                });
+            }
+            const template = three.materialSample;
+            if (!template?.clone) {
+                return null;
+            }
+            const material = template.clone();
+            material.vertexColors = true;
+            material.transparent = false;
+            material.opacity = 1;
+            material.depthTest = true;
+            material.depthWrite = true;
+            if ('side' in material) {
+                material.side = three.DoubleSide ?? 2;
+            }
+            material.polygonOffset = false;
+            return material;
         } catch (err) {
             console.warn('[mcwws-gis] createVolumeMeshMaterial failed', err);
             return null;
@@ -3845,6 +3895,12 @@
         const geometry = new three.BufferGeometry();
         geometry.setAttribute('position', new three.Float32BufferAttribute(positions, 3));
         geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
+        if (typeof geometry.computeBoundingSphere === 'function') {
+            geometry.computeBoundingSphere();
+        }
+        if (typeof geometry.computeBoundingBox === 'function') {
+            geometry.computeBoundingBox();
+        }
         const material = createVolumeMeshMaterial(three);
         if (!material) {
             return null;
@@ -3885,12 +3941,19 @@
             hasCamera: !!getGisBlueMapCamera(),
             hasThree: !!three,
             meshParent: !!resolveVolumeMeshParent(mv),
+            meshParentKind: getVolumeMeshParentLabel(mv),
             activeMeshCount: volumeFeatureMeshes.size,
-            webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl')
+            svgFallbackCount: volumeWebGlFailedFeatureIds.size,
+            webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl'),
+            volumeBackend: shouldRenderVolumesWithWebGl() ? 'webgl' : 'svg',
+            modeHint: shouldRenderVolumesWithWebGl()
+                ? '原版地图：三维建筑走 WebGL 深度缓冲。'
+                : '三维建筑走 SVG 面片（WebGL 体积路径已关闭）。相邻建筑按整体深度排序。'
         };
     }
 
     function syncVolumeMeshes(entries) {
+        volumeWebGlFailedFeatureIds.clear();
         try {
             const three = resolveGisThree();
             const mv = getBlueMapApp()?.mapViewer;
@@ -3919,6 +3982,7 @@
                     const group = buildVolumeFeatureMeshGroup(feature, layer, three);
                     if (!group) {
                         volumeFeatureMeshes.delete(feature.id);
+                        volumeWebGlFailedFeatureIds.add(feature.id);
                         return;
                     }
                     volumeMeshRoot.add(group);
@@ -3941,7 +4005,7 @@
             if (changed || volumeFeatureMeshes.size > 0) {
                 mv.redraw?.();
             }
-            return activeCount > 0;
+            return activeCount > 0 || volumeWebGlFailedFeatureIds.size > 0;
         } catch (err) {
             console.warn('[mcwws-gis] syncVolumeMeshes failed, falling back to SVG volumes', err);
             gisThree = null;
@@ -4598,6 +4662,34 @@
         return Math.hypot(dx, dy, dz);
     }
 
+    function faceViewSpaceDepthRange(ring, camera) {
+        const camPos = getCameraWorldPosition(camera);
+        const e = camera?.matrixWorld?.elements;
+        if (!camPos || !e) {
+            return { min: 0, max: 0, sort: 0 };
+        }
+        const fx = -e[8];
+        const fy = -e[9];
+        const fz = -e[10];
+        const flen = Math.hypot(fx, fy, fz) || 1;
+        let min = Infinity;
+        let max = -Infinity;
+        ring.forEach((p) => {
+            const wy = gisWorldY(p, false);
+            const d = ((p.x - camPos.x) * fx + (wy - camPos.y) * fy + (p.z - camPos.z) * fz) / flen;
+            if (d < min) {
+                min = d;
+            }
+            if (d > max) {
+                max = d;
+            }
+        });
+        if (min === Infinity) {
+            return { min: 0, max: 0, sort: 0 };
+        }
+        return { min, max, sort: (min + max) * 0.5 };
+    }
+
     function faceDepthRangeAlongCameraView(ring, camera) {
         let minNdcZ = Infinity;
         let maxNdcZ = -Infinity;
@@ -4645,36 +4737,54 @@
     }
 
     function compareVolumeFacePaintOrder(a, b, camera) {
-        const downness = getCameraDownness(camera);
-        if (downness > 0.55) {
-            const planDiff = (b.planDist ?? 0) - (a.planDist ?? 0);
-            if (Math.abs(planDiff) > 1e-4) {
-                return planDiff;
-            }
-            const yDiff = (a.centroidY ?? 0) - (b.centroidY ?? 0);
-            if (Math.abs(yDiff) > 1e-4) {
-                return yDiff;
-            }
-        }
-        const depthDiff = b.depth - a.depth;
-        if (Math.abs(depthDiff) > 1e-5) {
+        const depthDiff = (b.depth ?? 0) - (a.depth ?? 0);
+        if (Math.abs(depthDiff) > 1e-4) {
             return depthDiff;
         }
-        if (downness > 0.25) {
-            const planDiff = (b.planDist ?? 0) - (a.planDist ?? 0);
-            if (Math.abs(planDiff) > 1e-4) {
-                return planDiff;
-            }
-        }
         const maxDiff = (b.depthMax ?? b.depth) - (a.depthMax ?? a.depth);
-        if (Math.abs(maxDiff) > 1e-5) {
+        if (Math.abs(maxDiff) > 1e-4) {
             return maxDiff;
         }
         const minDiff = (b.depthMin ?? b.depth) - (a.depthMin ?? a.depth);
-        if (Math.abs(minDiff) > 1e-5) {
+        if (Math.abs(minDiff) > 1e-4) {
             return minDiff;
         }
         return String(a.index ?? '').localeCompare(String(b.index ?? ''));
+    }
+
+    function sortVolumeFacePaintQueue(queue, camera) {
+        const featureDepth = new Map();
+        queue.forEach((entry) => {
+            const d = Number(entry.item?.depth);
+            if (!Number.isFinite(d)) {
+                return;
+            }
+            const prev = featureDepth.get(entry.featureId);
+            if (prev == null || d < prev) {
+                featureDepth.set(entry.featureId, d);
+            }
+        });
+        queue.sort((a, b) => {
+            const aFeat = featureDepth.get(a.featureId) ?? a.item?.depth ?? 0;
+            const bFeat = featureDepth.get(b.featureId) ?? b.item?.depth ?? 0;
+            const featDiff = bFeat - aFeat;
+            if (Math.abs(featDiff) > 1e-3) {
+                return featDiff;
+            }
+            return compareVolumeFacePaintOrder(a.item, b.item, camera);
+        });
+    }
+
+    function paintVolumeFacePaintQueue(svg, queue, neededPathKeys) {
+        queue.forEach(({ featureId, fillKey, item, dimmed }) => {
+            neededPathKeys.add(fillKey);
+            const fillPath = ensureSvgFeaturePath(svg, fillKey, featureId, 'mcwws-gis-volume3d-fill');
+            fillPath.setAttribute('d', item.d);
+            fillPath.style.fill = item.fill;
+            fillPath.removeAttribute('stroke');
+            fillPath.classList.toggle('is-dimmed', dimmed);
+        });
+        applySvgPathPaintOrder(svg, queue.map((entry) => entry.fillKey));
     }
 
     function applySvgPathPaintOrder(svg, orderedKeys) {
@@ -4875,14 +4985,18 @@
                 if (!d) {
                     continue;
                 }
-                const depthRange = faceDepthRangeAlongCameraView(triRing, camera);
-                const depthCentroid = (depthRange.min + depthRange.max) * 0.5;
+                const depthRange = camera
+                    ? faceViewSpaceDepthRange(triRing, camera)
+                    : faceDepthRangeAlongCameraView(triRing, camera);
+                const depthSort = camera
+                    ? depthRange.sort
+                    : (depthRange.min + depthRange.max) * 0.5;
                 const centroid = faceCentroidWorld(triRing);
                 items.push({
                     index: `${faceIndex}-${ti}`,
                     d,
                     fill: shadeRegionFaceColor(baseColor, normal),
-                    depth: depthCentroid,
+                    depth: depthSort,
                     depthMax: depthRange.max,
                     depthMin: depthRange.min,
                     planDist: facePlanDistFromCamera(triRing, camera),
@@ -8431,15 +8545,31 @@
         let volumesRenderedWithWebGl = false;
         if (showVolume3dSolids && volumeMeshEntries.length && shouldRenderVolumesWithWebGl()) {
             volumesRenderedWithWebGl = syncVolumeMeshes(volumeMeshEntries);
+        } else if (volumeFeatureMeshes.size || volumeMeshRoot) {
+            clearVolumeMeshes();
         }
         syncVolume3dRenderModeClass(volumesRenderedWithWebGl);
         if (volumesRenderedWithWebGl) {
             purgeVolumeFillSvgPaths();
-        }
-        if (!volumesRenderedWithWebGl) {
-            if (volumeFeatureMeshes.size || volumeMeshRoot) {
-                clearVolumeMeshes();
+            volumeMeshEntries.forEach(({ feature, dimmed }) => {
+                if (!volumeWebGlFailedFeatureIds.has(feature.id)) {
+                    return;
+                }
+                const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
+                faceItems.forEach((item) => {
+                    volumeFacePaintQueue.push({
+                        featureId: feature.id,
+                        fillKey: `${feature.id}:volume-fill:${item.index}`,
+                        item,
+                        dimmed
+                    });
+                });
+            });
+            if (volumeFacePaintQueue.length) {
+                sortVolumeFacePaintQueue(volumeFacePaintQueue, camera);
+                paintVolumeFacePaintQueue(svg, volumeFacePaintQueue, neededPathKeys);
             }
+        } else if (showVolume3dSolids && volumeMeshEntries.length) {
             volumeMeshEntries.forEach(({ feature, dimmed }) => {
                 const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
                 faceItems.forEach((item) => {
@@ -8451,17 +8581,8 @@
                     });
                 });
             });
-
-            volumeFacePaintQueue.sort((a, b) => compareVolumeFacePaintOrder(a.item, b.item, camera));
-            volumeFacePaintQueue.forEach(({ featureId, fillKey, item, dimmed }) => {
-                neededPathKeys.add(fillKey);
-                const fillPath = ensureSvgFeaturePath(svg, fillKey, featureId, 'mcwws-gis-volume3d-fill');
-                fillPath.setAttribute('d', item.d);
-                fillPath.style.fill = item.fill;
-                fillPath.removeAttribute('stroke');
-                fillPath.classList.toggle('is-dimmed', dimmed);
-            });
-            applySvgPathPaintOrder(svg, volumeFacePaintQueue.map((entry) => entry.fillKey));
+            sortVolumeFacePaintQueue(volumeFacePaintQueue, camera);
+            paintVolumeFacePaintQueue(svg, volumeFacePaintQueue, neededPathKeys);
         } else if (showVolume3dSolids && !volumeMeshEntries.length) {
             clearVolumeMeshes();
         }
