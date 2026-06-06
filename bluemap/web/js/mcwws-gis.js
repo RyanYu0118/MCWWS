@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-64';
+    const MCWWS_GIS_BUILD = '20260602-67';
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -3566,7 +3566,7 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
-    /** WebGL 体积路径已停用：改由 SVG 三角面全局深度排序渲染，避免拓扑混乱 */
+    /** 体积立体仅用 SVG 面片渲染（WebGL 实验路径已关闭） */
     function shouldRenderVolumesWithWebGl() {
         return false;
     }
@@ -3653,8 +3653,8 @@
             Mesh: meshCtor,
             BufferGeometry: sample.geometry.constructor,
             Float32BufferAttribute: posAttr.constructor,
-            MeshBasicMaterial: materialCtor,
-            materialSample: basicMaterialSample || sample.material,
+            MeshBasicMaterial: basicMaterialSample?.constructor || materialCtor,
+            materialSample: basicMaterialSample,
             Group: groupCtor,
             Object3D: object3dCtor || groupCtor,
             FrontSide: 0,
@@ -3670,7 +3670,7 @@
         if (volumeMeshRoot?.parent) {
             volumeMeshRoot.parent.remove(volumeMeshRoot);
         }
-        volumeMeshRoot = new three.Group();
+        volumeMeshRoot = new three.Object3D();
         volumeMeshRoot.name = 'mcwws-gis-volumes';
         mv.markers.add(volumeMeshRoot);
         return volumeMeshRoot;
@@ -3697,42 +3697,18 @@
         };
     }
 
-    function createVolumeMeshMaterial(three, baseColor) {
-        const rgb = parseRegionHexColor(baseColor);
+    function createVolumeMeshMaterial(three) {
         try {
-            if (three.materialSample?.isMeshBasicMaterial) {
-                const material = three.materialSample.clone();
-                material.vertexColors = true;
-                material.transparent = true;
-                material.opacity = 0.92;
-                material.depthTest = true;
-                material.depthWrite = true;
-                material.side = three.FrontSide;
-                return material;
+            if (!three.materialSample?.isMeshBasicMaterial) {
+                return null;
             }
-            if (three.materialSample?.uniforms?.markerColor?.value?.setRGB) {
-                const material = three.materialSample.clone();
-                material.uniforms.markerColor.value.setRGB(rgb.r / 255, rgb.g / 255, rgb.b / 255);
-                if (material.uniforms.markerOpacity) {
-                    material.uniforms.markerOpacity.value = 0.92;
-                }
-                material.transparent = true;
-                material.depthTest = true;
-                material.depthWrite = true;
-                material.side = three.DoubleSide;
-                return material;
-            }
-            const material = new three.MeshBasicMaterial({
-                color: (rgb.r << 16) + (rgb.g << 8) + rgb.b,
-                transparent: true,
-                opacity: 0.92,
-                depthTest: true,
-                depthWrite: true,
-                side: three.FrontSide
-            });
-            if (material.vertexColors !== undefined) {
-                material.vertexColors = true;
-            }
+            const material = three.materialSample.clone();
+            material.vertexColors = true;
+            material.transparent = true;
+            material.opacity = 0.92;
+            material.depthTest = true;
+            material.depthWrite = true;
+            material.side = three.FrontSide;
             return material;
         } catch (err) {
             console.warn('[mcwws-gis] createVolumeMeshMaterial failed', err);
@@ -3751,9 +3727,9 @@
         faceSpecs.forEach((spec) => {
             const normal = computeVolumeFaceNormal(spec.ring, spec.kind, bottomRingCw, spec.sideCorners);
             const shaded = parseShadedRgbColor(shadeRegionFaceColor(baseColor, normal));
-            const ring = spec.ring;
+            const ring = orientFaceRingForOutwardNormal(spec.ring, normal);
             for (let i = 1; i < ring.length - 1; i += 1) {
-                const tri = [ring[0], ring[i], ring[i + 1]];
+                const tri = orientTriangleForOutwardNormal([ring[0], ring[i], ring[i + 1]], normal);
                 tri.forEach((v) => {
                     positions.push(v.x, gisWorldY(v, false), v.z);
                     colors.push(shaded.r, shaded.g, shaded.b);
@@ -3766,7 +3742,7 @@
         const geometry = new three.BufferGeometry();
         geometry.setAttribute('position', new three.Float32BufferAttribute(positions, 3));
         geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
-        const material = createVolumeMeshMaterial(three, baseColor);
+        const material = createVolumeMeshMaterial(three);
         if (!material) {
             return null;
         }
@@ -4673,13 +4649,16 @@
         return tri;
     }
 
-    function iterVolumeFaceTriangles(ring, handler) {
+    /** 统一面环顶点绕序，与面外法线一致 */
+    function orientFaceRingForOutwardNormal(ring, normal) {
         if (!ring || ring.length < 3) {
-            return;
+            return ring;
         }
-        for (let i = 1; i < ring.length - 1; i += 1) {
-            handler([ring[0], ring[i], ring[i + 1]], i - 1);
+        const oriented = orientTriangleForOutwardNormal([ring[0], ring[1], ring[2]], normal);
+        if (oriented[1] === ring[1]) {
+            return ring;
         }
+        return [ring[0], ...ring.slice(1).reverse()];
     }
 
     function buildVolumeFaceRenderItems(shape, points, cfg, view, camera, baseColor) {
@@ -4698,28 +4677,25 @@
             } else if (!isVolumeFaceVisibleFlat(normal, spec.kind)) {
                 return;
             }
-            const fill = shadeRegionFaceColor(baseColor, normal);
-            iterVolumeFaceTriangles(spec.ring, (triRaw, triIndex) => {
-                const tri = orientTriangleForOutwardNormal(triRaw, normal);
-                const screenRing = getClippedScreenRingForVolumeFace(tri, view, camera);
-                if (screenRing.length < 3) {
-                    return;
-                }
-                if (Math.abs(screenPolygonSignedArea(screenRing)) < GIS_VOLUME_FACE_MIN_SCREEN_AREA * 0.35) {
-                    return;
-                }
-                const d = screenRingToSvgPath(screenRing);
-                if (!d) {
-                    return;
-                }
-                const depthRange = faceDepthRangeAlongCameraView(tri, camera);
-                items.push({
-                    index: `${faceIndex}:${triIndex}`,
-                    d,
-                    fill,
-                    depth: depthRange.min,
-                    depthMax: depthRange.max
-                });
+            const ring = orientFaceRingForOutwardNormal(spec.ring, normal);
+            const screenRing = getClippedScreenRingForVolumeFace(ring, view, camera);
+            if (screenRing.length < 3) {
+                return;
+            }
+            if (Math.abs(screenPolygonSignedArea(screenRing)) < GIS_VOLUME_FACE_MIN_SCREEN_AREA) {
+                return;
+            }
+            const d = screenRingToSvgPath(screenRing);
+            if (!d) {
+                return;
+            }
+            const depthRange = faceDepthRangeAlongCameraView(ring, camera);
+            items.push({
+                index: faceIndex,
+                d,
+                fill: shadeRegionFaceColor(baseColor, normal),
+                depth: depthRange.min,
+                depthMax: depthRange.max
             });
         });
         items.sort((a, b) => b.depth - a.depth);
