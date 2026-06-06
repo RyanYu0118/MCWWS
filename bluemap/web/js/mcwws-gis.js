@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-54';
+    const MCWWS_GIS_BUILD = '20260602-55';
     const API_PORT = 8002;
     const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
@@ -1886,12 +1886,16 @@
             return coordsToPoints(feature.coordinates);
         }
         if (feature.type === 'Polygon' && (lane === 'bottom' || lane === 'top')) {
+            const split = splitBoxPrismPoints(getFeatureVertexPoints(feature));
+            if (split) {
+                return (lane === 'bottom' ? split.bottom : split.top).map((p) => ({ ...p }));
+            }
             const cfg = getVolume3dConfig(feature);
             if (cfg?.shape === VOLUME_SHAPES.BOX) {
-                const footprint = getFeatureVertexPoints(feature);
-                const { minY, maxY } = resolveVolumeYRange(cfg, footprint);
-                const y = lane === 'bottom' ? minY : maxY;
-                return footprint.map((p) => ({ x: p.x, y, z: p.z }));
+                const rings = getBoxPrismRings(getFeatureVertexPoints(feature), cfg);
+                if (rings) {
+                    return (lane === 'bottom' ? rings.bottom : rings.top).map((p) => ({ ...p }));
+                }
             }
         }
         return getFeatureVertexPoints(feature);
@@ -1903,30 +1907,20 @@
             return;
         }
         if (feature.type === 'Polygon' && (laneKey === 'bottom' || laneKey === 'top')) {
-            const cfg = getVolume3dConfig(feature);
-            if (cfg?.shape === VOLUME_SHAPES.BOX) {
-                const vol = ensureVolume3d(feature);
-                const footprint = getFeatureVertexPoints(feature).slice();
-                const count = Math.min(next.length, footprint.length);
-                const laneYs = next.slice(0, count).map((p) => p.y);
-                if (laneKey === 'bottom') {
-                    vol.minY = Math.min(...laneYs);
-                } else {
-                    vol.maxY = Math.max(...laneYs);
-                }
-                if (vol.maxY != null && vol.minY != null && vol.maxY - vol.minY < 0.5) {
-                    if (laneKey === 'top') {
-                        vol.maxY = vol.minY + VOLUME_DEFAULT_HEIGHT;
+            const split = splitBoxPrismPoints(getFeatureVertexPoints(feature));
+            if (split) {
+                const all = [...split.bottom, ...split.top];
+                const count = Math.min(next.length, split.n);
+                for (let i = 0; i < count; i += 1) {
+                    const p = next[i];
+                    if (laneKey === 'bottom') {
+                        all[i] = { x: p.x, y: p.y, z: p.z };
                     } else {
-                        vol.minY = vol.maxY - VOLUME_DEFAULT_HEIGHT;
+                        all[split.n + i] = { x: p.x, y: p.y, z: p.z };
                     }
                 }
-                for (let i = 0; i < count; i += 1) {
-                    footprint[i].x = next[i].x;
-                    footprint[i].z = next[i].z;
-                    footprint[i].y = vol.minY;
-                }
-                setFeatureCoordinatesFromPoints(feature, footprint);
+                setFeatureCoordinatesFromPoints(feature, all);
+                syncBoxVolumeYMeta(feature);
                 return;
             }
         }
@@ -1953,17 +1947,14 @@
         if (feature.type === 'Polygon') {
             const cfg = getVolume3dConfig(feature);
             if (cfg?.shape === VOLUME_SHAPES.BOX) {
-                const footprint = getFeatureVertexPoints(feature);
-                if (footprint.length < 3) {
-                    return [];
+                ensureBoxPrismCoordinates(feature);
+                const split = splitBoxPrismPoints(getFeatureVertexPoints(feature));
+                if (split && split.n >= 3) {
+                    return [
+                        { lane: 'bottom', points: split.bottom.map((p) => ({ ...p })) },
+                        { lane: 'top', points: split.top.map((p) => ({ ...p })) }
+                    ];
                 }
-                const { minY, maxY } = resolveVolumeYRange(cfg, footprint);
-                const bottom = footprint.map((p) => ({ x: p.x, y: minY, z: p.z }));
-                const top = footprint.map((p) => ({ x: p.x, y: maxY, z: p.z }));
-                return [
-                    { lane: 'bottom', points: bottom },
-                    { lane: 'top', points: top }
-                ];
             }
         }
         const points = getFeatureVertexPoints(feature);
@@ -2250,7 +2241,29 @@
         if (!next) {
             return null;
         }
-        const laneId = resolveVolumeEditLane(feature, lane || 'center');
+        if (feature.type === 'Polygon' && isBoxPrismFeature(feature)) {
+            ensureBoxPrismCoordinates(feature);
+            if (!options.skipHistory) {
+                recordGisHistory();
+            }
+            const inserted = insertBoxPrismVertex(feature, lane || 'bottom', insertIndex, next);
+            if (!inserted) {
+                return null;
+            }
+            reindexRoadNameSegments(feature);
+            if (!options.skipSelect) {
+                selectVertex(featureId, inserted.lane, inserted.vertexIndex);
+            }
+            if (!options.skipDirty) {
+                markDirty();
+            }
+            if (!options.skipRender) {
+                renderOverlay();
+                renderPanel();
+            }
+            return inserted.vertexIndex;
+        }
+        const laneId = lane || 'center';
         const pts = getFeatureLanePoints(feature, laneId).slice();
         const idx = Math.max(0, Math.min(insertIndex, pts.length));
         if (!options.skipHistory) {
@@ -2779,9 +2792,6 @@
                 return;
             }
             getEditableLanesForFeature(feature).forEach(({ lane, points }) => {
-            if (feature.type === 'Polygon' && lane === 'top' && getVolume3dConfig(feature)?.shape === VOLUME_SHAPES.BOX) {
-                return;
-            }
             const segCount = feature.type === 'LineString'
                 ? points.length - 1
                 : points.length;
@@ -3221,7 +3231,11 @@
                 }
             }
             if (found.feature.type === 'Polygon') {
-                normalizeVolume3dFeature(found.feature);
+                if (isBoxPrismFeature(found.feature)) {
+                    syncBoxVolumeYMeta(found.feature);
+                } else {
+                    normalizeVolume3dFeature(found.feature);
+                }
             }
         });
         validateSelectedVertices();
@@ -3707,12 +3721,6 @@
     }
 
     function resolveVolumeEditLane(feature, lane) {
-        if (feature?.type === 'Polygon' && lane === 'top') {
-            const cfg = getVolume3dConfig(feature);
-            if (cfg?.shape === VOLUME_SHAPES.BOX) {
-                return 'bottom';
-            }
-        }
         return lane || 'center';
     }
 
@@ -3742,6 +3750,137 @@
             maxY = minY + VOLUME_DEFAULT_HEIGHT;
         }
         return { minY, maxY };
+    }
+
+    function splitBoxPrismPoints(points) {
+        const n = points?.length || 0;
+        if (n >= 6 && n % 2 === 0) {
+            const half = n / 2;
+            return {
+                n: half,
+                bottom: points.slice(0, half).map((p) => ({ ...p })),
+                top: points.slice(half).map((p) => ({ ...p }))
+            };
+        }
+        return null;
+    }
+
+    function getBoxPrismRings(points, cfg) {
+        const split = splitBoxPrismPoints(points);
+        if (split) {
+            return split;
+        }
+        if (points.length >= 3 && cfg) {
+            const { minY, maxY } = resolveVolumeYRange(cfg, points);
+            return {
+                n: points.length,
+                bottom: points.map((p) => ({ x: p.x, y: minY, z: p.z })),
+                top: points.map((p) => ({ x: p.x, y: maxY, z: p.z }))
+            };
+        }
+        return null;
+    }
+
+    function isBoxPrismFeature(feature) {
+        if (!feature || feature.type !== 'Polygon') {
+            return false;
+        }
+        const cfg = getVolume3dConfig(feature);
+        return !!(cfg && cfg.shape === VOLUME_SHAPES.BOX);
+    }
+
+    function syncBoxVolumeYMeta(feature, points) {
+        const vol = ensureVolume3d(feature);
+        const pts = points || getFeatureVertexPoints(feature);
+        const split = splitBoxPrismPoints(pts);
+        if (split) {
+            vol.minY = Math.min(...split.bottom.map((p) => p.y));
+            vol.maxY = Math.max(...split.top.map((p) => p.y));
+            return;
+        }
+        const { minY, maxY } = resolveVolumeYRange(getVolume3dConfig(feature), pts);
+        vol.minY = minY;
+        vol.maxY = maxY;
+    }
+
+    function ensureBoxPrismCoordinates(feature) {
+        if (!isBoxPrismFeature(feature)) {
+            return;
+        }
+        const points = getFeatureVertexPoints(feature);
+        if (splitBoxPrismPoints(points)) {
+            syncBoxVolumeYMeta(feature, points);
+            return;
+        }
+        if (points.length < 3) {
+            return;
+        }
+        const cfg = getVolume3dConfig(feature);
+        const rings = getBoxPrismRings(points, cfg);
+        if (!rings) {
+            return;
+        }
+        setFeatureCoordinatesFromPoints(feature, [...rings.bottom, ...rings.top]);
+        syncBoxVolumeYMeta(feature);
+    }
+
+    function deleteBoxPrismRingIndices(feature, ringIndices) {
+        const split = splitBoxPrismPoints(getFeatureVertexPoints(feature));
+        if (!split) {
+            return false;
+        }
+        const unique = [...new Set(ringIndices)].filter((i) => i >= 0 && i < split.n);
+        if (!unique.length) {
+            return false;
+        }
+        if (split.n - unique.length < 3) {
+            return false;
+        }
+        const drop = new Set(unique);
+        const bottom = split.bottom.filter((_, i) => !drop.has(i));
+        const top = split.top.filter((_, i) => !drop.has(i));
+        const removeIds = unique.flatMap((i) => [split.n + i, i]).sort((a, b) => b - a);
+        removeVertexIdsAt(feature, removeIds);
+        setFeatureCoordinatesFromPoints(feature, [...bottom, ...top]);
+        syncBoxVolumeYMeta(feature);
+        return true;
+    }
+
+    function insertBoxPrismVertex(feature, lane, insertIndex, point) {
+        const split = splitBoxPrismPoints(getFeatureVertexPoints(feature));
+        if (!split) {
+            return null;
+        }
+        const next = coerceInsertVertexPoint(point);
+        if (!next) {
+            return null;
+        }
+        const laneId = lane === 'top' ? 'top' : 'bottom';
+        const idx = Math.max(0, Math.min(insertIndex, laneId === 'top' ? split.top.length : split.bottom.length));
+        const bottom = split.bottom.slice();
+        const top = split.top.slice();
+        if (laneId === 'top') {
+            const refBottom = split.bottom[Math.min(idx, split.n - 1)] || split.bottom[0];
+            top.splice(idx, 0, { ...next });
+            bottom.splice(idx, 0, {
+                x: next.x,
+                y: refBottom?.y ?? split.bottom[0]?.y ?? GIS_DEFAULT_Y,
+                z: next.z
+            });
+        } else {
+            const refTop = split.top[Math.min(idx, split.n - 1)] || split.top[0];
+            bottom.splice(idx, 0, { ...next });
+            top.splice(idx, 0, {
+                x: next.x,
+                y: refTop?.y ?? (split.top[0]?.y ?? next.y + VOLUME_DEFAULT_HEIGHT),
+                z: next.z
+            });
+        }
+        setFeatureCoordinatesFromPoints(feature, [...bottom, ...top]);
+        insertVertexIdAt(feature, split.n + idx);
+        insertVertexIdAt(feature, idx);
+        syncBoxVolumeYMeta(feature);
+        return { lane: laneId, vertexIndex: idx };
     }
 
     function getCylinderCenterRadius(feature, points, cfg) {
@@ -3788,15 +3927,14 @@
         }
         const { minY, maxY } = resolveVolumeYRange(cfg, points);
         if (shape === VOLUME_SHAPES.BOX) {
-            if (points.length < 2) {
+            const rings = getBoxPrismRings(points, cfg);
+            if (!rings || rings.n < 2) {
                 return edges;
             }
-            const bottom = points.map((p) => ({ x: p.x, y: minY, z: p.z }));
-            const top = points.map((p) => ({ x: p.x, y: maxY, z: p.z }));
-            appendRingEdges(edges, bottom, true);
-            appendRingEdges(edges, top, true);
-            for (let i = 0; i < points.length; i += 1) {
-                edges.push([bottom[i], top[i]]);
+            appendRingEdges(edges, rings.bottom, true);
+            appendRingEdges(edges, rings.top, true);
+            for (let i = 0; i < rings.n; i += 1) {
+                edges.push([rings.bottom[i], rings.top[i]]);
             }
             return edges;
         }
@@ -3844,14 +3982,16 @@
             return faces;
         }
         const { minY, maxY } = resolveVolumeYRange(cfg, points);
-        if (shape === VOLUME_SHAPES.BOX && points.length >= 3) {
-            const bottom = points.map((p) => ({ x: p.x, y: minY, z: p.z }));
-            const top = points.map((p) => ({ x: p.x, y: maxY, z: p.z }));
-            faces.push(bottom);
-            faces.push(top);
-            for (let i = 0; i < points.length; i += 1) {
-                const j = (i + 1) % points.length;
-                faces.push([bottom[i], bottom[j], top[j], top[i]]);
+        if (shape === VOLUME_SHAPES.BOX) {
+            const rings = getBoxPrismRings(points, cfg);
+            if (!rings || rings.n < 3) {
+                return faces;
+            }
+            faces.push(rings.bottom);
+            faces.push(rings.top);
+            for (let i = 0; i < rings.n; i += 1) {
+                const j = (i + 1) % rings.n;
+                faces.push([rings.bottom[i], rings.bottom[j], rings.top[j], rings.top[i]]);
             }
             return faces;
         }
@@ -3884,12 +4024,25 @@
         return faces;
     }
 
+    function buildSvgFacePathLenient(ring, view, camera) {
+        if (!ring || ring.length < 3) {
+            return '';
+        }
+        const pts = ring
+            .map((p) => projectGisPoint(p, view, camera, false))
+            .filter((p) => p && !p.behind);
+        if (pts.length < 3) {
+            return '';
+        }
+        return pts.map((p, i) => `${i ? 'L' : 'M'} ${p.x.toFixed(2)} ${p.y.toFixed(2)}`).join(' ') + ' Z';
+    }
+
     function buildSvgVolumeSolidFillPathFromSpec(shape, points, cfg, view, camera) {
         const faces = buildVolumeSolidFaces(shape, points, cfg);
         if (!faces.length) {
             return '';
         }
-        return faces.map((face) => buildSvgPolygonPath(face, view, camera)).filter(Boolean).join(' ');
+        return faces.map((face) => buildSvgFacePathLenient(face, view, camera)).filter(Boolean).join(' ');
     }
 
     function buildSvgVolumeSolidFillPath(feature, view, camera) {
@@ -4035,7 +4188,7 @@
             return '';
         }
         if (activeVolumeShape === VOLUME_SHAPES.BOX) {
-            return `柱状体：已 ${draftPoints.length} 点底面 — 双击或「完成」结束（默认高度 ${VOLUME_DEFAULT_HEIGHT} 格）`;
+            return `柱状体：已 ${draftPoints.length} 点底面 — 完成后生成 2n 顶点，可独立拖拽变形`;
         }
         if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
             if (draftVolumePhase === 'bottom') {
@@ -4054,20 +4207,21 @@
         if (vol.shape === VOLUME_SHAPES.FLAT) {
             vol.shape = VOLUME_SHAPES.BOX;
         }
+        const points = coordsToPoints(feature.coordinates);
+        if (vol.shape === VOLUME_SHAPES.HEXAHEDRON && points.length >= 8) {
+            vol.shape = VOLUME_SHAPES.BOX;
+        }
         const cfg = getVolume3dConfig(feature);
         if (!cfg) {
             return;
         }
-        const points = coordsToPoints(feature.coordinates);
+        if (cfg.shape === VOLUME_SHAPES.BOX) {
+            ensureBoxPrismCoordinates(feature);
+            return;
+        }
         const { minY, maxY } = resolveVolumeYRange(cfg, points);
         vol.minY = minY;
         vol.maxY = maxY;
-        if (cfg.shape === VOLUME_SHAPES.BOX && points.length >= 3) {
-            setFeatureCoordinatesFromPoints(
-                feature,
-                points.map((p) => ({ x: p.x, y: minY, z: p.z }))
-            );
-        }
         if (cfg.shape === VOLUME_SHAPES.CYLINDER) {
             const cr = getCylinderCenterRadius(feature, points, cfg);
             if (cr) {
@@ -4450,7 +4604,7 @@
             : legacyCylinder
                 ? '圆柱为旧数据，仍可编辑；新建请选柱状体或六面体'
                 : shape === VOLUME_SHAPES.BOX
-                    ? '柱状体：底面轮廓 + 上下 Y 范围'
+                    ? '柱状体：底/顶各 n 顶点可独立 XYZ 拖拽，可变形为任意棱柱'
                     : shape === VOLUME_SHAPES.HEXAHEDRON
                         ? '六面体：前 4 点为底面，后 4 点为顶面（可拖拽顶点）'
                         : '区域 3D 体';
@@ -5381,6 +5535,9 @@
             if (shape === VOLUME_SHAPES.HEXAHEDRON) {
                 return 8;
             }
+            if (shape === VOLUME_SHAPES.BOX && feature && splitBoxPrismPoints(getFeatureVertexPoints(feature))) {
+                return 3;
+            }
             return 3;
         }
         if (type === 'LineString') {
@@ -5394,26 +5551,43 @@
         if (!hasSelectedVertices() || !gisEditMode || !isGisSelectMode()) {
             return false;
         }
+        const boxFeatureDeletes = new Map();
         const byFeatureLane = new Map();
         selectedVertices.forEach((key) => {
             const sel = parseVertexSelectionKey(key);
             if (!sel) {
                 return;
             }
-            const laneKey = `${sel.featureId}:${resolveVolumeEditLane(findFeatureById(sel.featureId)?.feature, sel.lane || 'center')}`;
+            const found = findFeatureById(sel.featureId);
+            if (found && isBoxPrismFeature(found.feature)) {
+                if (!boxFeatureDeletes.has(sel.featureId)) {
+                    boxFeatureDeletes.set(sel.featureId, new Set());
+                }
+                boxFeatureDeletes.get(sel.featureId).add(sel.vertexIndex);
+                return;
+            }
+            const laneKey = `${sel.featureId}:${sel.lane || 'center'}`;
             if (!byFeatureLane.has(laneKey)) {
-                const found = findFeatureById(sel.featureId);
-                const lane = resolveVolumeEditLane(found?.feature, sel.lane || 'center');
-                byFeatureLane.set(laneKey, { featureId: sel.featureId, lane, indices: [] });
+                byFeatureLane.set(laneKey, { featureId: sel.featureId, lane: sel.lane || 'center', indices: [] });
             }
             byFeatureLane.get(laneKey).indices.push(sel.vertexIndex);
         });
-        if (!byFeatureLane.size) {
+        if (!boxFeatureDeletes.size && !byFeatureLane.size) {
             clearSelectedVertices();
             return false;
         }
         recordGisHistory();
         const deleteWholeFeatures = new Set();
+        boxFeatureDeletes.forEach((indexSet, featureId) => {
+            const found = findFeatureById(featureId);
+            if (!found) {
+                return;
+            }
+            const ok = deleteBoxPrismRingIndices(found.feature, [...indexSet]);
+            if (!ok) {
+                deleteWholeFeatures.add(featureId);
+            }
+        });
         byFeatureLane.forEach(({ featureId, lane, indices }) => {
             const found = findFeatureById(featureId);
             if (!found) {
@@ -5488,11 +5662,16 @@
         if (type === 'Polygon') {
             properties.color = GIS_DEFAULT_REGION_COLOR;
             properties.volume3d = { shape: activeVolumeShape };
-            if (activeVolumeShape === VOLUME_SHAPES.BOX) {
-                const ys = inferFootprintYs(draftPoints);
-                properties.volume3d.minY = ys.minY;
-                properties.volume3d.maxY = ys.maxY;
-            }
+        }
+
+        let coordinates = draftPoints.map((p) => ({ ...p }));
+        if (type === 'Polygon' && activeVolumeShape === VOLUME_SHAPES.BOX) {
+            const ys = inferFootprintYs(draftPoints);
+            properties.volume3d.minY = ys.minY;
+            properties.volume3d.maxY = ys.maxY;
+            const bottom = draftPoints.map((p) => ({ x: p.x, y: ys.minY, z: p.z }));
+            const top = draftPoints.map((p) => ({ x: p.x, y: ys.maxY, z: p.z }));
+            coordinates = [...bottom, ...top];
         }
 
         addFeature({
@@ -5500,7 +5679,7 @@
             type,
             map,
             layerId: layer.id,
-            coordinates: draftPoints.map((p) => ({ ...p })),
+            coordinates,
             properties
         });
         draftPoints = [];
@@ -5720,9 +5899,17 @@
 
             if (feature.type === 'Polygon' && points.length >= 3) {
                 const viewHeight = getMapCameraHeight();
-                const allVisible = points.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
+                let pickPoints = points;
+                const volCfg = getVolume3dConfig(feature);
+                if (volCfg?.shape === VOLUME_SHAPES.BOX) {
+                    const split = splitBoxPrismPoints(points);
+                    if (split) {
+                        pickPoints = split.bottom;
+                    }
+                }
+                const allVisible = pickPoints.every((_, i) => isVertexVisibleAtHeight(feature, i, viewHeight));
                 if (allVisible) {
-                    const ring = getClippedScreenRingForPolygon(points, view, camera);
+                    const ring = getClippedScreenRingForPolygon(pickPoints, view, camera);
                     if (ring.length < 3) {
                         return;
                     }
@@ -5748,12 +5935,12 @@
                     }
                     return;
                 }
-                for (let i = 0; i < points.length; i += 1) {
-                    const j = (i + 1) % points.length;
+                for (let i = 0; i < pickPoints.length; i += 1) {
+                    const j = (i + 1) % pickPoints.length;
                     if (!isSegmentVisibleAtHeight(feature, i, j, viewHeight)) {
                         continue;
                     }
-                    iterClippedLineScreenSegments([points[i], points[j]], view, camera, (a, b) => {
+                    iterClippedLineScreenSegments([pickPoints[i], pickPoints[j]], view, camera, (a, b) => {
                         const d = distPointToScreenSegment(clientX, clientY, a.x, a.y, b.x, b.y);
                         if (d < bestDist) {
                             bestDist = d;
@@ -7351,22 +7538,24 @@
                         neededPathKeys.add(fillKey);
                         const fillPath = ensureSvgFeaturePath(svg, fillKey, feature.id, 'mcwws-gis-volume3d-fill');
                         fillPath.setAttribute('d', fillD);
-                        fillPath.setAttribute('fill', fillColor);
+                        fillPath.style.fill = fillColor;
                         fillPath.removeAttribute('stroke');
                         fillPath.classList.toggle('is-dimmed', dimmed);
                     }
-                    const volEdges = buildVolume3dEdges(feature);
-                    if (volEdges.length) {
-                        const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
-                        if (volD) {
-                            const volKey = `${feature.id}:volume3d`;
-                            neededPathKeys.add(volKey);
-                            const volPath = ensureSvgFeaturePath(svg, volKey, feature.id, 'mcwws-gis-volume3d');
-                            volPath.setAttribute('d', volD);
-                            volPath.setAttribute('stroke', edgeStroke);
-                            volPath.setAttribute('stroke-width', regionSelected ? '2.5' : '2');
-                            volPath.classList.toggle('is-dimmed', dimmed);
-                            volPath.classList.toggle('is-selected', regionSelected);
+                    if (regionSelected) {
+                        const volEdges = buildVolume3dEdges(feature);
+                        if (volEdges.length) {
+                            const volD = buildSvgVolumeWireframePath(volEdges, view, camera);
+                            if (volD) {
+                                const volKey = `${feature.id}:volume3d`;
+                                neededPathKeys.add(volKey);
+                                const volPath = ensureSvgFeaturePath(svg, volKey, feature.id, 'mcwws-gis-volume3d');
+                                volPath.setAttribute('d', volD);
+                                volPath.setAttribute('stroke', edgeStroke);
+                                volPath.setAttribute('stroke-width', '2.5');
+                                volPath.classList.toggle('is-dimmed', dimmed);
+                                volPath.classList.add('is-selected');
+                            }
                         }
                     }
                 } else {
@@ -7419,7 +7608,7 @@
                             svg.insertBefore(svgDraftFillPathEl, svg.firstChild);
                         }
                         svgDraftFillPathEl.setAttribute('d', fillD);
-                        svgDraftFillPathEl.setAttribute('fill', GIS_DEFAULT_REGION_COLOR);
+                        svgDraftFillPathEl.style.fill = GIS_DEFAULT_REGION_COLOR;
                     } else if (svgDraftFillPathEl) {
                         svgDraftFillPathEl.removeAttribute('d');
                     }

@@ -723,7 +723,7 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     height: 100%;
 }
 
-#mcwws-gis-svg-layer path.mcwws-gis-feature {
+#mcwws-gis-svg-layer path.mcwws-gis-feature:not(.mcwws-gis-volume3d-fill) {
     pointer-events: none;
     stroke-width: 3;
     stroke-linecap: round;
@@ -735,7 +735,9 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill {
     stroke: none;
-    fill-opacity: 0.88;
+    fill: #DFEAF3;
+    fill-opacity: 0.92;
+    opacity: 1;
     pointer-events: none;
     transition: opacity 0.28s ease, fill-opacity 0.28s ease;
 }
