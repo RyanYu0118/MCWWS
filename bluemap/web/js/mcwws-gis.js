@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-95';
+    const MCWWS_GIS_BUILD = '20260602-97';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -1136,6 +1136,48 @@
             y: Math.floor(y) + 0.5,
             z: Math.floor(z) + 0.5
         };
+    }
+
+    function shouldSnapDraftPointToAxis(shiftKey) {
+        if (!shiftKey || !gisEditMode || activeTool !== 'polygon' || draftPoints.length === 0) {
+            return false;
+        }
+        return activeVolumeShape === VOLUME_SHAPES.BOX
+            || activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON
+            || activeVolumeShape === VOLUME_SHAPES.CYLINDER;
+    }
+
+    /** 按住 Shift：相对上一顶点，吸附到位移最大的 X/Y/Z 轴（便于画直角立方体） */
+    function snapDraftPointToNearestAxis(anchor, raw) {
+        if (!anchor || !raw) {
+            return snapPoint(raw);
+        }
+        const dx = raw.x - anchor.x;
+        const dy = raw.y - anchor.y;
+        const dz = raw.z - anchor.z;
+        const ax = Math.abs(dx);
+        const ay = Math.abs(dy);
+        const az = Math.abs(dz);
+        const snapped = { x: raw.x, y: raw.y, z: raw.z };
+        if (ax >= ay && ax >= az) {
+            snapped.y = anchor.y;
+            snapped.z = anchor.z;
+        } else if (ay >= ax && ay >= az) {
+            snapped.x = anchor.x;
+            snapped.z = anchor.z;
+        } else {
+            snapped.x = anchor.x;
+            snapped.y = anchor.y;
+        }
+        return coerceVertexPoint(snapped) || snapPoint(snapped);
+    }
+
+    function applyDraftAxisSnap(raw, shiftKey) {
+        if (!raw || !shouldSnapDraftPointToAxis(shiftKey)) {
+            return snapPoint(raw);
+        }
+        const anchor = draftPoints[draftPoints.length - 1];
+        return snapDraftPointToNearestAxis(anchor, raw);
     }
 
     function vec3Sub(a, b) {
@@ -2817,6 +2859,7 @@
         const camera = getGisBlueMapCamera();
         const screenAxis = getScreenAxisDir(world, axis, view, camera)
             || getScreenAxisDir(world, axis, view, null);
+        const projectedHub = projectGisPoint(world, view, camera, false);
         const vertexMode = hasSelectedVertices();
         let dragTargets = [];
         let featureSnapshots = null;
@@ -2860,6 +2903,9 @@
             mode: extendConfig ? 'extend' : (vertexMode ? 'vertex' : 'feature'),
             axis,
             anchorWorld: { x: world.x, y: world.y, z: world.z },
+            frozenAnchorScreen: projectedHub && !projectedHub.behind
+                ? { x: projectedHub.x, y: projectedHub.y }
+                : null,
             frozenAxisLayout: computeGizmoAxisLayout(world, view, camera),
             dragTargets,
             extendConfig,
@@ -2867,6 +2913,8 @@
             featureSnapshots,
             startClientX: event.clientX,
             startClientY: event.clientY,
+            clientX: event.clientX,
+            clientY: event.clientY,
             pointerId: event.pointerId,
             historyRecorded: false,
             moved: false,
@@ -2880,6 +2928,8 @@
             }
             e.preventDefault();
             e.stopPropagation();
+            gisVertexDrag.clientX = e.clientX;
+            gisVertexDrag.clientY = e.clientY;
             const dx = e.clientX - gisVertexDrag.startClientX;
             const dy = e.clientY - gisVertexDrag.startClientY;
             if (!gisVertexDrag.moved && dx * dx + dy * dy > 0) {
@@ -2919,6 +2969,7 @@
                     z: nextAnchor.z - gisVertexDrag.anchorWorld.z
                 };
                 applyFeatureTranslateDelta(gisVertexDrag.featureSnapshots, delta);
+                renderOverlay();
             } else {
                 gisVertexDrag.dragTargets.forEach((target) => {
                     const found = findFeatureById(target.featureId);
@@ -3608,10 +3659,36 @@
         return layout;
     }
 
-    function applyGizmoAxisLayout(gizmo, layout) {
+    function getGizmoDragScreenHub() {
+        if (!gisVertexDrag?.frozenAnchorScreen) {
+            return null;
+        }
+        const base = gisVertexDrag.frozenAnchorScreen;
+        if (!gisVertexDrag.moved || !gisVertexDrag.screenAxis) {
+            return { x: base.x, y: base.y };
+        }
+        const clientX = gisVertexDrag.clientX ?? gisVertexDrag.startClientX;
+        const clientY = gisVertexDrag.clientY ?? gisVertexDrag.startClientY;
+        const pdx = clientX - gisVertexDrag.startClientX;
+        const pdy = clientY - gisVertexDrag.startClientY;
+        const along = pdx * gisVertexDrag.screenAxis.ux + pdy * gisVertexDrag.screenAxis.uy;
+        return {
+            x: base.x + along * gisVertexDrag.screenAxis.ux,
+            y: base.y + along * gisVertexDrag.screenAxis.uy
+        };
+    }
+
+    function applyGizmoAxisLayout(gizmo, layout, dragActiveAxis) {
         if (!gizmo || !layout) {
             return;
         }
+        const screenHub = dragActiveAxis ? getGizmoDragScreenHub() : null;
+        const counterDx = screenHub && gisVertexDrag?.frozenAnchorScreen
+            ? gisVertexDrag.frozenAnchorScreen.x - screenHub.x
+            : 0;
+        const counterDy = screenHub && gisVertexDrag?.frozenAnchorScreen
+            ? gisVertexDrag.frozenAnchorScreen.y - screenHub.y
+            : 0;
         ['x', 'y', 'z'].forEach((axis) => {
             const el = gizmo.querySelector(`.mcwws-gis-axis--${axis}`);
             const spec = layout[axis];
@@ -3626,7 +3703,11 @@
             el.style.left = `${spec.hub}px`;
             el.style.top = `${spec.hub}px`;
             el.style.width = `${spec.widthPx}px`;
-            el.style.transform = `rotate(${spec.deg.toFixed(2)}deg)`;
+            if (dragActiveAxis && axis !== dragActiveAxis) {
+                el.style.transform = `translate(${counterDx}px, ${counterDy}px) rotate(${spec.deg.toFixed(2)}deg)`;
+            } else {
+                el.style.transform = `rotate(${spec.deg.toFixed(2)}deg)`;
+            }
         });
     }
 
@@ -3636,7 +3717,8 @@
             hideVertexGizmo();
             return;
         }
-        const projected = projectGisPoint(world, view, camera, false);
+        const dragHub = gisVertexDrag?.frozenAnchorScreen ? getGizmoDragScreenHub() : null;
+        const projected = dragHub || projectGisPoint(world, view, camera, false);
         if (!projected || projected.behind) {
             hideVertexGizmo();
             return;
@@ -3657,7 +3739,7 @@
             coords.style.transform = `translate(-50%, ${GIS_GIZMO_COORDS_OFFSET_Y}px)`;
         }
         if (gisVertexDrag?.frozenAxisLayout) {
-            applyGizmoAxisLayout(gizmo, gisVertexDrag.frozenAxisLayout);
+            applyGizmoAxisLayout(gizmo, gisVertexDrag.frozenAxisLayout, gisVertexDrag.axis);
         } else {
             applyGizmoAxisLayout(gizmo, computeGizmoAxisLayout(world, view, camera));
         }
@@ -6021,13 +6103,16 @@
             return '';
         }
         if (activeVolumeShape === VOLUME_SHAPES.BOX) {
-            return `柱状体：已 ${draftPoints.length} 点底面 — 完成后生成 2n 顶点，可独立拖拽变形`;
+            return `柱状体：已 ${draftPoints.length} 点底面 — 按住 Shift 吸附坐标轴；完成后生成 2n 顶点`;
         }
         if (activeVolumeShape === VOLUME_SHAPES.HEXAHEDRON) {
             if (draftVolumePhase === 'bottom') {
-                return `六面体底面：${draftPoints.length}/4 点`;
+                return `六面体底面：${draftPoints.length}/4 点 — 按住 Shift 吸附坐标轴`;
             }
-            return `六面体顶面：${Math.max(0, draftPoints.length - 4)}/4 点`;
+            return `六面体顶面：${Math.max(0, draftPoints.length - 4)}/4 点 — 按住 Shift 吸附坐标轴`;
+        }
+        if (activeVolumeShape === VOLUME_SHAPES.CYLINDER) {
+            return `圆柱：已 ${draftPoints.length} 点 — 按住 Shift 吸附坐标轴`;
         }
         return `区域：已 ${draftPoints.length} 点 — 双击或点「完成」结束，Esc 取消`;
     }
@@ -7525,6 +7610,7 @@
     function cancelDraft() {
         draftPoints = [];
         draftHover = null;
+        document.body.classList.remove('mcwws-gis-draft-axis-snap');
         resetVolumeDraftState();
         setStatus('已取消当前绘制', '');
         renderOverlay();
@@ -7589,19 +7675,23 @@
         }
     }
 
-    function pickWorldFromScreen(clientX, clientY) {
+    function pickWorldFromScreen(clientX, clientY, shiftKey = false) {
         const camera = getGisBlueMapCamera();
+        let raw = null;
         if (camera) {
-            const onPlane = pickWorldOnHorizontalPlane(clientX, clientY, camera, getDefaultPickPlaneY());
-            if (onPlane) {
-                return onPlane;
-            }
+            raw = pickWorldOnHorizontalPlane(clientX, clientY, camera, getDefaultPickPlaneY());
         }
-        const view = getViewForProjection();
-        if (!view) {
+        if (!raw) {
+            const view = getViewForProjection();
+            if (!view) {
+                return null;
+            }
+            raw = screenToWorld(clientX, clientY, view);
+        }
+        if (!raw) {
             return null;
         }
-        return snapPoint(screenToWorld(clientX, clientY, view));
+        return applyDraftAxisSnap(raw, shiftKey);
     }
 
     function isGisPickTarget(target) {
@@ -8226,8 +8316,14 @@
         if (gisEditMode && draftPoints.length > 0
             && (activeTool === 'line' || activeTool === 'polygon')
             && isGisPickTarget(event.target)) {
-            draftHover = pickWorldFromScreen(event.clientX, event.clientY);
+            draftHover = pickWorldFromScreen(event.clientX, event.clientY, event.shiftKey);
+            document.body.classList.toggle(
+                'mcwws-gis-draft-axis-snap',
+                shouldSnapDraftPointToAxis(event.shiftKey)
+            );
             renderOverlay();
+        } else {
+            document.body.classList.remove('mcwws-gis-draft-axis-snap');
         }
         if (isGisSelectMode()) {
             updateGisHoverSegmentInsert(event.clientX, event.clientY);
@@ -8288,7 +8384,7 @@
         if (!isGisDrawPointerActive()) {
             return;
         }
-        const point = pickWorldFromScreen(event.clientX, event.clientY);
+        const point = pickWorldFromScreen(event.clientX, event.clientY, event.shiftKey);
         if (!point) {
             return;
         }

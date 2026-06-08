@@ -1286,6 +1286,10 @@ body.mcwws-map-render-no-transition.mcwws-map-simplified-mode.mcwws-gis-has-sele
     color: #111;
 }
 
+body.mcwws-gis-draft-axis-snap #map-container canvas {
+    cursor: crosshair !important;
+}
+
 body.mcwws-gis-vertex-dragging #map-container canvas {
     cursor: grabbing !important;
 }
