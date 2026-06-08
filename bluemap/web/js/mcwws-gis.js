@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-89';
+    const MCWWS_GIS_BUILD = '20260602-91';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -19,7 +19,6 @@
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const ROAD_NAME_SVG_LAYER_ID = 'mcwws-gis-road-name-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
-    const VOLUME_GL_LAYER_ID = 'mcwws-gis-volume-gl-layer';
     const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
     const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
     const LASSO_LAYER_ID = 'mcwws-gis-lasso-layer';
@@ -133,8 +132,7 @@
     let volumeMeshRoot = null;
     /** GIS 三维建筑独立图层（不参与 BlueMap markers / 地形深度合成） */
     let volumeMeshScene = null;
-    let volumeGlOverlayEl = null;
-    let volumeGlOverlayRenderer = null;
+    let lastVolumeMeshSyncKey = '';
     /** @type {Map<string, { sig: string, group: object, anchor: { x: number, y: number, z: number }, dimmed?: boolean }>} */
     const volumeFeatureMeshes = new Map();
     const volumeWebGlFailedFeatureIds = new Set();
@@ -381,7 +379,8 @@
         gisCachedCamera = null;
         gisThree = null;
         gisMarkerFillMaterialTemplate = null;
-        disposeVolumeGlOverlay();
+        lastVolumeMeshSyncKey = '';
+        document.getElementById('mcwws-gis-volume-gl-layer')?.remove();
         syncVolume3dVisibilityClass();
         renderOverlay();
     }
@@ -1641,19 +1640,13 @@
 
     function syncVolume3dRenderModeClass(useWebGl) {
         document.body.classList.toggle('mcwws-gis-volumes-webgl', !!useWebGl);
-        if (volumeGlOverlayEl) {
-            volumeGlOverlayEl.classList.toggle(
-                'is-active',
-                !!useWebGl && isSimplifiedMapMode() && volumeFeatureMeshes.size > 0
-            );
-        }
     }
 
     function getVolumeRenderLayerLabel() {
         if (!shouldRenderVolumesWithWebGl()) {
             return 'svg';
         }
-        return isSimplifiedMapMode() ? 'simplified-overlay-canvas' : 'post-map-overlay';
+        return isSimplifiedMapMode() ? 'simplified-main-canvas' : 'post-map-overlay';
     }
 
     function getVolumeRenderModeHint() {
@@ -1661,69 +1654,23 @@
             return '三维建筑走 SVG 面片。';
         }
         if (isSimplifiedMapMode()) {
-            return '简化地图：独立透明 WebGL 图层渲染三维建筑，建筑之间按深度正确遮挡；线/标注仍在 SVG 上层。';
+            return '简化地图：复用 BlueMap 主 canvas 白底渲染三维建筑（单 WebGL 上下文），建筑之间按深度正确遮挡；线/标注在 SVG 上层。';
         }
         return '原版地图：地图渲染后叠加独立 WebGL 图层，不被地形深度遮挡；建筑之间仍按深度正确遮挡。';
     }
 
-    function disposeVolumeGlOverlay() {
-        if (volumeGlOverlayRenderer) {
-            volumeGlOverlayRenderer.dispose?.();
-            volumeGlOverlayRenderer.domElement?.remove?.();
-            volumeGlOverlayRenderer = null;
-        }
-        if (volumeGlOverlayEl) {
-            volumeGlOverlayEl.replaceChildren?.();
-            volumeGlOverlayEl.classList.remove('is-active');
-        }
+    function shouldRenderSimplifiedVolumeCanvas(mv) {
+        return isSimplifiedMapMode()
+            && shouldRenderVolumesWithWebGl()
+            && !!mv
+            && volumeFeatureMeshes.size > 0
+            && !!volumeMeshScene;
     }
 
-    function ensureVolumeGlOverlayLayer(mv) {
-        const RendererCtor = mv?.renderer?.constructor;
-        if (!RendererCtor) {
-            return null;
-        }
-        if (!volumeGlOverlayEl) {
-            volumeGlOverlayEl = document.getElementById(VOLUME_GL_LAYER_ID);
-            if (!volumeGlOverlayEl) {
-                volumeGlOverlayEl = document.createElement('div');
-                volumeGlOverlayEl.id = VOLUME_GL_LAYER_ID;
-                document.body.appendChild(volumeGlOverlayEl);
-            }
-        }
-        if (!volumeGlOverlayRenderer) {
-            try {
-                volumeGlOverlayRenderer = new RendererCtor({
-                    alpha: true,
-                    antialias: true,
-                    logarithmicDepthBuffer: true,
-                    preserveDrawingBuffer: false
-                });
-                volumeGlOverlayRenderer.setClearColor(0x000000, 0);
-                volumeGlOverlayRenderer.domElement.style.width = '100%';
-                volumeGlOverlayRenderer.domElement.style.height = '100%';
-                volumeGlOverlayRenderer.domElement.style.display = 'block';
-                volumeGlOverlayEl.appendChild(volumeGlOverlayRenderer.domElement);
-            } catch (err) {
-                console.warn('[mcwws-gis] ensureVolumeGlOverlayLayer failed', err);
-                return null;
-            }
-        }
-        return volumeGlOverlayRenderer;
-    }
-
-    function syncVolumeGlOverlaySize(mv) {
-        if (!volumeGlOverlayRenderer) {
-            return;
-        }
-        const w = window.innerWidth;
-        const h = window.innerHeight;
-        if (w <= 0 || h <= 0) {
-            return;
-        }
-        const pixelRatio = mv?.renderer?.getPixelRatio?.() ?? (window.devicePixelRatio || 1);
-        volumeGlOverlayRenderer.setPixelRatio(pixelRatio);
-        volumeGlOverlayRenderer.setSize(w, h, false);
+    function buildVolumeMeshSyncKey(entries) {
+        return entries.map(({ feature, layer, dimmed }) => (
+            `${feature.id}\t${dimmed ? 1 : 0}\t${volumeFeatureMeshSignature(feature, layer)}`
+        )).join('\n');
     }
 
     function getVertexIndexById(feature, vertexId) {
@@ -3764,7 +3711,8 @@
             volumeMeshRoot.parent.remove(volumeMeshRoot);
         }
         volumeMeshRoot = null;
-        disposeVolumeGlOverlay();
+        lastVolumeMeshSyncKey = '';
+        document.getElementById('mcwws-gis-volume-gl-layer')?.remove();
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
@@ -3796,15 +3744,33 @@
         return parent.name || parent.type || 'object3d';
     }
 
-    function renderMcwwsVolumeLayer(mv) {
+    function renderMcwwsSimplifiedVolumeFrame(mv, delta) {
+        const dt = typeof delta === 'number' && delta > 0 ? delta : 16;
+        if (mv.map && typeof mv.controlsManager?.update === 'function') {
+            mv.controlsManager.update(dt, mv.map);
+        }
+        getGisBlueMapCamera();
+        const renderer = mv?.renderer;
+        const camera = mv?.camera;
+        if (!renderer || !camera || !volumeMeshScene || !volumeFeatureMeshes.size) {
+            return;
+        }
+        syncVolumeMeshChunkOffset(mv);
+        volumeMeshScene.updateMatrixWorld?.(true);
+        const prevAutoClear = renderer.autoClear;
+        renderer.autoClear = true;
+        renderer.setClearColor(0xffffff, 1);
+        renderer.clear(true, true, true);
+        renderer.render(volumeMeshScene, camera);
+        renderer.autoClear = prevAutoClear;
+    }
+
+    /** 原版地图：BlueMap 主 canvas 渲染地形/markers 后叠加三维建筑 */
+    function renderMcwwsVolumePostPass(mv) {
+        if (isSimplifiedMapMode()) {
+            return;
+        }
         if (!volumeMeshScene || !volumeFeatureMeshes.size || !shouldRenderVolumesWithWebGl()) {
-            if (volumeGlOverlayEl) {
-                volumeGlOverlayEl.classList.remove('is-active');
-            }
-            if (volumeGlOverlayRenderer) {
-                volumeGlOverlayRenderer.setClearColor(0x000000, 0);
-                volumeGlOverlayRenderer.clear(true, true, true);
-            }
             return;
         }
         const camera = mv?.camera;
@@ -3813,22 +3779,6 @@
         }
         syncVolumeMeshChunkOffset(mv);
         volumeMeshScene.updateMatrixWorld?.(true);
-
-        if (isSimplifiedMapMode()) {
-            const overlayRenderer = ensureVolumeGlOverlayLayer(mv);
-            if (!overlayRenderer) {
-                return;
-            }
-            syncVolumeGlOverlaySize(mv);
-            if (volumeGlOverlayEl) {
-                volumeGlOverlayEl.classList.add('is-active');
-            }
-            overlayRenderer.setClearColor(0x000000, 0);
-            overlayRenderer.clear(true, true, true);
-            overlayRenderer.render(volumeMeshScene, camera);
-            return;
-        }
-
         const renderer = mv?.renderer;
         if (!renderer) {
             return;
@@ -3859,26 +3809,36 @@
             return false;
         }
         const state = getMcwwsVolumeLayerHookState(mv);
-        if (!state || state.hookInstalled) {
-            return !!state?.hookInstalled;
+        if (!state) {
+            return false;
         }
         if (!state.originalRender) {
-            state.originalRender = mv.render.bind(mv);
+            const bound = mv.render.bind(mv);
+            state.originalRender = bound;
         }
         const baseRender = state.originalRender;
         mv.render = function mcwwsRenderWithVolumeLayer(delta) {
-            baseRender(delta);
             try {
-                renderMcwwsVolumeLayer(mv);
+                if (shouldRenderSimplifiedVolumeCanvas(mv)) {
+                    renderMcwwsSimplifiedVolumeFrame(mv, delta);
+                    return;
+                }
+                baseRender(delta);
+                renderMcwwsVolumePostPass(mv);
             } catch (err) {
-                console.warn('[mcwws-gis] renderMcwwsVolumeLayer failed', err);
+                console.warn('[mcwws-gis] volume layer render failed', err);
+                try {
+                    baseRender(delta);
+                } catch (innerErr) {
+                    console.warn('[mcwws-gis] base render failed', innerErr);
+                }
             }
         };
         state.hookInstalled = true;
         return true;
     }
 
-    /** WebGL + BlueMap MarkerFill shader（对数深度）；简化地图走独立透明 canvas */
+    /** WebGL + BlueMap MarkerFill shader（对数深度） */
     function shouldRenderVolumesWithWebGl() {
         if (!GIS_VOLUME_WEBGL_ENABLED) {
             return false;
@@ -4331,6 +4291,12 @@
         mat.polygonOffset = true;
         mat.polygonOffsetFactor = 1;
         mat.polygonOffsetUnits = volumeFeaturePolygonOffsetUnits(featureId);
+        if (mat.uniforms?.fadeDistanceMin) {
+            mat.uniforms.fadeDistanceMin.value = 0;
+        }
+        if (mat.uniforms?.fadeDistanceMax) {
+            mat.uniforms.fadeDistanceMax.value = Number.MAX_VALUE;
+        }
     }
 
     function volumeFeatureMeshSignature(feature, layer) {
@@ -4650,7 +4616,6 @@
             meshParent: !!resolveVolumeMeshParent(mv, three),
             meshParentKind: getVolumeMeshParentLabel(mv, three),
             volumeRenderLayer: getVolumeRenderLayerLabel(),
-            volumeGlOverlay: !!volumeGlOverlayRenderer,
             activeMeshCount: volumeFeatureMeshes.size,
             svgFallbackCount: volumeWebGlFailedFeatureIds.size,
             webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl'),
@@ -4667,10 +4632,16 @@
             const three = resolveGisThree();
             const mv = getBlueMapApp()?.mapViewer;
             if (!three || !mv || !shouldRenderVolumesWithWebGl()) {
-                if (volumeFeatureMeshes.size || volumeMeshRoot) {
-                    clearVolumeMeshes();
-                }
                 return false;
+            }
+            const syncKey = buildVolumeMeshSyncKey(entries);
+            if (
+                syncKey === lastVolumeMeshSyncKey
+                && volumeFeatureMeshes.size > 0
+                && volumeMeshRoot
+            ) {
+                syncVolumeMeshChunkOffset(mv);
+                return true;
             }
             if (!ensureMarkerFillMaterialTemplate(three, mv)) {
                 entries.forEach(({ feature }) => volumeWebGlFailedFeatureIds.add(feature.id));
@@ -4719,8 +4690,9 @@
                 volumeFeatureMeshes.delete(featureId);
                 changed = true;
             });
+            lastVolumeMeshSyncKey = syncKey;
+            syncVolumeMeshChunkOffset(mv);
             if (changed) {
-                syncVolumeMeshChunkOffset(mv);
                 mv.redraw?.();
             }
             return activeCount > 0;
@@ -4728,6 +4700,7 @@
             console.warn('[mcwws-gis] syncVolumeMeshes failed, falling back to SVG volumes', err);
             gisThree = null;
             gisMarkerFillMaterialTemplate = null;
+            lastVolumeMeshSyncKey = '';
             clearVolumeMeshes();
             entries.forEach(({ feature }) => volumeWebGlFailedFeatureIds.add(feature.id));
             return false;
@@ -9301,7 +9274,7 @@
         try {
             if (showVolume3dSolids && volumeMeshEntries.length && shouldRenderVolumesWithWebGl()) {
                 syncVolumeMeshes(volumeMeshEntries);
-            } else if (volumeFeatureMeshes.size || volumeMeshRoot) {
+            } else if (!showVolume3dSolids && (volumeFeatureMeshes.size || volumeMeshRoot)) {
                 clearVolumeMeshes();
             }
             volumesRenderedWithWebGl = volumeFeatureMeshes.size > 0;
@@ -10268,7 +10241,7 @@
         window.addEventListener('resize', () => {
             invalidateRoadArrowCache();
             invalidateRoadLabelCache();
-            syncVolumeGlOverlaySize(getBlueMapApp()?.mapViewer);
+            getBlueMapApp()?.mapViewer?.redraw?.();
             renderOverlay();
         });
         animationId = requestAnimationFrame(tick);

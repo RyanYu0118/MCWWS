@@ -721,24 +721,6 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     }
 }
 
-#mcwws-gis-volume-gl-layer {
-    position: fixed;
-    inset: 0;
-    z-index: 9997;
-    pointer-events: none;
-    display: none;
-}
-
-#mcwws-gis-volume-gl-layer.is-active {
-    display: block;
-}
-
-#mcwws-gis-volume-gl-layer canvas {
-    width: 100%;
-    height: 100%;
-    display: block;
-}
-
 #mcwws-gis-svg-layer {
     position: fixed;
     inset: 0;
@@ -990,6 +972,17 @@ body.mcwws-map-simplified-mode {
 body.mcwws-map-simplified-mode #map-container {
     opacity: 0;
     pointer-events: auto !important;
+}
+
+/* 简化地图 WebGL 建筑：显示主 canvas（白底+建筑），禁用 opacity 过渡避免闪烁 */
+body.mcwws-map-simplified-mode.mcwws-gis-volumes-webgl #map-container {
+    opacity: 1 !important;
+    transition: none !important;
+}
+
+body.mcwws-map-simplified-mode.mcwws-gis-volumes-webgl.mcwws-gis-has-selection #map-container {
+    opacity: 0.1 !important;
+    transition: none !important;
 }
 
 body.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
