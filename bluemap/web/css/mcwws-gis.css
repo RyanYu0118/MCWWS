@@ -969,17 +969,30 @@ body.mcwws-map-simplified-mode {
     background: #fff !important;
 }
 
+body.mcwws-map-simplified-mode.mcwws-gis-volume3d-visible #map-container {
+    transition: none !important;
+}
+
 body.mcwws-map-simplified-mode #map-container {
     opacity: 0;
     pointer-events: auto !important;
 }
 
-/* 简化地图 WebGL 建筑：显示主 canvas（白底+建筑），禁用 opacity 过渡避免闪烁 */
+/* WebGL 建筑启用时彻底隐藏 SVG 面片，避免与 canvas 叠绘闪烁 */
+body.mcwws-gis-volumes-webgl #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill {
+    display: none !important;
+    visibility: hidden !important;
+    pointer-events: none !important;
+}
+
+body.mcwws-map-simplified-mode.mcwws-gis-simplified-canvas-active #map-container,
 body.mcwws-map-simplified-mode.mcwws-gis-volumes-webgl #map-container {
     opacity: 1 !important;
     transition: none !important;
+    visibility: visible !important;
 }
 
+body.mcwws-map-simplified-mode.mcwws-gis-simplified-canvas-active.mcwws-gis-has-selection #map-container,
 body.mcwws-map-simplified-mode.mcwws-gis-volumes-webgl.mcwws-gis-has-selection #map-container {
     opacity: 0.1 !important;
     transition: none !important;
