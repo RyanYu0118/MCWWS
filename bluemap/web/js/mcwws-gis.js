@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-84';
+    const MCWWS_GIS_BUILD = '20260602-88';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版地图：使用 BlueMap MarkerFill shader（对数深度缓冲），与地形同一 Z 测试 */
@@ -130,9 +130,13 @@
     let gisCachedCamera = null;
     /** @type {import('three').Object3D | null} */
     let volumeMeshRoot = null;
-    /** @type {Map<string, { sig: string, group: object, anchor: { x: number, y: number, z: number } }>} */
+    /** GIS 三维建筑独立图层（不参与 BlueMap markers / 地形深度合成） */
+    let volumeMeshScene = null;
+    /** @type {Map<string, { sig: string, group: object, anchor: { x: number, y: number, z: number }, dimmed?: boolean }>} */
     const volumeFeatureMeshes = new Map();
     const volumeWebGlFailedFeatureIds = new Set();
+    /** BlueMap MapViewer 非 Three 对象，无 userData；用 WeakMap 存 render hook 状态 */
+    const mcwwsVolumeLayerHookState = new WeakMap();
     /** @type {null | { Mesh: Function, BufferGeometry: Function, Float32BufferAttribute: Function, MeshBasicMaterial: Function, ShaderMaterial: Function, Color: Function, Group: Function, FrontSide: number, DoubleSide: number }} */
     let gisThree = null;
     /** BlueMap ExtrudeMarkerFill 材质原型（含 logdepthbuf），用于克隆 */
@@ -1596,16 +1600,35 @@
         renderLayerDialog();
     }
 
-    function purgeVolumeFillSvgPaths() {
+    function purgeVolumeFillSvgPathsForFeatures(featureIds) {
+        const keepWebGl = featureIds instanceof Set ? featureIds : new Set(featureIds);
         const staleKeys = [];
         svgPathElements.forEach((path, key) => {
             if (!key.includes(':volume-fill:')) {
+                return;
+            }
+            const featureId = key.split(':')[0];
+            if (!keepWebGl.has(featureId)) {
                 return;
             }
             path.remove();
             staleKeys.push(key);
         });
         staleKeys.forEach((key) => svgPathElements.delete(key));
+    }
+
+    function queueVolumeSolidSvgFills(entries, view, camera, queue, dimmedByFeature) {
+        entries.forEach(({ feature, dimmed }) => {
+            const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
+            faceItems.forEach((item) => {
+                queue.push({
+                    featureId: feature.id,
+                    fillKey: `${feature.id}:volume-fill:${item.index}`,
+                    item,
+                    dimmed: dimmedByFeature?.get(feature.id) ?? dimmed
+                });
+            });
+        });
     }
 
     function syncVolume3dVisibilityClass() {
@@ -3657,6 +3680,90 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
+    function ensureVolumeMeshScene(mv, three) {
+        if (!three) {
+            return null;
+        }
+        if (!volumeMeshScene) {
+            volumeMeshScene = new three.Group();
+            volumeMeshScene.name = 'mcwws-gis-volume-layer';
+            volumeMeshScene.matrixAutoUpdate = true;
+        }
+        return volumeMeshScene;
+    }
+
+    /** 独立 GIS 覆盖图层，不再挂到 BlueMap markers */
+    function resolveVolumeMeshParent(mv, three) {
+        return ensureVolumeMeshScene(mv, three || gisThree || resolveGisThree());
+    }
+
+    function getVolumeMeshParentLabel(mv, three) {
+        const parent = resolveVolumeMeshParent(mv, three);
+        if (!parent) {
+            return 'none';
+        }
+        if (parent === volumeMeshScene) {
+            return 'gis-overlay-layer';
+        }
+        return parent.name || parent.type || 'object3d';
+    }
+
+    function renderMcwwsVolumeLayer(mv) {
+        if (!volumeMeshScene || !volumeFeatureMeshes.size || !shouldRenderVolumesWithWebGl()) {
+            return;
+        }
+        const renderer = mv?.renderer;
+        const camera = mv?.camera;
+        if (!renderer || !camera) {
+            return;
+        }
+        syncVolumeMeshChunkOffset(mv);
+        volumeMeshScene.updateMatrixWorld?.(true);
+        const autoClear = renderer.autoClear;
+        renderer.autoClear = false;
+        if (typeof renderer.clearDepth === 'function') {
+            renderer.clearDepth();
+        }
+        renderer.render(volumeMeshScene, camera);
+        renderer.autoClear = autoClear;
+    }
+
+    function getMcwwsVolumeLayerHookState(mv) {
+        if (!mv) {
+            return null;
+        }
+        let state = mcwwsVolumeLayerHookState.get(mv);
+        if (!state) {
+            state = { hookInstalled: false, originalRender: null };
+            mcwwsVolumeLayerHookState.set(mv, state);
+        }
+        return state;
+    }
+
+    function installMcwwsVolumeLayerRenderer(mv) {
+        if (!mv || typeof mv.render !== 'function') {
+            return false;
+        }
+        const state = getMcwwsVolumeLayerHookState(mv);
+        if (!state || state.hookInstalled) {
+            return !!state?.hookInstalled;
+        }
+        if (!state.originalRender) {
+            state.originalRender = mv.render.bind(mv);
+        }
+        const baseRender = state.originalRender;
+        mv.render = function mcwwsRenderWithVolumeLayer(delta) {
+            baseRender(delta);
+            try {
+                renderMcwwsVolumeLayer(mv);
+            } catch (err) {
+                console.warn('[mcwws-gis] renderMcwwsVolumeLayer failed', err);
+            }
+        };
+        state.hookInstalled = true;
+        return true;
+    }
+
     /** 原版地图：WebGL + BlueMap 对数深度 shader；失败时回退 SVG */
     function shouldRenderVolumesWithWebGl() {
         if (!GIS_VOLUME_WEBGL_ENABLED) {
@@ -3668,7 +3775,7 @@
         return !!getGisBlueMapCamera();
     }
 
-    function resolveVolumeMeshParent(mv) {
+    function resolveVolumeMeshParentLegacyMarkers(mv) {
         const markers = mv?.markers;
         if (markers && typeof markers.add === 'function') {
             return markers;
@@ -3682,18 +3789,15 @@
         return markerSetRoot;
     }
 
-    function getVolumeMeshParentLabel(mv) {
-        const parent = resolveVolumeMeshParent(mv);
-        if (!parent) {
-            return 'none';
+    /** 从旧版 BlueMap markers 挂载点移除残留 mesh */
+    function detachVolumeMeshesFromBlueMapMarkers(mv) {
+        const legacy = resolveVolumeMeshParentLegacyMarkers(mv);
+        if (!legacy || !volumeMeshRoot) {
+            return;
         }
-        if (parent === mv?.markers) {
-            return 'markers';
+        if (volumeMeshRoot.parent === legacy) {
+            legacy.remove(volumeMeshRoot);
         }
-        if (parent?.isMarkerSet) {
-            return 'marker-set';
-        }
-        return parent.name || parent.type || 'object3d';
     }
 
     function findThreeGroupCtor(mv, sample) {
@@ -4058,27 +4162,61 @@
     }
 
     function ensureVolumeMeshRoot(mv, three) {
-        const parent = resolveVolumeMeshParent(mv);
+        detachVolumeMeshesFromBlueMapMarkers(mv);
+        const parent = resolveVolumeMeshParent(mv, three);
         if (!parent) {
             return null;
         }
-        if (volumeMeshRoot && volumeMeshRoot.parent === parent) {
-            return volumeMeshRoot;
+        if (!volumeMeshRoot) {
+            volumeMeshRoot = new three.Object3D();
+            volumeMeshRoot.name = 'mcwws-gis-volumes';
+            volumeMeshRoot.userData = { chunkOx: null, chunkOz: null, mcwwsRenderSyncBound: false };
         }
-        if (volumeFeatureMeshes.size) {
-            volumeFeatureMeshes.forEach((entry) => {
-                disposeVolumeMeshObject(entry.group);
-            });
-            volumeFeatureMeshes.clear();
+        if (volumeMeshRoot.parent !== parent) {
+            volumeMeshRoot.parent?.remove?.(volumeMeshRoot);
+            parent.add(volumeMeshRoot);
+            volumeMeshRoot.userData.mcwwsRenderSyncBound = false;
         }
-        if (volumeMeshRoot?.parent) {
-            volumeMeshRoot.parent.remove(volumeMeshRoot);
-        }
-        volumeMeshRoot = new three.Object3D();
-        volumeMeshRoot.name = 'mcwws-gis-volumes';
-        volumeMeshRoot.userData = { chunkOx: null, chunkOz: null };
-        parent.add(volumeMeshRoot);
+        bindVolumeMeshRenderSync(mv);
         return volumeMeshRoot;
+    }
+
+    function bindVolumeMeshRenderSync(mv) {
+        if (!volumeMeshRoot || volumeMeshRoot.userData.mcwwsRenderSyncBound) {
+            return;
+        }
+        volumeMeshRoot.userData.mcwwsRenderSyncBound = true;
+        volumeMeshRoot.onBeforeRender = () => {
+            syncVolumeMeshChunkOffset(mv);
+        };
+    }
+
+    function volumeFeaturePolygonOffsetUnits(featureId) {
+        let hash = 0;
+        const s = String(featureId || '');
+        for (let i = 0; i < s.length; i += 1) {
+            hash = ((hash << 5) - hash + s.charCodeAt(i)) | 0;
+        }
+        return (Math.abs(hash) % 6) + 1;
+    }
+
+    function applyVolumeMaterialState(mat, opacity, featureId) {
+        if (!mat) {
+            return;
+        }
+        const o = opacity ?? 1;
+        const opaque = o >= 0.99;
+        if (mat.uniforms?.markerOpacity) {
+            mat.uniforms.markerOpacity.value = o;
+        } else {
+            mat.opacity = o;
+        }
+        mat.transparent = !opaque;
+        mat.depthWrite = opaque;
+        mat.depthTest = true;
+        mat.polygonOffset = true;
+        mat.polygonOffsetFactor = 1;
+        mat.polygonOffsetUnits = volumeFeaturePolygonOffsetUnits(featureId);
     }
 
     function volumeFeatureMeshSignature(feature, layer) {
@@ -4102,7 +4240,7 @@
         };
     }
 
-    function createVolumeMarkerFillMaterial(three, mv, rgb, opacity) {
+    function createVolumeMarkerFillMaterial(three, mv, rgb, opacity, featureId) {
         const template = ensureMarkerFillMaterialTemplate(three, mv);
         if (!template?.clone) {
             return null;
@@ -4112,15 +4250,10 @@
             if (material.uniforms?.markerColor?.value?.setRGB) {
                 material.uniforms.markerColor.value.setRGB(rgb.r, rgb.g, rgb.b);
             }
-            if (material.uniforms?.markerOpacity) {
-                material.uniforms.markerOpacity.value = opacity ?? 1;
-            }
-            material.depthTest = true;
-            material.depthWrite = (opacity ?? 1) >= 0.99;
-            material.transparent = (opacity ?? 1) < 0.99 || !!template.transparent;
             if ('side' in material) {
                 material.side = three.FrontSide ?? 0;
             }
+            applyVolumeMaterialState(material, opacity ?? 1, featureId);
             material.needsUpdate = true;
             return material;
         } catch (err) {
@@ -4300,7 +4433,7 @@
             if (materialCache.has(key)) {
                 return materialCache.get(key);
             }
-            const mat = createVolumeMarkerFillMaterial(three, mv, shaded, 1);
+            const mat = createVolumeMarkerFillMaterial(three, mv, shaded, 1, feature.id);
             if (!mat) {
                 return -1;
             }
@@ -4367,7 +4500,7 @@
         return { group, anchor };
     }
 
-    function applyVolumeMeshStyle(group, dimmed) {
+    function applyVolumeMeshStyle(group, dimmed, featureId) {
         group.traverse?.((child) => {
             if (!child.isMesh || !child.material) {
                 return;
@@ -4375,14 +4508,7 @@
             const opacity = dimmed ? 0.42 : 1;
             const mats = Array.isArray(child.material) ? child.material : [child.material];
             mats.forEach((mat) => {
-                if (mat.uniforms?.markerOpacity) {
-                    mat.uniforms.markerOpacity.value = opacity;
-                } else {
-                    mat.opacity = opacity;
-                }
-                mat.transparent = opacity < 0.99;
-                mat.depthWrite = opacity >= 0.99;
-                mat.depthTest = true;
+                applyVolumeMaterialState(mat, opacity, featureId);
             });
         });
     }
@@ -4407,16 +4533,17 @@
             hasShaderMaterial: !!three?.ShaderMaterial,
             hasColor: !!three?.Color,
             hasShaderSample: !!three?.shaderMaterialSample,
-            meshParent: !!resolveVolumeMeshParent(mv),
-            meshParentKind: getVolumeMeshParentLabel(mv),
+            meshParent: !!resolveVolumeMeshParent(mv, three),
+            meshParentKind: getVolumeMeshParentLabel(mv, three),
+            volumeRenderLayer: 'post-map-overlay',
             activeMeshCount: volumeFeatureMeshes.size,
             svgFallbackCount: volumeWebGlFailedFeatureIds.size,
             webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl'),
-            volumeBackend: shouldRenderVolumesWithWebGl() ? 'webgl' : 'svg',
+            volumeBackend: volumeFeatureMeshes.size > 0 ? 'webgl' : (shouldRenderVolumesWithWebGl() ? 'webgl+svg-fallback' : 'svg'),
             markerFillMaterial: getMarkerFillMaterialSourceLabel(),
             chunkOffset: getVolumeMeshChunkOffset(mv),
             modeHint: shouldRenderVolumesWithWebGl()
-                ? '原版地图：WebGL 对数深度 + 分块原点偏移（与 BlueMap 地形一致）。'
+                ? 'GIS 三维建筑独立图层：地图渲染后叠加，不被地形深度遮挡；建筑之间仍按深度正确遮挡。'
                 : '三维建筑走 SVG 面片。'
         };
     }
@@ -4436,6 +4563,7 @@
                 entries.forEach(({ feature }) => volumeWebGlFailedFeatureIds.add(feature.id));
                 return false;
             }
+            installMcwwsVolumeLayerRenderer(mv);
             ensureVolumeMeshRoot(mv, three);
             if (!volumeMeshRoot) {
                 return false;
@@ -4459,11 +4587,14 @@
                         return;
                     }
                     volumeMeshRoot.add(built.group);
-                    entry = { sig, group: built.group, anchor: built.anchor };
+                    entry = { sig, group: built.group, anchor: built.anchor, dimmed: !!dimmed };
                     volumeFeatureMeshes.set(feature.id, entry);
+                    applyVolumeMeshStyle(built.group, dimmed, feature.id);
                     changed = true;
+                } else if (entry.dimmed !== !!dimmed) {
+                    applyVolumeMeshStyle(entry.group, dimmed, feature.id);
+                    entry.dimmed = !!dimmed;
                 }
-                applyVolumeMeshStyle(entry.group, dimmed);
                 activeCount += 1;
             });
             volumeFeatureMeshes.forEach((entry, featureId) => {
@@ -4475,16 +4606,17 @@
                 volumeFeatureMeshes.delete(featureId);
                 changed = true;
             });
-            if (changed || volumeFeatureMeshes.size > 0) {
+            if (changed) {
                 syncVolumeMeshChunkOffset(mv);
                 mv.redraw?.();
             }
-            return activeCount > 0 || volumeWebGlFailedFeatureIds.size > 0;
+            return activeCount > 0;
         } catch (err) {
             console.warn('[mcwws-gis] syncVolumeMeshes failed, falling back to SVG volumes', err);
             gisThree = null;
             gisMarkerFillMaterialTemplate = null;
             clearVolumeMeshes();
+            entries.forEach(({ feature }) => volumeWebGlFailedFeatureIds.add(feature.id));
             return false;
         }
     }
@@ -7940,15 +8072,35 @@
 
     function bindVolumeMeshRenderHook() {
         const bm = getBlueMapApp();
+        if (!bm?.mapViewer) {
+            return;
+        }
+        try {
+            installMcwwsVolumeLayerRenderer(bm.mapViewer);
+            bindVolumeMeshRenderSync(bm.mapViewer);
+        } catch (err) {
+            console.warn('[mcwws-gis] bindVolumeMeshRenderHook failed', err);
+        }
         if (!bm?.events || volumeRenderHookBound) {
             return;
         }
         volumeRenderHookBound = true;
-        bm.events.addEventListener('bluemapRenderFrame', () => {
-            if (!volumeFeatureMeshes.size) {
-                return;
+        bm.events.addEventListener('bluemapMapChanged', () => {
+            if (volumeMeshRoot) {
+                volumeMeshRoot.userData.mcwwsRenderSyncBound = false;
             }
-            syncVolumeMeshChunkOffset(bm.mapViewer);
+            if (bm.mapViewer) {
+                const state = getMcwwsVolumeLayerHookState(bm.mapViewer);
+                if (state) {
+                    state.hookInstalled = false;
+                }
+                try {
+                    installMcwwsVolumeLayerRenderer(bm.mapViewer);
+                    bindVolumeMeshRenderSync(bm.mapViewer);
+                } catch (err) {
+                    console.warn('[mcwws-gis] rebind volume render hook failed', err);
+                }
+            }
         });
     }
 
@@ -9033,47 +9185,41 @@
         });
 
         let volumesRenderedWithWebGl = false;
-        if (showVolume3dSolids && volumeMeshEntries.length && shouldRenderVolumesWithWebGl()) {
-            volumesRenderedWithWebGl = syncVolumeMeshes(volumeMeshEntries);
-        } else if (volumeFeatureMeshes.size || volumeMeshRoot) {
-            clearVolumeMeshes();
-        }
-        syncVolume3dRenderModeClass(volumesRenderedWithWebGl);
-        if (volumesRenderedWithWebGl) {
-            purgeVolumeFillSvgPaths();
-            volumeMeshEntries.forEach(({ feature, dimmed }) => {
-                if (!volumeWebGlFailedFeatureIds.has(feature.id)) {
-                    return;
-                }
-                const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
-                faceItems.forEach((item) => {
-                    volumeFacePaintQueue.push({
-                        featureId: feature.id,
-                        fillKey: `${feature.id}:volume-fill:${item.index}`,
-                        item,
-                        dimmed
-                    });
-                });
-            });
+        try {
+            if (showVolume3dSolids && volumeMeshEntries.length && shouldRenderVolumesWithWebGl()) {
+                syncVolumeMeshes(volumeMeshEntries);
+            } else if (volumeFeatureMeshes.size || volumeMeshRoot) {
+                clearVolumeMeshes();
+            }
+            volumesRenderedWithWebGl = volumeFeatureMeshes.size > 0;
+            syncVolume3dRenderModeClass(volumesRenderedWithWebGl);
+            if (volumesRenderedWithWebGl) {
+                purgeVolumeFillSvgPathsForFeatures(new Set(volumeFeatureMeshes.keys()));
+            }
+            const svgVolumeEntries = volumeMeshEntries.filter(
+                ({ feature }) => !volumeFeatureMeshes.has(feature.id)
+            );
+            if (svgVolumeEntries.length) {
+                queueVolumeSolidSvgFills(svgVolumeEntries, view, camera, volumeFacePaintQueue);
+            }
             if (volumeFacePaintQueue.length) {
                 sortVolumeFacePaintQueue(volumeFacePaintQueue, camera);
                 paintVolumeFacePaintQueue(svg, volumeFacePaintQueue, neededPathKeys);
             }
-        } else if (showVolume3dSolids && volumeMeshEntries.length) {
-            volumeMeshEntries.forEach(({ feature, dimmed }) => {
-                const faceItems = buildSvgVolumeSolidFillPath(feature, view, camera);
-                faceItems.forEach((item) => {
-                    volumeFacePaintQueue.push({
-                        featureId: feature.id,
-                        fillKey: `${feature.id}:volume-fill:${item.index}`,
-                        item,
-                        dimmed
-                    });
-                });
-            });
-            sortVolumeFacePaintQueue(volumeFacePaintQueue, camera);
-            paintVolumeFacePaintQueue(svg, volumeFacePaintQueue, neededPathKeys);
-        } else if (showVolume3dSolids && !volumeMeshEntries.length) {
+        } catch (err) {
+            console.warn('[mcwws-gis] volume render failed, falling back to SVG', err);
+            clearVolumeMeshes();
+            syncVolume3dRenderModeClass(false);
+            volumeFacePaintQueue.length = 0;
+            if (showVolume3dSolids && volumeMeshEntries.length) {
+                queueVolumeSolidSvgFills(volumeMeshEntries, view, camera, volumeFacePaintQueue);
+                if (volumeFacePaintQueue.length) {
+                    sortVolumeFacePaintQueue(volumeFacePaintQueue, camera);
+                    paintVolumeFacePaintQueue(svg, volumeFacePaintQueue, neededPathKeys);
+                }
+            }
+        }
+        if (showVolume3dSolids && !volumeMeshEntries.length && (volumeFeatureMeshes.size || volumeMeshRoot)) {
             clearVolumeMeshes();
         }
 
