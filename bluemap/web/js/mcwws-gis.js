@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-94';
+    const MCWWS_GIS_BUILD = '20260602-95';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -27,7 +27,7 @@
     const GIS_LASSO_MIN_DIAG_PX = 12;
     const GIS_DEFAULT_Y = 64;
     const GIS_DEFAULT_ROAD_COLOR = '#C0CDD7';
-    const GIS_DEFAULT_REGION_COLOR = '#DFEAF3';
+    const GIS_DEFAULT_REGION_COLOR = '#F5F6F8';
     const GIS_VOLUME_SELECTION_STROKE = '#f59e0b';
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
@@ -5678,7 +5678,7 @@
     function parseRegionHexColor(hex) {
         const m = String(hex || '').match(/^#?([0-9a-f]{6})$/i);
         if (!m) {
-            return { r: 223, g: 234, b: 243 };
+            return { r: 245, g: 246, b: 248 };
         }
         const n = parseInt(m[1], 16);
         return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
@@ -5694,7 +5694,7 @@
             0,
             nx * GIS_VOLUME_LIGHT_DIR.x + ny * GIS_VOLUME_LIGHT_DIR.y + nz * GIS_VOLUME_LIGHT_DIR.z
         );
-        const shade = 0.38 + 0.62 * ndotl;
+        const shade = 0.52 + 0.48 * ndotl;
         const r = Math.min(255, Math.round(base.r * shade));
         const g = Math.min(255, Math.round(base.g * shade));
         const b = Math.min(255, Math.round(base.b * shade));

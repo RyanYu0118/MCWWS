@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-08T12:47:22.539Z",
+  "updatedAt": "2026-06-08T16:46:28.345Z",
   "layers": [
     {
       "id": "roads",
@@ -2057,6 +2057,84 @@
               "shape": "box",
               "minY": 67.5,
               "maxY": 108.5
+            }
+          }
+        },
+        {
+          "id": "e3ccc3db439f459a",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -759.5,
+              "y": 109.5,
+              "z": 102.5
+            },
+            {
+              "x": -634.5,
+              "y": 109.5,
+              "z": 102.5
+            },
+            {
+              "x": -607.5,
+              "y": 109.5,
+              "z": 243.5
+            },
+            {
+              "x": -801.5,
+              "y": 109.5,
+              "z": 218.5
+            },
+            {
+              "x": -759.5,
+              "y": 113.5,
+              "z": 102.5
+            },
+            {
+              "x": -634.5,
+              "y": 161.5,
+              "z": 102.5
+            },
+            {
+              "x": -607.5,
+              "y": 113.5,
+              "z": 243.5
+            },
+            {
+              "x": -801.5,
+              "y": 113.5,
+              "z": 218.5
+            }
+          ],
+          "properties": {
+            "name": "区域",
+            "description": "",
+            "color": "#DFEAF3",
+            "vertexIds": [
+              "e3ccc3db439f459a-v-cb769f94c50a",
+              "e3ccc3db439f459a-v-acebd2c1d32e",
+              "e3ccc3db439f459a-v-2996eeb534e4",
+              "e3ccc3db439f459a-v-edabd3ef1cee",
+              "e3ccc3db439f459a-v-8e032ee2926b",
+              "e3ccc3db439f459a-v-049382bef2d5",
+              "e3ccc3db439f459a-v-4a11565138d2",
+              "e3ccc3db439f459a-v-33b704dbeb92"
+            ],
+            "vertexVisibility": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
+            "volume3d": {
+              "shape": "box",
+              "minY": 109.5,
+              "maxY": 161.5
             }
           }
         }
