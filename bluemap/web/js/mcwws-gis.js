@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-93';
+    const MCWWS_GIS_BUILD = '20260602-94';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -2860,6 +2860,7 @@
             mode: extendConfig ? 'extend' : (vertexMode ? 'vertex' : 'feature'),
             axis,
             anchorWorld: { x: world.x, y: world.y, z: world.z },
+            frozenAxisLayout: computeGizmoAxisLayout(world, view, camera),
             dragTargets,
             extendConfig,
             extendPending: !!extendConfig,
@@ -3577,6 +3578,58 @@
         }
     }
 
+    function computeGizmoAxisLayout(world, view, camera) {
+        const hub = GIS_GIZMO_HUB;
+        const layout = {};
+        ['x', 'y', 'z'].forEach((axis) => {
+            let dir = getScreenAxisDir(world, axis, view, camera);
+            if (!dir && axis === 'y') {
+                dir = { ux: 0, uy: -1, len: 42, pixelsPerWorld: 0.1 };
+            }
+            if (!dir) {
+                layout[axis] = { display: 'none' };
+                return;
+            }
+            const deg = (Math.atan2(dir.uy, dir.ux) * 180) / Math.PI;
+            const widthPx = Math.max(
+                GIS_GIZMO_AXIS_MIN_WIDTH_PX,
+                Math.min(
+                    GIS_GIZMO_AXIS_MAX_WIDTH_PX,
+                    Math.max(dir.len, 24) * (dir.len >= 1.5 ? GIS_GIZMO_AXIS_WORLD_SPAN : 1)
+                )
+            );
+            layout[axis] = {
+                display: 'block',
+                hub,
+                widthPx,
+                deg
+            };
+        });
+        return layout;
+    }
+
+    function applyGizmoAxisLayout(gizmo, layout) {
+        if (!gizmo || !layout) {
+            return;
+        }
+        ['x', 'y', 'z'].forEach((axis) => {
+            const el = gizmo.querySelector(`.mcwws-gis-axis--${axis}`);
+            const spec = layout[axis];
+            if (!el || !spec) {
+                return;
+            }
+            if (spec.display === 'none') {
+                el.style.display = 'none';
+                return;
+            }
+            el.style.display = 'block';
+            el.style.left = `${spec.hub}px`;
+            el.style.top = `${spec.hub}px`;
+            el.style.width = `${spec.widthPx}px`;
+            el.style.transform = `rotate(${spec.deg.toFixed(2)}deg)`;
+        });
+    }
+
     function positionVertexGizmo(world, view, camera) {
         const gizmo = ensureVertexGizmo();
         if (!shouldShowGizmo()) {
@@ -3603,31 +3656,11 @@
             coords.style.top = `${projected.y}px`;
             coords.style.transform = `translate(-50%, ${GIS_GIZMO_COORDS_OFFSET_Y}px)`;
         }
-        const hub = GIS_GIZMO_HUB;
-        ['x', 'y', 'z'].forEach((axis) => {
-            let dir = getScreenAxisDir(world, axis, view, camera);
-            const el = gizmo.querySelector(`.mcwws-gis-axis--${axis}`);
-            if (!el) {
-                return;
-            }
-            if (!dir && axis === 'y') {
-                dir = { ux: 0, uy: -1, len: 42, pixelsPerWorld: 0.1 };
-            }
-            if (!dir) {
-                el.style.display = 'none';
-                return;
-            }
-            el.style.display = 'block';
-            const deg = (Math.atan2(dir.uy, dir.ux) * 180) / Math.PI;
-            const widthPx = Math.max(
-                GIS_GIZMO_AXIS_MIN_WIDTH_PX,
-                Math.min(GIS_GIZMO_AXIS_MAX_WIDTH_PX, Math.max(dir.len, 24) * (dir.len >= 1.5 ? GIS_GIZMO_AXIS_WORLD_SPAN : 1))
-            );
-            el.style.left = `${hub}px`;
-            el.style.top = `${hub}px`;
-            el.style.width = `${widthPx}px`;
-            el.style.transform = `rotate(${deg.toFixed(2)}deg)`;
-        });
+        if (gisVertexDrag?.frozenAxisLayout) {
+            applyGizmoAxisLayout(gizmo, gisVertexDrag.frozenAxisLayout);
+        } else {
+            applyGizmoAxisLayout(gizmo, computeGizmoAxisLayout(world, view, camera));
+        }
         showVertexGizmo();
     }
 
