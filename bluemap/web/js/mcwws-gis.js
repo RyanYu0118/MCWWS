@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-97';
+    const MCWWS_GIS_BUILD = '20260602-99';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -28,6 +28,7 @@
     const GIS_DEFAULT_Y = 64;
     const GIS_DEFAULT_ROAD_COLOR = '#C0CDD7';
     const GIS_DEFAULT_REGION_COLOR = '#F5F6F8';
+    const GIS_LEGACY_REGION_COLORS = new Set(['#dfeaf3']);
     const GIS_VOLUME_SELECTION_STROKE = '#f59e0b';
     const GIS_CLIP_W_EPS = 1e-4;
     const GIS_NDC_LIMIT = 1.001;
@@ -1363,7 +1364,7 @@
         return snapPoint(lerpWorld3(p0, p1, hit.t));
     }
 
-    function coerceVertexPoint(raw) {
+    function readFiniteVertexPoint(raw) {
         if (!raw) {
             return null;
         }
@@ -1373,10 +1374,18 @@
         if (![x, y, z].every(Number.isFinite)) {
             return null;
         }
+        return { x, y, z };
+    }
+
+    function coerceVertexPoint(raw) {
+        const point = readFiniteVertexPoint(raw);
+        if (!point) {
+            return null;
+        }
         return {
-            x: Math.floor(x) + 0.5,
-            y: Math.floor(y) + 0.5,
-            z: Math.floor(z) + 0.5
+            x: Math.floor(point.x) + 0.5,
+            y: Math.floor(point.y) + 0.5,
+            z: Math.floor(point.z) + 0.5
         };
     }
 
@@ -2389,7 +2398,9 @@
         if (vertexIndex < 0 || vertexIndex >= pts.length) {
             return;
         }
-        const next = coerceVertexPoint(point);
+        const next = options.coerce === false
+            ? readFiniteVertexPoint(point)
+            : coerceVertexPoint(point);
         if (!next) {
             return;
         }
@@ -2756,6 +2767,31 @@
         };
     }
 
+    function resolveGizmoScreenAxis(world, axis, view, camera) {
+        let dir = getScreenAxisDir(world, axis, view, camera)
+            || getScreenAxisDir(world, axis, view, null);
+        if (!dir && axis === 'y') {
+            dir = { ux: 0, uy: -1, len: 42, pixelsPerWorld: 0.1 };
+        }
+        return dir;
+    }
+
+    function resolveGizmoDragAnchorWorld() {
+        if (!gisVertexDrag?.moved || !gisVertexDrag.anchorWorld) {
+            return getGizmoAnchorWorld();
+        }
+        return resolveAxisDragWorld(
+            gisVertexDrag.screenAxis,
+            gisVertexDrag.axis,
+            gisVertexDrag.anchorWorld,
+            gisVertexDrag.startClientX,
+            gisVertexDrag.startClientY,
+            gisVertexDrag.clientX ?? gisVertexDrag.startClientX,
+            gisVertexDrag.clientY ?? gisVertexDrag.startClientY,
+            getGisBlueMapCamera()
+        );
+    }
+
     function dragVertexAlongAxisAtScreen(screenAxis, axis, startWorld, startClientX, startClientY, clientX, clientY) {
         if (!screenAxis) {
             return startWorld;
@@ -2827,6 +2863,53 @@
         }) || startWorld;
     }
 
+    function snapFeatureGeometryToGrid(feature) {
+        if (!feature) {
+            return;
+        }
+        const pts = getFeatureVertexPoints(feature)
+            .map((p) => coerceVertexPoint(p))
+            .filter(Boolean);
+        if (!pts.length) {
+            return;
+        }
+        setFeatureCoordinatesFromPoints(feature, pts);
+        if (feature.type === 'Polygon') {
+            if (isBoxPrismFeature(feature)) {
+                syncBoxVolumeYMeta(feature);
+            } else {
+                normalizeVolume3dFeature(feature);
+            }
+        }
+    }
+
+    function finalizeGizmoDragSnap() {
+        if (!gisVertexDrag?.moved) {
+            return;
+        }
+        if (gisVertexDrag.mode === 'feature' && gisVertexDrag.featureSnapshots) {
+            gisVertexDrag.featureSnapshots.forEach((_, id) => {
+                const found = findFeatureById(id);
+                if (found) {
+                    snapFeatureGeometryToGrid(found.feature);
+                }
+            });
+            markDirty();
+            return;
+        }
+        gisVertexDrag.dragTargets?.forEach((target) => {
+            const found = findFeatureById(target.featureId);
+            if (!found) {
+                return;
+            }
+            const pts = getFeatureLanePoints(found.feature, target.lane || 'center');
+            const point = pts[target.vertexIndex];
+            if (point) {
+                setFeatureVertexPoint(found.feature, target.lane || 'center', target.vertexIndex, point);
+            }
+        });
+    }
+
     function endVertexAxisDrag(event) {
         if (!gisVertexDrag) {
             return;
@@ -2839,6 +2922,7 @@
             gisVertexDrag.cleanup = null;
         }
         if (gisVertexDrag.moved) {
+            finalizeGizmoDragSnap();
             renderPanel();
         }
         gisVertexDrag = null;
@@ -2857,8 +2941,7 @@
         }
         const view = getViewForProjection();
         const camera = getGisBlueMapCamera();
-        const screenAxis = getScreenAxisDir(world, axis, view, camera)
-            || getScreenAxisDir(world, axis, view, null);
+        const screenAxis = resolveGizmoScreenAxis(world, axis, view, camera);
         const projectedHub = projectGisPoint(world, view, camera, false);
         const vertexMode = hasSelectedVertices();
         let dragTargets = [];
@@ -2968,7 +3051,7 @@
                     y: nextAnchor.y - gisVertexDrag.anchorWorld.y,
                     z: nextAnchor.z - gisVertexDrag.anchorWorld.z
                 };
-                applyFeatureTranslateDelta(gisVertexDrag.featureSnapshots, delta);
+                applyFeatureTranslateDelta(gisVertexDrag.featureSnapshots, delta, { coerce: false });
                 renderOverlay();
             } else {
                 gisVertexDrag.dragTargets.forEach((target) => {
@@ -2986,12 +3069,15 @@
                         target.lane || 'center',
                         target.vertexIndex,
                         next,
-                        { skipPanel: true }
+                        { skipPanel: true, coerce: false }
                     );
                 });
                 renderOverlay();
             }
-            syncGizmoFromVertexSelection();
+            const dragAnchor = resolveGizmoDragAnchorWorld();
+            if (dragAnchor) {
+                syncVertexGizmoInputs(dragAnchor);
+            }
         };
         const onUp = (e) => {
             endVertexAxisDrag(e);
@@ -3463,17 +3549,21 @@
         return snapshots;
     }
 
-    function applyFeatureTranslateDelta(snapshots, delta) {
+    function applyFeatureTranslateDelta(snapshots, delta, options = {}) {
+        const coerce = options.coerce !== false;
         snapshots.forEach((snap, id) => {
             const found = findFeatureById(id);
             if (!found) {
                 return;
             }
-            const shift = (pts) => pts.map((p) => coerceVertexPoint({
-                x: p.x + delta.x,
-                y: p.y + delta.y,
-                z: p.z + delta.z
-            })).filter(Boolean);
+            const shift = (pts) => pts.map((p) => {
+                const raw = {
+                    x: p.x + delta.x,
+                    y: p.y + delta.y,
+                    z: p.z + delta.z
+                };
+                return coerce ? coerceVertexPoint(raw) : readFiniteVertexPoint(raw);
+            }).filter(Boolean);
             const centerNext = shift(snap.center || []);
             if (centerNext.length) {
                 setFeatureCoordinatesFromPoints(found.feature, centerNext);
@@ -3585,7 +3675,9 @@
             }
         });
         if (shouldShowGizmo()) {
-            const world = getGizmoAnchorWorld();
+            const world = gisVertexDrag?.moved
+                ? resolveGizmoDragAnchorWorld()
+                : getGizmoAnchorWorld();
             if (!world) {
                 hideVertexGizmo();
             } else {
@@ -3633,10 +3725,7 @@
         const hub = GIS_GIZMO_HUB;
         const layout = {};
         ['x', 'y', 'z'].forEach((axis) => {
-            let dir = getScreenAxisDir(world, axis, view, camera);
-            if (!dir && axis === 'y') {
-                dir = { ux: 0, uy: -1, len: 42, pixelsPerWorld: 0.1 };
-            }
+            const dir = resolveGizmoScreenAxis(world, axis, view, camera);
             if (!dir) {
                 layout[axis] = { display: 'none' };
                 return;
@@ -3664,7 +3753,19 @@
             return null;
         }
         const base = gisVertexDrag.frozenAnchorScreen;
-        if (!gisVertexDrag.moved || !gisVertexDrag.screenAxis) {
+        if (!gisVertexDrag.moved) {
+            return { x: base.x, y: base.y };
+        }
+        const nextWorld = resolveGizmoDragAnchorWorld();
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const projected = nextWorld
+            ? projectGisPoint(nextWorld, view, camera, false)
+            : null;
+        if (projected && !projected.behind) {
+            return { x: projected.x, y: projected.y };
+        }
+        if (!gisVertexDrag.screenAxis) {
             return { x: base.x, y: base.y };
         }
         const clientX = gisVertexDrag.clientX ?? gisVertexDrag.startClientX;
@@ -5151,12 +5252,34 @@
         return cfg ? cfg.shape : VOLUME_SHAPES.BOX;
     }
 
-    function getRegionVolumeFillColor(feature, layer) {
-        const c = feature?.properties?.color || layer?.color;
-        if (c && /^#[0-9a-fA-F]{3,8}$/i.test(c)) {
-            return c;
+    function normalizeRegionFillColorHex(color) {
+        if (!color || typeof color !== 'string') {
+            return null;
         }
-        return GIS_DEFAULT_REGION_COLOR;
+        const c = color.trim();
+        if (!/^#[0-9a-fA-F]{3,8}$/i.test(c)) {
+            return null;
+        }
+        if (GIS_LEGACY_REGION_COLORS.has(c.toLowerCase())) {
+            return GIS_DEFAULT_REGION_COLOR;
+        }
+        return c;
+    }
+
+    function migrateLegacyRegionFillColor(feature) {
+        if (!feature?.properties) {
+            return;
+        }
+        const normalized = normalizeRegionFillColorHex(feature.properties.color);
+        if (normalized && normalized !== feature.properties.color) {
+            feature.properties.color = normalized;
+        }
+    }
+
+    function getRegionVolumeFillColor(feature, layer) {
+        const normalized = normalizeRegionFillColorHex(feature?.properties?.color)
+            || normalizeRegionFillColorHex(layer?.color);
+        return normalized || GIS_DEFAULT_REGION_COLOR;
     }
 
     function resolveVolumeEditLane(feature, lane) {
@@ -6146,6 +6269,7 @@
                 vol.radius = Math.round(cr.radius * 1000) / 1000;
             }
         }
+        migrateLegacyRegionFillColor(feature);
     }
 
     function getSelectedPolygonFeature() {
@@ -6541,7 +6665,7 @@
                         <span>颜色</span>
                         <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="color"
                             value="${escapeHtml(colorDisp.value)}"
-                            placeholder="${colorDisp.mixed ? '多个值' : '#DFEAF3（留空=默认填充）'}"
+                            placeholder="${colorDisp.mixed ? '多个值' : '#F5F6F8（留空=默认填充）'}"
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
