@@ -1,7 +1,9 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-80';
-    /** BlueMap 暂不支持直接挂载原始 Mesh 稳定显示，关闭 WebGL 体积，统一走 SVG */
-    const GIS_VOLUME_WEBGL_ENABLED = false;
+    const MCWWS_GIS_BUILD = '20260602-84';
+    /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
+    const GIS_VOLUME_CHUNK_SIZE = 10000;
+    /** 原版地图：使用 BlueMap MarkerFill shader（对数深度缓冲），与地形同一 Z 测试 */
+    const GIS_VOLUME_WEBGL_ENABLED = true;
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
@@ -111,6 +113,7 @@
     let started = false;
     let mapClickBound = false;
     let canvasClickBound = false;
+    let volumeRenderHookBound = false;
     let pinElements = new Map();
     /** @type {Map<string, SVGPathElement>} */
     const svgPathElements = new Map();
@@ -127,11 +130,13 @@
     let gisCachedCamera = null;
     /** @type {import('three').Object3D | null} */
     let volumeMeshRoot = null;
-    /** @type {Map<string, { sig: string, group: object }>} */
+    /** @type {Map<string, { sig: string, group: object, anchor: { x: number, y: number, z: number } }>} */
     const volumeFeatureMeshes = new Map();
     const volumeWebGlFailedFeatureIds = new Set();
-    /** @type {null | { Mesh: Function, BufferGeometry: Function, Float32BufferAttribute: Function, MeshBasicMaterial: Function, Group: Function, FrontSide: number }} */
+    /** @type {null | { Mesh: Function, BufferGeometry: Function, Float32BufferAttribute: Function, MeshBasicMaterial: Function, ShaderMaterial: Function, Color: Function, Group: Function, FrontSide: number, DoubleSide: number }} */
     let gisThree = null;
+    /** BlueMap ExtrudeMarkerFill 材质原型（含 logdepthbuf），用于克隆 */
+    let gisMarkerFillMaterialTemplate = null;
     /** @type {{ startX: number, startY: number, moved: boolean, pointerId: number } | null} */
     let gisCanvasPointer = null;
     let gisLastMapDragAt = 0;
@@ -368,6 +373,7 @@
         }
         gisCachedCamera = null;
         gisThree = null;
+        gisMarkerFillMaterialTemplate = null;
         syncVolume3dVisibilityClass();
         renderOverlay();
     }
@@ -3651,7 +3657,7 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
-    /** 原版地图：WebGL 实验路径；当前关闭，三维建筑统一 SVG 渲染 */
+    /** 原版地图：WebGL + BlueMap 对数深度 shader；失败时回退 SVG */
     function shouldRenderVolumesWithWebGl() {
         if (!GIS_VOLUME_WEBGL_ENABLED) {
             return false;
@@ -3729,11 +3735,82 @@
             : null;
     }
 
+    function isShaderLikeMaterial(mat) {
+        return !!(mat && (
+            mat.isShaderMaterial
+            || mat.type === 'ShaderMaterial'
+            || mat.type === 'LineMaterial'
+            || mat.type === 'RawShaderMaterial'
+            || (mat.vertexShader && mat.fragmentShader)
+        ));
+    }
+
+    function createMinimalGisColorCtor() {
+        function GisColor(r, g, b) {
+            this.r = r ?? 1;
+            this.g = g ?? 1;
+            this.b = b ?? 1;
+        }
+        GisColor.prototype.setRGB = function setRGB(r, g, b) {
+            this.r = r;
+            this.g = g;
+            this.b = b;
+        };
+        GisColor.prototype.clone = function clone() {
+            return new GisColor(this.r, this.g, this.b);
+        };
+        return GisColor;
+    }
+
+    function collectMaterialFromObject(obj, bucket) {
+        if (!obj?.material) {
+            return;
+        }
+        const mats = Array.isArray(obj.material) ? obj.material : [obj.material];
+        mats.forEach((mat) => {
+            if (!mat) {
+                return;
+            }
+            if (isShaderLikeMaterial(mat) && !bucket.shaderMaterial) {
+                bucket.shaderMaterial = mat;
+            }
+            if (mat.color && !bucket.colorCtor) {
+                bucket.colorCtor = mat.color.constructor;
+            }
+            if (mat.uniforms?.markerColor?.value && !bucket.colorCtor) {
+                bucket.colorCtor = mat.uniforms.markerColor.value.constructor;
+            }
+            const diffuse = mat.uniforms?.diffuse?.value;
+            if (diffuse && typeof diffuse.r === 'number' && !bucket.colorCtor) {
+                bucket.colorCtor = diffuse.constructor;
+            }
+        });
+    }
+
+    function traverseMapViewerScenes(mv, visitor) {
+        const roots = [
+            mv?.markers,
+            mv?.skyboxScene,
+            mv?.map?.hiresTileManager?.scene,
+            mv?.map?.hiresTileManager?.sceneParent
+        ];
+        if (mv?.map?.lowresTileManager?.length) {
+            mv.map.lowresTileManager.forEach((tm) => {
+                roots.push(tm.scene, tm.sceneParent);
+            });
+        }
+        roots.forEach((root) => {
+            root?.traverse?.((obj) => visitor(obj));
+        });
+    }
+
     function collectThreeSampleFromScene(mv) {
         let sample = null;
         let basicMaterial = null;
+        const bucket = { shaderMaterial: null, colorCtor: null };
         const tryRoot = (root) => {
             root?.traverse?.((obj) => {
+                collectMaterialFromObject(obj, bucket);
                 if (!obj?.isMesh || !obj.geometry?.attributes?.position) {
                     return;
                 }
@@ -3746,11 +3823,106 @@
             });
         };
         tryRoot(mv?.markers);
-        tryRoot(mv?.map?.hiresTileManager?.scene);
-        if (!sample && mv?.map?.lowresTileManager?.length) {
-            tryRoot(mv.map.lowresTileManager[0].scene);
+        traverseMapViewerScenes(mv, (obj) => {
+            collectMaterialFromObject(obj, bucket);
+            if (!sample && obj?.isMesh && obj.geometry?.attributes?.position) {
+                sample = obj;
+            }
+            if (!basicMaterial && obj?.isMesh && obj.material?.isMeshBasicMaterial) {
+                basicMaterial = obj.material;
+            }
+        });
+        return {
+            sample,
+            basicMaterial,
+            shaderMaterial: bucket.shaderMaterial,
+            colorCtor: bucket.colorCtor
+        };
+    }
+
+    function resolveShaderMaterialCtor(shaderMaterial, bm, mv) {
+        if (shaderMaterial?.constructor) {
+            return shaderMaterial.constructor;
         }
-        return { sample, basicMaterial };
+        return findNamedThreeClass(bm, 'ShaderMaterial')
+            || findNamedThreeClass(mv, 'ShaderMaterial')
+            || findNamedThreeClass(mv?.renderer, 'ShaderMaterial')
+            || null;
+    }
+
+    function resolveColorCtor(colorCtor, shaderMaterial, basicMaterial, bm, mv) {
+        return colorCtor
+            || shaderMaterial?.uniforms?.markerColor?.value?.constructor
+            || shaderMaterial?.uniforms?.diffuse?.value?.constructor
+            || basicMaterial?.color?.constructor
+            || findNamedThreeClass(bm, 'Color')
+            || findNamedThreeClass(mv, 'Color')
+            || createMinimalGisColorCtor();
+    }
+
+    function getMarkerFillShaderSources() {
+        const vertexShader = [
+            '#include <common>',
+            '#include <logdepthbuf_pars_vertex>',
+            '',
+            'varying float vDistance;',
+            '',
+            'void main() {',
+            '	vec4 worldPos = modelMatrix * vec4(position, 1.0);',
+            '	vec4 viewPos = viewMatrix * worldPos;',
+            '	vDistance = -viewPos.z;',
+            '	gl_Position = projectionMatrix * viewPos;',
+            '	#include <logdepthbuf_vertex>',
+            '}'
+        ].join('\n');
+        const fragmentShader = [
+            '#include <logdepthbuf_pars_fragment>',
+            '',
+            '#define FLT_MAX 3.402823466e+38',
+            '',
+            'varying float vDistance;',
+            '',
+            'uniform vec3 markerColor;',
+            'uniform float markerOpacity;',
+            'uniform float fadeDistanceMax;',
+            'uniform float fadeDistanceMin;',
+            '',
+            'void main() {',
+            '	vec4 color = vec4(markerColor, markerOpacity);',
+            '	float fdMax = fadeDistanceMax > 0.0 ? fadeDistanceMax : FLT_MAX;',
+            '	float minDelta = fadeDistanceMin > 0.0 ? (vDistance - fadeDistanceMin) / fadeDistanceMin : 1.0;',
+            '	float maxDelta = fadeDistanceMax > 0.0 ? (vDistance - fadeDistanceMax) / (fadeDistanceMax * 0.5) : 0.0;',
+            '	float distanceOpacity = min(',
+            '		clamp(minDelta, 0.0, 1.0),',
+            '		1.0 - clamp(maxDelta + 1.0, 0.0, 1.0)',
+            '	);',
+            '	color.a *= distanceOpacity;',
+            '	gl_FragColor = color;',
+            '	#include <logdepthbuf_fragment>',
+            '}'
+        ].join('\n');
+        return { vertexShader, fragmentShader };
+    }
+
+    function createMarkerFillUniforms(ColorCtor) {
+        return {
+            markerColor: { value: new ColorCtor(1, 1, 1) },
+            markerOpacity: { value: 1 },
+            fadeDistanceMin: { value: 0 },
+            fadeDistanceMax: { value: Number.MAX_VALUE }
+        };
+    }
+
+    function applyMarkerFillShaderToMaterial(material, ColorCtor) {
+        const { vertexShader, fragmentShader } = getMarkerFillShaderSources();
+        material.vertexShader = vertexShader;
+        material.fragmentShader = fragmentShader;
+        material.uniforms = createMarkerFillUniforms(ColorCtor);
+        material.depthTest = true;
+        material.transparent = true;
+        material.needsUpdate = true;
+        material.userData = { ...(material.userData || {}), mcwwsBuiltinMarkerFill: true, mcwwsAdaptedShader: true };
+        return material;
     }
 
     function resolveGisThree() {
@@ -3766,7 +3938,7 @@
         if (!camera) {
             return null;
         }
-        const { sample, basicMaterial } = collectThreeSampleFromScene(mv);
+        const { sample, basicMaterial, shaderMaterial, colorCtor } = collectThreeSampleFromScene(mv);
         if (!sample) {
             return null;
         }
@@ -3774,6 +3946,8 @@
         const BufferGeometryCtor = sample.geometry.constructor;
         const Float32AttrCtor = sample.geometry.attributes.position.constructor;
         const MeshBasicMaterialCtor = basicMaterial?.constructor || null;
+        const ShaderMaterialCtor = resolveShaderMaterialCtor(shaderMaterial, bm, mv);
+        const ColorCtor = resolveColorCtor(colorCtor, shaderMaterial, basicMaterial, bm, mv);
         const groupCtor = findThreeGroupCtor(mv, sample) || findThreeObject3DCtor(MeshCtor) || MeshCtor;
         if (!MeshCtor || !BufferGeometryCtor || !Float32AttrCtor) {
             return null;
@@ -3783,6 +3957,9 @@
             BufferGeometry: BufferGeometryCtor,
             Float32BufferAttribute: Float32AttrCtor,
             MeshBasicMaterial: MeshBasicMaterialCtor,
+            ShaderMaterial: ShaderMaterialCtor,
+            Color: ColorCtor,
+            shaderMaterialSample: shaderMaterial || null,
             materialSample: basicMaterial || sample.material,
             Group: groupCtor,
             Object3D: groupCtor,
@@ -3790,6 +3967,94 @@
             DoubleSide: 2
         };
         return gisThree;
+    }
+
+    function findMarkerFillMaterialInScene(mv) {
+        let found = null;
+        traverseMapViewerScenes(mv, (obj) => {
+            if (found || !obj?.isMesh || !obj.material?.uniforms) {
+                return;
+            }
+            const mat = obj.material;
+            if (mat.uniforms.markerColor && mat.uniforms.markerOpacity) {
+                found = mat;
+            }
+        });
+        return found;
+    }
+
+    function findAnyShaderMaterialInScene(mv) {
+        let found = null;
+        traverseMapViewerScenes(mv, (obj) => {
+            if (found) {
+                return;
+            }
+            const mats = Array.isArray(obj?.material) ? obj.material : [obj?.material];
+            mats.forEach((mat) => {
+                if (!found && isShaderLikeMaterial(mat)) {
+                    found = mat;
+                }
+            });
+        });
+        return found;
+    }
+
+    function createBuiltinMarkerFillMaterialPrototype(three, mv) {
+        const ColorCtor = three.Color || createMinimalGisColorCtor();
+        const { vertexShader, fragmentShader } = getMarkerFillShaderSources();
+        try {
+            if (three.ShaderMaterial) {
+                const material = new three.ShaderMaterial({
+                    vertexShader,
+                    fragmentShader,
+                    uniforms: createMarkerFillUniforms(ColorCtor),
+            side: three.FrontSide ?? 0,
+            depthTest: true,
+            transparent: true
+        });
+        material.userData = { mcwwsBuiltinMarkerFill: true };
+        return material;
+            }
+            const shaderSample = three.shaderMaterialSample || findAnyShaderMaterialInScene(mv);
+            if (shaderSample?.clone) {
+                const material = applyMarkerFillShaderToMaterial(shaderSample.clone(), ColorCtor);
+                return material;
+            }
+        } catch (err) {
+            console.warn('[mcwws-gis] createBuiltinMarkerFillMaterialPrototype failed', err);
+        }
+        return null;
+    }
+
+    function ensureMarkerFillMaterialTemplate(three, mv) {
+        if (gisMarkerFillMaterialTemplate) {
+            return gisMarkerFillMaterialTemplate;
+        }
+        const existing = findMarkerFillMaterialInScene(mv);
+        if (existing) {
+            gisMarkerFillMaterialTemplate = existing;
+            return gisMarkerFillMaterialTemplate;
+        }
+        const created = createBuiltinMarkerFillMaterialPrototype(three, mv);
+        if (created) {
+            gisMarkerFillMaterialTemplate = created;
+            return gisMarkerFillMaterialTemplate;
+        }
+        console.warn('[mcwws-gis] MarkerFill material unavailable; volume WebGL disabled for this frame');
+        return null;
+    }
+
+    function getMarkerFillMaterialSourceLabel() {
+        if (!gisMarkerFillMaterialTemplate) {
+            return 'missing';
+        }
+        if (gisMarkerFillMaterialTemplate.userData?.mcwwsAdaptedShader) {
+            return 'adapted';
+        }
+        if (gisMarkerFillMaterialTemplate.userData?.mcwwsBuiltinMarkerFill) {
+            return 'builtin';
+        }
+        return 'cloned';
     }
 
     function ensureVolumeMeshRoot(mv, three) {
@@ -3811,6 +4076,7 @@
         }
         volumeMeshRoot = new three.Object3D();
         volumeMeshRoot.name = 'mcwws-gis-volumes';
+        volumeMeshRoot.userData = { chunkOx: null, chunkOz: null };
         parent.add(volumeMeshRoot);
         return volumeMeshRoot;
     }
@@ -3836,78 +4102,269 @@
         };
     }
 
-    function createVolumeMeshMaterial(three) {
+    function createVolumeMarkerFillMaterial(three, mv, rgb, opacity) {
+        const template = ensureMarkerFillMaterialTemplate(three, mv);
+        if (!template?.clone) {
+            return null;
+        }
         try {
-            if (three.MeshBasicMaterial) {
-                return new three.MeshBasicMaterial({
-                    vertexColors: true,
-                    transparent: false,
-                    opacity: 1,
-                    depthTest: true,
-                    depthWrite: true,
-                    side: three.DoubleSide ?? 2
-                });
-            }
-            const template = three.materialSample;
-            if (!template?.clone) {
-                return null;
-            }
             const material = template.clone();
-            material.vertexColors = true;
-            material.transparent = false;
-            material.opacity = 1;
-            material.depthTest = true;
-            material.depthWrite = true;
-            if ('side' in material) {
-                material.side = three.DoubleSide ?? 2;
+            if (material.uniforms?.markerColor?.value?.setRGB) {
+                material.uniforms.markerColor.value.setRGB(rgb.r, rgb.g, rgb.b);
             }
-            material.polygonOffset = false;
+            if (material.uniforms?.markerOpacity) {
+                material.uniforms.markerOpacity.value = opacity ?? 1;
+            }
+            material.depthTest = true;
+            material.depthWrite = (opacity ?? 1) >= 0.99;
+            material.transparent = (opacity ?? 1) < 0.99 || !!template.transparent;
+            if ('side' in material) {
+                material.side = three.FrontSide ?? 0;
+            }
+            material.needsUpdate = true;
             return material;
         } catch (err) {
-            console.warn('[mcwws-gis] createVolumeMeshMaterial failed', err);
+            console.warn('[mcwws-gis] createVolumeMarkerFillMaterial failed', err);
             return null;
         }
     }
 
-    function buildVolumeFeatureMeshGroup(feature, layer, three) {
+    function computeFeatureVolumeAnchor(faceSpecs, points) {
+        let sx = 0;
+        let sy = 0;
+        let sz = 0;
+        let n = 0;
+        const addPoint = (p) => {
+            sx += p.x;
+            sy += gisWorldY(p, false);
+            sz += p.z;
+            n += 1;
+        };
+        if (faceSpecs?.length) {
+            faceSpecs.forEach((spec) => {
+                spec.ring.forEach(addPoint);
+            });
+        } else {
+            points.forEach(addPoint);
+        }
+        if (!n) {
+            return { x: 0, y: GIS_DEFAULT_Y, z: 0 };
+        }
+        return { x: sx / n, y: sy / n, z: sz / n };
+    }
+
+    function getVolumeMeshChunkOffset(mv) {
+        const cam = mv?.camera;
+        if (!cam) {
+            return { ox: 0, oz: 0 };
+        }
+        const chunk = GIS_VOLUME_CHUNK_SIZE;
+        return {
+            ox: Math.round(cam.position.x / chunk) * chunk,
+            oz: Math.round(cam.position.z / chunk) * chunk
+        };
+    }
+
+    function syncVolumeMeshChunkOffset(mv) {
+        if (!volumeMeshRoot || !volumeFeatureMeshes.size) {
+            return;
+        }
+        const { ox, oz } = getVolumeMeshChunkOffset(mv);
+        const prevOx = volumeMeshRoot.userData?.chunkOx;
+        const prevOz = volumeMeshRoot.userData?.chunkOz;
+        if (prevOx === ox && prevOz === oz) {
+            return;
+        }
+        volumeMeshRoot.position.set(ox, 0, oz);
+        volumeMeshRoot.userData.chunkOx = ox;
+        volumeMeshRoot.userData.chunkOz = oz;
+        volumeFeatureMeshes.forEach(({ group, anchor }) => {
+            if (!group || !anchor) {
+                return;
+            }
+            group.position.set(anchor.x - ox, anchor.y, anchor.z - oz);
+        });
+        volumeMeshRoot.updateMatrixWorld?.(true);
+    }
+
+    function volumeFaceTriangleNormalSign(tri, faceNormal) {
+        const p0 = volumeWorldPoint(tri[0]);
+        const p1 = volumeWorldPoint(tri[1]);
+        const p2 = volumeWorldPoint(tri[2]);
+        const cross = vec3Cross(vec3Sub(p1, p0), vec3Sub(p2, p0));
+        return cross.x * faceNormal.x + cross.y * faceNormal.y + cross.z * faceNormal.z;
+    }
+
+    /** 面环是否为凸多边形（避免三角扇自交成“蝴蝶结”） */
+    function isVolumeFaceRingConvex(ring, normal) {
+        if (!ring || ring.length < 3) {
+            return false;
+        }
+        const len = Math.hypot(normal.x, normal.y, normal.z);
+        if (len < 1e-8) {
+            return true;
+        }
+        const fn = { x: normal.x / len, y: normal.y / len, z: normal.z / len };
+        let sign = 0;
+        for (let i = 0; i < ring.length; i += 1) {
+            const tri = [ring[i], ring[(i + 1) % ring.length], ring[(i + 2) % ring.length]];
+            const dot = volumeFaceTriangleNormalSign(tri, fn);
+            if (Math.abs(dot) < 1e-8) {
+                continue;
+            }
+            const s = Math.sign(dot);
+            if (sign === 0) {
+                sign = s;
+            } else if (s !== sign) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    /** 四边形侧面：顶底环绕序不一致时，交换顶边顶点顺序 */
+    function resolveSideFaceRing(ring, normal) {
+        if (!ring || ring.length !== 4) {
+            return ring;
+        }
+        const orderA = ring;
+        const orderB = [ring[0], ring[1], ring[3], ring[2]];
+        if (isVolumeFaceRingConvex(orderA, normal)) {
+            return orderA;
+        }
+        if (isVolumeFaceRingConvex(orderB, normal)) {
+            return orderB;
+        }
+        return orderA;
+    }
+
+    function ensureConvexVolumeFaceRing(ring, normal) {
+        if (!ring || ring.length < 3) {
+            return ring;
+        }
+        if (isVolumeFaceRingConvex(ring, normal)) {
+            return ring;
+        }
+        const reversed = [...ring].reverse();
+        if (isVolumeFaceRingConvex(reversed, normal)) {
+            return reversed;
+        }
+        if (ring.length === 4) {
+            const swapped = [ring[0], ring[2], ring[1], ring[3]];
+            if (isVolumeFaceRingConvex(swapped, normal)) {
+                return swapped;
+            }
+        }
+        return ring;
+    }
+
+    function triangulateVolumeFaceRing(ring, normal) {
+        if (!ring || ring.length < 3) {
+            return [];
+        }
+        const tris = [];
+        if (ring.length === 3) {
+            tris.push(orientTriangleForOutwardNormal([ring[0], ring[1], ring[2]], normal));
+            return tris;
+        }
+        for (let i = 1; i < ring.length - 1; i += 1) {
+            tris.push(orientTriangleForOutwardNormal([ring[0], ring[i], ring[i + 1]], normal));
+        }
+        return tris;
+    }
+
+    function prepareVolumeFaceRing(spec, normal) {
+        let ring = spec.ring;
+        if (spec.kind === 'side') {
+            ring = resolveSideFaceRing(ring, normal);
+        }
+        ring = ensureConvexVolumeFaceRing(ring, normal);
+        return orientFaceRingForOutwardNormal(ring, normal);
+    }
+
+    function buildVolumeFeatureMeshGroup(feature, layer, three, mv) {
         const cfg = getVolume3dConfig(feature);
         const points = coordsToPoints(feature.coordinates);
         const faceSpecs = buildVolumeSolidFaces(cfg.shape, points, cfg);
         const bottomRingCw = getBottomRingCwFlag(cfg.shape, points, cfg);
         const baseColor = getRegionVolumeFillColor(feature, layer);
+        const anchor = computeFeatureVolumeAnchor(faceSpecs, points);
         const positions = [];
-        const colors = [];
+        const indices = [];
+        const groups = [];
+        const materials = [];
+        const materialCache = new Map();
+
+        const getMaterialIndex = (shaded) => {
+            const key = `${shaded.r.toFixed(4)},${shaded.g.toFixed(4)},${shaded.b.toFixed(4)}`;
+            if (materialCache.has(key)) {
+                return materialCache.get(key);
+            }
+            const mat = createVolumeMarkerFillMaterial(three, mv, shaded, 1);
+            if (!mat) {
+                return -1;
+            }
+            const idx = materials.length;
+            materials.push(mat);
+            materialCache.set(key, idx);
+            return idx;
+        };
+
         faceSpecs.forEach((spec) => {
             const normal = computeVolumeFaceNormal(spec.ring, spec.kind, bottomRingCw, spec.sideCorners);
-            const shaded = parseShadedRgbColor(shadeRegionFaceColor(baseColor, normal));
-            const ring = orientFaceRingForOutwardNormal(spec.ring, normal);
-            for (let i = 1; i < ring.length - 1; i += 1) {
-                const tri = orientTriangleForOutwardNormal([ring[0], ring[i], ring[i + 1]], normal);
-                tri.forEach((v) => {
-                    positions.push(v.x, gisWorldY(v, false), v.z);
-                    colors.push(shaded.r, shaded.g, shaded.b);
-                });
+            const ring = prepareVolumeFaceRing(spec, normal);
+            const tris = triangulateVolumeFaceRing(ring, normal);
+            if (!tris.length) {
+                return;
             }
+            const shaded = parseShadedRgbColor(shadeRegionFaceColor(baseColor, normal));
+            const materialIndex = getMaterialIndex(shaded);
+            if (materialIndex < 0) {
+                return;
+            }
+            const indexStart = indices.length;
+            tris.forEach((tri) => {
+                const base = positions.length / 3;
+                tri.forEach((v) => {
+                    positions.push(
+                        v.x - anchor.x,
+                        gisWorldY(v, false) - anchor.y,
+                        v.z - anchor.z
+                    );
+                });
+                indices.push(base, base + 1, base + 2);
+            });
+            groups.push({
+                start: indexStart,
+                count: indices.length - indexStart,
+                materialIndex
+            });
         });
-        if (positions.length < 9) {
+
+        if (!indices.length || !materials.length) {
             return null;
         }
+
         const geometry = new three.BufferGeometry();
         geometry.setAttribute('position', new three.Float32BufferAttribute(positions, 3));
-        geometry.setAttribute('color', new three.Float32BufferAttribute(colors, 3));
+        geometry.setIndex(indices);
+        geometry.groups = groups;
         if (typeof geometry.computeBoundingSphere === 'function') {
             geometry.computeBoundingSphere();
         }
         if (typeof geometry.computeBoundingBox === 'function') {
             geometry.computeBoundingBox();
         }
-        const material = createVolumeMeshMaterial(three);
-        if (!material) {
-            return null;
-        }
-        const mesh = new three.Mesh(geometry, material);
+
+        const mesh = new three.Mesh(geometry, materials.length === 1 ? materials[0] : materials);
         mesh.userData = { featureId: feature.id };
-        return mesh;
+        const group = new three.Group();
+        group.userData = { featureId: feature.id };
+        group.add(mesh);
+
+        const { ox, oz } = getVolumeMeshChunkOffset(mv);
+        group.position.set(anchor.x - ox, anchor.y, anchor.z - oz);
+        return { group, anchor };
     }
 
     function applyVolumeMeshStyle(group, dimmed) {
@@ -3916,13 +4373,17 @@
                 return;
             }
             const opacity = dimmed ? 0.42 : 1;
-            child.material.opacity = opacity;
-            child.material.transparent = opacity < 0.99;
-            child.material.depthWrite = opacity >= 0.99;
-            if (child.material.uniforms?.markerOpacity) {
-                child.material.uniforms.markerOpacity.value = opacity;
-            }
-            child.material.depthTest = true;
+            const mats = Array.isArray(child.material) ? child.material : [child.material];
+            mats.forEach((mat) => {
+                if (mat.uniforms?.markerOpacity) {
+                    mat.uniforms.markerOpacity.value = opacity;
+                } else {
+                    mat.opacity = opacity;
+                }
+                mat.transparent = opacity < 0.99;
+                mat.depthWrite = opacity >= 0.99;
+                mat.depthTest = true;
+            });
         });
     }
 
@@ -3930,6 +4391,9 @@
         const bm = getBlueMapApp();
         const mv = bm?.mapViewer;
         const three = resolveGisThree();
+        if (three && mv) {
+            ensureMarkerFillMaterialTemplate(three, mv);
+        }
         return {
             build: MCWWS_GIS_BUILD,
             simplifiedMap: isSimplifiedMapMode(),
@@ -3940,15 +4404,20 @@
             shouldWebGl: shouldRenderVolumesWithWebGl(),
             hasCamera: !!getGisBlueMapCamera(),
             hasThree: !!three,
+            hasShaderMaterial: !!three?.ShaderMaterial,
+            hasColor: !!three?.Color,
+            hasShaderSample: !!three?.shaderMaterialSample,
             meshParent: !!resolveVolumeMeshParent(mv),
             meshParentKind: getVolumeMeshParentLabel(mv),
             activeMeshCount: volumeFeatureMeshes.size,
             svgFallbackCount: volumeWebGlFailedFeatureIds.size,
             webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl'),
             volumeBackend: shouldRenderVolumesWithWebGl() ? 'webgl' : 'svg',
+            markerFillMaterial: getMarkerFillMaterialSourceLabel(),
+            chunkOffset: getVolumeMeshChunkOffset(mv),
             modeHint: shouldRenderVolumesWithWebGl()
-                ? '原版地图：三维建筑走 WebGL 深度缓冲。'
-                : '三维建筑走 SVG 面片（WebGL 体积路径已关闭）。相邻建筑按整体深度排序。'
+                ? '原版地图：WebGL 对数深度 + 分块原点偏移（与 BlueMap 地形一致）。'
+                : '三维建筑走 SVG 面片。'
         };
     }
 
@@ -3961,6 +4430,10 @@
                 if (volumeFeatureMeshes.size || volumeMeshRoot) {
                     clearVolumeMeshes();
                 }
+                return false;
+            }
+            if (!ensureMarkerFillMaterialTemplate(three, mv)) {
+                entries.forEach(({ feature }) => volumeWebGlFailedFeatureIds.add(feature.id));
                 return false;
             }
             ensureVolumeMeshRoot(mv, three);
@@ -3979,14 +4452,14 @@
                         volumeMeshRoot.remove(entry.group);
                         disposeVolumeMeshObject(entry.group);
                     }
-                    const group = buildVolumeFeatureMeshGroup(feature, layer, three);
-                    if (!group) {
+                    const built = buildVolumeFeatureMeshGroup(feature, layer, three, mv);
+                    if (!built) {
                         volumeFeatureMeshes.delete(feature.id);
                         volumeWebGlFailedFeatureIds.add(feature.id);
                         return;
                     }
-                    volumeMeshRoot.add(group);
-                    entry = { sig, group };
+                    volumeMeshRoot.add(built.group);
+                    entry = { sig, group: built.group, anchor: built.anchor };
                     volumeFeatureMeshes.set(feature.id, entry);
                     changed = true;
                 }
@@ -4003,12 +4476,14 @@
                 changed = true;
             });
             if (changed || volumeFeatureMeshes.size > 0) {
+                syncVolumeMeshChunkOffset(mv);
                 mv.redraw?.();
             }
             return activeCount > 0 || volumeWebGlFailedFeatureIds.size > 0;
         } catch (err) {
             console.warn('[mcwws-gis] syncVolumeMeshes failed, falling back to SVG volumes', err);
             gisThree = null;
+            gisMarkerFillMaterialTemplate = null;
             clearVolumeMeshes();
             return false;
         }
@@ -4971,7 +5446,7 @@
             } else if (!isVolumeFaceVisibleFlat(normal, spec.kind)) {
                 return;
             }
-            const ring = orientFaceRingForOutwardNormal(spec.ring, normal);
+            const ring = prepareVolumeFaceRing({ ring: spec.ring, kind: spec.kind }, normal);
             for (let ti = 1; ti < ring.length - 1; ti += 1) {
                 const triRing = [ring[0], ring[ti], ring[ti + 1]];
                 const screenRing = getClippedScreenRingForVolumeFace(triRing, view, camera);
@@ -7460,6 +7935,21 @@
             document.addEventListener('pointermove', onDocumentPointerMoveCapture, true);
         }
         bindGisLassoCapture();
+        bindVolumeMeshRenderHook();
+    }
+
+    function bindVolumeMeshRenderHook() {
+        const bm = getBlueMapApp();
+        if (!bm?.events || volumeRenderHookBound) {
+            return;
+        }
+        volumeRenderHookBound = true;
+        bm.events.addEventListener('bluemapRenderFrame', () => {
+            if (!volumeFeatureMeshes.size) {
+                return;
+            }
+            syncVolumeMeshChunkOffset(bm.mapViewer);
+        });
     }
 
     function exportGeoJson() {
