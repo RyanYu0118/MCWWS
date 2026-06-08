@@ -1,8 +1,8 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-88';
+    const MCWWS_GIS_BUILD = '20260602-89';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
-    /** 原版地图：使用 BlueMap MarkerFill shader（对数深度缓冲），与地形同一 Z 测试 */
+    /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
     const GIS_VOLUME_WEBGL_ENABLED = true;
     const GIS_VOLUME_FACE_BACK_EPS = -0.015;
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
@@ -19,6 +19,7 @@
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const ROAD_NAME_SVG_LAYER_ID = 'mcwws-gis-road-name-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
+    const VOLUME_GL_LAYER_ID = 'mcwws-gis-volume-gl-layer';
     const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
     const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
     const LASSO_LAYER_ID = 'mcwws-gis-lasso-layer';
@@ -132,6 +133,8 @@
     let volumeMeshRoot = null;
     /** GIS 三维建筑独立图层（不参与 BlueMap markers / 地形深度合成） */
     let volumeMeshScene = null;
+    let volumeGlOverlayEl = null;
+    let volumeGlOverlayRenderer = null;
     /** @type {Map<string, { sig: string, group: object, anchor: { x: number, y: number, z: number }, dimmed?: boolean }>} */
     const volumeFeatureMeshes = new Map();
     const volumeWebGlFailedFeatureIds = new Set();
@@ -378,6 +381,7 @@
         gisCachedCamera = null;
         gisThree = null;
         gisMarkerFillMaterialTemplate = null;
+        disposeVolumeGlOverlay();
         syncVolume3dVisibilityClass();
         renderOverlay();
     }
@@ -1637,6 +1641,89 @@
 
     function syncVolume3dRenderModeClass(useWebGl) {
         document.body.classList.toggle('mcwws-gis-volumes-webgl', !!useWebGl);
+        if (volumeGlOverlayEl) {
+            volumeGlOverlayEl.classList.toggle(
+                'is-active',
+                !!useWebGl && isSimplifiedMapMode() && volumeFeatureMeshes.size > 0
+            );
+        }
+    }
+
+    function getVolumeRenderLayerLabel() {
+        if (!shouldRenderVolumesWithWebGl()) {
+            return 'svg';
+        }
+        return isSimplifiedMapMode() ? 'simplified-overlay-canvas' : 'post-map-overlay';
+    }
+
+    function getVolumeRenderModeHint() {
+        if (!shouldRenderVolumesWithWebGl()) {
+            return '三维建筑走 SVG 面片。';
+        }
+        if (isSimplifiedMapMode()) {
+            return '简化地图：独立透明 WebGL 图层渲染三维建筑，建筑之间按深度正确遮挡；线/标注仍在 SVG 上层。';
+        }
+        return '原版地图：地图渲染后叠加独立 WebGL 图层，不被地形深度遮挡；建筑之间仍按深度正确遮挡。';
+    }
+
+    function disposeVolumeGlOverlay() {
+        if (volumeGlOverlayRenderer) {
+            volumeGlOverlayRenderer.dispose?.();
+            volumeGlOverlayRenderer.domElement?.remove?.();
+            volumeGlOverlayRenderer = null;
+        }
+        if (volumeGlOverlayEl) {
+            volumeGlOverlayEl.replaceChildren?.();
+            volumeGlOverlayEl.classList.remove('is-active');
+        }
+    }
+
+    function ensureVolumeGlOverlayLayer(mv) {
+        const RendererCtor = mv?.renderer?.constructor;
+        if (!RendererCtor) {
+            return null;
+        }
+        if (!volumeGlOverlayEl) {
+            volumeGlOverlayEl = document.getElementById(VOLUME_GL_LAYER_ID);
+            if (!volumeGlOverlayEl) {
+                volumeGlOverlayEl = document.createElement('div');
+                volumeGlOverlayEl.id = VOLUME_GL_LAYER_ID;
+                document.body.appendChild(volumeGlOverlayEl);
+            }
+        }
+        if (!volumeGlOverlayRenderer) {
+            try {
+                volumeGlOverlayRenderer = new RendererCtor({
+                    alpha: true,
+                    antialias: true,
+                    logarithmicDepthBuffer: true,
+                    preserveDrawingBuffer: false
+                });
+                volumeGlOverlayRenderer.setClearColor(0x000000, 0);
+                volumeGlOverlayRenderer.domElement.style.width = '100%';
+                volumeGlOverlayRenderer.domElement.style.height = '100%';
+                volumeGlOverlayRenderer.domElement.style.display = 'block';
+                volumeGlOverlayEl.appendChild(volumeGlOverlayRenderer.domElement);
+            } catch (err) {
+                console.warn('[mcwws-gis] ensureVolumeGlOverlayLayer failed', err);
+                return null;
+            }
+        }
+        return volumeGlOverlayRenderer;
+    }
+
+    function syncVolumeGlOverlaySize(mv) {
+        if (!volumeGlOverlayRenderer) {
+            return;
+        }
+        const w = window.innerWidth;
+        const h = window.innerHeight;
+        if (w <= 0 || h <= 0) {
+            return;
+        }
+        const pixelRatio = mv?.renderer?.getPixelRatio?.() ?? (window.devicePixelRatio || 1);
+        volumeGlOverlayRenderer.setPixelRatio(pixelRatio);
+        volumeGlOverlayRenderer.setSize(w, h, false);
     }
 
     function getVertexIndexById(feature, vertexId) {
@@ -3677,6 +3764,7 @@
             volumeMeshRoot.parent.remove(volumeMeshRoot);
         }
         volumeMeshRoot = null;
+        disposeVolumeGlOverlay();
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
@@ -3710,15 +3798,41 @@
 
     function renderMcwwsVolumeLayer(mv) {
         if (!volumeMeshScene || !volumeFeatureMeshes.size || !shouldRenderVolumesWithWebGl()) {
+            if (volumeGlOverlayEl) {
+                volumeGlOverlayEl.classList.remove('is-active');
+            }
+            if (volumeGlOverlayRenderer) {
+                volumeGlOverlayRenderer.setClearColor(0x000000, 0);
+                volumeGlOverlayRenderer.clear(true, true, true);
+            }
             return;
         }
-        const renderer = mv?.renderer;
         const camera = mv?.camera;
-        if (!renderer || !camera) {
+        if (!camera) {
             return;
         }
         syncVolumeMeshChunkOffset(mv);
         volumeMeshScene.updateMatrixWorld?.(true);
+
+        if (isSimplifiedMapMode()) {
+            const overlayRenderer = ensureVolumeGlOverlayLayer(mv);
+            if (!overlayRenderer) {
+                return;
+            }
+            syncVolumeGlOverlaySize(mv);
+            if (volumeGlOverlayEl) {
+                volumeGlOverlayEl.classList.add('is-active');
+            }
+            overlayRenderer.setClearColor(0x000000, 0);
+            overlayRenderer.clear(true, true, true);
+            overlayRenderer.render(volumeMeshScene, camera);
+            return;
+        }
+
+        const renderer = mv?.renderer;
+        if (!renderer) {
+            return;
+        }
         const autoClear = renderer.autoClear;
         renderer.autoClear = false;
         if (typeof renderer.clearDepth === 'function') {
@@ -3764,12 +3878,12 @@
         return true;
     }
 
-    /** 原版地图：WebGL + BlueMap 对数深度 shader；失败时回退 SVG */
+    /** WebGL + BlueMap MarkerFill shader（对数深度）；简化地图走独立透明 canvas */
     function shouldRenderVolumesWithWebGl() {
         if (!GIS_VOLUME_WEBGL_ENABLED) {
             return false;
         }
-        if (isSimplifiedMapMode() || !gisInfoEnabled) {
+        if (!gisInfoEnabled) {
             return false;
         }
         return !!getGisBlueMapCamera();
@@ -4535,16 +4649,15 @@
             hasShaderSample: !!three?.shaderMaterialSample,
             meshParent: !!resolveVolumeMeshParent(mv, three),
             meshParentKind: getVolumeMeshParentLabel(mv, three),
-            volumeRenderLayer: 'post-map-overlay',
+            volumeRenderLayer: getVolumeRenderLayerLabel(),
+            volumeGlOverlay: !!volumeGlOverlayRenderer,
             activeMeshCount: volumeFeatureMeshes.size,
             svgFallbackCount: volumeWebGlFailedFeatureIds.size,
             webglClassOnBody: document.body.classList.contains('mcwws-gis-volumes-webgl'),
             volumeBackend: volumeFeatureMeshes.size > 0 ? 'webgl' : (shouldRenderVolumesWithWebGl() ? 'webgl+svg-fallback' : 'svg'),
             markerFillMaterial: getMarkerFillMaterialSourceLabel(),
             chunkOffset: getVolumeMeshChunkOffset(mv),
-            modeHint: shouldRenderVolumesWithWebGl()
-                ? 'GIS 三维建筑独立图层：地图渲染后叠加，不被地形深度遮挡；建筑之间仍按深度正确遮挡。'
-                : '三维建筑走 SVG 面片。'
+            modeHint: getVolumeRenderModeHint()
         };
     }
 
@@ -9527,7 +9640,7 @@
                     <span>忽视高度裁切（编辑时显示全部顶点与线段）</span>
                 </label>
                 ${isSimplifiedMapMode() ? `
-                <p class="mcwws-gis-edit-option mcwws-gis-edit-option--hint">简化地图模式下始终显示三维建筑物</p>
+                <p class="mcwws-gis-edit-option mcwws-gis-edit-option--hint">简化地图模式下始终显示三维建筑物（WebGL 深度渲染）</p>
                 ` : `
                 <label class="mcwws-gis-edit-option">
                     <input type="checkbox" data-gis-show-volume3d ${gisShowVolume3dBuildings ? 'checked' : ''}
@@ -10155,6 +10268,7 @@
         window.addEventListener('resize', () => {
             invalidateRoadArrowCache();
             invalidateRoadLabelCache();
+            syncVolumeGlOverlaySize(getBlueMapApp()?.mapViewer);
             renderOverlay();
         });
         animationId = requestAnimationFrame(tick);
