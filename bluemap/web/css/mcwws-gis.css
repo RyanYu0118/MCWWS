@@ -685,10 +685,11 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     opacity: 0.28;
 }
 
+/* 层级：道路 SVG 9998 < 路名 10000 < 地图控件 10001 */
 #mcwws-gis-road-name-layer {
     position: fixed;
     inset: 0;
-    z-index: 9997;
+    z-index: 10000;
     pointer-events: none;
     width: 100%;
     height: 100%;
