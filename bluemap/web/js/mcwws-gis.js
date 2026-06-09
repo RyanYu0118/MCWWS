@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-107';
+    const MCWWS_GIS_BUILD = '20260602-109';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -391,6 +391,7 @@
         volumeChunkSticky = { ox: 0, oz: 0 };
         document.getElementById('mcwws-gis-volume-gl-layer')?.remove();
         syncVolume3dVisibilityClass();
+        syncVolume3dRenderModeClass(volumeFeatureMeshes.size > 0);
         renderOverlay();
     }
 
@@ -1712,9 +1713,10 @@
     function syncVolume3dRenderModeClass(useWebGl) {
         const webglActive = !!useWebGl;
         document.body.classList.toggle('mcwws-gis-volumes-webgl', webglActive);
+        const mv = getBlueMapApp()?.mapViewer;
         document.body.classList.toggle(
             'mcwws-gis-simplified-canvas-active',
-            isSimplifiedMapMode() && shouldShowVolume3dSolids() && webglActive
+            !!(isSimplifiedMapMode() && shouldUseSimplifiedGisCanvas(mv))
         );
     }
 
@@ -4020,6 +4022,20 @@
         return parent.name || parent.type || 'object3d';
     }
 
+    /** 简化地图跳过 baseRender 后仍需投影 HTML 玩家钉（css2dRenderer） */
+    function renderSimplifiedMapMarkers(mv, delta) {
+        if (!mv?.camera || !mv?.markers || !mv?.renderer) {
+            return;
+        }
+        mv.markers.updateMatrixWorld?.(true);
+        const renderer = mv.renderer;
+        const prevAutoClear = renderer.autoClear;
+        renderer.autoClear = false;
+        renderer.render(mv.markers, mv.camera);
+        renderer.autoClear = prevAutoClear;
+        mv.css2dRenderer?.render?.(mv.markers, mv.camera);
+    }
+
     function renderMcwwsSimplifiedEmptyFrame(mv, delta) {
         updateSimplifiedMapControls(mv, delta);
         const renderer = mv?.renderer;
@@ -4033,6 +4049,7 @@
         renderer.clear(true, true, true);
         renderer.autoClear = prevAutoClear;
         lastVolumeRenderPath = 'simplified-empty';
+        renderSimplifiedMapMarkers(mv, delta);
     }
 
     function renderMcwwsSimplifiedVolumeFrame(mv, delta) {
@@ -4052,6 +4069,7 @@
         renderer.render(volumeMeshScene, camera);
         renderer.autoClear = prevAutoClear;
         lastVolumeRenderPath = 'simplified-volume';
+        renderSimplifiedMapMarkers(mv, delta);
     }
 
     /** 原版地图：BlueMap 主 canvas 渲染地形/markers 后叠加三维建筑 */

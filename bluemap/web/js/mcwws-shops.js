@@ -2829,7 +2829,10 @@
     }
 
     function shouldStabilizeAuthPlayerMarker(pos) {
-        return !!(pos && !pos.online && (playerFollowActive || playerFollowSyntheticMarker));
+        if (playerFollowActive) {
+            return true;
+        }
+        return !!(pos && !pos.online && playerFollowSyntheticMarker);
     }
 
     function stabilizeAuthPlayerMarkerElement(marker) {
@@ -2947,14 +2950,18 @@
         if (marker) {
             if (pos.online) {
                 playerFollowSyntheticMarker = false;
-                clearAuthPlayerMarkerStyling(marker);
+                if (!playerFollowActive) {
+                    clearAuthPlayerMarkerStyling(marker);
+                }
             } else {
                 playerFollowSyntheticMarker = true;
             }
             return applyAuthPlayerMarkerTransform(marker, pos);
         }
-        if (!pos.online) {
-            playerFollowSyntheticMarker = true;
+        if (!pos.online || playerFollowActive) {
+            if (!pos.online) {
+                playerFollowSyntheticMarker = true;
+            }
             const payload = buildBlueMapPlayerMarkerPayload(pos, mapAuthUser.playerId);
             if (!payload) return null;
             const set = getPlayerMarkerManager()?.getPlayerMarkerSet?.(true);
@@ -2974,7 +2981,7 @@
         if (!mapAuthUser?.playerId || !pos) return null;
         const marker = findAuthPlayerMarker();
         if (!marker) {
-            if (playerFollowSyntheticMarker && !pos.online) {
+            if (playerFollowActive || (playerFollowSyntheticMarker && !pos.online)) {
                 return ensureAuthPlayerMarkerVisible(pos);
             }
             return null;
@@ -3441,14 +3448,14 @@
         playerFollowActive = true;
         armPlayerFollowGestureGuard(480);
         syncPlayerFollowSmoothFromControls(getControlsManager());
+        updateMapControlsState();
         if (!playerFollowTarget.online) {
             playerFollowSyntheticMarker = true;
             ensurePlayerMarkerManagerOfflinePatch();
         }
         ensureAuthPlayerMarkerVisible(playerFollowTarget);
+        refreshAuthPlayerMarkerAfterLocate(playerFollowTarget);
         void pollPlayerFollowTarget();
-        updatePlayerOfflineLocateBanner();
-        updateMapControlsState();
         if (from3d) {
             showPlayerFollowNotice(PLAYER_FOLLOW_3D_START_MSG, 3600);
         }
@@ -4020,6 +4027,19 @@
             }
         }
         updatePlayerOfflineLocateBanner();
+        document.body.classList.toggle('mcwws-player-follow-active', playerFollowActive);
+    }
+
+    function refreshAuthPlayerMarkerAfterLocate(pos, attemptsLeft = 10) {
+        if (!playerFollowActive || !pos) {
+            return;
+        }
+        ensureAuthPlayerMarkerVisible(pos);
+        syncAuthPlayerMarkerPosition(pos);
+        getBlueMapApp()?.mapViewer?.redraw?.();
+        if (attemptsLeft > 1) {
+            requestAnimationFrame(() => refreshAuthPlayerMarkerAfterLocate(pos, attemptsLeft - 1));
+        }
     }
 
     function ensureMapControls() {

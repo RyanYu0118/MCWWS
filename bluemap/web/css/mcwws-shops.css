@@ -984,6 +984,20 @@ body.mcwws-offline-locate-active .mcwws-player-follow-notice {
     bottom: 76px;
 }
 
+/* 简化地图下 map-container 默认 opacity:0；定位玩家时需显示其中的 HTML 玩家钉 */
+body.mcwws-map-simplified-mode.mcwws-player-follow-active #map-container {
+    opacity: 1 !important;
+    visibility: visible !important;
+}
+
+body.mcwws-map-simplified-mode.mcwws-player-follow-active #map-container .bm-marker-player,
+body.mcwws-map-simplified-mode.mcwws-player-follow-active #map-container .bm-marker-player img,
+body.mcwws-map-simplified-mode.mcwws-player-follow-active #map-container .bm-marker-player .bm-player-name {
+    opacity: 1 !important;
+    visibility: visible !important;
+    transition: none !important;
+}
+
 /* 离线定位注入的玩家钉：禁用 BlueMap 距离淡出与 opacity 过渡 */
 #map-container .bm-marker-player.mcwws-auth-player-marker,
 #map-container .bm-marker-player.mcwws-auth-player-marker img,
