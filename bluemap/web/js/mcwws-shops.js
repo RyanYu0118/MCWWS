@@ -1934,6 +1934,18 @@
         updatePinPositions();
     }
 
+    /** 3D 透视下复位朝北并竖直向下（angle=0），不切换为 2D 正交 */
+    function applyNorthPerspectiveView(cm) {
+        const dist = clampMapDistance(cm.distance);
+        cm.rotation = 0;
+        cm.ortho = 0;
+        cm.angle = 0;
+        cm.tilt = 0;
+        syncPageAddressFromControls();
+        updateMapControlsState();
+        updatePinPositions();
+    }
+
     function waitForBlueMapViewAnimation(bm, onDone) {
         waitForBlueMapViewAnimationAsync(bm).then(() => onDone?.());
     }
@@ -1966,22 +1978,17 @@
             return;
         }
 
-        if (typeof bm.setFlatView === 'function') {
-            callBlueMapSetFlatView(bm, 500, savedDistance);
-            waitForBlueMapViewAnimation(bm, () => {
-                if (orthoOn) {
-                    cm.ortho = FLAT_ORTHO_ON;
-                }
-                applyNorthFlatView(cm, savedDistance, savedAngle);
-            });
-            return;
-        }
-
-        setBlueMapViewMode('flat');
-        if (orthoOn) {
-            cm.ortho = FLAT_ORTHO_ON;
-        }
-        applyNorthFlatView(cm, savedDistance, savedAngle);
+        const targetView = buildTopDownPerspectiveView({
+            ...mergeViewWithCurrentControls(parseHash() || {}),
+            map: getCurrentMapId(),
+            x: cm.position.x,
+            y: cm.position.y,
+            z: cm.position.z,
+            distance: savedDistance,
+            height: savedDistance,
+            rotation: 0
+        });
+        void animateControlsToView(targetView, 300);
     }
 
     const ZOOM_FRAME_MS = 16.666;
@@ -4056,7 +4063,7 @@
                         </div>
                     </div>
                     <div class="mcwws-ctrl-tools-cluster">
-                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北（2D 俯视，上北下南）">
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-compass" title="复位朝北">
                             <span class="mcwws-compass-shell" aria-hidden="true">
                                 <span class="mcwws-compass-ellipse">
                                     <span class="mcwws-compass-dial">
