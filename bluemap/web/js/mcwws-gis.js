@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-109';
+    const MCWWS_GIS_BUILD = '20260610-110';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -22,6 +22,7 @@
     const MAP_CONTROLS_STACK_SEL = '.mcwws-map-controls-stack';
     const SVG_LAYER_ID = 'mcwws-gis-svg-layer';
     const ROAD_NAME_SVG_LAYER_ID = 'mcwws-gis-road-name-layer';
+    const BUILDING_NAME_SVG_LAYER_ID = 'mcwws-gis-building-name-layer';
     const PIN_LAYER_ID = 'mcwws-gis-pin-layer';
     const VERTEX_LAYER_ID = 'mcwws-gis-vertex-layer';
     const VERTEX_GIZMO_ID = 'mcwws-gis-vertex-gizmo';
@@ -89,6 +90,7 @@
     let gisEditMode = false;
     let gisIgnoreHeightClip = false;
     let gisShowRoadNames = true;
+    let gisShowBuildingNames = true;
     /** 原版地图编辑模式下是否显示区域三维立体填充 */
     let gisShowVolume3dBuildings = true;
     let activeTool = 'select';
@@ -109,6 +111,7 @@
     const STORAGE_GIS_ENABLED = 'mcwws-gis-info-enabled';
     const STORAGE_GIS_IGNORE_HEIGHT_CLIP = 'mcwws-gis-ignore-height-clip';
     const STORAGE_GIS_SHOW_ROAD_NAMES = 'mcwws-gis-show-road-names';
+    const STORAGE_GIS_SHOW_BUILDING_NAMES = 'mcwws-gis-show-building-names';
     const STORAGE_GIS_SHOW_VOLUME3D = 'mcwws-gis-show-volume3d';
     let dirty = false;
     let saving = false;
@@ -126,6 +129,7 @@
     const svgLaneArrowGroups = new Map();
     /** @type {Map<string, SVGGElement>} */
     const svgLaneNameGroups = new Map();
+    const svgBuildingNameGroups = new Map();
     /** @type {SVGPathElement | null} */
     let svgDraftPathEl = null;
     let svgDraftFillPathEl = null;
@@ -247,6 +251,8 @@
             gisIgnoreHeightClip = localStorage.getItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP) === '1';
             const roadNames = localStorage.getItem(STORAGE_GIS_SHOW_ROAD_NAMES);
             gisShowRoadNames = roadNames !== '0';
+            const buildingNames = localStorage.getItem(STORAGE_GIS_SHOW_BUILDING_NAMES);
+            gisShowBuildingNames = buildingNames !== '0';
             const volume3d = localStorage.getItem(STORAGE_GIS_SHOW_VOLUME3D);
             gisShowVolume3dBuildings = volume3d !== '0';
         } catch {
@@ -260,6 +266,7 @@
             localStorage.setItem(STORAGE_GIS_ENABLED, gisInfoEnabled ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_IGNORE_HEIGHT_CLIP, gisIgnoreHeightClip ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_ROAD_NAMES, gisShowRoadNames ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_SHOW_BUILDING_NAMES, gisShowBuildingNames ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_VOLUME3D, gisShowVolume3dBuildings ? '1' : '0');
         } catch {
             /* ignore */
@@ -1632,6 +1639,15 @@
         saveLayerPrefs();
         invalidateRoadLabelCache();
         document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
+        renderOverlay();
+        renderLayerDialog();
+    }
+
+    function setGisShowBuildingNames(enabled) {
+        gisShowBuildingNames = !!enabled;
+        saveLayerPrefs();
+        invalidateBuildingLabelCache();
+        document.body.classList.toggle('mcwws-gis-building-names-off', !gisShowBuildingNames);
         renderOverlay();
         renderLayerDialog();
     }
@@ -3935,6 +3951,8 @@
         svgLaneArrowGroups.clear();
         svgLaneNameGroups.forEach((el) => el.remove());
         svgLaneNameGroups.clear();
+        svgBuildingNameGroups.forEach((el) => el.remove());
+        svgBuildingNameGroups.clear();
         if (svgDraftPathEl) {
             svgDraftPathEl.remove();
             svgDraftPathEl = null;
@@ -6017,6 +6035,70 @@
         return { x: x / n, y: y / n, z: z / n };
     }
 
+    function collectVolume3dCornerPoints(shape, points, cfg) {
+        if (!shape || shape === VOLUME_SHAPES.FLAT || !points.length) {
+            return [];
+        }
+        const { minY, maxY } = resolveVolumeYRange(cfg, points);
+        if (shape === VOLUME_SHAPES.BOX) {
+            const rings = getBoxPrismRings(points, cfg);
+            if (!rings) {
+                return points.slice();
+            }
+            return [...rings.bottom, ...rings.top];
+        }
+        if (shape === VOLUME_SHAPES.HEXAHEDRON && points.length >= 8) {
+            return points.slice(0, 8);
+        }
+        if (shape === VOLUME_SHAPES.CYLINDER) {
+            const cr = getCylinderCenterRadius(null, points, cfg);
+            if (!cr) {
+                return points.slice();
+            }
+            const midY = (minY + maxY) / 2;
+            return [{ x: cr.center.x, y: midY, z: cr.center.z }];
+        }
+        return points.slice();
+    }
+
+    function computeVolumeGeometricCenter(feature) {
+        const cfg = getVolume3dConfig(feature);
+        if (!cfg || cfg.shape === VOLUME_SHAPES.FLAT) {
+            return null;
+        }
+        const points = getFeatureVertexPoints(feature);
+        const corners = collectVolume3dCornerPoints(cfg.shape, points, cfg);
+        if (!corners.length) {
+            return null;
+        }
+        return computeVolumeShapeCenter(corners);
+    }
+
+    function isVolume3dPolygonFeature(feature) {
+        return !!(feature && feature.type === 'Polygon' && getVolume3dConfig(feature));
+    }
+
+    function getBuildingDisplayName(feature) {
+        return String(feature?.properties?.name || '').trim();
+    }
+
+    function featureHasBuildingName(feature) {
+        return !!getBuildingDisplayName(feature);
+    }
+
+    function shouldShowBuildingNameOnFeature(feature) {
+        if (!gisShowBuildingNames || !feature) {
+            return false;
+        }
+        if (!isVolume3dPolygonFeature(feature)) {
+            return false;
+        }
+        if (feature.properties?.showBuildingName === false) {
+            return false;
+        }
+        return featureHasBuildingName(feature);
+    }
+
     function volumeWorldPoint(p) {
         return { x: p.x, y: gisWorldY(p, false), z: p.z };
     }
@@ -6616,6 +6698,7 @@
             return cr ? Math.round(cr.radius * 100) / 100 : '';
         });
         const nameDisp = getBatchStringPropDisplay(items, (f) => f.properties?.name || '区域');
+        const showBuildingNameDisp = getBatchBoolPropDisplay(items, (f) => f.properties?.showBuildingName !== false);
         const colorDisp = getBatchStringPropDisplay(items, (f) => f.properties?.color || '');
         const shapeOptions = VOLUME_SHAPE_OPTIONS.map((opt) => `
             <option value="${opt.id}" ${!shapeDisp.mixed && shape === opt.id ? 'selected' : ''}>${escapeHtml(opt.label)}</option>
@@ -6677,10 +6760,16 @@
                 <p class="mcwws-gis-menu-section-title">区域属性 · ${escapeHtml(nameDisp.mixed ? '多个名称' : (nameDisp.value || '区域'))}${renderBatchCountSuffix(batchCount)}</p>
                 <div class="mcwws-gis-road-prop-grid">
                     <label class="mcwws-gis-road-prop-row">
-                        <span>名称</span>
+                        <span>建筑名称</span>
                         <input type="text" class="mcwws-gis-road-prop-input" data-pin-prop="name"
                             value="${escapeHtml(nameDisp.value)}"
-                            placeholder="${nameDisp.mixed ? '多个值' : '区域名称'}"
+                            placeholder="${nameDisp.mixed ? '多个值' : '如：市政府（留空不显示）'}"
+                            ${!gisCanEdit ? 'disabled' : ''}>
+                    </label>
+                    <label class="mcwws-gis-road-prop-row mcwws-gis-road-prop-row--checkbox">
+                        <span>在模型中心显示名称</span>
+                        <input type="checkbox" data-volume-prop="showBuildingName" data-mixed="${showBuildingNameDisp.mixed ? '1' : '0'}"
+                            ${showBuildingNameDisp.checked ? 'checked' : ''}
                             ${!gisCanEdit ? 'disabled' : ''}>
                     </label>
                     <label class="mcwws-gis-road-prop-row">
@@ -6704,6 +6793,7 @@
                     ${yRows}
                     ${radiusRow}
                     <p class="mcwws-gis-road-props-hint">${escapeHtml(hint)}</p>
+                    ${batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量设置建筑名称将应用到全部所选区域；名称显示在各自模型几何中心</p>' : ''}
                 </div>
             </div>
         `;
@@ -6773,6 +6863,13 @@
             } else {
                 vol.radius = n;
             }
+        } else if (prop === 'showBuildingName') {
+            const props = ensureFeatureProperties(feature);
+            if (input.checked) {
+                delete props.showBuildingName;
+            } else {
+                props.showBuildingName = false;
+            }
         } else {
             return false;
         }
@@ -6800,6 +6897,9 @@
         recordGisHistory();
         markDirty();
         renderOverlay();
+        if (input?.getAttribute?.('data-volume-prop') === 'showBuildingName') {
+            renderBuildingNameLabelsLayer();
+        }
         renderLayerDialog();
     }
 
@@ -6855,6 +6955,10 @@
         recordGisHistory();
         markDirty();
         renderOverlay();
+        if (input?.getAttribute?.('data-pin-prop') === 'name' && getSelectedPolygonFeatures().length) {
+            invalidateBuildingLabelCache();
+            renderBuildingNameLabelsLayer();
+        }
         renderLayerDialog();
     }
 
@@ -8667,6 +8771,18 @@
         return svg;
     }
 
+    function ensureSvgBuildingNameLayer() {
+        let svg = document.getElementById(BUILDING_NAME_SVG_LAYER_ID);
+        if (!svg) {
+            svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+            svg.id = BUILDING_NAME_SVG_LAYER_ID;
+            document.body.appendChild(svg);
+        }
+        svg.setAttribute('width', String(window.innerWidth));
+        svg.setAttribute('height', String(window.innerHeight));
+        return svg;
+    }
+
     function ensurePinLayer() {
         let layer = document.getElementById(PIN_LAYER_ID);
         if (!layer) {
@@ -8771,6 +8887,12 @@
 
     function invalidateRoadLabelCache() {
         svgLaneNameGroups.forEach((group) => {
+            delete group.dataset.nameStructSig;
+        });
+    }
+
+    function invalidateBuildingLabelCache() {
+        svgBuildingNameGroups.forEach((group) => {
             delete group.dataset.nameStructSig;
         });
     }
@@ -9383,6 +9505,114 @@
         });
     }
 
+    function ensureSvgBuildingNameGroup(svg, key, featureId) {
+        let group = svgBuildingNameGroups.get(key);
+        if (!group) {
+            group = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+            group.setAttribute('data-fid', featureId);
+            group.classList.add('mcwws-gis-building-name-group');
+            svg.appendChild(group);
+            svgBuildingNameGroups.set(key, group);
+        }
+        return group;
+    }
+
+    function getBuildingNameStructSig(feature, policy, viewHeight, selectionActive) {
+        const center = computeVolumeGeometricCenter(feature);
+        const name = getBuildingDisplayName(feature);
+        const c = center
+            ? `${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`
+            : 'none';
+        const dimmed = selectionActive && !isFeatureSelected(feature.id) ? 1 : 0;
+        return `${name}|${c}|${policy.bucket}|${Math.round(viewHeight)}|${dimmed}`;
+    }
+
+    function syncBuildingNameGroupPosition(group, feature, policy, view, camera, selectionActive) {
+        const name = getBuildingDisplayName(feature);
+        const center = computeVolumeGeometricCenter(feature);
+        const dimmed = selectionActive && !isFeatureSelected(feature.id);
+        group.classList.toggle('is-dimmed', dimmed);
+        let text = group.querySelector('.mcwws-gis-building-name');
+        if (!name || !center) {
+            if (text) {
+                text.style.display = 'none';
+            }
+            return;
+        }
+        const screen = projectGisPoint(center, view, camera, false);
+        if (!isRoadNameOnScreen(screen)) {
+            if (text) {
+                text.style.display = 'none';
+            }
+            return;
+        }
+        const fontSize = fitRoadNameFontSize(name, policy.fontSize, 0, { primary: true });
+        if (!fontSize) {
+            if (text) {
+                text.style.display = 'none';
+            }
+            return;
+        }
+        if (!text) {
+            text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            text.classList.add('mcwws-gis-building-name');
+            text.setAttribute('text-anchor', 'middle');
+            text.setAttribute('dominant-baseline', 'middle');
+            group.appendChild(text);
+        }
+        const x = screen.x.toFixed(1);
+        const y = screen.y.toFixed(1);
+        text.style.display = '';
+        text.textContent = name;
+        text.setAttribute('x', x);
+        text.setAttribute('y', y);
+        text.setAttribute('font-size', String(fontSize));
+        text.removeAttribute('transform');
+    }
+
+    function renderBuildingNameLabelsLayer() {
+        const svg = ensureSvgBuildingNameLayer();
+        if (!svg || !gisInfoEnabled || !gisShowBuildingNames) {
+            svgBuildingNameGroups.forEach((group) => group.remove());
+            svgBuildingNameGroups.clear();
+            return;
+        }
+        const view = getViewForProjection();
+        const camera = getGisBlueMapCamera();
+        const viewHeight = getMapCameraHeight();
+        const policy = getRoadNameDisplayPolicy(viewHeight);
+        const selectionActive = hasGisSelection();
+        const neededKeys = new Set();
+
+        if (!policy.show) {
+            svgBuildingNameGroups.forEach((group) => group.remove());
+            svgBuildingNameGroups.clear();
+            return;
+        }
+
+        iterVisibleFeatures().forEach(({ feature }) => {
+            if (!shouldShowBuildingNameOnFeature(feature)) {
+                return;
+            }
+            const key = feature.id;
+            neededKeys.add(key);
+            const group = ensureSvgBuildingNameGroup(svg, key, feature.id);
+            const structSig = getBuildingNameStructSig(feature, policy, viewHeight, selectionActive);
+            if (group.dataset.nameStructSig !== structSig) {
+                group.dataset.nameStructSig = structSig;
+                clearSvgGroupChildren(group);
+            }
+            syncBuildingNameGroupPosition(group, feature, policy, view, camera, selectionActive);
+        });
+
+        svgBuildingNameGroups.forEach((group, key) => {
+            if (!neededKeys.has(key)) {
+                group.remove();
+                svgBuildingNameGroups.delete(key);
+            }
+        });
+    }
+
     function placeRoadArrowsOnScreenSegment(group, s0, s1, fillColor) {
         const dx = s1.x - s0.x;
         const dy = s1.y - s0.y;
@@ -9748,6 +9978,7 @@
 
         renderRoadArrowsLayer();
         renderRoadNameLabelsLayer();
+        renderBuildingNameLabelsLayer();
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const d = buildDraftPreviewPath(view, camera);
@@ -10031,6 +10262,16 @@
         return `
             <div class="mcwws-layer-editor">
                 <p class="mcwws-gis-menu-hint">${escapeHtml(editHint)}</p>
+                <p class="mcwws-gis-menu-section-title">地图标注显示</p>
+                <label class="mcwws-gis-edit-option">
+                    <input type="checkbox" data-gis-show-road-names ${gisShowRoadNames ? 'checked' : ''}>
+                    <span>沿路显示路名</span>
+                </label>
+                <label class="mcwws-gis-edit-option">
+                    <input type="checkbox" data-gis-show-building-names ${gisShowBuildingNames ? 'checked' : ''}>
+                    <span>在模型几何中心显示建筑名称</span>
+                </label>
+                <p class="mcwws-gis-road-props-hint">缩放过远时路名与建筑名会自动隐藏；选中三维区域后可在下方填写建筑名称</p>
                 <label class="mcwws-gis-edit-option">
                     <input type="checkbox" data-gis-ignore-height-clip ${gisIgnoreHeightClip ? 'checked' : ''}
                         ${!gisCanEdit ? 'disabled' : ''}>
@@ -10390,6 +10631,11 @@
                     ${!gisInfoEnabled ? 'disabled' : ''}>
                 <span>沿路自动显示路名（每段可见路名各 1 个，超远缩放自动隐藏）</span>
             </label>
+            <label class="mcwws-layer-gis-toggle mcwws-layer-gis-toggle--sub">
+                <input type="checkbox" data-gis-show-building-names ${gisShowBuildingNames ? 'checked' : ''}
+                    ${!gisInfoEnabled ? 'disabled' : ''}>
+                <span>在模型几何中心显示建筑名称（超远缩放自动隐藏）</span>
+            </label>
             <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
                 data-action="toggle-gis-editor"
                 ${!gisInfoEnabled ? 'disabled' : ''}
@@ -10487,6 +10733,12 @@
                 setGisShowRoadNames(e.target.checked);
                 return;
             }
+            const buildingNamesInput = e.target.closest('[data-gis-show-building-names]');
+            if (buildingNamesInput && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisShowBuildingNames(e.target.checked);
+                return;
+            }
             const volume3dInput = e.target.closest('[data-gis-show-volume3d]');
             if (volume3dInput && e.target.matches('input[type="checkbox"]')) {
                 e.stopPropagation();
@@ -10564,6 +10816,9 @@
                 if (syncVolumePropertyFromInput(volumePropInputLive)) {
                     markDirtySoft();
                     renderOverlay();
+                    if (volumePropInputLive.getAttribute('data-volume-prop') === 'showBuildingName') {
+                        renderBuildingNameLabelsLayer();
+                    }
                 }
                 return;
             }
@@ -10573,6 +10828,10 @@
                 if (syncPinPropertyFromInput(pinPropInputLive)) {
                     markDirtySoft();
                     renderOverlay();
+                    if (pinPropInputLive.getAttribute('data-pin-prop') === 'name' && getSelectedPolygonFeatures().length) {
+                        invalidateBuildingLabelCache();
+                        renderBuildingNameLabelsLayer();
+                    }
                 }
             }
         });
@@ -10862,6 +11121,7 @@
         document.getElementById('mcwws-gis-panel')?.remove();
         loadLayerPrefs();
         document.body.classList.toggle('mcwws-gis-road-names-off', !gisShowRoadNames);
+        document.body.classList.toggle('mcwws-gis-building-names-off', !gisShowBuildingNames);
         syncVolume3dVisibilityClass();
         initMapAuth();
         bindMapPicks();
@@ -10896,11 +11156,13 @@
             gisThree = null;
             invalidateRoadArrowCache();
             invalidateRoadLabelCache();
+            invalidateBuildingLabelCache();
             renderOverlay();
         });
         window.addEventListener('resize', () => {
             invalidateRoadArrowCache();
             invalidateRoadLabelCache();
+            invalidateBuildingLabelCache();
             getBlueMapApp()?.mapViewer?.redraw?.();
             renderOverlay();
         });

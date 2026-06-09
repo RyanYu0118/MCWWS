@@ -719,6 +719,38 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     display: none;
 }
 
+#mcwws-gis-building-name-layer {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    pointer-events: none;
+    width: 100%;
+    height: 100%;
+}
+
+#mcwws-gis-building-name-layer .mcwws-gis-building-name-group {
+    pointer-events: none;
+}
+
+#mcwws-gis-building-name-layer .mcwws-gis-building-name {
+    fill: #0f172a;
+    font-family: "Microsoft YaHei", "PingFang SC", "Noto Sans SC", system-ui, sans-serif;
+    font-weight: 600;
+    letter-spacing: 0.02em;
+    paint-order: stroke fill;
+    stroke: rgba(255, 255, 255, 0.78);
+    stroke-width: 1px;
+    stroke-linejoin: round;
+}
+
+#mcwws-gis-building-name-layer .mcwws-gis-building-name-group.is-dimmed .mcwws-gis-building-name {
+    opacity: 0.38;
+}
+
+body.mcwws-gis-building-names-off #mcwws-gis-building-name-layer {
+    display: none;
+}
+
 #mcwws-gis-svg-layer .mcwws-gis-road-name-group {
     display: none;
 }
@@ -1182,14 +1214,16 @@ body.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
 /* 仅控制显隐过渡；图层本身保持 pointer-events:none，由下方 path/钉 单独接管点击，避免挡住地图拖拽 */
 #mcwws-gis-svg-layer,
 #mcwws-gis-pin-layer,
-#mcwws-gis-road-name-layer {
+#mcwws-gis-road-name-layer,
+#mcwws-gis-building-name-layer {
     opacity: 0;
     transition: opacity 0.48s ease;
 }
 
 body.mcwws-gis-overlay-visible #mcwws-gis-svg-layer,
 body.mcwws-gis-overlay-visible #mcwws-gis-pin-layer,
-body.mcwws-gis-overlay-visible #mcwws-gis-road-name-layer {
+body.mcwws-gis-overlay-visible #mcwws-gis-road-name-layer,
+body.mcwws-gis-overlay-visible #mcwws-gis-building-name-layer {
     opacity: 1;
 }
 
@@ -1197,7 +1231,8 @@ body.mcwws-map-render-no-transition,
 body.mcwws-map-render-no-transition #map-container,
 body.mcwws-map-render-no-transition #mcwws-gis-svg-layer,
 body.mcwws-map-render-no-transition #mcwws-gis-pin-layer,
-body.mcwws-map-render-no-transition #mcwws-gis-road-name-layer {
+body.mcwws-map-render-no-transition #mcwws-gis-road-name-layer,
+body.mcwws-map-render-no-transition #mcwws-gis-building-name-layer {
     transition: none !important;
 }
 
@@ -1211,7 +1246,8 @@ body.mcwws-map-render-no-transition.mcwws-map-simplified-mode.mcwws-gis-has-sele
     #map-container,
     #mcwws-gis-svg-layer,
     #mcwws-gis-pin-layer,
-    #mcwws-gis-road-name-layer {
+    #mcwws-gis-road-name-layer,
+    #mcwws-gis-building-name-layer {
         transition: none !important;
     }
 }
