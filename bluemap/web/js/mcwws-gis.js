@@ -1,5 +1,6 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-99';
+    const MCWWS_GIS_BUILD = '20260602-101';
+    const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
     /** 原版 / 简化地图均使用 WebGL 深度缓冲渲染三维建筑 */
@@ -2807,7 +2808,7 @@
         } else {
             next.z = startWorld.z + delta;
         }
-        return coerceVertexPoint(next) || startWorld;
+        return readFiniteVertexPoint(next) || startWorld;
     }
 
     function resolveAxisDragWorld(screenAxis, axis, anchorWorld, startClientX, startClientY, clientX, clientY, camera) {
@@ -2856,7 +2857,7 @@
             return startWorld;
         }
         const t = vec3Dot(vec3Sub(hit, startWorld), axisDir);
-        return coerceVertexPoint({
+        return readFiniteVertexPoint({
             x: startWorld.x + axisDir.x * t,
             y: startWorld.y + axisDir.y * t,
             z: startWorld.z + axisDir.z * t
@@ -10101,6 +10102,46 @@
         `;
     }
 
+    function isMobileSheetViewport() {
+        return typeof window.matchMedia === 'function'
+            && window.matchMedia(GIS_MOBILE_SHEET_MQ).matches;
+    }
+
+    function syncMobileSheetBodyLock() {
+        const mobileOpen = isMobileSheetViewport()
+            && (layerDialogOpen || document.body.classList.contains('mcwws-layer-menu-open'));
+        document.body.classList.toggle('mcwws-mobile-sheet-open', mobileOpen);
+    }
+
+    function bindMobileSheetDismiss() {
+        document.addEventListener('click', (event) => {
+            if (!isMobileSheetViewport() || !layerDialogOpen) {
+                return;
+            }
+            if (event.target.closest('.mcwws-layer-dialog, .mcwws-ctrl-gis, .mcwws-ctrl-gis-wrap')) {
+                return;
+            }
+            layerDialogOpen = false;
+            renderLayerDialog();
+        }, true);
+        window.addEventListener('mcwws-close-gis-layer-dialog', () => {
+            if (!layerDialogOpen) {
+                return;
+            }
+            layerDialogOpen = false;
+            renderLayerDialog();
+        });
+        if (typeof window.matchMedia === 'function') {
+            const mq = window.matchMedia(GIS_MOBILE_SHEET_MQ);
+            const onMq = () => syncMobileSheetBodyLock();
+            if (typeof mq.addEventListener === 'function') {
+                mq.addEventListener('change', onMq);
+            } else if (typeof mq.addListener === 'function') {
+                mq.addListener(onMq);
+            }
+        }
+    }
+
     function renderLayerDialog() {
         const wrap = ensureGisControls();
         const dialog = wrap?.querySelector('.mcwws-layer-dialog');
@@ -10109,6 +10150,7 @@
         }
         dialog.hidden = !layerDialogOpen;
         document.body.classList.toggle('mcwws-gis-layer-dialog-open', layerDialogOpen);
+        syncMobileSheetBodyLock();
 
         const scrollTop = dialog.scrollTop;
         const activeEl = document.activeElement;
@@ -10200,6 +10242,7 @@
             e.stopPropagation();
             layerDialogOpen = !layerDialogOpen;
             if (layerDialogOpen) {
+                window.dispatchEvent(new CustomEvent('mcwws-close-layer-menu'));
                 const layerMenu = document.querySelector('.mcwws-layer-menu');
                 if (layerMenu) {
                     layerMenu.hidden = true;
@@ -10209,6 +10252,12 @@
         });
 
         wrap.addEventListener('change', (e) => {
+            const gisInfoToggle = e.target.closest('[data-gis-info-toggle]');
+            if (gisInfoToggle && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisInfoEnabled(e.target.checked);
+                return;
+            }
             const heightClipInput = e.target.closest('[data-gis-ignore-height-clip]');
             if (heightClipInput && e.target.matches('input[type="checkbox"]')) {
                 e.stopPropagation();
@@ -10315,26 +10364,6 @@
                 applyMapRenderMode(modeCard.getAttribute('data-map-mode'));
                 return;
             }
-            const gisToggle = e.target.closest('[data-gis-info-toggle]');
-            if (gisToggle && e.target.matches('input[type="checkbox"]')) {
-                setGisInfoEnabled(e.target.checked);
-                return;
-            }
-            const heightClipToggle = e.target.closest('[data-gis-ignore-height-clip]');
-            if (heightClipToggle && e.target.matches('input[type="checkbox"]')) {
-                setGisIgnoreHeightClip(e.target.checked);
-                return;
-            }
-            const roadNamesToggle = e.target.closest('[data-gis-show-road-names]');
-            if (roadNamesToggle && e.target.matches('input[type="checkbox"]')) {
-                setGisShowRoadNames(e.target.checked);
-                return;
-            }
-            const volume3dToggle = e.target.closest('[data-gis-show-volume3d]');
-            if (volume3dToggle && e.target.matches('input[type="checkbox"]')) {
-                setGisShowVolume3dBuildings(e.target.checked);
-                return;
-            }
             const toolBtn = e.target.closest('[data-tool]');
             if (toolBtn) {
                 activeTool = toolBtn.getAttribute('data-tool') || 'select';
@@ -10395,6 +10424,8 @@
                     if (window.parent !== window) {
                         window.parent.postMessage({ type: 'mcwws-auth-required' }, '*');
                     }
+                    setStatus('需要管理员登录后才能编辑地理标注', 'error');
+                    renderLayerDialog();
                     return;
                 }
                 if (gisEditorOpen) {
@@ -10608,6 +10639,7 @@
         initMapAuth();
         bindMapPicks();
         bindMapContextMenuSuppression();
+        bindMobileSheetDismiss();
         waitForMapControls();
         tryApplyStoredMapRenderMode();
         syncMapRenderModeVisual();

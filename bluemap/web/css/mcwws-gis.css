@@ -713,11 +713,89 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     color: #059669;
 }
 
-@media (max-width: 520px) {
+@media (max-width: 640px) {
+    body.mcwws-mobile-sheet-open {
+        overflow: hidden;
+    }
+
+    body.mcwws-gis-layer-dialog-open::before,
+    body.mcwws-layer-menu-open::before {
+        content: "";
+        position: fixed;
+        inset: 0;
+        z-index: 10055;
+        background: rgba(15, 23, 42, 0.45);
+        pointer-events: auto;
+    }
+
     .mcwws-layer-dialog {
-        right: 0;
-        bottom: calc(100% + 8px);
-        min-width: 240px;
+        position: fixed !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        top: auto !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        max-width: none !important;
+        max-height: min(88dvh, calc(100dvh - 16px)) !important;
+        margin: 0 !important;
+        border-radius: 16px 16px 0 0;
+        padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
+        transform: none;
+        z-index: 10066 !important;
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: contain;
+        touch-action: pan-y;
+        animation: mcwws-sheet-rise 0.26s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .mcwws-layer-dialog::before {
+        content: "";
+        display: block;
+        width: 40px;
+        height: 4px;
+        margin: 2px auto 12px;
+        border-radius: 999px;
+        background: #cbd5e1;
+    }
+
+    .mcwws-layer-dialog-title {
+        font-size: 15px;
+        margin-bottom: 12px;
+    }
+
+    .mcwws-layer-mode-card,
+    .mcwws-layer-gis-toggle,
+    .mcwws-layer-edit-entry,
+    .mcwws-gis-menu-tool,
+    .mcwws-gis-menu-action {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+
+    .mcwws-layer-edit-entry {
+        font-size: 14px;
+        padding: 12px 14px;
+    }
+
+    .mcwws-gis-edit-option {
+        min-height: 44px;
+        touch-action: manipulation;
+    }
+
+    body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
+        z-index: 10050;
+    }
+}
+
+@keyframes mcwws-sheet-rise {
+    from {
+        transform: translateY(100%);
+        opacity: 0.92;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
     }
 }
 

@@ -3834,21 +3834,38 @@
         waitForBlueMap();
     }
 
+    function isMobileSheetViewport() {
+        return typeof window.matchMedia === 'function'
+            && window.matchMedia('(max-width: 640px)').matches;
+    }
+
+    function syncMobileSheetBodyLock() {
+        const mobileOpen = isMobileSheetViewport()
+            && (layerMenuOpen || document.body.classList.contains('mcwws-gis-layer-dialog-open'));
+        document.body.classList.toggle('mcwws-mobile-sheet-open', mobileOpen);
+        document.body.classList.toggle('mcwws-layer-menu-open', layerMenuOpen);
+    }
+
     function renderLayerMenu() {
-        const menu = document.getElementById(MAP_CONTROLS_ID)?.querySelector('.mcwws-layer-menu');
+        const root = document.getElementById(MAP_CONTROLS_ID);
+        const menu = root?.querySelector('.mcwws-layer-menu');
         if (!menu) return;
+        menu.hidden = !layerMenuOpen;
+        syncMobileSheetBodyLock();
         const maps = getAvailableMaps();
         const current = parseHash()?.map || maps[0]?.id;
-        menu.hidden = !layerMenuOpen;
-        menu.innerHTML = maps.map((entry) => {
-            const active = entry.id === current;
-            return `
+        menu.innerHTML = `
+            <p class="mcwws-layer-menu-title">维度</p>
+            ${maps.map((entry) => {
+                const active = entry.id === current;
+                return `
                 <button type="button" class="mcwws-layer-item${active ? ' is-active' : ''}" data-map-id="${escapeHtml(entry.id)}">
                     <span class="mcwws-layer-item-thumb" aria-hidden="true"></span>
                     <span class="mcwws-layer-item-name">${escapeHtml(entry.name)}</span>
                 </button>
             `;
-        }).join('');
+            }).join('')}
+        `;
     }
 
     function updateMapControlsState() {
@@ -4070,6 +4087,9 @@
         root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
             e.stopPropagation();
             layerMenuOpen = !layerMenuOpen;
+            if (layerMenuOpen) {
+                window.dispatchEvent(new CustomEvent('mcwws-close-gis-layer-dialog'));
+            }
             renderLayerMenu();
         });
 
@@ -4086,6 +4106,24 @@
             layerMenuOpen = false;
             renderLayerMenu();
         });
+
+        window.addEventListener('mcwws-close-layer-menu', () => {
+            if (!layerMenuOpen) {
+                return;
+            }
+            layerMenuOpen = false;
+            renderLayerMenu();
+        });
+
+        if (typeof window.matchMedia === 'function') {
+            const mq = window.matchMedia('(max-width: 640px)');
+            const onMq = () => syncMobileSheetBodyLock();
+            if (typeof mq.addEventListener === 'function') {
+                mq.addEventListener('change', onMq);
+            } else if (typeof mq.addListener === 'function') {
+                mq.addListener(onMq);
+            }
+        }
     }
 
     function applyMatrix4(point, matrix) {
