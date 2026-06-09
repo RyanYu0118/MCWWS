@@ -3839,23 +3839,58 @@
             && window.matchMedia('(max-width: 640px)').matches;
     }
 
+    const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
+
+    function getLayerMenuElement(root) {
+        return document.getElementById(MAP_LAYER_MENU_ID)
+            || root?.querySelector('.mcwws-layer-menu')
+            || null;
+    }
+
+    function mountMobileSheetPanel(panel, homeParent) {
+        if (!panel) {
+            return;
+        }
+        if (isMobileSheetViewport()) {
+            if (panel.parentElement !== document.body) {
+                document.body.appendChild(panel);
+            }
+            return;
+        }
+        if (homeParent && panel.parentElement !== homeParent) {
+            homeParent.appendChild(panel);
+        }
+    }
+
     function syncMobileSheetBodyLock() {
         const mobileOpen = isMobileSheetViewport()
             && (layerMenuOpen || document.body.classList.contains('mcwws-gis-layer-dialog-open'));
         document.body.classList.toggle('mcwws-mobile-sheet-open', mobileOpen);
         document.body.classList.toggle('mcwws-layer-menu-open', layerMenuOpen);
+        const backdrop = document.getElementById('mcwws-mobile-sheet-backdrop');
+        if (backdrop) {
+            backdrop.hidden = !mobileOpen;
+        }
     }
 
     function renderLayerMenu() {
         const root = document.getElementById(MAP_CONTROLS_ID);
-        const menu = root?.querySelector('.mcwws-layer-menu');
+        const layerWrap = root?.querySelector('.mcwws-ctrl-layer-wrap');
+        const menu = getLayerMenuElement(root);
         if (!menu) return;
+        if (!menu.id) {
+            menu.id = MAP_LAYER_MENU_ID;
+        }
+        mountMobileSheetPanel(menu, layerWrap);
         menu.hidden = !layerMenuOpen;
         syncMobileSheetBodyLock();
         const maps = getAvailableMaps();
         const current = parseHash()?.map || maps[0]?.id;
         menu.innerHTML = `
-            <p class="mcwws-layer-menu-title">维度</p>
+            <div class="mcwws-layer-menu-title">
+                <span class="mcwws-layer-menu-title-text">维度</span>
+                <button type="button" class="mcwws-layer-sheet-close" data-action="close-layer-menu" aria-label="关闭">×</button>
+            </div>
             ${maps.map((entry) => {
                 const active = entry.id === current;
                 return `
@@ -4002,7 +4037,7 @@
                                     维度
                                 </span>
                             </button>
-                            <div class="mcwws-layer-menu" hidden></div>
+                            <div id="mcwws-map-layer-menu" class="mcwws-layer-menu" hidden></div>
                         </div>
                     </div>
                     <div class="mcwws-ctrl-tools-cluster">
@@ -4093,15 +4128,25 @@
             renderLayerMenu();
         });
 
-        root.addEventListener('click', (e) => {
-            const item = e.target.closest('.mcwws-layer-item');
+        document.addEventListener('click', (e) => {
+            const closeBtn = e.target.closest('[data-action="close-layer-menu"]');
+            if (closeBtn) {
+                e.stopPropagation();
+                layerMenuOpen = false;
+                renderLayerMenu();
+                return;
+            }
+            const item = e.target.closest(`#${MAP_LAYER_MENU_ID} .mcwws-layer-item, .mcwws-layer-menu .mcwws-layer-item`);
             if (!item) return;
+            e.stopPropagation();
             switchMapLayer(item.dataset.mapId);
+            layerMenuOpen = false;
+            renderLayerMenu();
             updateMapControlsState();
         });
 
         document.addEventListener('click', (e) => {
-            if (!layerMenuOpen) return;
+            if (!layerMenuOpen || isMobileSheetViewport()) return;
             if (e.target.closest('.mcwws-ctrl-layer') || e.target.closest('.mcwws-layer-menu')) return;
             layerMenuOpen = false;
             renderLayerMenu();
@@ -4117,7 +4162,13 @@
 
         if (typeof window.matchMedia === 'function') {
             const mq = window.matchMedia('(max-width: 640px)');
-            const onMq = () => syncMobileSheetBodyLock();
+            const onMq = () => {
+                const root = document.getElementById(MAP_CONTROLS_ID);
+                const layerWrap = root?.querySelector('.mcwws-ctrl-layer-wrap');
+                const menu = getLayerMenuElement(root);
+                mountMobileSheetPanel(menu, layerWrap);
+                syncMobileSheetBodyLock();
+            };
             if (typeof mq.addEventListener === 'function') {
                 mq.addEventListener('change', onMq);
             } else if (typeof mq.addListener === 'function') {

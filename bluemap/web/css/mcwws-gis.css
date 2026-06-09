@@ -118,11 +118,40 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     box-sizing: border-box;
 }
 
-.mcwws-layer-dialog-title {
+.mcwws-layer-dialog-title,
+.mcwws-layer-menu-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
     margin: 0 0 10px;
     font-size: 13px;
     font-weight: 700;
     color: #111827;
+}
+
+.mcwws-layer-dialog-title-text,
+.mcwws-layer-menu-title-text {
+    flex: 1;
+    min-width: 0;
+}
+
+.mcwws-layer-sheet-close {
+    flex-shrink: 0;
+    width: 36px;
+    height: 36px;
+    border: 0;
+    border-radius: 999px;
+    background: #f3f4f6;
+    color: #4b5563;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    touch-action: manipulation;
+}
+
+.mcwws-layer-sheet-close:hover {
+    background: #e5e7eb;
 }
 
 .mcwws-layer-dialog-modes {
@@ -713,22 +742,28 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     color: #059669;
 }
 
+.mcwws-mobile-sheet-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: 10060;
+    background: rgba(15, 23, 42, 0.45);
+    pointer-events: auto;
+    touch-action: none;
+}
+
+.mcwws-mobile-sheet-backdrop[hidden] {
+    display: none !important;
+}
+
 @media (max-width: 640px) {
     body.mcwws-mobile-sheet-open {
         overflow: hidden;
     }
 
-    body.mcwws-gis-layer-dialog-open::before,
-    body.mcwws-layer-menu-open::before {
-        content: "";
-        position: fixed;
-        inset: 0;
-        z-index: 10055;
-        background: rgba(15, 23, 42, 0.45);
-        pointer-events: auto;
-    }
-
-    .mcwws-layer-dialog {
+    #mcwws-gis-layer-dialog,
+    #mcwws-map-layer-menu,
+    .mcwws-layer-dialog,
+    .mcwws-layer-menu {
         position: fixed !important;
         left: 0 !important;
         right: 0 !important;
@@ -742,14 +777,47 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         border-radius: 16px 16px 0 0;
         padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
         transform: none;
-        z-index: 10066 !important;
+        z-index: 10070 !important;
+        pointer-events: auto !important;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
         touch-action: pan-y;
         animation: mcwws-sheet-rise 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .mcwws-layer-dialog::before {
+    #mcwws-map-layer-menu,
+    .mcwws-layer-menu {
+        max-height: min(72dvh, calc(100dvh - 16px)) !important;
+    }
+
+    #mcwws-gis-layer-dialog:not([hidden]),
+    #mcwws-map-layer-menu:not([hidden]),
+    .mcwws-layer-dialog:not([hidden]),
+    .mcwws-layer-menu:not([hidden]) {
+        display: block !important;
+    }
+
+    #mcwws-gis-layer-dialog[hidden],
+    #mcwws-map-layer-menu[hidden],
+    .mcwws-layer-dialog[hidden],
+    .mcwws-layer-menu[hidden] {
+        display: none !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
+    }
+
+    body.mcwws-mobile-sheet-open .mcwws-map-controls {
+        z-index: 10080 !important;
+        pointer-events: none;
+    }
+
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack * {
+        pointer-events: auto;
+    }
+
+    .mcwws-layer-dialog::before,
+    .mcwws-layer-menu::before {
         content: "";
         display: block;
         width: 40px;
@@ -759,7 +827,8 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         background: #cbd5e1;
     }
 
-    .mcwws-layer-dialog-title {
+    .mcwws-layer-dialog-title,
+    .mcwws-layer-menu-title {
         font-size: 15px;
         margin-bottom: 12px;
     }
@@ -781,10 +850,6 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     .mcwws-gis-edit-option {
         min-height: 44px;
         touch-action: manipulation;
-    }
-
-    body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
-        z-index: 10050;
     }
 }
 
