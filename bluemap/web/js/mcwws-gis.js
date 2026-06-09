@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260610-110';
+    const MCWWS_GIS_BUILD = '20260610-111';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -6793,7 +6793,7 @@
                     ${yRows}
                     ${radiusRow}
                     <p class="mcwws-gis-road-props-hint">${escapeHtml(hint)}</p>
-                    ${batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量设置建筑名称将应用到全部所选区域；名称显示在各自模型几何中心</p>' : ''}
+                    ${batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量设置建筑名称将应用到全部所选区域；附近同名建筑会合并显示在合并后的几何中心</p>' : ''}
                 </div>
             </div>
         `;
@@ -9517,57 +9517,73 @@
         return group;
     }
 
-    function getBuildingNameStructSig(feature, policy, viewHeight, selectionActive) {
-        const center = computeVolumeGeometricCenter(feature);
-        const name = getBuildingDisplayName(feature);
-        const c = center
-            ? `${center.x.toFixed(2)},${center.y.toFixed(2)},${center.z.toFixed(2)}`
-            : 'none';
-        const dimmed = selectionActive && !isFeatureSelected(feature.id) ? 1 : 0;
-        return `${name}|${c}|${policy.bucket}|${Math.round(viewHeight)}|${dimmed}`;
+    function getMergedBuildingNamesStructSig(anchors, policy, viewHeight, selectionActive) {
+        const anchorSig = anchors
+            .map((anchor) => {
+                const w = anchor.world;
+                return `${anchor.name}|${w.x.toFixed(2)},${w.y.toFixed(2)},${w.z.toFixed(2)}|${anchor.mergeCount || 1}|${anchor.dimmed ? 1 : 0}`;
+            })
+            .join(';');
+        return `${anchorSig}|${policy.bucket}|${Math.round(viewHeight)}|${selectionActive ? 1 : 0}`;
     }
 
-    function syncBuildingNameGroupPosition(group, feature, policy, view, camera, selectionActive) {
-        const name = getBuildingDisplayName(feature);
-        const center = computeVolumeGeometricCenter(feature);
-        const dimmed = selectionActive && !isFeatureSelected(feature.id);
-        group.classList.toggle('is-dimmed', dimmed);
-        let text = group.querySelector('.mcwws-gis-building-name');
-        if (!name || !center) {
-            if (text) {
-                text.style.display = 'none';
+    function rebuildBuildingNameGroupStructure(group, anchors) {
+        clearSvgGroupChildren(group);
+        anchors.forEach((anchor, index) => {
+            if (!anchor?.world || !anchor.name) {
+                return;
             }
-            return;
-        }
-        const screen = projectGisPoint(center, view, camera, false);
-        if (!isRoadNameOnScreen(screen)) {
-            if (text) {
-                text.style.display = 'none';
-            }
-            return;
-        }
-        const fontSize = fitRoadNameFontSize(name, policy.fontSize, 0, { primary: true });
-        if (!fontSize) {
-            if (text) {
-                text.style.display = 'none';
-            }
-            return;
-        }
-        if (!text) {
-            text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
+            const text = document.createElementNS('http://www.w3.org/2000/svg', 'text');
             text.classList.add('mcwws-gis-building-name');
+            text.setAttribute('data-anchor-index', String(index));
+            text.setAttribute('data-ax', anchor.world.x.toFixed(3));
+            text.setAttribute('data-ay', anchor.world.y.toFixed(3));
+            text.setAttribute('data-az', anchor.world.z.toFixed(3));
             text.setAttribute('text-anchor', 'middle');
             text.setAttribute('dominant-baseline', 'middle');
+            text.textContent = anchor.name;
+            text.style.display = 'none';
             group.appendChild(text);
+        });
+    }
+
+    function syncBuildingNameMergedGroupPositions(group, anchors, policy, view, camera) {
+        const texts = group.querySelectorAll('.mcwws-gis-building-name');
+        anchors.forEach((anchor, index) => {
+            const text = texts[index];
+            const labelName = anchor?.name || '';
+            const dimmed = !!anchor?.dimmed;
+            if (!text || !anchor?.world || !labelName) {
+                if (text) {
+                    text.style.display = 'none';
+                }
+                return;
+            }
+            const screen = projectGisPoint(anchor.world, view, camera, false);
+            if (!isRoadNameOnScreen(screen)) {
+                text.style.display = 'none';
+                text.classList.remove('is-dimmed');
+                return;
+            }
+            const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, 0, { primary: true });
+            if (!fontSize) {
+                text.style.display = 'none';
+                text.classList.remove('is-dimmed');
+                return;
+            }
+            const x = screen.x.toFixed(1);
+            const y = screen.y.toFixed(1);
+            text.style.display = '';
+            text.textContent = labelName;
+            text.classList.toggle('is-dimmed', dimmed);
+            text.setAttribute('x', x);
+            text.setAttribute('y', y);
+            text.setAttribute('font-size', String(fontSize));
+            text.removeAttribute('transform');
+        });
+        for (let i = anchors.length; i < texts.length; i += 1) {
+            texts[i].style.display = 'none';
         }
-        const x = screen.x.toFixed(1);
-        const y = screen.y.toFixed(1);
-        text.style.display = '';
-        text.textContent = name;
-        text.setAttribute('x', x);
-        text.setAttribute('y', y);
-        text.setAttribute('font-size', String(fontSize));
-        text.removeAttribute('transform');
     }
 
     function renderBuildingNameLabelsLayer() {
@@ -9590,20 +9606,34 @@
             return;
         }
 
+        const flatCandidates = [];
         iterVisibleFeatures().forEach(({ feature }) => {
             if (!shouldShowBuildingNameOnFeature(feature)) {
                 return;
             }
-            const key = feature.id;
-            neededKeys.add(key);
-            const group = ensureSvgBuildingNameGroup(svg, key, feature.id);
-            const structSig = getBuildingNameStructSig(feature, policy, viewHeight, selectionActive);
-            if (group.dataset.nameStructSig !== structSig) {
-                group.dataset.nameStructSig = structSig;
-                clearSvgGroupChildren(group);
+            const name = getBuildingDisplayName(feature);
+            const center = computeVolumeGeometricCenter(feature);
+            if (!name || !center) {
+                return;
             }
-            syncBuildingNameGroupPosition(group, feature, policy, view, camera, selectionActive);
+            const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            flatCandidates.push({
+                feature,
+                anchor: { world: center, name, angleRad: 0 },
+                dimmed
+            });
         });
+
+        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const key = '__merged_building_names__';
+        neededKeys.add(key);
+        const group = ensureSvgBuildingNameGroup(svg, key, '__merged__');
+        const structSig = getMergedBuildingNamesStructSig(mergedAnchors, policy, viewHeight, selectionActive);
+        if (group.dataset.nameStructSig !== structSig) {
+            group.dataset.nameStructSig = structSig;
+            rebuildBuildingNameGroupStructure(group, mergedAnchors);
+        }
+        syncBuildingNameMergedGroupPositions(group, mergedAnchors, policy, view, camera);
 
         svgBuildingNameGroups.forEach((group, key) => {
             if (!neededKeys.has(key)) {
@@ -10271,7 +10301,7 @@
                     <input type="checkbox" data-gis-show-building-names ${gisShowBuildingNames ? 'checked' : ''}>
                     <span>在模型几何中心显示建筑名称</span>
                 </label>
-                <p class="mcwws-gis-road-props-hint">缩放过远时路名与建筑名会自动隐藏；选中三维区域后可在下方填写建筑名称</p>
+                <p class="mcwws-gis-road-props-hint">缩放过远时路名与建筑名会自动隐藏；附近同名建筑会合并显示在几何中心；选中三维区域后可在下方填写建筑名称</p>
                 <label class="mcwws-gis-edit-option">
                     <input type="checkbox" data-gis-ignore-height-clip ${gisIgnoreHeightClip ? 'checked' : ''}
                         ${!gisCanEdit ? 'disabled' : ''}>
@@ -10634,7 +10664,7 @@
             <label class="mcwws-layer-gis-toggle mcwws-layer-gis-toggle--sub">
                 <input type="checkbox" data-gis-show-building-names ${gisShowBuildingNames ? 'checked' : ''}
                     ${!gisInfoEnabled ? 'disabled' : ''}>
-                <span>在模型几何中心显示建筑名称（超远缩放自动隐藏）</span>
+                <span>在模型几何中心显示建筑名称（附近同名合并，超远缩放自动隐藏）</span>
             </label>
             <button type="button" class="mcwws-layer-edit-entry${!gisInfoEnabled ? ' is-disabled' : ''}"
                 data-action="toggle-gis-editor"
