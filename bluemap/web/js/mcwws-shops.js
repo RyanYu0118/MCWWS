@@ -4008,7 +4008,7 @@
         if (locateBtn) {
             locateBtn.classList.toggle('is-active', playerFollowActive);
             if (!mapAuthUser) {
-                locateBtn.title = '请先在顶栏登录后再定位玩家';
+                locateBtn.title = '请先在左下角登录后再定位玩家';
             } else if (playerFollowActive) {
                 const offline = playerFollowTarget && !playerFollowTarget.online;
                 const modeLabel = offline

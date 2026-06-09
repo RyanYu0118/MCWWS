@@ -95,6 +95,7 @@
                             <div class="mcwws-auth-popover-progress-fill"></div>
                         </div>
                     </div>
+                    ${isMap ? '<a href="home.html" class="mcwws-auth-popover-services-link">🏠 更多服务</a>' : ''}
                     <button type="button" id="${actionId}" class="mcwws-auth-popover-action">登录 / 注册</button>
                 </div>
             </div>
@@ -682,6 +683,16 @@
         bindHoverOpen(popover);
 
         btn?.addEventListener('click', () => {
+            if (widget.id === 'mapAuthWidget') {
+                const open = widget.classList.toggle('is-popover-open');
+                widget.classList.toggle('is-popover-hover', open);
+                btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+                refs.popover?.setAttribute('aria-hidden', open ? 'false' : 'true');
+                if (open && currentUser) {
+                    void refreshEconomyForPopover(refs);
+                }
+                return;
+            }
             if (currentUser) {
                 if (!canHover()) {
                     widget.classList.toggle('is-popover-open');

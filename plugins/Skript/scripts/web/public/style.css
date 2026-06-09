@@ -3350,9 +3350,13 @@ body {
     filter: brightness(1.08);
 }
 
-.services-shop-page .services-hub-main,
-.services-map-page .services-map-frame-wrap {
+.services-shop-page .services-hub-main {
     margin-top: 52px;
+}
+
+.services-map-page .services-map-frame-wrap {
+    margin-top: 0;
+    min-height: 100vh;
 }
 
 .services-map-frame-wrap {
@@ -3381,13 +3385,77 @@ body {
     z-index: 2;
 }
 
-body.services-map-clean .services-subnav {
+body.services-map-clean .services-map-frame-wrap {
+    min-height: 100vh;
+}
+
+body.services-map-clean .services-map-auth-float {
     display: none;
 }
 
-body.services-map-clean .services-map-frame-wrap {
-    margin-top: 0;
-    min-height: 100vh;
+.services-map-auth-float {
+    position: absolute;
+    left: 16px;
+    bottom: calc(24px + env(safe-area-inset-bottom, 0px));
+    z-index: 20;
+    pointer-events: none;
+}
+
+.services-map-auth-float .mcwws-auth-widget {
+    pointer-events: auto;
+}
+
+.services-map-auth-float .mcwws-auth-avatar-btn {
+    width: 48px;
+    height: 48px;
+    border-radius: 12px;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
+}
+
+.services-map-auth-float .mcwws-auth-popover {
+    top: auto;
+    bottom: 100%;
+    right: auto;
+    left: 0;
+    padding: 0 0 10px;
+    transform: translateY(6px);
+}
+
+.services-map-auth-float .mcwws-auth-widget:hover .mcwws-auth-popover,
+.services-map-auth-float .mcwws-auth-widget.is-popover-hover .mcwws-auth-popover,
+.services-map-auth-float .mcwws-auth-widget:focus-within .mcwws-auth-popover,
+.services-map-auth-float .mcwws-auth-widget.is-popover-open .mcwws-auth-popover {
+    transform: translateY(0);
+}
+
+.services-map-auth-float .mcwws-auth-popover-body::before {
+    top: auto;
+    bottom: -5px;
+    left: 16px;
+    right: auto;
+    border-left: none;
+    border-top: none;
+    border-right: 1px solid rgba(255, 255, 255, 0.1);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.mcwws-auth-popover-services-link {
+    display: flex;
+    align-items: center;
+    gap: 0.35rem;
+    margin-top: 10px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(99, 102, 241, 0.14);
+    color: var(--text-primary, #f8fafc);
+    font-size: 0.85rem;
+    text-decoration: none;
+    transition: background 0.15s;
+}
+
+.mcwws-auth-popover-services-link:hover {
+    background: rgba(99, 102, 241, 0.28);
 }
 
 .services-map-footer {
