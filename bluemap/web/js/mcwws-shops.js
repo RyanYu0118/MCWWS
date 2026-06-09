@@ -2708,35 +2708,15 @@
         return PLAYER_FOLLOW_OFFLINE_LOCATE_MSG_LOGOUT;
     }
 
-    function ensurePlayerOfflineLocateBanner() {
-        let el = document.getElementById('mcwws-player-offline-locate-banner');
-        if (!el) {
-            el = document.createElement('div');
-            el.id = 'mcwws-player-offline-locate-banner';
-            el.className = 'mcwws-player-offline-locate-banner';
-            el.setAttribute('role', 'status');
-            el.setAttribute('aria-live', 'polite');
-            document.body.appendChild(el);
-        }
-        return el;
-    }
-
     function updatePlayerOfflineLocateBanner() {
-        const el = ensurePlayerOfflineLocateBanner();
-        const show = !!(
-            playerFollowActive
-            && playerFollowTarget
-            && !playerFollowTarget.online
-        );
-        if (!show) {
-            el.classList.remove('is-visible');
-            el.textContent = '';
+        const el = document.getElementById('mcwws-player-offline-locate-banner');
+        if (!el) {
             document.body.classList.remove('mcwws-offline-locate-active');
             return;
         }
-        el.textContent = getPlayerOfflineLocateBannerText(playerFollowTarget);
-        el.classList.add('is-visible');
-        document.body.classList.add('mcwws-offline-locate-active');
+        el.classList.remove('is-visible');
+        el.textContent = '';
+        document.body.classList.remove('mcwws-offline-locate-active');
     }
 
     function getBlueMapRootElement() {

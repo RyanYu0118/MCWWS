@@ -954,7 +954,7 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     transform: translate(-50%, 0);
 }
 
-/* 离线玩家定位：底部常驻说明（跟踪开启期间保持显示） */
+/* 离线玩家定位说明（已弃用常驻条，保留样式供兼容） */
 .mcwws-player-offline-locate-banner {
     position: fixed;
     left: 50%;
