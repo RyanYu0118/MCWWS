@@ -1,7 +1,8 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-105';
+    const MCWWS_GIS_BUILD = '20260602-107';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
+    const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
     const MOBILE_SHEET_BACKDROP_ID = 'mcwws-mobile-sheet-backdrop';
     /** BlueMap 地形渲染使用 10000 方块分块原点，避免大坐标 float32 精度丢失 */
     const GIS_VOLUME_CHUNK_SIZE = 10000;
@@ -9951,7 +9952,7 @@
                     document.body.appendChild(wrap);
                 }
             }
-            let dialog = wrap.querySelector('.mcwws-layer-dialog');
+            let dialog = getLayerDialogElement(wrap);
             const legacyMenu = wrap.querySelector('.mcwws-gis-menu');
             if (!dialog && legacyMenu) {
                 legacyMenu.classList.replace('mcwws-gis-menu', 'mcwws-layer-dialog');
@@ -9966,6 +9967,7 @@
             } else if (!dialog.id) {
                 dialog.id = GIS_LAYER_DIALOG_ID;
             }
+            pruneDuplicateLayerDialogs(dialog);
             const textEl = wrap.querySelector('.mcwws-ctrl-gis-text');
             if (textEl) {
                 const icon = textEl.querySelector('.mcwws-ctrl-gis-icon');
@@ -10141,6 +10143,11 @@
             return false;
         }
         const target = event.target;
+        if (target?.closest?.(`#${GIS_LAYER_DIALOG_ID}, .mcwws-layer-dialog, #${MAP_LAYER_MENU_ID}, .mcwws-layer-menu`)) {
+            if (!target?.closest?.('[data-action="close-layer-dialog"], [data-action="close-layer-menu"]')) {
+                return false;
+            }
+        }
         if (target?.closest?.('[data-action="close-layer-dialog"]')) {
             if (!guardMobileSheetDismiss()) {
                 return true;
@@ -10192,6 +10199,17 @@
         return document.getElementById(GIS_LAYER_DIALOG_ID)
             || wrap?.querySelector('.mcwws-layer-dialog')
             || null;
+    }
+
+    function pruneDuplicateLayerDialogs(keepDialog) {
+        const keep = keepDialog || getLayerDialogElement(document.getElementById(GIS_WRAP_ID));
+        document.querySelectorAll(`#${GIS_LAYER_DIALOG_ID}, .mcwws-layer-dialog`).forEach((el) => {
+            if (keep && el === keep) {
+                return;
+            }
+            el.remove();
+        });
+        return keep;
     }
 
     function mountMobileSheetPanel(panel, homeParent) {
@@ -10275,7 +10293,7 @@
 
     function renderLayerDialog() {
         const wrap = ensureGisControls();
-        const dialog = getLayerDialogElement(wrap);
+        const dialog = pruneDuplicateLayerDialogs(getLayerDialogElement(wrap));
         if (!dialog) {
             return;
         }
@@ -10285,6 +10303,17 @@
         dialog.classList.toggle('is-sheet-open', layerDialogOpen);
         dialog.hidden = !layerDialogOpen;
         dialog.setAttribute('aria-hidden', layerDialogOpen ? 'false' : 'true');
+        if (layerDialogOpen && isMobileSheetViewport() && !dialog.dataset.sheetAnimated) {
+            dialog.dataset.sheetAnimated = '1';
+            dialog.classList.add('is-sheet-entering');
+            dialog.addEventListener('animationend', () => {
+                dialog.classList.remove('is-sheet-entering');
+            }, { once: true });
+        }
+        if (!layerDialogOpen) {
+            dialog.classList.remove('is-sheet-entering');
+            delete dialog.dataset.sheetAnimated;
+        }
         document.body.classList.toggle('mcwws-gis-layer-dialog-open', layerDialogOpen);
         syncMobileSheetBodyLock();
 

@@ -763,7 +763,6 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
 @media (max-width: 640px) {
     body.mcwws-mobile-sheet-open {
         overflow: hidden;
-        touch-action: none;
     }
 
     body.mcwws-mobile-sheet-open #map-container,
@@ -790,11 +789,22 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         border-radius: 16px 16px 0 0;
         padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
         transform: none;
-        z-index: 10110 !important;
+        z-index: 10130 !important;
         pointer-events: auto !important;
+        overflow-x: hidden !important;
+        overflow-y: auto !important;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
         touch-action: pan-y;
+        animation: none;
+        background: #fff;
+        box-shadow: 0 -8px 32px rgba(15, 23, 42, 0.18);
+    }
+
+    #mcwws-gis-layer-dialog.is-sheet-entering,
+    #mcwws-map-layer-menu.is-sheet-entering,
+    .mcwws-layer-dialog.is-sheet-entering,
+    .mcwws-layer-menu.is-sheet-entering {
         animation: mcwws-sheet-rise 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
@@ -824,16 +834,19 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         pointer-events: none !important;
     }
 
-    body.mcwws-mobile-sheet-open .mcwws-map-controls {
-        z-index: 10120 !important;
-        pointer-events: none;
+    body.mcwws-mobile-sheet-open .mcwws-map-controls,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack * {
+        z-index: 10105 !important;
+        pointer-events: none !important;
     }
 
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-gis-wrap,
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-gis,
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-layer-wrap,
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-layer {
-        pointer-events: auto;
+    body.mcwws-mobile-sheet-open #mcwws-gis-layer-dialog,
+    body.mcwws-mobile-sheet-open #mcwws-map-layer-menu,
+    body.mcwws-mobile-sheet-open .mcwws-layer-dialog,
+    body.mcwws-mobile-sheet-open .mcwws-layer-menu {
+        z-index: 10130 !important;
+        pointer-events: auto !important;
     }
 
     .mcwws-layer-dialog::before,
