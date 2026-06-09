@@ -1909,7 +1909,7 @@
         }
         function step(now) {
             const t = Math.min(1, (now - startTime) / duration);
-            cm.rotation = start + (target - start) * (1 - easeOutQuad(t));
+            cm.rotation = start + (target - start) * easeOutQuad(t);
             if (t < 1) {
                 requestAnimationFrame(step);
             } else {
@@ -1969,12 +1969,14 @@
         const state = getMapViewState();
 
         if (state === 'flat') {
-            if (orthoOn) {
-                cm.ortho = FLAT_ORTHO_ON;
-            }
-            animateControlsRotation(cm, 0, () => {
-                applyNorthFlatView(cm, savedDistance, savedAngle);
+            const targetView = buildFlatViewFromCurrentControls({
+                map: getCurrentMapId(),
+                distance: savedDistance,
+                height: savedDistance,
+                rotation: 0,
+                angle: orthoOn ? 0 : savedAngle
             });
+            void animateControlsToView(targetView, 300);
             return;
         }
 
