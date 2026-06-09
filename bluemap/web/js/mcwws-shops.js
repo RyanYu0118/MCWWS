@@ -3862,6 +3862,14 @@
         }
     }
 
+    function closeLayerMenu() {
+        if (!layerMenuOpen) {
+            return;
+        }
+        layerMenuOpen = false;
+        renderLayerMenu();
+    }
+
     function syncMobileSheetBodyLock() {
         const mobileOpen = isMobileSheetViewport()
             && (layerMenuOpen || document.body.classList.contains('mcwws-gis-layer-dialog-open'));
@@ -3870,6 +3878,8 @@
         const backdrop = document.getElementById('mcwws-mobile-sheet-backdrop');
         if (backdrop) {
             backdrop.hidden = !mobileOpen;
+            backdrop.classList.toggle('is-visible', mobileOpen);
+            backdrop.setAttribute('aria-hidden', mobileOpen ? 'false' : 'true');
         }
     }
 
@@ -3881,9 +3891,14 @@
         if (!menu.id) {
             menu.id = MAP_LAYER_MENU_ID;
         }
-        mountMobileSheetPanel(menu, layerWrap);
+        menu.classList.toggle('is-sheet-open', layerMenuOpen);
         menu.hidden = !layerMenuOpen;
+        menu.setAttribute('aria-hidden', layerMenuOpen ? 'false' : 'true');
         syncMobileSheetBodyLock();
+        if (!layerMenuOpen) {
+            return;
+        }
+        mountMobileSheetPanel(menu, layerWrap);
         const maps = getAvailableMaps();
         const current = parseHash()?.map || maps[0]?.id;
         menu.innerHTML = `
@@ -4119,45 +4134,51 @@
         });
         bindFreeFlightControl(root);
         root.querySelector('.mcwws-ctrl-fullscreen')?.addEventListener('click', toggleCleanMode);
-        root.querySelector('.mcwws-ctrl-layer')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            layerMenuOpen = !layerMenuOpen;
-            if (layerMenuOpen) {
-                window.dispatchEvent(new CustomEvent('mcwws-close-gis-layer-dialog'));
+        let layerBtnLock = 0;
+        const onLayerButtonActivate = (event) => {
+            if (event.type === 'pointerup' && event.pointerType === 'mouse' && event.button !== 0) {
+                return;
             }
+            event.preventDefault();
+            event.stopPropagation();
+            const now = Date.now();
+            if (now - layerBtnLock < 450) {
+                return;
+            }
+            layerBtnLock = now;
+            if (layerMenuOpen) {
+                closeLayerMenu();
+                return;
+            }
+            layerMenuOpen = true;
+            window.dispatchEvent(new CustomEvent('mcwws-close-gis-layer-dialog'));
             renderLayerMenu();
+        };
+        const layerBtn = root.querySelector('.mcwws-ctrl-layer');
+        layerBtn?.addEventListener('pointerup', onLayerButtonActivate);
+        layerBtn?.addEventListener('click', (event) => {
+            if (!isMobileSheetViewport()) {
+                onLayerButtonActivate(event);
+            }
         });
 
         document.addEventListener('click', (e) => {
-            const closeBtn = e.target.closest('[data-action="close-layer-menu"]');
-            if (closeBtn) {
-                e.stopPropagation();
-                layerMenuOpen = false;
-                renderLayerMenu();
-                return;
-            }
             const item = e.target.closest(`#${MAP_LAYER_MENU_ID} .mcwws-layer-item, .mcwws-layer-menu .mcwws-layer-item`);
             if (!item) return;
             e.stopPropagation();
             switchMapLayer(item.dataset.mapId);
-            layerMenuOpen = false;
-            renderLayerMenu();
+            closeLayerMenu();
             updateMapControlsState();
         });
 
         document.addEventListener('click', (e) => {
             if (!layerMenuOpen || isMobileSheetViewport()) return;
             if (e.target.closest('.mcwws-ctrl-layer') || e.target.closest('.mcwws-layer-menu')) return;
-            layerMenuOpen = false;
-            renderLayerMenu();
+            closeLayerMenu();
         });
 
         window.addEventListener('mcwws-close-layer-menu', () => {
-            if (!layerMenuOpen) {
-                return;
-            }
-            layerMenuOpen = false;
-            renderLayerMenu();
+            closeLayerMenu();
         });
 
         if (typeof window.matchMedia === 'function') {

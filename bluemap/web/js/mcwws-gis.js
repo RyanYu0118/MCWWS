@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260602-103';
+    const MCWWS_GIS_BUILD = '20260602-105';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MOBILE_SHEET_BACKDROP_ID = 'mcwws-mobile-sheet-backdrop';
@@ -10112,12 +10112,67 @@
             && window.matchMedia(GIS_MOBILE_SHEET_MQ).matches;
     }
 
-    function dismissOpenMobileSheets() {
-        if (layerDialogOpen) {
-            layerDialogOpen = false;
-            renderLayerDialog();
+    let mobileSheetDismissGuard = 0;
+
+    function closeLayerDialog() {
+        if (!layerDialogOpen) {
+            return;
         }
+        layerDialogOpen = false;
+        renderLayerDialog();
+    }
+
+    function dismissOpenMobileSheets() {
+        closeLayerDialog();
         window.dispatchEvent(new CustomEvent('mcwws-close-layer-menu'));
+    }
+
+    function guardMobileSheetDismiss() {
+        const now = Date.now();
+        if (now - mobileSheetDismissGuard < 280) {
+            return false;
+        }
+        mobileSheetDismissGuard = now;
+        return true;
+    }
+
+    function onMobileSheetDismissTarget(event) {
+        if (!isMobileSheetViewport()) {
+            return false;
+        }
+        const target = event.target;
+        if (target?.closest?.('[data-action="close-layer-dialog"]')) {
+            if (!guardMobileSheetDismiss()) {
+                return true;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation?.();
+            closeLayerDialog();
+            return true;
+        }
+        if (target?.closest?.('[data-action="close-layer-menu"]')) {
+            if (!guardMobileSheetDismiss()) {
+                return true;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation?.();
+            window.dispatchEvent(new CustomEvent('mcwws-close-layer-menu'));
+            return true;
+        }
+        if (target?.id === MOBILE_SHEET_BACKDROP_ID
+            || target?.closest?.(`#${MOBILE_SHEET_BACKDROP_ID}`)) {
+            if (!guardMobileSheetDismiss()) {
+                return true;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation?.();
+            dismissOpenMobileSheets();
+            return true;
+        }
+        return false;
     }
 
     function ensureMobileSheetBackdrop() {
@@ -10128,14 +10183,6 @@
             backdrop.className = 'mcwws-mobile-sheet-backdrop';
             backdrop.hidden = true;
             backdrop.setAttribute('aria-hidden', 'true');
-            backdrop.addEventListener('pointerup', (event) => {
-                if (event.pointerType === 'mouse' && event.button !== 0) {
-                    return;
-                }
-                event.preventDefault();
-                event.stopPropagation();
-                dismissOpenMobileSheets();
-            });
             document.body.appendChild(backdrop);
         }
         return backdrop;
@@ -10174,16 +10221,19 @@
         const backdrop = document.getElementById(MOBILE_SHEET_BACKDROP_ID);
         if (backdrop) {
             backdrop.hidden = !mobileOpen;
+            backdrop.classList.toggle('is-visible', mobileOpen);
+            backdrop.setAttribute('aria-hidden', mobileOpen ? 'false' : 'true');
         }
     }
 
     function bindMobileSheetDismiss() {
+        const onMobileDismissEvent = (event) => {
+            onMobileSheetDismissTarget(event);
+        };
+        document.addEventListener('touchend', onMobileDismissEvent, true);
+        document.addEventListener('pointerup', onMobileDismissEvent, true);
         window.addEventListener('mcwws-close-gis-layer-dialog', () => {
-            if (!layerDialogOpen) {
-                return;
-            }
-            layerDialogOpen = false;
-            renderLayerDialog();
+            closeLayerDialog();
         });
         document.addEventListener('click', (event) => {
             if (isMobileSheetViewport() || !layerDialogOpen) {
@@ -10192,8 +10242,7 @@
             if (event.target.closest('.mcwws-layer-dialog, .mcwws-ctrl-gis-wrap')) {
                 return;
             }
-            layerDialogOpen = false;
-            renderLayerDialog();
+            closeLayerDialog();
         });
         document.addEventListener('keydown', (event) => {
             if (event.key !== 'Escape') {
@@ -10233,10 +10282,18 @@
         if (!dialog.id) {
             dialog.id = GIS_LAYER_DIALOG_ID;
         }
-        mountMobileSheetPanel(dialog, wrap);
+        dialog.classList.toggle('is-sheet-open', layerDialogOpen);
         dialog.hidden = !layerDialogOpen;
+        dialog.setAttribute('aria-hidden', layerDialogOpen ? 'false' : 'true');
         document.body.classList.toggle('mcwws-gis-layer-dialog-open', layerDialogOpen);
         syncMobileSheetBodyLock();
+
+        if (!layerDialogOpen) {
+            updateGisButtonState();
+            return;
+        }
+
+        mountMobileSheetPanel(dialog, wrap);
 
         const scrollTop = dialog.scrollTop;
         const activeEl = document.activeElement;
@@ -10327,17 +10384,38 @@
         }
         gisControlsBound = true;
 
-        wrap.querySelector('.mcwws-ctrl-gis')?.addEventListener('click', (e) => {
-            e.stopPropagation();
-            layerDialogOpen = !layerDialogOpen;
+        let gisLayerBtnLock = 0;
+        const onGisLayerButtonActivate = (event) => {
+            if (event.type === 'pointerup' && event.pointerType === 'mouse' && event.button !== 0) {
+                return;
+            }
+            event.preventDefault();
+            event.stopPropagation();
+            const now = Date.now();
+            if (now - gisLayerBtnLock < 450) {
+                return;
+            }
+            gisLayerBtnLock = now;
             if (layerDialogOpen) {
-                window.dispatchEvent(new CustomEvent('mcwws-close-layer-menu'));
-                const layerMenu = document.querySelector('.mcwws-layer-menu');
-                if (layerMenu) {
-                    layerMenu.hidden = true;
-                }
+                closeLayerDialog();
+                return;
+            }
+            layerDialogOpen = true;
+            window.dispatchEvent(new CustomEvent('mcwws-close-layer-menu'));
+            const layerMenu = document.getElementById('mcwws-map-layer-menu')
+                || document.querySelector('.mcwws-layer-menu');
+            if (layerMenu) {
+                layerMenu.hidden = true;
+                layerMenu.classList.remove('is-sheet-open');
             }
             renderLayerDialog();
+        };
+        const gisLayerBtn = wrap.querySelector('.mcwws-ctrl-gis');
+        gisLayerBtn?.addEventListener('pointerup', onGisLayerButtonActivate);
+        gisLayerBtn?.addEventListener('click', (event) => {
+            if (!isMobileSheetViewport()) {
+                onGisLayerButtonActivate(event);
+            }
         });
 
         document.addEventListener('change', (e) => {
@@ -10514,8 +10592,7 @@
             }
             const action = actionBtn.getAttribute('data-action');
             if (action === 'close-layer-dialog') {
-                layerDialogOpen = false;
-                renderLayerDialog();
+                closeLayerDialog();
                 return;
             }
             if (action === 'toggle-gis-editor') {

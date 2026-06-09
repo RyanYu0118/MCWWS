@@ -138,8 +138,8 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
 
 .mcwws-layer-sheet-close {
     flex-shrink: 0;
-    width: 36px;
-    height: 36px;
+    width: 44px;
+    height: 44px;
     border: 0;
     border-radius: 999px;
     background: #f3f4f6;
@@ -148,6 +148,9 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     line-height: 1;
     cursor: pointer;
     touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+    position: relative;
+    z-index: 1;
 }
 
 .mcwws-layer-sheet-close:hover {
@@ -745,19 +748,29 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
 .mcwws-mobile-sheet-backdrop {
     position: fixed;
     inset: 0;
-    z-index: 10060;
+    z-index: 10100;
     background: rgba(15, 23, 42, 0.45);
     pointer-events: auto;
     touch-action: none;
+    -webkit-tap-highlight-color: transparent;
 }
 
 .mcwws-mobile-sheet-backdrop[hidden] {
     display: none !important;
+    pointer-events: none !important;
 }
 
 @media (max-width: 640px) {
     body.mcwws-mobile-sheet-open {
         overflow: hidden;
+        touch-action: none;
+    }
+
+    body.mcwws-mobile-sheet-open #map-container,
+    body.mcwws-mobile-sheet-open #map-container canvas,
+    body.mcwws-mobile-sheet-open.mcwws-map-simplified-mode #map-container,
+    body.mcwws-mobile-sheet-open.mcwws-map-simplified-mode #map-container canvas {
+        pointer-events: none !important;
     }
 
     #mcwws-gis-layer-dialog,
@@ -777,7 +790,7 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         border-radius: 16px 16px 0 0;
         padding: 10px 14px calc(14px + env(safe-area-inset-bottom, 0px));
         transform: none;
-        z-index: 10070 !important;
+        z-index: 10110 !important;
         pointer-events: auto !important;
         -webkit-overflow-scrolling: touch;
         overscroll-behavior: contain;
@@ -790,29 +803,36 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
         max-height: min(72dvh, calc(100dvh - 16px)) !important;
     }
 
+    #mcwws-gis-layer-dialog.is-sheet-open,
+    #mcwws-map-layer-menu.is-sheet-open,
+    .mcwws-layer-dialog.is-sheet-open,
+    .mcwws-layer-menu.is-sheet-open,
     #mcwws-gis-layer-dialog:not([hidden]),
     #mcwws-map-layer-menu:not([hidden]),
     .mcwws-layer-dialog:not([hidden]),
     .mcwws-layer-menu:not([hidden]) {
         display: block !important;
+        visibility: visible !important;
     }
 
-    #mcwws-gis-layer-dialog[hidden],
-    #mcwws-map-layer-menu[hidden],
-    .mcwws-layer-dialog[hidden],
-    .mcwws-layer-menu[hidden] {
+    #mcwws-gis-layer-dialog:not(.is-sheet-open)[hidden],
+    #mcwws-map-layer-menu:not(.is-sheet-open)[hidden],
+    .mcwws-layer-dialog:not(.is-sheet-open)[hidden],
+    .mcwws-layer-menu:not(.is-sheet-open)[hidden] {
         display: none !important;
         visibility: hidden !important;
         pointer-events: none !important;
     }
 
     body.mcwws-mobile-sheet-open .mcwws-map-controls {
-        z-index: 10080 !important;
+        z-index: 10120 !important;
         pointer-events: none;
     }
 
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack,
-    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack * {
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-gis-wrap,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-gis,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-layer-wrap,
+    body.mcwws-mobile-sheet-open .mcwws-map-controls-stack .mcwws-ctrl-layer {
         pointer-events: auto;
     }
 
