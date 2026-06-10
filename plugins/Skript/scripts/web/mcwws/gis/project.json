@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "updatedAt": "2026-06-09T18:13:49.007Z",
+  "updatedAt": "2026-06-10T13:54:42.642Z",
   "layers": [
     {
       "id": "roads",
@@ -1822,7 +1822,7 @@
             }
           ],
           "properties": {
-            "name": "区域",
+            "name": "科技大厦",
             "description": "",
             "color": "#F5F6F8",
             "vertexIds": [
@@ -2057,6 +2057,84 @@
               "shape": "box",
               "minY": 64.5,
               "maxY": 105.5
+            }
+          }
+        },
+        {
+          "id": "bee1a92d975f4339",
+          "type": "Polygon",
+          "map": "world",
+          "layerId": "roads",
+          "coordinates": [
+            {
+              "x": -547.5,
+              "y": 65.5,
+              "z": 177.5
+            },
+            {
+              "x": -513.5,
+              "y": 65.5,
+              "z": 177.5
+            },
+            {
+              "x": -513.5,
+              "y": 65.5,
+              "z": 197.5
+            },
+            {
+              "x": -547.5,
+              "y": 65.5,
+              "z": 196.5
+            },
+            {
+              "x": -547.5,
+              "y": 69.5,
+              "z": 177.5
+            },
+            {
+              "x": -513.5,
+              "y": 69.5,
+              "z": 177.5
+            },
+            {
+              "x": -513.5,
+              "y": 69.5,
+              "z": 197.5
+            },
+            {
+              "x": -547.5,
+              "y": 69.5,
+              "z": 196.5
+            }
+          ],
+          "properties": {
+            "name": "麦当劳",
+            "description": "",
+            "color": "#F5F6F8",
+            "vertexIds": [
+              "bee1a92d975f4339-v-c65b345da32f",
+              "bee1a92d975f4339-v-3696388baecc",
+              "bee1a92d975f4339-v-e8fa84ecf359",
+              "bee1a92d975f4339-v-1296c8d2dbdd",
+              "bee1a92d975f4339-v-626c9c7c2df7",
+              "bee1a92d975f4339-v-8ec906c10a59",
+              "bee1a92d975f4339-v-0eacaaaf0a1e",
+              "bee1a92d975f4339-v-1c0a619ae0ea"
+            ],
+            "vertexVisibility": [
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {},
+              {}
+            ],
+            "volume3d": {
+              "shape": "box",
+              "minY": 65.5,
+              "maxY": 69.5
             }
           }
         }
