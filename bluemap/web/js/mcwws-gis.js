@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260610-113';
+    const MCWWS_GIS_BUILD = '20260610-115';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -70,6 +70,10 @@
     const GIS_ROAD_NAME_MAX_FONT_PX = 13;
     const GIS_ROAD_NAME_MIN_FONT_PX = 9;
     const GIS_ROAD_NAME_FONT_HEIGHT_MIN = 140;
+    /** 相机高度接近可视上下限时，元素淡入淡出的过渡带（方块） */
+    const GIS_HEIGHT_VISIBILITY_FADE_BAND = 48;
+    /** 同名路名/建筑名合并时的聚拢动画时长（毫秒） */
+    const GIS_LABEL_MERGE_ANIM_MS = 200;
     const GIS_ROAD_NAME_MAX_TEXT_VS_ROAD = 1.65;
     const VOLUME_SHAPES = Object.freeze({
         FLAT: 'flat',
@@ -130,6 +134,8 @@
     /** @type {Map<string, SVGGElement>} */
     const svgLaneNameGroups = new Map();
     const svgBuildingNameGroups = new Map();
+    /** @type {Map<string, { key: string, sourceSig: string, startTime: number, sourceScreens: Array<{ x: number, y: number, angleRad: number }>, targetScreen: { x: number, y: number }, targetAngleRad: number }>} */
+    const gisLabelMergeAnims = new Map();
     /** @type {SVGPathElement | null} */
     let svgDraftPathEl = null;
     let svgDraftFillPathEl = null;
@@ -1618,6 +1624,160 @@
         const lo = entry.min == null ? '−∞' : String(entry.min);
         const hi = entry.max == null ? '+∞' : String(entry.max);
         return `${lo} < h ≤ ${hi}`;
+    }
+
+    function smoothstep01(t) {
+        const x = Math.max(0, Math.min(1, t));
+        return x * x * (3 - 2 * x);
+    }
+
+    /** 可视范围 a < h ≤ b 内按接近上下限计算 0–1 不透明度（带平滑过渡带） */
+    function getVisibilityRangeOpacity(entry, viewHeight) {
+        if (!Number.isFinite(viewHeight)) {
+            return 1;
+        }
+        const { min, max } = sanitizeVertexVisibilityEntry(entry);
+        const lo = min == null ? -Infinity : min;
+        const hi = max == null ? Infinity : max;
+        if (!(lo < viewHeight && viewHeight <= hi)) {
+            return 0;
+        }
+        const band = GIS_HEIGHT_VISIBILITY_FADE_BAND;
+        if (!(band > 0)) {
+            return 1;
+        }
+        let opacity = 1;
+        if (Number.isFinite(lo)) {
+            opacity = Math.min(opacity, smoothstep01((viewHeight - lo) / band));
+        }
+        if (Number.isFinite(hi)) {
+            opacity = Math.min(opacity, smoothstep01((hi - viewHeight) / band));
+        }
+        return opacity;
+    }
+
+    function getVertexOpacityAtHeight(feature, vertexIndex, viewHeight) {
+        if (!isGisHeightVisibilityActive()) {
+            return 1;
+        }
+        const entry = getVertexVisibilityEntry(feature, vertexIndex);
+        if (!hasActiveVisibilityRange(entry)) {
+            return 1;
+        }
+        return getVisibilityRangeOpacity(entry, viewHeight);
+    }
+
+    function getSegmentOpacityAtHeight(feature, indexA, indexB, viewHeight) {
+        return Math.min(
+            getVertexOpacityAtHeight(feature, indexA, viewHeight),
+            getVertexOpacityAtHeight(feature, indexB, viewHeight)
+        );
+    }
+
+    function getLineFeatureHeightFadeOpacity(feature, points, viewHeight) {
+        if (!isGisHeightVisibilityActive() || !points?.length) {
+            return 1;
+        }
+        let minOpacity = 1;
+        let found = false;
+        const segCount = points.length - 1;
+        for (let i = 0; i < segCount; i += 1) {
+            if (!isSegmentVisibleAtHeight(feature, i, i + 1, viewHeight)) {
+                continue;
+            }
+            found = true;
+            const segOpacity = getSegmentOpacityAtHeight(feature, i, i + 1, viewHeight);
+            if (segOpacity < minOpacity) {
+                minOpacity = segOpacity;
+            }
+            if (minOpacity <= 0) {
+                return 0;
+            }
+        }
+        return found ? minOpacity : 0;
+    }
+
+    function getPolygonFeatureHeightFadeOpacity(feature, points, viewHeight) {
+        if (!isGisHeightVisibilityActive() || !points || points.length < 3) {
+            return 1;
+        }
+        let minOpacity = 1;
+        let found = false;
+        for (let i = 0; i < points.length; i += 1) {
+            const j = (i + 1) % points.length;
+            if (!isSegmentVisibleAtHeight(feature, i, j, viewHeight)) {
+                continue;
+            }
+            found = true;
+            const segOpacity = getSegmentOpacityAtHeight(feature, i, j, viewHeight);
+            if (segOpacity < minOpacity) {
+                minOpacity = segOpacity;
+            }
+            if (minOpacity <= 0) {
+                return 0;
+            }
+        }
+        return found ? minOpacity : 0;
+    }
+
+    function getBuildingNameOpacityAtHeight(feature, viewHeight) {
+        if (!isGisHeightVisibilityActive()) {
+            return 1;
+        }
+        const entry = getBuildingNameVisibilityEntry(feature);
+        if (!hasActiveVisibilityRange(entry)) {
+            return 1;
+        }
+        return getVisibilityRangeOpacity(entry, viewHeight);
+    }
+
+    function applySvgHeightFadeStyle(el, heightOpacity, { dimmed = false, polygon = false, volumeFill = false } = {}) {
+        if (!el) {
+            return;
+        }
+        const h = Math.max(0, Math.min(1, heightOpacity));
+        if (h >= 0.999) {
+            el.style.removeProperty('opacity');
+            el.style.removeProperty('fill-opacity');
+            return;
+        }
+        if (volumeFill) {
+            if (dimmed) {
+                el.style.opacity = String(0.55 * h);
+                el.style.fillOpacity = String(0.28 * h);
+            } else {
+                el.style.opacity = String(h);
+                el.style.fillOpacity = String(h);
+            }
+            return;
+        }
+        if (dimmed) {
+            el.style.opacity = String(0.2 * h);
+            if (polygon) {
+                el.style.fillOpacity = String(0.044 * h);
+            } else {
+                el.style.removeProperty('fill-opacity');
+            }
+            return;
+        }
+        el.style.opacity = String(0.9 * h);
+        if (polygon) {
+            el.style.fillOpacity = String(0.22 * h);
+        } else {
+            el.style.removeProperty('fill-opacity');
+        }
+    }
+
+    function applyLabelHeightFadeStyle(el, heightOpacity, dimmed) {
+        if (!el) {
+            return;
+        }
+        const h = Math.max(0, Math.min(1, heightOpacity));
+        if (h >= 0.999) {
+            el.style.removeProperty('opacity');
+            return;
+        }
+        el.style.opacity = String((dimmed ? 0.38 : 1) * h);
     }
 
     /** 编辑模式下是否按顶点可视范围裁切显示 */
@@ -6201,20 +6361,7 @@
     }
 
     function isBuildingNameVisibleAtHeight(feature, viewHeight) {
-        if (!isGisHeightVisibilityActive()) {
-            return true;
-        }
-        const entry = getBuildingNameVisibilityEntry(feature);
-        if (!hasActiveVisibilityRange(entry)) {
-            return true;
-        }
-        if (!Number.isFinite(viewHeight)) {
-            return true;
-        }
-        const { min, max } = entry;
-        const lo = min == null ? -Infinity : min;
-        const hi = max == null ? Infinity : max;
-        return lo < viewHeight && viewHeight <= hi;
+        return getBuildingNameOpacityAtHeight(feature, viewHeight) > 0;
     }
 
     function shouldShowBuildingNameOnFeature(feature, viewHeight) {
@@ -9533,6 +9680,11 @@
                 sinSum += Math.sin(anchor.angleRad);
             });
             const mergedDimmed = members.every((member) => member.dimmed);
+            const heightOpacity = Math.min(...members.map((member) => member.heightOpacity ?? 1));
+            const mergeSources = members.map((member) => ({
+                world: { ...member.anchor.world },
+                angleRad: member.anchor.angleRad ?? 0
+            }));
             return {
                 name: members[0].name,
                 world: {
@@ -9543,19 +9695,196 @@
                 angleRad: Math.atan2(sinSum / count, cosSum / count),
                 primary: true,
                 dimmed: mergedDimmed,
-                mergeCount: count
+                mergeCount: count,
+                heightOpacity,
+                mergeSources
             };
         });
     }
 
-    function getMergedRoadNamesStructSig(anchors, policy, viewHeight, selectionActive) {
-        const anchorSig = anchors
+    function getLabelMergeSourceSig(sources) {
+        return (sources || [])
+            .map((s) => `${s.world.x.toFixed(1)},${s.world.z.toFixed(1)}`)
+            .sort()
+            .join('+');
+    }
+
+    function getLabelMergeAnimKey(anchor) {
+        const sources = anchor?.mergeSources;
+        if (!sources || sources.length <= 1) {
+            return '';
+        }
+        return `${String(anchor.name || '').trim()}|${getLabelMergeSourceSig(sources)}`;
+    }
+
+    function updateLabelMergeAnim(anchor, view, camera) {
+        const key = getLabelMergeAnimKey(anchor);
+        if (!key) {
+            return null;
+        }
+        const targetScreen = projectGisPoint(anchor.world, view, camera, false);
+        if (!targetScreen || targetScreen.behind) {
+            return null;
+        }
+        const sourceSig = getLabelMergeSourceSig(anchor.mergeSources);
+        let anim = gisLabelMergeAnims.get(key);
+        if (!anim || anim.sourceSig !== sourceSig) {
+            const sourceScreens = anchor.mergeSources.map((src) => {
+                const screen = projectGisPoint(src.world, view, camera, false);
+                if (!screen || screen.behind) {
+                    return null;
+                }
+                return {
+                    x: screen.x,
+                    y: screen.y,
+                    angleRad: src.angleRad ?? 0
+                };
+            }).filter(Boolean);
+            if (sourceScreens.length <= 1) {
+                return null;
+            }
+            anim = {
+                key,
+                sourceSig,
+                startTime: performance.now(),
+                sourceScreens,
+                targetScreen: { x: targetScreen.x, y: targetScreen.y },
+                targetAngleRad: anchor.angleRad ?? 0
+            };
+            gisLabelMergeAnims.set(key, anim);
+        } else {
+            anim.targetScreen = { x: targetScreen.x, y: targetScreen.y };
+            anim.targetAngleRad = anchor.angleRad ?? 0;
+        }
+        const elapsed = performance.now() - anim.startTime;
+        const rawT = Math.min(1, elapsed / GIS_LABEL_MERGE_ANIM_MS);
+        const t = smoothstep01(rawT);
+        const done = rawT >= 1;
+        if (done) {
+            gisLabelMergeAnims.delete(key);
+        }
+        return { ...anim, t, done };
+    }
+
+    function pruneLabelMergeAnims(activeKeys) {
+        gisLabelMergeAnims.forEach((_, key) => {
+            if (!activeKeys.has(key)) {
+                gisLabelMergeAnims.delete(key);
+            }
+        });
+    }
+
+    function expandAnchorsForMergeDisplay(mergedAnchors, view, camera) {
+        const activeKeys = new Set();
+        const expanded = [];
+        mergedAnchors.forEach((anchor) => {
+            if ((anchor.mergeCount || 1) > 1 && anchor.mergeSources?.length > 1) {
+                const anim = updateLabelMergeAnim(anchor, view, camera);
+                const key = getLabelMergeAnimKey(anchor);
+                if (key) {
+                    activeKeys.add(key);
+                }
+                if (anim && !anim.done) {
+                    anchor.mergeSources.forEach((src, index) => {
+                        expanded.push({
+                            name: anchor.name,
+                            world: { ...src.world },
+                            angleRad: src.angleRad ?? 0,
+                            dimmed: anchor.dimmed,
+                            heightOpacity: anchor.heightOpacity,
+                            mergeCount: 1,
+                            mergeAnim: { anim, index }
+                        });
+                    });
+                    return;
+                }
+            }
+            expanded.push(anchor);
+        });
+        pruneLabelMergeAnims(activeKeys);
+        return expanded;
+    }
+
+    function getMergedNameLabelsStructSig(displayAnchors, policy, viewHeight, selectionActive) {
+        const anchorSig = displayAnchors
             .map((anchor) => {
-                const w = anchor.world;
-                return `${anchor.name}|${w.x.toFixed(2)},${w.y.toFixed(2)},${w.z.toFixed(2)}|${anchor.mergeCount || 1}|${anchor.dimmed ? 1 : 0}`;
+                if (anchor.mergeAnim) {
+                    return `${anchor.name}|ma|${anchor.mergeAnim.index}|${anchor.mergeAnim.anim.sourceSig}`;
+                }
+                const srcSig = getLabelMergeSourceSig(anchor.mergeSources)
+                    || `${anchor.world.x.toFixed(0)},${anchor.world.z.toFixed(0)}`;
+                return `${anchor.name}|${anchor.mergeCount || 1}|${srcSig}|${anchor.dimmed ? 1 : 0}`;
             })
             .join(';');
         return `${anchorSig}|${policy.bucket}|${Math.round(viewHeight)}|${selectionActive ? 1 : 0}`;
+    }
+
+    function getMergedRoadNamesStructSig(anchors, policy, viewHeight, selectionActive) {
+        return getMergedNameLabelsStructSig(anchors, policy, viewHeight, selectionActive);
+    }
+
+    function getMergedBuildingNamesStructSig(anchors, policy, viewHeight, selectionActive) {
+        return getMergedNameLabelsStructSig(anchors, policy, viewHeight, selectionActive);
+    }
+
+    function resolveNameLabelScreenLayout(anchor, view, camera, policy, options = {}) {
+        const { rotate = false, useRoadWidth = false } = options;
+        const labelName = anchor?.name || '';
+        if (!anchor?.world || !labelName) {
+            return null;
+        }
+        let screen;
+        let deg = 0;
+        let mergeFade = 1;
+        if (anchor.mergeAnim) {
+            const { anim, index } = anchor.mergeAnim;
+            const src = anim.sourceScreens[index];
+            if (!src) {
+                return null;
+            }
+            const x = src.x + (anim.targetScreen.x - src.x) * anim.t;
+            const y = src.y + (anim.targetScreen.y - src.y) * anim.t;
+            screen = { x, y, behind: false };
+            if (rotate) {
+                const startDeg = normalizeLabelRotationDeg(src.angleRad);
+                const endDeg = normalizeLabelRotationDeg(anim.targetAngleRad);
+                deg = startDeg + (endDeg - startDeg) * anim.t;
+            }
+            mergeFade = index === 0 ? 1 : (1 - anim.t);
+        } else {
+            screen = projectGisPoint(anchor.world, view, camera, false);
+            if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
+                return null;
+            }
+            if (rotate) {
+                deg = normalizeLabelRotationDeg(anchor.angleRad);
+            }
+        }
+        const roadWidthPx = useRoadWidth ? estimateRoadWidthScreenPx(anchor.world, view, camera) : 0;
+        const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, roadWidthPx, { primary: true });
+        if (!fontSize) {
+            return null;
+        }
+        return { screen, deg, fontSize, mergeFade, labelName };
+    }
+
+    function applyNameLabelTextLayout(text, layout, anchor, dimmed, rotate) {
+        const { screen, deg, fontSize, mergeFade, labelName } = layout;
+        const heightOpacity = (anchor?.heightOpacity ?? 1) * mergeFade;
+        const x = screen.x.toFixed(1);
+        const y = screen.y.toFixed(1);
+        text.style.display = '';
+        text.textContent = labelName;
+        text.classList.toggle('is-dimmed', dimmed);
+        text.setAttribute('x', x);
+        text.setAttribute('y', y);
+        text.setAttribute('font-size', String(fontSize));
+        if (rotate) {
+            text.setAttribute('transform', `rotate(${deg.toFixed(2)}, ${x}, ${y})`);
+        } else {
+            text.removeAttribute('transform');
+        }
+        applyLabelHeightFadeStyle(text, heightOpacity, dimmed);
     }
 
     function normalizeLabelRotationDeg(angleRad) {
@@ -9624,39 +9953,26 @@
         const texts = group.querySelectorAll('.mcwws-gis-road-name');
         anchors.forEach((anchor, index) => {
             const text = texts[index];
-            const labelName = anchor?.name || '';
             const dimmed = anchor?.dimmed ?? !!groupDimmed;
-            if (!text || !anchor?.world || !labelName) {
-                if (text) {
-                    text.style.display = 'none';
-                }
+            if (!text) {
                 return;
             }
-            const screen = projectGisPoint(anchor.world, view, camera, false);
-            if (!isRoadNameOnScreen(screen)) {
+            const layout = resolveNameLabelScreenLayout(anchor, view, camera, policy, {
+                rotate: true,
+                useRoadWidth: true
+            });
+            if (!layout) {
                 text.style.display = 'none';
                 text.classList.remove('is-dimmed');
                 return;
             }
-            const roadWidthPx = estimateRoadWidthScreenPx(anchor.world, view, camera);
-            const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, roadWidthPx, { primary: true });
-            if (!fontSize) {
-                text.style.display = 'none';
-                text.classList.remove('is-dimmed');
-                return;
-            }
-            const deg = normalizeLabelRotationDeg(anchor.angleRad);
-            const rect = estimateRoadNameLabelRect(screen, labelName, fontSize, deg);
-            placedRects.push(rect);
-            const x = screen.x.toFixed(1);
-            const y = screen.y.toFixed(1);
-            text.style.display = '';
-            text.textContent = labelName;
-            text.classList.toggle('is-dimmed', dimmed);
-            text.setAttribute('x', x);
-            text.setAttribute('y', y);
-            text.setAttribute('font-size', String(fontSize));
-            text.setAttribute('transform', `rotate(${deg.toFixed(2)}, ${x}, ${y})`);
+            placedRects.push(estimateRoadNameLabelRect(
+                layout.screen,
+                layout.labelName,
+                layout.fontSize,
+                layout.deg
+            ));
+            applyNameLabelTextLayout(text, layout, anchor, dimmed, true);
         });
         for (let i = anchors.length; i < texts.length; i += 1) {
             texts[i].style.display = 'none';
@@ -9668,6 +9984,7 @@
         if (!svg || !gisInfoEnabled || !gisShowRoadNames) {
             svgLaneNameGroups.forEach((group) => group.remove());
             svgLaneNameGroups.clear();
+            gisLabelMergeAnims.clear();
             return;
         }
         const view = getViewForProjection();
@@ -9681,6 +9998,7 @@
         if (!policy.show) {
             svgLaneNameGroups.forEach((group) => group.remove());
             svgLaneNameGroups.clear();
+            gisLabelMergeAnims.clear();
             return;
         }
 
@@ -9697,21 +10015,24 @@
                 return;
             }
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
+            const points = coordsToPoints(feature.coordinates);
+            const heightOpacity = getLineFeatureHeightFadeOpacity(feature, points, viewHeight);
             anchors.forEach((anchor) => {
-                flatCandidates.push({ feature, anchor, dimmed });
+                flatCandidates.push({ feature, anchor, dimmed, heightOpacity });
             });
         });
 
         const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const displayAnchors = expandAnchorsForMergeDisplay(mergedAnchors, view, camera);
         const key = '__merged_road_names__';
         neededNameGroupKeys.add(key);
         const group = ensureSvgNameGroup(svg, key, '__merged__');
-        const structSig = getMergedRoadNamesStructSig(mergedAnchors, policy, viewHeight, selectionActive);
+        const structSig = getMergedRoadNamesStructSig(displayAnchors, policy, viewHeight, selectionActive);
         if (group.dataset.nameStructSig !== structSig) {
             group.dataset.nameStructSig = structSig;
-            rebuildRoadNameGroupStructure(group, mergedAnchors);
+            rebuildRoadNameGroupStructure(group, displayAnchors);
         }
-        syncRoadNameGroupPositions(group, mergedAnchors, policy, view, camera, false, placedRects);
+        syncRoadNameGroupPositions(group, displayAnchors, policy, view, camera, false, placedRects);
 
         svgLaneNameGroups.forEach((group, key) => {
             if (!neededNameGroupKeys.has(key)) {
@@ -9731,16 +10052,6 @@
             svgBuildingNameGroups.set(key, group);
         }
         return group;
-    }
-
-    function getMergedBuildingNamesStructSig(anchors, policy, viewHeight, selectionActive) {
-        const anchorSig = anchors
-            .map((anchor) => {
-                const w = anchor.world;
-                return `${anchor.name}|${w.x.toFixed(2)},${w.y.toFixed(2)},${w.z.toFixed(2)}|${anchor.mergeCount || 1}|${anchor.dimmed ? 1 : 0}`;
-            })
-            .join(';');
-        return `${anchorSig}|${policy.bucket}|${Math.round(viewHeight)}|${selectionActive ? 1 : 0}`;
     }
 
     function rebuildBuildingNameGroupStructure(group, anchors) {
@@ -9767,35 +10078,17 @@
         const texts = group.querySelectorAll('.mcwws-gis-building-name');
         anchors.forEach((anchor, index) => {
             const text = texts[index];
-            const labelName = anchor?.name || '';
             const dimmed = !!anchor?.dimmed;
-            if (!text || !anchor?.world || !labelName) {
-                if (text) {
-                    text.style.display = 'none';
-                }
+            if (!text) {
                 return;
             }
-            const screen = projectGisPoint(anchor.world, view, camera, false);
-            if (!isRoadNameOnScreen(screen)) {
+            const layout = resolveNameLabelScreenLayout(anchor, view, camera, policy);
+            if (!layout) {
                 text.style.display = 'none';
                 text.classList.remove('is-dimmed');
                 return;
             }
-            const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, 0, { primary: true });
-            if (!fontSize) {
-                text.style.display = 'none';
-                text.classList.remove('is-dimmed');
-                return;
-            }
-            const x = screen.x.toFixed(1);
-            const y = screen.y.toFixed(1);
-            text.style.display = '';
-            text.textContent = labelName;
-            text.classList.toggle('is-dimmed', dimmed);
-            text.setAttribute('x', x);
-            text.setAttribute('y', y);
-            text.setAttribute('font-size', String(fontSize));
-            text.removeAttribute('transform');
+            applyNameLabelTextLayout(text, layout, anchor, dimmed, false);
         });
         for (let i = anchors.length; i < texts.length; i += 1) {
             texts[i].style.display = 'none';
@@ -9807,6 +10100,7 @@
         if (!svg || !gisInfoEnabled || !gisShowBuildingNames) {
             svgBuildingNameGroups.forEach((group) => group.remove());
             svgBuildingNameGroups.clear();
+            gisLabelMergeAnims.clear();
             return;
         }
         const view = getViewForProjection();
@@ -9819,6 +10113,7 @@
         if (!policy.show) {
             svgBuildingNameGroups.forEach((group) => group.remove());
             svgBuildingNameGroups.clear();
+            gisLabelMergeAnims.clear();
             return;
         }
 
@@ -9836,20 +10131,22 @@
             flatCandidates.push({
                 feature,
                 anchor: { world: center, name, angleRad: 0 },
-                dimmed
+                dimmed,
+                heightOpacity: getBuildingNameOpacityAtHeight(feature, viewHeight)
             });
         });
 
         const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const displayAnchors = expandAnchorsForMergeDisplay(mergedAnchors, view, camera);
         const key = '__merged_building_names__';
         neededKeys.add(key);
         const group = ensureSvgBuildingNameGroup(svg, key, '__merged__');
-        const structSig = getMergedBuildingNamesStructSig(mergedAnchors, policy, viewHeight, selectionActive);
+        const structSig = getMergedBuildingNamesStructSig(displayAnchors, policy, viewHeight, selectionActive);
         if (group.dataset.nameStructSig !== structSig) {
             group.dataset.nameStructSig = structSig;
-            rebuildBuildingNameGroupStructure(group, mergedAnchors);
+            rebuildBuildingNameGroupStructure(group, displayAnchors);
         }
-        syncBuildingNameMergedGroupPositions(group, mergedAnchors, policy, view, camera);
+        syncBuildingNameMergedGroupPositions(group, displayAnchors, policy, view, camera);
 
         svgBuildingNameGroups.forEach((group, key) => {
             if (!neededKeys.has(key)) {
@@ -10106,6 +10403,11 @@
                     if (dash) path.setAttribute('stroke-dasharray', dash);
                     else path.removeAttribute('stroke-dasharray');
                     path.classList.toggle('is-dimmed', dimmed);
+                    applySvgHeightFadeStyle(
+                        path,
+                        getLineFeatureHeightFadeOpacity(feature, points, viewHeight),
+                        { dimmed }
+                    );
 
                     const hitKey = `${key}:hit`;
                     neededPathKeys.add(hitKey);

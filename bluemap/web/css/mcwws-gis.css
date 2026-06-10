@@ -672,6 +672,7 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
 
 #mcwws-gis-svg-layer .mcwws-gis-lane-arrow-group {
     pointer-events: none;
+    transition: opacity 0.2s ease;
 }
 
 #mcwws-gis-svg-layer .mcwws-gis-lane-arrow-group path {
@@ -708,6 +709,7 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     stroke: rgba(255, 255, 255, 0.78);
     stroke-width: 1px;
     stroke-linejoin: round;
+    transition: opacity 0.2s ease;
 }
 
 #mcwws-gis-road-name-layer .mcwws-gis-road-name-group.is-dimmed .mcwws-gis-road-name,
@@ -741,6 +743,7 @@ body.mcwws-gis-road-names-off #mcwws-gis-road-name-layer {
     stroke: rgba(255, 255, 255, 0.78);
     stroke-width: 1px;
     stroke-linejoin: round;
+    transition: opacity 0.2s ease;
 }
 
 #mcwws-gis-building-name-layer .mcwws-gis-building-name-group.is-dimmed .mcwws-gis-building-name {
@@ -946,7 +949,7 @@ body.mcwws-gis-building-names-off #mcwws-gis-building-name-layer {
     stroke-linejoin: round;
     opacity: 0.9;
     fill: none;
-    transition: opacity 0.28s ease, fill-opacity 0.28s ease;
+    transition: opacity 0.2s ease, fill-opacity 0.2s ease;
 }
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill {
@@ -954,7 +957,7 @@ body.mcwws-gis-building-names-off #mcwws-gis-building-name-layer {
     fill-opacity: 1;
     opacity: 1;
     pointer-events: none;
-    transition: opacity 0.28s ease, fill-opacity 0.28s ease;
+    transition: opacity 0.2s ease, fill-opacity 0.2s ease;
 }
 
 #mcwws-gis-svg-layer path.mcwws-gis-volume3d-fill.is-dimmed {
@@ -1125,7 +1128,7 @@ body.mcwws-gis-select-mode.mcwws-gis-lasso-active #map-container canvas {
     max-width: 160px;
     filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.25));
     opacity: 1;
-    transition: opacity 0.28s ease;
+    transition: opacity 0.2s ease;
 }
 
 .mcwws-gis-pin-icon {
@@ -1165,7 +1168,7 @@ body {
 
 #map-container {
     opacity: 1;
-    transition: opacity 0.48s ease;
+    transition: opacity 0.2s ease;
     will-change: opacity;
 }
 
@@ -1217,7 +1220,7 @@ body.mcwws-map-simplified-mode.mcwws-gis-has-selection #map-container {
 #mcwws-gis-road-name-layer,
 #mcwws-gis-building-name-layer {
     opacity: 0;
-    transition: opacity 0.48s ease;
+    transition: opacity 0.2s ease;
 }
 
 body.mcwws-gis-overlay-visible #mcwws-gis-svg-layer,
