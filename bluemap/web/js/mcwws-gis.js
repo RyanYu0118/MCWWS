@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260610-116';
+    const MCWWS_GIS_BUILD = '20260610-117';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -69,14 +69,13 @@
     const GIS_LABEL_MERGE_MAX_CENTER_PX = 72;
     /** 屏幕同名标签包围盒间距小于此值时合并（像素） */
     const GIS_LABEL_MERGE_RECT_GAP_PX = 20;
-    const GIS_ROAD_NAME_MAX_FONT_PX = 13;
-    const GIS_ROAD_NAME_MIN_FONT_PX = 9;
-    const GIS_ROAD_NAME_FONT_HEIGHT_MIN = 140;
+    const GIS_NAME_LABEL_MAX_FONT_PX = 13;
+    const GIS_NAME_LABEL_MIN_FONT_PX = 9;
+    const GIS_NAME_LABEL_FONT_HEIGHT_MIN = 140;
     /** 相机高度接近可视上下限时，元素淡入淡出的过渡带（方块） */
     const GIS_HEIGHT_VISIBILITY_FADE_BAND = 48;
     /** 同名路名/建筑名合并时的聚拢动画时长（毫秒） */
     const GIS_LABEL_MERGE_ANIM_MS = 200;
-    const GIS_ROAD_NAME_MAX_TEXT_VS_ROAD = 1.65;
     const VOLUME_SHAPES = Object.freeze({
         FLAT: 'flat',
         BOX: 'box',
@@ -9410,31 +9409,50 @@
         });
     }
 
-    function computeRoadNameFontSize(viewHeight) {
+    function computeNameLabelFontSize(viewHeight) {
         const h = Number.isFinite(viewHeight) ? viewHeight : getMapCameraHeight();
-        const minH = GIS_ROAD_NAME_FONT_HEIGHT_MIN;
+        const minH = GIS_NAME_LABEL_FONT_HEIGHT_MIN;
         const maxH = GIS_ROAD_NAME_MAX_VIEW_HEIGHT;
         const clamped = Math.max(minH, Math.min(maxH, h));
         const t = Math.log(clamped / minH) / Math.log(maxH / minH);
-        const size = GIS_ROAD_NAME_MAX_FONT_PX - t * (GIS_ROAD_NAME_MAX_FONT_PX - GIS_ROAD_NAME_MIN_FONT_PX);
+        const size = GIS_NAME_LABEL_MAX_FONT_PX - t * (GIS_NAME_LABEL_MAX_FONT_PX - GIS_NAME_LABEL_MIN_FONT_PX);
         return Math.max(
-            GIS_ROAD_NAME_MIN_FONT_PX,
-            Math.min(GIS_ROAD_NAME_MAX_FONT_PX, Math.round(size * 10) / 10)
+            GIS_NAME_LABEL_MIN_FONT_PX,
+            Math.min(GIS_NAME_LABEL_MAX_FONT_PX, Math.round(size * 10) / 10)
         );
     }
 
-    function getRoadNameDisplayPolicy(viewHeight) {
+    function resolveNameLabelFontSize(desiredFont) {
+        const desired = Number(desiredFont);
+        if (!Number.isFinite(desired) || desired <= 0) {
+            return 0;
+        }
+        return Math.max(
+            GIS_NAME_LABEL_MIN_FONT_PX,
+            Math.min(GIS_NAME_LABEL_MAX_FONT_PX, desired)
+        );
+    }
+
+    function getNameLabelDisplayPolicy(viewHeight) {
         const h = Number.isFinite(viewHeight) ? viewHeight : getMapCameraHeight();
         if (!Number.isFinite(h) || h > GIS_ROAD_NAME_MAX_VIEW_HEIGHT) {
             return { show: false, bucket: 'off', fontSize: 0 };
         }
-        const fontSize = computeRoadNameFontSize(h);
-        const minH = GIS_ROAD_NAME_FONT_HEIGHT_MIN;
+        const fontSize = computeNameLabelFontSize(h);
+        const minH = GIS_NAME_LABEL_FONT_HEIGHT_MIN;
         const maxH = GIS_ROAD_NAME_MAX_VIEW_HEIGHT;
         const clamped = Math.max(minH, Math.min(maxH, h));
         const t = Math.log(clamped / minH) / Math.log(maxH / minH);
         const bucket = t > 0.72 ? 'far' : t > 0.42 ? 'mid' : t > 0.18 ? 'near' : 'close';
         return { show: true, bucket, fontSize };
+    }
+
+    function computeRoadNameFontSize(viewHeight) {
+        return computeNameLabelFontSize(viewHeight);
+    }
+
+    function getRoadNameDisplayPolicy(viewHeight) {
+        return getNameLabelDisplayPolicy(viewHeight);
     }
 
     function getRoadNameHeightBucket() {
@@ -9547,47 +9565,22 @@
         return `${getRoadNameSegmentsSignature(feature)}|${policy.bucket}`;
     }
 
-    function fitRoadNameFontSize(name, desiredFont, roadWidthPx, options = {}) {
-        let size = desiredFont;
-        if (roadWidthPx > 0 && name) {
-            const estText = Math.max(12, name.length * desiredFont * 0.55);
-            const limit = roadWidthPx * GIS_ROAD_NAME_MAX_TEXT_VS_ROAD;
-            if (limit > 0 && estText > limit) {
-                const scaled = Math.floor(desiredFont * (limit / estText));
-                size = Math.max(GIS_ROAD_NAME_MIN_FONT_PX, scaled || GIS_ROAD_NAME_MIN_FONT_PX);
-            }
+    function buildLabelMergeNodeLayout(item, view, camera, policy, useRoadWidth) {
+        const name = String(item.anchor?.name || '').trim();
+        if (!name || !item.anchor?.world) {
+            return null;
         }
-        size = Math.min(desiredFont, size);
-        if (!options.primary && size < GIS_ROAD_NAME_MIN_FONT_PX) {
-            return 0;
+        const screen = projectGisPoint(item.anchor.world, view, camera, false);
+        if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
+            return null;
         }
-        return Math.max(GIS_ROAD_NAME_MIN_FONT_PX, size);
-    }
-
-    function estimateRoadWidthScreenPx(world, view, camera) {
-        const center = projectGisPoint(world, view, camera, false);
-        if (!center || center.behind) {
-            return 0;
+        const fontSize = resolveNameLabelFontSize(policy.fontSize);
+        if (!fontSize) {
+            return null;
         }
-        const offsets = [
-            { x: 4, z: 0 },
-            { x: -4, z: 0 },
-            { x: 0, z: 4 },
-            { x: 0, z: -4 }
-        ];
-        let best = 0;
-        offsets.forEach((off) => {
-            const edge = projectGisPoint({
-                x: world.x + off.x,
-                y: world.y,
-                z: world.z + off.z
-            }, view, camera, false);
-            if (!edge || edge.behind) {
-                return;
-            }
-            best = Math.max(best, Math.hypot(edge.x - center.x, edge.y - center.y) * 2);
-        });
-        return best;
+        const deg = useRoadWidth ? normalizeLabelRotationDeg(item.anchor.angleRad ?? 0) : 0;
+        const labelRect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
+        return { name, screen, fontSize, deg, labelRect };
     }
 
     function estimateRoadNameLabelRect(screen, name, fontSize, angleDeg) {
@@ -9620,27 +9613,6 @@
         const dx = Math.max(0, Math.max(a.left - b.right, b.left - a.right));
         const dy = Math.max(0, Math.max(a.top - b.bottom, b.top - a.bottom));
         return Math.hypot(dx, dy);
-    }
-
-    function buildLabelMergeNodeLayout(item, view, camera, policy, useRoadWidth) {
-        const name = String(item.anchor?.name || '').trim();
-        if (!name || !item.anchor?.world) {
-            return null;
-        }
-        const screen = projectGisPoint(item.anchor.world, view, camera, false);
-        if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
-            return null;
-        }
-        const roadWidthPx = useRoadWidth
-            ? estimateRoadWidthScreenPx(item.anchor.world, view, camera)
-            : 0;
-        const fontSize = fitRoadNameFontSize(name, policy.fontSize, roadWidthPx, { primary: true });
-        if (!fontSize) {
-            return null;
-        }
-        const deg = useRoadWidth ? normalizeLabelRotationDeg(item.anchor.angleRad ?? 0) : 0;
-        const labelRect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
-        return { name, screen, fontSize, deg, labelRect };
     }
 
     function shouldMergeSameNameLabels(a, b) {
@@ -9911,8 +9883,7 @@
                 deg = normalizeLabelRotationDeg(anchor.angleRad);
             }
         }
-        const roadWidthPx = useRoadWidth ? estimateRoadWidthScreenPx(anchor.world, view, camera) : 0;
-        const fontSize = fitRoadNameFontSize(labelName, policy.fontSize, roadWidthPx, { primary: true });
+        const fontSize = resolveNameLabelFontSize(policy.fontSize);
         if (!fontSize) {
             return null;
         }
