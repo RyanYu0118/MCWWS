@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260610-115';
+    const MCWWS_GIS_BUILD = '20260610-116';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -65,8 +65,10 @@
     const GIS_ROAD_NAME_MIN_VISIBLE_PX = 3;
     const GIS_ROAD_NAME_SCREEN_MARGIN_PX = 48;
     const GIS_ROAD_NAME_DEDUP_PAD_PX = 10;
-    const GIS_ROAD_NAME_SAME_NAME_MERGE_SCREEN_PX = 100;
-    const GIS_ROAD_NAME_SAME_NAME_MERGE_WORLD_XZ = 24;
+    /** 屏幕同名标签中心距小于此值时合并（像素） */
+    const GIS_LABEL_MERGE_MAX_CENTER_PX = 72;
+    /** 屏幕同名标签包围盒间距小于此值时合并（像素） */
+    const GIS_LABEL_MERGE_RECT_GAP_PX = 20;
     const GIS_ROAD_NAME_MAX_FONT_PX = 13;
     const GIS_ROAD_NAME_MIN_FONT_PX = 9;
     const GIS_ROAD_NAME_FONT_HEIGHT_MIN = 140;
@@ -9608,32 +9610,59 @@
         return !(a.right < b.left || a.left > b.right || a.bottom < b.top || a.top > b.bottom);
     }
 
-    function shouldMergeSameNameRoadLabels(a, b) {
+    function labelRectGap(a, b) {
+        if (!a || !b) {
+            return Infinity;
+        }
+        if (roadNameRectsOverlap(a, b)) {
+            return 0;
+        }
+        const dx = Math.max(0, Math.max(a.left - b.right, b.left - a.right));
+        const dy = Math.max(0, Math.max(a.top - b.bottom, b.top - a.bottom));
+        return Math.hypot(dx, dy);
+    }
+
+    function buildLabelMergeNodeLayout(item, view, camera, policy, useRoadWidth) {
+        const name = String(item.anchor?.name || '').trim();
+        if (!name || !item.anchor?.world) {
+            return null;
+        }
+        const screen = projectGisPoint(item.anchor.world, view, camera, false);
+        if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
+            return null;
+        }
+        const roadWidthPx = useRoadWidth
+            ? estimateRoadWidthScreenPx(item.anchor.world, view, camera)
+            : 0;
+        const fontSize = fitRoadNameFontSize(name, policy.fontSize, roadWidthPx, { primary: true });
+        if (!fontSize) {
+            return null;
+        }
+        const deg = useRoadWidth ? normalizeLabelRotationDeg(item.anchor.angleRad ?? 0) : 0;
+        const labelRect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
+        return { name, screen, fontSize, deg, labelRect };
+    }
+
+    function shouldMergeSameNameLabels(a, b) {
         if (String(a.name || '').trim() !== String(b.name || '').trim()) {
             return false;
         }
-        const screenDist = Math.hypot(a.screen.x - b.screen.x, a.screen.y - b.screen.y);
-        if (screenDist <= GIS_ROAD_NAME_SAME_NAME_MERGE_SCREEN_PX) {
+        const centerDist = Math.hypot(a.screen.x - b.screen.x, a.screen.y - b.screen.y);
+        if (centerDist <= GIS_LABEL_MERGE_MAX_CENTER_PX) {
             return true;
         }
-        const wa = a.anchor.world;
-        const wb = b.anchor.world;
-        const worldDist = Math.hypot(wa.x - wb.x, wa.z - wb.z);
-        return worldDist <= GIS_ROAD_NAME_SAME_NAME_MERGE_WORLD_XZ;
+        return labelRectGap(a.labelRect, b.labelRect) <= GIS_LABEL_MERGE_RECT_GAP_PX;
     }
 
-    function mergeSameNameRoadLabelAnchors(items, view, camera) {
+    function mergeSameNameRoadLabelAnchors(items, view, camera, policy, layoutOptions = {}) {
+        const useRoadWidth = !!layoutOptions.useRoadWidth;
         const nodes = [];
         items.forEach((item) => {
-            const name = String(item.anchor?.name || '').trim();
-            if (!name || !item.anchor?.world) {
+            const layout = buildLabelMergeNodeLayout(item, view, camera, policy, useRoadWidth);
+            if (!layout) {
                 return;
             }
-            const screen = projectGisPoint(item.anchor.world, view, camera, false);
-            if (!screen || screen.behind) {
-                return;
-            }
-            nodes.push({ ...item, name, screen });
+            nodes.push({ ...item, ...layout });
         });
         if (!nodes.length) {
             return [];
@@ -9654,7 +9683,7 @@
         };
         for (let i = 0; i < nodes.length; i += 1) {
             for (let j = i + 1; j < nodes.length; j += 1) {
-                if (shouldMergeSameNameRoadLabels(nodes[i], nodes[j])) {
+                if (shouldMergeSameNameLabels(nodes[i], nodes[j])) {
                     unite(i, j);
                 }
             }
@@ -9683,7 +9712,8 @@
             const heightOpacity = Math.min(...members.map((member) => member.heightOpacity ?? 1));
             const mergeSources = members.map((member) => ({
                 world: { ...member.anchor.world },
-                angleRad: member.anchor.angleRad ?? 0
+                angleRad: member.anchor.angleRad ?? 0,
+                screen: { x: member.screen.x, y: member.screen.y }
             }));
             return {
                 name: members[0].name,
@@ -9730,6 +9760,13 @@
         let anim = gisLabelMergeAnims.get(key);
         if (!anim || anim.sourceSig !== sourceSig) {
             const sourceScreens = anchor.mergeSources.map((src) => {
+                if (src.screen) {
+                    return {
+                        x: src.screen.x,
+                        y: src.screen.y,
+                        angleRad: src.angleRad ?? 0
+                    };
+                }
                 const screen = projectGisPoint(src.world, view, camera, false);
                 if (!screen || screen.behind) {
                     return null;
@@ -9817,6 +9854,20 @@
             })
             .join(';');
         return `${anchorSig}|${policy.bucket}|${Math.round(viewHeight)}|${selectionActive ? 1 : 0}`;
+    }
+
+    function needsNameLabelGroupStructureRebuild(group, displayAnchors, labelClass) {
+        const texts = group.querySelectorAll(`.${labelClass}`);
+        if (texts.length !== displayAnchors.length) {
+            return true;
+        }
+        for (let i = 0; i < displayAnchors.length; i += 1) {
+            const expected = String(displayAnchors[i]?.name || '').trim();
+            if (String(texts[i]?.textContent || '').trim() !== expected) {
+                return true;
+            }
+        }
+        return false;
     }
 
     function getMergedRoadNamesStructSig(anchors, policy, viewHeight, selectionActive) {
@@ -10022,14 +10073,14 @@
             });
         });
 
-        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera, policy, {
+            useRoadWidth: true
+        });
         const displayAnchors = expandAnchorsForMergeDisplay(mergedAnchors, view, camera);
         const key = '__merged_road_names__';
         neededNameGroupKeys.add(key);
         const group = ensureSvgNameGroup(svg, key, '__merged__');
-        const structSig = getMergedRoadNamesStructSig(displayAnchors, policy, viewHeight, selectionActive);
-        if (group.dataset.nameStructSig !== structSig) {
-            group.dataset.nameStructSig = structSig;
+        if (needsNameLabelGroupStructureRebuild(group, displayAnchors, 'mcwws-gis-road-name')) {
             rebuildRoadNameGroupStructure(group, displayAnchors);
         }
         syncRoadNameGroupPositions(group, displayAnchors, policy, view, camera, false, placedRects);
@@ -10136,14 +10187,14 @@
             });
         });
 
-        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera);
+        const mergedAnchors = mergeSameNameRoadLabelAnchors(flatCandidates, view, camera, policy, {
+            useRoadWidth: false
+        });
         const displayAnchors = expandAnchorsForMergeDisplay(mergedAnchors, view, camera);
         const key = '__merged_building_names__';
         neededKeys.add(key);
         const group = ensureSvgBuildingNameGroup(svg, key, '__merged__');
-        const structSig = getMergedBuildingNamesStructSig(displayAnchors, policy, viewHeight, selectionActive);
-        if (group.dataset.nameStructSig !== structSig) {
-            group.dataset.nameStructSig = structSig;
+        if (needsNameLabelGroupStructureRebuild(group, displayAnchors, 'mcwws-gis-building-name')) {
             rebuildBuildingNameGroupStructure(group, displayAnchors);
         }
         syncBuildingNameMergedGroupPositions(group, displayAnchors, policy, view, camera);
