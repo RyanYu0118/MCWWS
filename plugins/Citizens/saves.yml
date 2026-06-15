@@ -189,12 +189,12 @@ npc:
           amount: 1
           type: stone_pickaxe
       location:
-        bodyYaw: 39.982742
+        bodyYaw: 50.788605
         x: -183.4521
         y: 77.0
         z: -964.502
-        yaw: 39.9827
-        pitch: -5.0613
+        yaw: 50.7886
+        pitch: -2.6766
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {
         }
@@ -250,12 +250,12 @@ npc:
     uuid: b1a58a87-579b-4cee-91e7-ab8577cf5c19
     traits:
       location:
-        bodyYaw: -10.6729965
+        bodyYaw: -57.136974
         x: -212.5125
         y: 83.0
         z: -939.4988
-        yaw: -10.673
-        pitch: 3.8448
+        yaw: -57.137
+        pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       type: PLAYER
       owner:
@@ -1331,11 +1331,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 90.00037
-        x: -429.1088
+        bodyYaw: 90.00017
+        x: -444.1398
         y: 95.0
         z: -496.5
-        yaw: 90.0003
+        yaw: 90.0002
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
@@ -1388,11 +1388,12 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_1
-        - in.eid_2
+        - in.eid_0
         - in.eid_4
         - in.checked
-        - in.eid_6
+        - in.eid_7
+        - in.eid_8
+        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
     navigator:
@@ -1495,12 +1496,12 @@ npc:
         skinName: cf5b393b-5a0b-4bff-b9b4-6106d52f1686
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTYyNzU4OTkyNTc1MiwKICAicHJvZmlsZUlkIiA6ICJkMGI4MjE1OThmMTE0NzI1ODBmNmNiZTliOGUxYmU3MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJqYmFydHl5IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzNmY2NmYjViMjUwODc0NDY2NjhjYWU3NjdhZmViMTAxY2Q5OTUzOTVmM2Y0MWM4ZTMwNDZiMWVkNjI5MjAwY2MiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==
       location:
-        bodyYaw: -56.728935
+        bodyYaw: -47.73375
         x: -535.5159
         y: 64.0
         z: 193.7
-        yaw: -56.7289
-        pitch: -4.0752
+        yaw: -47.7337
+        pitch: -11.6867
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {
         }
@@ -1539,12 +1540,12 @@ npc:
         skinName: 55e25eac-f92c-4f0d-b5df-e78e34e700b1
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTY1NTQyMDU2MDI5NywKICAicHJvZmlsZUlkIiA6ICJiMjdjMjlkZWZiNWU0OTEyYjFlYmQ5NDVkMmI2NzE0YSIsCiAgInByb2ZpbGVOYW1lIiA6ICJIRUtUMCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iNDQxOTFjODFiNGJkYjNjZGUxZDIyNzgzZmQ2YTU2NDM5OGZiZGFiOWY5MmZjNTMwMzE2MDBmNDBkMjFjOWQ3IgogICAgfQogIH0KfQ==
       location:
-        bodyYaw: -39.237076
+        bodyYaw: -38.29112
         x: -544.5237
         y: 64.0
         z: 193.7
-        yaw: -39.2371
-        pitch: -5.2032
+        yaw: -38.2911
+        pitch: -12.037
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {
         }
