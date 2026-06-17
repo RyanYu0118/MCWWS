@@ -6,6 +6,7 @@ const path = require('path');
 const crypto = require('crypto');
 const yaml = require('js-yaml');
 const litematicParser = require('./litematic-parser');
+const { exportWorldEditSchemFromBuffer, schemFileBaseName } = require('./litematic-to-schem');
 
 const SCHEMATICS_DIR = path.join(__dirname, 'data', 'build_schematics');
 const BUILD_QUOTES_PATH = path.join(__dirname, 'data', 'build_quotes.yml');
@@ -80,10 +81,21 @@ async function ingestSchematicBuffer(buffer, options = {}) {
         listName: parsed.listName,
         blockCount: parsed.blockCount,
         regionCount: parsed.regionCount,
+        schemFileName: schemFileBaseName(contentHash),
         fileSha256: crypto.createHash('sha256').update(buffer).digest('hex'),
         originalFileName: String(options.fileName || '').trim(),
         uploadedAt: new Date().toISOString()
     };
+    try {
+        const schem = await exportWorldEditSchemFromBuffer(buffer, contentHash);
+        meta.schemFileName = schem.schemFileName;
+        meta.schemPath = schem.schemPath;
+        meta.schemOriginOffset = schem.originOffset;
+        meta.schemSize = { width: schem.width, height: schem.height, length: schem.length };
+    } catch (schemError) {
+        console.warn('[build-schematic] WorldEdit 导出失败:', schemError.message);
+        meta.schemExportError = schemError.message || String(schemError);
+    }
     fs.writeFileSync(metaPath, JSON.stringify(meta, null, 2), 'utf8');
 
     return { ...parsed, meta, stored: true };
@@ -225,6 +237,22 @@ function createPasteOrder({
         const numericId = Number(store.next_id) || 1;
         const pasteToken = crypto.randomBytes(16).toString('hex');
         const now = new Date();
+        const metaPath = schematicMetaPath(contentHash);
+        let schemFileName = schemFileBaseName(contentHash);
+        let schemOriginOffset = null;
+        if (fs.existsSync(metaPath)) {
+            try {
+                const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
+                if (meta.schemFileName) {
+                    schemFileName = meta.schemFileName;
+                }
+                if (meta.schemOriginOffset) {
+                    schemOriginOffset = meta.schemOriginOffset;
+                }
+            } catch (metaError) {
+                console.warn('[build-schematic] 读取 meta 失败:', metaError.message);
+            }
+        }
         const order = {
             id: orderUuid,
             numericId,
@@ -238,6 +266,8 @@ function createPasteOrder({
             total,
             status: 'awaiting_anchor',
             anchor: anchor || null,
+            schemFileName,
+            schemOriginOffset,
             schematicPath: schematicFilePath(contentHash),
             createdAt: now.toISOString(),
             pasteTokenExpiresAt: new Date(now.getTime() + PASTE_TOKEN_TTL_MS).toISOString(),

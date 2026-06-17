@@ -119,6 +119,7 @@
                         逆序
                     </label>
                     <button type="button" id="litematicaImportBtn" class="filter-select litematica-import-btn" title="导入 Litematica 材料清单 JSON">导入材料清单</button>
+                    <button type="button" id="buildPasteBtn" class="filter-select build-paste-btn" title="上传 .litematic 投影并购买粘贴">投影粘贴</button>
                 </div>
                 <div class="page-controls items-pagination">
                     <button id="pageFirst" class="pagination-btn" type="button">首页</button>
@@ -198,6 +199,24 @@
         </div>
     </div>
 
+    <div id="buildPasteModal" class="modal litematica-import-modal build-paste-modal" aria-hidden="true">
+        <div class="modal-content glass litematica-import-content">
+            <div class="modal-header">
+                <h2 id="buildPasteTitle">投影粘贴</h2>
+                <button type="button" class="modal-close" id="buildPasteClose" aria-label="关闭">×</button>
+            </div>
+            <div id="buildPasteBody" class="modal-body litematica-import-body"></div>
+            <div id="buildPasteFooter" class="litematica-import-footer" hidden>
+                <div class="litematica-import-total">
+                    <span>应付（仅商店可购材料）</span>
+                    <strong id="buildPasteTotal">￥0.00</strong>
+                </div>
+                <button type="button" id="buildPastePayBtn" class="cart-drawer-btn cart-drawer-btn--primary">付款并生成粘贴订单</button>
+            </div>
+            <input type="file" id="buildPasteFileInput" accept=".litematic,application/octet-stream" hidden>
+        </div>
+    </div>
+
     <div id="cartBackdrop" class="cart-backdrop" hidden aria-hidden="true"></div>
     <aside id="cartDrawer" class="cart-drawer" aria-label="购物车" aria-hidden="true">
         <div class="cart-drawer-header">
@@ -272,7 +291,8 @@
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
     <script src="material-list-parser.js?v=2"></script>
     <script src="items.js?v=2.5.68" defer></script>
-    <script src="litematica-import.js?v=2" defer></script>
+    <script src="litematica-import.js?v=3" defer></script>
+    <script src="build-paste-import.js?v=1" defer></script>
 </body>
 
 </html>

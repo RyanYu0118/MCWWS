@@ -184,6 +184,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         getItemIconHtml,
         mountItemIconsInContainer
     };
+    window.MCWWS_BuildPasteDeps = window.MCWWS_LitematicaDeps;
     loadShopCart();
     updateCartBadge();
     loadItems();

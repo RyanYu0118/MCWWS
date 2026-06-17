@@ -3084,6 +3084,7 @@ app.post('/api/build/checkout', async (req, res) => {
             contentHashVersion: pasteOrder.contentHashVersion,
             total,
             balanceAfter,
+            balanceFormatted: formatEssentialsBalance(balanceAfter),
             status: pasteOrder.status,
             pasteTokenExpiresAt: pasteOrder.pasteTokenExpiresAt,
             message: '付款成功。请在游戏内设置粘贴锚点后执行粘贴；全程 contentHash 不变。',

@@ -1,0 +1,169 @@
+# MCWWS 投影粘贴：网页付款 → 游戏内锚点 → WorldEdit 粘贴
+
+function mcwwsPasteYamlPath() :: text:
+    return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
+
+function mcwwsInitPasteOrders():
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    if yaml value "next_id" from "pastes" is not set:
+        set yaml value "next_id" from "pastes" to 1
+        save yaml "pastes"
+        send "§a[MCWWS] 已创建投影粘贴订单 YAML。" to console
+    else:
+        send "§a[MCWWS] 投影粘贴订单已启用。" to console
+    unload yaml "pastes"
+
+function mcwwsPasteOrderBelongsTo(p: player, oid: text) :: boolean:
+    set {_uuid} to mcwwsPlayerUuidKey({_p})
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set {_ouuid} to yaml value "orders.%{_oid}%.playerUuid" from "pastes"
+    unload yaml "pastes"
+    if mcwwsUuidKey({_ouuid}) is {_uuid}:
+        return true
+    return false
+
+function mcwwsReadPasteOrderField(oid: text, field: text) :: text:
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set {_val} to yaml value "orders.%{_oid}%.%{_field}%" from "pastes"
+    unload yaml "pastes"
+    if {_val} is not set:
+        return ""
+    return "%{_val}%"
+
+function mcwwsSendPasteHelp(p: player):
+    send "§6[投影粘贴] §f/build orders §7- 我的粘贴订单" to {_p}
+    send "§6[投影粘贴] §f/build anchor <订单号> §7- 在当前位置设粘贴锚点" to {_p}
+    send "§6[投影粘贴] §f/build paste <订单号> §7- 执行粘贴（须先 anchor）" to {_p}
+    send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
+
+command /build [<text>] [<text>]:
+    trigger:
+        if arg-1 is not set:
+            mcwwsSendPasteHelp(player)
+            stop
+        set {_sub} to lowercase "%arg-1%"
+        if {_sub} is "help":
+            mcwwsSendPasteHelp(player)
+            stop
+        if {_sub} is "orders":
+            mcwwsListPasteOrders(player)
+            stop
+        if {_sub} is "anchor":
+            if arg-2 is not set:
+                send "§c用法: /build anchor <订单号>" to player
+                stop
+            mcwwsPasteSetAnchor(player, arg-2)
+            stop
+        if {_sub} is "paste":
+            if arg-2 is not set:
+                send "§c用法: /build paste <订单号>" to player
+                stop
+            mcwwsPasteExecute(player, arg-2)
+            stop
+        send "§c未知子命令。输入 /build 查看帮助。" to player
+
+function mcwwsListPasteOrders(p: player):
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set {_max} to yaml value "next_id" from "pastes"
+    unload yaml "pastes"
+    if {_max} is not set:
+        set {_max} to 1
+    set {_found} to 0
+    loop ({_max} - 1) times:
+        set {_oid} to loop-number
+        if mcwwsPasteOrderBelongsTo({_p}, "%{_oid}%") is false:
+            continue
+        set {_status} to mcwwsReadPasteOrderField("%{_oid}%", "status")
+        set {_hash} to mcwwsReadPasteOrderField("%{_oid}%", "contentHash")
+        set {_hashShort} to subtext of {_hash} from 1 to 12
+        send "§e#%{_oid}% §7[%{_status}%] §fhash…%{_hashShort}%" to {_p}
+        add 1 to {_found}
+    if {_found} is 0:
+        send "§7暂无粘贴订单。请先在商店网页上传 .litematic 并付款。" to {_p}
+
+function mcwwsPasteSetAnchor(p: player, oid: text):
+    if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
+        send "§c订单不存在或不属于你。" to {_p}
+        stop
+    set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
+    if {_status} is "completed":
+        send "§c该订单已完成粘贴。" to {_p}
+        stop
+    if {_status} is "expired":
+        send "§c该订单已过期。" to {_p}
+        stop
+    set {_hash} to mcwwsReadPasteOrderField({_oid}, "contentHash")
+    set {_loc} to location of {_p}
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.anchor.world" from "pastes" to name of world of {_loc}
+    set yaml value "orders.%{_oid}%.anchor.x" from "pastes" to floor(x-coords of {_loc})
+    set yaml value "orders.%{_oid}%.anchor.y" from "pastes" to floor(y-coords of {_loc})
+    set yaml value "orders.%{_oid}%.anchor.z" from "pastes" to floor(z-coords of {_loc})
+    set yaml value "orders.%{_oid}%.anchor.yaw" from "pastes" to yaw of {_loc}
+    set yaml value "orders.%{_oid}%.anchor.pitch" from "pastes" to pitch of {_loc}
+    set yaml value "orders.%{_oid}%.status" from "pastes" to "ready"
+    set yaml value "orders.%{_oid}%.anchorSetAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "pastes"
+    unload yaml "pastes"
+    send "§a[投影粘贴] §f订单 §e#%{_oid}% §a锚点已设置。" to {_p}
+    send "§7contentHash: §f%{_hash}%" to {_p}
+    send "§7请确认 Litematica 投影对齐后执行 §f/build paste %{_oid}%" to {_p}
+
+function mcwwsPasteExecute(p: player, oid: text):
+    if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
+        send "§c订单不存在或不属于你。" to {_p}
+        stop
+    set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
+    if {_status} is not "ready":
+        if {_status} is "awaiting_anchor":
+            send "§c请先执行 /build anchor %{_oid}% 设置粘贴原点。" to {_p}
+        else:
+            send "§c订单状态为 %{_status}%，无法粘贴。" to {_p}
+        stop
+    set {_hash} to mcwwsReadPasteOrderField({_oid}, "contentHash")
+    set {_schem} to mcwwsReadPasteOrderField({_oid}, "schemFileName")
+    if {_schem} is "":
+        set {_hashShort} to subtext of {_hash} from 1 to 16
+        set {_schem} to "mcwws_%{_hashShort}%"
+    set {_worldName} to mcwwsReadPasteOrderField({_oid}, "anchor.world")
+    set {_ax} to mcwwsReadPasteOrderField({_oid}, "anchor.x") parsed as number
+    set {_ay} to mcwwsReadPasteOrderField({_oid}, "anchor.y") parsed as number
+    set {_az} to mcwwsReadPasteOrderField({_oid}, "anchor.z") parsed as number
+    if {_worldName} is "":
+        send "§c锚点未设置。" to {_p}
+        stop
+    set {_world} to world {_worldName}
+    if {_world} is not set:
+        send "§c锚点世界不存在: %{_worldName}%" to {_p}
+        stop
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.status" from "pastes" to "pasting"
+    set yaml value "orders.%{_oid}%.pasteStartedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "pastes"
+    unload yaml "pastes"
+    set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
+    teleport {_p} to {_anchor}
+    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7(hash %{_hash}%)" to {_p}
+    wait 5 ticks
+    make {_p} execute command "//schem load %{_schem}%"
+    wait 10 ticks
+    make {_p} execute command "//paste -a -o"
+    wait 20 ticks
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.status" from "pastes" to "completed"
+    set yaml value "orders.%{_oid}%.pastedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    set yaml value "orders.%{_oid}%.pasteToken" from "pastes" to ""
+    set yaml value "orders.%{_oid}%.failureReason" from "pastes" to ""
+    save yaml "pastes"
+    unload yaml "pastes"
+    send "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。" to {_p}
+    send "§7contentHash: §f%{_hash}%" to {_p}
+
+on load:
+    mcwwsInitPasteOrders()
