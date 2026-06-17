@@ -1,7 +1,31 @@
 # MCWWS 投影粘贴：网页付款 → 游戏内锚点 → WorldEdit 粘贴
 
+import:
+    java.io.File
+    org.bukkit.Bukkit
+
+function mcwwsServerRootFile(relPath: text) :: object:
+    set {_root} to Bukkit.getServer().getWorldContainer().getParentFile()
+    return new File({_root}, {_relPath})
+
+function mcwwsSchemAbsolutePath(schemName: text) :: text:
+    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schem}%.schem")
+    return {_file}.getAbsolutePath()
+
+function mcwwsSchemFileExists(schemName: text) :: boolean:
+    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schem}%.schem")
+    return {_file}.exists()
+
 function mcwwsPasteYamlPath() :: text:
     return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
+
+function mcwwsPasteMarkFailed(oid: text, reason: text):
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.status" from "pastes" to "ready"
+    set yaml value "orders.%{_oid}%.failureReason" from "pastes" to {_reason}
+    save yaml "pastes"
+    unload yaml "pastes"
 
 function mcwwsInitPasteOrders():
     set {_path} to mcwwsPasteYamlPath()
@@ -141,6 +165,11 @@ function mcwwsPasteExecute(p: player, oid: text):
     if {_world} is not set:
         send "§c锚点世界不存在: %{_worldName}%" to {_p}
         stop
+    if mcwwsSchemFileExists({_schem}) is false:
+        send "§c找不到原理图 §e%{_schem}%.schem" to {_p}
+        send "§7路径: §f%mcwwsSchemAbsolutePath({_schem})%" to {_p}
+        send "§7请让管理员执行: §fnode plugins/Skript/scripts/web/tools/reexport-schem.js %{_hash}%" to {_p}
+        stop
     set {_path} to mcwwsPasteYamlPath()
     load yaml {_path} as "pastes"
     set yaml value "orders.%{_oid}%.status" from "pastes" to "pasting"
@@ -152,9 +181,9 @@ function mcwwsPasteExecute(p: player, oid: text):
     send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7(hash %{_hash}%)" to {_p}
     wait 5 ticks
     make {_p} execute command "//schem load %{_schem}%"
-    wait 10 ticks
+    wait 15 ticks
     make {_p} execute command "//paste -a -o"
-    wait 20 ticks
+    wait 40 ticks
     load yaml {_path} as "pastes"
     set yaml value "orders.%{_oid}%.status" from "pastes" to "completed"
     set yaml value "orders.%{_oid}%.pastedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"

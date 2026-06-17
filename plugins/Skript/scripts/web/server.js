@@ -2880,6 +2880,15 @@ app.post('/api/build/quote', async (req, res) => {
             return res.status(400).json({ error: '请提供 dataBase64 或已存储的 contentHash。' });
         }
 
+        if (!ingest.blockCount || ingest.blockCount <= 0) {
+            return res.status(400).json({ error: '未能从投影中识别到任何方块，请确认 .litematic 文件完整。' });
+        }
+        if (ingest.meta?.schemExportError) {
+            return res.status(400).json({
+                error: `WorldEdit 原理图导出失败：${ingest.meta.schemExportError}`
+            });
+        }
+
         const pricing = quoteBuildPasteLines(ingest.materials, ingest.listName || fileName);
         const user = authenticate(req);
         const playerId = user ? String(user.playerId || '').trim() : '';
@@ -2936,6 +2945,12 @@ app.post('/api/build/quote/upload', express.raw({ limit: '64mb', type: '*/*' }),
                 contentHash: ingest.contentHash,
                 expectedHash: requestedHash
             });
+        }
+        if (!ingest.blockCount || ingest.blockCount <= 0) {
+            return res.status(400).json({ error: '未能从投影中识别到任何方块。' });
+        }
+        if (ingest.meta?.schemExportError) {
+            return res.status(400).json({ error: `原理图导出失败：${ingest.meta.schemExportError}` });
         }
         const pricing = quoteBuildPasteLines(ingest.materials, ingest.listName || fileName);
         const user = authenticate(req);

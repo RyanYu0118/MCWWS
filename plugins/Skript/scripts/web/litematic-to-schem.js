@@ -6,9 +6,21 @@ const path = require('path');
 const zlib = require('zlib');
 const nbt = require('prismarine-nbt');
 const litematicParser = require('./litematic-parser');
+const {
+    normalizeRegionSize,
+    normalizeRegionPosition,
+    normalizeBlockStatePalette,
+    normalizeBlockStatesLongs,
+    normalizeRegions
+} = litematicParser;
 
-const DEFAULT_WE_SCHEM_DIR = path.join(__dirname, '..', '..', '..', 'WorldEdit', 'schematics');
+const SERVER_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
+const DEFAULT_WE_SCHEM_DIR = path.join(SERVER_ROOT, 'plugins', 'WorldEdit', 'schematics');
 const DEFAULT_DATA_VERSION = 3955;
+
+function blockIndexV3(x, z, y, width, length) {
+    return x + z * width + y * width * length;
+}
 
 function indexToLocalXYZ(i, size) {
     const w = Math.abs(Math.trunc(Number(size[0]) || 0));
@@ -40,14 +52,14 @@ function isAirState(entry) {
 }
 
 function collectMergedBlocks(root) {
-    const regions = root?.Regions && typeof root.Regions === 'object' ? root.Regions : {};
+    const regions = normalizeRegions(root);
     const placed = [];
     Object.keys(regions).forEach((regionName) => {
         const region = regions[regionName] || {};
-        const size = (region.Size || []).map((v) => Math.trunc(Number(v) || 0));
-        const pos = (region.Position || []).map((v) => Math.trunc(Number(v) || 0));
-        const palette = Array.isArray(region.BlockStatePalette) ? region.BlockStatePalette : [];
-        const longs = Array.isArray(region.BlockStates) ? region.BlockStates : [];
+        const size = normalizeRegionSize(region);
+        const pos = normalizeRegionPosition(region);
+        const palette = normalizeBlockStatePalette(region);
+        const longs = normalizeBlockStatesLongs(region);
         const volume = Math.abs(size[0]) * Math.abs(size[1]) * Math.abs(size[2]);
         if (!volume || !palette.length || !longs.length) {
             return;
@@ -134,13 +146,6 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     const width = maxX - minX + 1;
     const height = maxY - minY + 1;
     const length = maxZ - minZ + 1;
-    const blockMap = new Map();
-    placed.forEach((block) => {
-        const rx = block.x - minX;
-        const ry = block.y - minY;
-        const rz = block.z - minZ;
-        blockMap.set(`${rx},${ry},${rz}`, block.state);
-    });
 
     const paletteList = ['minecraft:air'];
     const paletteIndex = new Map([['minecraft:air', 0]]);
@@ -152,19 +157,23 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
         return paletteIndex.get(state);
     }
 
-    const dataIndices = [];
-    for (let y = 0; y < height; y += 1) {
-        for (let z = 0; z < length; z += 1) {
-            for (let x = 0; x < width; x += 1) {
-                const state = blockMap.get(`${x},${y},${z}`) || 'minecraft:air';
-                dataIndices.push(paletteIdFor(state));
-            }
-        }
-    }
+    placed.forEach((block) => {
+        paletteIdFor(block.state);
+    });
+
+    const volume = width * height * length;
+    const dataIndices = new Array(volume).fill(0);
+    placed.forEach((block) => {
+        const rx = block.x - minX;
+        const ry = block.y - minY;
+        const rz = block.z - minZ;
+        const index = blockIndexV3(rx, rz, ry, width, length);
+        dataIndices[index] = paletteIdFor(block.state);
+    });
 
     const paletteCompound = {};
     paletteList.forEach((state, idx) => {
-        paletteCompound[String(idx)] = nbt.string(state);
+        paletteCompound[state] = nbt.int(idx);
     });
 
     const dataVersion = Number(root.MinecraftDataVersion) || options.dataVersion || DEFAULT_DATA_VERSION;
@@ -176,20 +185,19 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
         Length: nbt.short(length),
         Offset: nbt.intArray([0, 0, 0]),
         Metadata: nbt.comp({
-            'WEOffsetX': nbt.int(0),
-            'WEOffsetY': nbt.int(0),
-            'WEOffsetZ': nbt.int(0)
+            WEOffsetX: nbt.int(0),
+            WEOffsetY: nbt.int(0),
+            WEOffsetZ: nbt.int(0)
         }),
         Blocks: nbt.comp({
             Palette: nbt.comp(paletteCompound),
-            Data: nbt.byteArray(encodeVarints(dataIndices))
+            Data: nbt.byteArray(encodeVarints(dataIndices)),
+            BlockEntities: nbt.list([])
         }),
-        BlockEntities: nbt.list([]),
         Entities: nbt.list([])
-    });
+    }, 'Schematic');
 
-    const named = nbt.comp({ Schematic: schematic }, 'Schematic');
-    const raw = nbt.writeUncompressed(named, 'big');
+    const raw = nbt.writeUncompressed(schematic, 'big');
     const gz = zlib.gzipSync(raw);
 
     const baseName = schemFileBaseName(contentHash);

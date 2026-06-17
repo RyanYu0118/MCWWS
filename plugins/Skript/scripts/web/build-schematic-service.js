@@ -92,6 +92,7 @@ async function ingestSchematicBuffer(buffer, options = {}) {
         meta.schemPath = schem.schemPath;
         meta.schemOriginOffset = schem.originOffset;
         meta.schemSize = { width: schem.width, height: schem.height, length: schem.length };
+        meta.schemExportError = '';
     } catch (schemError) {
         console.warn('[build-schematic] WorldEdit 导出失败:', schemError.message);
         meta.schemExportError = schemError.message || String(schemError);
@@ -218,6 +219,16 @@ function markQuoteConsumed(numericId, pasteOrderId) {
     return quote;
 }
 
+async function ensureWorldEditSchemExport(contentHash) {
+    const hash = String(contentHash || '').toLowerCase();
+    const litematicPath = schematicFilePath(hash);
+    if (!fs.existsSync(litematicPath)) {
+        throw new Error('投影文件不存在，请重新上传。');
+    }
+    const buffer = fs.readFileSync(litematicPath);
+    return exportWorldEditSchemFromBuffer(buffer, hash);
+}
+
 function createPasteOrder({
     contentHash,
     quoteId,
@@ -227,10 +238,15 @@ function createPasteOrder({
     total,
     anchor
 }) {
-    const verification = { ok: false };
-    return verifyStoredSchematicHash(contentHash).then((verify) => {
+    return verifyStoredSchematicHash(contentHash).then(async (verify) => {
         if (!verify.ok) {
             throw new Error('粘贴订单创建失败：存储的投影文件与 contentHash 不一致。');
+        }
+        let schemExport;
+        try {
+            schemExport = await ensureWorldEditSchemExport(contentHash);
+        } catch (exportError) {
+            throw new Error(`WorldEdit 原理图导出失败：${exportError.message || exportError}`);
         }
         const store = loadPasteOrdersStore();
         const orderUuid = crypto.randomUUID();
@@ -238,15 +254,12 @@ function createPasteOrder({
         const pasteToken = crypto.randomBytes(16).toString('hex');
         const now = new Date();
         const metaPath = schematicMetaPath(contentHash);
-        let schemFileName = schemFileBaseName(contentHash);
-        let schemOriginOffset = null;
+        let schemFileName = schemExport?.schemFileName || schemFileBaseName(contentHash);
+        let schemOriginOffset = schemExport?.originOffset || null;
         if (fs.existsSync(metaPath)) {
             try {
                 const meta = JSON.parse(fs.readFileSync(metaPath, 'utf8'));
-                if (meta.schemFileName) {
-                    schemFileName = meta.schemFileName;
-                }
-                if (meta.schemOriginOffset) {
+                if (meta.schemOriginOffset && !schemOriginOffset) {
                     schemOriginOffset = meta.schemOriginOffset;
                 }
             } catch (metaError) {
@@ -379,6 +392,7 @@ module.exports = {
     assertPasteOrderHash,
     consumePasteToken,
     completePasteOrder,
+    ensureWorldEditSchemExport,
     schematicFilePath,
     loadPasteOrdersStore
 };

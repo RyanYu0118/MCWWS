@@ -60,7 +60,7 @@ orders:
         status: delivered
         total: 9.2
         createdAt: '2026-05-31T09:38:53.643Z'
-        updatedAt: '2026-05-31 17:39:03'
+        updatedAt: '2026-06-18 00:21:02'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-05-31 17:39:03'
@@ -77,6 +77,7 @@ orders:
                 material: white_stained_glass
                 shopTitle: 玻璃商店
                 status: delivered
+        economyChargedInGame: true
     '4':
         id: b5db5ddb-a74f-4058-af1e-a1f29ded3133
         numericId: 4

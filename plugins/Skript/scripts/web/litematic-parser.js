@@ -10,6 +10,90 @@ const nbt = require('prismarine-nbt');
 const CONTENT_HASH_VERSION = 'mcwws:content-v1';
 const AIR_KEYS = new Set(['minecraft:air', 'air']);
 
+/** NBT simplify 后可能是数组、带数字键的对象或 TypedArray */
+function normalizeNbtArray(value) {
+    if (value == null) {
+        return [];
+    }
+    if (Array.isArray(value)) {
+        return value;
+    }
+    if (ArrayBuffer.isView(value)) {
+        return Array.from(value);
+    }
+    if (typeof value === 'object') {
+        if (Array.isArray(value.value)) {
+            return value.value;
+        }
+        const numericKeys = Object.keys(value)
+            .filter((k) => /^\d+$/.test(k))
+            .sort((a, b) => Number(a) - Number(b));
+        if (numericKeys.length) {
+            return numericKeys.map((k) => value[k]);
+        }
+    }
+    if (typeof value === 'number' || typeof value === 'string') {
+        const n = Number(value);
+        return Number.isFinite(n) ? [n] : [];
+    }
+    return [];
+}
+
+function normalizeIntTriple(value) {
+    if (value && typeof value === 'object' && !Array.isArray(value)) {
+        const hasAxis = 'x' in value || 'y' in value || 'z' in value
+            || 'X' in value || 'Y' in value || 'Z' in value;
+        if (hasAxis) {
+            return [
+                Math.trunc(Number(value.x ?? value.X ?? 0) || 0),
+                Math.trunc(Number(value.y ?? value.Y ?? 0) || 0),
+                Math.trunc(Number(value.z ?? value.Z ?? 0) || 0)
+            ];
+        }
+    }
+    const arr = normalizeNbtArray(value).map((v) => Math.trunc(Number(v) || 0));
+    while (arr.length < 3) {
+        arr.push(0);
+    }
+    return arr.slice(0, 3);
+}
+
+function normalizeRegionSize(region) {
+    return normalizeIntTriple(
+        region?.Size ?? region?.size ?? region?.Dimensions ?? region?.dimensions
+    );
+}
+
+function normalizeRegionPosition(region) {
+    return normalizeIntTriple(
+        region?.Position ?? region?.position ?? region?.Pos ?? region?.pos
+    );
+}
+
+function normalizeBlockStatePalette(region) {
+    const raw = region?.BlockStatePalette ?? region?.blockStatePalette ?? region?.Palette;
+    const arr = normalizeNbtArray(raw);
+    if (arr.length) {
+        return arr;
+    }
+    if (raw && typeof raw === 'object' && !Array.isArray(raw)) {
+        return Object.keys(raw)
+            .filter((k) => /^\d+$/.test(k))
+            .sort((a, b) => Number(a) - Number(b))
+            .map((k) => raw[k]);
+    }
+    return [];
+}
+
+function normalizeBlockStatesLongs(region) {
+    const raw = region?.BlockStates ?? region?.blockStates ?? region?.Blocks;
+    const arr = normalizeNbtArray(raw);
+    if (arr.length) {
+        return arr;
+    }
+    return [];
+}
+
 function nbtLongToBigInt(pair) {
     if (!Array.isArray(pair) || pair.length < 2) {
         return 0n;
@@ -75,10 +159,10 @@ function regionVolume(sizeArr) {
 }
 
 function countRegionBlocks(region) {
-    const size = (region?.Size || []).map((v) => Math.trunc(Number(v) || 0));
+    const size = normalizeRegionSize(region);
     const volume = regionVolume(size);
-    const palette = Array.isArray(region?.BlockStatePalette) ? region.BlockStatePalette : [];
-    const longs = Array.isArray(region?.BlockStates) ? region.BlockStates : [];
+    const palette = normalizeBlockStatePalette(region);
+    const longs = normalizeBlockStatesLongs(region);
     if (!volume || !palette.length || !longs.length) {
         return new Map();
     }
@@ -103,15 +187,31 @@ function sortedCountEntries(counts) {
         .map(([state, count]) => [state, count]);
 }
 
+function normalizeRegions(root) {
+    const raw = root?.Regions ?? root?.regions;
+    if (!raw || typeof raw !== 'object') {
+        return {};
+    }
+    if (Array.isArray(raw)) {
+        const out = {};
+        raw.forEach((region, index) => {
+            const name = String(region?.Name ?? region?.name ?? `region_${index}`).trim() || `region_${index}`;
+            out[name] = region;
+        });
+        return out;
+    }
+    return raw;
+}
+
 function buildCanonicalPayload(root) {
-    const regions = root?.Regions && typeof root.Regions === 'object' ? root.Regions : {};
+    const regions = normalizeRegions(root);
     const regionNames = Object.keys(regions).sort();
     return {
         version: CONTENT_HASH_VERSION,
         regions: regionNames.map((name) => {
             const region = regions[name] || {};
-            const size = (region.Size || []).map((v) => Math.trunc(Number(v) || 0));
-            const position = (region.Position || []).map((v) => Math.trunc(Number(v) || 0));
+            const size = normalizeRegionSize(region);
+            const position = normalizeRegionPosition(region);
             const counts = countRegionBlocks(region);
             return {
                 name,
@@ -199,5 +299,12 @@ module.exports = {
     computeContentHashFromBuffer,
     verifyContentHash,
     buildCanonicalPayload,
-    computeContentHashFromPayload
+    computeContentHashFromPayload,
+    normalizeIntTriple,
+    normalizeRegionSize,
+    normalizeRegionPosition,
+    normalizeBlockStatePalette,
+    normalizeBlockStatesLongs,
+    normalizeNbtArray,
+    normalizeRegions
 };
