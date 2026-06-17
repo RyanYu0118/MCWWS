@@ -75,6 +75,8 @@ const app = express();
 const PORT = 8002;
 const HOST = process.env.HOST || '0.0.0.0';
 const materialListParser = require('./public/material-list-parser');
+const buildSchematicService = require('./build-schematic-service');
+const litematicParser = require('./litematic-parser');
 
 app.use(cors());
 app.use(express.json());
@@ -564,6 +566,50 @@ function quoteMaterialLines(materials, listName) {
         purchasableCount,
         unavailableCount,
         lineCount: lines.length
+    };
+}
+
+/** 投影粘贴报价：商店可购材料正常计价，未上架/无价/无法识别一律免费 */
+function quoteBuildPasteLines(materials, listName) {
+    const base = quoteMaterialLines(materials, listName);
+    let purchasableTotal = 0;
+    let freeUnlistedTotal = 0;
+    let freeUnlistedCount = 0;
+    const lines = base.lines.map((line) => {
+        if (line.status === 'ok') {
+            purchasableTotal = Math.round((purchasableTotal + line.lineTotal) * 100) / 100;
+            return {
+                ...line,
+                checkoutLineTotal: line.lineTotal,
+                billing: 'shop'
+            };
+        }
+        freeUnlistedCount += 1;
+        const referenceValue = line.estimatedLineTotal != null
+            ? Number(line.estimatedLineTotal)
+            : (line.catalogBuyPrice != null && line.materialCount
+                ? Math.round(line.catalogBuyPrice * line.materialCount * 100) / 100
+                : 0);
+        if (referenceValue > 0) {
+            freeUnlistedTotal = Math.round((freeUnlistedTotal + referenceValue) * 100) / 100;
+        }
+        return {
+            ...line,
+            checkoutLineTotal: 0,
+            billing: 'free',
+            statusLabel: `${line.statusLabel || line.status}（免费）`
+        };
+    });
+    purchasableTotal = Math.round(purchasableTotal * 100) / 100;
+    freeUnlistedTotal = Math.round(freeUnlistedTotal * 100) / 100;
+    return {
+        ...base,
+        lines,
+        purchasableTotal,
+        freeUnlistedTotal,
+        freeUnlistedCount,
+        checkoutTotal: purchasableTotal,
+        referenceTotal: freeUnlistedTotal
     };
 }
 
@@ -2767,6 +2813,410 @@ app.get('/api/prices', (req, res) => {
     } catch (error) {
         console.error('读取价格数据出错:', error);
         res.status(500).json({ error: '读取错误' });
+    }
+});
+
+// ── 投影粘贴：contentHash 全链路（上传 → 报价 → 付款 → 粘贴）──
+
+app.post('/api/build/verify-hash', async (req, res) => {
+    try {
+        const expectedHash = String(
+            req.body?.contentHash || req.headers['x-content-hash'] || ''
+        ).trim().toLowerCase();
+        const buffer = buildSchematicService.readBufferFromRequestBody(req.body);
+        if (!buffer || !buffer.length) {
+            return res.status(400).json({ error: '请提供 .litematic 文件（dataBase64）或原始二进制。' });
+        }
+        const result = await litematicParser.verifyContentHash(buffer, expectedHash || undefined);
+        const storedMatch = expectedHash
+            ? await buildSchematicService.verifyStoredSchematicHash(expectedHash)
+            : null;
+        res.json({
+            contentHash: result.contentHash,
+            contentHashVersion: litematicParser.CONTENT_HASH_VERSION,
+            matchesExpected: expectedHash ? result.ok : null,
+            expectedHash: expectedHash || null,
+            storedOnServer: storedMatch?.ok === true,
+            storedVerify: storedMatch
+        });
+    } catch (error) {
+        console.error('投影哈希校验失败:', error);
+        res.status(400).json({ error: error.message || '投影哈希校验失败' });
+    }
+});
+
+app.post('/api/build/quote', async (req, res) => {
+    try {
+        if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
+            return res.status(404).json({ error: '暂无价格数据' });
+        }
+
+        const body = req.body && typeof req.body === 'object' ? req.body : {};
+        let buffer = buildSchematicService.readBufferFromRequestBody(body);
+        let fileName = String(body.fileName || req.headers['x-file-name'] || '').trim();
+        let requestedHash = String(body.contentHash || '').trim().toLowerCase();
+
+        let ingest;
+        if (buffer && buffer.length) {
+            ingest = await buildSchematicService.ingestSchematicBuffer(buffer, { fileName });
+            if (requestedHash && ingest.contentHash !== requestedHash) {
+                return res.status(409).json({
+                    error: '上传文件与声明的 contentHash 不一致，请确认投影文件未被替换。',
+                    contentHash: ingest.contentHash,
+                    expectedHash: requestedHash
+                });
+            }
+        } else if (requestedHash) {
+            const verify = await buildSchematicService.verifyStoredSchematicHash(requestedHash);
+            if (!verify.ok) {
+                return res.status(404).json({ error: '服务器未找到该 contentHash 的投影文件，请先上传。' });
+            }
+            const storedBuffer = fs.readFileSync(buildSchematicService.schematicFilePath(requestedHash));
+            ingest = await buildSchematicService.ingestSchematicBuffer(storedBuffer, {
+                skipFileHashCheck: true,
+                fileName
+            });
+        } else {
+            return res.status(400).json({ error: '请提供 dataBase64 或已存储的 contentHash。' });
+        }
+
+        const pricing = quoteBuildPasteLines(ingest.materials, ingest.listName || fileName);
+        const user = authenticate(req);
+        const playerId = user ? String(user.playerId || '').trim() : '';
+        const uuid = playerId ? resolvePlayerUuid(playerId) : null;
+        const quote = buildSchematicService.createBuildQuote({
+            contentHash: ingest.contentHash,
+            listName: pricing.listName || ingest.listName || fileName,
+            materials: ingest.materials,
+            quoteLines: pricing.lines,
+            purchasableTotal: pricing.checkoutTotal,
+            freeUnlistedTotal: pricing.freeUnlistedTotal,
+            playerUuid: uuid || '',
+            playerId,
+            username: user ? user.username : ''
+        });
+
+        res.json({
+            quoteId: quote.numericId,
+            quoteUuid: quote.id,
+            contentHash: ingest.contentHash,
+            contentHashVersion: ingest.contentHashVersion,
+            listName: quote.listName,
+            expiresAt: quote.expiresAt,
+            blockCount: ingest.blockCount,
+            regionCount: ingest.regionCount,
+            lineCount: pricing.lineCount,
+            purchasableTotal: pricing.checkoutTotal,
+            freeUnlistedTotal: pricing.freeUnlistedTotal,
+            freeUnlistedCount: pricing.freeUnlistedCount,
+            lines: pricing.lines,
+            hashNote: '付款与粘贴均绑定此 contentHash；本地可用 node tools/litematic-hash.js 核对。'
+        });
+    } catch (error) {
+        console.error('投影报价失败:', error);
+        res.status(400).json({ error: error.message || '投影报价失败' });
+    }
+});
+
+app.post('/api/build/quote/upload', express.raw({ limit: '64mb', type: '*/*' }), async (req, res) => {
+    try {
+        if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
+            return res.status(404).json({ error: '暂无价格数据' });
+        }
+        const buffer = Buffer.isBuffer(req.body) ? req.body : null;
+        if (!buffer || !buffer.length) {
+            return res.status(400).json({ error: '请上传 .litematic 二进制内容。' });
+        }
+        const fileName = String(req.headers['x-file-name'] || '').trim();
+        const requestedHash = String(req.headers['x-content-hash'] || '').trim().toLowerCase();
+        const ingest = await buildSchematicService.ingestSchematicBuffer(buffer, { fileName });
+        if (requestedHash && ingest.contentHash !== requestedHash) {
+            return res.status(409).json({
+                error: '上传文件与声明的 contentHash 不一致。',
+                contentHash: ingest.contentHash,
+                expectedHash: requestedHash
+            });
+        }
+        const pricing = quoteBuildPasteLines(ingest.materials, ingest.listName || fileName);
+        const user = authenticate(req);
+        const playerId = user ? String(user.playerId || '').trim() : '';
+        const uuid = playerId ? resolvePlayerUuid(playerId) : null;
+        const quote = buildSchematicService.createBuildQuote({
+            contentHash: ingest.contentHash,
+            listName: pricing.listName || ingest.listName || fileName,
+            materials: ingest.materials,
+            quoteLines: pricing.lines,
+            purchasableTotal: pricing.checkoutTotal,
+            freeUnlistedTotal: pricing.freeUnlistedTotal,
+            playerUuid: uuid || '',
+            playerId,
+            username: user ? user.username : ''
+        });
+        res.json({
+            quoteId: quote.numericId,
+            quoteUuid: quote.id,
+            contentHash: ingest.contentHash,
+            contentHashVersion: ingest.contentHashVersion,
+            listName: quote.listName,
+            expiresAt: quote.expiresAt,
+            blockCount: ingest.blockCount,
+            regionCount: ingest.regionCount,
+            purchasableTotal: pricing.checkoutTotal,
+            freeUnlistedTotal: pricing.freeUnlistedTotal,
+            lines: pricing.lines
+        });
+    } catch (error) {
+        console.error('投影上传报价失败:', error);
+        res.status(400).json({ error: error.message || '投影上传报价失败' });
+    }
+});
+
+app.get('/api/build/quote/:quoteId', (req, res) => {
+    try {
+        const quote = buildSchematicService.getBuildQuote(req.params.quoteId);
+        if (!quote) {
+            return res.status(404).json({ error: '报价单不存在。' });
+        }
+        res.json({
+            quoteId: quote.numericId,
+            quoteUuid: quote.id,
+            contentHash: quote.contentHash,
+            contentHashVersion: quote.contentHashVersion,
+            listName: quote.listName,
+            status: quote.status,
+            expiresAt: quote.expiresAt,
+            purchasableTotal: quote.purchasableTotal,
+            freeUnlistedTotal: quote.freeUnlistedTotal,
+            lines: quote.quoteLines
+        });
+    } catch (error) {
+        res.status(500).json({ error: '读取报价单失败' });
+    }
+});
+
+app.post('/api/build/checkout', async (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录后才能购买投影粘贴。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        if (!playerId) {
+            return res.status(400).json({ error: '账号未绑定游戏玩家 ID。' });
+        }
+        const uuid = resolvePlayerUuid(playerId);
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+
+        const quoteId = String(req.body?.quoteId || '').trim();
+        const contentHash = String(req.body?.contentHash || '').trim().toLowerCase();
+        if (!quoteId || !contentHash) {
+            return res.status(400).json({ error: '缺少 quoteId 或 contentHash。' });
+        }
+
+        const quote = buildSchematicService.getBuildQuote(quoteId);
+        if (!quote) {
+            return res.status(404).json({ error: '报价单不存在。' });
+        }
+        if (quote.status !== 'open') {
+            return res.status(409).json({ error: `报价单状态为 ${quote.status}，无法结账。` });
+        }
+        if (quote.contentHash !== contentHash) {
+            return res.status(409).json({
+                error: 'contentHash 与报价单不一致，请重新上传投影并报价。',
+                quoteContentHash: quote.contentHash,
+                providedContentHash: contentHash
+            });
+        }
+
+        const storedVerify = await buildSchematicService.verifyStoredSchematicHash(contentHash);
+        if (!storedVerify.ok) {
+            return res.status(409).json({
+                error: '服务器存储的投影文件哈希校验失败，请重新上传。',
+                storedVerify
+            });
+        }
+
+        const total = Math.round(Number(quote.purchasableTotal) * 100) / 100;
+        reconcileStuckEconomyDeductions();
+        const balance = readEffectiveEssentialsBalance(uuid);
+        if (balance == null) {
+            return res.status(404).json({ error: '未找到该玩家的 Essentials 经济存档。' });
+        }
+        if (total > 0 && balance < total) {
+            return res.status(402).json({
+                error: '零钱不足，无法购买投影粘贴。',
+                balance,
+                total
+            });
+        }
+
+        const fileBalance = readEssentialsBalance(uuid);
+        const balanceAfter = Math.round((fileBalance - total) * 100) / 100;
+
+        const pasteOrder = await buildSchematicService.createPasteOrder({
+            contentHash,
+            quoteId: quote.numericId,
+            playerUuid: uuid,
+            playerId,
+            username: user.username,
+            total
+        });
+        buildSchematicService.markQuoteConsumed(quote.numericId, pasteOrder.numericId);
+
+        if (total > 0) {
+            enqueueEssentialsDeduction({
+                uuid,
+                playerId,
+                amount: total,
+                orderId: pasteOrder.numericId,
+                balanceAfter
+            });
+            appendEcoTakeQueueLine(playerId, total, pasteOrder.numericId);
+        }
+
+        res.json({
+            pasteOrderId: pasteOrder.numericId,
+            pasteOrderUuid: pasteOrder.id,
+            pasteToken: pasteOrder.pasteToken,
+            contentHash: pasteOrder.contentHash,
+            contentHashVersion: pasteOrder.contentHashVersion,
+            total,
+            balanceAfter,
+            status: pasteOrder.status,
+            pasteTokenExpiresAt: pasteOrder.pasteTokenExpiresAt,
+            message: '付款成功。请在游戏内设置粘贴锚点后执行粘贴；全程 contentHash 不变。',
+            nextStep: 'POST /api/build/paste/anchor 绑定锚点，再由服务器执行粘贴。'
+        });
+    } catch (error) {
+        console.error('投影粘贴结账失败:', error);
+        res.status(500).json({ error: error.message || '投影粘贴结账失败' });
+    }
+});
+
+app.post('/api/build/paste/anchor', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        const uuid = resolvePlayerUuid(playerId);
+        const pasteOrderId = String(req.body?.pasteOrderId || '').trim();
+        const contentHash = String(req.body?.contentHash || '').trim().toLowerCase();
+        const world = String(req.body?.world || '').trim();
+        const x = Number(req.body?.x);
+        const y = Number(req.body?.y);
+        const z = Number(req.body?.z);
+        const yaw = Number(req.body?.yaw);
+        const pitch = Number(req.body?.pitch);
+
+        if (!pasteOrderId || !contentHash || !world || !Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+            return res.status(400).json({ error: '缺少 pasteOrderId、contentHash 或锚点坐标。' });
+        }
+
+        const order = buildSchematicService.getPasteOrder(pasteOrderId);
+        if (!order) {
+            return res.status(404).json({ error: '粘贴订单不存在。' });
+        }
+        if (order.contentHash !== contentHash) {
+            return res.status(409).json({
+                error: 'contentHash 与粘贴订单不一致。',
+                orderContentHash: order.contentHash,
+                providedContentHash: contentHash
+            });
+        }
+
+        const result = buildSchematicService.updatePasteOrderAnchor(pasteOrderId, {
+            world,
+            x: Math.floor(x),
+            y: Math.floor(y),
+            z: Math.floor(z),
+            yaw: Number.isFinite(yaw) ? yaw : 0,
+            pitch: Number.isFinite(pitch) ? pitch : 0
+        }, uuid);
+        if (result.error) {
+            return res.status(409).json({ error: result.error });
+        }
+
+        res.json({
+            pasteOrderId: result.order.numericId,
+            contentHash: result.order.contentHash,
+            status: result.order.status,
+            anchor: result.order.anchor,
+            pasteToken: result.order.pasteToken,
+            schematicPath: result.order.schematicPath
+        });
+    } catch (error) {
+        console.error('设置粘贴锚点失败:', error);
+        res.status(500).json({ error: '设置粘贴锚点失败' });
+    }
+});
+
+app.post('/api/build/paste/consume', async (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        const uuid = resolvePlayerUuid(playerId);
+        const pasteToken = String(req.body?.pasteToken || '').trim();
+        const contentHash = String(req.body?.contentHash || '').trim().toLowerCase();
+        if (!pasteToken || !contentHash) {
+            return res.status(400).json({ error: '缺少 pasteToken 或 contentHash。' });
+        }
+
+        const order = buildSchematicService.getPasteOrderByToken(pasteToken);
+        if (!order || order.contentHash !== contentHash) {
+            return res.status(409).json({ error: '粘贴凭证与 contentHash 不匹配。' });
+        }
+
+        const consumed = await buildSchematicService.consumePasteToken(pasteToken, uuid);
+        if (consumed.error) {
+            return res.status(409).json({ error: consumed.error });
+        }
+
+        res.json({
+            pasteOrderId: consumed.order.numericId,
+            contentHash: consumed.order.contentHash,
+            status: consumed.order.status,
+            anchor: consumed.order.anchor,
+            schematicPath: consumed.order.schematicPath,
+            message: '哈希校验通过，可执行粘贴。'
+        });
+    } catch (error) {
+        console.error('消费粘贴凭证失败:', error);
+        res.status(500).json({ error: error.message || '消费粘贴凭证失败' });
+    }
+});
+
+app.get('/api/build/paste/orders', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        const uuid = resolvePlayerUuid(playerId);
+        const store = buildSchematicService.loadPasteOrdersStore();
+        const orders = Object.values(store.orders || {})
+            .filter((order) => !uuid || order.playerUuid === uuid)
+            .map((order) => ({
+                pasteOrderId: order.numericId,
+                contentHash: order.contentHash,
+                status: order.status,
+                total: order.total,
+                anchor: order.anchor,
+                createdAt: order.createdAt,
+                pasteTokenExpiresAt: order.pasteTokenExpiresAt
+            }))
+            .sort((a, b) => Number(b.pasteOrderId) - Number(a.pasteOrderId))
+            .slice(0, 20);
+        res.json({ orders });
+    } catch (error) {
+        res.status(500).json({ error: '读取粘贴订单失败' });
     }
 });
 
