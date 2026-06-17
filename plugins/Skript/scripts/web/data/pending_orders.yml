@@ -901,5 +901,33 @@ orders:
                 material: black_concrete
                 shopTitle: 混凝土商店
                 status: delivered
+    '35':
+        id: 1d630829-cd97-4658-b9ef-25365371af97
+        numericId: 35
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 1
+        balanceAfter: 200154.41
+        economyChargedInGame: true
+        createdAt: '2026-06-17T13:45:05.920Z'
+        updatedAt: '2026-06-17 21:54:57'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-06-17 21:54:56'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: short_grass
+                shopId: flowers
+                slot: i76
+                quantity: 1
+                unitBuyPrice: 1
+                lineTotal: 1
+                productAmount: 1
+                material: short_grass
+                shopTitle: 花卉商店
+                status: delivered
 
-next_id: 35
+next_id: 36
