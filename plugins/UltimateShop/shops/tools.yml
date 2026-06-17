@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:drops-shop-name}'
+  shop-name: '{lang:tools-shop-name}'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -11,18 +11,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ARMADILLO_SCUTE
+        material: CARROT_ON_A_STICK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_armadillo_scute%'
+        amount: '%mcwws.price_buy_carrot_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_armadillo_scute%'
+        amount: '%mcwws.price_sell_carrot_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
   i2:
@@ -30,18 +30,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BEE_NEST
+        material: COPPER_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bee_nest%'
+        amount: '%mcwws.price_buy_copper_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bee_nest%'
+        amount: '%mcwws.price_sell_copper_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i3:
@@ -49,18 +49,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLAZE_POWDER
+        material: COPPER_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blaze_powder%'
+        amount: '%mcwws.price_buy_copper_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blaze_powder%'
+        amount: '%mcwws.price_sell_copper_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i4:
@@ -68,18 +68,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLAZE_ROD
+        material: COPPER_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blaze_rod%'
+        amount: '%mcwws.price_buy_copper_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blaze_rod%'
+        amount: '%mcwws.price_sell_copper_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i5:
@@ -87,18 +87,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BONE
+        material: COPPER_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bone%'
+        amount: '%mcwws.price_buy_copper_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bone%'
+        amount: '%mcwws.price_sell_copper_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i6:
@@ -106,18 +106,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BREEZE_ROD
+        material: DIAMOND_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_breeze_rod%'
+        amount: '%mcwws.price_buy_diamond_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_breeze_rod%'
+        amount: '%mcwws.price_sell_diamond_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i7:
@@ -125,18 +125,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CREEPER_HEAD
+        material: DIAMOND_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_creeper_head%'
+        amount: '%mcwws.price_buy_diamond_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_creeper_head%'
+        amount: '%mcwws.price_sell_diamond_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i8:
@@ -144,18 +144,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENDER_PEARL
+        material: DIAMOND_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ender_pearl%'
+        amount: '%mcwws.price_buy_diamond_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ender_pearl%'
+        amount: '%mcwws.price_sell_diamond_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i9:
@@ -163,18 +163,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FEATHER
+        material: DIAMOND_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_feather%'
+        amount: '%mcwws.price_buy_diamond_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_feather%'
+        amount: '%mcwws.price_sell_diamond_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i10:
@@ -182,18 +182,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GHAST_TEAR
+        material: FISHING_ROD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ghast_tear%'
+        amount: '%mcwws.price_buy_fishing_rod%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ghast_tear%'
+        amount: '%mcwws.price_sell_fishing_rod%'
         placeholder: '{amount}$'
         start-apply: 0
   i11:
@@ -201,18 +201,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLOW_INK_SAC
+        material: GOLDEN_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glow_ink_sac%'
+        amount: '%mcwws.price_buy_golden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glow_ink_sac%'
+        amount: '%mcwws.price_sell_golden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i12:
@@ -220,18 +220,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOAT_HORN
+        material: GOLDEN_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_goat_horn%'
+        amount: '%mcwws.price_buy_golden_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_goat_horn%'
+        amount: '%mcwws.price_sell_golden_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i13:
@@ -239,18 +239,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GUNPOWDER
+        material: GOLDEN_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_gunpowder%'
+        amount: '%mcwws.price_buy_golden_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_gunpowder%'
+        amount: '%mcwws.price_sell_golden_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i14:
@@ -258,18 +258,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HONEY_BLOCK
+        material: GOLDEN_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_honey_block%'
+        amount: '%mcwws.price_buy_golden_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_honey_block%'
+        amount: '%mcwws.price_sell_golden_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i15:
@@ -277,18 +277,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HONEY_BOTTLE
+        material: IRON_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_honey_bottle%'
+        amount: '%mcwws.price_buy_iron_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_honey_bottle%'
+        amount: '%mcwws.price_sell_iron_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i16:
@@ -296,18 +296,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HONEYCOMB
+        material: IRON_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_honeycomb%'
+        amount: '%mcwws.price_buy_iron_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_honeycomb%'
+        amount: '%mcwws.price_sell_iron_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i17:
@@ -315,18 +315,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HONEYCOMB_BLOCK
+        material: IRON_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_honeycomb_block%'
+        amount: '%mcwws.price_buy_iron_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_honeycomb_block%'
+        amount: '%mcwws.price_sell_iron_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i18:
@@ -334,18 +334,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: INK_SAC
+        material: IRON_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ink_sac%'
+        amount: '%mcwws.price_buy_iron_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ink_sac%'
+        amount: '%mcwws.price_sell_iron_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i19:
@@ -353,18 +353,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER
+        material: NETHERITE_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather%'
+        amount: '%mcwws.price_buy_netherite_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather%'
+        amount: '%mcwws.price_sell_netherite_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i20:
@@ -372,18 +372,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAGMA_CREAM
+        material: NETHERITE_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_magma_cream%'
+        amount: '%mcwws.price_buy_netherite_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_magma_cream%'
+        amount: '%mcwws.price_sell_netherite_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i21:
@@ -391,18 +391,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NAUTILUS_SHELL
+        material: NETHERITE_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nautilus_shell%'
+        amount: '%mcwws.price_buy_netherite_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nautilus_shell%'
+        amount: '%mcwws.price_sell_netherite_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i22:
@@ -410,18 +410,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NETHER_STAR
+        material: NETHERITE_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nether_star%'
+        amount: '%mcwws.price_buy_netherite_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nether_star%'
+        amount: '%mcwws.price_sell_netherite_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i23:
@@ -429,18 +429,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OMINOUS_BOTTLE
+        material: SHEARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ominous_bottle%'
+        amount: '%mcwws.price_buy_shears%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ominous_bottle%'
+        amount: '%mcwws.price_sell_shears%'
         placeholder: '{amount}$'
         start-apply: 0
   i24:
@@ -448,18 +448,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OMINOUS_TRIAL_KEY
+        material: STONE_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ominous_trial_key%'
+        amount: '%mcwws.price_buy_stone_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ominous_trial_key%'
+        amount: '%mcwws.price_sell_stone_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i25:
@@ -467,18 +467,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PHANTOM_MEMBRANE
+        material: STONE_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_phantom_membrane%'
+        amount: '%mcwws.price_buy_stone_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_phantom_membrane%'
+        amount: '%mcwws.price_sell_stone_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i26:
@@ -486,18 +486,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PIGLIN_HEAD
+        material: STONE_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_piglin_head%'
+        amount: '%mcwws.price_buy_stone_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_piglin_head%'
+        amount: '%mcwws.price_sell_stone_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i27:
@@ -505,18 +505,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RABBIT_HIDE
+        material: STONE_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_rabbit_hide%'
+        amount: '%mcwws.price_buy_stone_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_rabbit_hide%'
+        amount: '%mcwws.price_sell_stone_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
   i28:
@@ -524,18 +524,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RESIN_BLOCK
+        material: WARPED_FUNGUS_ON_A_STICK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_resin_block%'
+        amount: '%mcwws.price_buy_warped_fungus_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_resin_block%'
+        amount: '%mcwws.price_sell_warped_fungus_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
   i29:
@@ -543,18 +543,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RESIN_CLUMP
+        material: WOODEN_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_resin_clump%'
+        amount: '%mcwws.price_buy_wooden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_resin_clump%'
+        amount: '%mcwws.price_sell_wooden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   i30:
@@ -562,18 +562,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ROTTEN_FLESH
+        material: WOODEN_HOE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_rotten_flesh%'
+        amount: '%mcwws.price_buy_wooden_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_rotten_flesh%'
+        amount: '%mcwws.price_sell_wooden_hoe%'
         placeholder: '{amount}$'
         start-apply: 0
   i31:
@@ -581,18 +581,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SKELETON_SKULL
+        material: WOODEN_PICKAXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_skeleton_skull%'
+        amount: '%mcwws.price_buy_wooden_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_skeleton_skull%'
+        amount: '%mcwws.price_sell_wooden_pickaxe%'
         placeholder: '{amount}$'
         start-apply: 0
   i32:
@@ -600,188 +600,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SLIME_BALL
+        material: WOODEN_SHOVEL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_slime_ball%'
+        amount: '%mcwws.price_buy_wooden_shovel%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_slime_ball%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i33:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SLIME_BLOCK
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_slime_block%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_slime_block%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i34:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SPIDER_EYE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_spider_eye%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_spider_eye%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i35:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: STRING
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_string%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_string%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i36:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: TRIAL_KEY
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_trial_key%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_trial_key%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i37:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: TURTLE_SCUTE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_turtle_scute%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_turtle_scute%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i38:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WIND_CHARGE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_wind_charge%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_wind_charge%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i39:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WITHER_ROSE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_wither_rose%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_wither_rose%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i40:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WITHER_SKELETON_SKULL
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_wither_skeleton_skull%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_wither_skeleton_skull%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i41:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ZOMBIE_HEAD
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_zombie_head%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_zombie_head%'
+        amount: '%mcwws.price_sell_wooden_shovel%'
         placeholder: '{amount}$'
         start-apply: 0

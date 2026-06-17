@@ -1,313 +1,1623 @@
 settings:
-  menu: 'example-shop-menu'
+  menu: example-shop-menu
   buy-more: true
   shop-name: '{lang:logs-shop-name}'
   hide-message: false
-  secret-shop-items: true
+  secret-shop-items: false
   allow-favourite: true
-
 items:
-  A:
+  i1:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: CHERRY_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_cherry_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_cherry_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  B:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: OAK_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_oak_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_oak_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  C:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: SPRUCE_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_spruce_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_spruce_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  D:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: BIRCH_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_birch_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_birch_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  E:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: MANGROVE_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  F:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: JUNGLE_LOG
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_jungle_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_jungle_log%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  G:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
+      '1':
         material: ACACIA_LOG
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_buy_acacia_log%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_acacia_log%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  i2:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
+      '1':
+        material: ACACIA_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_acacia_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_acacia_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i3:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ACACIA_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_acacia_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_acacia_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i4:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ACACIA_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_acacia_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_acacia_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i5:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ACACIA_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_acacia_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_acacia_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i6:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i7:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_MOSAIC
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_mosaic%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_mosaic%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i8:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_MOSAIC_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_mosaic_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_mosaic_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i9:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_MOSAIC_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_mosaic_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_mosaic_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i10:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i11:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i12:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BAMBOO_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bamboo_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bamboo_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i13:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BIRCH_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_birch_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_birch_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i14:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BIRCH_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_birch_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_birch_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i15:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BIRCH_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_birch_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_birch_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i16:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BIRCH_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_birch_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_birch_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i17:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BIRCH_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_birch_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_birch_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i18:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHERRY_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cherry_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cherry_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i19:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHERRY_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cherry_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cherry_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i20:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHERRY_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cherry_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cherry_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i21:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHERRY_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cherry_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cherry_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i22:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHERRY_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cherry_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cherry_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i23:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CRIMSON_HYPHAE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crimson_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crimson_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i24:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CRIMSON_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crimson_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crimson_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i25:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CRIMSON_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crimson_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crimson_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i26:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CRIMSON_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crimson_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crimson_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i27:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CRIMSON_STEM
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crimson_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crimson_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i28:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: DARK_OAK_LOG
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_buy_dark_oak_log%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_dark_oak_log%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  i29:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: CHERRY_SAPLING
+      '1':
+        material: DARK_OAK_PLANKS
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cherry_sapling%'
+        amount: '%mcwws.price_buy_dark_oak_planks%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cherry_sapling%'
+        amount: '%mcwws.price_sell_dark_oak_planks%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  i30:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: OAK_SAPLING
+      '1':
+        material: DARK_OAK_SLAB
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_oak_sapling%'
+        amount: '%mcwws.price_buy_dark_oak_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_oak_sapling%'
+        amount: '%mcwws.price_sell_dark_oak_slab%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  i31:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: SPRUCE_SAPLING
+      '1':
+        material: DARK_OAK_STAIRS
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_spruce_sapling%'
+        amount: '%mcwws.price_buy_dark_oak_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_spruce_sapling%'
+        amount: '%mcwws.price_sell_dark_oak_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  i32:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: BIRCH_SAPLING
+      '1':
+        material: DARK_OAK_WOOD
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_birch_sapling%'
+        amount: '%mcwws.price_buy_dark_oak_wood%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_birch_sapling%'
+        amount: '%mcwws.price_sell_dark_oak_wood%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  i33:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: MANGROVE_PROPAGULE
+      '1':
+        material: JUNGLE_LOG
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_propagule%'
+        amount: '%mcwws.price_buy_jungle_log%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_propagule%'
+        amount: '%mcwws.price_sell_jungle_log%'
         placeholder: '{amount}$'
         start-apply: 0
-  N:
+  i34:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: JUNGLE_SAPLING
+      '1':
+        material: JUNGLE_PLANKS
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_jungle_sapling%'
+        amount: '%mcwws.price_buy_jungle_planks%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_jungle_sapling%'
+        amount: '%mcwws.price_sell_jungle_planks%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  i35:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: ACACIA_SAPLING
+      '1':
+        material: JUNGLE_SLAB
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_acacia_sapling%'
+        amount: '%mcwws.price_buy_jungle_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_acacia_sapling%'
+        amount: '%mcwws.price_sell_jungle_slab%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  i36:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: DARK_OAK_SAPLING
+      '1':
+        material: JUNGLE_STAIRS
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_oak_sapling%'
+        amount: '%mcwws.price_buy_jungle_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_oak_sapling%'
+        amount: '%mcwws.price_sell_jungle_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i37:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: JUNGLE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_jungle_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_jungle_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i38:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MANGROVE_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mangrove_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mangrove_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i39:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MANGROVE_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mangrove_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mangrove_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i40:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MANGROVE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mangrove_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mangrove_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i41:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MANGROVE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mangrove_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mangrove_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i42:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MANGROVE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mangrove_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mangrove_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i43:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i44:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i45:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i46:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i47:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i48:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PALE_OAK_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pale_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pale_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i49:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PALE_OAK_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pale_oak_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pale_oak_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i50:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PALE_OAK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pale_oak_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pale_oak_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i51:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PALE_OAK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pale_oak_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pale_oak_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i52:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PALE_OAK_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pale_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pale_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i53:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPRUCE_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spruce_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spruce_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i54:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPRUCE_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spruce_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spruce_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i55:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPRUCE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spruce_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spruce_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i56:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPRUCE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spruce_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spruce_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i57:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPRUCE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spruce_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spruce_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i58:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_ACACIA_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_acacia_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_acacia_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i59:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_ACACIA_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_acacia_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_acacia_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i60:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_BAMBOO_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_bamboo_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_bamboo_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i61:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_BIRCH_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_birch_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_birch_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i62:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_BIRCH_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_birch_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_birch_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i63:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_CHERRY_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_cherry_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_cherry_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i64:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_CHERRY_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_cherry_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_cherry_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i65:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_CRIMSON_HYPHAE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_crimson_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_crimson_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i66:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_CRIMSON_STEM
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_crimson_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_crimson_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i67:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_DARK_OAK_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_dark_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_dark_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i68:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_DARK_OAK_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_dark_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_dark_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i69:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_JUNGLE_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_jungle_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_jungle_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i70:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_JUNGLE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_jungle_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_jungle_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i71:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_MANGROVE_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_mangrove_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_mangrove_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i72:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_MANGROVE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_mangrove_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_mangrove_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i73:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_OAK_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i74:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_OAK_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i75:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_PALE_OAK_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_pale_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_pale_oak_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i76:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_PALE_OAK_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_pale_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_pale_oak_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i77:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_SPRUCE_LOG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_spruce_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_spruce_log%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i78:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_SPRUCE_WOOD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_spruce_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_spruce_wood%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i79:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_WARPED_HYPHAE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_warped_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_warped_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i80:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: STRIPPED_WARPED_STEM
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_stripped_warped_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_stripped_warped_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i81:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARPED_HYPHAE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_warped_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_warped_hyphae%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i82:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARPED_PLANKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_warped_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_warped_planks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i83:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARPED_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_warped_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_warped_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i84:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARPED_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_warped_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_warped_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i85:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARPED_STEM
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_warped_stem%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_warped_stem%'
         placeholder: '{amount}$'
         start-apply: 0

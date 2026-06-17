@@ -1,332 +1,939 @@
 settings:
-  menu: 'example-shop-menu'
+  menu: example-shop-menu
   buy-more: true
   shop-name: '{lang:farming-shop-name}'
   hide-message: false
-  secret-shop-items: true
+  secret-shop-items: false
   allow-favourite: true
-
 items:
-  A:
+  i1:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: WHEAT_SEEDS
+      '1':
+        material: APPLE
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wheat_seeds%'
+        amount: '%mcwws.price_buy_apple%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wheat_seeds%'
+        amount: '%mcwws.price_sell_apple%'
         placeholder: '{amount}$'
         start-apply: 0
-  B:
+  i2:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: PUMPKIN_SEEDS
+      '1':
+        material: BAKED_POTATO
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pumpkin_seeds%'
+        amount: '%mcwws.price_buy_baked_potato%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pumpkin_seeds%'
+        amount: '%mcwws.price_sell_baked_potato%'
         placeholder: '{amount}$'
         start-apply: 0
-  C:
+  i3:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: BEETROOT_SEEDS
+      '1':
+        material: BEEF
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_beetroot_seeds%'
+        amount: '%mcwws.price_buy_beef%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_beetroot_seeds%'
+        amount: '%mcwws.price_sell_beef%'
         placeholder: '{amount}$'
         start-apply: 0
-  D:
+  i4:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: MELON_SEEDS
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_melon_seeds%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_melon_seeds%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  E:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: WHEAT
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_wheat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_wheat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  F:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: PUMPKIN
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_pumpkin%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_pumpkin%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  G:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
-        material: MELON_SLICE
-        amount: 1
-    buy-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_melon_slice%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      1:
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_melon_slice%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  H:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      1:
+      '1':
         material: BEETROOT
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_buy_beetroot%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_beetroot%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  i5:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: POTATO
+      '1':
+        material: BEETROOT_SOUP
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_potato%'
+        amount: '%mcwws.price_buy_beetroot_soup%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_potato%'
+        amount: '%mcwws.price_sell_beetroot_soup%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  i6:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: SUGAR_CANE
+      '1':
+        material: BLUE_EGG
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sugar_cane%'
+        amount: '%mcwws.price_buy_blue_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sugar_cane%'
+        amount: '%mcwws.price_sell_blue_egg%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  i7:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: KELP
+      '1':
+        material: BREAD
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_kelp%'
+        amount: '%mcwws.price_buy_bread%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_kelp%'
+        amount: '%mcwws.price_sell_bread%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  i8:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: VINE
+      '1':
+        material: BROWN_EGG
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_vine%'
+        amount: '%mcwws.price_buy_brown_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_vine%'
+        amount: '%mcwws.price_sell_brown_egg%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  i9:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
+      '1':
+        material: CAKE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cake%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cake%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i10:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: CARROT
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_buy_carrot%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_carrot%'
         placeholder: '{amount}$'
         start-apply: 0
-  N:
+  i11:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: NETHER_WART
+      '1':
+        material: CHICKEN
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nether_wart%'
+        amount: '%mcwws.price_buy_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nether_wart%'
+        amount: '%mcwws.price_sell_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  i12:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: LILY_PAD
+      '1':
+        material: CHORUS_FRUIT
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lily_pad%'
+        amount: '%mcwws.price_buy_chorus_fruit%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lily_pad%'
+        amount: '%mcwws.price_sell_chorus_fruit%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  i13:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
-        material: SWEET_BERRIES
+      '1':
+        material: COD
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sweet_berries%'
+        amount: '%mcwws.price_buy_cod%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sweet_berries%'
+        amount: '%mcwws.price_sell_cod%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  i14:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
-      1:
+      '1':
+        material: COOKED_BEEF
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_beef%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_beef%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i15:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_CHICKEN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i16:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_COD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_cod%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_cod%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i17:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_MUTTON
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_mutton%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_mutton%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i18:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_PORKCHOP
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_porkchop%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_porkchop%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i19:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_RABBIT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i20:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKED_SALMON
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_salmon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_salmon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i21:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COOKIE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cookie%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cookie%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i22:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: DRIED_KELP
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_dried_kelp%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_dried_kelp%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i23:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: DRIED_KELP_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_dried_kelp_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_dried_kelp_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i24:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: EGG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i25:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_GOLDEN_APPLE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_golden_apple%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_golden_apple%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i26:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: FERMENTED_SPIDER_EYE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_fermented_spider_eye%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_fermented_spider_eye%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i27:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GLISTERING_MELON_SLICE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_glistering_melon_slice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_glistering_melon_slice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i28:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: GLOW_BERRIES
         amount: 1
     buy-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_buy_glow_berries%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
-      1:
+      '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_glow_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i29:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GOLDEN_APPLE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_golden_apple%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_golden_apple%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i30:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GOLDEN_CARROT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_golden_carrot%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_golden_carrot%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i31:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: HAY_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_hay_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_hay_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i32:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MELON
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_melon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_melon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i33:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MELON_SLICE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_melon_slice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_melon_slice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i34:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSHROOM_STEW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mushroom_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mushroom_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i35:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUTTON
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mutton%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mutton%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i36:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POISONOUS_POTATO
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_poisonous_potato%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_poisonous_potato%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i37:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POPPED_CHORUS_FRUIT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_popped_chorus_fruit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_popped_chorus_fruit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i38:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PORKCHOP
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_porkchop%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_porkchop%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i39:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POTATO
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_potato%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_potato%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i40:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PUFFERFISH
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pufferfish%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pufferfish%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i41:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PUMPKIN_PIE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pumpkin_pie%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pumpkin_pie%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i42:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RABBIT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i43:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RABBIT_STEW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_rabbit_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_rabbit_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i44:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SALMON
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_salmon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_salmon%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i45:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SUGAR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sugar%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sugar%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i46:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SUSPICIOUS_STEW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_suspicious_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_suspicious_stew%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i47:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SWEET_BERRIES
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sweet_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sweet_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i48:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TROPICAL_FISH
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tropical_fish%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tropical_fish%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i49:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WHEAT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_wheat%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_wheat%'
         placeholder: '{amount}$'
         start-apply: 0

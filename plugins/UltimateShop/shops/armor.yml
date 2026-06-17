@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:fish-shop-name}'
+  shop-name: '{lang:armor-shop-name}'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -11,18 +11,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRAIN_CORAL
+        material: ARMOR_STAND
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brain_coral%'
+        amount: '%mcwws.price_buy_armor_stand%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brain_coral%'
+        amount: '%mcwws.price_sell_armor_stand%'
         placeholder: '{amount}$'
         start-apply: 0
   i2:
@@ -30,18 +30,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRAIN_CORAL_BLOCK
+        material: BOLT_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brain_coral_block%'
+        amount: '%mcwws.price_buy_bolt_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brain_coral_block%'
+        amount: '%mcwws.price_sell_bolt_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i3:
@@ -49,18 +49,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRAIN_CORAL_FAN
+        material: CHAINMAIL_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brain_coral_fan%'
+        amount: '%mcwws.price_buy_chainmail_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brain_coral_fan%'
+        amount: '%mcwws.price_sell_chainmail_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i4:
@@ -68,18 +68,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BUBBLE_CORAL
+        material: CHAINMAIL_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bubble_coral%'
+        amount: '%mcwws.price_buy_chainmail_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bubble_coral%'
+        amount: '%mcwws.price_sell_chainmail_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i5:
@@ -87,18 +87,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BUBBLE_CORAL_BLOCK
+        material: CHAINMAIL_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bubble_coral_block%'
+        amount: '%mcwws.price_buy_chainmail_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bubble_coral_block%'
+        amount: '%mcwws.price_sell_chainmail_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i6:
@@ -106,18 +106,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BUBBLE_CORAL_FAN
+        material: CHAINMAIL_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bubble_coral_fan%'
+        amount: '%mcwws.price_buy_chainmail_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bubble_coral_fan%'
+        amount: '%mcwws.price_sell_chainmail_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i7:
@@ -125,18 +125,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CONDUIT
+        material: COAST_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_conduit%'
+        amount: '%mcwws.price_buy_coast_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_conduit%'
+        amount: '%mcwws.price_sell_coast_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i8:
@@ -144,18 +144,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_PRISMARINE
+        material: COPPER_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_prismarine%'
+        amount: '%mcwws.price_buy_copper_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_prismarine%'
+        amount: '%mcwws.price_sell_copper_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i9:
@@ -163,18 +163,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_PRISMARINE_SLAB
+        material: COPPER_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_prismarine_slab%'
+        amount: '%mcwws.price_buy_copper_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_prismarine_slab%'
+        amount: '%mcwws.price_sell_copper_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i10:
@@ -182,18 +182,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_PRISMARINE_STAIRS
+        material: COPPER_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_prismarine_stairs%'
+        amount: '%mcwws.price_buy_copper_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_prismarine_stairs%'
+        amount: '%mcwws.price_sell_copper_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i11:
@@ -201,18 +201,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BRAIN_CORAL
+        material: COPPER_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_brain_coral%'
+        amount: '%mcwws.price_buy_copper_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_brain_coral%'
+        amount: '%mcwws.price_sell_copper_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i12:
@@ -220,18 +220,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BRAIN_CORAL_BLOCK
+        material: COPPER_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_brain_coral_block%'
+        amount: '%mcwws.price_buy_copper_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_brain_coral_block%'
+        amount: '%mcwws.price_sell_copper_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i13:
@@ -239,18 +239,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BRAIN_CORAL_FAN
+        material: COPPER_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_brain_coral_fan%'
+        amount: '%mcwws.price_buy_copper_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_brain_coral_fan%'
+        amount: '%mcwws.price_sell_copper_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i14:
@@ -258,18 +258,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BUBBLE_CORAL
+        material: DIAMOND_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bubble_coral%'
+        amount: '%mcwws.price_buy_diamond_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bubble_coral%'
+        amount: '%mcwws.price_sell_diamond_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i15:
@@ -277,18 +277,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BUBBLE_CORAL_BLOCK
+        material: DIAMOND_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bubble_coral_block%'
+        amount: '%mcwws.price_buy_diamond_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bubble_coral_block%'
+        amount: '%mcwws.price_sell_diamond_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i16:
@@ -296,18 +296,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BUBBLE_CORAL_FAN
+        material: DIAMOND_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bubble_coral_fan%'
+        amount: '%mcwws.price_buy_diamond_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bubble_coral_fan%'
+        amount: '%mcwws.price_sell_diamond_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i17:
@@ -315,18 +315,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_FIRE_CORAL
+        material: DIAMOND_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_fire_coral%'
+        amount: '%mcwws.price_buy_diamond_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_fire_coral%'
+        amount: '%mcwws.price_sell_diamond_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i18:
@@ -334,18 +334,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_FIRE_CORAL_BLOCK
+        material: DIAMOND_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_fire_coral_block%'
+        amount: '%mcwws.price_buy_diamond_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_fire_coral_block%'
+        amount: '%mcwws.price_sell_diamond_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i19:
@@ -353,18 +353,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_FIRE_CORAL_FAN
+        material: DIAMOND_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_fire_coral_fan%'
+        amount: '%mcwws.price_buy_diamond_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_fire_coral_fan%'
+        amount: '%mcwws.price_sell_diamond_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i20:
@@ -372,18 +372,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_HORN_CORAL
+        material: DUNE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_horn_coral%'
+        amount: '%mcwws.price_buy_dune_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_horn_coral%'
+        amount: '%mcwws.price_sell_dune_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i21:
@@ -391,18 +391,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_HORN_CORAL_BLOCK
+        material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_horn_coral_block%'
+        amount: '%mcwws.price_buy_eye_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_horn_coral_block%'
+        amount: '%mcwws.price_sell_eye_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i22:
@@ -410,18 +410,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_HORN_CORAL_FAN
+        material: FLOW_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_horn_coral_fan%'
+        amount: '%mcwws.price_buy_flow_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_horn_coral_fan%'
+        amount: '%mcwws.price_sell_flow_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i23:
@@ -429,18 +429,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_TUBE_CORAL
+        material: GOLDEN_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_tube_coral%'
+        amount: '%mcwws.price_buy_golden_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_tube_coral%'
+        amount: '%mcwws.price_sell_golden_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i24:
@@ -448,18 +448,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_TUBE_CORAL_BLOCK
+        material: GOLDEN_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_tube_coral_block%'
+        amount: '%mcwws.price_buy_golden_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_tube_coral_block%'
+        amount: '%mcwws.price_sell_golden_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i25:
@@ -467,18 +467,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_TUBE_CORAL_FAN
+        material: GOLDEN_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_tube_coral_fan%'
+        amount: '%mcwws.price_buy_golden_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_tube_coral_fan%'
+        amount: '%mcwws.price_sell_golden_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i26:
@@ -486,18 +486,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FIRE_CORAL
+        material: GOLDEN_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fire_coral%'
+        amount: '%mcwws.price_buy_golden_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fire_coral%'
+        amount: '%mcwws.price_sell_golden_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i27:
@@ -505,18 +505,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FIRE_CORAL_BLOCK
+        material: GOLDEN_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fire_coral_block%'
+        amount: '%mcwws.price_buy_golden_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fire_coral_block%'
+        amount: '%mcwws.price_sell_golden_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i28:
@@ -524,18 +524,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FIRE_CORAL_FAN
+        material: GOLDEN_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fire_coral_fan%'
+        amount: '%mcwws.price_buy_golden_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fire_coral_fan%'
+        amount: '%mcwws.price_sell_golden_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i29:
@@ -543,18 +543,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HEART_OF_THE_SEA
+        material: HOST_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_heart_of_the_sea%'
+        amount: '%mcwws.price_buy_host_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_heart_of_the_sea%'
+        amount: '%mcwws.price_sell_host_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i30:
@@ -562,18 +562,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HORN_CORAL
+        material: IRON_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_horn_coral%'
+        amount: '%mcwws.price_buy_iron_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_horn_coral%'
+        amount: '%mcwws.price_sell_iron_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i31:
@@ -581,18 +581,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HORN_CORAL_BLOCK
+        material: IRON_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_horn_coral_block%'
+        amount: '%mcwws.price_buy_iron_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_horn_coral_block%'
+        amount: '%mcwws.price_sell_iron_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i32:
@@ -600,18 +600,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HORN_CORAL_FAN
+        material: IRON_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_horn_coral_fan%'
+        amount: '%mcwws.price_buy_iron_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_horn_coral_fan%'
+        amount: '%mcwws.price_sell_iron_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i33:
@@ -619,18 +619,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: KELP
+        material: IRON_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_kelp%'
+        amount: '%mcwws.price_buy_iron_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_kelp%'
+        amount: '%mcwws.price_sell_iron_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i34:
@@ -638,18 +638,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE
+        material: IRON_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine%'
+        amount: '%mcwws.price_buy_iron_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine%'
+        amount: '%mcwws.price_sell_iron_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i35:
@@ -657,18 +657,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_BRICK_SLAB
+        material: IRON_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_brick_slab%'
+        amount: '%mcwws.price_buy_iron_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_brick_slab%'
+        amount: '%mcwws.price_sell_iron_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i36:
@@ -676,18 +676,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_BRICK_STAIRS
+        material: LEATHER_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_brick_stairs%'
+        amount: '%mcwws.price_buy_leather_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_brick_stairs%'
+        amount: '%mcwws.price_sell_leather_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i37:
@@ -695,18 +695,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_BRICKS
+        material: LEATHER_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_bricks%'
+        amount: '%mcwws.price_buy_leather_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_bricks%'
+        amount: '%mcwws.price_sell_leather_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i38:
@@ -714,18 +714,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_CRYSTALS
+        material: LEATHER_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_crystals%'
+        amount: '%mcwws.price_buy_leather_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_crystals%'
+        amount: '%mcwws.price_sell_leather_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i39:
@@ -733,18 +733,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_SHARD
+        material: LEATHER_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_shard%'
+        amount: '%mcwws.price_buy_leather_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_shard%'
+        amount: '%mcwws.price_sell_leather_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i40:
@@ -752,18 +752,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_SLAB
+        material: LEATHER_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_slab%'
+        amount: '%mcwws.price_buy_leather_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_slab%'
+        amount: '%mcwws.price_sell_leather_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i41:
@@ -771,18 +771,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_STAIRS
+        material: NETHERITE_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_stairs%'
+        amount: '%mcwws.price_buy_netherite_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_stairs%'
+        amount: '%mcwws.price_sell_netherite_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   i42:
@@ -790,18 +790,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRISMARINE_WALL
+        material: NETHERITE_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prismarine_wall%'
+        amount: '%mcwws.price_buy_netherite_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prismarine_wall%'
+        amount: '%mcwws.price_sell_netherite_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   i43:
@@ -809,18 +809,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SEA_PICKLE
+        material: NETHERITE_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sea_pickle%'
+        amount: '%mcwws.price_buy_netherite_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sea_pickle%'
+        amount: '%mcwws.price_sell_netherite_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   i44:
@@ -828,18 +828,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SEAGRASS
+        material: NETHERITE_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_seagrass%'
+        amount: '%mcwws.price_buy_netherite_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_seagrass%'
+        amount: '%mcwws.price_sell_netherite_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i45:
@@ -847,18 +847,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SPONGE
+        material: NETHERITE_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sponge%'
+        amount: '%mcwws.price_buy_netherite_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sponge%'
+        amount: '%mcwws.price_sell_netherite_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   i46:
@@ -866,18 +866,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TUBE_CORAL
+        material: NETHERITE_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tube_coral%'
+        amount: '%mcwws.price_buy_netherite_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tube_coral%'
+        amount: '%mcwws.price_sell_netherite_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   i47:
@@ -885,18 +885,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TUBE_CORAL_BLOCK
+        material: RAISER_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tube_coral_block%'
+        amount: '%mcwws.price_buy_raiser_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tube_coral_block%'
+        amount: '%mcwws.price_sell_raiser_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i48:
@@ -904,18 +904,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TUBE_CORAL_FAN
+        material: RIB_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tube_coral_fan%'
+        amount: '%mcwws.price_buy_rib_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tube_coral_fan%'
+        amount: '%mcwws.price_sell_rib_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i49:
@@ -923,18 +923,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TURTLE_EGG
+        material: SENTRY_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_turtle_egg%'
+        amount: '%mcwws.price_buy_sentry_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_turtle_egg%'
+        amount: '%mcwws.price_sell_sentry_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   i50:
@@ -942,17 +942,226 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WET_SPONGE
+        material: SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wet_sponge%'
+        amount: '%mcwws.price_buy_shaper_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wet_sponge%'
+        amount: '%mcwws.price_sell_shaper_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i51:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SHIELD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_shield%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_shield%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i52:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_silence_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_silence_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i53:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_snout_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_snout_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i54:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spire_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spire_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i55:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TIDE_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tide_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tide_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i56:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TURTLE_HELMET
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_turtle_helmet%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_turtle_helmet%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i57:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: VEX_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_vex_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_vex_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i58:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_ward_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_ward_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i59:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_wayfinder_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_wayfinder_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i60:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WILD_ARMOR_TRIM_SMITHING_TEMPLATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_wild_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_wild_armor_trim_smithing_template%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i61:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WOLF_ARMOR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_wolf_armor%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_wolf_armor%'
         placeholder: '{amount}$'
         start-apply: 0

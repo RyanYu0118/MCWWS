@@ -1,321 +1,2613 @@
 # UltimateShop 映射（由 server.js 根据 shops/*.yml 自动生成）
 # shop = 商店 ID（如 blocks、farming），item = 该商店 yml 中的槽位字母
 
-grass_block:
-  shop: blocks
-  item: A
+angler_pottery_sherd:
+  shop: archaeology
+  item: i1
   amount: 1
-dirt:
+archer_pottery_sherd:
+  shop: archaeology
+  item: i2
+  amount: 1
+arms_up_pottery_sherd:
+  shop: archaeology
+  item: i3
+  amount: 1
+blade_pottery_sherd:
+  shop: archaeology
+  item: i4
+  amount: 1
+brewer_pottery_sherd:
+  shop: archaeology
+  item: i5
+  amount: 1
+brush:
+  shop: archaeology
+  item: i6
+  amount: 1
+burn_pottery_sherd:
+  shop: archaeology
+  item: i7
+  amount: 1
+danger_pottery_sherd:
+  shop: archaeology
+  item: i8
+  amount: 1
+decorated_pot:
+  shop: archaeology
+  item: i9
+  amount: 1
+explorer_pottery_sherd:
+  shop: archaeology
+  item: i10
+  amount: 1
+flow_pottery_sherd:
+  shop: archaeology
+  item: i11
+  amount: 1
+friend_pottery_sherd:
+  shop: archaeology
+  item: i12
+  amount: 1
+guster_pottery_sherd:
+  shop: archaeology
+  item: i13
+  amount: 1
+heart_pottery_sherd:
+  shop: archaeology
+  item: i14
+  amount: 1
+heartbreak_pottery_sherd:
+  shop: archaeology
+  item: i15
+  amount: 1
+howl_pottery_sherd:
+  shop: archaeology
+  item: i16
+  amount: 1
+miner_pottery_sherd:
+  shop: archaeology
+  item: i17
+  amount: 1
+mourner_pottery_sherd:
+  shop: archaeology
+  item: i18
+  amount: 1
+plenty_pottery_sherd:
+  shop: archaeology
+  item: i19
+  amount: 1
+prize_pottery_sherd:
+  shop: archaeology
+  item: i20
+  amount: 1
+scrape_pottery_sherd:
+  shop: archaeology
+  item: i21
+  amount: 1
+sheaf_pottery_sherd:
+  shop: archaeology
+  item: i22
+  amount: 1
+shelter_pottery_sherd:
+  shop: archaeology
+  item: i23
+  amount: 1
+skull_pottery_sherd:
+  shop: archaeology
+  item: i24
+  amount: 1
+sniffer_egg:
+  shop: archaeology
+  item: i25
+  amount: 1
+snort_pottery_sherd:
+  shop: archaeology
+  item: i26
+  amount: 1
+armor_stand:
+  shop: armor
+  item: i1
+  amount: 1
+bolt_armor_trim_smithing_template:
+  shop: armor
+  item: i2
+  amount: 1
+chainmail_boots:
+  shop: armor
+  item: i3
+  amount: 1
+chainmail_chestplate:
+  shop: armor
+  item: i4
+  amount: 1
+chainmail_helmet:
+  shop: armor
+  item: i5
+  amount: 1
+chainmail_leggings:
+  shop: armor
+  item: i6
+  amount: 1
+coast_armor_trim_smithing_template:
+  shop: armor
+  item: i7
+  amount: 1
+copper_boots:
+  shop: armor
+  item: i8
+  amount: 1
+copper_chestplate:
+  shop: armor
+  item: i9
+  amount: 1
+copper_helmet:
+  shop: armor
+  item: i10
+  amount: 1
+copper_horse_armor:
+  shop: armor
+  item: i11
+  amount: 1
+copper_leggings:
+  shop: armor
+  item: i12
+  amount: 1
+copper_nautilus_armor:
+  shop: armor
+  item: i13
+  amount: 1
+diamond_boots:
+  shop: armor
+  item: i14
+  amount: 1
+diamond_chestplate:
+  shop: armor
+  item: i15
+  amount: 1
+diamond_helmet:
+  shop: armor
+  item: i16
+  amount: 1
+diamond_horse_armor:
+  shop: armor
+  item: i17
+  amount: 1
+diamond_leggings:
+  shop: armor
+  item: i18
+  amount: 1
+diamond_nautilus_armor:
+  shop: armor
+  item: i19
+  amount: 1
+dune_armor_trim_smithing_template:
+  shop: armor
+  item: i20
+  amount: 1
+eye_armor_trim_smithing_template:
+  shop: armor
+  item: i21
+  amount: 1
+flow_armor_trim_smithing_template:
+  shop: armor
+  item: i22
+  amount: 1
+golden_boots:
+  shop: armor
+  item: i23
+  amount: 1
+golden_chestplate:
+  shop: armor
+  item: i24
+  amount: 1
+golden_helmet:
+  shop: armor
+  item: i25
+  amount: 1
+golden_horse_armor:
+  shop: armor
+  item: i26
+  amount: 1
+golden_leggings:
+  shop: armor
+  item: i27
+  amount: 1
+golden_nautilus_armor:
+  shop: armor
+  item: i28
+  amount: 1
+host_armor_trim_smithing_template:
+  shop: armor
+  item: i29
+  amount: 1
+iron_boots:
+  shop: armor
+  item: i30
+  amount: 1
+iron_chestplate:
+  shop: armor
+  item: i31
+  amount: 1
+iron_helmet:
+  shop: armor
+  item: i32
+  amount: 1
+iron_horse_armor:
+  shop: armor
+  item: i33
+  amount: 1
+iron_leggings:
+  shop: armor
+  item: i34
+  amount: 1
+iron_nautilus_armor:
+  shop: armor
+  item: i35
+  amount: 1
+leather_boots:
+  shop: armor
+  item: i36
+  amount: 1
+leather_chestplate:
+  shop: armor
+  item: i37
+  amount: 1
+leather_helmet:
+  shop: armor
+  item: i38
+  amount: 1
+leather_horse_armor:
+  shop: armor
+  item: i39
+  amount: 1
+leather_leggings:
+  shop: armor
+  item: i40
+  amount: 1
+netherite_boots:
+  shop: armor
+  item: i41
+  amount: 1
+netherite_chestplate:
+  shop: armor
+  item: i42
+  amount: 1
+netherite_helmet:
+  shop: armor
+  item: i43
+  amount: 1
+netherite_horse_armor:
+  shop: armor
+  item: i44
+  amount: 1
+netherite_leggings:
+  shop: armor
+  item: i45
+  amount: 1
+netherite_nautilus_armor:
+  shop: armor
+  item: i46
+  amount: 1
+raiser_armor_trim_smithing_template:
+  shop: armor
+  item: i47
+  amount: 1
+rib_armor_trim_smithing_template:
+  shop: armor
+  item: i48
+  amount: 1
+sentry_armor_trim_smithing_template:
+  shop: armor
+  item: i49
+  amount: 1
+shaper_armor_trim_smithing_template:
+  shop: armor
+  item: i50
+  amount: 1
+shield:
+  shop: armor
+  item: i51
+  amount: 1
+silence_armor_trim_smithing_template:
+  shop: armor
+  item: i52
+  amount: 1
+snout_armor_trim_smithing_template:
+  shop: armor
+  item: i53
+  amount: 1
+spire_armor_trim_smithing_template:
+  shop: armor
+  item: i54
+  amount: 1
+tide_armor_trim_smithing_template:
+  shop: armor
+  item: i55
+  amount: 1
+turtle_helmet:
+  shop: armor
+  item: i56
+  amount: 1
+vex_armor_trim_smithing_template:
+  shop: armor
+  item: i57
+  amount: 1
+ward_armor_trim_smithing_template:
+  shop: armor
+  item: i58
+  amount: 1
+wayfinder_armor_trim_smithing_template:
+  shop: armor
+  item: i59
+  amount: 1
+wild_armor_trim_smithing_template:
+  shop: armor
+  item: i60
+  amount: 1
+wolf_armor:
+  shop: armor
+  item: i61
+  amount: 1
+brick:
   shop: blocks
-  item: B
+  item: i1
+  amount: 1
+brick_slab:
+  shop: blocks
+  item: i2
+  amount: 1
+brick_stairs:
+  shop: blocks
+  item: i3
+  amount: 1
+brick_wall:
+  shop: blocks
+  item: i4
+  amount: 1
+bricks:
+  shop: blocks
+  item: i5
+  amount: 1
+chiseled_nether_bricks:
+  shop: blocks
+  item: i6
+  amount: 1
+chiseled_red_sandstone:
+  shop: blocks
+  item: i7
+  amount: 1
+chiseled_resin_bricks:
+  shop: blocks
+  item: i8
+  amount: 1
+chiseled_sandstone:
+  shop: blocks
+  item: i9
   amount: 1
 coarse_dirt:
   shop: blocks
-  item: C
+  item: i10
   amount: 1
-rooted_dirt:
+cracked_nether_bricks:
   shop: blocks
-  item: D
+  item: i11
   amount: 1
-cobblestone:
+cut_red_sandstone:
   shop: blocks
-  item: E
+  item: i12
   amount: 1
-stone:
+cut_red_sandstone_slab:
   shop: blocks
-  item: F
+  item: i13
+  amount: 1
+cut_sandstone:
+  shop: blocks
+  item: i14
+  amount: 1
+cut_sandstone_slab:
+  shop: blocks
+  item: i15
+  amount: 1
+dirt:
+  shop: blocks
+  item: i16
+  amount: 1
+grass_block:
+  shop: blocks
+  item: i17
   amount: 1
 gravel:
   shop: blocks
-  item: G
+  item: i18
   amount: 1
-andesite:
+mud:
   shop: blocks
-  item: H
+  item: i19
   amount: 1
-diorite:
+mud_brick_slab:
   shop: blocks
-  item: I
+  item: i20
   amount: 1
-granite:
+mud_brick_stairs:
   shop: blocks
-  item: J
+  item: i21
   amount: 1
-ice:
+mud_brick_wall:
   shop: blocks
-  item: K
+  item: i22
   amount: 1
-packed_ice:
+mud_bricks:
   shop: blocks
-  item: L
+  item: i23
   amount: 1
-blue_ice:
+mycelium:
   shop: blocks
-  item: M
+  item: i24
   amount: 1
-netherrack:
+nether_brick:
   shop: blocks
-  item: 'N'
+  item: i25
+  amount: 1
+nether_brick_fence:
+  shop: blocks
+  item: i26
+  amount: 1
+nether_brick_slab:
+  shop: blocks
+  item: i27
+  amount: 1
+nether_brick_stairs:
+  shop: blocks
+  item: i28
+  amount: 1
+nether_brick_wall:
+  shop: blocks
+  item: i29
   amount: 1
 nether_bricks:
   shop: blocks
-  item: O
+  item: i30
   amount: 1
-glowstone:
+packed_mud:
   shop: blocks
-  item: P
+  item: i31
   amount: 1
-soul_sand:
+podzol:
   shop: blocks
-  item: Q
+  item: i32
   amount: 1
-soul_soil:
+red_nether_brick_slab:
   shop: blocks
-  item: R
+  item: i33
   amount: 1
-basalt:
+red_nether_brick_stairs:
   shop: blocks
-  item: S
+  item: i34
   amount: 1
-obsidian:
+red_nether_brick_wall:
   shop: blocks
-  item: T
+  item: i35
   amount: 1
-crying_obsidian:
+red_nether_bricks:
   shop: blocks
-  item: U
+  item: i36
   amount: 1
-mud:
+red_sand:
+  shop: blocks
+  item: i37
+  amount: 1
+red_sandstone:
+  shop: blocks
+  item: i38
+  amount: 1
+red_sandstone_slab:
+  shop: blocks
+  item: i39
+  amount: 1
+red_sandstone_stairs:
+  shop: blocks
+  item: i40
+  amount: 1
+red_sandstone_wall:
+  shop: blocks
+  item: i41
+  amount: 1
+resin_brick:
+  shop: blocks
+  item: i42
+  amount: 1
+resin_brick_slab:
+  shop: blocks
+  item: i43
+  amount: 1
+resin_brick_stairs:
+  shop: blocks
+  item: i44
+  amount: 1
+resin_brick_wall:
+  shop: blocks
+  item: i45
+  amount: 1
+resin_bricks:
+  shop: blocks
+  item: i46
+  amount: 1
+rooted_dirt:
+  shop: blocks
+  item: i47
+  amount: 1
+sand:
+  shop: blocks
+  item: i48
+  amount: 1
+sandstone:
+  shop: blocks
+  item: i49
+  amount: 1
+sandstone_slab:
+  shop: blocks
+  item: i50
+  amount: 1
+sandstone_stairs:
+  shop: blocks
+  item: i51
+  amount: 1
+sandstone_wall:
+  shop: blocks
+  item: i52
+  amount: 1
+smooth_red_sandstone:
+  shop: blocks
+  item: i53
+  amount: 1
+smooth_red_sandstone_slab:
+  shop: blocks
+  item: i54
+  amount: 1
+smooth_red_sandstone_stairs:
+  shop: blocks
+  item: i55
+  amount: 1
+smooth_sandstone:
+  shop: blocks
+  item: i56
+  amount: 1
+smooth_sandstone_slab:
+  shop: blocks
+  item: i57
+  amount: 1
+smooth_sandstone_stairs:
+  shop: blocks
+  item: i58
+  amount: 1
+andesite:
   shop: blocks2
-  item: A
+  item: i1
   amount: 1
-bricks:
+andesite_slab:
   shop: blocks2
-  item: B
+  item: i2
   amount: 1
-sponge:
+andesite_stairs:
   shop: blocks2
-  item: C
+  item: i3
   amount: 1
-moss_block:
+andesite_wall:
   shop: blocks2
-  item: D
+  item: i4
+  amount: 1
+blue_ice:
+  shop: blocks2
+  item: i5
   amount: 1
 calcite:
   shop: blocks2
-  item: E
+  item: i6
   amount: 1
-blackstone:
+calibrated_sculk_sensor:
   shop: blocks2
-  item: F
+  item: i7
   amount: 1
-purpur_block:
+chiseled_deepslate:
   shop: blocks2
-  item: G
+  item: i8
   amount: 1
-shroomlight:
+chiseled_stone_bricks:
   shop: blocks2
-  item: H
+  item: i9
   amount: 1
-amethyst_block:
+chiseled_tuff:
   shop: blocks2
-  item: I
+  item: i10
   amount: 1
-tube_coral_block:
+chiseled_tuff_bricks:
   shop: blocks2
-  item: J
+  item: i11
   amount: 1
-brain_coral_block:
+clay:
   shop: blocks2
-  item: K
+  item: i12
   amount: 1
-bubble_coral_block:
+clay_ball:
   shop: blocks2
-  item: L
+  item: i13
   amount: 1
-fire_coral_block:
+cobbled_deepslate:
   shop: blocks2
-  item: M
+  item: i14
   amount: 1
-horn_coral_block:
+cobbled_deepslate_slab:
   shop: blocks2
-  item: 'N'
+  item: i15
   amount: 1
-sea_lantern:
+cobbled_deepslate_stairs:
   shop: blocks2
-  item: O
+  item: i16
   amount: 1
-magma_block:
+cobbled_deepslate_wall:
   shop: blocks2
-  item: P
+  item: i17
+  amount: 1
+cobblestone:
+  shop: blocks2
+  item: i18
+  amount: 1
+cobblestone_slab:
+  shop: blocks2
+  item: i19
+  amount: 1
+cobblestone_stairs:
+  shop: blocks2
+  item: i20
+  amount: 1
+cobblestone_wall:
+  shop: blocks2
+  item: i21
+  amount: 1
+cracked_deepslate_bricks:
+  shop: blocks2
+  item: i22
+  amount: 1
+cracked_deepslate_tiles:
+  shop: blocks2
+  item: i23
+  amount: 1
+cracked_stone_bricks:
+  shop: blocks2
+  item: i24
+  amount: 1
+deepslate:
+  shop: blocks2
+  item: i25
+  amount: 1
+deepslate_brick_slab:
+  shop: blocks2
+  item: i26
+  amount: 1
+deepslate_brick_stairs:
+  shop: blocks2
+  item: i27
+  amount: 1
+deepslate_brick_wall:
+  shop: blocks2
+  item: i28
+  amount: 1
+deepslate_bricks:
+  shop: blocks2
+  item: i29
+  amount: 1
+deepslate_tile_slab:
+  shop: blocks2
+  item: i30
+  amount: 1
+deepslate_tile_stairs:
+  shop: blocks2
+  item: i31
+  amount: 1
+deepslate_tile_wall:
+  shop: blocks2
+  item: i32
+  amount: 1
+deepslate_tiles:
+  shop: blocks2
+  item: i33
+  amount: 1
+diorite:
+  shop: blocks2
+  item: i34
+  amount: 1
+diorite_slab:
+  shop: blocks2
+  item: i35
+  amount: 1
+diorite_stairs:
+  shop: blocks2
+  item: i36
+  amount: 1
+diorite_wall:
+  shop: blocks2
+  item: i37
+  amount: 1
+dripstone_block:
+  shop: blocks2
+  item: i38
+  amount: 1
+echo_shard:
+  shop: blocks2
+  item: i39
+  amount: 1
+granite:
+  shop: blocks2
+  item: i40
+  amount: 1
+granite_slab:
+  shop: blocks2
+  item: i41
+  amount: 1
+granite_stairs:
+  shop: blocks2
+  item: i42
+  amount: 1
+granite_wall:
+  shop: blocks2
+  item: i43
+  amount: 1
+ice:
+  shop: blocks2
+  item: i44
+  amount: 1
+mossy_cobblestone:
+  shop: blocks2
+  item: i45
+  amount: 1
+mossy_cobblestone_slab:
+  shop: blocks2
+  item: i46
+  amount: 1
+mossy_cobblestone_stairs:
+  shop: blocks2
+  item: i47
+  amount: 1
+mossy_cobblestone_wall:
+  shop: blocks2
+  item: i48
+  amount: 1
+mossy_stone_brick_slab:
+  shop: blocks2
+  item: i49
+  amount: 1
+mossy_stone_brick_stairs:
+  shop: blocks2
+  item: i50
+  amount: 1
+mossy_stone_brick_wall:
+  shop: blocks2
+  item: i51
+  amount: 1
+mossy_stone_bricks:
+  shop: blocks2
+  item: i52
+  amount: 1
+packed_ice:
+  shop: blocks2
+  item: i53
+  amount: 1
+pointed_dripstone:
+  shop: blocks2
+  item: i54
+  amount: 1
+polished_andesite:
+  shop: blocks2
+  item: i55
+  amount: 1
+polished_andesite_slab:
+  shop: blocks2
+  item: i56
+  amount: 1
+polished_andesite_stairs:
+  shop: blocks2
+  item: i57
+  amount: 1
+polished_deepslate:
+  shop: blocks2
+  item: i58
+  amount: 1
+polished_deepslate_slab:
+  shop: blocks2
+  item: i59
+  amount: 1
+polished_deepslate_stairs:
+  shop: blocks2
+  item: i60
+  amount: 1
+polished_deepslate_wall:
+  shop: blocks2
+  item: i61
+  amount: 1
+polished_diorite:
+  shop: blocks2
+  item: i62
+  amount: 1
+polished_diorite_slab:
+  shop: blocks2
+  item: i63
+  amount: 1
+polished_diorite_stairs:
+  shop: blocks2
+  item: i64
+  amount: 1
+polished_granite:
+  shop: blocks2
+  item: i65
+  amount: 1
+polished_granite_slab:
+  shop: blocks2
+  item: i66
+  amount: 1
+polished_granite_stairs:
+  shop: blocks2
+  item: i67
+  amount: 1
+polished_tuff:
+  shop: blocks2
+  item: i68
+  amount: 1
+polished_tuff_slab:
+  shop: blocks2
+  item: i69
+  amount: 1
+polished_tuff_stairs:
+  shop: blocks2
+  item: i70
+  amount: 1
+polished_tuff_wall:
+  shop: blocks2
+  item: i71
+  amount: 1
+sculk:
+  shop: blocks2
+  item: i72
+  amount: 1
+sculk_catalyst:
+  shop: blocks2
+  item: i73
+  amount: 1
+sculk_sensor:
+  shop: blocks2
+  item: i74
+  amount: 1
+sculk_shrieker:
+  shop: blocks2
+  item: i75
+  amount: 1
+sculk_vein:
+  shop: blocks2
+  item: i76
+  amount: 1
+smooth_stone:
+  shop: blocks2
+  item: i77
+  amount: 1
+smooth_stone_slab:
+  shop: blocks2
+  item: i78
+  amount: 1
+snow:
+  shop: blocks2
+  item: i79
+  amount: 1
+snow_block:
+  shop: blocks2
+  item: i80
+  amount: 1
+snowball:
+  shop: blocks2
+  item: i81
+  amount: 1
+stone:
+  shop: blocks2
+  item: i82
+  amount: 1
+stone_brick_slab:
+  shop: blocks2
+  item: i83
+  amount: 1
+stone_brick_stairs:
+  shop: blocks2
+  item: i84
+  amount: 1
+stone_brick_wall:
+  shop: blocks2
+  item: i85
+  amount: 1
+stone_bricks:
+  shop: blocks2
+  item: i86
+  amount: 1
+stone_slab:
+  shop: blocks2
+  item: i87
+  amount: 1
+stone_stairs:
+  shop: blocks2
+  item: i88
   amount: 1
 tuff:
   shop: blocks2
-  item: Q
+  item: i89
   amount: 1
-sand:
+tuff_brick_slab:
   shop: blocks2
-  item: R
+  item: i90
   amount: 1
-red_sand:
+tuff_brick_stairs:
   shop: blocks2
-  item: S
+  item: i91
   amount: 1
-prismarine:
+tuff_brick_wall:
   shop: blocks2
-  item: T
+  item: i92
   amount: 1
-red_concrete:
-  shop: concretes
-  item: A
+tuff_bricks:
+  shop: blocks2
+  item: i93
   amount: 1
-orange_concrete:
-  shop: concretes
-  item: B
+tuff_slab:
+  shop: blocks2
+  item: i94
   amount: 1
-yellow_concrete:
-  shop: concretes
-  item: C
+tuff_stairs:
+  shop: blocks2
+  item: i95
   amount: 1
-lime_concrete:
-  shop: concretes
-  item: D
+tuff_wall:
+  shop: blocks2
+  item: i96
   amount: 1
-green_concrete:
-  shop: concretes
-  item: E
+arrow_of_fire_resistance_1:
+  shop: brewing
+  item: i1
   amount: 1
-light_blue_concrete:
-  shop: concretes
-  item: F
+arrow_of_fire_resistance_extended:
+  shop: brewing
+  item: i2
   amount: 1
-cyan_concrete:
-  shop: concretes
-  item: G
+arrow_of_harming_1:
+  shop: brewing
+  item: i3
   amount: 1
-blue_concrete:
-  shop: concretes
-  item: H
+arrow_of_harming_2:
+  shop: brewing
+  item: i4
   amount: 1
-purple_concrete:
-  shop: concretes
-  item: I
+arrow_of_healing_1:
+  shop: brewing
+  item: i5
   amount: 1
-magenta_concrete:
-  shop: concretes
-  item: J
+arrow_of_healing_2:
+  shop: brewing
+  item: i6
   amount: 1
-pink_concrete:
-  shop: concretes
-  item: K
+arrow_of_infestation_1:
+  shop: brewing
+  item: i7
   amount: 1
-brown_concrete:
-  shop: concretes
-  item: L
+arrow_of_invisibility_1:
+  shop: brewing
+  item: i8
+  amount: 1
+arrow_of_invisibility_extended:
+  shop: brewing
+  item: i9
+  amount: 1
+arrow_of_leaping_1:
+  shop: brewing
+  item: i10
+  amount: 1
+arrow_of_leaping_2:
+  shop: brewing
+  item: i11
+  amount: 1
+arrow_of_leaping_extended:
+  shop: brewing
+  item: i12
+  amount: 1
+arrow_of_night_vision_1:
+  shop: brewing
+  item: i13
+  amount: 1
+arrow_of_night_vision_extended:
+  shop: brewing
+  item: i14
+  amount: 1
+arrow_of_oozing_1:
+  shop: brewing
+  item: i15
+  amount: 1
+arrow_of_poison_1:
+  shop: brewing
+  item: i16
+  amount: 1
+arrow_of_poison_2:
+  shop: brewing
+  item: i17
+  amount: 1
+arrow_of_poison_extended:
+  shop: brewing
+  item: i18
+  amount: 1
+arrow_of_regeneration_1:
+  shop: brewing
+  item: i19
+  amount: 1
+arrow_of_regeneration_2:
+  shop: brewing
+  item: i20
+  amount: 1
+arrow_of_regeneration_extended:
+  shop: brewing
+  item: i21
+  amount: 1
+arrow_of_slow_falling_1:
+  shop: brewing
+  item: i22
+  amount: 1
+arrow_of_slow_falling_extended:
+  shop: brewing
+  item: i23
+  amount: 1
+arrow_of_slowness_1:
+  shop: brewing
+  item: i24
+  amount: 1
+arrow_of_slowness_2:
+  shop: brewing
+  item: i25
+  amount: 1
+arrow_of_slowness_extended:
+  shop: brewing
+  item: i26
+  amount: 1
+arrow_of_strength_1:
+  shop: brewing
+  item: i27
+  amount: 1
+arrow_of_strength_2:
+  shop: brewing
+  item: i28
+  amount: 1
+arrow_of_strength_extended:
+  shop: brewing
+  item: i29
+  amount: 1
+arrow_of_swiftness_1:
+  shop: brewing
+  item: i30
+  amount: 1
+arrow_of_swiftness_2:
+  shop: brewing
+  item: i31
+  amount: 1
+arrow_of_swiftness_extended:
+  shop: brewing
+  item: i32
+  amount: 1
+arrow_of_the_turtle_master_1:
+  shop: brewing
+  item: i33
+  amount: 1
+arrow_of_the_turtle_master_2:
+  shop: brewing
+  item: i34
+  amount: 1
+arrow_of_the_turtle_master_extended:
+  shop: brewing
+  item: i35
+  amount: 1
+arrow_of_water_breathing_1:
+  shop: brewing
+  item: i36
+  amount: 1
+arrow_of_water_breathing_extended:
+  shop: brewing
+  item: i37
+  amount: 1
+arrow_of_weakness_1:
+  shop: brewing
+  item: i38
+  amount: 1
+arrow_of_weakness_extended:
+  shop: brewing
+  item: i39
+  amount: 1
+arrow_of_weaving_1:
+  shop: brewing
+  item: i40
+  amount: 1
+arrow_of_wind_charging_1:
+  shop: brewing
+  item: i41
+  amount: 1
+awkward_lingering_potion:
+  shop: brewing
+  item: i42
+  amount: 1
+awkward_potion:
+  shop: brewing
+  item: i43
+  amount: 1
+awkward_splash_potion:
+  shop: brewing
+  item: i44
+  amount: 1
+lingering_potion_of_fire_resistance_1:
+  shop: brewing
+  item: i45
+  amount: 1
+lingering_potion_of_fire_resistance_extended:
+  shop: brewing
+  item: i46
+  amount: 1
+lingering_potion_of_harming_1:
+  shop: brewing
+  item: i47
+  amount: 1
+lingering_potion_of_harming_2:
+  shop: brewing
+  item: i48
+  amount: 1
+lingering_potion_of_healing_1:
+  shop: brewing
+  item: i49
+  amount: 1
+lingering_potion_of_healing_2:
+  shop: brewing
+  item: i50
+  amount: 1
+lingering_potion_of_infestation_1:
+  shop: brewing
+  item: i51
+  amount: 1
+lingering_potion_of_invisibility_1:
+  shop: brewing
+  item: i52
+  amount: 1
+lingering_potion_of_invisibility_extended:
+  shop: brewing
+  item: i53
+  amount: 1
+lingering_potion_of_leaping_1:
+  shop: brewing
+  item: i54
+  amount: 1
+lingering_potion_of_leaping_2:
+  shop: brewing
+  item: i55
+  amount: 1
+lingering_potion_of_leaping_extended:
+  shop: brewing
+  item: i56
+  amount: 1
+lingering_potion_of_night_vision_1:
+  shop: brewing
+  item: i57
+  amount: 1
+lingering_potion_of_night_vision_extended:
+  shop: brewing
+  item: i58
+  amount: 1
+lingering_potion_of_oozing_1:
+  shop: brewing
+  item: i59
+  amount: 1
+lingering_potion_of_poison_1:
+  shop: brewing
+  item: i60
+  amount: 1
+lingering_potion_of_poison_2:
+  shop: brewing
+  item: i61
+  amount: 1
+lingering_potion_of_poison_extended:
+  shop: brewing
+  item: i62
+  amount: 1
+lingering_potion_of_regeneration_1:
+  shop: brewing
+  item: i63
+  amount: 1
+lingering_potion_of_regeneration_2:
+  shop: brewing
+  item: i64
+  amount: 1
+lingering_potion_of_regeneration_extended:
+  shop: brewing
+  item: i65
+  amount: 1
+lingering_potion_of_slow_falling_1:
+  shop: brewing
+  item: i66
+  amount: 1
+lingering_potion_of_slow_falling_extended:
+  shop: brewing
+  item: i67
+  amount: 1
+lingering_potion_of_slowness_1:
+  shop: brewing
+  item: i68
+  amount: 1
+lingering_potion_of_slowness_2:
+  shop: brewing
+  item: i69
+  amount: 1
+lingering_potion_of_slowness_extended:
+  shop: brewing
+  item: i70
+  amount: 1
+lingering_potion_of_strength_1:
+  shop: brewing
+  item: i71
+  amount: 1
+lingering_potion_of_strength_2:
+  shop: brewing
+  item: i72
+  amount: 1
+lingering_potion_of_strength_extended:
+  shop: brewing
+  item: i73
+  amount: 1
+lingering_potion_of_swiftness_1:
+  shop: brewing
+  item: i74
+  amount: 1
+lingering_potion_of_swiftness_2:
+  shop: brewing
+  item: i75
+  amount: 1
+lingering_potion_of_swiftness_extended:
+  shop: brewing
+  item: i76
+  amount: 1
+lingering_potion_of_the_turtle_master_1:
+  shop: brewing
+  item: i77
+  amount: 1
+lingering_potion_of_the_turtle_master_2:
+  shop: brewing
+  item: i78
+  amount: 1
+lingering_potion_of_the_turtle_master_extended:
+  shop: brewing
+  item: i79
+  amount: 1
+lingering_potion_of_water_breathing_1:
+  shop: brewing
+  item: i80
+  amount: 1
+lingering_potion_of_water_breathing_extended:
+  shop: brewing
+  item: i81
+  amount: 1
+lingering_potion_of_weakness_1:
+  shop: brewing
+  item: i82
+  amount: 1
+lingering_potion_of_weakness_extended:
+  shop: brewing
+  item: i83
+  amount: 1
+lingering_potion_of_weaving_1:
+  shop: brewing
+  item: i84
+  amount: 1
+lingering_potion_of_wind_charging_1:
+  shop: brewing
+  item: i85
+  amount: 1
+lingering_water_bottle:
+  shop: brewing
+  item: i86
+  amount: 1
+mundane_potion:
+  shop: brewing
+  item: i87
+  amount: 1
+potion_of_fire_resistance_1:
+  shop: brewing
+  item: i88
+  amount: 1
+potion_of_fire_resistance_extended:
+  shop: brewing
+  item: i89
+  amount: 1
+potion_of_harming_1:
+  shop: brewing
+  item: i90
+  amount: 1
+potion_of_harming_2:
+  shop: brewing
+  item: i91
+  amount: 1
+potion_of_healing_1:
+  shop: brewing
+  item: i92
+  amount: 1
+potion_of_healing_2:
+  shop: brewing
+  item: i93
+  amount: 1
+potion_of_infestation_1:
+  shop: brewing
+  item: i94
+  amount: 1
+potion_of_invisibility_1:
+  shop: brewing
+  item: i95
+  amount: 1
+potion_of_invisibility_extended:
+  shop: brewing
+  item: i96
+  amount: 1
+potion_of_leaping_1:
+  shop: brewing
+  item: i97
+  amount: 1
+potion_of_leaping_2:
+  shop: brewing
+  item: i98
+  amount: 1
+potion_of_leaping_extended:
+  shop: brewing
+  item: i99
+  amount: 1
+potion_of_night_vision_1:
+  shop: brewing
+  item: i100
+  amount: 1
+potion_of_night_vision_extended:
+  shop: brewing
+  item: i101
+  amount: 1
+potion_of_oozing_1:
+  shop: brewing
+  item: i102
+  amount: 1
+potion_of_poison_1:
+  shop: brewing
+  item: i103
+  amount: 1
+potion_of_poison_2:
+  shop: brewing
+  item: i104
+  amount: 1
+potion_of_poison_extended:
+  shop: brewing
+  item: i105
+  amount: 1
+potion_of_regeneration_1:
+  shop: brewing
+  item: i106
+  amount: 1
+potion_of_regeneration_2:
+  shop: brewing
+  item: i107
+  amount: 1
+potion_of_regeneration_extended:
+  shop: brewing
+  item: i108
+  amount: 1
+potion_of_slow_falling_1:
+  shop: brewing
+  item: i109
+  amount: 1
+potion_of_slow_falling_extended:
+  shop: brewing
+  item: i110
+  amount: 1
+potion_of_slowness_1:
+  shop: brewing
+  item: i111
+  amount: 1
+potion_of_slowness_2:
+  shop: brewing
+  item: i112
+  amount: 1
+potion_of_slowness_extended:
+  shop: brewing
+  item: i113
+  amount: 1
+potion_of_strength_1:
+  shop: brewing
+  item: i114
+  amount: 1
+potion_of_strength_2:
+  shop: brewing
+  item: i115
+  amount: 1
+potion_of_strength_extended:
+  shop: brewing
+  item: i116
+  amount: 1
+potion_of_swiftness_1:
+  shop: brewing
+  item: i117
+  amount: 1
+potion_of_swiftness_2:
+  shop: brewing
+  item: i118
+  amount: 1
+potion_of_swiftness_extended:
+  shop: brewing
+  item: i119
+  amount: 1
+potion_of_the_turtle_master_1:
+  shop: brewing
+  item: i120
+  amount: 1
+potion_of_the_turtle_master_2:
+  shop: brewing
+  item: i121
+  amount: 1
+potion_of_the_turtle_master_extended:
+  shop: brewing
+  item: i122
+  amount: 1
+potion_of_water_breathing_1:
+  shop: brewing
+  item: i123
+  amount: 1
+potion_of_water_breathing_extended:
+  shop: brewing
+  item: i124
+  amount: 1
+potion_of_weakness:
+  shop: brewing
+  item: i125
+  amount: 1
+potion_of_weakness_extended:
+  shop: brewing
+  item: i126
+  amount: 1
+potion_of_weaving_1:
+  shop: brewing
+  item: i127
+  amount: 1
+potion_of_wind_charging_1:
+  shop: brewing
+  item: i128
+  amount: 1
+splash_potion_of_fire_resistance_1:
+  shop: brewing
+  item: i129
+  amount: 1
+splash_potion_of_fire_resistance_extended:
+  shop: brewing
+  item: i130
+  amount: 1
+splash_potion_of_harming_1:
+  shop: brewing
+  item: i131
+  amount: 1
+splash_potion_of_harming_2:
+  shop: brewing
+  item: i132
+  amount: 1
+splash_potion_of_healing_1:
+  shop: brewing
+  item: i133
+  amount: 1
+splash_potion_of_healing_2:
+  shop: brewing
+  item: i134
+  amount: 1
+splash_potion_of_infestation_1:
+  shop: brewing
+  item: i135
+  amount: 1
+splash_potion_of_invisibility_1:
+  shop: brewing
+  item: i136
+  amount: 1
+splash_potion_of_invisibility_extended:
+  shop: brewing
+  item: i137
+  amount: 1
+splash_potion_of_leaping_1:
+  shop: brewing
+  item: i138
+  amount: 1
+splash_potion_of_leaping_2:
+  shop: brewing
+  item: i139
+  amount: 1
+splash_potion_of_leaping_extended:
+  shop: brewing
+  item: i140
+  amount: 1
+splash_potion_of_night_vision_1:
+  shop: brewing
+  item: i141
+  amount: 1
+splash_potion_of_night_vision_extended:
+  shop: brewing
+  item: i142
+  amount: 1
+splash_potion_of_oozing_1:
+  shop: brewing
+  item: i143
+  amount: 1
+splash_potion_of_poison_1:
+  shop: brewing
+  item: i144
+  amount: 1
+splash_potion_of_poison_2:
+  shop: brewing
+  item: i145
+  amount: 1
+splash_potion_of_poison_extended:
+  shop: brewing
+  item: i146
+  amount: 1
+splash_potion_of_regeneration_1:
+  shop: brewing
+  item: i147
+  amount: 1
+splash_potion_of_regeneration_2:
+  shop: brewing
+  item: i148
+  amount: 1
+splash_potion_of_regeneration_extended:
+  shop: brewing
+  item: i149
+  amount: 1
+splash_potion_of_slow_falling_1:
+  shop: brewing
+  item: i150
+  amount: 1
+splash_potion_of_slow_falling_extended:
+  shop: brewing
+  item: i151
+  amount: 1
+splash_potion_of_slowness_1:
+  shop: brewing
+  item: i152
+  amount: 1
+splash_potion_of_slowness_2:
+  shop: brewing
+  item: i153
+  amount: 1
+splash_potion_of_slowness_extended:
+  shop: brewing
+  item: i154
+  amount: 1
+splash_potion_of_strength_1:
+  shop: brewing
+  item: i155
+  amount: 1
+splash_potion_of_strength_2:
+  shop: brewing
+  item: i156
+  amount: 1
+splash_potion_of_strength_extended:
+  shop: brewing
+  item: i157
+  amount: 1
+splash_potion_of_swiftness_1:
+  shop: brewing
+  item: i158
+  amount: 1
+splash_potion_of_swiftness_2:
+  shop: brewing
+  item: i159
+  amount: 1
+splash_potion_of_swiftness_extended:
+  shop: brewing
+  item: i160
+  amount: 1
+splash_potion_of_the_turtle_master_1:
+  shop: brewing
+  item: i161
+  amount: 1
+splash_potion_of_the_turtle_master_2:
+  shop: brewing
+  item: i162
+  amount: 1
+splash_potion_of_the_turtle_master_extended:
+  shop: brewing
+  item: i163
+  amount: 1
+splash_potion_of_water_breathing_1:
+  shop: brewing
+  item: i164
+  amount: 1
+splash_potion_of_water_breathing_extended:
+  shop: brewing
+  item: i165
+  amount: 1
+splash_potion_of_weakness_1:
+  shop: brewing
+  item: i166
+  amount: 1
+splash_potion_of_weakness_extended:
+  shop: brewing
+  item: i167
+  amount: 1
+splash_potion_of_weaving_1:
+  shop: brewing
+  item: i168
+  amount: 1
+splash_potion_of_wind_charging_1:
+  shop: brewing
+  item: i169
+  amount: 1
+splash_water_bottle:
+  shop: brewing
+  item: i170
+  amount: 1
+thick_potion:
+  shop: brewing
+  item: i171
+  amount: 1
+water_bottle:
+  shop: brewing
+  item: i172
   amount: 1
 black_concrete:
   shop: concretes
-  item: M
+  item: i1
+  amount: 1
+black_concrete_powder:
+  shop: concretes
+  item: i2
+  amount: 1
+blue_concrete:
+  shop: concretes
+  item: i3
+  amount: 1
+blue_concrete_powder:
+  shop: concretes
+  item: i4
+  amount: 1
+brown_concrete:
+  shop: concretes
+  item: i5
+  amount: 1
+brown_concrete_powder:
+  shop: concretes
+  item: i6
+  amount: 1
+cyan_concrete:
+  shop: concretes
+  item: i7
+  amount: 1
+cyan_concrete_powder:
+  shop: concretes
+  item: i8
   amount: 1
 gray_concrete:
   shop: concretes
-  item: 'N'
+  item: i9
+  amount: 1
+gray_concrete_powder:
+  shop: concretes
+  item: i10
+  amount: 1
+green_concrete:
+  shop: concretes
+  item: i11
+  amount: 1
+green_concrete_powder:
+  shop: concretes
+  item: i12
+  amount: 1
+light_blue_concrete:
+  shop: concretes
+  item: i13
+  amount: 1
+light_blue_concrete_powder:
+  shop: concretes
+  item: i14
   amount: 1
 light_gray_concrete:
   shop: concretes
-  item: O
+  item: i15
+  amount: 1
+light_gray_concrete_powder:
+  shop: concretes
+  item: i16
+  amount: 1
+lime_concrete:
+  shop: concretes
+  item: i17
+  amount: 1
+lime_concrete_powder:
+  shop: concretes
+  item: i18
+  amount: 1
+magenta_concrete:
+  shop: concretes
+  item: i19
+  amount: 1
+magenta_concrete_powder:
+  shop: concretes
+  item: i20
+  amount: 1
+orange_concrete:
+  shop: concretes
+  item: i21
+  amount: 1
+orange_concrete_powder:
+  shop: concretes
+  item: i22
+  amount: 1
+pink_concrete:
+  shop: concretes
+  item: i23
+  amount: 1
+pink_concrete_powder:
+  shop: concretes
+  item: i24
+  amount: 1
+purple_concrete:
+  shop: concretes
+  item: i25
+  amount: 1
+purple_concrete_powder:
+  shop: concretes
+  item: i26
+  amount: 1
+red_concrete:
+  shop: concretes
+  item: i27
+  amount: 1
+red_concrete_powder:
+  shop: concretes
+  item: i28
   amount: 1
 white_concrete:
   shop: concretes
-  item: P
+  item: i29
+  amount: 1
+white_concrete_powder:
+  shop: concretes
+  item: i30
+  amount: 1
+yellow_concrete:
+  shop: concretes
+  item: i31
+  amount: 1
+yellow_concrete_powder:
+  shop: concretes
+  item: i32
   amount: 1
 redstone:
   shop: minerals
-  item: E
+  item: i73
   amount: 1
 iron_ingot:
   shop: minerals
-  item: C
+  item: i48
   amount: 1
 gold_ingot:
   shop: minerals
-  item: B
+  item: i44
   amount: 1
 copper_ingot:
   shop: minerals
-  item: J
+  item: i14
   amount: 1
 diamond:
   shop: minerals
-  item: A
+  item: i28
   amount: 1
 lapis_lazuli:
   shop: minerals
-  item: D
+  item: i52
   amount: 1
 emerald:
-  shop: daily
-  item: F
+  shop: minerals
+  item: i31
   amount: 1
-string:
-  shop: drops
-  item: A
+disc_fragment_5:
+  shop: discs
+  item: i1
   amount: 1
-feather:
-  shop: drops
-  item: B
+music_disc_11:
+  shop: discs
+  item: i2
   amount: 1
-gunpowder:
-  shop: drops
-  item: C
+music_disc_13:
+  shop: discs
+  item: i3
   amount: 1
-flint:
+music_disc_5:
+  shop: discs
+  item: i4
+  amount: 1
+music_disc_blocks:
+  shop: discs
+  item: i5
+  amount: 1
+music_disc_cat:
+  shop: discs
+  item: i6
+  amount: 1
+music_disc_chirp:
+  shop: discs
+  item: i7
+  amount: 1
+music_disc_creator:
+  shop: discs
+  item: i8
+  amount: 1
+music_disc_creator_music_box:
+  shop: discs
+  item: i9
+  amount: 1
+music_disc_far:
+  shop: discs
+  item: i10
+  amount: 1
+music_disc_lava_chicken:
+  shop: discs
+  item: i11
+  amount: 1
+music_disc_mall:
+  shop: discs
+  item: i12
+  amount: 1
+music_disc_mellohi:
+  shop: discs
+  item: i13
+  amount: 1
+music_disc_otherside:
+  shop: discs
+  item: i14
+  amount: 1
+music_disc_pigstep:
+  shop: discs
+  item: i15
+  amount: 1
+music_disc_precipice:
+  shop: discs
+  item: i16
+  amount: 1
+music_disc_relic:
+  shop: discs
+  item: i17
+  amount: 1
+music_disc_stal:
+  shop: discs
+  item: i18
+  amount: 1
+music_disc_strad:
+  shop: discs
+  item: i19
+  amount: 1
+music_disc_tears:
+  shop: discs
+  item: i20
+  amount: 1
+music_disc_wait:
+  shop: discs
+  item: i21
+  amount: 1
+music_disc_ward:
+  shop: discs
+  item: i22
+  amount: 1
+armadillo_scute:
   shop: drops
-  item: D
+  item: i1
+  amount: 1
+bee_nest:
+  shop: drops
+  item: i2
+  amount: 1
+blaze_powder:
+  shop: drops
+  item: i3
+  amount: 1
+blaze_rod:
+  shop: drops
+  item: i4
   amount: 1
 bone:
   shop: drops
-  item: E
+  item: i5
   amount: 1
-ghast_tear:
+breeze_rod:
   shop: drops
-  item: F
+  item: i6
   amount: 1
-ink_sac:
+creeper_head:
   shop: drops
-  item: G
-  amount: 1
-glow_ink_sac:
-  shop: drops
-  item: H
-  amount: 1
-spider_eye:
-  shop: drops
-  item: I
-  amount: 1
-rotten_flesh:
-  shop: drops
-  item: J
-  amount: 1
-leather:
-  shop: drops
-  item: K
-  amount: 1
-rabbit_hide:
-  shop: drops
-  item: L
+  item: i7
   amount: 1
 ender_pearl:
   shop: drops
-  item: M
+  item: i8
   amount: 1
-slime_ball:
+feather:
   shop: drops
-  item: 'N'
+  item: i9
+  amount: 1
+ghast_tear:
+  shop: drops
+  item: i10
+  amount: 1
+glow_ink_sac:
+  shop: drops
+  item: i11
+  amount: 1
+goat_horn:
+  shop: drops
+  item: i12
+  amount: 1
+gunpowder:
+  shop: drops
+  item: i13
+  amount: 1
+honey_block:
+  shop: drops
+  item: i14
+  amount: 1
+honey_bottle:
+  shop: drops
+  item: i15
+  amount: 1
+honeycomb:
+  shop: drops
+  item: i16
+  amount: 1
+honeycomb_block:
+  shop: drops
+  item: i17
+  amount: 1
+ink_sac:
+  shop: drops
+  item: i18
+  amount: 1
+leather:
+  shop: drops
+  item: i19
   amount: 1
 magma_cream:
   shop: drops
-  item: O
+  item: i20
+  amount: 1
+nautilus_shell:
+  shop: drops
+  item: i21
+  amount: 1
+nether_star:
+  shop: drops
+  item: i22
+  amount: 1
+ominous_bottle:
+  shop: drops
+  item: i23
+  amount: 1
+ominous_trial_key:
+  shop: drops
+  item: i24
+  amount: 1
+phantom_membrane:
+  shop: drops
+  item: i25
+  amount: 1
+piglin_head:
+  shop: drops
+  item: i26
+  amount: 1
+rabbit_hide:
+  shop: drops
+  item: i27
+  amount: 1
+resin_block:
+  shop: drops
+  item: i28
+  amount: 1
+resin_clump:
+  shop: drops
+  item: i29
+  amount: 1
+rotten_flesh:
+  shop: drops
+  item: i30
+  amount: 1
+skeleton_skull:
+  shop: drops
+  item: i31
+  amount: 1
+slime_ball:
+  shop: drops
+  item: i32
+  amount: 1
+slime_block:
+  shop: drops
+  item: i33
+  amount: 1
+spider_eye:
+  shop: drops
+  item: i34
+  amount: 1
+string:
+  shop: drops
+  item: i35
+  amount: 1
+trial_key:
+  shop: drops
+  item: i36
+  amount: 1
+turtle_scute:
+  shop: drops
+  item: i37
+  amount: 1
+wind_charge:
+  shop: drops
+  item: i38
+  amount: 1
+wither_rose:
+  shop: drops
+  item: i39
+  amount: 1
+wither_skeleton_skull:
+  shop: drops
+  item: i40
+  amount: 1
+zombie_head:
+  shop: drops
+  item: i41
+  amount: 1
+enchanted_book_aqua_affinity_1:
+  shop: enchantments
+  item: i1
+  amount: 1
+enchanted_book_bane_of_arthropods_1:
+  shop: enchantments
+  item: i2
+  amount: 1
+enchanted_book_bane_of_arthropods_2:
+  shop: enchantments
+  item: i3
+  amount: 1
+enchanted_book_bane_of_arthropods_3:
+  shop: enchantments
+  item: i4
+  amount: 1
+enchanted_book_bane_of_arthropods_4:
+  shop: enchantments
+  item: i5
+  amount: 1
+enchanted_book_bane_of_arthropods_5:
+  shop: enchantments
+  item: i6
+  amount: 1
+enchanted_book_blast_protection_1:
+  shop: enchantments
+  item: i7
+  amount: 1
+enchanted_book_blast_protection_2:
+  shop: enchantments
+  item: i8
+  amount: 1
+enchanted_book_blast_protection_3:
+  shop: enchantments
+  item: i9
+  amount: 1
+enchanted_book_blast_protection_4:
+  shop: enchantments
+  item: i10
+  amount: 1
+enchanted_book_breach_1:
+  shop: enchantments
+  item: i11
+  amount: 1
+enchanted_book_breach_2:
+  shop: enchantments
+  item: i12
+  amount: 1
+enchanted_book_breach_3:
+  shop: enchantments
+  item: i13
+  amount: 1
+enchanted_book_channeling_1:
+  shop: enchantments
+  item: i14
+  amount: 1
+enchanted_book_curse_of_binding_1:
+  shop: enchantments
+  item: i15
+  amount: 1
+enchanted_book_curse_of_vanishing_1:
+  shop: enchantments
+  item: i16
+  amount: 1
+enchanted_book_density_1:
+  shop: enchantments
+  item: i17
+  amount: 1
+enchanted_book_density_2:
+  shop: enchantments
+  item: i18
+  amount: 1
+enchanted_book_density_3:
+  shop: enchantments
+  item: i19
+  amount: 1
+enchanted_book_density_4:
+  shop: enchantments
+  item: i20
+  amount: 1
+enchanted_book_density_5:
+  shop: enchantments
+  item: i21
+  amount: 1
+enchanted_book_depth_strider_1:
+  shop: enchantments
+  item: i22
+  amount: 1
+enchanted_book_depth_strider_2:
+  shop: enchantments
+  item: i23
+  amount: 1
+enchanted_book_depth_strider_3:
+  shop: enchantments
+  item: i24
+  amount: 1
+enchanted_book_efficiency_1:
+  shop: enchantments
+  item: i25
+  amount: 1
+enchanted_book_efficiency_2:
+  shop: enchantments
+  item: i26
+  amount: 1
+enchanted_book_efficiency_3:
+  shop: enchantments
+  item: i27
+  amount: 1
+enchanted_book_efficiency_4:
+  shop: enchantments
+  item: i28
+  amount: 1
+enchanted_book_efficiency_5:
+  shop: enchantments
+  item: i29
+  amount: 1
+enchanted_book_feather_falling_1:
+  shop: enchantments
+  item: i30
+  amount: 1
+enchanted_book_feather_falling_2:
+  shop: enchantments
+  item: i31
+  amount: 1
+enchanted_book_feather_falling_3:
+  shop: enchantments
+  item: i32
+  amount: 1
+enchanted_book_feather_falling_4:
+  shop: enchantments
+  item: i33
+  amount: 1
+enchanted_book_fire_aspect_1:
+  shop: enchantments
+  item: i34
+  amount: 1
+enchanted_book_fire_aspect_2:
+  shop: enchantments
+  item: i35
+  amount: 1
+enchanted_book_fire_protection_1:
+  shop: enchantments
+  item: i36
+  amount: 1
+enchanted_book_fire_protection_2:
+  shop: enchantments
+  item: i37
+  amount: 1
+enchanted_book_fire_protection_3:
+  shop: enchantments
+  item: i38
+  amount: 1
+enchanted_book_fire_protection_4:
+  shop: enchantments
+  item: i39
+  amount: 1
+enchanted_book_flame_1:
+  shop: enchantments
+  item: i40
+  amount: 1
+enchanted_book_fortune_1:
+  shop: enchantments
+  item: i41
+  amount: 1
+enchanted_book_fortune_2:
+  shop: enchantments
+  item: i42
+  amount: 1
+enchanted_book_fortune_3:
+  shop: enchantments
+  item: i43
+  amount: 1
+enchanted_book_frost_walker_1:
+  shop: enchantments
+  item: i44
+  amount: 1
+enchanted_book_frost_walker_2:
+  shop: enchantments
+  item: i45
+  amount: 1
+enchanted_book_impaling_1:
+  shop: enchantments
+  item: i46
+  amount: 1
+enchanted_book_impaling_2:
+  shop: enchantments
+  item: i47
+  amount: 1
+enchanted_book_impaling_3:
+  shop: enchantments
+  item: i48
+  amount: 1
+enchanted_book_impaling_4:
+  shop: enchantments
+  item: i49
+  amount: 1
+enchanted_book_impaling_5:
+  shop: enchantments
+  item: i50
+  amount: 1
+enchanted_book_infinity_1:
+  shop: enchantments
+  item: i51
+  amount: 1
+enchanted_book_knockback_1:
+  shop: enchantments
+  item: i52
+  amount: 1
+enchanted_book_knockback_2:
+  shop: enchantments
+  item: i53
+  amount: 1
+enchanted_book_looting_1:
+  shop: enchantments
+  item: i54
+  amount: 1
+enchanted_book_looting_2:
+  shop: enchantments
+  item: i55
+  amount: 1
+enchanted_book_looting_3:
+  shop: enchantments
+  item: i56
+  amount: 1
+enchanted_book_loyalty_1:
+  shop: enchantments
+  item: i57
+  amount: 1
+enchanted_book_loyalty_2:
+  shop: enchantments
+  item: i58
+  amount: 1
+enchanted_book_loyalty_3:
+  shop: enchantments
+  item: i59
+  amount: 1
+enchanted_book_luck_of_the_sea_1:
+  shop: enchantments
+  item: i60
+  amount: 1
+enchanted_book_luck_of_the_sea_2:
+  shop: enchantments
+  item: i61
+  amount: 1
+enchanted_book_luck_of_the_sea_3:
+  shop: enchantments
+  item: i62
+  amount: 1
+enchanted_book_lure_1:
+  shop: enchantments
+  item: i63
+  amount: 1
+enchanted_book_lure_2:
+  shop: enchantments
+  item: i64
+  amount: 1
+enchanted_book_lure_3:
+  shop: enchantments
+  item: i65
+  amount: 1
+enchanted_book_mending_1:
+  shop: enchantments
+  item: i66
+  amount: 1
+enchanted_book_multishot_1:
+  shop: enchantments
+  item: i67
+  amount: 1
+enchanted_book_piercing_1:
+  shop: enchantments
+  item: i68
+  amount: 1
+enchanted_book_piercing_2:
+  shop: enchantments
+  item: i69
+  amount: 1
+enchanted_book_piercing_3:
+  shop: enchantments
+  item: i70
+  amount: 1
+enchanted_book_piercing_4:
+  shop: enchantments
+  item: i71
+  amount: 1
+enchanted_book_power_1:
+  shop: enchantments
+  item: i72
+  amount: 1
+enchanted_book_power_2:
+  shop: enchantments
+  item: i73
+  amount: 1
+enchanted_book_power_3:
+  shop: enchantments
+  item: i74
+  amount: 1
+enchanted_book_power_4:
+  shop: enchantments
+  item: i75
+  amount: 1
+enchanted_book_power_5:
+  shop: enchantments
+  item: i76
+  amount: 1
+enchanted_book_projectile_protection_1:
+  shop: enchantments
+  item: i77
+  amount: 1
+enchanted_book_projectile_protection_2:
+  shop: enchantments
+  item: i78
+  amount: 1
+enchanted_book_projectile_protection_3:
+  shop: enchantments
+  item: i79
+  amount: 1
+enchanted_book_projectile_protection_4:
+  shop: enchantments
+  item: i80
+  amount: 1
+enchanted_book_protection_1:
+  shop: enchantments
+  item: i81
+  amount: 1
+enchanted_book_protection_2:
+  shop: enchantments
+  item: i82
+  amount: 1
+enchanted_book_protection_3:
+  shop: enchantments
+  item: i83
+  amount: 1
+enchanted_book_protection_4:
+  shop: enchantments
+  item: i84
+  amount: 1
+enchanted_book_punch_1:
+  shop: enchantments
+  item: i85
+  amount: 1
+enchanted_book_punch_2:
+  shop: enchantments
+  item: i86
+  amount: 1
+enchanted_book_quick_charge_1:
+  shop: enchantments
+  item: i87
+  amount: 1
+enchanted_book_quick_charge_2:
+  shop: enchantments
+  item: i88
+  amount: 1
+enchanted_book_quick_charge_3:
+  shop: enchantments
+  item: i89
+  amount: 1
+enchanted_book_respiration_1:
+  shop: enchantments
+  item: i90
+  amount: 1
+enchanted_book_respiration_2:
+  shop: enchantments
+  item: i91
+  amount: 1
+enchanted_book_respiration_3:
+  shop: enchantments
+  item: i92
+  amount: 1
+enchanted_book_riptide_1:
+  shop: enchantments
+  item: i93
+  amount: 1
+enchanted_book_riptide_2:
+  shop: enchantments
+  item: i94
+  amount: 1
+enchanted_book_riptide_3:
+  shop: enchantments
+  item: i95
+  amount: 1
+enchanted_book_sharpness_1:
+  shop: enchantments
+  item: i96
+  amount: 1
+enchanted_book_sharpness_2:
+  shop: enchantments
+  item: i97
+  amount: 1
+enchanted_book_sharpness_3:
+  shop: enchantments
+  item: i98
+  amount: 1
+enchanted_book_sharpness_4:
+  shop: enchantments
+  item: i99
+  amount: 1
+enchanted_book_sharpness_5:
+  shop: enchantments
+  item: i100
+  amount: 1
+enchanted_book_silk_touch_1:
+  shop: enchantments
+  item: i101
+  amount: 1
+enchanted_book_smite_1:
+  shop: enchantments
+  item: i102
+  amount: 1
+enchanted_book_smite_2:
+  shop: enchantments
+  item: i103
+  amount: 1
+enchanted_book_smite_3:
+  shop: enchantments
+  item: i104
+  amount: 1
+enchanted_book_smite_4:
+  shop: enchantments
+  item: i105
+  amount: 1
+enchanted_book_smite_5:
+  shop: enchantments
+  item: i106
+  amount: 1
+enchanted_book_soul_speed_1:
+  shop: enchantments
+  item: i107
+  amount: 1
+enchanted_book_soul_speed_2:
+  shop: enchantments
+  item: i108
+  amount: 1
+enchanted_book_soul_speed_3:
+  shop: enchantments
+  item: i109
+  amount: 1
+enchanted_book_sweeping_edge_1:
+  shop: enchantments
+  item: i110
+  amount: 1
+enchanted_book_sweeping_edge_2:
+  shop: enchantments
+  item: i111
+  amount: 1
+enchanted_book_sweeping_edge_3:
+  shop: enchantments
+  item: i112
+  amount: 1
+enchanted_book_swift_sneak_1:
+  shop: enchantments
+  item: i113
+  amount: 1
+enchanted_book_swift_sneak_2:
+  shop: enchantments
+  item: i114
+  amount: 1
+enchanted_book_swift_sneak_3:
+  shop: enchantments
+  item: i115
+  amount: 1
+enchanted_book_thorns_1:
+  shop: enchantments
+  item: i116
+  amount: 1
+enchanted_book_thorns_2:
+  shop: enchantments
+  item: i117
+  amount: 1
+enchanted_book_thorns_3:
+  shop: enchantments
+  item: i118
+  amount: 1
+enchanted_book_unbreaking_1:
+  shop: enchantments
+  item: i119
+  amount: 1
+enchanted_book_unbreaking_2:
+  shop: enchantments
+  item: i120
+  amount: 1
+enchanted_book_unbreaking_3:
+  shop: enchantments
+  item: i121
+  amount: 1
+dragon_breath:
+  shop: end
+  item: i1
+  amount: 1
+dragon_egg:
+  shop: end
+  item: i2
+  amount: 1
+dragon_head:
+  shop: end
+  item: i3
+  amount: 1
+end_crystal:
+  shop: end
+  item: i4
+  amount: 1
+end_stone:
+  shop: end
+  item: i5
+  amount: 1
+end_stone_brick_slab:
+  shop: end
+  item: i6
+  amount: 1
+end_stone_brick_stairs:
+  shop: end
+  item: i7
+  amount: 1
+end_stone_brick_wall:
+  shop: end
+  item: i8
+  amount: 1
+end_stone_bricks:
+  shop: end
+  item: i9
+  amount: 1
+ender_chest:
+  shop: end
+  item: i10
+  amount: 1
+purpur_block:
+  shop: end
+  item: i11
+  amount: 1
+purpur_pillar:
+  shop: end
+  item: i12
+  amount: 1
+purpur_slab:
+  shop: end
+  item: i13
+  amount: 1
+purpur_stairs:
+  shop: end
+  item: i14
+  amount: 1
+shulker_box:
+  shop: end
+  item: i15
+  amount: 1
+shulker_shell:
+  shop: end
+  item: i16
   amount: 1
 potion:
   shop: example
@@ -361,10 +2653,6 @@ firework_rocket:
   shop: example
   item: L
   amount: 1
-leather_chestplate:
-  shop: example
-  item: M
-  amount: 1
 spawner:
   shop: example
   item: 'N'
@@ -373,523 +2661,4019 @@ apple:
   shop: example
   item: P
   amount: 1
-echo_shard:
-  shop: example
-  item: S
-  amount: 1
-wheat_seeds:
+baked_potato:
   shop: farming
-  item: A
+  item: i2
   amount: 1
-pumpkin_seeds:
+beef:
   shop: farming
-  item: B
-  amount: 1
-beetroot_seeds:
-  shop: farming
-  item: C
-  amount: 1
-melon_seeds:
-  shop: farming
-  item: D
-  amount: 1
-wheat:
-  shop: farming
-  item: E
-  amount: 1
-pumpkin:
-  shop: farming
-  item: F
-  amount: 1
-melon_slice:
-  shop: farming
-  item: G
+  item: i3
   amount: 1
 beetroot:
   shop: farming
-  item: H
+  item: i4
   amount: 1
-sugar_cane:
+beetroot_soup:
   shop: farming
-  item: J
+  item: i5
   amount: 1
-kelp:
+blue_egg:
   shop: farming
-  item: K
+  item: i6
   amount: 1
-vine:
+bread:
   shop: farming
-  item: L
+  item: i7
+  amount: 1
+brown_egg:
+  shop: farming
+  item: i8
+  amount: 1
+cake:
+  shop: farming
+  item: i9
   amount: 1
 carrot:
   shop: farming
-  item: M
+  item: i10
   amount: 1
-nether_wart:
+chicken:
   shop: farming
-  item: 'N'
+  item: i11
   amount: 1
-lily_pad:
+chorus_fruit:
   shop: farming
-  item: O
+  item: i12
   amount: 1
-sweet_berries:
+cod:
   shop: farming
-  item: P
+  item: i13
+  amount: 1
+cooked_beef:
+  shop: farming
+  item: i14
+  amount: 1
+cooked_chicken:
+  shop: farming
+  item: i15
+  amount: 1
+cooked_cod:
+  shop: farming
+  item: i16
+  amount: 1
+cooked_mutton:
+  shop: farming
+  item: i17
+  amount: 1
+cooked_porkchop:
+  shop: farming
+  item: i18
+  amount: 1
+cooked_rabbit:
+  shop: farming
+  item: i19
+  amount: 1
+cooked_salmon:
+  shop: farming
+  item: i20
+  amount: 1
+cookie:
+  shop: farming
+  item: i21
+  amount: 1
+dried_kelp:
+  shop: farming
+  item: i22
+  amount: 1
+dried_kelp_block:
+  shop: farming
+  item: i23
+  amount: 1
+egg:
+  shop: farming
+  item: i24
+  amount: 1
+enchanted_golden_apple:
+  shop: farming
+  item: i25
+  amount: 1
+fermented_spider_eye:
+  shop: farming
+  item: i26
+  amount: 1
+glistering_melon_slice:
+  shop: farming
+  item: i27
   amount: 1
 glow_berries:
   shop: farming
-  item: Q
+  item: i28
   amount: 1
-cod:
-  shop: fish
-  item: A
+golden_apple:
+  shop: farming
+  item: i29
   amount: 1
-cooked_cod:
-  shop: fish
-  item: B
+golden_carrot:
+  shop: farming
+  item: i30
   amount: 1
-salmon:
-  shop: fish
-  item: C
+hay_block:
+  shop: farming
+  item: i31
   amount: 1
-cooked_salmon:
-  shop: fish
-  item: D
+melon:
+  shop: farming
+  item: i32
   amount: 1
-tropical_fish:
-  shop: fish
-  item: E
+melon_slice:
+  shop: farming
+  item: i33
+  amount: 1
+mushroom_stew:
+  shop: farming
+  item: i34
+  amount: 1
+mutton:
+  shop: farming
+  item: i35
+  amount: 1
+poisonous_potato:
+  shop: farming
+  item: i36
+  amount: 1
+popped_chorus_fruit:
+  shop: farming
+  item: i37
+  amount: 1
+porkchop:
+  shop: farming
+  item: i38
   amount: 1
 pufferfish:
+  shop: farming
+  item: i40
+  amount: 1
+pumpkin_pie:
+  shop: farming
+  item: i41
+  amount: 1
+rabbit:
+  shop: farming
+  item: i42
+  amount: 1
+rabbit_stew:
+  shop: farming
+  item: i43
+  amount: 1
+salmon:
+  shop: farming
+  item: i44
+  amount: 1
+sugar:
+  shop: farming
+  item: i45
+  amount: 1
+suspicious_stew:
+  shop: farming
+  item: i46
+  amount: 1
+sweet_berries:
+  shop: farming
+  item: i47
+  amount: 1
+tropical_fish:
+  shop: farming
+  item: i48
+  amount: 1
+wheat:
+  shop: farming
+  item: i49
+  amount: 1
+brain_coral:
   shop: fish
-  item: F
+  item: i1
   amount: 1
-peony:
-  shop: flowers
-  item: A
+brain_coral_block:
+  shop: fish
+  item: i2
   amount: 1
-sunflower:
-  shop: flowers
-  item: B
+brain_coral_fan:
+  shop: fish
+  item: i3
   amount: 1
-pink_petals:
-  shop: flowers
-  item: C
+bubble_coral:
+  shop: fish
+  item: i4
   amount: 1
-blue_orchid:
-  shop: flowers
-  item: D
+bubble_coral_block:
+  shop: fish
+  item: i5
   amount: 1
-white_tulip:
-  shop: flowers
-  item: E
+bubble_coral_fan:
+  shop: fish
+  item: i6
   amount: 1
-orange_tulip:
-  shop: flowers
-  item: F
+conduit:
+  shop: fish
+  item: i7
   amount: 1
-red_tulip:
-  shop: flowers
-  item: G
+dark_prismarine:
+  shop: fish
+  item: i8
   amount: 1
-lilac:
-  shop: flowers
-  item: H
+dark_prismarine_slab:
+  shop: fish
+  item: i9
   amount: 1
-cornflower:
-  shop: flowers
-  item: I
+dark_prismarine_stairs:
+  shop: fish
+  item: i10
   amount: 1
-pink_tulip:
-  shop: flowers
-  item: J
+dead_brain_coral:
+  shop: fish
+  item: i11
   amount: 1
-poppy:
-  shop: flowers
-  item: K
+dead_brain_coral_block:
+  shop: fish
+  item: i12
   amount: 1
-dandelion:
-  shop: flowers
-  item: L
+dead_brain_coral_fan:
+  shop: fish
+  item: i13
   amount: 1
-rose_bush:
-  shop: flowers
-  item: M
+dead_bubble_coral:
+  shop: fish
+  item: i14
   amount: 1
-azure_bluet:
+dead_bubble_coral_block:
+  shop: fish
+  item: i15
+  amount: 1
+dead_bubble_coral_fan:
+  shop: fish
+  item: i16
+  amount: 1
+dead_fire_coral:
+  shop: fish
+  item: i17
+  amount: 1
+dead_fire_coral_block:
+  shop: fish
+  item: i18
+  amount: 1
+dead_fire_coral_fan:
+  shop: fish
+  item: i19
+  amount: 1
+dead_horn_coral:
+  shop: fish
+  item: i20
+  amount: 1
+dead_horn_coral_block:
+  shop: fish
+  item: i21
+  amount: 1
+dead_horn_coral_fan:
+  shop: fish
+  item: i22
+  amount: 1
+dead_tube_coral:
+  shop: fish
+  item: i23
+  amount: 1
+dead_tube_coral_block:
+  shop: fish
+  item: i24
+  amount: 1
+dead_tube_coral_fan:
+  shop: fish
+  item: i25
+  amount: 1
+fire_coral:
+  shop: fish
+  item: i26
+  amount: 1
+fire_coral_block:
+  shop: fish
+  item: i27
+  amount: 1
+fire_coral_fan:
+  shop: fish
+  item: i28
+  amount: 1
+heart_of_the_sea:
+  shop: fish
+  item: i29
+  amount: 1
+horn_coral:
+  shop: fish
+  item: i30
+  amount: 1
+horn_coral_block:
+  shop: fish
+  item: i31
+  amount: 1
+horn_coral_fan:
+  shop: fish
+  item: i32
+  amount: 1
+kelp:
+  shop: fish
+  item: i33
+  amount: 1
+prismarine:
+  shop: fish
+  item: i34
+  amount: 1
+prismarine_brick_slab:
+  shop: fish
+  item: i35
+  amount: 1
+prismarine_brick_stairs:
+  shop: fish
+  item: i36
+  amount: 1
+prismarine_bricks:
+  shop: fish
+  item: i37
+  amount: 1
+prismarine_crystals:
+  shop: fish
+  item: i38
+  amount: 1
+prismarine_shard:
+  shop: fish
+  item: i39
+  amount: 1
+prismarine_slab:
+  shop: fish
+  item: i40
+  amount: 1
+prismarine_stairs:
+  shop: fish
+  item: i41
+  amount: 1
+prismarine_wall:
+  shop: fish
+  item: i42
+  amount: 1
+sea_pickle:
+  shop: fish
+  item: i43
+  amount: 1
+seagrass:
+  shop: fish
+  item: i44
+  amount: 1
+sponge:
+  shop: fish
+  item: i45
+  amount: 1
+tube_coral:
+  shop: fish
+  item: i46
+  amount: 1
+tube_coral_block:
+  shop: fish
+  item: i47
+  amount: 1
+tube_coral_fan:
+  shop: fish
+  item: i48
+  amount: 1
+turtle_egg:
+  shop: fish
+  item: i49
+  amount: 1
+wet_sponge:
+  shop: fish
+  item: i50
+  amount: 1
+acacia_leaves:
   shop: flowers
-  item: 'N'
+  item: i1
+  amount: 1
+acacia_sapling:
+  shop: flowers
+  item: i2
   amount: 1
 allium:
   shop: flowers
-  item: O
+  item: i3
+  amount: 1
+azalea:
+  shop: flowers
+  item: i4
+  amount: 1
+azalea_leaves:
+  shop: flowers
+  item: i5
+  amount: 1
+azure_bluet:
+  shop: flowers
+  item: i6
+  amount: 1
+bamboo:
+  shop: flowers
+  item: i7
+  amount: 1
+beetroot_seeds:
+  shop: flowers
+  item: i8
+  amount: 1
+big_dripleaf:
+  shop: flowers
+  item: i9
+  amount: 1
+birch_leaves:
+  shop: flowers
+  item: i10
+  amount: 1
+birch_sapling:
+  shop: flowers
+  item: i11
+  amount: 1
+blue_orchid:
+  shop: flowers
+  item: i12
+  amount: 1
+bone_block:
+  shop: flowers
+  item: i13
+  amount: 1
+bone_meal:
+  shop: flowers
+  item: i14
+  amount: 1
+brown_mushroom:
+  shop: flowers
+  item: i15
+  amount: 1
+brown_mushroom_block:
+  shop: flowers
+  item: i16
+  amount: 1
+bush:
+  shop: flowers
+  item: i17
+  amount: 1
+cactus:
+  shop: flowers
+  item: i18
+  amount: 1
+cactus_flower:
+  shop: flowers
+  item: i19
+  amount: 1
+carved_pumpkin:
+  shop: flowers
+  item: i20
+  amount: 1
+cherry_leaves:
+  shop: flowers
+  item: i21
+  amount: 1
+cherry_sapling:
+  shop: flowers
+  item: i22
+  amount: 1
+chorus_flower:
+  shop: flowers
+  item: i23
+  amount: 1
+closed_eyeblossom:
+  shop: flowers
+  item: i24
+  amount: 1
+cocoa_beans:
+  shop: flowers
+  item: i25
+  amount: 1
+cornflower:
+  shop: flowers
+  item: i26
+  amount: 1
+dandelion:
+  shop: flowers
+  item: i27
+  amount: 1
+dark_oak_leaves:
+  shop: flowers
+  item: i28
+  amount: 1
+dark_oak_sapling:
+  shop: flowers
+  item: i29
+  amount: 1
+dead_bush:
+  shop: flowers
+  item: i30
+  amount: 1
+fern:
+  shop: flowers
+  item: i31
+  amount: 1
+firefly_bush:
+  shop: flowers
+  item: i32
+  amount: 1
+flower_pot:
+  shop: flowers
+  item: i33
+  amount: 1
+flowering_azalea:
+  shop: flowers
+  item: i34
+  amount: 1
+flowering_azalea_leaves:
+  shop: flowers
+  item: i35
+  amount: 1
+glow_lichen:
+  shop: flowers
+  item: i36
+  amount: 1
+hanging_roots:
+  shop: flowers
+  item: i37
+  amount: 1
+jungle_leaves:
+  shop: flowers
+  item: i38
+  amount: 1
+jungle_sapling:
+  shop: flowers
+  item: i39
+  amount: 1
+large_fern:
+  shop: flowers
+  item: i40
+  amount: 1
+leaf_litter:
+  shop: flowers
+  item: i41
+  amount: 1
+lilac:
+  shop: flowers
+  item: i42
   amount: 1
 lily_of_the_valley:
   shop: flowers
-  item: P
+  item: i43
+  amount: 1
+lily_pad:
+  shop: flowers
+  item: i44
+  amount: 1
+mangrove_leaves:
+  shop: flowers
+  item: i45
+  amount: 1
+mangrove_propagule:
+  shop: flowers
+  item: i46
+  amount: 1
+mangrove_roots:
+  shop: flowers
+  item: i47
+  amount: 1
+melon_seeds:
+  shop: flowers
+  item: i48
+  amount: 1
+moss_block:
+  shop: flowers
+  item: i49
+  amount: 1
+moss_carpet:
+  shop: flowers
+  item: i50
+  amount: 1
+muddy_mangrove_roots:
+  shop: flowers
+  item: i51
+  amount: 1
+mushroom_stem:
+  shop: flowers
+  item: i52
+  amount: 1
+oak_leaves:
+  shop: flowers
+  item: i53
+  amount: 1
+oak_sapling:
+  shop: flowers
+  item: i54
+  amount: 1
+open_eyeblossom:
+  shop: flowers
+  item: i55
+  amount: 1
+orange_tulip:
+  shop: flowers
+  item: i56
   amount: 1
 oxeye_daisy:
   shop: flowers
-  item: Q
+  item: i57
   amount: 1
-red_stained_glass:
-  shop: glass
-  item: A
+pale_hanging_moss:
+  shop: flowers
+  item: i58
   amount: 1
-orange_stained_glass:
-  shop: glass
-  item: B
+pale_moss_block:
+  shop: flowers
+  item: i59
   amount: 1
-yellow_stained_glass:
-  shop: glass
-  item: C
+pale_moss_carpet:
+  shop: flowers
+  item: i60
   amount: 1
-lime_stained_glass:
-  shop: glass
-  item: D
+pale_oak_leaves:
+  shop: flowers
+  item: i61
   amount: 1
-green_stained_glass:
-  shop: glass
-  item: E
+pale_oak_sapling:
+  shop: flowers
+  item: i62
   amount: 1
-light_blue_stained_glass:
-  shop: glass
-  item: F
+peony:
+  shop: flowers
+  item: i63
   amount: 1
-cyan_stained_glass:
-  shop: glass
-  item: G
+pink_petals:
+  shop: flowers
+  item: i64
   amount: 1
-blue_stained_glass:
-  shop: glass
-  item: H
+pink_tulip:
+  shop: flowers
+  item: i65
   amount: 1
-purple_stained_glass:
-  shop: glass
-  item: I
+pitcher_plant:
+  shop: flowers
+  item: i66
   amount: 1
-magenta_stained_glass:
-  shop: glass
-  item: J
+pitcher_pod:
+  shop: flowers
+  item: i67
   amount: 1
-pink_stained_glass:
-  shop: glass
-  item: K
+poppy:
+  shop: flowers
+  item: i68
   amount: 1
-brown_stained_glass:
-  shop: glass
-  item: L
+pumpkin:
+  shop: flowers
+  item: i69
+  amount: 1
+pumpkin_seeds:
+  shop: flowers
+  item: i70
+  amount: 1
+red_mushroom:
+  shop: flowers
+  item: i71
+  amount: 1
+red_mushroom_block:
+  shop: flowers
+  item: i72
+  amount: 1
+red_tulip:
+  shop: flowers
+  item: i73
+  amount: 1
+rose_bush:
+  shop: flowers
+  item: i74
+  amount: 1
+short_dry_grass:
+  shop: flowers
+  item: i75
+  amount: 1
+short_grass:
+  shop: flowers
+  item: i76
+  amount: 1
+small_dripleaf:
+  shop: flowers
+  item: i77
+  amount: 1
+spore_blossom:
+  shop: flowers
+  item: i78
+  amount: 1
+spruce_leaves:
+  shop: flowers
+  item: i79
+  amount: 1
+spruce_sapling:
+  shop: flowers
+  item: i80
+  amount: 1
+sugar_cane:
+  shop: flowers
+  item: i81
+  amount: 1
+sunflower:
+  shop: flowers
+  item: i82
+  amount: 1
+tall_dry_grass:
+  shop: flowers
+  item: i83
+  amount: 1
+torchflower:
+  shop: flowers
+  item: i84
+  amount: 1
+torchflower_seeds:
+  shop: flowers
+  item: i85
+  amount: 1
+twisting_vines:
+  shop: flowers
+  item: i86
+  amount: 1
+vine:
+  shop: flowers
+  item: i87
+  amount: 1
+weeping_vines:
+  shop: flowers
+  item: i88
+  amount: 1
+wheat_seeds:
+  shop: flowers
+  item: i89
+  amount: 1
+white_tulip:
+  shop: flowers
+  item: i90
+  amount: 1
+wildflowers:
+  shop: flowers
+  item: i91
   amount: 1
 black_stained_glass:
   shop: glass
-  item: M
+  item: i1
+  amount: 1
+black_stained_glass_pane:
+  shop: glass
+  item: i2
+  amount: 1
+blue_stained_glass:
+  shop: glass
+  item: i3
+  amount: 1
+blue_stained_glass_pane:
+  shop: glass
+  item: i4
+  amount: 1
+brown_stained_glass:
+  shop: glass
+  item: i5
+  amount: 1
+brown_stained_glass_pane:
+  shop: glass
+  item: i6
+  amount: 1
+cyan_stained_glass:
+  shop: glass
+  item: i7
+  amount: 1
+cyan_stained_glass_pane:
+  shop: glass
+  item: i8
+  amount: 1
+glass:
+  shop: glass
+  item: i9
+  amount: 1
+glass_pane:
+  shop: glass
+  item: i10
   amount: 1
 gray_stained_glass:
   shop: glass
-  item: 'N'
+  item: i11
+  amount: 1
+gray_stained_glass_pane:
+  shop: glass
+  item: i12
+  amount: 1
+green_stained_glass:
+  shop: glass
+  item: i13
+  amount: 1
+green_stained_glass_pane:
+  shop: glass
+  item: i14
+  amount: 1
+light_blue_stained_glass:
+  shop: glass
+  item: i15
+  amount: 1
+light_blue_stained_glass_pane:
+  shop: glass
+  item: i16
   amount: 1
 light_gray_stained_glass:
   shop: glass
-  item: O
+  item: i17
+  amount: 1
+light_gray_stained_glass_pane:
+  shop: glass
+  item: i18
+  amount: 1
+lime_stained_glass:
+  shop: glass
+  item: i19
+  amount: 1
+lime_stained_glass_pane:
+  shop: glass
+  item: i20
+  amount: 1
+magenta_stained_glass:
+  shop: glass
+  item: i21
+  amount: 1
+magenta_stained_glass_pane:
+  shop: glass
+  item: i22
+  amount: 1
+orange_stained_glass:
+  shop: glass
+  item: i23
+  amount: 1
+orange_stained_glass_pane:
+  shop: glass
+  item: i24
+  amount: 1
+pink_stained_glass:
+  shop: glass
+  item: i25
+  amount: 1
+pink_stained_glass_pane:
+  shop: glass
+  item: i26
+  amount: 1
+purple_stained_glass:
+  shop: glass
+  item: i27
+  amount: 1
+purple_stained_glass_pane:
+  shop: glass
+  item: i28
+  amount: 1
+red_stained_glass:
+  shop: glass
+  item: i29
+  amount: 1
+red_stained_glass_pane:
+  shop: glass
+  item: i30
   amount: 1
 white_stained_glass:
   shop: glass
-  item: P
+  item: i31
   amount: 1
-tinted_glass:
+white_stained_glass_pane:
   shop: glass
-  item: Q
+  item: i32
   amount: 1
-cherry_log:
-  shop: logs
-  item: A
+yellow_stained_glass:
+  shop: glass
+  item: i33
   amount: 1
-oak_log:
-  shop: logs
-  item: B
-  amount: 1
-spruce_log:
-  shop: logs
-  item: C
-  amount: 1
-birch_log:
-  shop: logs
-  item: D
-  amount: 1
-mangrove_log:
-  shop: logs
-  item: E
-  amount: 1
-jungle_log:
-  shop: logs
-  item: F
+yellow_stained_glass_pane:
+  shop: glass
+  item: i34
   amount: 1
 acacia_log:
   shop: logs
-  item: G
+  item: i1
+  amount: 1
+acacia_planks:
+  shop: logs
+  item: i2
+  amount: 1
+acacia_slab:
+  shop: logs
+  item: i3
+  amount: 1
+acacia_stairs:
+  shop: logs
+  item: i4
+  amount: 1
+acacia_wood:
+  shop: logs
+  item: i5
+  amount: 1
+bamboo_block:
+  shop: logs
+  item: i6
+  amount: 1
+bamboo_mosaic:
+  shop: logs
+  item: i7
+  amount: 1
+bamboo_mosaic_slab:
+  shop: logs
+  item: i8
+  amount: 1
+bamboo_mosaic_stairs:
+  shop: logs
+  item: i9
+  amount: 1
+bamboo_planks:
+  shop: logs
+  item: i10
+  amount: 1
+bamboo_slab:
+  shop: logs
+  item: i11
+  amount: 1
+bamboo_stairs:
+  shop: logs
+  item: i12
+  amount: 1
+birch_log:
+  shop: logs
+  item: i13
+  amount: 1
+birch_planks:
+  shop: logs
+  item: i14
+  amount: 1
+birch_slab:
+  shop: logs
+  item: i15
+  amount: 1
+birch_stairs:
+  shop: logs
+  item: i16
+  amount: 1
+birch_wood:
+  shop: logs
+  item: i17
+  amount: 1
+cherry_log:
+  shop: logs
+  item: i18
+  amount: 1
+cherry_planks:
+  shop: logs
+  item: i19
+  amount: 1
+cherry_slab:
+  shop: logs
+  item: i20
+  amount: 1
+cherry_stairs:
+  shop: logs
+  item: i21
+  amount: 1
+cherry_wood:
+  shop: logs
+  item: i22
+  amount: 1
+crimson_hyphae:
+  shop: logs
+  item: i23
+  amount: 1
+crimson_planks:
+  shop: logs
+  item: i24
+  amount: 1
+crimson_slab:
+  shop: logs
+  item: i25
+  amount: 1
+crimson_stairs:
+  shop: logs
+  item: i26
+  amount: 1
+crimson_stem:
+  shop: logs
+  item: i27
   amount: 1
 dark_oak_log:
   shop: logs
-  item: H
+  item: i28
   amount: 1
-cherry_sapling:
+dark_oak_planks:
   shop: logs
-  item: I
+  item: i29
   amount: 1
-oak_sapling:
+dark_oak_slab:
   shop: logs
-  item: J
+  item: i30
   amount: 1
-spruce_sapling:
+dark_oak_stairs:
   shop: logs
-  item: K
+  item: i31
   amount: 1
-birch_sapling:
+dark_oak_wood:
   shop: logs
-  item: L
+  item: i32
   amount: 1
-mangrove_propagule:
+jungle_log:
   shop: logs
-  item: M
+  item: i33
   amount: 1
-jungle_sapling:
+jungle_planks:
   shop: logs
-  item: 'N'
+  item: i34
   amount: 1
-acacia_sapling:
+jungle_slab:
   shop: logs
-  item: O
+  item: i35
   amount: 1
-dark_oak_sapling:
+jungle_stairs:
   shop: logs
-  item: P
+  item: i36
   amount: 1
-coal:
+jungle_wood:
+  shop: logs
+  item: i37
+  amount: 1
+mangrove_log:
+  shop: logs
+  item: i38
+  amount: 1
+mangrove_planks:
+  shop: logs
+  item: i39
+  amount: 1
+mangrove_slab:
+  shop: logs
+  item: i40
+  amount: 1
+mangrove_stairs:
+  shop: logs
+  item: i41
+  amount: 1
+mangrove_wood:
+  shop: logs
+  item: i42
+  amount: 1
+oak_log:
+  shop: logs
+  item: i43
+  amount: 1
+oak_planks:
+  shop: logs
+  item: i44
+  amount: 1
+oak_slab:
+  shop: logs
+  item: i45
+  amount: 1
+oak_stairs:
+  shop: logs
+  item: i46
+  amount: 1
+oak_wood:
+  shop: logs
+  item: i47
+  amount: 1
+pale_oak_log:
+  shop: logs
+  item: i48
+  amount: 1
+pale_oak_planks:
+  shop: logs
+  item: i49
+  amount: 1
+pale_oak_slab:
+  shop: logs
+  item: i50
+  amount: 1
+pale_oak_stairs:
+  shop: logs
+  item: i51
+  amount: 1
+pale_oak_wood:
+  shop: logs
+  item: i52
+  amount: 1
+spruce_log:
+  shop: logs
+  item: i53
+  amount: 1
+spruce_planks:
+  shop: logs
+  item: i54
+  amount: 1
+spruce_slab:
+  shop: logs
+  item: i55
+  amount: 1
+spruce_stairs:
+  shop: logs
+  item: i56
+  amount: 1
+spruce_wood:
+  shop: logs
+  item: i57
+  amount: 1
+stripped_acacia_log:
+  shop: logs
+  item: i58
+  amount: 1
+stripped_acacia_wood:
+  shop: logs
+  item: i59
+  amount: 1
+stripped_bamboo_block:
+  shop: logs
+  item: i60
+  amount: 1
+stripped_birch_log:
+  shop: logs
+  item: i61
+  amount: 1
+stripped_birch_wood:
+  shop: logs
+  item: i62
+  amount: 1
+stripped_cherry_log:
+  shop: logs
+  item: i63
+  amount: 1
+stripped_cherry_wood:
+  shop: logs
+  item: i64
+  amount: 1
+stripped_crimson_hyphae:
+  shop: logs
+  item: i65
+  amount: 1
+stripped_crimson_stem:
+  shop: logs
+  item: i66
+  amount: 1
+stripped_dark_oak_log:
+  shop: logs
+  item: i67
+  amount: 1
+stripped_dark_oak_wood:
+  shop: logs
+  item: i68
+  amount: 1
+stripped_jungle_log:
+  shop: logs
+  item: i69
+  amount: 1
+stripped_jungle_wood:
+  shop: logs
+  item: i70
+  amount: 1
+stripped_mangrove_log:
+  shop: logs
+  item: i71
+  amount: 1
+stripped_mangrove_wood:
+  shop: logs
+  item: i72
+  amount: 1
+stripped_oak_log:
+  shop: logs
+  item: i73
+  amount: 1
+stripped_oak_wood:
+  shop: logs
+  item: i74
+  amount: 1
+stripped_pale_oak_log:
+  shop: logs
+  item: i75
+  amount: 1
+stripped_pale_oak_wood:
+  shop: logs
+  item: i76
+  amount: 1
+stripped_spruce_log:
+  shop: logs
+  item: i77
+  amount: 1
+stripped_spruce_wood:
+  shop: logs
+  item: i78
+  amount: 1
+stripped_warped_hyphae:
+  shop: logs
+  item: i79
+  amount: 1
+stripped_warped_stem:
+  shop: logs
+  item: i80
+  amount: 1
+warped_hyphae:
+  shop: logs
+  item: i81
+  amount: 1
+warped_planks:
+  shop: logs
+  item: i82
+  amount: 1
+warped_slab:
+  shop: logs
+  item: i83
+  amount: 1
+warped_stairs:
+  shop: logs
+  item: i84
+  amount: 1
+warped_stem:
+  shop: logs
+  item: i85
+  amount: 1
+amethyst_block:
   shop: minerals
-  item: F
+  item: i1
+  amount: 1
+amethyst_cluster:
+  shop: minerals
+  item: i2
   amount: 1
 amethyst_shard:
   shop: minerals
-  item: G
+  item: i3
   amount: 1
 ancient_debris:
   shop: minerals
-  item: H
+  item: i4
+  amount: 1
+chiseled_copper:
+  shop: minerals
+  item: i5
+  amount: 1
+coal:
+  shop: minerals
+  item: i6
+  amount: 1
+coal_block:
+  shop: minerals
+  item: i7
+  amount: 1
+coal_ore:
+  shop: minerals
+  item: i8
+  amount: 1
+copper_bars:
+  shop: minerals
+  item: i9
+  amount: 1
+copper_block:
+  shop: minerals
+  item: i10
+  amount: 1
+copper_chain:
+  shop: minerals
+  item: i11
+  amount: 1
+copper_golem_statue:
+  shop: minerals
+  item: i12
+  amount: 1
+copper_grate:
+  shop: minerals
+  item: i13
+  amount: 1
+copper_nugget:
+  shop: minerals
+  item: i15
+  amount: 1
+copper_ore:
+  shop: minerals
+  item: i16
+  amount: 1
+cut_copper:
+  shop: minerals
+  item: i17
+  amount: 1
+cut_copper_slab:
+  shop: minerals
+  item: i18
+  amount: 1
+cut_copper_stairs:
+  shop: minerals
+  item: i19
+  amount: 1
+deepslate_coal_ore:
+  shop: minerals
+  item: i20
+  amount: 1
+deepslate_copper_ore:
+  shop: minerals
+  item: i21
+  amount: 1
+deepslate_diamond_ore:
+  shop: minerals
+  item: i22
+  amount: 1
+deepslate_emerald_ore:
+  shop: minerals
+  item: i23
+  amount: 1
+deepslate_gold_ore:
+  shop: minerals
+  item: i24
+  amount: 1
+deepslate_iron_ore:
+  shop: minerals
+  item: i25
+  amount: 1
+deepslate_lapis_ore:
+  shop: minerals
+  item: i26
+  amount: 1
+deepslate_redstone_ore:
+  shop: minerals
+  item: i27
+  amount: 1
+diamond_block:
+  shop: minerals
+  item: i29
+  amount: 1
+diamond_ore:
+  shop: minerals
+  item: i30
+  amount: 1
+emerald_block:
+  shop: minerals
+  item: i32
+  amount: 1
+emerald_ore:
+  shop: minerals
+  item: i33
+  amount: 1
+exposed_chiseled_copper:
+  shop: minerals
+  item: i34
+  amount: 1
+exposed_copper:
+  shop: minerals
+  item: i35
+  amount: 1
+exposed_copper_bars:
+  shop: minerals
+  item: i36
+  amount: 1
+exposed_copper_chain:
+  shop: minerals
+  item: i37
+  amount: 1
+exposed_copper_golem_statue:
+  shop: minerals
+  item: i38
+  amount: 1
+exposed_copper_grate:
+  shop: minerals
+  item: i39
+  amount: 1
+exposed_cut_copper:
+  shop: minerals
+  item: i40
+  amount: 1
+exposed_cut_copper_slab:
+  shop: minerals
+  item: i41
+  amount: 1
+exposed_cut_copper_stairs:
+  shop: minerals
+  item: i42
+  amount: 1
+gold_block:
+  shop: minerals
+  item: i43
+  amount: 1
+gold_nugget:
+  shop: minerals
+  item: i45
+  amount: 1
+gold_ore:
+  shop: minerals
+  item: i46
+  amount: 1
+iron_block:
+  shop: minerals
+  item: i47
+  amount: 1
+iron_nugget:
+  shop: minerals
+  item: i49
+  amount: 1
+iron_ore:
+  shop: minerals
+  item: i50
+  amount: 1
+lapis_block:
+  shop: minerals
+  item: i51
+  amount: 1
+lapis_ore:
+  shop: minerals
+  item: i53
+  amount: 1
+nether_gold_ore:
+  shop: minerals
+  item: i54
+  amount: 1
+netherite_block:
+  shop: minerals
+  item: i55
+  amount: 1
+netherite_ingot:
+  shop: minerals
+  item: i56
+  amount: 1
+netherite_scrap:
+  shop: minerals
+  item: i57
+  amount: 1
+oxidized_chiseled_copper:
+  shop: minerals
+  item: i58
+  amount: 1
+oxidized_copper:
+  shop: minerals
+  item: i59
+  amount: 1
+oxidized_copper_bars:
+  shop: minerals
+  item: i60
+  amount: 1
+oxidized_copper_chain:
+  shop: minerals
+  item: i61
+  amount: 1
+oxidized_copper_golem_statue:
+  shop: minerals
+  item: i62
+  amount: 1
+oxidized_copper_grate:
+  shop: minerals
+  item: i63
+  amount: 1
+oxidized_cut_copper:
+  shop: minerals
+  item: i64
+  amount: 1
+oxidized_cut_copper_slab:
+  shop: minerals
+  item: i65
+  amount: 1
+oxidized_cut_copper_stairs:
+  shop: minerals
+  item: i66
+  amount: 1
+raw_copper:
+  shop: minerals
+  item: i67
+  amount: 1
+raw_copper_block:
+  shop: minerals
+  item: i68
+  amount: 1
+raw_gold:
+  shop: minerals
+  item: i69
+  amount: 1
+raw_gold_block:
+  shop: minerals
+  item: i70
+  amount: 1
+raw_iron:
+  shop: minerals
+  item: i71
+  amount: 1
+raw_iron_block:
+  shop: minerals
+  item: i72
+  amount: 1
+redstone_block:
+  shop: minerals
+  item: i74
+  amount: 1
+redstone_ore:
+  shop: minerals
+  item: i75
+  amount: 1
+waxed_chiseled_copper:
+  shop: minerals
+  item: i76
+  amount: 1
+waxed_copper_bars:
+  shop: minerals
+  item: i77
+  amount: 1
+waxed_copper_block:
+  shop: minerals
+  item: i78
+  amount: 1
+waxed_copper_chain:
+  shop: minerals
+  item: i79
+  amount: 1
+waxed_copper_golem_statue:
+  shop: minerals
+  item: i80
+  amount: 1
+waxed_copper_grate:
+  shop: minerals
+  item: i81
+  amount: 1
+waxed_cut_copper:
+  shop: minerals
+  item: i82
+  amount: 1
+waxed_cut_copper_slab:
+  shop: minerals
+  item: i83
+  amount: 1
+waxed_cut_copper_stairs:
+  shop: minerals
+  item: i84
+  amount: 1
+waxed_exposed_chiseled_copper:
+  shop: minerals
+  item: i85
+  amount: 1
+waxed_exposed_copper:
+  shop: minerals
+  item: i86
+  amount: 1
+waxed_exposed_copper_bars:
+  shop: minerals
+  item: i87
+  amount: 1
+waxed_exposed_copper_chain:
+  shop: minerals
+  item: i88
+  amount: 1
+waxed_exposed_copper_golem_statue:
+  shop: minerals
+  item: i89
+  amount: 1
+waxed_exposed_copper_grate:
+  shop: minerals
+  item: i90
+  amount: 1
+waxed_exposed_cut_copper:
+  shop: minerals
+  item: i91
+  amount: 1
+waxed_exposed_cut_copper_slab:
+  shop: minerals
+  item: i92
+  amount: 1
+waxed_exposed_cut_copper_stairs:
+  shop: minerals
+  item: i93
+  amount: 1
+waxed_oxidized_chiseled_copper:
+  shop: minerals
+  item: i94
+  amount: 1
+waxed_oxidized_copper:
+  shop: minerals
+  item: i95
+  amount: 1
+waxed_oxidized_copper_bars:
+  shop: minerals
+  item: i96
+  amount: 1
+waxed_oxidized_copper_chain:
+  shop: minerals
+  item: i97
+  amount: 1
+waxed_oxidized_copper_golem_statue:
+  shop: minerals
+  item: i98
+  amount: 1
+waxed_oxidized_copper_grate:
+  shop: minerals
+  item: i99
+  amount: 1
+waxed_oxidized_cut_copper:
+  shop: minerals
+  item: i100
+  amount: 1
+waxed_oxidized_cut_copper_slab:
+  shop: minerals
+  item: i101
+  amount: 1
+waxed_oxidized_cut_copper_stairs:
+  shop: minerals
+  item: i102
+  amount: 1
+waxed_weathered_chiseled_copper:
+  shop: minerals
+  item: i103
+  amount: 1
+waxed_weathered_copper:
+  shop: minerals
+  item: i104
+  amount: 1
+waxed_weathered_copper_bars:
+  shop: minerals
+  item: i105
+  amount: 1
+waxed_weathered_copper_chain:
+  shop: minerals
+  item: i106
+  amount: 1
+waxed_weathered_copper_golem_statue:
+  shop: minerals
+  item: i107
+  amount: 1
+waxed_weathered_copper_grate:
+  shop: minerals
+  item: i108
+  amount: 1
+waxed_weathered_cut_copper:
+  shop: minerals
+  item: i109
+  amount: 1
+waxed_weathered_cut_copper_slab:
+  shop: minerals
+  item: i110
+  amount: 1
+waxed_weathered_cut_copper_stairs:
+  shop: minerals
+  item: i111
+  amount: 1
+weathered_chiseled_copper:
+  shop: minerals
+  item: i112
+  amount: 1
+weathered_copper:
+  shop: minerals
+  item: i113
+  amount: 1
+weathered_copper_bars:
+  shop: minerals
+  item: i114
+  amount: 1
+weathered_copper_chain:
+  shop: minerals
+  item: i115
+  amount: 1
+weathered_copper_golem_statue:
+  shop: minerals
+  item: i116
+  amount: 1
+weathered_copper_grate:
+  shop: minerals
+  item: i117
+  amount: 1
+weathered_cut_copper:
+  shop: minerals
+  item: i118
+  amount: 1
+weathered_cut_copper_slab:
+  shop: minerals
+  item: i119
+  amount: 1
+weathered_cut_copper_stairs:
+  shop: minerals
+  item: i120
+  amount: 1
+basalt:
+  shop: nether
+  item: i1
+  amount: 1
+blackstone:
+  shop: nether
+  item: i2
+  amount: 1
+blackstone_slab:
+  shop: nether
+  item: i3
+  amount: 1
+blackstone_stairs:
+  shop: nether
+  item: i4
+  amount: 1
+blackstone_wall:
+  shop: nether
+  item: i5
+  amount: 1
+chiseled_polished_blackstone:
+  shop: nether
+  item: i6
+  amount: 1
+chiseled_quartz_block:
+  shop: nether
+  item: i7
+  amount: 1
+cracked_polished_blackstone_bricks:
+  shop: nether
+  item: i8
+  amount: 1
+crimson_fungus:
+  shop: nether
+  item: i9
+  amount: 1
+crimson_nylium:
+  shop: nether
+  item: i10
+  amount: 1
+crimson_roots:
+  shop: nether
+  item: i11
+  amount: 1
+crying_obsidian:
+  shop: nether
+  item: i12
+  amount: 1
+dried_ghast:
+  shop: nether
+  item: i13
+  amount: 1
+gilded_blackstone:
+  shop: nether
+  item: i14
+  amount: 1
+magma_block:
+  shop: nether
+  item: i15
+  amount: 1
+nether_quartz_ore:
+  shop: nether
+  item: i16
+  amount: 1
+nether_sprouts:
+  shop: nether
+  item: i17
+  amount: 1
+nether_wart:
+  shop: nether
+  item: i18
+  amount: 1
+nether_wart_block:
+  shop: nether
+  item: i19
+  amount: 1
+netherite_upgrade_smithing_template:
+  shop: nether
+  item: i20
+  amount: 1
+netherrack:
+  shop: nether
+  item: i21
+  amount: 1
+obsidian:
+  shop: nether
+  item: i22
+  amount: 1
+polished_basalt:
+  shop: nether
+  item: i23
+  amount: 1
+polished_blackstone:
+  shop: nether
+  item: i24
+  amount: 1
+polished_blackstone_brick_slab:
+  shop: nether
+  item: i25
+  amount: 1
+polished_blackstone_brick_stairs:
+  shop: nether
+  item: i26
+  amount: 1
+polished_blackstone_brick_wall:
+  shop: nether
+  item: i27
+  amount: 1
+polished_blackstone_bricks:
+  shop: nether
+  item: i28
+  amount: 1
+polished_blackstone_slab:
+  shop: nether
+  item: i29
+  amount: 1
+polished_blackstone_stairs:
+  shop: nether
+  item: i30
+  amount: 1
+polished_blackstone_wall:
+  shop: nether
+  item: i31
   amount: 1
 quartz:
-  shop: minerals
-  item: I
+  shop: nether
+  item: i32
   amount: 1
-dispenser:
-  shop: redstone
-  item: A
+quartz_block:
+  shop: nether
+  item: i33
   amount: 1
-note_block:
-  shop: redstone
-  item: B
+quartz_bricks:
+  shop: nether
+  item: i34
   amount: 1
-sticky_piston:
-  shop: redstone
-  item: C
+quartz_pillar:
+  shop: nether
+  item: i35
   amount: 1
-piston:
-  shop: redstone
-  item: D
+quartz_slab:
+  shop: nether
+  item: i36
   amount: 1
-tnt:
-  shop: redstone
-  item: E
+quartz_stairs:
+  shop: nether
+  item: i37
   amount: 1
-dropper:
-  shop: redstone
-  item: F
+respawn_anchor:
+  shop: nether
+  item: i38
   amount: 1
-observer:
-  shop: redstone
-  item: G
+smooth_basalt:
+  shop: nether
+  item: i39
   amount: 1
-repeater:
+smooth_quartz:
+  shop: nether
+  item: i40
+  amount: 1
+smooth_quartz_slab:
+  shop: nether
+  item: i41
+  amount: 1
+smooth_quartz_stairs:
+  shop: nether
+  item: i42
+  amount: 1
+soul_sand:
+  shop: nether
+  item: i43
+  amount: 1
+soul_soil:
+  shop: nether
+  item: i44
+  amount: 1
+warped_fungus:
+  shop: nether
+  item: i45
+  amount: 1
+warped_nylium:
+  shop: nether
+  item: i46
+  amount: 1
+warped_roots:
+  shop: nether
+  item: i47
+  amount: 1
+warped_wart_block:
+  shop: nether
+  item: i48
+  amount: 1
+acacia_button:
   shop: redstone
-  item: H
+  item: i1
+  amount: 1
+acacia_door:
+  shop: redstone
+  item: i2
+  amount: 1
+acacia_pressure_plate:
+  shop: redstone
+  item: i3
+  amount: 1
+acacia_trapdoor:
+  shop: redstone
+  item: i4
+  amount: 1
+bamboo_button:
+  shop: redstone
+  item: i5
+  amount: 1
+bamboo_door:
+  shop: redstone
+  item: i6
+  amount: 1
+bamboo_pressure_plate:
+  shop: redstone
+  item: i7
+  amount: 1
+bamboo_trapdoor:
+  shop: redstone
+  item: i8
+  amount: 1
+birch_button:
+  shop: redstone
+  item: i9
+  amount: 1
+birch_door:
+  shop: redstone
+  item: i10
+  amount: 1
+birch_pressure_plate:
+  shop: redstone
+  item: i11
+  amount: 1
+birch_trapdoor:
+  shop: redstone
+  item: i12
+  amount: 1
+campfire:
+  shop: redstone
+  item: i13
+  amount: 1
+candle:
+  shop: redstone
+  item: i14
+  amount: 1
+cherry_button:
+  shop: redstone
+  item: i15
+  amount: 1
+cherry_door:
+  shop: redstone
+  item: i16
+  amount: 1
+cherry_pressure_plate:
+  shop: redstone
+  item: i17
+  amount: 1
+cherry_trapdoor:
+  shop: redstone
+  item: i18
   amount: 1
 comparator:
   shop: redstone
-  item: I
+  item: i19
+  amount: 1
+copper_bulb:
+  shop: redstone
+  item: i20
+  amount: 1
+copper_door:
+  shop: redstone
+  item: i21
+  amount: 1
+copper_lantern:
+  shop: redstone
+  item: i22
+  amount: 1
+copper_torch:
+  shop: redstone
+  item: i23
+  amount: 1
+copper_trapdoor:
+  shop: redstone
+  item: i24
+  amount: 1
+crimson_button:
+  shop: redstone
+  item: i25
+  amount: 1
+crimson_door:
+  shop: redstone
+  item: i26
+  amount: 1
+crimson_pressure_plate:
+  shop: redstone
+  item: i27
+  amount: 1
+crimson_trapdoor:
+  shop: redstone
+  item: i28
+  amount: 1
+dark_oak_button:
+  shop: redstone
+  item: i29
+  amount: 1
+dark_oak_door:
+  shop: redstone
+  item: i30
+  amount: 1
+dark_oak_pressure_plate:
+  shop: redstone
+  item: i31
+  amount: 1
+dark_oak_trapdoor:
+  shop: redstone
+  item: i32
+  amount: 1
+daylight_detector:
+  shop: redstone
+  item: i33
+  amount: 1
+dispenser:
+  shop: redstone
+  item: i34
+  amount: 1
+dropper:
+  shop: redstone
+  item: i35
+  amount: 1
+end_rod:
+  shop: redstone
+  item: i36
+  amount: 1
+exposed_copper_bulb:
+  shop: redstone
+  item: i37
+  amount: 1
+exposed_copper_door:
+  shop: redstone
+  item: i38
+  amount: 1
+exposed_copper_lantern:
+  shop: redstone
+  item: i39
+  amount: 1
+exposed_copper_trapdoor:
+  shop: redstone
+  item: i40
+  amount: 1
+glowstone:
+  shop: redstone
+  item: i41
+  amount: 1
+glowstone_dust:
+  shop: redstone
+  item: i42
+  amount: 1
+heavy_weighted_pressure_plate:
+  shop: redstone
+  item: i43
+  amount: 1
+iron_door:
+  shop: redstone
+  item: i44
+  amount: 1
+iron_trapdoor:
+  shop: redstone
+  item: i45
+  amount: 1
+jack_o_lantern:
+  shop: redstone
+  item: i46
+  amount: 1
+jungle_button:
+  shop: redstone
+  item: i47
+  amount: 1
+jungle_door:
+  shop: redstone
+  item: i48
+  amount: 1
+jungle_pressure_plate:
+  shop: redstone
+  item: i49
+  amount: 1
+jungle_trapdoor:
+  shop: redstone
+  item: i50
+  amount: 1
+lantern:
+  shop: redstone
+  item: i51
+  amount: 1
+lever:
+  shop: redstone
+  item: i52
+  amount: 1
+light_weighted_pressure_plate:
+  shop: redstone
+  item: i53
+  amount: 1
+mangrove_button:
+  shop: redstone
+  item: i54
+  amount: 1
+mangrove_door:
+  shop: redstone
+  item: i55
+  amount: 1
+mangrove_pressure_plate:
+  shop: redstone
+  item: i56
+  amount: 1
+mangrove_trapdoor:
+  shop: redstone
+  item: i57
+  amount: 1
+note_block:
+  shop: redstone
+  item: i58
+  amount: 1
+oak_button:
+  shop: redstone
+  item: i59
+  amount: 1
+oak_door:
+  shop: redstone
+  item: i60
+  amount: 1
+oak_pressure_plate:
+  shop: redstone
+  item: i61
+  amount: 1
+oak_trapdoor:
+  shop: redstone
+  item: i62
+  amount: 1
+observer:
+  shop: redstone
+  item: i63
+  amount: 1
+ochre_froglight:
+  shop: redstone
+  item: i64
+  amount: 1
+oxidized_copper_bulb:
+  shop: redstone
+  item: i65
+  amount: 1
+oxidized_copper_door:
+  shop: redstone
+  item: i66
+  amount: 1
+oxidized_copper_lantern:
+  shop: redstone
+  item: i67
+  amount: 1
+oxidized_copper_trapdoor:
+  shop: redstone
+  item: i68
+  amount: 1
+pale_oak_button:
+  shop: redstone
+  item: i69
+  amount: 1
+pale_oak_door:
+  shop: redstone
+  item: i70
+  amount: 1
+pale_oak_pressure_plate:
+  shop: redstone
+  item: i71
+  amount: 1
+pale_oak_trapdoor:
+  shop: redstone
+  item: i72
+  amount: 1
+pearlescent_froglight:
+  shop: redstone
+  item: i73
+  amount: 1
+piston:
+  shop: redstone
+  item: i74
+  amount: 1
+polished_blackstone_button:
+  shop: redstone
+  item: i75
+  amount: 1
+polished_blackstone_pressure_plate:
+  shop: redstone
+  item: i76
+  amount: 1
+redstone_lamp:
+  shop: redstone
+  item: i77
+  amount: 1
+redstone_torch:
+  shop: redstone
+  item: i78
+  amount: 1
+repeater:
+  shop: redstone
+  item: i79
+  amount: 1
+sea_lantern:
+  shop: redstone
+  item: i80
+  amount: 1
+shroomlight:
+  shop: redstone
+  item: i81
+  amount: 1
+soul_campfire:
+  shop: redstone
+  item: i82
+  amount: 1
+soul_lantern:
+  shop: redstone
+  item: i83
+  amount: 1
+soul_torch:
+  shop: redstone
+  item: i84
+  amount: 1
+spruce_button:
+  shop: redstone
+  item: i85
+  amount: 1
+spruce_door:
+  shop: redstone
+  item: i86
+  amount: 1
+spruce_pressure_plate:
+  shop: redstone
+  item: i87
+  amount: 1
+spruce_trapdoor:
+  shop: redstone
+  item: i88
+  amount: 1
+sticky_piston:
+  shop: redstone
+  item: i89
+  amount: 1
+stone_button:
+  shop: redstone
+  item: i90
+  amount: 1
+stone_pressure_plate:
+  shop: redstone
+  item: i91
+  amount: 1
+target:
+  shop: redstone
+  item: i92
+  amount: 1
+torch:
+  shop: redstone
+  item: i93
+  amount: 1
+trapped_chest:
+  shop: redstone
+  item: i94
+  amount: 1
+tripwire_hook:
+  shop: redstone
+  item: i95
+  amount: 1
+verdant_froglight:
+  shop: redstone
+  item: i96
+  amount: 1
+warped_button:
+  shop: redstone
+  item: i97
+  amount: 1
+warped_door:
+  shop: redstone
+  item: i98
+  amount: 1
+warped_pressure_plate:
+  shop: redstone
+  item: i99
+  amount: 1
+warped_trapdoor:
+  shop: redstone
+  item: i100
+  amount: 1
+waxed_copper_bulb:
+  shop: redstone
+  item: i101
+  amount: 1
+waxed_copper_door:
+  shop: redstone
+  item: i102
+  amount: 1
+waxed_copper_lantern:
+  shop: redstone
+  item: i103
+  amount: 1
+waxed_copper_trapdoor:
+  shop: redstone
+  item: i104
+  amount: 1
+waxed_exposed_copper_bulb:
+  shop: redstone
+  item: i105
+  amount: 1
+waxed_exposed_copper_door:
+  shop: redstone
+  item: i106
+  amount: 1
+waxed_exposed_copper_lantern:
+  shop: redstone
+  item: i107
+  amount: 1
+waxed_exposed_copper_trapdoor:
+  shop: redstone
+  item: i108
+  amount: 1
+waxed_oxidized_copper_bulb:
+  shop: redstone
+  item: i109
+  amount: 1
+waxed_oxidized_copper_door:
+  shop: redstone
+  item: i110
+  amount: 1
+waxed_oxidized_copper_lantern:
+  shop: redstone
+  item: i111
+  amount: 1
+waxed_oxidized_copper_trapdoor:
+  shop: redstone
+  item: i112
+  amount: 1
+waxed_weathered_copper_bulb:
+  shop: redstone
+  item: i113
+  amount: 1
+waxed_weathered_copper_door:
+  shop: redstone
+  item: i114
+  amount: 1
+waxed_weathered_copper_lantern:
+  shop: redstone
+  item: i115
+  amount: 1
+waxed_weathered_copper_trapdoor:
+  shop: redstone
+  item: i116
+  amount: 1
+weathered_copper_bulb:
+  shop: redstone
+  item: i117
+  amount: 1
+weathered_copper_door:
+  shop: redstone
+  item: i118
+  amount: 1
+weathered_copper_lantern:
+  shop: redstone
+  item: i119
+  amount: 1
+weathered_copper_trapdoor:
+  shop: redstone
+  item: i120
   amount: 1
 experience_bottle:
   shop: special
   item: A
   amount: 1
-heart_of_the_sea:
-  shop: special
-  item: B
-  amount: 1
-nautilus_shell:
-  shop: special
-  item: C
-  amount: 1
-red_terracotta:
+black_glazed_terracotta:
   shop: terracottas
-  item: A
-  amount: 1
-orange_terracotta:
-  shop: terracottas
-  item: B
-  amount: 1
-yellow_terracotta:
-  shop: terracottas
-  item: C
-  amount: 1
-lime_terracotta:
-  shop: terracottas
-  item: D
-  amount: 1
-green_terracotta:
-  shop: terracottas
-  item: E
-  amount: 1
-light_blue_terracotta:
-  shop: terracottas
-  item: F
-  amount: 1
-cyan_terracotta:
-  shop: terracottas
-  item: G
-  amount: 1
-blue_terracotta:
-  shop: terracottas
-  item: H
-  amount: 1
-purple_terracotta:
-  shop: terracottas
-  item: I
-  amount: 1
-magenta_terracotta:
-  shop: terracottas
-  item: J
-  amount: 1
-pink_terracotta:
-  shop: terracottas
-  item: K
-  amount: 1
-brown_terracotta:
-  shop: terracottas
-  item: L
+  item: i1
   amount: 1
 black_terracotta:
   shop: terracottas
-  item: M
+  item: i2
+  amount: 1
+blue_glazed_terracotta:
+  shop: terracottas
+  item: i3
+  amount: 1
+blue_terracotta:
+  shop: terracottas
+  item: i4
+  amount: 1
+brown_glazed_terracotta:
+  shop: terracottas
+  item: i5
+  amount: 1
+brown_terracotta:
+  shop: terracottas
+  item: i6
+  amount: 1
+cyan_glazed_terracotta:
+  shop: terracottas
+  item: i7
+  amount: 1
+cyan_terracotta:
+  shop: terracottas
+  item: i8
+  amount: 1
+gray_glazed_terracotta:
+  shop: terracottas
+  item: i9
   amount: 1
 gray_terracotta:
   shop: terracottas
-  item: 'N'
+  item: i10
+  amount: 1
+green_glazed_terracotta:
+  shop: terracottas
+  item: i11
+  amount: 1
+green_terracotta:
+  shop: terracottas
+  item: i12
+  amount: 1
+light_blue_glazed_terracotta:
+  shop: terracottas
+  item: i13
+  amount: 1
+light_blue_terracotta:
+  shop: terracottas
+  item: i14
+  amount: 1
+light_gray_glazed_terracotta:
+  shop: terracottas
+  item: i15
   amount: 1
 light_gray_terracotta:
   shop: terracottas
-  item: O
+  item: i16
+  amount: 1
+lime_glazed_terracotta:
+  shop: terracottas
+  item: i17
+  amount: 1
+lime_terracotta:
+  shop: terracottas
+  item: i18
+  amount: 1
+magenta_glazed_terracotta:
+  shop: terracottas
+  item: i19
+  amount: 1
+magenta_terracotta:
+  shop: terracottas
+  item: i20
+  amount: 1
+orange_glazed_terracotta:
+  shop: terracottas
+  item: i21
+  amount: 1
+orange_terracotta:
+  shop: terracottas
+  item: i22
+  amount: 1
+pink_glazed_terracotta:
+  shop: terracottas
+  item: i23
+  amount: 1
+pink_terracotta:
+  shop: terracottas
+  item: i24
+  amount: 1
+purple_glazed_terracotta:
+  shop: terracottas
+  item: i25
+  amount: 1
+purple_terracotta:
+  shop: terracottas
+  item: i26
+  amount: 1
+red_glazed_terracotta:
+  shop: terracottas
+  item: i27
+  amount: 1
+red_terracotta:
+  shop: terracottas
+  item: i28
+  amount: 1
+terracotta:
+  shop: terracottas
+  item: i29
+  amount: 1
+white_glazed_terracotta:
+  shop: terracottas
+  item: i30
   amount: 1
 white_terracotta:
   shop: terracottas
-  item: P
+  item: i31
   amount: 1
-rail:
-  shop: transport
-  item: A
+yellow_glazed_terracotta:
+  shop: terracottas
+  item: i32
   amount: 1
-powered_rail:
+yellow_terracotta:
+  shop: terracottas
+  item: i33
+  amount: 1
+carrot_on_a_stick:
+  shop: tools
+  item: i1
+  amount: 1
+copper_axe:
+  shop: tools
+  item: i2
+  amount: 1
+copper_hoe:
+  shop: tools
+  item: i3
+  amount: 1
+copper_pickaxe:
+  shop: tools
+  item: i4
+  amount: 1
+copper_shovel:
+  shop: tools
+  item: i5
+  amount: 1
+diamond_hoe:
+  shop: tools
+  item: i7
+  amount: 1
+diamond_pickaxe:
+  shop: tools
+  item: i8
+  amount: 1
+diamond_shovel:
+  shop: tools
+  item: i9
+  amount: 1
+fishing_rod:
+  shop: tools
+  item: i10
+  amount: 1
+golden_axe:
+  shop: tools
+  item: i11
+  amount: 1
+golden_hoe:
+  shop: tools
+  item: i12
+  amount: 1
+golden_pickaxe:
+  shop: tools
+  item: i13
+  amount: 1
+golden_shovel:
+  shop: tools
+  item: i14
+  amount: 1
+iron_axe:
+  shop: tools
+  item: i15
+  amount: 1
+iron_hoe:
+  shop: tools
+  item: i16
+  amount: 1
+iron_pickaxe:
+  shop: tools
+  item: i17
+  amount: 1
+iron_shovel:
+  shop: tools
+  item: i18
+  amount: 1
+netherite_axe:
+  shop: tools
+  item: i19
+  amount: 1
+netherite_hoe:
+  shop: tools
+  item: i20
+  amount: 1
+netherite_pickaxe:
+  shop: tools
+  item: i21
+  amount: 1
+netherite_shovel:
+  shop: tools
+  item: i22
+  amount: 1
+shears:
+  shop: tools
+  item: i23
+  amount: 1
+stone_axe:
+  shop: tools
+  item: i24
+  amount: 1
+stone_hoe:
+  shop: tools
+  item: i25
+  amount: 1
+stone_pickaxe:
+  shop: tools
+  item: i26
+  amount: 1
+stone_shovel:
+  shop: tools
+  item: i27
+  amount: 1
+warped_fungus_on_a_stick:
+  shop: tools
+  item: i28
+  amount: 1
+wooden_axe:
+  shop: tools
+  item: i29
+  amount: 1
+wooden_hoe:
+  shop: tools
+  item: i30
+  amount: 1
+wooden_pickaxe:
+  shop: tools
+  item: i31
+  amount: 1
+wooden_shovel:
+  shop: tools
+  item: i32
+  amount: 1
+acacia_boat:
   shop: transport
-  item: B
+  item: i1
+  amount: 1
+acacia_chest_boat:
+  shop: transport
+  item: i2
   amount: 1
 activator_rail:
   shop: transport
-  item: C
+  item: i3
   amount: 1
-detector_rail:
+bamboo_chest_raft:
   shop: transport
-  item: D
+  item: i4
   amount: 1
-minecart:
+bamboo_raft:
   shop: transport
-  item: E
+  item: i5
+  amount: 1
+birch_boat:
+  shop: transport
+  item: i6
+  amount: 1
+birch_chest_boat:
+  shop: transport
+  item: i7
+  amount: 1
+black_harness:
+  shop: transport
+  item: i8
+  amount: 1
+blue_harness:
+  shop: transport
+  item: i9
+  amount: 1
+brown_harness:
+  shop: transport
+  item: i10
+  amount: 1
+cherry_boat:
+  shop: transport
+  item: i11
+  amount: 1
+cherry_chest_boat:
+  shop: transport
+  item: i12
   amount: 1
 chest_minecart:
   shop: transport
-  item: F
+  item: i13
+  amount: 1
+cyan_harness:
+  shop: transport
+  item: i14
+  amount: 1
+dark_oak_boat:
+  shop: transport
+  item: i15
+  amount: 1
+dark_oak_chest_boat:
+  shop: transport
+  item: i16
+  amount: 1
+detector_rail:
+  shop: transport
+  item: i17
+  amount: 1
+elytra:
+  shop: transport
+  item: i18
   amount: 1
 furnace_minecart:
   shop: transport
-  item: G
+  item: i19
+  amount: 1
+gray_harness:
+  shop: transport
+  item: i20
+  amount: 1
+green_harness:
+  shop: transport
+  item: i21
   amount: 1
 hopper_minecart:
   shop: transport
-  item: H
+  item: i22
+  amount: 1
+jungle_boat:
+  shop: transport
+  item: i23
+  amount: 1
+jungle_chest_boat:
+  shop: transport
+  item: i24
+  amount: 1
+light_blue_harness:
+  shop: transport
+  item: i25
+  amount: 1
+light_gray_harness:
+  shop: transport
+  item: i26
+  amount: 1
+lime_harness:
+  shop: transport
+  item: i27
+  amount: 1
+magenta_harness:
+  shop: transport
+  item: i28
+  amount: 1
+mangrove_boat:
+  shop: transport
+  item: i29
+  amount: 1
+mangrove_chest_boat:
+  shop: transport
+  item: i30
+  amount: 1
+minecart:
+  shop: transport
+  item: i31
+  amount: 1
+oak_boat:
+  shop: transport
+  item: i32
+  amount: 1
+oak_chest_boat:
+  shop: transport
+  item: i33
+  amount: 1
+orange_harness:
+  shop: transport
+  item: i34
+  amount: 1
+pale_oak_boat:
+  shop: transport
+  item: i35
+  amount: 1
+pale_oak_chest_boat:
+  shop: transport
+  item: i36
+  amount: 1
+pink_harness:
+  shop: transport
+  item: i37
+  amount: 1
+powered_rail:
+  shop: transport
+  item: i38
+  amount: 1
+purple_harness:
+  shop: transport
+  item: i39
+  amount: 1
+rail:
+  shop: transport
+  item: i40
+  amount: 1
+red_harness:
+  shop: transport
+  item: i41
+  amount: 1
+saddle:
+  shop: transport
+  item: i42
+  amount: 1
+spruce_boat:
+  shop: transport
+  item: i43
+  amount: 1
+spruce_chest_boat:
+  shop: transport
+  item: i44
   amount: 1
 tnt_minecart:
   shop: transport
-  item: I
+  item: i45
   amount: 1
-red_wool:
-  shop: wools
-  item: A
+white_harness:
+  shop: transport
+  item: i46
   amount: 1
-orange_wool:
-  shop: wools
-  item: B
+yellow_harness:
+  shop: transport
+  item: i47
   amount: 1
-yellow_wool:
-  shop: wools
-  item: C
+acacia_fence:
+  shop: utility
+  item: i1
   amount: 1
-lime_wool:
-  shop: wools
-  item: D
+acacia_fence_gate:
+  shop: utility
+  item: i2
   amount: 1
-green_wool:
-  shop: wools
-  item: E
+acacia_hanging_sign:
+  shop: utility
+  item: i3
   amount: 1
-light_blue_wool:
-  shop: wools
-  item: F
+acacia_shelf:
+  shop: utility
+  item: i4
   amount: 1
-cyan_wool:
-  shop: wools
-  item: G
+acacia_sign:
+  shop: utility
+  item: i5
   amount: 1
-blue_wool:
-  shop: wools
-  item: H
+anvil:
+  shop: utility
+  item: i6
   amount: 1
-purple_wool:
-  shop: wools
-  item: I
+bamboo_fence:
+  shop: utility
+  item: i8
   amount: 1
-magenta_wool:
-  shop: wools
-  item: J
+bamboo_fence_gate:
+  shop: utility
+  item: i9
   amount: 1
-pink_wool:
-  shop: wools
-  item: K
+bamboo_hanging_sign:
+  shop: utility
+  item: i10
   amount: 1
-brown_wool:
+bamboo_shelf:
+  shop: utility
+  item: i11
+  amount: 1
+bamboo_sign:
+  shop: utility
+  item: i12
+  amount: 1
+barrel:
+  shop: utility
+  item: i13
+  amount: 1
+beacon:
+  shop: utility
+  item: i14
+  amount: 1
+beehive:
+  shop: utility
+  item: i15
+  amount: 1
+bell:
+  shop: utility
+  item: i16
+  amount: 1
+birch_fence:
+  shop: utility
+  item: i17
+  amount: 1
+birch_fence_gate:
+  shop: utility
+  item: i18
+  amount: 1
+birch_hanging_sign:
+  shop: utility
+  item: i19
+  amount: 1
+birch_shelf:
+  shop: utility
+  item: i20
+  amount: 1
+birch_sign:
+  shop: utility
+  item: i21
+  amount: 1
+blast_furnace:
+  shop: utility
+  item: i22
+  amount: 1
+book:
+  shop: utility
+  item: i23
+  amount: 1
+bookshelf:
+  shop: utility
+  item: i24
+  amount: 1
+bordure_indented_banner_pattern:
+  shop: utility
+  item: i25
+  amount: 1
+bowl:
+  shop: utility
+  item: i26
+  amount: 1
+brewing_stand:
+  shop: utility
+  item: i27
+  amount: 1
+bucket:
+  shop: utility
+  item: i28
+  amount: 1
+cartography_table:
+  shop: utility
+  item: i30
+  amount: 1
+cauldron:
+  shop: utility
+  item: i31
+  amount: 1
+charcoal:
+  shop: utility
+  item: i32
+  amount: 1
+cherry_fence:
+  shop: utility
+  item: i33
+  amount: 1
+cherry_fence_gate:
+  shop: utility
+  item: i34
+  amount: 1
+cherry_hanging_sign:
+  shop: utility
+  item: i35
+  amount: 1
+cherry_shelf:
+  shop: utility
+  item: i36
+  amount: 1
+cherry_sign:
+  shop: utility
+  item: i37
+  amount: 1
+chest:
+  shop: utility
+  item: i38
+  amount: 1
+chipped_anvil:
+  shop: utility
+  item: i39
+  amount: 1
+chiseled_bookshelf:
+  shop: utility
+  item: i40
+  amount: 1
+clock:
+  shop: utility
+  item: i41
+  amount: 1
+cobweb:
+  shop: utility
+  item: i42
+  amount: 1
+cod_bucket:
+  shop: utility
+  item: i43
+  amount: 1
+compass:
+  shop: utility
+  item: i44
+  amount: 1
+composter:
+  shop: utility
+  item: i45
+  amount: 1
+copper_chest:
+  shop: utility
+  item: i46
+  amount: 1
+crafter:
+  shop: utility
+  item: i47
+  amount: 1
+crafting_table:
+  shop: utility
+  item: i48
+  amount: 1
+creaking_heart:
+  shop: utility
+  item: i49
+  amount: 1
+creeper_banner_pattern:
+  shop: utility
+  item: i50
+  amount: 1
+crimson_fence:
+  shop: utility
+  item: i51
+  amount: 1
+crimson_fence_gate:
+  shop: utility
+  item: i52
+  amount: 1
+crimson_hanging_sign:
+  shop: utility
+  item: i53
+  amount: 1
+crimson_shelf:
+  shop: utility
+  item: i54
+  amount: 1
+crimson_sign:
+  shop: utility
+  item: i55
+  amount: 1
+damaged_anvil:
+  shop: utility
+  item: i56
+  amount: 1
+dark_oak_fence:
+  shop: utility
+  item: i57
+  amount: 1
+dark_oak_fence_gate:
+  shop: utility
+  item: i58
+  amount: 1
+dark_oak_hanging_sign:
+  shop: utility
+  item: i59
+  amount: 1
+dark_oak_shelf:
+  shop: utility
+  item: i60
+  amount: 1
+dark_oak_sign:
+  shop: utility
+  item: i61
+  amount: 1
+enchanting_table:
+  shop: utility
+  item: i62
+  amount: 1
+ender_eye:
+  shop: utility
+  item: i63
+  amount: 1
+exposed_copper_chest:
+  shop: utility
+  item: i65
+  amount: 1
+exposed_lightning_rod:
+  shop: utility
+  item: i66
+  amount: 1
+field_masoned_banner_pattern:
+  shop: utility
+  item: i67
+  amount: 1
+fire_charge:
+  shop: utility
+  item: i68
+  amount: 1
+firework_star:
+  shop: utility
+  item: i70
+  amount: 1
+fletching_table:
+  shop: utility
+  item: i71
+  amount: 1
+flint:
+  shop: utility
+  item: i72
+  amount: 1
+flint_and_steel:
+  shop: utility
+  item: i73
+  amount: 1
+flow_banner_pattern:
+  shop: utility
+  item: i74
+  amount: 1
+flower_banner_pattern:
+  shop: utility
+  item: i75
+  amount: 1
+furnace:
+  shop: utility
+  item: i76
+  amount: 1
+glass_bottle:
+  shop: utility
+  item: i77
+  amount: 1
+globe_banner_pattern:
+  shop: utility
+  item: i78
+  amount: 1
+glow_item_frame:
+  shop: utility
+  item: i79
+  amount: 1
+grindstone:
+  shop: utility
+  item: i80
+  amount: 1
+guster_banner_pattern:
+  shop: utility
+  item: i81
+  amount: 1
+heavy_core:
+  shop: utility
+  item: i82
+  amount: 1
+hopper:
+  shop: utility
+  item: i83
+  amount: 1
+iron_bars:
+  shop: utility
+  item: i84
+  amount: 1
+iron_chain:
+  shop: utility
+  item: i85
+  amount: 1
+item_frame:
+  shop: utility
+  item: i86
+  amount: 1
+jukebox:
+  shop: utility
+  item: i87
+  amount: 1
+jungle_fence:
+  shop: utility
+  item: i88
+  amount: 1
+jungle_fence_gate:
+  shop: utility
+  item: i89
+  amount: 1
+jungle_hanging_sign:
+  shop: utility
+  item: i90
+  amount: 1
+jungle_shelf:
+  shop: utility
+  item: i91
+  amount: 1
+jungle_sign:
+  shop: utility
+  item: i92
+  amount: 1
+ladder:
+  shop: utility
+  item: i93
+  amount: 1
+lava_bucket:
+  shop: utility
+  item: i94
+  amount: 1
+lead:
+  shop: utility
+  item: i95
+  amount: 1
+lectern:
+  shop: utility
+  item: i96
+  amount: 1
+lightning_rod:
+  shop: utility
+  item: i97
+  amount: 1
+lodestone:
+  shop: utility
+  item: i98
+  amount: 1
+loom:
+  shop: utility
+  item: i99
+  amount: 1
+mangrove_fence:
+  shop: utility
+  item: i100
+  amount: 1
+mangrove_fence_gate:
+  shop: utility
+  item: i101
+  amount: 1
+mangrove_hanging_sign:
+  shop: utility
+  item: i102
+  amount: 1
+mangrove_shelf:
+  shop: utility
+  item: i103
+  amount: 1
+mangrove_sign:
+  shop: utility
+  item: i104
+  amount: 1
+map:
+  shop: utility
+  item: i105
+  amount: 1
+milk_bucket:
+  shop: utility
+  item: i106
+  amount: 1
+mojang_banner_pattern:
+  shop: utility
+  item: i107
+  amount: 1
+name_tag:
+  shop: utility
+  item: i108
+  amount: 1
+oak_fence:
+  shop: utility
+  item: i109
+  amount: 1
+oak_fence_gate:
+  shop: utility
+  item: i110
+  amount: 1
+oak_hanging_sign:
+  shop: utility
+  item: i111
+  amount: 1
+oak_shelf:
+  shop: utility
+  item: i112
+  amount: 1
+oak_sign:
+  shop: utility
+  item: i113
+  amount: 1
+oxidized_copper_chest:
+  shop: utility
+  item: i114
+  amount: 1
+oxidized_lightning_rod:
+  shop: utility
+  item: i115
+  amount: 1
+painting:
+  shop: utility
+  item: i116
+  amount: 1
+pale_oak_fence:
+  shop: utility
+  item: i117
+  amount: 1
+pale_oak_fence_gate:
+  shop: utility
+  item: i118
+  amount: 1
+pale_oak_hanging_sign:
+  shop: utility
+  item: i119
+  amount: 1
+pale_oak_shelf:
+  shop: utility
+  item: i120
+  amount: 1
+pale_oak_sign:
+  shop: utility
+  item: i121
+  amount: 1
+paper:
+  shop: utility
+  item: i122
+  amount: 1
+piglin_banner_pattern:
+  shop: utility
+  item: i123
+  amount: 1
+powder_snow_bucket:
+  shop: utility
+  item: i124
+  amount: 1
+pufferfish_bucket:
+  shop: utility
+  item: i125
+  amount: 1
+rabbit_foot:
+  shop: utility
+  item: i126
+  amount: 1
+recovery_compass:
+  shop: utility
+  item: i127
+  amount: 1
+salmon_bucket:
+  shop: utility
+  item: i128
+  amount: 1
+scaffolding:
+  shop: utility
+  item: i129
+  amount: 1
+skull_banner_pattern:
+  shop: utility
+  item: i130
+  amount: 1
+smithing_table:
+  shop: utility
+  item: i131
+  amount: 1
+smoker:
+  shop: utility
+  item: i132
+  amount: 1
+spruce_fence:
+  shop: utility
+  item: i133
+  amount: 1
+spruce_fence_gate:
+  shop: utility
+  item: i134
+  amount: 1
+spruce_hanging_sign:
+  shop: utility
+  item: i135
+  amount: 1
+spruce_shelf:
+  shop: utility
+  item: i136
+  amount: 1
+spruce_sign:
+  shop: utility
+  item: i137
+  amount: 1
+spyglass:
+  shop: utility
+  item: i138
+  amount: 1
+stick:
+  shop: utility
+  item: i139
+  amount: 1
+stonecutter:
+  shop: utility
+  item: i140
+  amount: 1
+tadpole_bucket:
+  shop: utility
+  item: i141
+  amount: 1
+tinted_glass:
+  shop: utility
+  item: i142
+  amount: 1
+tnt:
+  shop: utility
+  item: i143
+  amount: 1
+totem_of_undying:
+  shop: utility
+  item: i144
+  amount: 1
+warped_fence:
+  shop: utility
+  item: i146
+  amount: 1
+warped_fence_gate:
+  shop: utility
+  item: i147
+  amount: 1
+warped_hanging_sign:
+  shop: utility
+  item: i148
+  amount: 1
+warped_shelf:
+  shop: utility
+  item: i149
+  amount: 1
+warped_sign:
+  shop: utility
+  item: i150
+  amount: 1
+water_bucket:
+  shop: utility
+  item: i151
+  amount: 1
+waxed_copper_chest:
+  shop: utility
+  item: i152
+  amount: 1
+waxed_exposed_copper_chest:
+  shop: utility
+  item: i153
+  amount: 1
+waxed_exposed_lightning_rod:
+  shop: utility
+  item: i154
+  amount: 1
+waxed_lightning_rod:
+  shop: utility
+  item: i155
+  amount: 1
+waxed_oxidized_copper_chest:
+  shop: utility
+  item: i156
+  amount: 1
+waxed_oxidized_lightning_rod:
+  shop: utility
+  item: i157
+  amount: 1
+waxed_weathered_copper_chest:
+  shop: utility
+  item: i158
+  amount: 1
+waxed_weathered_lightning_rod:
+  shop: utility
+  item: i159
+  amount: 1
+weathered_copper_chest:
+  shop: utility
+  item: i160
+  amount: 1
+weathered_lightning_rod:
+  shop: utility
+  item: i161
+  amount: 1
+white_bed:
+  shop: utility
+  item: i162
+  amount: 1
+writable_book:
+  shop: utility
+  item: i163
+  amount: 1
+arrow:
+  shop: weapons
+  item: i1
+  amount: 1
+bow:
+  shop: weapons
+  item: i2
+  amount: 1
+copper_spear:
+  shop: weapons
+  item: i3
+  amount: 1
+copper_sword:
+  shop: weapons
+  item: i4
+  amount: 1
+crossbow:
+  shop: weapons
+  item: i5
+  amount: 1
+diamond_spear:
+  shop: weapons
+  item: i6
+  amount: 1
+diamond_sword:
+  shop: weapons
+  item: i7
+  amount: 1
+golden_spear:
+  shop: weapons
+  item: i8
+  amount: 1
+golden_sword:
+  shop: weapons
+  item: i9
+  amount: 1
+iron_spear:
+  shop: weapons
+  item: i10
+  amount: 1
+iron_sword:
+  shop: weapons
+  item: i11
+  amount: 1
+mace:
+  shop: weapons
+  item: i12
+  amount: 1
+netherite_spear:
+  shop: weapons
+  item: i13
+  amount: 1
+netherite_sword:
+  shop: weapons
+  item: i14
+  amount: 1
+spectral_arrow:
+  shop: weapons
+  item: i15
+  amount: 1
+stone_spear:
+  shop: weapons
+  item: i16
+  amount: 1
+stone_sword:
+  shop: weapons
+  item: i17
+  amount: 1
+trident:
+  shop: weapons
+  item: i18
+  amount: 1
+wooden_spear:
+  shop: weapons
+  item: i19
+  amount: 1
+wooden_sword:
+  shop: weapons
+  item: i20
+  amount: 1
+black_banner:
   shop: wools
-  item: L
+  item: i1
+  amount: 1
+black_bed:
+  shop: wools
+  item: i2
+  amount: 1
+black_bundle:
+  shop: wools
+  item: i3
+  amount: 1
+black_candle:
+  shop: wools
+  item: i4
+  amount: 1
+black_carpet:
+  shop: wools
+  item: i5
+  amount: 1
+black_dye:
+  shop: wools
+  item: i6
+  amount: 1
+black_shulker_box:
+  shop: wools
+  item: i7
   amount: 1
 black_wool:
   shop: wools
-  item: M
+  item: i8
+  amount: 1
+blue_bed:
+  shop: wools
+  item: i10
+  amount: 1
+blue_bundle:
+  shop: wools
+  item: i11
+  amount: 1
+blue_candle:
+  shop: wools
+  item: i12
+  amount: 1
+blue_carpet:
+  shop: wools
+  item: i13
+  amount: 1
+blue_dye:
+  shop: wools
+  item: i14
+  amount: 1
+blue_shulker_box:
+  shop: wools
+  item: i15
+  amount: 1
+blue_wool:
+  shop: wools
+  item: i16
+  amount: 1
+brown_banner:
+  shop: wools
+  item: i17
+  amount: 1
+brown_bed:
+  shop: wools
+  item: i18
+  amount: 1
+brown_bundle:
+  shop: wools
+  item: i19
+  amount: 1
+brown_candle:
+  shop: wools
+  item: i20
+  amount: 1
+brown_carpet:
+  shop: wools
+  item: i21
+  amount: 1
+brown_dye:
+  shop: wools
+  item: i22
+  amount: 1
+brown_shulker_box:
+  shop: wools
+  item: i23
+  amount: 1
+brown_wool:
+  shop: wools
+  item: i24
+  amount: 1
+cyan_banner:
+  shop: wools
+  item: i25
+  amount: 1
+cyan_bed:
+  shop: wools
+  item: i26
+  amount: 1
+cyan_bundle:
+  shop: wools
+  item: i27
+  amount: 1
+cyan_candle:
+  shop: wools
+  item: i28
+  amount: 1
+cyan_carpet:
+  shop: wools
+  item: i29
+  amount: 1
+cyan_dye:
+  shop: wools
+  item: i30
+  amount: 1
+cyan_shulker_box:
+  shop: wools
+  item: i31
+  amount: 1
+cyan_wool:
+  shop: wools
+  item: i32
+  amount: 1
+gray_banner:
+  shop: wools
+  item: i33
+  amount: 1
+gray_bed:
+  shop: wools
+  item: i34
+  amount: 1
+gray_bundle:
+  shop: wools
+  item: i35
+  amount: 1
+gray_candle:
+  shop: wools
+  item: i36
+  amount: 1
+gray_carpet:
+  shop: wools
+  item: i37
+  amount: 1
+gray_dye:
+  shop: wools
+  item: i38
+  amount: 1
+gray_shulker_box:
+  shop: wools
+  item: i39
   amount: 1
 gray_wool:
   shop: wools
-  item: 'N'
+  item: i40
+  amount: 1
+green_banner:
+  shop: wools
+  item: i41
+  amount: 1
+green_bed:
+  shop: wools
+  item: i42
+  amount: 1
+green_bundle:
+  shop: wools
+  item: i43
+  amount: 1
+green_candle:
+  shop: wools
+  item: i44
+  amount: 1
+green_carpet:
+  shop: wools
+  item: i45
+  amount: 1
+green_dye:
+  shop: wools
+  item: i46
+  amount: 1
+green_shulker_box:
+  shop: wools
+  item: i47
+  amount: 1
+green_wool:
+  shop: wools
+  item: i48
+  amount: 1
+light_blue_banner:
+  shop: wools
+  item: i49
+  amount: 1
+light_blue_bed:
+  shop: wools
+  item: i50
+  amount: 1
+light_blue_bundle:
+  shop: wools
+  item: i51
+  amount: 1
+light_blue_candle:
+  shop: wools
+  item: i52
+  amount: 1
+light_blue_carpet:
+  shop: wools
+  item: i53
+  amount: 1
+light_blue_dye:
+  shop: wools
+  item: i54
+  amount: 1
+light_blue_shulker_box:
+  shop: wools
+  item: i55
+  amount: 1
+light_blue_wool:
+  shop: wools
+  item: i56
+  amount: 1
+light_gray_banner:
+  shop: wools
+  item: i57
+  amount: 1
+light_gray_bed:
+  shop: wools
+  item: i58
+  amount: 1
+light_gray_bundle:
+  shop: wools
+  item: i59
+  amount: 1
+light_gray_candle:
+  shop: wools
+  item: i60
+  amount: 1
+light_gray_carpet:
+  shop: wools
+  item: i61
+  amount: 1
+light_gray_dye:
+  shop: wools
+  item: i62
+  amount: 1
+light_gray_shulker_box:
+  shop: wools
+  item: i63
   amount: 1
 light_gray_wool:
   shop: wools
-  item: O
+  item: i64
+  amount: 1
+lime_banner:
+  shop: wools
+  item: i65
+  amount: 1
+lime_bed:
+  shop: wools
+  item: i66
+  amount: 1
+lime_bundle:
+  shop: wools
+  item: i67
+  amount: 1
+lime_candle:
+  shop: wools
+  item: i68
+  amount: 1
+lime_carpet:
+  shop: wools
+  item: i69
+  amount: 1
+lime_dye:
+  shop: wools
+  item: i70
+  amount: 1
+lime_shulker_box:
+  shop: wools
+  item: i71
+  amount: 1
+lime_wool:
+  shop: wools
+  item: i72
+  amount: 1
+magenta_banner:
+  shop: wools
+  item: i73
+  amount: 1
+magenta_bed:
+  shop: wools
+  item: i74
+  amount: 1
+magenta_bundle:
+  shop: wools
+  item: i75
+  amount: 1
+magenta_candle:
+  shop: wools
+  item: i76
+  amount: 1
+magenta_carpet:
+  shop: wools
+  item: i77
+  amount: 1
+magenta_dye:
+  shop: wools
+  item: i78
+  amount: 1
+magenta_shulker_box:
+  shop: wools
+  item: i79
+  amount: 1
+magenta_wool:
+  shop: wools
+  item: i80
+  amount: 1
+orange_banner:
+  shop: wools
+  item: i81
+  amount: 1
+orange_bed:
+  shop: wools
+  item: i82
+  amount: 1
+orange_bundle:
+  shop: wools
+  item: i83
+  amount: 1
+orange_candle:
+  shop: wools
+  item: i84
+  amount: 1
+orange_carpet:
+  shop: wools
+  item: i85
+  amount: 1
+orange_dye:
+  shop: wools
+  item: i86
+  amount: 1
+orange_shulker_box:
+  shop: wools
+  item: i87
+  amount: 1
+orange_wool:
+  shop: wools
+  item: i88
+  amount: 1
+pink_banner:
+  shop: wools
+  item: i89
+  amount: 1
+pink_bed:
+  shop: wools
+  item: i90
+  amount: 1
+pink_bundle:
+  shop: wools
+  item: i91
+  amount: 1
+pink_candle:
+  shop: wools
+  item: i92
+  amount: 1
+pink_carpet:
+  shop: wools
+  item: i93
+  amount: 1
+pink_dye:
+  shop: wools
+  item: i94
+  amount: 1
+pink_shulker_box:
+  shop: wools
+  item: i95
+  amount: 1
+pink_wool:
+  shop: wools
+  item: i96
+  amount: 1
+purple_banner:
+  shop: wools
+  item: i97
+  amount: 1
+purple_bed:
+  shop: wools
+  item: i98
+  amount: 1
+purple_bundle:
+  shop: wools
+  item: i99
+  amount: 1
+purple_candle:
+  shop: wools
+  item: i100
+  amount: 1
+purple_carpet:
+  shop: wools
+  item: i101
+  amount: 1
+purple_dye:
+  shop: wools
+  item: i102
+  amount: 1
+purple_shulker_box:
+  shop: wools
+  item: i103
+  amount: 1
+purple_wool:
+  shop: wools
+  item: i104
+  amount: 1
+red_banner:
+  shop: wools
+  item: i105
+  amount: 1
+red_bed:
+  shop: wools
+  item: i106
+  amount: 1
+red_bundle:
+  shop: wools
+  item: i107
+  amount: 1
+red_candle:
+  shop: wools
+  item: i108
+  amount: 1
+red_carpet:
+  shop: wools
+  item: i109
+  amount: 1
+red_dye:
+  shop: wools
+  item: i110
+  amount: 1
+red_shulker_box:
+  shop: wools
+  item: i111
+  amount: 1
+red_wool:
+  shop: wools
+  item: i112
+  amount: 1
+white_banner:
+  shop: wools
+  item: i113
+  amount: 1
+white_bundle:
+  shop: wools
+  item: i114
+  amount: 1
+white_candle:
+  shop: wools
+  item: i115
+  amount: 1
+white_carpet:
+  shop: wools
+  item: i116
+  amount: 1
+white_dye:
+  shop: wools
+  item: i117
+  amount: 1
+white_shulker_box:
+  shop: wools
+  item: i118
   amount: 1
 white_wool:
   shop: wools
-  item: P
+  item: i119
+  amount: 1
+yellow_banner:
+  shop: wools
+  item: i120
+  amount: 1
+yellow_bed:
+  shop: wools
+  item: i121
+  amount: 1
+yellow_bundle:
+  shop: wools
+  item: i122
+  amount: 1
+yellow_candle:
+  shop: wools
+  item: i123
+  amount: 1
+yellow_carpet:
+  shop: wools
+  item: i124
+  amount: 1
+yellow_dye:
+  shop: wools
+  item: i125
+  amount: 1
+yellow_shulker_box:
+  shop: wools
+  item: i126
+  amount: 1
+yellow_wool:
+  shop: wools
+  item: i127
   amount: 1

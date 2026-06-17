@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:glass-shop-name}'
+  shop-name: '{lang:archaeology-shop-name}'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -11,18 +11,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_STAINED_GLASS
+        material: ANGLER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_stained_glass%'
+        amount: '%mcwws.price_buy_angler_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_stained_glass%'
+        amount: '%mcwws.price_sell_angler_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i2:
@@ -30,18 +30,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_STAINED_GLASS_PANE
+        material: ARCHER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_stained_glass_pane%'
+        amount: '%mcwws.price_buy_archer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_stained_glass_pane%'
+        amount: '%mcwws.price_sell_archer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i3:
@@ -49,18 +49,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_STAINED_GLASS
+        material: ARMS_UP_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_stained_glass%'
+        amount: '%mcwws.price_buy_arms_up_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_stained_glass%'
+        amount: '%mcwws.price_sell_arms_up_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i4:
@@ -68,18 +68,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_STAINED_GLASS_PANE
+        material: BLADE_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_stained_glass_pane%'
+        amount: '%mcwws.price_buy_blade_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_stained_glass_pane%'
+        amount: '%mcwws.price_sell_blade_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i5:
@@ -87,18 +87,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_STAINED_GLASS
+        material: BREWER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_stained_glass%'
+        amount: '%mcwws.price_buy_brewer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_stained_glass%'
+        amount: '%mcwws.price_sell_brewer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i6:
@@ -106,18 +106,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_STAINED_GLASS_PANE
+        material: BRUSH
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_stained_glass_pane%'
+        amount: '%mcwws.price_buy_brush%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_stained_glass_pane%'
+        amount: '%mcwws.price_sell_brush%'
         placeholder: '{amount}$'
         start-apply: 0
   i7:
@@ -125,18 +125,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_STAINED_GLASS
+        material: BURN_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_stained_glass%'
+        amount: '%mcwws.price_buy_burn_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_stained_glass%'
+        amount: '%mcwws.price_sell_burn_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i8:
@@ -144,18 +144,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_STAINED_GLASS_PANE
+        material: DANGER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_stained_glass_pane%'
+        amount: '%mcwws.price_buy_danger_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_stained_glass_pane%'
+        amount: '%mcwws.price_sell_danger_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i9:
@@ -163,18 +163,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLASS
+        material: DECORATED_POT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glass%'
+        amount: '%mcwws.price_buy_decorated_pot%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glass%'
+        amount: '%mcwws.price_sell_decorated_pot%'
         placeholder: '{amount}$'
         start-apply: 0
   i10:
@@ -182,18 +182,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLASS_PANE
+        material: EXPLORER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glass_pane%'
+        amount: '%mcwws.price_buy_explorer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glass_pane%'
+        amount: '%mcwws.price_sell_explorer_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i11:
@@ -201,18 +201,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRAY_STAINED_GLASS
+        material: FLOW_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_gray_stained_glass%'
+        amount: '%mcwws.price_buy_flow_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_gray_stained_glass%'
+        amount: '%mcwws.price_sell_flow_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i12:
@@ -220,18 +220,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRAY_STAINED_GLASS_PANE
+        material: FRIEND_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_gray_stained_glass_pane%'
+        amount: '%mcwws.price_buy_friend_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_gray_stained_glass_pane%'
+        amount: '%mcwws.price_sell_friend_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i13:
@@ -239,18 +239,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_STAINED_GLASS
+        material: GUSTER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_stained_glass%'
+        amount: '%mcwws.price_buy_guster_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_stained_glass%'
+        amount: '%mcwws.price_sell_guster_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i14:
@@ -258,18 +258,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_STAINED_GLASS_PANE
+        material: HEART_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_stained_glass_pane%'
+        amount: '%mcwws.price_buy_heart_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_stained_glass_pane%'
+        amount: '%mcwws.price_sell_heart_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i15:
@@ -277,18 +277,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_BLUE_STAINED_GLASS
+        material: HEARTBREAK_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_stained_glass%'
+        amount: '%mcwws.price_buy_heartbreak_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_stained_glass%'
+        amount: '%mcwws.price_sell_heartbreak_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i16:
@@ -296,18 +296,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        material: HOWL_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_stained_glass_pane%'
+        amount: '%mcwws.price_buy_howl_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_stained_glass_pane%'
+        amount: '%mcwws.price_sell_howl_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i17:
@@ -315,18 +315,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_GRAY_STAINED_GLASS
+        material: MINER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_stained_glass%'
+        amount: '%mcwws.price_buy_miner_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_stained_glass%'
+        amount: '%mcwws.price_sell_miner_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i18:
@@ -334,18 +334,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_GRAY_STAINED_GLASS_PANE
+        material: MOURNER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_stained_glass_pane%'
+        amount: '%mcwws.price_buy_mourner_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_stained_glass_pane%'
+        amount: '%mcwws.price_sell_mourner_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i19:
@@ -353,18 +353,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIME_STAINED_GLASS
+        material: PLENTY_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lime_stained_glass%'
+        amount: '%mcwws.price_buy_plenty_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lime_stained_glass%'
+        amount: '%mcwws.price_sell_plenty_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i20:
@@ -372,18 +372,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIME_STAINED_GLASS_PANE
+        material: PRIZE_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lime_stained_glass_pane%'
+        amount: '%mcwws.price_buy_prize_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lime_stained_glass_pane%'
+        amount: '%mcwws.price_sell_prize_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i21:
@@ -391,18 +391,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAGENTA_STAINED_GLASS
+        material: SCRAPE_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_magenta_stained_glass%'
+        amount: '%mcwws.price_buy_scrape_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_magenta_stained_glass%'
+        amount: '%mcwws.price_sell_scrape_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i22:
@@ -410,18 +410,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAGENTA_STAINED_GLASS_PANE
+        material: SHEAF_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_magenta_stained_glass_pane%'
+        amount: '%mcwws.price_buy_sheaf_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_magenta_stained_glass_pane%'
+        amount: '%mcwws.price_sell_sheaf_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i23:
@@ -429,18 +429,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ORANGE_STAINED_GLASS
+        material: SHELTER_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_stained_glass%'
+        amount: '%mcwws.price_buy_shelter_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_stained_glass%'
+        amount: '%mcwws.price_sell_shelter_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i24:
@@ -448,18 +448,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ORANGE_STAINED_GLASS_PANE
+        material: SKULL_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_stained_glass_pane%'
+        amount: '%mcwws.price_buy_skull_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_stained_glass_pane%'
+        amount: '%mcwws.price_sell_skull_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
   i25:
@@ -467,18 +467,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PINK_STAINED_GLASS
+        material: SNIFFER_EGG
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_stained_glass%'
+        amount: '%mcwws.price_buy_sniffer_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_stained_glass%'
+        amount: '%mcwws.price_sell_sniffer_egg%'
         placeholder: '{amount}$'
         start-apply: 0
   i26:
@@ -486,169 +486,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PINK_STAINED_GLASS_PANE
+        material: SNORT_POTTERY_SHERD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_stained_glass_pane%'
+        amount: '%mcwws.price_buy_snort_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i27:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: PURPLE_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i28:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: PURPLE_STAINED_GLASS_PANE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i29:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: RED_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i30:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: RED_STAINED_GLASS_PANE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i31:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WHITE_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i32:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WHITE_STAINED_GLASS_PANE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i33:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: YELLOW_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_yellow_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_yellow_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  i34:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: YELLOW_STAINED_GLASS_PANE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_yellow_stained_glass_pane%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_yellow_stained_glass_pane%'
+        amount: '%mcwws.price_sell_snort_pottery_sherd%'
         placeholder: '{amount}$'
         start-apply: 0

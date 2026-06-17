@@ -13,10 +13,10 @@ open-actions:
 
 layout:
   - '00Y0S0X00'
-  - '000000000'
+  - '0RTUVW123'
   - '0ABCDEFG0'
   - '0HIJKLMN0'
-  - '00OPQ0000'
+  - '0OPQ45000'
   - '0000Z0000'
 
 buttons:
@@ -243,6 +243,116 @@ buttons:
       1:
         type: shop_menu
         shop: example
+  R:
+    display-item:
+      material: BRUSH
+      name: '{lang:archaeology-name}'
+      lore:
+        - '{lang:archaeology-lore-1}'
+        - '{lang:archaeology-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: archaeology
+  T:
+    display-item:
+      material: DIAMOND_CHESTPLATE
+      name: '{lang:armor-name}'
+      lore:
+        - '{lang:armor-lore-1}'
+        - '{lang:armor-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: armor
+  U:
+    display-item:
+      material: BREWING_STAND
+      name: '{lang:brewing-name}'
+      lore:
+        - '{lang:brewing-lore-1}'
+        - '{lang:brewing-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: brewing
+  V:
+    display-item:
+      material: IRON_PICKAXE
+      name: '{lang:tools-name}'
+      lore:
+        - '{lang:tools-lore-1}'
+        - '{lang:tools-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: tools
+  W:
+    display-item:
+      material: DIAMOND_SWORD
+      name: '{lang:weapons-name}'
+      lore:
+        - '{lang:weapons-lore-1}'
+        - '{lang:weapons-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: weapons
+  '1':
+    display-item:
+      material: CHEST
+      name: '{lang:utility-name}'
+      lore:
+        - '{lang:utility-lore-1}'
+        - '{lang:utility-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: utility
+  '2':
+    display-item:
+      material: ENCHANTED_BOOK
+      name: '{lang:enchantments-name}'
+      lore:
+        - '{lang:enchantments-lore-1}'
+        - '{lang:enchantments-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: enchantments
+  '3':
+    display-item:
+      material: END_STONE
+      name: '{lang:end-name}'
+      lore:
+        - '{lang:end-lore-1}'
+        - '{lang:end-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: end
+  '4':
+    display-item:
+      material: NETHERRACK
+      name: '{lang:nether-name}'
+      lore:
+        - '{lang:nether-lore-1}'
+        - '{lang:nether-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: nether
+  '5':
+    display-item:
+      material: MUSIC_DISC_CAT
+      name: '{lang:discs-name}'
+      lore:
+        - '{lang:discs-lore-1}'
+        - '{lang:discs-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: discs
   Z:
     display-item:
       material: BARRIER

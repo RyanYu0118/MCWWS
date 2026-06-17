@@ -42,12 +42,12 @@ useTimes:
       lastBuyTime: '2026-05-10 02:09:38'
       lastSellTime: '2026-05-15 23:02:07'
     P:
-      buyUseTimes: 2
-      totalBuyUseTimes: 2
-      sellUseTimes: 98
-      totalSellUseTimes: 98
-      lastBuyTime: '2026-06-17 15:44:50'
-      lastSellTime: '2026-06-17 15:45:19'
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      sellUseTimes: 99
+      totalSellUseTimes: 99
+      lastBuyTime: '2026-06-17 20:52:42'
+      lastSellTime: '2026-06-17 20:52:45'
     S:
       buyUseTimes: 25
       totalBuyUseTimes: 25
@@ -67,6 +67,11 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-05-10 14:37:11'
+  blocks2:
+    O:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-05-31 18:00:55'
   wools:
     K:
       buyUseTimes: 1
@@ -135,19 +140,6 @@ useTimes:
       buyUseTimes: 3
       totalBuyUseTimes: 3
       lastBuyTime: '2026-05-11 00:00:32'
-  farming:
-    A:
-      buyUseTimes: 8
-      totalBuyUseTimes: 8
-      sellUseTimes: 5
-      totalSellUseTimes: 5
-      lastBuyTime: '2026-05-15 16:41:04'
-      lastSellTime: '2026-05-15 23:02:07'
-  blocks2:
-    O:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-05-31 18:00:55'
   minerals:
     A:
       buyUseTimes: 34
@@ -171,14 +163,6 @@ useTimes:
       totalSellUseTimes: 3
       lastBuyTime: '2026-05-31 15:05:38'
       lastSellTime: '2026-05-31 15:05:44'
-  transport:
-    F:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      sellUseTimes: 1
-      totalSellUseTimes: 1
-      lastBuyTime: '2026-05-10 14:41:43'
-      lastSellTime: '2026-05-10 14:41:45'
   flowers:
     Q:
       buyUseTimes: 3
@@ -192,11 +176,27 @@ useTimes:
       sellUseTimes: 14
       totalSellUseTimes: 14
       lastSellTime: '2026-05-10 02:06:12'
+  transport:
+    F:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastBuyTime: '2026-05-10 14:41:43'
+      lastSellTime: '2026-05-10 14:41:45'
   concretes:
     P:
       sellUseTimes: 64
       totalSellUseTimes: 64
       lastSellTime: '2026-05-10 02:06:05'
+  farming:
+    A:
+      buyUseTimes: 8
+      totalBuyUseTimes: 8
+      sellUseTimes: 5
+      totalSellUseTimes: 5
+      lastBuyTime: '2026-05-15 16:41:04'
+      lastSellTime: '2026-05-15 23:02:07'
 favourites: {}
 randomPlaceholder:
   daily:

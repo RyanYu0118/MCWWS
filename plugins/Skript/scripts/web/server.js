@@ -1053,9 +1053,7 @@ function buildUltimateShopCatalogByMaterial(priceData = {}) {
 }
 
 const ORPHAN_SHOP_CATEGORIES = [
-    { id: 'blocks2', name: '方块扩展', icon: 'mud_bricks', insertAfter: 'blocks' },
-    { id: 'daily', name: '每日商店', icon: 'sunflower', langNameKey: 'daily-shop-name' },
-    { id: 'example', name: '示例商品', icon: 'book', insertAfter: 'daily' }
+    { id: 'daily', name: '每日商店', icon: 'clock', langNameKey: 'daily-shop-name' }
 ];
 
 let ultimateShopRegistryCache = null;
