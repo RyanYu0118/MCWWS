@@ -16,7 +16,7 @@ layout:
   - '000000000'
   - '0ABCDEFG0'
   - '0HIJKLMN0'
-  - '000000000'
+  - '00OPQ0000'
   - '0000Z0000'
 
 buttons:
@@ -210,6 +210,39 @@ buttons:
       1:
         type: shop_menu
         shop: transport
+  O:
+    display-item:
+      material: MUD_BRICKS
+      name: '{lang:blocks2-name}'
+      lore:
+        - '{lang:blocks2-lore-1}'
+        - '{lang:blocks2-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: blocks2
+  P:
+    display-item:
+      material: CLOCK
+      name: '{lang:daily-name}'
+      lore:
+        - '{lang:daily-lore-1}'
+        - '{lang:daily-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: daily
+  Q:
+    display-item:
+      material: KNOWLEDGE_BOOK
+      name: '{lang:example-name}'
+      lore:
+        - '{lang:example-lore-1}'
+        - '{lang:example-lore-2}'
+    actions:
+      1:
+        type: shop_menu
+        shop: example
   Z:
     display-item:
       material: BARRIER
