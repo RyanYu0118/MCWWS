@@ -1,4 +1,4 @@
-next_id: 5
+next_id: 8
 quotes:
   '1':
     id: 6467f176-2e7e-4371-ae59-b35d84a0c507
@@ -1122,3 +1122,2341 @@ quotes:
     expiresAt: '2026-06-18T16:21:00.481Z'
     consumedAt: '2026-06-17T16:21:02.370Z'
     pasteOrderId: 3
+  '5':
+    id: 4da901b6-4260-431c-bdce-3e24935053dc
+    numericId: 5
+    contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
+    contentHashVersion: mcwws:content-v1
+    listName: Unnamed
+    materials:
+      - label: gray_concrete
+        itemId: gray_concrete
+        count: 284
+      - label: black_wool
+        itemId: black_wool
+        count: 123
+      - label: black_stained_glass_pane
+        itemId: black_stained_glass_pane
+        count: 59
+      - label: coal_block
+        itemId: coal_block
+        count: 52
+      - label: orange_wool
+        itemId: orange_wool
+        count: 36
+      - label: gray_stained_glass_pane
+        itemId: gray_stained_glass_pane
+        count: 32
+      - label: black_concrete
+        itemId: black_concrete
+        count: 28
+      - label: obsidian
+        itemId: obsidian
+        count: 21
+      - label: diorite_wall
+        itemId: diorite_wall
+        count: 13
+      - label: quartz_stairs
+        itemId: quartz_stairs
+        count: 11
+      - label: mud
+        itemId: mud
+        count: 10
+      - label: quartz_slab
+        itemId: quartz_slab
+        count: 10
+      - label: red_stained_glass_pane
+        itemId: red_stained_glass_pane
+        count: 10
+      - label: quartz_block
+        itemId: quartz_block
+        count: 8
+      - label: white_stained_glass_pane
+        itemId: white_stained_glass_pane
+        count: 8
+      - label: black_glazed_terracotta
+        itemId: black_glazed_terracotta
+        count: 7
+      - label: calcite
+        itemId: calcite
+        count: 7
+      - label: mangrove_slab
+        itemId: mangrove_slab
+        count: 7
+      - label: end_rod
+        itemId: end_rod
+        count: 6
+      - label: gray_wool
+        itemId: gray_wool
+        count: 6
+      - label: red_terracotta
+        itemId: red_terracotta
+        count: 5
+      - label: light_gray_wool
+        itemId: light_gray_wool
+        count: 4
+      - label: netherrack
+        itemId: netherrack
+        count: 4
+      - label: deepslate_coal_ore
+        itemId: deepslate_coal_ore
+        count: 3
+      - label: red_nether_bricks
+        itemId: red_nether_bricks
+        count: 3
+      - label: red_glazed_terracotta
+        itemId: red_glazed_terracotta
+        count: 2
+      - label: tripwire
+        itemId: tripwire
+        count: 2
+      - label: red_wool
+        itemId: red_wool
+        count: 1
+    quoteLines:
+      - label: gray_concrete
+        itemId: gray_concrete
+        materialCount: 284
+        displayName: 灰色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i9
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 284
+        productAmount: 1
+        lineTotal: 568
+        checkoutLineTotal: 568
+        billing: shop
+      - label: black_wool
+        itemId: black_wool
+        materialCount: 123
+        displayName: 黑色羊毛
+        catalogBuyPrice: 9
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i8
+        shopTitle: 羊毛商店
+        unitBuyPrice: 9
+        purchaseQuantity: 123
+        productAmount: 1
+        lineTotal: 1107
+        checkoutLineTotal: 1107
+        billing: shop
+      - label: black_stained_glass_pane
+        itemId: black_stained_glass_pane
+        materialCount: 59
+        displayName: 黑色染色玻璃板
+        catalogBuyPrice: 1.4
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i2
+        shopTitle: 玻璃商店
+        unitBuyPrice: 1.4
+        purchaseQuantity: 59
+        productAmount: 1
+        lineTotal: 82.6
+        checkoutLineTotal: 82.6
+        billing: shop
+      - label: coal_block
+        itemId: coal_block
+        materialCount: 52
+        displayName: 煤炭块
+        catalogBuyPrice: 45
+        status: ok
+        statusLabel: 可购买
+        shopId: minerals
+        slot: i7
+        shopTitle: 矿物商店
+        unitBuyPrice: 45
+        purchaseQuantity: 52
+        productAmount: 1
+        lineTotal: 2340
+        checkoutLineTotal: 2340
+        billing: shop
+      - label: orange_wool
+        itemId: orange_wool
+        materialCount: 36
+        displayName: 橙色羊毛
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i88
+        shopTitle: 羊毛商店
+        unitBuyPrice: 6
+        purchaseQuantity: 36
+        productAmount: 1
+        lineTotal: 216
+        checkoutLineTotal: 216
+        billing: shop
+      - label: gray_stained_glass_pane
+        itemId: gray_stained_glass_pane
+        materialCount: 32
+        displayName: 灰色染色玻璃板
+        catalogBuyPrice: 1.2
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i12
+        shopTitle: 玻璃商店
+        unitBuyPrice: 1.2
+        purchaseQuantity: 32
+        productAmount: 1
+        lineTotal: 38.4
+        checkoutLineTotal: 38.4
+        billing: shop
+      - label: black_concrete
+        itemId: black_concrete
+        materialCount: 28
+        displayName: 黑色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i1
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 28
+        productAmount: 1
+        lineTotal: 56
+        checkoutLineTotal: 56
+        billing: shop
+      - label: obsidian
+        itemId: obsidian
+        materialCount: 21
+        displayName: 黑曜石
+        catalogBuyPrice: 25
+        status: ok
+        statusLabel: 可购买
+        shopId: nether
+        slot: i22
+        shopTitle: 下界商店
+        unitBuyPrice: 25
+        purchaseQuantity: 21
+        productAmount: 1
+        lineTotal: 525
+        checkoutLineTotal: 525
+        billing: shop
+      - label: diorite_wall
+        itemId: diorite_wall
+        materialCount: 13
+        displayName: 闪长岩墙
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i37
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 13
+        productAmount: 1
+        lineTotal: 13
+        checkoutLineTotal: 13
+        billing: shop
+      - label: quartz_stairs
+        itemId: quartz_stairs
+        materialCount: 11
+        displayName: 石英楼梯
+        catalogBuyPrice: 18
+        status: ok
+        statusLabel: 可购买
+        shopId: nether
+        slot: i37
+        shopTitle: 下界商店
+        unitBuyPrice: 18
+        purchaseQuantity: 11
+        productAmount: 1
+        lineTotal: 198
+        checkoutLineTotal: 198
+        billing: shop
+      - label: mud
+        itemId: mud
+        materialCount: 10
+        displayName: 泥巴
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i19
+        shopTitle: 方块商店
+        unitBuyPrice: 2
+        purchaseQuantity: 10
+        productAmount: 1
+        lineTotal: 20
+        checkoutLineTotal: 20
+        billing: shop
+      - label: quartz_slab
+        itemId: quartz_slab
+        materialCount: 10
+        displayName: 石英台阶
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: nether
+        slot: i36
+        shopTitle: 下界商店
+        unitBuyPrice: 6
+        purchaseQuantity: 10
+        productAmount: 1
+        lineTotal: 60
+        checkoutLineTotal: 60
+        billing: shop
+      - label: red_stained_glass_pane
+        itemId: red_stained_glass_pane
+        materialCount: 10
+        displayName: 红色染色玻璃板
+        catalogBuyPrice: 0.9
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i30
+        shopTitle: 玻璃商店
+        unitBuyPrice: 0.9
+        purchaseQuantity: 10
+        productAmount: 1
+        lineTotal: 9
+        checkoutLineTotal: 9
+        billing: shop
+      - label: quartz_block
+        itemId: quartz_block
+        materialCount: 8
+        displayName: 石英块
+        catalogBuyPrice: 12
+        status: ok
+        statusLabel: 可购买
+        shopId: nether
+        slot: i33
+        shopTitle: 下界商店
+        unitBuyPrice: 12
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 96
+        checkoutLineTotal: 96
+        billing: shop
+      - label: white_stained_glass_pane
+        itemId: white_stained_glass_pane
+        materialCount: 8
+        displayName: 白色染色玻璃板
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i32
+        shopTitle: 玻璃商店
+        unitBuyPrice: 1
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 8
+        checkoutLineTotal: 8
+        billing: shop
+      - label: black_glazed_terracotta
+        itemId: black_glazed_terracotta
+        materialCount: 7
+        displayName: 黑色带釉陶瓦
+        catalogBuyPrice: 10
+        status: ok
+        statusLabel: 可购买
+        shopId: terracottas
+        slot: i1
+        shopTitle: '{lang:terracottas-shop-name}'
+        unitBuyPrice: 10
+        purchaseQuantity: 7
+        productAmount: 1
+        lineTotal: 70
+        checkoutLineTotal: 70
+        billing: shop
+      - label: calcite
+        itemId: calcite
+        materialCount: 7
+        displayName: 方解石
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i6
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 6
+        purchaseQuantity: 7
+        productAmount: 1
+        lineTotal: 42
+        checkoutLineTotal: 42
+        billing: shop
+      - label: mangrove_slab
+        itemId: mangrove_slab
+        materialCount: 7
+        displayName: 红树木台阶
+        catalogBuyPrice: 1.17
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i40
+        shopTitle: 原木商店
+        unitBuyPrice: 1.17
+        purchaseQuantity: 7
+        productAmount: 1
+        lineTotal: 8.19
+        checkoutLineTotal: 8.19
+        billing: shop
+      - label: end_rod
+        itemId: end_rod
+        materialCount: 6
+        displayName: 末地烛
+        catalogBuyPrice: 9
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i36
+        shopTitle: 红石商店
+        unitBuyPrice: 9
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 54
+        checkoutLineTotal: 54
+        billing: shop
+      - label: gray_wool
+        itemId: gray_wool
+        materialCount: 6
+        displayName: 灰色羊毛
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i40
+        shopTitle: 羊毛商店
+        unitBuyPrice: 8
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 48
+        checkoutLineTotal: 48
+        billing: shop
+      - label: red_terracotta
+        itemId: red_terracotta
+        materialCount: 5
+        displayName: 红色陶瓦
+        catalogBuyPrice: 4.2
+        status: ok
+        statusLabel: 可购买
+        shopId: terracottas
+        slot: i28
+        shopTitle: '{lang:terracottas-shop-name}'
+        unitBuyPrice: 4.2
+        purchaseQuantity: 5
+        productAmount: 1
+        lineTotal: 21
+        checkoutLineTotal: 21
+        billing: shop
+      - label: light_gray_wool
+        itemId: light_gray_wool
+        materialCount: 4
+        displayName: 淡灰色羊毛
+        catalogBuyPrice: 5
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i64
+        shopTitle: 羊毛商店
+        unitBuyPrice: 5
+        purchaseQuantity: 4
+        productAmount: 1
+        lineTotal: 20
+        checkoutLineTotal: 20
+        billing: shop
+      - label: netherrack
+        itemId: netherrack
+        materialCount: 4
+        displayName: 下界岩
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: nether
+        slot: i21
+        shopTitle: 下界商店
+        unitBuyPrice: 1
+        purchaseQuantity: 4
+        productAmount: 1
+        lineTotal: 4
+        checkoutLineTotal: 4
+        billing: shop
+      - label: deepslate_coal_ore
+        itemId: deepslate_coal_ore
+        materialCount: 3
+        displayName: 深层煤矿石
+        catalogBuyPrice: 12
+        status: ok
+        statusLabel: 可购买
+        shopId: minerals
+        slot: i20
+        shopTitle: 矿物商店
+        unitBuyPrice: 12
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 36
+        checkoutLineTotal: 36
+        billing: shop
+      - label: red_nether_bricks
+        itemId: red_nether_bricks
+        materialCount: 3
+        displayName: 红色下界砖块
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i36
+        shopTitle: 方块商店
+        unitBuyPrice: 6
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 18
+        checkoutLineTotal: 18
+        billing: shop
+      - label: red_glazed_terracotta
+        itemId: red_glazed_terracotta
+        materialCount: 2
+        displayName: 红色带釉陶瓦
+        catalogBuyPrice: 10
+        status: ok
+        statusLabel: 可购买
+        shopId: terracottas
+        slot: i27
+        shopTitle: '{lang:terracottas-shop-name}'
+        unitBuyPrice: 10
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 20
+        checkoutLineTotal: 20
+        billing: shop
+      - label: tripwire
+        itemId: tripwire
+        materialCount: 2
+        displayName: 绊线
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: red_wool
+        itemId: red_wool
+        materialCount: 1
+        displayName: 红色羊毛
+        catalogBuyPrice: 5
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i112
+        shopTitle: 羊毛商店
+        unitBuyPrice: 5
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 5
+        checkoutLineTotal: 5
+        billing: shop
+    purchasableTotal: 5683.19
+    freeUnlistedTotal: 0
+    playerUuid: ''
+    playerId: ''
+    username: ''
+    status: consumed
+    createdAt: '2026-06-17T16:57:22.022Z'
+    expiresAt: '2026-06-18T16:57:22.022Z'
+    consumedAt: '2026-06-17T16:57:24.676Z'
+    pasteOrderId: 4
+  '6':
+    id: ccdbffea-42d6-4aab-9724-6f991df3814d
+    numericId: 6
+    contentHash: 24e6b7654e27bff5ffc10082c369756c3b5e667bdc67ab184b12f86949920e9b
+    contentHashVersion: mcwws:content-v1
+    listName: Unnamed
+    materials:
+      - label: gray_concrete
+        itemId: gray_concrete
+        count: 255
+      - label: stone_bricks
+        itemId: stone_bricks
+        count: 134
+      - label: yellow_terracotta
+        itemId: yellow_terracotta
+        count: 87
+      - label: dark_oak_wall_sign
+        itemId: dark_oak_wall_sign
+        count: 68
+      - label: orange_wool
+        itemId: orange_wool
+        count: 58
+      - label: stripped_jungle_wood
+        itemId: stripped_jungle_wood
+        count: 49
+      - label: spruce_planks
+        itemId: spruce_planks
+        count: 47
+      - label: stone
+        itemId: stone
+        count: 45
+      - label: spruce_slab
+        itemId: spruce_slab
+        count: 42
+      - label: black_wool
+        itemId: black_wool
+        count: 41
+      - label: dark_oak_wood
+        itemId: dark_oak_wood
+        count: 40
+      - label: polished_deepslate_slab
+        itemId: polished_deepslate_slab
+        count: 37
+      - label: andesite
+        itemId: andesite
+        count: 31
+      - label: cobbled_deepslate_slab
+        itemId: cobbled_deepslate_slab
+        count: 29
+      - label: glow_lichen
+        itemId: glow_lichen
+        count: 26
+      - label: cobblestone
+        itemId: cobblestone
+        count: 20
+      - label: dark_oak_button
+        itemId: dark_oak_button
+        count: 20
+      - label: white_carpet
+        itemId: white_carpet
+        count: 20
+      - label: light_gray_wool
+        itemId: light_gray_wool
+        count: 18
+      - label: spruce_stairs
+        itemId: spruce_stairs
+        count: 18
+      - label: mossy_cobblestone
+        itemId: mossy_cobblestone
+        count: 17
+      - label: moss_block
+        itemId: moss_block
+        count: 15
+      - label: pumpkin
+        itemId: pumpkin
+        count: 15
+      - label: coarse_dirt
+        itemId: coarse_dirt
+        count: 14
+      - label: cobweb
+        itemId: cobweb
+        count: 14
+      - label: dark_oak_trapdoor
+        itemId: dark_oak_trapdoor
+        count: 13
+      - label: white_stained_glass
+        itemId: white_stained_glass
+        count: 13
+      - label: candle
+        itemId: candle
+        count: 12
+      - label: rooted_dirt
+        itemId: rooted_dirt
+        count: 12
+      - label: spruce_fence
+        itemId: spruce_fence
+        count: 12
+      - label: stone_brick_wall
+        itemId: stone_brick_wall
+        count: 12
+      - label: oak_stairs
+        itemId: oak_stairs
+        count: 11
+      - label: stone_brick_slab
+        itemId: stone_brick_slab
+        count: 11
+      - label: dark_oak_stairs
+        itemId: dark_oak_stairs
+        count: 10
+      - label: oak_trapdoor
+        itemId: oak_trapdoor
+        count: 9
+      - label: cobbled_deepslate_stairs
+        itemId: cobbled_deepslate_stairs
+        count: 8
+      - label: polished_deepslate_stairs
+        itemId: polished_deepslate_stairs
+        count: 7
+      - label: chain
+        itemId: chain
+        count: 6
+      - label: oak_slab
+        itemId: oak_slab
+        count: 6
+      - label: sea_pickle
+        itemId: sea_pickle
+        count: 6
+      - label: nether_brick_fence
+        itemId: nether_brick_fence
+        count: 4
+      - label: honeycomb_block
+        itemId: honeycomb_block
+        count: 3
+      - label: jack_o_lantern
+        itemId: jack_o_lantern
+        count: 3
+      - label: stone_slab
+        itemId: stone_slab
+        count: 3
+      - label: andesite_stairs
+        itemId: andesite_stairs
+        count: 2
+      - label: carved_pumpkin
+        itemId: carved_pumpkin
+        count: 2
+      - label: dark_oak_door
+        itemId: dark_oak_door
+        count: 2
+      - label: nether_brick_wall
+        itemId: nether_brick_wall
+        count: 2
+      - label: stone_stairs
+        itemId: stone_stairs
+        count: 2
+      - label: brewing_stand
+        itemId: brewing_stand
+        count: 1
+      - label: cobblestone_stairs
+        itemId: cobblestone_stairs
+        count: 1
+      - label: dark_oak_fence_gate
+        itemId: dark_oak_fence_gate
+        count: 1
+      - label: dark_oak_fence
+        itemId: dark_oak_fence
+        count: 1
+      - label: ladder
+        itemId: ladder
+        count: 1
+      - label: mossy_cobblestone_stairs
+        itemId: mossy_cobblestone_stairs
+        count: 1
+      - label: purple_wool
+        itemId: purple_wool
+        count: 1
+      - label: stone_brick_stairs
+        itemId: stone_brick_stairs
+        count: 1
+    quoteLines:
+      - label: gray_concrete
+        itemId: gray_concrete
+        materialCount: 255
+        displayName: 灰色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i9
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 255
+        productAmount: 1
+        lineTotal: 510
+        checkoutLineTotal: 510
+        billing: shop
+      - label: stone_bricks
+        itemId: stone_bricks
+        materialCount: 134
+        displayName: 石砖
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i86
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 134
+        productAmount: 1
+        lineTotal: 268
+        checkoutLineTotal: 268
+        billing: shop
+      - label: yellow_terracotta
+        itemId: yellow_terracotta
+        materialCount: 87
+        displayName: 黄色陶瓦
+        catalogBuyPrice: 4.2
+        status: ok
+        statusLabel: 可购买
+        shopId: terracottas
+        slot: i33
+        shopTitle: '{lang:terracottas-shop-name}'
+        unitBuyPrice: 4.2
+        purchaseQuantity: 87
+        productAmount: 1
+        lineTotal: 365.4
+        checkoutLineTotal: 365.4
+        billing: shop
+      - label: dark_oak_wall_sign
+        itemId: dark_oak_wall_sign
+        materialCount: 68
+        displayName: 墙上的深色橡木告示牌
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: orange_wool
+        itemId: orange_wool
+        materialCount: 58
+        displayName: 橙色羊毛
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i88
+        shopTitle: 羊毛商店
+        unitBuyPrice: 6
+        purchaseQuantity: 58
+        productAmount: 1
+        lineTotal: 348
+        checkoutLineTotal: 348
+        billing: shop
+      - label: stripped_jungle_wood
+        itemId: stripped_jungle_wood
+        materialCount: 49
+        displayName: 去皮丛林木
+        catalogBuyPrice: 9.9
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i70
+        shopTitle: 原木商店
+        unitBuyPrice: 9.9
+        purchaseQuantity: 49
+        productAmount: 1
+        lineTotal: 485.1
+        checkoutLineTotal: 485.1
+        billing: shop
+      - label: spruce_planks
+        itemId: spruce_planks
+        materialCount: 47
+        displayName: 云杉木板
+        catalogBuyPrice: 1.8
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i54
+        shopTitle: 原木商店
+        unitBuyPrice: 1.8
+        purchaseQuantity: 47
+        productAmount: 1
+        lineTotal: 84.6
+        checkoutLineTotal: 84.6
+        billing: shop
+      - label: stone
+        itemId: stone
+        materialCount: 45
+        displayName: 石头
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i82
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 45
+        productAmount: 1
+        lineTotal: 90
+        checkoutLineTotal: 90
+        billing: shop
+      - label: spruce_slab
+        itemId: spruce_slab
+        materialCount: 42
+        displayName: 云杉木台阶
+        catalogBuyPrice: 0.9
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i55
+        shopTitle: 原木商店
+        unitBuyPrice: 0.9
+        purchaseQuantity: 42
+        productAmount: 1
+        lineTotal: 37.8
+        checkoutLineTotal: 37.8
+        billing: shop
+      - label: black_wool
+        itemId: black_wool
+        materialCount: 41
+        displayName: 黑色羊毛
+        catalogBuyPrice: 9
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i8
+        shopTitle: 羊毛商店
+        unitBuyPrice: 9
+        purchaseQuantity: 41
+        productAmount: 1
+        lineTotal: 369
+        checkoutLineTotal: 369
+        billing: shop
+      - label: dark_oak_wood
+        itemId: dark_oak_wood
+        materialCount: 40
+        displayName: 深色橡木
+        catalogBuyPrice: 9.9
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i32
+        shopTitle: 原木商店
+        unitBuyPrice: 9.9
+        purchaseQuantity: 40
+        productAmount: 1
+        lineTotal: 396
+        checkoutLineTotal: 396
+        billing: shop
+      - label: polished_deepslate_slab
+        itemId: polished_deepslate_slab
+        materialCount: 37
+        displayName: 磨制深板岩台阶
+        catalogBuyPrice: 0.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i59
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 0.5
+        purchaseQuantity: 37
+        productAmount: 1
+        lineTotal: 18.5
+        checkoutLineTotal: 18.5
+        billing: shop
+      - label: andesite
+        itemId: andesite
+        materialCount: 31
+        displayName: 安山岩
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i1
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 31
+        productAmount: 1
+        lineTotal: 31
+        checkoutLineTotal: 31
+        billing: shop
+      - label: cobbled_deepslate_slab
+        itemId: cobbled_deepslate_slab
+        materialCount: 29
+        displayName: 深板岩圆石台阶
+        catalogBuyPrice: 0.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i15
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 0.5
+        purchaseQuantity: 29
+        productAmount: 1
+        lineTotal: 14.5
+        checkoutLineTotal: 14.5
+        billing: shop
+      - label: glow_lichen
+        itemId: glow_lichen
+        materialCount: 26
+        displayName: 发光地衣
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i36
+        shopTitle: 花卉商店
+        unitBuyPrice: 2
+        purchaseQuantity: 26
+        productAmount: 1
+        lineTotal: 52
+        checkoutLineTotal: 52
+        billing: shop
+      - label: cobblestone
+        itemId: cobblestone
+        materialCount: 20
+        displayName: 圆石
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i18
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 20
+        productAmount: 1
+        lineTotal: 20
+        checkoutLineTotal: 20
+        billing: shop
+      - label: dark_oak_button
+        itemId: dark_oak_button
+        materialCount: 20
+        displayName: 深色橡木按钮
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i29
+        shopTitle: 红石商店
+        unitBuyPrice: 2
+        purchaseQuantity: 20
+        productAmount: 1
+        lineTotal: 40
+        checkoutLineTotal: 40
+        billing: shop
+      - label: white_carpet
+        itemId: white_carpet
+        materialCount: 20
+        displayName: 白色地毯
+        catalogBuyPrice: 2.7
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i116
+        shopTitle: 羊毛商店
+        unitBuyPrice: 2.7
+        purchaseQuantity: 20
+        productAmount: 1
+        lineTotal: 54
+        checkoutLineTotal: 54
+        billing: shop
+      - label: light_gray_wool
+        itemId: light_gray_wool
+        materialCount: 18
+        displayName: 淡灰色羊毛
+        catalogBuyPrice: 5
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i64
+        shopTitle: 羊毛商店
+        unitBuyPrice: 5
+        purchaseQuantity: 18
+        productAmount: 1
+        lineTotal: 90
+        checkoutLineTotal: 90
+        billing: shop
+      - label: spruce_stairs
+        itemId: spruce_stairs
+        materialCount: 18
+        displayName: 云杉木楼梯
+        catalogBuyPrice: 2.7
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i56
+        shopTitle: 原木商店
+        unitBuyPrice: 2.7
+        purchaseQuantity: 18
+        productAmount: 1
+        lineTotal: 48.6
+        checkoutLineTotal: 48.6
+        billing: shop
+      - label: mossy_cobblestone
+        itemId: mossy_cobblestone
+        materialCount: 17
+        displayName: 苔石
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i45
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 3
+        purchaseQuantity: 17
+        productAmount: 1
+        lineTotal: 51
+        checkoutLineTotal: 51
+        billing: shop
+      - label: moss_block
+        itemId: moss_block
+        materialCount: 15
+        displayName: 苔藓块
+        catalogBuyPrice: 4
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i49
+        shopTitle: 花卉商店
+        unitBuyPrice: 4
+        purchaseQuantity: 15
+        productAmount: 1
+        lineTotal: 60
+        checkoutLineTotal: 60
+        billing: shop
+      - label: pumpkin
+        itemId: pumpkin
+        materialCount: 15
+        displayName: 南瓜
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i69
+        shopTitle: 花卉商店
+        unitBuyPrice: 6
+        purchaseQuantity: 15
+        productAmount: 1
+        lineTotal: 90
+        checkoutLineTotal: 90
+        billing: shop
+      - label: coarse_dirt
+        itemId: coarse_dirt
+        materialCount: 14
+        displayName: 砂土
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i10
+        shopTitle: 方块商店
+        unitBuyPrice: 1.5
+        purchaseQuantity: 14
+        productAmount: 1
+        lineTotal: 21
+        checkoutLineTotal: 21
+        billing: shop
+      - label: cobweb
+        itemId: cobweb
+        materialCount: 14
+        displayName: 蜘蛛网
+        catalogBuyPrice: 4
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i42
+        shopTitle: 杂项商店
+        unitBuyPrice: 4
+        purchaseQuantity: 14
+        productAmount: 1
+        lineTotal: 56
+        checkoutLineTotal: 56
+        billing: shop
+      - label: dark_oak_trapdoor
+        itemId: dark_oak_trapdoor
+        materialCount: 13
+        displayName: 深色橡木活板门
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i32
+        shopTitle: 红石商店
+        unitBuyPrice: 6
+        purchaseQuantity: 13
+        productAmount: 1
+        lineTotal: 78
+        checkoutLineTotal: 78
+        billing: shop
+      - label: white_stained_glass
+        itemId: white_stained_glass
+        materialCount: 13
+        displayName: 白色染色玻璃
+        catalogBuyPrice: 2.3
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i31
+        shopTitle: 玻璃商店
+        unitBuyPrice: 2.3
+        purchaseQuantity: 13
+        productAmount: 1
+        lineTotal: 29.9
+        checkoutLineTotal: 29.9
+        billing: shop
+      - label: candle
+        itemId: candle
+        materialCount: 12
+        displayName: 蜡烛
+        catalogBuyPrice: 4
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i14
+        shopTitle: 红石商店
+        unitBuyPrice: 4
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 48
+        checkoutLineTotal: 48
+        billing: shop
+      - label: rooted_dirt
+        itemId: rooted_dirt
+        materialCount: 12
+        displayName: 缠根泥土
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i47
+        shopTitle: 方块商店
+        unitBuyPrice: 3
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 36
+        checkoutLineTotal: 36
+        billing: shop
+      - label: spruce_fence
+        itemId: spruce_fence
+        materialCount: 12
+        displayName: 云杉木栅栏
+        catalogBuyPrice: 3.4
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i133
+        shopTitle: 杂项商店
+        unitBuyPrice: 3.4
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 40.8
+        checkoutLineTotal: 40.8
+        billing: shop
+      - label: stone_brick_wall
+        itemId: stone_brick_wall
+        materialCount: 12
+        displayName: 石砖墙
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i85
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 24
+        checkoutLineTotal: 24
+        billing: shop
+      - label: oak_stairs
+        itemId: oak_stairs
+        materialCount: 11
+        displayName: 橡木楼梯
+        catalogBuyPrice: 2.7
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i46
+        shopTitle: 原木商店
+        unitBuyPrice: 2.7
+        purchaseQuantity: 11
+        productAmount: 1
+        lineTotal: 29.7
+        checkoutLineTotal: 29.7
+        billing: shop
+      - label: stone_brick_slab
+        itemId: stone_brick_slab
+        materialCount: 11
+        displayName: 石砖台阶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i83
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 11
+        productAmount: 1
+        lineTotal: 11
+        checkoutLineTotal: 11
+        billing: shop
+      - label: dark_oak_stairs
+        itemId: dark_oak_stairs
+        materialCount: 10
+        displayName: 深色橡木楼梯
+        catalogBuyPrice: 2.7
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i31
+        shopTitle: 原木商店
+        unitBuyPrice: 2.7
+        purchaseQuantity: 10
+        productAmount: 1
+        lineTotal: 27
+        checkoutLineTotal: 27
+        billing: shop
+      - label: oak_trapdoor
+        itemId: oak_trapdoor
+        materialCount: 9
+        displayName: 橡木活板门
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i62
+        shopTitle: 红石商店
+        unitBuyPrice: 6
+        purchaseQuantity: 9
+        productAmount: 1
+        lineTotal: 54
+        checkoutLineTotal: 54
+        billing: shop
+      - label: cobbled_deepslate_stairs
+        itemId: cobbled_deepslate_stairs
+        materialCount: 8
+        displayName: 深板岩圆石楼梯
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i16
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1.5
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 12
+        checkoutLineTotal: 12
+        billing: shop
+      - label: polished_deepslate_stairs
+        itemId: polished_deepslate_stairs
+        materialCount: 7
+        displayName: 磨制深板岩楼梯
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i60
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1.5
+        purchaseQuantity: 7
+        productAmount: 1
+        lineTotal: 10.5
+        checkoutLineTotal: 10.5
+        billing: shop
+      - label: chain
+        itemId: chain
+        materialCount: 6
+        displayName: 锁链
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: oak_slab
+        itemId: oak_slab
+        materialCount: 6
+        displayName: 橡木台阶
+        catalogBuyPrice: 0.9
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i45
+        shopTitle: 原木商店
+        unitBuyPrice: 0.9
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 5.4
+        checkoutLineTotal: 5.4
+        billing: shop
+      - label: sea_pickle
+        itemId: sea_pickle
+        materialCount: 6
+        displayName: 海泡菜
+        catalogBuyPrice: 5
+        status: ok
+        statusLabel: 可购买
+        shopId: fish
+        slot: i43
+        shopTitle: 鱼类商店
+        unitBuyPrice: 5
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 30
+        checkoutLineTotal: 30
+        billing: shop
+      - label: nether_brick_fence
+        itemId: nether_brick_fence
+        materialCount: 4
+        displayName: 下界砖栅栏
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i26
+        shopTitle: 方块商店
+        unitBuyPrice: 3
+        purchaseQuantity: 4
+        productAmount: 1
+        lineTotal: 12
+        checkoutLineTotal: 12
+        billing: shop
+      - label: honeycomb_block
+        itemId: honeycomb_block
+        materialCount: 3
+        displayName: 蜜脾块
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: drops
+        slot: i17
+        shopTitle: 掉落物商店
+        unitBuyPrice: 8
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 24
+        checkoutLineTotal: 24
+        billing: shop
+      - label: jack_o_lantern
+        itemId: jack_o_lantern
+        materialCount: 3
+        displayName: 南瓜灯
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i46
+        shopTitle: 红石商店
+        unitBuyPrice: 8
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 24
+        checkoutLineTotal: 24
+        billing: shop
+      - label: stone_slab
+        itemId: stone_slab
+        materialCount: 3
+        displayName: 石头台阶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i87
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 3
+        checkoutLineTotal: 3
+        billing: shop
+      - label: andesite_stairs
+        itemId: andesite_stairs
+        materialCount: 2
+        displayName: 安山岩楼梯
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i3
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1.5
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 3
+        checkoutLineTotal: 3
+        billing: shop
+      - label: carved_pumpkin
+        itemId: carved_pumpkin
+        materialCount: 2
+        displayName: 雕刻南瓜
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i20
+        shopTitle: 花卉商店
+        unitBuyPrice: 6
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 12
+        checkoutLineTotal: 12
+        billing: shop
+      - label: dark_oak_door
+        itemId: dark_oak_door
+        materialCount: 2
+        displayName: 深色橡木门
+        catalogBuyPrice: 4
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i30
+        shopTitle: 红石商店
+        unitBuyPrice: 4
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 8
+        checkoutLineTotal: 8
+        billing: shop
+      - label: nether_brick_wall
+        itemId: nether_brick_wall
+        materialCount: 2
+        displayName: 下界砖墙
+        catalogBuyPrice: 4
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i29
+        shopTitle: 方块商店
+        unitBuyPrice: 4
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 8
+        checkoutLineTotal: 8
+        billing: shop
+      - label: stone_stairs
+        itemId: stone_stairs
+        materialCount: 2
+        displayName: 石头楼梯
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i88
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 3
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 6
+        checkoutLineTotal: 6
+        billing: shop
+      - label: brewing_stand
+        itemId: brewing_stand
+        materialCount: 1
+        displayName: 酿造台
+        catalogBuyPrice: 33
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i27
+        shopTitle: 杂项商店
+        unitBuyPrice: 33
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 33
+        checkoutLineTotal: 33
+        billing: shop
+      - label: cobblestone_stairs
+        itemId: cobblestone_stairs
+        materialCount: 1
+        displayName: 圆石楼梯
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i20
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1.5
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 1.5
+        checkoutLineTotal: 1.5
+        billing: shop
+      - label: dark_oak_fence_gate
+        itemId: dark_oak_fence_gate
+        materialCount: 1
+        displayName: 深色橡木栅栏门
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i58
+        shopTitle: 杂项商店
+        unitBuyPrice: 8
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 8
+        checkoutLineTotal: 8
+        billing: shop
+      - label: dark_oak_fence
+        itemId: dark_oak_fence
+        materialCount: 1
+        displayName: 深色橡木栅栏
+        catalogBuyPrice: 3.4
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i57
+        shopTitle: 杂项商店
+        unitBuyPrice: 3.4
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 3.4
+        checkoutLineTotal: 3.4
+        billing: shop
+      - label: ladder
+        itemId: ladder
+        materialCount: 1
+        displayName: 梯子
+        catalogBuyPrice: 2.4
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i93
+        shopTitle: 杂项商店
+        unitBuyPrice: 2.4
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 2.4
+        checkoutLineTotal: 2.4
+        billing: shop
+      - label: mossy_cobblestone_stairs
+        itemId: mossy_cobblestone_stairs
+        materialCount: 1
+        displayName: 苔石楼梯
+        catalogBuyPrice: 4.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i47
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 4.5
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 4.5
+        checkoutLineTotal: 4.5
+        billing: shop
+      - label: purple_wool
+        itemId: purple_wool
+        materialCount: 1
+        displayName: 紫色羊毛
+        catalogBuyPrice: 5
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: i104
+        shopTitle: 羊毛商店
+        unitBuyPrice: 5
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 5
+        checkoutLineTotal: 5
+        billing: shop
+      - label: stone_brick_stairs
+        itemId: stone_brick_stairs
+        materialCount: 1
+        displayName: 石砖楼梯
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i84
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 3
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 3
+        checkoutLineTotal: 3
+        billing: shop
+    purchasableTotal: 4197.6
+    freeUnlistedTotal: 0
+    playerUuid: ''
+    playerId: ''
+    username: ''
+    status: open
+    createdAt: '2026-06-17T16:59:28.566Z'
+    expiresAt: '2026-06-18T16:59:28.566Z'
+  '7':
+    id: 85b71c51-f91e-44e8-9218-7aa4eebb78ce
+    numericId: 7
+    contentHash: 79bc0104a2c493c7305ba88c708d66f43922ee46b26fcca5d452ac0072f05853
+    contentHashVersion: mcwws:content-v1
+    listName: Unnamed
+    materials:
+      - label: pink_concrete
+        itemId: pink_concrete
+        count: 34817
+      - label: grass_block
+        itemId: grass_block
+        count: 18239
+      - label: blue_concrete
+        itemId: blue_concrete
+        count: 9134
+      - label: spruce_leaves
+        itemId: spruce_leaves
+        count: 6102
+      - label: red_concrete
+        itemId: red_concrete
+        count: 1528
+      - label: spruce_log
+        itemId: spruce_log
+        count: 1508
+      - label: stone_slab
+        itemId: stone_slab
+        count: 1441
+      - label: dirt
+        itemId: dirt
+        count: 1066
+      - label: magenta_concrete
+        itemId: magenta_concrete
+        count: 706
+      - label: ochre_froglight
+        itemId: ochre_froglight
+        count: 665
+      - label: stone_bricks
+        itemId: stone_bricks
+        count: 545
+      - label: oak_fence
+        itemId: oak_fence
+        count: 324
+      - label: gray_concrete
+        itemId: gray_concrete
+        count: 265
+      - label: purple_concrete
+        itemId: purple_concrete
+        count: 236
+      - label: orange_concrete
+        itemId: orange_concrete
+        count: 143
+      - label: green_concrete
+        itemId: green_concrete
+        count: 138
+      - label: sticky_piston
+        itemId: sticky_piston
+        count: 123
+      - label: oak_leaves
+        itemId: oak_leaves
+        count: 103
+      - label: piston_head
+        itemId: piston_head
+        count: 94
+      - label: black_concrete
+        itemId: black_concrete
+        count: 77
+      - label: gold_block
+        itemId: gold_block
+        count: 68
+      - label: glass_pane
+        itemId: glass_pane
+        count: 66
+      - label: lapis_block
+        itemId: lapis_block
+        count: 47
+      - label: white_concrete
+        itemId: white_concrete
+        count: 45
+      - label: iron_bars
+        itemId: iron_bars
+        count: 35
+      - label: oak_planks
+        itemId: oak_planks
+        count: 25
+      - label: glass
+        itemId: glass
+        count: 13
+      - label: stone
+        itemId: stone
+        count: 11
+      - label: yellow_concrete
+        itemId: yellow_concrete
+        count: 9
+      - label: oak_log
+        itemId: oak_log
+        count: 8
+      - label: oak_slab
+        itemId: oak_slab
+        count: 8
+      - label: oak_fence_gate
+        itemId: oak_fence_gate
+        count: 7
+      - label: jack_o_lantern
+        itemId: jack_o_lantern
+        count: 2
+      - label: bookshelf
+        itemId: bookshelf
+        count: 1
+      - label: carved_pumpkin
+        itemId: carved_pumpkin
+        count: 1
+      - label: cracked_stone_bricks
+        itemId: cracked_stone_bricks
+        count: 1
+      - label: redstone_wire
+        itemId: redstone_wire
+        count: 1
+    quoteLines:
+      - label: pink_concrete
+        itemId: pink_concrete
+        materialCount: 34817
+        displayName: 粉红色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i23
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 34817
+        productAmount: 1
+        lineTotal: 69634
+        checkoutLineTotal: 69634
+        billing: shop
+      - label: grass_block
+        itemId: grass_block
+        materialCount: 18239
+        displayName: 草方块
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i17
+        shopTitle: 方块商店
+        unitBuyPrice: 2
+        purchaseQuantity: 18239
+        productAmount: 1
+        lineTotal: 36478
+        checkoutLineTotal: 36478
+        billing: shop
+      - label: blue_concrete
+        itemId: blue_concrete
+        materialCount: 9134
+        displayName: 蓝色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i3
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 9134
+        productAmount: 1
+        lineTotal: 18268
+        checkoutLineTotal: 18268
+        billing: shop
+      - label: spruce_leaves
+        itemId: spruce_leaves
+        materialCount: 6102
+        displayName: 云杉树叶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i79
+        shopTitle: 花卉商店
+        unitBuyPrice: 1
+        purchaseQuantity: 6102
+        productAmount: 1
+        lineTotal: 6102
+        checkoutLineTotal: 6102
+        billing: shop
+      - label: red_concrete
+        itemId: red_concrete
+        materialCount: 1528
+        displayName: 红色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i27
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 1528
+        productAmount: 1
+        lineTotal: 3056
+        checkoutLineTotal: 3056
+        billing: shop
+      - label: spruce_log
+        itemId: spruce_log
+        materialCount: 1508
+        displayName: 云杉原木
+        catalogBuyPrice: 7.2
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i53
+        shopTitle: 原木商店
+        unitBuyPrice: 7.2
+        purchaseQuantity: 1508
+        productAmount: 1
+        lineTotal: 10857.6
+        checkoutLineTotal: 10857.6
+        billing: shop
+      - label: stone_slab
+        itemId: stone_slab
+        materialCount: 1441
+        displayName: 石头台阶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i87
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 1
+        purchaseQuantity: 1441
+        productAmount: 1
+        lineTotal: 1441
+        checkoutLineTotal: 1441
+        billing: shop
+      - label: dirt
+        itemId: dirt
+        materialCount: 1066
+        displayName: 泥土
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks
+        slot: i16
+        shopTitle: 方块商店
+        unitBuyPrice: 1
+        purchaseQuantity: 1066
+        productAmount: 1
+        lineTotal: 1066
+        checkoutLineTotal: 1066
+        billing: shop
+      - label: magenta_concrete
+        itemId: magenta_concrete
+        materialCount: 706
+        displayName: 品红色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i19
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 706
+        productAmount: 1
+        lineTotal: 1412
+        checkoutLineTotal: 1412
+        billing: shop
+      - label: ochre_froglight
+        itemId: ochre_froglight
+        materialCount: 665
+        displayName: 赭黄蛙明灯
+        catalogBuyPrice: 20
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i64
+        shopTitle: 红石商店
+        unitBuyPrice: 20
+        purchaseQuantity: 665
+        productAmount: 1
+        lineTotal: 13300
+        checkoutLineTotal: 13300
+        billing: shop
+      - label: stone_bricks
+        itemId: stone_bricks
+        materialCount: 545
+        displayName: 石砖
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i86
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 545
+        productAmount: 1
+        lineTotal: 1090
+        checkoutLineTotal: 1090
+        billing: shop
+      - label: oak_fence
+        itemId: oak_fence
+        materialCount: 324
+        displayName: 橡木栅栏
+        catalogBuyPrice: 3.4
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i109
+        shopTitle: 杂项商店
+        unitBuyPrice: 3.4
+        purchaseQuantity: 324
+        productAmount: 1
+        lineTotal: 1101.6
+        checkoutLineTotal: 1101.6
+        billing: shop
+      - label: gray_concrete
+        itemId: gray_concrete
+        materialCount: 265
+        displayName: 灰色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i9
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 265
+        productAmount: 1
+        lineTotal: 530
+        checkoutLineTotal: 530
+        billing: shop
+      - label: purple_concrete
+        itemId: purple_concrete
+        materialCount: 236
+        displayName: 紫色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i25
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 236
+        productAmount: 1
+        lineTotal: 472
+        checkoutLineTotal: 472
+        billing: shop
+      - label: orange_concrete
+        itemId: orange_concrete
+        materialCount: 143
+        displayName: 橙色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i21
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 143
+        productAmount: 1
+        lineTotal: 286
+        checkoutLineTotal: 286
+        billing: shop
+      - label: green_concrete
+        itemId: green_concrete
+        materialCount: 138
+        displayName: 绿色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i11
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 138
+        productAmount: 1
+        lineTotal: 276
+        checkoutLineTotal: 276
+        billing: shop
+      - label: sticky_piston
+        itemId: sticky_piston
+        materialCount: 123
+        displayName: 黏性活塞
+        catalogBuyPrice: 38
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i89
+        shopTitle: 红石商店
+        unitBuyPrice: 38
+        purchaseQuantity: 123
+        productAmount: 1
+        lineTotal: 4674
+        checkoutLineTotal: 4674
+        billing: shop
+      - label: oak_leaves
+        itemId: oak_leaves
+        materialCount: 103
+        displayName: 橡树树叶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i53
+        shopTitle: 花卉商店
+        unitBuyPrice: 1
+        purchaseQuantity: 103
+        productAmount: 1
+        lineTotal: 103
+        checkoutLineTotal: 103
+        billing: shop
+      - label: piston_head
+        itemId: piston_head
+        materialCount: 94
+        displayName: 活塞头
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: black_concrete
+        itemId: black_concrete
+        materialCount: 77
+        displayName: 黑色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i1
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 77
+        productAmount: 1
+        lineTotal: 154
+        checkoutLineTotal: 154
+        billing: shop
+      - label: gold_block
+        itemId: gold_block
+        materialCount: 68
+        displayName: 金块
+        catalogBuyPrice: 540
+        status: ok
+        statusLabel: 可购买
+        shopId: minerals
+        slot: i43
+        shopTitle: 矿物商店
+        unitBuyPrice: 540
+        purchaseQuantity: 68
+        productAmount: 1
+        lineTotal: 36720
+        checkoutLineTotal: 36720
+        billing: shop
+      - label: glass_pane
+        itemId: glass_pane
+        materialCount: 66
+        displayName: 玻璃板
+        catalogBuyPrice: 0.8
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i10
+        shopTitle: 玻璃商店
+        unitBuyPrice: 0.8
+        purchaseQuantity: 66
+        productAmount: 1
+        lineTotal: 52.8
+        checkoutLineTotal: 52.8
+        billing: shop
+      - label: lapis_block
+        itemId: lapis_block
+        materialCount: 47
+        displayName: 青金石块
+        catalogBuyPrice: 45
+        status: ok
+        statusLabel: 可购买
+        shopId: minerals
+        slot: i51
+        shopTitle: 矿物商店
+        unitBuyPrice: 45
+        purchaseQuantity: 47
+        productAmount: 1
+        lineTotal: 2115
+        checkoutLineTotal: 2115
+        billing: shop
+      - label: white_concrete
+        itemId: white_concrete
+        materialCount: 45
+        displayName: 白色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i29
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 45
+        productAmount: 1
+        lineTotal: 90
+        checkoutLineTotal: 90
+        billing: shop
+      - label: iron_bars
+        itemId: iron_bars
+        materialCount: 35
+        displayName: 铁栏杆
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i84
+        shopTitle: 杂项商店
+        unitBuyPrice: 6
+        purchaseQuantity: 35
+        productAmount: 1
+        lineTotal: 210
+        checkoutLineTotal: 210
+        billing: shop
+      - label: oak_planks
+        itemId: oak_planks
+        materialCount: 25
+        displayName: 橡木木板
+        catalogBuyPrice: 1.8
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i44
+        shopTitle: 原木商店
+        unitBuyPrice: 1.8
+        purchaseQuantity: 25
+        productAmount: 1
+        lineTotal: 45
+        checkoutLineTotal: 45
+        billing: shop
+      - label: glass
+        itemId: glass
+        materialCount: 13
+        displayName: 玻璃
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: i9
+        shopTitle: 玻璃商店
+        unitBuyPrice: 2
+        purchaseQuantity: 13
+        productAmount: 1
+        lineTotal: 26
+        checkoutLineTotal: 26
+        billing: shop
+      - label: stone
+        itemId: stone
+        materialCount: 11
+        displayName: 石头
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i82
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 11
+        productAmount: 1
+        lineTotal: 22
+        checkoutLineTotal: 22
+        billing: shop
+      - label: yellow_concrete
+        itemId: yellow_concrete
+        materialCount: 9
+        displayName: 黄色混凝土
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: concretes
+        slot: i31
+        shopTitle: 混凝土商店
+        unitBuyPrice: 2
+        purchaseQuantity: 9
+        productAmount: 1
+        lineTotal: 18
+        checkoutLineTotal: 18
+        billing: shop
+      - label: oak_log
+        itemId: oak_log
+        materialCount: 8
+        displayName: 橡木原木
+        catalogBuyPrice: 7.2
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i43
+        shopTitle: 原木商店
+        unitBuyPrice: 7.2
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 57.6
+        checkoutLineTotal: 57.6
+        billing: shop
+      - label: oak_slab
+        itemId: oak_slab
+        materialCount: 8
+        displayName: 橡木台阶
+        catalogBuyPrice: 0.9
+        status: ok
+        statusLabel: 可购买
+        shopId: logs
+        slot: i45
+        shopTitle: 原木商店
+        unitBuyPrice: 0.9
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 7.2
+        checkoutLineTotal: 7.2
+        billing: shop
+      - label: oak_fence_gate
+        itemId: oak_fence_gate
+        materialCount: 7
+        displayName: 橡木栅栏门
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i110
+        shopTitle: 杂项商店
+        unitBuyPrice: 8
+        purchaseQuantity: 7
+        productAmount: 1
+        lineTotal: 56
+        checkoutLineTotal: 56
+        billing: shop
+      - label: jack_o_lantern
+        itemId: jack_o_lantern
+        materialCount: 2
+        displayName: 南瓜灯
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone
+        slot: i46
+        shopTitle: 红石商店
+        unitBuyPrice: 8
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 16
+        checkoutLineTotal: 16
+        billing: shop
+      - label: bookshelf
+        itemId: bookshelf
+        materialCount: 1
+        displayName: 书架
+        catalogBuyPrice: 45
+        status: ok
+        statusLabel: 可购买
+        shopId: utility
+        slot: i24
+        shopTitle: 杂项商店
+        unitBuyPrice: 45
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 45
+        checkoutLineTotal: 45
+        billing: shop
+      - label: carved_pumpkin
+        itemId: carved_pumpkin
+        materialCount: 1
+        displayName: 雕刻南瓜
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers
+        slot: i20
+        shopTitle: 花卉商店
+        unitBuyPrice: 6
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 6
+        checkoutLineTotal: 6
+        billing: shop
+      - label: cracked_stone_bricks
+        itemId: cracked_stone_bricks
+        materialCount: 1
+        displayName: 裂纹石砖
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: i24
+        shopTitle: 方块扩展商店
+        unitBuyPrice: 2
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 2
+        checkoutLineTotal: 2
+        billing: shop
+      - label: redstone_wire
+        itemId: redstone_wire
+        materialCount: 1
+        displayName: 红石线
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+    purchasableTotal: 209789.8
+    freeUnlistedTotal: 0
+    playerUuid: ''
+    playerId: ''
+    username: ''
+    status: open
+    createdAt: '2026-06-17T17:00:56.698Z'
+    expiresAt: '2026-06-18T17:00:56.698Z'

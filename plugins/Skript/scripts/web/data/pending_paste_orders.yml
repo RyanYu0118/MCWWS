@@ -1,4 +1,4 @@
-next_id: 4
+next_id: 5
 
 orders:
     '1':
@@ -59,7 +59,7 @@ orders:
     '3':
         id: f0b09f4e-a55c-4ac6-b6dc-451fcf8194b6
         numericId: 3
-        pasteToken: e7af45b8369fd40ab48ddea05f5873b9
+        pasteToken: ''
         contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
         contentHashVersion: mcwws:content-v1
         quoteId: 4
@@ -67,7 +67,7 @@ orders:
         playerId: Ryan_yu__
         username: Ryan Yu
         total: 5683.19
-        status: ready
+        status: completed
         anchor:
             world: world
             x: -623
@@ -83,6 +83,38 @@ orders:
         schematicPath: D:\Minecraft\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67.litematic
         createdAt: '2026-06-17T16:21:02.330Z'
         pasteTokenExpiresAt: '2026-06-17T16:36:02.330Z'
-        pastedAt: ''
+        pastedAt: '2026-06-18 00:53:03'
         failureReason: ''
         anchorSetAt: '2026-06-18 00:21:24'
+        pasteStartedAt: '2026-06-18 00:52:59'
+    '4':
+        id: d7b3f7bd-58c1-43e7-9972-3c4ced6416b0
+        numericId: 4
+        pasteToken: ''
+        contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
+        contentHashVersion: mcwws:content-v1
+        quoteId: 5
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        total: 5683.19
+        status: completed
+        anchor:
+            world: world
+            x: -618
+            y: 116
+            z: 281
+            yaw: 331.1464
+            pitch: 34.312916
+        schemFileName: mcwws_e353234a24b78a67
+        schemOriginOffset:
+            x: 0
+            y: 0
+            z: 0
+        schematicPath: D:\Minecraft\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67.litematic
+        createdAt: '2026-06-17T16:57:24.671Z'
+        pasteTokenExpiresAt: '2026-06-17T17:12:24.671Z'
+        pastedAt: '2026-06-18 00:57:49'
+        failureReason: ''
+        anchorSetAt: '2026-06-18 00:57:37'
+        pasteStartedAt: '2026-06-18 00:57:45'

@@ -9,11 +9,11 @@ function mcwwsServerRootFile(relPath: text) :: object:
     return new File({_root}, {_relPath})
 
 function mcwwsSchemAbsolutePath(schemName: text) :: text:
-    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schem}%.schem")
+    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schemName}%.schem")
     return {_file}.getAbsolutePath()
 
 function mcwwsSchemFileExists(schemName: text) :: boolean:
-    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schem}%.schem")
+    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schemName}%.schem")
     return {_file}.exists()
 
 function mcwwsPasteYamlPath() :: text:
@@ -68,7 +68,7 @@ command /build [<text>] [<text>]:
         if arg-1 is not set:
             mcwwsSendPasteHelp(player)
             stop
-        set {_sub} to lowercase "%arg-1%"
+        set {_sub} to lowercase arg-1
         if {_sub} is "help":
             mcwwsSendPasteHelp(player)
             stop
@@ -178,20 +178,26 @@ function mcwwsPasteExecute(p: player, oid: text):
     unload yaml "pastes"
     set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
     teleport {_p} to {_anchor}
-    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7(hash %{_hash}%)" to {_p}
+    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}%.schem §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
     wait 5 ticks
-    make {_p} execute command "//schem load %{_schem}%"
-    wait 15 ticks
-    make {_p} execute command "//paste -a -o"
+    make {_p} execute command "/schem load ""%{_schem}%.schem"""
+    wait 40 ticks
+    make {_p} execute command "//paste -a"
     wait 40 ticks
     load yaml {_path} as "pastes"
-    set yaml value "orders.%{_oid}%.status" from "pastes" to "completed"
-    set yaml value "orders.%{_oid}%.pastedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
-    set yaml value "orders.%{_oid}%.pasteToken" from "pastes" to ""
-    set yaml value "orders.%{_oid}%.failureReason" from "pastes" to ""
-    save yaml "pastes"
-    unload yaml "pastes"
-    send "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。" to {_p}
+    set {_prevStatus} to yaml value "orders.%{_oid}%.status" from "pastes"
+    if {_prevStatus} is "pasting":
+        set yaml value "orders.%{_oid}%.status" from "pastes" to "completed"
+        set yaml value "orders.%{_oid}%.pastedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set yaml value "orders.%{_oid}%.pasteToken" from "pastes" to ""
+        set yaml value "orders.%{_oid}%.failureReason" from "pastes" to ""
+        save yaml "pastes"
+        unload yaml "pastes"
+        send "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。" to {_p}
+        send "§7建筑应出现在锚点 §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}% §7附近（约 19×21×19 区域）。" to {_p}
+        send "§7若看不到，请站在锚点处执行 §f//paste -a §7或联系管理员。" to {_p}
+    else:
+        unload yaml "pastes"
     send "§7contentHash: §f%{_hash}%" to {_p}
 
 on load:

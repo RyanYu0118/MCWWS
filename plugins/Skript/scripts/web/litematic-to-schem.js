@@ -177,7 +177,7 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     });
 
     const dataVersion = Number(root.MinecraftDataVersion) || options.dataVersion || DEFAULT_DATA_VERSION;
-    const schematic = nbt.comp({
+    const schematicBody = nbt.comp({
         Version: nbt.int(3),
         DataVersion: nbt.int(dataVersion),
         Width: nbt.short(width),
@@ -185,19 +185,23 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
         Length: nbt.short(length),
         Offset: nbt.intArray([0, 0, 0]),
         Metadata: nbt.comp({
-            WEOffsetX: nbt.int(0),
-            WEOffsetY: nbt.int(0),
-            WEOffsetZ: nbt.int(0)
+            WorldEdit: nbt.comp({
+                Origin: nbt.intArray([0, 0, 0])
+            })
         }),
         Blocks: nbt.comp({
             Palette: nbt.comp(paletteCompound),
             Data: nbt.byteArray(encodeVarints(dataIndices)),
-            BlockEntities: nbt.list([])
+            BlockEntities: nbt.list(nbt.comp([]))
         }),
-        Entities: nbt.list([])
-    }, 'Schematic');
+        Entities: nbt.list(nbt.comp([]))
+    });
 
-    const raw = nbt.writeUncompressed(schematic, 'big');
+    const schemRoot = nbt.comp({
+        Schematic: schematicBody
+    }, '');
+
+    const raw = nbt.writeUncompressed(schemRoot, 'big');
     const gz = zlib.gzipSync(raw);
 
     const baseName = schemFileBaseName(contentHash);
