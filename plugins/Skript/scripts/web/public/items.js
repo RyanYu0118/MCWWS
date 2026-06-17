@@ -169,6 +169,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.warn('[物品图标] Three.js 未加载（检查 vendor/three.module.min.js），仍使用 PNG');
     }
     initItemsHeroCompass();
+    window.MCWWS_LitematicaDeps = {
+        allItems: () => allItems,
+        addToCart,
+        openCartDrawer,
+        showToast,
+        escapeHtml,
+        getItemIconHtml,
+        mountItemIconsInContainer
+    };
     loadShopCart();
     updateCartBadge();
     loadItems();
@@ -528,7 +537,7 @@ function renderCartDrawer() {
         const itemName = el.getAttribute('data-item-name');
         el.innerHTML = getItemIconHtml(itemId, itemName);
     });
-    mountItemIcons();
+    mountItemIconsInContainer(body);
     if (window.McTextureAnim) window.McTextureAnim.initInContainer(body);
     if (window.McEnchantGlint) window.McEnchantGlint.initInContainer(body);
 
@@ -1814,9 +1823,12 @@ function getItemIconHtml(itemId, itemName) {
 
 function mountItemIcons() {
     const grid = document.getElementById('itemsGrid');
-    if (grid && window.McItemIcon) {
-        window.McItemIcon.mountGrid(grid);
-    }
+    mountItemIconsInContainer(grid);
+}
+
+function mountItemIconsInContainer(root) {
+    if (!root || !window.McItemIcon) return;
+    void window.McItemIcon.mountGrid(root);
 }
 
 function renderPagination() {

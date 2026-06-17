@@ -74,6 +74,7 @@ const nbt = require('prismarine-nbt');
 const app = express();
 const PORT = 8002;
 const HOST = process.env.HOST || '0.0.0.0';
+const materialListParser = require('./public/material-list-parser');
 
 app.use(cors());
 app.use(express.json());
@@ -321,6 +322,248 @@ function loadPriceTables() {
         });
     });
     return merged;
+}
+
+let materialNameIndexCache = null;
+let materialNameIndexMtime = 0;
+let chineseNameIndexCache = null;
+let chineseDisplayNameCache = null;
+
+function loadChineseDisplayNames() {
+    if (chineseDisplayNameCache) {
+        return chineseDisplayNameCache;
+    }
+    const map = {};
+    const langPath = path.join(PUBLIC_DIR, '26.1.2', 'assets', 'minecraft', 'lang', 'zh_cn.json');
+    const lang = loadJsonFile(langPath, {});
+    Object.keys(lang).forEach((key) => {
+        if (!key.startsWith('item.minecraft.') && !key.startsWith('block.minecraft.')) {
+            return;
+        }
+        const itemId = normalizeMaterialId(key.replace(/^item\.minecraft\./, '').replace(/^block\.minecraft\./, ''));
+        if (itemId) {
+            map[itemId] = lang[key];
+        }
+    });
+    chineseDisplayNameCache = map;
+    return map;
+}
+
+function loadChineseNameIndex() {
+    if (chineseNameIndexCache) {
+        return chineseNameIndexCache;
+    }
+    const index = new Map();
+    const langPath = path.join(PUBLIC_DIR, '26.1.2', 'assets', 'minecraft', 'lang', 'zh_cn.json');
+    const lang = loadJsonFile(langPath, {});
+    Object.keys(lang).forEach((key) => {
+        if (!key.startsWith('item.minecraft.') && !key.startsWith('block.minecraft.')) {
+            return;
+        }
+        const itemId = normalizeMaterialId(key.replace(/^item\.minecraft\./, '').replace(/^block\.minecraft\./, ''));
+        const lookup = materialListParser.normalizeLookupKey(lang[key]);
+        if (itemId && lookup && !index.has(lookup)) {
+            index.set(lookup, itemId);
+        }
+    });
+    chineseNameIndexCache = index;
+    return index;
+}
+
+function resolveItemDisplayName(itemId, label, mappings, priceData) {
+    if (itemId) {
+        const zhName = loadChineseDisplayNames()[itemId];
+        if (zhName) return zhName;
+        if (mappings[itemId] && mappings[itemId].displayName) {
+            return mappings[itemId].displayName;
+        }
+        if (priceData[itemId] && priceData[itemId].customDisplayName) {
+            return priceData[itemId].customDisplayName;
+        }
+    }
+    return label || itemId || '未知';
+}
+
+function getCatalogBuyPrice(itemId, priceData) {
+    const buy = itemId && priceData[itemId] ? Number(priceData[itemId].buy) : NaN;
+    return Number.isFinite(buy) && buy >= 0 ? buy : null;
+}
+
+function loadMaterialNameIndex() {
+    if (!fs.existsSync(ITEMS_DB_PATH)) {
+        return new Map();
+    }
+    const stat = fs.statSync(ITEMS_DB_PATH);
+    if (materialNameIndexCache && materialNameIndexMtime === stat.mtimeMs) {
+        return materialNameIndexCache;
+    }
+    const index = new Map();
+    const add = (label, itemId) => {
+        const key = materialListParser.normalizeLookupKey(label);
+        if (!key || index.has(key)) return;
+        index.set(key, itemId);
+    };
+    const items = loadYamlFile(ITEMS_DB_PATH);
+    Object.keys(items).forEach((itemId) => {
+        const row = items[itemId];
+        const normId = normalizeMaterialId(itemId);
+        if (!normId) return;
+        add(normId, normId);
+        add(normId.replace(/_/g, ' '), normId);
+        if (row && typeof row === 'object' && row.name) {
+            add(row.name, normId);
+            add(String(row.name).replace(/\s+/g, '_'), normId);
+        }
+    });
+    materialNameIndexCache = index;
+    materialNameIndexMtime = stat.mtimeMs;
+    return index;
+}
+
+function resolveMaterialItemId(label, explicitId) {
+    const fromId = normalizeMaterialId(explicitId || label);
+    if (fromId && loadPriceTables()[fromId]) {
+        return fromId;
+    }
+    if (fromId) {
+        const catalog = buildUltimateShopCatalogByMaterial(loadPriceTables());
+        if (catalog[fromId]) return fromId;
+    }
+    const index = loadMaterialNameIndex();
+    const key = materialListParser.normalizeLookupKey(label || explicitId);
+    if (key && index.has(key)) {
+        return index.get(key);
+    }
+    const zhIndex = loadChineseNameIndex();
+    if (key && zhIndex.has(key)) {
+        return zhIndex.get(key);
+    }
+    return fromId;
+}
+
+function pickCheapestBuyOffer(catalog, itemId, priceData) {
+    const offers = catalog[itemId] || [];
+    let best = null;
+    let bestPrice = Infinity;
+    offers.forEach((offer) => {
+        const hasBuy = offer.buyAmount != null && offer.buyAmount !== '';
+        if (!hasBuy) return;
+        const unit = offer.buyAmountResolved != null
+            ? Number(offer.buyAmountResolved)
+            : resolveMcwwsPricePlaceholder(offer.buyAmount, priceData);
+        if (!Number.isFinite(unit) || unit < 0) return;
+        if (unit < bestPrice) {
+            bestPrice = unit;
+            best = offer;
+        }
+    });
+    return best;
+}
+
+function quoteMaterialLines(materials, listName) {
+    const priceData = loadPriceTables();
+    const catalog = buildUltimateShopCatalogByMaterial(priceData);
+    const mappings = loadYamlFile(MAPPING_PATH);
+    const lines = [];
+    let purchasableTotal = 0;
+    let referenceTotal = 0;
+    let purchasableCount = 0;
+    let unavailableCount = 0;
+
+    (materials || []).forEach((entry) => {
+        const materialCount = Math.floor(Number(entry.count) || 0);
+        const label = entry.label || entry.name || entry.itemId || '';
+        const itemId = resolveMaterialItemId(label, entry.itemId);
+        const displayName = resolveItemDisplayName(itemId, label, mappings, priceData);
+        const catalogBuyPrice = itemId ? getCatalogBuyPrice(itemId, priceData) : null;
+        const base = {
+            label,
+            itemId: itemId || null,
+            materialCount,
+            displayName,
+            catalogBuyPrice
+        };
+
+        if (!itemId || materialCount <= 0) {
+            unavailableCount += 1;
+            lines.push({
+                ...base,
+                itemId: itemId || normalizeMaterialId(label),
+                status: 'unresolved',
+                statusLabel: '无法识别物品'
+            });
+            return;
+        }
+
+        const offer = pickCheapestBuyOffer(catalog, itemId, priceData);
+        if (!offer) {
+            unavailableCount += 1;
+            const estimatedLineTotal = catalogBuyPrice != null
+                ? Math.round(catalogBuyPrice * materialCount * 100) / 100
+                : null;
+            if (estimatedLineTotal != null) {
+                referenceTotal = Math.round((referenceTotal + estimatedLineTotal) * 100) / 100;
+            }
+            lines.push({
+                ...base,
+                status: 'not_listed',
+                statusLabel: '未上架',
+                estimatedLineTotal
+            });
+            return;
+        }
+
+        const product = getShopProductDetails(offer.shopId, offer.slot);
+        const productAmount = Math.max(1, Number(product && product.productAmount) || 1);
+        const unitBuyPrice = offer.buyAmountResolved != null
+            ? Number(offer.buyAmountResolved)
+            : resolveMcwwsPricePlaceholder(offer.buyAmount, priceData);
+        if (!Number.isFinite(unitBuyPrice) || unitBuyPrice < 0) {
+            unavailableCount += 1;
+            const estimatedLineTotal = catalogBuyPrice != null
+                ? Math.round(catalogBuyPrice * materialCount * 100) / 100
+                : null;
+            if (estimatedLineTotal != null) {
+                referenceTotal = Math.round((referenceTotal + estimatedLineTotal) * 100) / 100;
+            }
+            lines.push({
+                ...base,
+                status: 'no_price',
+                statusLabel: '无买入价',
+                estimatedLineTotal
+            });
+            return;
+        }
+
+        const purchaseQuantity = Math.ceil(materialCount / productAmount);
+        const lineTotal = Math.round(unitBuyPrice * purchaseQuantity * 100) / 100;
+        purchasableTotal = Math.round((purchasableTotal + lineTotal) * 100) / 100;
+        purchasableCount += 1;
+        lines.push({
+            ...base,
+            status: 'ok',
+            statusLabel: '可购买',
+            shopId: offer.shopId,
+            slot: String(offer.slot),
+            shopTitle: offer.shopTitleResolved || offer.shopTitle || offer.shopId,
+            unitBuyPrice,
+            purchaseQuantity,
+            productAmount,
+            lineTotal
+        });
+    });
+
+    lines.sort((a, b) => (b.materialCount || 0) - (a.materialCount || 0));
+
+    return {
+        listName: String(listName || '').trim(),
+        lines,
+        purchasableTotal,
+        referenceTotal,
+        purchasableCount,
+        unavailableCount,
+        lineCount: lines.length
+    };
 }
 
 function normalizeMaterialId(material) {
@@ -2312,6 +2555,44 @@ app.get('/api/prices', (req, res) => {
     } catch (error) {
         console.error('读取价格数据出错:', error);
         res.status(500).json({ error: '读取错误' });
+    }
+});
+
+// Litematica 材料清单：解析 JSON/合并条目后按商店买入价计价
+app.post('/api/shop/material-quote', (req, res) => {
+    try {
+        if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
+            return res.status(404).json({ error: '暂无价格数据' });
+        }
+
+        const body = req.body || {};
+        let materials = [];
+        let listName = String(body.listName || '').trim();
+
+        if (Array.isArray(body.materials) && body.materials.length) {
+            materials = body.materials;
+        } else if (typeof body.raw === 'string' && body.raw.trim()) {
+            const parsed = materialListParser.parseLitematicaMaterialFile(body.raw, body.fileName || 'import.json');
+            materials = parsed.materials;
+            if (!listName) listName = parsed.listName;
+        } else if (body && typeof body === 'object' && !Array.isArray(body)) {
+            const payload = body.data && typeof body.data === 'object' ? body.data : body;
+            const parsed = materialListParser.parseLitematicaMaterialJson(payload);
+            materials = parsed.materials;
+            if (!listName) listName = parsed.listName;
+        }
+
+        if (!materials.length) {
+            return res.status(400).json({ error: '材料清单为空或格式无法识别。' });
+        }
+        if (materials.length > 500) {
+            return res.status(400).json({ error: '单次最多导入 500 种材料。' });
+        }
+
+        res.json(quoteMaterialLines(materials, listName));
+    } catch (error) {
+        console.error('材料清单计价失败:', error);
+        res.status(400).json({ error: error.message || '材料清单计价失败' });
     }
 });
 
