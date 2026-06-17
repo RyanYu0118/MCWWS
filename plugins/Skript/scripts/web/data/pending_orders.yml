@@ -873,5 +873,33 @@ orders:
                 material: orange_terracotta
                 shopTitle: 陶瓦商店
                 status: delivered
+    '34':
+        id: c95bcba7-ac52-442b-ad5f-f78ccefdaa2a
+        numericId: 34
+        playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+        playerId: GuuuuuLei
+        username: Gu Lei
+        status: pending
+        total: 2
+        balanceAfter: 1426.22
+        economyChargedInGame: true
+        createdAt: '2026-06-17T09:47:59.254Z'
+        updatedAt: '2026-06-17 17:48:00'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: ''
+        lineCount: 1
+        lines:
+            '1':
+                itemId: black_concrete
+                shopId: concretes
+                slot: M
+                quantity: 1
+                unitBuyPrice: 2
+                lineTotal: 2
+                productAmount: 1
+                material: black_concrete
+                shopTitle: 混凝土商店
+                status: pending
 
-next_id: 34
+next_id: 35
