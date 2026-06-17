@@ -1331,11 +1331,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 270.11713
-        x: -437.7625
+        bodyYaw: 90.00006
+        x: -435.0512
         y: 95.0
-        z: -496.5027
-        yaw: 270.3646
+        z: -496.5
+        yaw: 90.0001
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
@@ -1389,11 +1389,15 @@ npc:
       scoreboardtrait:
         tags:
         - in.eid_0
+        - in.eid_1
+        - in.eid_3
         - in.eid_4
         - in.checked
+        - in.eid_10
         - in.eid_7
         - in.eid_8
         - in.eid_9
+        - in.eid_14
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
     navigator:

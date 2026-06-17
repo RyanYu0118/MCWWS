@@ -192,6 +192,7 @@ const PRICE_TABLE_PATHS = [
 ];
 const MAPPING_PATH = path.join(__dirname, 'mcwws', 'ultimateshop_mappings.yml');
 const ULTIMATE_SHOP_SHOPS_DIR = path.join(__dirname, '..', '..', '..', 'UltimateShop', 'shops');
+const ULTIMATE_SHOP_MAIN_MENU_PATH = path.join(__dirname, '..', '..', '..', 'UltimateShop', 'menus', 'main.yml');
 const ULTIMATE_SHOP_LANG_FILE = path.join(__dirname, '..', '..', '..', 'UltimateShop', 'languages', 'zh_CN.yml');
 const DB_DIR = path.join(__dirname, 'data');
 const USER_DB_FILE = path.join(DB_DIR, 'users.json');
@@ -1049,6 +1050,200 @@ function buildUltimateShopCatalogByMaterial(priceData = {}) {
     });
 
     return catalog;
+}
+
+const ORPHAN_SHOP_CATEGORIES = [
+    { id: 'blocks2', name: '方块扩展', icon: 'mud_bricks', insertAfter: 'blocks' },
+    { id: 'daily', name: '每日商店', icon: 'sunflower', langNameKey: 'daily-shop-name' },
+    { id: 'example', name: '示例商品', icon: 'book', insertAfter: 'daily' }
+];
+
+let ultimateShopRegistryCache = null;
+
+function buildMaterialToShopsMap() {
+    const map = {};
+    if (!fs.existsSync(ULTIMATE_SHOP_SHOPS_DIR)) {
+        return map;
+    }
+    const files = fs.readdirSync(ULTIMATE_SHOP_SHOPS_DIR).filter((f) => f.endsWith('.yml'));
+    files.forEach((file) => {
+        const shopId = path.basename(file, '.yml');
+        const doc = loadYamlFile(path.join(ULTIMATE_SHOP_SHOPS_DIR, file));
+        const items = doc.items;
+        if (!items || typeof items !== 'object') {
+            return;
+        }
+        Object.keys(items).forEach((slot) => {
+            const def = items[slot];
+            if (!def || typeof def !== 'object') {
+                return;
+            }
+            collectProductMaterials(def.products).forEach((mat) => {
+                if (!map[mat]) {
+                    map[mat] = new Set();
+                }
+                map[mat].add(shopId);
+            });
+        });
+    });
+    const plain = {};
+    Object.keys(map).forEach((mat) => {
+        plain[mat] = [...map[mat]].sort();
+    });
+    return plain;
+}
+
+function loadUltimateShopCategoryRegistry() {
+    if (ultimateShopRegistryCache) {
+        return ultimateShopRegistryCache;
+    }
+
+    const langMap = loadUltimateShopLangMap();
+    const mainMenu = loadYamlFile(ULTIMATE_SHOP_MAIN_MENU_PATH);
+    const categories = [];
+    const knownShopIds = new Set();
+
+    const pushCategory = (entry) => {
+        if (!entry || !entry.id || knownShopIds.has(entry.id)) {
+            return;
+        }
+        knownShopIds.add(entry.id);
+        categories.push(entry);
+    };
+
+    if (mainMenu && mainMenu.buttons && typeof mainMenu.buttons === 'object') {
+        Object.keys(mainMenu.buttons).forEach((menuKey) => {
+            const btn = mainMenu.buttons[menuKey];
+            if (!btn || typeof btn !== 'object') {
+                return;
+            }
+            const actions = btn.actions || {};
+            Object.values(actions).forEach((action) => {
+                if (!action || action.type !== 'shop_menu' || !action.shop) {
+                    return;
+                }
+                const shopId = String(action.shop).trim();
+                const displayItem = btn['display-item'] || btn.displayItem || {};
+                const resolvedName = resolveUltimateShopLangText(displayItem.name || '', langMap) || shopId;
+                pushCategory({
+                    id: shopId,
+                    menuKey,
+                    name: stripMinecraftColorCodes(resolvedName) || shopId,
+                    icon: normalizeMaterialId(displayItem.material) || 'chest',
+                    order: categories.length
+                });
+            });
+        });
+    }
+
+    ORPHAN_SHOP_CATEGORIES.forEach((orphan) => {
+        const shopFile = path.join(ULTIMATE_SHOP_SHOPS_DIR, `${orphan.id}.yml`);
+        if (!fs.existsSync(shopFile)) {
+            return;
+        }
+        let name = orphan.name;
+        if (orphan.langNameKey && langMap[orphan.langNameKey]) {
+            name = stripMinecraftColorCodes(resolveUltimateShopLangText(`{lang:${orphan.langNameKey}}`, langMap));
+        }
+        const entry = {
+            id: orphan.id,
+            menuKey: null,
+            name: name || orphan.id,
+            icon: orphan.icon || 'chest',
+            order: categories.length
+        };
+        if (orphan.insertAfter) {
+            const idx = categories.findIndex((cat) => cat.id === orphan.insertAfter);
+            if (idx >= 0) {
+                entry.order = idx + 1;
+                categories.splice(idx + 1, 0, entry);
+                categories.forEach((cat, i) => {
+                    cat.order = i;
+                });
+                knownShopIds.add(entry.id);
+                return;
+            }
+        }
+        pushCategory(entry);
+    });
+
+    const materialToShops = buildMaterialToShopsMap();
+    const shopItemCounts = {};
+    categories.forEach((cat) => {
+        shopItemCounts[cat.id] = 0;
+    });
+    Object.values(materialToShops).forEach((shopIds) => {
+        shopIds.forEach((shopId) => {
+            if (shopItemCounts[shopId] == null) {
+                shopItemCounts[shopId] = 0;
+            }
+            shopItemCounts[shopId] += 1;
+        });
+    });
+
+    ultimateShopRegistryCache = {
+        categories,
+        materialToShops,
+        shopItemCounts
+    };
+    return ultimateShopRegistryCache;
+}
+
+function pickPrimaryUltimateShopOffer(offers, priceData) {
+    if (!Array.isArray(offers) || !offers.length) {
+        return null;
+    }
+    let best = offers[0];
+    let bestPrice = Infinity;
+    offers.forEach((offer) => {
+        const hasBuy = offer.buyAmount != null && offer.buyAmount !== '';
+        if (!hasBuy) {
+            return;
+        }
+        const unit = offer.buyAmountResolved != null
+            ? Number(offer.buyAmountResolved)
+            : resolveMcwwsPricePlaceholder(offer.buyAmount, priceData);
+        if (!Number.isFinite(unit) || unit < 0) {
+            return;
+        }
+        if (unit < bestPrice) {
+            bestPrice = unit;
+            best = offer;
+        }
+    });
+    return best;
+}
+
+function buildUltimateShopMappingsFromCatalog(priceData) {
+    const catalog = buildUltimateShopCatalogByMaterial(priceData);
+    const mappings = {};
+    Object.keys(catalog).forEach((itemId) => {
+        const offer = pickPrimaryUltimateShopOffer(catalog[itemId], priceData);
+        if (!offer) {
+            return;
+        }
+        mappings[itemId] = {
+            shop: offer.shopId,
+            item: String(offer.slot),
+            amount: 1
+        };
+    });
+    return mappings;
+}
+
+function syncUltimateShopMappingsFile() {
+    try {
+        const priceData = loadPriceTables();
+        const generated = buildUltimateShopMappingsFromCatalog(priceData);
+        const header = `# UltimateShop 映射（由 server.js 根据 shops/*.yml 自动生成）\n# shop = 商店 ID（如 blocks、farming），item = 该商店 yml 中的槽位字母\n\n`;
+        const body = yaml.dump(generated, { lineWidth: 120, noRefs: true });
+        fs.writeFileSync(MAPPING_PATH, header + body, 'utf8');
+        yamlFileCache.delete(MAPPING_PATH);
+        return Object.keys(generated).length;
+    } catch (error) {
+        console.error('同步 UltimateShop 映射失败:', error.message || error);
+        return 0;
+    }
 }
 
 const ORDER_LINE_FIELD_NAMES = [
@@ -2521,6 +2716,20 @@ app.post('/api/admin/shop-locations/:shopId', (req, res) => {
 });
 
 // 提供数据接口，同时返回 UltimateShop 映射配置
+app.get('/api/shop/categories', (req, res) => {
+    try {
+        const registry = loadUltimateShopCategoryRegistry();
+        res.json({
+            categories: registry.categories,
+            shopItemCounts: registry.shopItemCounts,
+            shopMaterialCount: Object.keys(registry.materialToShops).length
+        });
+    } catch (error) {
+        console.error('读取商店分类失败:', error);
+        res.status(500).json({ error: '读取商店分类失败' });
+    }
+});
+
 app.get('/api/prices', (req, res) => {
     try {
         if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
@@ -2530,23 +2739,28 @@ app.get('/api/prices', (req, res) => {
         const rawData = loadPriceTables();
         const mappings = loadYamlFile(MAPPING_PATH);
         const usCatalog = buildUltimateShopCatalogByMaterial(rawData);
+        const registry = loadUltimateShopCategoryRegistry();
 
         const responseData = {};
         Object.keys(rawData).forEach(key => {
             const mapping = mappings[key] || {};
             const normKey = normalizeMaterialId(key) || key;
             const ultimateShopOffers = usCatalog[normKey] || [];
+            const shopCategories = registry.materialToShops[normKey] || [];
+            const primaryOffer = pickPrimaryUltimateShopOffer(ultimateShopOffers, rawData);
             responseData[key] = {
                 buy: rawData[key].buy,
                 sell: rawData[key].sell,
                 source: rawData[key].source || 'vanilla',
                 custom: rawData[key].custom === true,
-                shop: mapping.shop || null,
-                item: mapping.item || null,
+                shop: primaryOffer ? primaryOffer.shopId : (mapping.shop || null),
+                item: primaryOffer ? String(primaryOffer.slot) : (mapping.item || null),
                 amount: mapping.amount || 1,
                 displayName: mapping.displayName || null,
                 customDisplayName: rawData[key].displayName || null,
                 loreLine: rawData[key].loreLine || rawData[key].description || rawData[key].lore || null,
+                shopCategories,
+                inShop: ultimateShopOffers.length > 0,
                 ultimateShopOffers
             };
         });
@@ -2869,6 +3083,10 @@ function localIpv4Addresses() {
 function logServerStart(protocol) {
     analytics.reload();
     purgeBlueMapShopMarkers();
+    const mappingCount = syncUltimateShopMappingsFile();
+    if (mappingCount > 0) {
+        console.log(`🛒 UltimateShop 映射已同步：${mappingCount} 个可购物品 → ${MAPPING_PATH}`);
+    }
     console.log(`✅ 高级版 UI 服务已启动！访问: ${protocol}://${HOST}:${PORT}`);
     localIpv4Addresses().forEach((ip) => {
         console.log(`📱 局域网访问: ${protocol}://${ip}:${PORT}`);

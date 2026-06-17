@@ -1,15 +1,895 @@
-# UltimateShop 映射文件
-# 用于将网页端的 itemId 对应到 UltimateShop 里的 shop 和 item 标识。
-# 例如，网页端 itemId 为 angler_pottery_sherd 的商品，实际在 UltimateShop 中是 shop 'pottery_shop' 的产品 ID 'A'
-# 请根据你的 UltimateShop shops/*.yml 配置实际填写 shop 和 item 值。
-# amount 表示默认购买数量，可省略。
+# UltimateShop 映射（由 server.js 根据 shops/*.yml 自动生成）
+# shop = 商店 ID（如 blocks、farming），item = 该商店 yml 中的槽位字母
 
-angler_pottery_sherd:
-  shop: 'example-shop-menu'
-  item: 'A'
+grass_block:
+  shop: blocks
+  item: A
   amount: 1
-
-diamond_boots:
-  shop: 'example-shop-menu'
-  item: 'B'
+dirt:
+  shop: blocks
+  item: B
+  amount: 1
+coarse_dirt:
+  shop: blocks
+  item: C
+  amount: 1
+rooted_dirt:
+  shop: blocks
+  item: D
+  amount: 1
+cobblestone:
+  shop: blocks
+  item: E
+  amount: 1
+stone:
+  shop: blocks
+  item: F
+  amount: 1
+gravel:
+  shop: blocks
+  item: G
+  amount: 1
+andesite:
+  shop: blocks
+  item: H
+  amount: 1
+diorite:
+  shop: blocks
+  item: I
+  amount: 1
+granite:
+  shop: blocks
+  item: J
+  amount: 1
+ice:
+  shop: blocks
+  item: K
+  amount: 1
+packed_ice:
+  shop: blocks
+  item: L
+  amount: 1
+blue_ice:
+  shop: blocks
+  item: M
+  amount: 1
+netherrack:
+  shop: blocks
+  item: 'N'
+  amount: 1
+nether_bricks:
+  shop: blocks
+  item: O
+  amount: 1
+glowstone:
+  shop: blocks
+  item: P
+  amount: 1
+soul_sand:
+  shop: blocks
+  item: Q
+  amount: 1
+soul_soil:
+  shop: blocks
+  item: R
+  amount: 1
+basalt:
+  shop: blocks
+  item: S
+  amount: 1
+obsidian:
+  shop: blocks
+  item: T
+  amount: 1
+crying_obsidian:
+  shop: blocks
+  item: U
+  amount: 1
+mud:
+  shop: blocks2
+  item: A
+  amount: 1
+bricks:
+  shop: blocks2
+  item: B
+  amount: 1
+sponge:
+  shop: blocks2
+  item: C
+  amount: 1
+moss_block:
+  shop: blocks2
+  item: D
+  amount: 1
+calcite:
+  shop: blocks2
+  item: E
+  amount: 1
+blackstone:
+  shop: blocks2
+  item: F
+  amount: 1
+purpur_block:
+  shop: blocks2
+  item: G
+  amount: 1
+shroomlight:
+  shop: blocks2
+  item: H
+  amount: 1
+amethyst_block:
+  shop: blocks2
+  item: I
+  amount: 1
+tube_coral_block:
+  shop: blocks2
+  item: J
+  amount: 1
+brain_coral_block:
+  shop: blocks2
+  item: K
+  amount: 1
+bubble_coral_block:
+  shop: blocks2
+  item: L
+  amount: 1
+fire_coral_block:
+  shop: blocks2
+  item: M
+  amount: 1
+horn_coral_block:
+  shop: blocks2
+  item: 'N'
+  amount: 1
+sea_lantern:
+  shop: blocks2
+  item: O
+  amount: 1
+magma_block:
+  shop: blocks2
+  item: P
+  amount: 1
+tuff:
+  shop: blocks2
+  item: Q
+  amount: 1
+sand:
+  shop: blocks2
+  item: R
+  amount: 1
+red_sand:
+  shop: blocks2
+  item: S
+  amount: 1
+prismarine:
+  shop: blocks2
+  item: T
+  amount: 1
+red_concrete:
+  shop: concretes
+  item: A
+  amount: 1
+orange_concrete:
+  shop: concretes
+  item: B
+  amount: 1
+yellow_concrete:
+  shop: concretes
+  item: C
+  amount: 1
+lime_concrete:
+  shop: concretes
+  item: D
+  amount: 1
+green_concrete:
+  shop: concretes
+  item: E
+  amount: 1
+light_blue_concrete:
+  shop: concretes
+  item: F
+  amount: 1
+cyan_concrete:
+  shop: concretes
+  item: G
+  amount: 1
+blue_concrete:
+  shop: concretes
+  item: H
+  amount: 1
+purple_concrete:
+  shop: concretes
+  item: I
+  amount: 1
+magenta_concrete:
+  shop: concretes
+  item: J
+  amount: 1
+pink_concrete:
+  shop: concretes
+  item: K
+  amount: 1
+brown_concrete:
+  shop: concretes
+  item: L
+  amount: 1
+black_concrete:
+  shop: concretes
+  item: M
+  amount: 1
+gray_concrete:
+  shop: concretes
+  item: 'N'
+  amount: 1
+light_gray_concrete:
+  shop: concretes
+  item: O
+  amount: 1
+white_concrete:
+  shop: concretes
+  item: P
+  amount: 1
+redstone:
+  shop: minerals
+  item: E
+  amount: 1
+iron_ingot:
+  shop: minerals
+  item: C
+  amount: 1
+gold_ingot:
+  shop: minerals
+  item: B
+  amount: 1
+copper_ingot:
+  shop: minerals
+  item: J
+  amount: 1
+diamond:
+  shop: minerals
+  item: A
+  amount: 1
+lapis_lazuli:
+  shop: minerals
+  item: D
+  amount: 1
+emerald:
+  shop: daily
+  item: F
+  amount: 1
+string:
+  shop: drops
+  item: A
+  amount: 1
+feather:
+  shop: drops
+  item: B
+  amount: 1
+gunpowder:
+  shop: drops
+  item: C
+  amount: 1
+flint:
+  shop: drops
+  item: D
+  amount: 1
+bone:
+  shop: drops
+  item: E
+  amount: 1
+ghast_tear:
+  shop: drops
+  item: F
+  amount: 1
+ink_sac:
+  shop: drops
+  item: G
+  amount: 1
+glow_ink_sac:
+  shop: drops
+  item: H
+  amount: 1
+spider_eye:
+  shop: drops
+  item: I
+  amount: 1
+rotten_flesh:
+  shop: drops
+  item: J
+  amount: 1
+leather:
+  shop: drops
+  item: K
+  amount: 1
+rabbit_hide:
+  shop: drops
+  item: L
+  amount: 1
+ender_pearl:
+  shop: drops
+  item: M
+  amount: 1
+slime_ball:
+  shop: drops
+  item: 'N'
+  amount: 1
+magma_cream:
+  shop: drops
+  item: O
+  amount: 1
+potion:
+  shop: example
+  item: A
+  amount: 1
+bundle:
+  shop: example
+  item: B
+  amount: 1
+suspicious_sand:
+  shop: example
+  item: C
+  amount: 1
+diamond_axe:
+  shop: example
+  item: D
+  amount: 1
+enchanted_book:
+  shop: example
+  item: E
+  amount: 1
+potato:
+  shop: example
+  item: F
+  amount: 1
+blue_banner:
+  shop: example
+  item: G
+  amount: 1
+axolotl_bucket:
+  shop: example
+  item: H
+  amount: 1
+tropical_fish_bucket:
+  shop: example
+  item: I
+  amount: 1
+player_head:
+  shop: example
+  item: J
+  amount: 1
+firework_rocket:
+  shop: example
+  item: L
+  amount: 1
+leather_chestplate:
+  shop: example
+  item: M
+  amount: 1
+spawner:
+  shop: example
+  item: 'N'
+  amount: 1
+apple:
+  shop: example
+  item: P
+  amount: 1
+echo_shard:
+  shop: example
+  item: S
+  amount: 1
+wheat_seeds:
+  shop: farming
+  item: A
+  amount: 1
+pumpkin_seeds:
+  shop: farming
+  item: B
+  amount: 1
+beetroot_seeds:
+  shop: farming
+  item: C
+  amount: 1
+melon_seeds:
+  shop: farming
+  item: D
+  amount: 1
+wheat:
+  shop: farming
+  item: E
+  amount: 1
+pumpkin:
+  shop: farming
+  item: F
+  amount: 1
+melon_slice:
+  shop: farming
+  item: G
+  amount: 1
+beetroot:
+  shop: farming
+  item: H
+  amount: 1
+sugar_cane:
+  shop: farming
+  item: J
+  amount: 1
+kelp:
+  shop: farming
+  item: K
+  amount: 1
+vine:
+  shop: farming
+  item: L
+  amount: 1
+carrot:
+  shop: farming
+  item: M
+  amount: 1
+nether_wart:
+  shop: farming
+  item: 'N'
+  amount: 1
+lily_pad:
+  shop: farming
+  item: O
+  amount: 1
+sweet_berries:
+  shop: farming
+  item: P
+  amount: 1
+glow_berries:
+  shop: farming
+  item: Q
+  amount: 1
+cod:
+  shop: fish
+  item: A
+  amount: 1
+cooked_cod:
+  shop: fish
+  item: B
+  amount: 1
+salmon:
+  shop: fish
+  item: C
+  amount: 1
+cooked_salmon:
+  shop: fish
+  item: D
+  amount: 1
+tropical_fish:
+  shop: fish
+  item: E
+  amount: 1
+pufferfish:
+  shop: fish
+  item: F
+  amount: 1
+peony:
+  shop: flowers
+  item: A
+  amount: 1
+sunflower:
+  shop: flowers
+  item: B
+  amount: 1
+pink_petals:
+  shop: flowers
+  item: C
+  amount: 1
+blue_orchid:
+  shop: flowers
+  item: D
+  amount: 1
+white_tulip:
+  shop: flowers
+  item: E
+  amount: 1
+orange_tulip:
+  shop: flowers
+  item: F
+  amount: 1
+red_tulip:
+  shop: flowers
+  item: G
+  amount: 1
+lilac:
+  shop: flowers
+  item: H
+  amount: 1
+cornflower:
+  shop: flowers
+  item: I
+  amount: 1
+pink_tulip:
+  shop: flowers
+  item: J
+  amount: 1
+poppy:
+  shop: flowers
+  item: K
+  amount: 1
+dandelion:
+  shop: flowers
+  item: L
+  amount: 1
+rose_bush:
+  shop: flowers
+  item: M
+  amount: 1
+azure_bluet:
+  shop: flowers
+  item: 'N'
+  amount: 1
+allium:
+  shop: flowers
+  item: O
+  amount: 1
+lily_of_the_valley:
+  shop: flowers
+  item: P
+  amount: 1
+oxeye_daisy:
+  shop: flowers
+  item: Q
+  amount: 1
+red_stained_glass:
+  shop: glass
+  item: A
+  amount: 1
+orange_stained_glass:
+  shop: glass
+  item: B
+  amount: 1
+yellow_stained_glass:
+  shop: glass
+  item: C
+  amount: 1
+lime_stained_glass:
+  shop: glass
+  item: D
+  amount: 1
+green_stained_glass:
+  shop: glass
+  item: E
+  amount: 1
+light_blue_stained_glass:
+  shop: glass
+  item: F
+  amount: 1
+cyan_stained_glass:
+  shop: glass
+  item: G
+  amount: 1
+blue_stained_glass:
+  shop: glass
+  item: H
+  amount: 1
+purple_stained_glass:
+  shop: glass
+  item: I
+  amount: 1
+magenta_stained_glass:
+  shop: glass
+  item: J
+  amount: 1
+pink_stained_glass:
+  shop: glass
+  item: K
+  amount: 1
+brown_stained_glass:
+  shop: glass
+  item: L
+  amount: 1
+black_stained_glass:
+  shop: glass
+  item: M
+  amount: 1
+gray_stained_glass:
+  shop: glass
+  item: 'N'
+  amount: 1
+light_gray_stained_glass:
+  shop: glass
+  item: O
+  amount: 1
+white_stained_glass:
+  shop: glass
+  item: P
+  amount: 1
+tinted_glass:
+  shop: glass
+  item: Q
+  amount: 1
+cherry_log:
+  shop: logs
+  item: A
+  amount: 1
+oak_log:
+  shop: logs
+  item: B
+  amount: 1
+spruce_log:
+  shop: logs
+  item: C
+  amount: 1
+birch_log:
+  shop: logs
+  item: D
+  amount: 1
+mangrove_log:
+  shop: logs
+  item: E
+  amount: 1
+jungle_log:
+  shop: logs
+  item: F
+  amount: 1
+acacia_log:
+  shop: logs
+  item: G
+  amount: 1
+dark_oak_log:
+  shop: logs
+  item: H
+  amount: 1
+cherry_sapling:
+  shop: logs
+  item: I
+  amount: 1
+oak_sapling:
+  shop: logs
+  item: J
+  amount: 1
+spruce_sapling:
+  shop: logs
+  item: K
+  amount: 1
+birch_sapling:
+  shop: logs
+  item: L
+  amount: 1
+mangrove_propagule:
+  shop: logs
+  item: M
+  amount: 1
+jungle_sapling:
+  shop: logs
+  item: 'N'
+  amount: 1
+acacia_sapling:
+  shop: logs
+  item: O
+  amount: 1
+dark_oak_sapling:
+  shop: logs
+  item: P
+  amount: 1
+coal:
+  shop: minerals
+  item: F
+  amount: 1
+amethyst_shard:
+  shop: minerals
+  item: G
+  amount: 1
+ancient_debris:
+  shop: minerals
+  item: H
+  amount: 1
+quartz:
+  shop: minerals
+  item: I
+  amount: 1
+dispenser:
+  shop: redstone
+  item: A
+  amount: 1
+note_block:
+  shop: redstone
+  item: B
+  amount: 1
+sticky_piston:
+  shop: redstone
+  item: C
+  amount: 1
+piston:
+  shop: redstone
+  item: D
+  amount: 1
+tnt:
+  shop: redstone
+  item: E
+  amount: 1
+dropper:
+  shop: redstone
+  item: F
+  amount: 1
+observer:
+  shop: redstone
+  item: G
+  amount: 1
+repeater:
+  shop: redstone
+  item: H
+  amount: 1
+comparator:
+  shop: redstone
+  item: I
+  amount: 1
+experience_bottle:
+  shop: special
+  item: A
+  amount: 1
+heart_of_the_sea:
+  shop: special
+  item: B
+  amount: 1
+nautilus_shell:
+  shop: special
+  item: C
+  amount: 1
+red_terracotta:
+  shop: terracottas
+  item: A
+  amount: 1
+orange_terracotta:
+  shop: terracottas
+  item: B
+  amount: 1
+yellow_terracotta:
+  shop: terracottas
+  item: C
+  amount: 1
+lime_terracotta:
+  shop: terracottas
+  item: D
+  amount: 1
+green_terracotta:
+  shop: terracottas
+  item: E
+  amount: 1
+light_blue_terracotta:
+  shop: terracottas
+  item: F
+  amount: 1
+cyan_terracotta:
+  shop: terracottas
+  item: G
+  amount: 1
+blue_terracotta:
+  shop: terracottas
+  item: H
+  amount: 1
+purple_terracotta:
+  shop: terracottas
+  item: I
+  amount: 1
+magenta_terracotta:
+  shop: terracottas
+  item: J
+  amount: 1
+pink_terracotta:
+  shop: terracottas
+  item: K
+  amount: 1
+brown_terracotta:
+  shop: terracottas
+  item: L
+  amount: 1
+black_terracotta:
+  shop: terracottas
+  item: M
+  amount: 1
+gray_terracotta:
+  shop: terracottas
+  item: 'N'
+  amount: 1
+light_gray_terracotta:
+  shop: terracottas
+  item: O
+  amount: 1
+white_terracotta:
+  shop: terracottas
+  item: P
+  amount: 1
+rail:
+  shop: transport
+  item: A
+  amount: 1
+powered_rail:
+  shop: transport
+  item: B
+  amount: 1
+activator_rail:
+  shop: transport
+  item: C
+  amount: 1
+detector_rail:
+  shop: transport
+  item: D
+  amount: 1
+minecart:
+  shop: transport
+  item: E
+  amount: 1
+chest_minecart:
+  shop: transport
+  item: F
+  amount: 1
+furnace_minecart:
+  shop: transport
+  item: G
+  amount: 1
+hopper_minecart:
+  shop: transport
+  item: H
+  amount: 1
+tnt_minecart:
+  shop: transport
+  item: I
+  amount: 1
+red_wool:
+  shop: wools
+  item: A
+  amount: 1
+orange_wool:
+  shop: wools
+  item: B
+  amount: 1
+yellow_wool:
+  shop: wools
+  item: C
+  amount: 1
+lime_wool:
+  shop: wools
+  item: D
+  amount: 1
+green_wool:
+  shop: wools
+  item: E
+  amount: 1
+light_blue_wool:
+  shop: wools
+  item: F
+  amount: 1
+cyan_wool:
+  shop: wools
+  item: G
+  amount: 1
+blue_wool:
+  shop: wools
+  item: H
+  amount: 1
+purple_wool:
+  shop: wools
+  item: I
+  amount: 1
+magenta_wool:
+  shop: wools
+  item: J
+  amount: 1
+pink_wool:
+  shop: wools
+  item: K
+  amount: 1
+brown_wool:
+  shop: wools
+  item: L
+  amount: 1
+black_wool:
+  shop: wools
+  item: M
+  amount: 1
+gray_wool:
+  shop: wools
+  item: 'N'
+  amount: 1
+light_gray_wool:
+  shop: wools
+  item: O
+  amount: 1
+white_wool:
+  shop: wools
+  item: P
   amount: 1

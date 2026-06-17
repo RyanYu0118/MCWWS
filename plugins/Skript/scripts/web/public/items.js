@@ -11,7 +11,7 @@ let letterFilter = ''; // A–Z 首字母筛选，空表示不限
 let sortReverse = false; // 逆序状态，默认关闭
 let hideUntradable = false; // 隐藏无 UltimateShop 上架（不可交易）的物品
 let currentPage = 1;
-let itemScope = 'all';
+let itemScope = 'in_shop';
 const PAGE_SIZE = 60;
 let searchTimer = null;
 let pageBeforeSearch = null;
@@ -35,7 +35,9 @@ function sanitizeMcFontText(text) {
 }
 
 const SORT_VALUES = new Set(['name', 'buyPrice', 'sellPrice', 'stock']);
-const ITEM_SCOPE_VALUES = new Set(['all', 'vanilla', 'custom']);
+const STATIC_ITEM_SCOPES = new Set(['all', 'in_shop', 'custom']);
+const ITEM_SCOPE_VALUES = new Set(['all', 'in_shop', 'custom']);
+let shopCategoryList = [];
 const CART_STORAGE_KEY = 'mcwws_shop_cart';
 let shopCart = [];
 let cartDrawerOpen = false;
@@ -76,7 +78,11 @@ function hydrateItemsStateFromUrl() {
     }
 
     const scopeVal = params.get('scope');
-    itemScope = scopeVal && ITEM_SCOPE_VALUES.has(scopeVal) ? scopeVal : 'all';
+    if (scopeVal && (ITEM_SCOPE_VALUES.has(scopeVal) || shopCategoryList.some((cat) => cat.id === scopeVal))) {
+        itemScope = scopeVal;
+    } else {
+        itemScope = 'in_shop';
+    }
     updateCategoryScopeButtons();
 
     sortReverse = params.get('rev') === '1';
@@ -108,7 +114,7 @@ function syncItemsStateToUrl() {
     if (currentSort && currentSort !== 'name') params.set('sort', currentSort);
     else params.delete('sort');
 
-    if (itemScope && itemScope !== 'all') params.set('scope', itemScope);
+    if (itemScope && itemScope !== 'in_shop') params.set('scope', itemScope);
     else params.delete('scope');
 
     if (sortReverse) params.set('rev', '1');
@@ -193,8 +199,42 @@ document.addEventListener('DOMContentLoaded', async () => {
 // 该函数在后面定义为优化版，避免重复定义。
 
 // 从 Node.js 后端拉取数据，并读取 UltimateShop 映射
+async function loadShopCategories() {
+    try {
+        const response = await fetch('/api/shop/categories?t=' + Date.now());
+        if (!response.ok) return;
+        const data = await response.json();
+        shopCategoryList = Array.isArray(data.categories) ? data.categories : [];
+        shopCategoryList.forEach((cat) => ITEM_SCOPE_VALUES.add(cat.id));
+        renderCategoryTabs();
+        updateCategoryScopeButtons();
+    } catch (error) {
+        console.warn('加载商店分类失败', error);
+    }
+}
+
+function renderCategoryTabs() {
+    const tabs = document.getElementById('categoryTabs');
+    if (!tabs) return;
+
+    const customBtn = '<button class="category-btn" data-scope="custom">自定义</button>';
+    const dynamic = shopCategoryList.map((cat) => {
+        const count = cat.itemCount != null ? ` (${cat.itemCount})` : '';
+        return `<button class="category-btn" data-scope="${escapeHtml(cat.id)}" title="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}${count}</button>`;
+    }).join('');
+
+    tabs.innerHTML = `
+        <button class="category-btn" data-scope="all">全部</button>
+        <button class="category-btn" data-scope="in_shop">商店内</button>
+        ${dynamic}
+        ${customBtn}
+    `;
+    updateCategoryScopeButtons();
+}
+
 async function loadItems() {
     try {
+        await loadShopCategories();
         const response = await fetch('/api/prices?t=' + new Date().getTime());
 
         if (!response.ok) throw new Error('网络响应失败');
@@ -219,11 +259,15 @@ async function loadItems() {
                 || rawData[key].description
                 || rawData[key].lore
                 || (window.getItemLoreLine ? window.getItemLoreLine(key) : null)),
+            shopCategories: Array.isArray(rawData[key].shopCategories) ? rawData[key].shopCategories : [],
+            inShop: rawData[key].inShop === true,
             ultimateShopOffers: Array.isArray(rawData[key].ultimateShopOffers)
                 ? rawData[key].ultimateShopOffers
                 : []
         }));
 
+        updateShopCategoryCounts();
+        renderCategoryTabs();
         hydrateItemsStateFromUrl();
         initLetterIndexBar();
         updateLetterIndexButtons();
@@ -633,6 +677,40 @@ function isCustomCatalogItem(item) {
         || item.source === 'custom'
         || item.kind === 'custom'
         || item.type === 'custom';
+}
+
+function updateShopCategoryCounts() {
+    const counts = {};
+    shopCategoryList.forEach((cat) => {
+        counts[cat.id] = 0;
+    });
+    allItems.forEach((item) => {
+        (item.shopCategories || []).forEach((shopId) => {
+            if (counts[shopId] != null) {
+                counts[shopId] += 1;
+            }
+        });
+    });
+    shopCategoryList = shopCategoryList.map((cat) => ({
+        ...cat,
+        itemCount: counts[cat.id] || 0
+    }));
+}
+
+function itemMatchesShopScope(item) {
+    if (itemScope === 'all') {
+        return true;
+    }
+    if (itemScope === 'in_shop') {
+        return item.inShop === true || (item.ultimateShopOffers || []).length > 0;
+    }
+    if (itemScope === 'custom') {
+        return isCustomCatalogItem(item);
+    }
+    if (ITEM_SCOPE_VALUES.has(itemScope) || shopCategoryList.some((cat) => cat.id === itemScope)) {
+        return (item.shopCategories || []).includes(itemScope);
+    }
+    return true;
 }
 
 function updateCategoryScopeButtons() {
@@ -1388,13 +1466,9 @@ function filterAndRenderItems() {
         return itemMatchesSearchQuery(item, query);
     });
 
-    if (itemScope === 'vanilla') {
-        filteredItems = filteredItems.filter(item => !isCustomCatalogItem(item));
-    } else if (itemScope === 'custom') {
-        filteredItems = filteredItems.filter(item => isCustomCatalogItem(item));
-    }
+    filteredItems = filteredItems.filter((item) => itemMatchesShopScope(item));
 
-    if (hideUntradable) {
+    if (hideUntradable && itemScope === 'all') {
         filteredItems = filteredItems.filter(item => (item.ultimateShopOffers || []).length > 0);
     }
 
@@ -1691,7 +1765,8 @@ function setupEventListeners() {
             const btn = e.target.closest('.category-btn[data-scope]');
             if (!btn) return;
             const nextScope = btn.dataset.scope || 'all';
-            if (!ITEM_SCOPE_VALUES.has(nextScope) || nextScope === itemScope) return;
+            if (!STATIC_ITEM_SCOPES.has(nextScope) && !shopCategoryList.some((cat) => cat.id === nextScope)) return;
+            if (nextScope === itemScope) return;
             itemScope = nextScope;
             currentPage = 1;
             updateCategoryScopeButtons();
