@@ -879,15 +879,15 @@ orders:
         playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
         playerId: GuuuuuLei
         username: Gu Lei
-        status: pending
+        status: delivered
         total: 2
         balanceAfter: 1426.22
         economyChargedInGame: true
         createdAt: '2026-06-17T09:47:59.254Z'
-        updatedAt: '2026-06-17 17:48:00'
+        updatedAt: '2026-06-17 18:09:44'
         failureReason: ''
         deliveringLine: 0
-        deliveringStartedAt: ''
+        deliveringStartedAt: '2026-06-17 18:09:43'
         lineCount: 1
         lines:
             '1':
@@ -900,6 +900,6 @@ orders:
                 productAmount: 1
                 material: black_concrete
                 shopTitle: 混凝土商店
-                status: pending
+                status: delivered
 
 next_id: 35

@@ -181,11 +181,12 @@ app.get('/manage/index.html', (req, res) => {
     res.redirect(301, '/manage/shop-locations.html');
 });
 
-// 价格表：原版物品与自定义物品分开存放，接口层合并输出。
+// 价格表：Skript 每分钟导出 web_prices.yml；custom_prices 为自定义物品覆盖层。
+const WEB_PRICES_PATH = path.join(__dirname, 'mcwws', 'economy', 'web_prices.yml');
 const VANILLA_PRICES_PATH = path.join(__dirname, 'mcwws', 'economy', 'vanilla_prices.yml');
 const CUSTOM_PRICES_PATH = path.join(__dirname, 'mcwws', 'economy', 'custom_prices.yml');
 const PRICE_TABLE_PATHS = [
-    { path: VANILLA_PRICES_PATH, source: 'vanilla', custom: false },
+    { path: WEB_PRICES_PATH, fallback: VANILLA_PRICES_PATH, source: 'vanilla', custom: false },
     { path: CUSTOM_PRICES_PATH, source: 'custom', custom: true }
 ];
 const MAPPING_PATH = path.join(__dirname, 'mcwws', 'ultimateshop_mappings.yml');
@@ -293,10 +294,22 @@ function saveYamlFile(filePath, data) {
     yamlFileCache.delete(filePath);
 }
 
+function resolvePriceTablePath(table) {
+    if (fs.existsSync(table.path)) {
+        return table.path;
+    }
+    if (table.fallback && fs.existsSync(table.fallback)) {
+        return table.fallback;
+    }
+    return null;
+}
+
 function loadPriceTables() {
     const merged = {};
     PRICE_TABLE_PATHS.forEach((table) => {
-        const data = loadYamlFile(table.path);
+        const filePath = resolvePriceTablePath(table);
+        if (!filePath) return;
+        const data = loadYamlFile(filePath);
         Object.keys(data).forEach((key) => {
             const row = data[key];
             if (!row || typeof row !== 'object') return;
@@ -2267,7 +2280,7 @@ app.post('/api/admin/shop-locations/:shopId', (req, res) => {
 // 提供数据接口，同时返回 UltimateShop 映射配置
 app.get('/api/prices', (req, res) => {
     try {
-        if (!PRICE_TABLE_PATHS.some((table) => fs.existsSync(table.path))) {
+        if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
             return res.status(404).json({ error: '暂无数据' });
         }
 
@@ -2523,7 +2536,7 @@ app.post('/api/buy', (req, res) => {
             return res.status(400).json({ error: '缺少 itemId 参数' });
         }
 
-        if (!PRICE_TABLE_PATHS.some((table) => fs.existsSync(table.path))) {
+        if (!PRICE_TABLE_PATHS.some((table) => resolvePriceTablePath(table))) {
             return res.status(404).json({ error: '暂无数据' });
         }
 

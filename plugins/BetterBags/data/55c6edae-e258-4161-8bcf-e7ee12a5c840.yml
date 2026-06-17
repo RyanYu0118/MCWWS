@@ -85,11 +85,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:stick
-  count: 22
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stick
-  count: 42
+  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:nether_wart_block
@@ -253,7 +249,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:spruce_sapling
-  count: 17
+  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
@@ -264,10 +260,6 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#A241BF",italic:0b,obfuscated:0b,strikethrough:0b,text:"农耕工艺
       - 原始植物: 光明",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PLANT_LIGHT"}}'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:spruce_sapling
-  count: 47
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:netherrack
@@ -685,6 +677,10 @@ items:
 - DataVersion: 4671
   id: minecraft:shroomlight
   count: 31
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:black_concrete
+  count: 1
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

@@ -13,9 +13,14 @@ function updatePrices():
         if {_buy_base} is not set:
             continue
             
-        # 计算波动后的最终价格
-        set {_final_buy} to {_buy_base} * getMarketMultiplier({_item}, "buy")
-        set {_final_sell} to {_sell_base} * getMarketMultiplier({_item}, "sell")
+        # 计算波动后的最终价格（买卖同倍率，避免单侧调价导致套利）
+        set {_multiplier} to getMarketMultiplier({_item})
+        set {_final_buy} to {_buy_base} * {_multiplier}
+        set {_final_sell} to {_sell_base} * {_multiplier}
+        
+        # 安全钳制：回收价不得高于买入价
+        if {_final_sell} > {_final_buy}:
+            set {_final_sell} to {_final_buy} * 0.99
         
         # 存入纯内存缓存，精确保留两位小数 (先乘100取整再除以100)
         # 注意这里的 {-} 前缀，代表完全不写入硬盘！
@@ -25,21 +30,19 @@ function updatePrices():
 # ==========================================
 # 2. 波动函数 (在此处编写你的经济逻辑)
 # ==========================================
-function getMarketMultiplier(item: text, actionType: text) :: number:
+function getMarketMultiplier(item: text) :: number:
     set {_multiplier} to 1.0
     
     # 优化：从内存中直接获取物品分类标签，不再读取 YAML 文件
     set {_category} to {-item_category::%{_item}%}
     
-    # --- 逻辑示例：考古类物品回收价提高 10% ---
+    # 考古类：整体溢价 10%（买卖同调，保持价差比例）
     if {_category} is "archaeology":
-        if {_actionType} is "sell":
-            add 0.1 to {_multiplier}
+        add 0.1 to {_multiplier}
             
-    # --- 逻辑示例：木材类物品买入价打 9 折 ---
+    # 木材类：整体降价 10%（买卖同调，保持价差比例）
     if {_category} is "wood":
-        if {_actionType} is "buy":
-            subtract 0.1 from {_multiplier}
+        subtract 0.1 from {_multiplier}
             
     # --- 逻辑示例：根据在线人数动态涨价 ---
     # set {_online} to amount of all players
