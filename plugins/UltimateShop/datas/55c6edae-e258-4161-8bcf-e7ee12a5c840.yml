@@ -1,16 +1,42 @@
 useTimes:
+  blocks:
+    B:
+      buyUseTimes: 43
+      totalBuyUseTimes: 43
+      lastBuyTime: '2026-06-17 15:03:36'
+    P:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      sellUseTimes: 98
+      totalSellUseTimes: 98
+      lastBuyTime: '2026-06-17 15:44:50'
+      lastSellTime: '2026-06-17 15:45:19'
+    S:
+      buyUseTimes: 25
+      totalBuyUseTimes: 25
+      sellUseTimes: 32
+      totalSellUseTimes: 32
+      lastBuyTime: '2026-06-17 15:02:58'
+      lastSellTime: '2026-06-17 15:03:09'
   logs:
     C:
-      buyUseTimes: 27
-      totalBuyUseTimes: 27
-      sellUseTimes: 1479
-      totalSellUseTimes: 1479
-      lastBuyTime: '2026-06-15 22:56:17'
-      lastSellTime: '2026-06-15 22:56:18'
+      buyUseTimes: 2854
+      totalBuyUseTimes: 2854
+      sellUseTimes: 4303
+      totalSellUseTimes: 4303
+      lastBuyTime: '2026-06-16 12:18:46'
+      lastSellTime: '2026-06-16 12:18:48'
+    K:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      sellUseTimes: 179
+      totalSellUseTimes: 179
+      lastBuyTime: '2026-06-17 15:01:08'
+      lastSellTime: '2026-06-17 15:02:26'
   minerals:
     A:
-      buyUseTimes: 7
-      totalBuyUseTimes: 7
-      lastBuyTime: '2026-06-15 22:54:46'
+      buyUseTimes: 28
+      totalBuyUseTimes: 28
+      lastBuyTime: '2026-06-17 16:00:14'
 favourites: {}
 randomPlaceholder: {}

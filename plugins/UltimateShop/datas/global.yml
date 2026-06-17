@@ -24,8 +24,11 @@ useTimes:
       lastBuyTime: '2026-05-18 02:24:12'
       lastSellTime: '2026-05-18 02:24:14'
     B:
+      buyUseTimes: 43
+      totalBuyUseTimes: 43
       sellUseTimes: 4401
       totalSellUseTimes: 4401
+      lastBuyTime: '2026-06-17 15:03:36'
       lastSellTime: '2026-05-15 23:02:06'
     C:
       sellUseTimes: 296
@@ -38,6 +41,20 @@ useTimes:
       totalSellUseTimes: 9
       lastBuyTime: '2026-05-10 02:09:38'
       lastSellTime: '2026-05-15 23:02:07'
+    P:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      sellUseTimes: 98
+      totalSellUseTimes: 98
+      lastBuyTime: '2026-06-17 15:44:50'
+      lastSellTime: '2026-06-17 15:45:19'
+    S:
+      buyUseTimes: 25
+      totalBuyUseTimes: 25
+      sellUseTimes: 32
+      totalSellUseTimes: 32
+      lastBuyTime: '2026-06-17 15:02:58'
+      lastSellTime: '2026-06-17 15:03:09'
     F:
       sellUseTimes: 14
       totalSellUseTimes: 14
@@ -61,23 +78,23 @@ useTimes:
       lastSellTime: '2026-05-10 02:06:12'
   logs:
     C:
-      buyUseTimes: 27
-      totalBuyUseTimes: 27
-      sellUseTimes: 1479
-      totalSellUseTimes: 1479
-      lastBuyTime: '2026-06-15 22:56:17'
-      lastSellTime: '2026-06-15 22:56:18'
+      buyUseTimes: 2854
+      totalBuyUseTimes: 2854
+      sellUseTimes: 4303
+      totalSellUseTimes: 4303
+      lastBuyTime: '2026-06-16 12:18:46'
+      lastSellTime: '2026-06-16 12:18:48'
     D:
       buyUseTimes: 3
       totalBuyUseTimes: 3
       lastBuyTime: '2026-05-31 16:56:44'
     K:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      sellUseTimes: 131
-      totalSellUseTimes: 131
-      lastBuyTime: '2026-05-10 02:06:40'
-      lastSellTime: '2026-05-10 02:07:01'
+      buyUseTimes: 5
+      totalBuyUseTimes: 5
+      sellUseTimes: 310
+      totalSellUseTimes: 310
+      lastBuyTime: '2026-06-17 15:01:08'
+      lastSellTime: '2026-06-17 15:02:26'
     L:
       buyUseTimes: 3
       totalBuyUseTimes: 3
@@ -133,11 +150,11 @@ useTimes:
       lastBuyTime: '2026-05-31 18:00:55'
   minerals:
     A:
-      buyUseTimes: 13
-      totalBuyUseTimes: 13
+      buyUseTimes: 34
+      totalBuyUseTimes: 34
       sellUseTimes: 12
       totalSellUseTimes: 12
-      lastBuyTime: '2026-06-15 22:54:46'
+      lastBuyTime: '2026-06-17 16:00:14'
       lastSellTime: '2026-05-27 22:42:36'
     C:
       sellUseTimes: 49
@@ -183,5 +200,5 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;E;;F;;G
-    refreshDoneTime: '2026-06-17 00:00:00'
+    nowValue: B;;C;;E;;F;;G
+    refreshDoneTime: '2026-06-18 00:00:00'
