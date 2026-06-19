@@ -11,7 +11,7 @@ settings:
     - 1ABCDEFG2
     - 1HIJKLMN2
     - 1OPQRSTU2
-    - a0(03000b
+    - a0403000b
 items:
   A:
     price-mode: CLASSIC_ALL
@@ -375,7 +375,7 @@ items:
         placeholder: '{amount}$'
         start-apply: 0
 buttons:
-  (:
+  '4':
     display-item:
       material: ARROW
       name: '{lang:previous-page-button}'

@@ -138,10 +138,10 @@ function chunkArray(list, size) {
     return chunks;
 }
 
-/** 54 格 GUI 底行：上一页=47(列2)，返回=49(列4)，下一页=51(列6) */
-/** 翻页按钮使用 ( )，避免与商品槽位 A-U 中的 N、P 等字母冲突 */
-const PREV_PAGE_BTN = '(';
-const NEXT_PAGE_BTN = ')';
+/** 54 格 GUI 底行：上一页=47(返回左2格)，返回=49，下一页=51(返回右2格) */
+/** 使用 4/5 作为翻页 ID，避免与商品槽位 A-U 及菜单按钮冲突 */
+const PREV_PAGE_BTN = '4';
+const NEXT_PAGE_BTN = '5';
 
 function buildPaginationLayoutRow({ hasPrev, hasNext }) {
     const row = ['a', '0', '0', '0', '3', '0', '0', '0', 'b'];

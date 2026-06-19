@@ -73,7 +73,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:rotten_flesh
-  count: 1
+  count: 4
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
@@ -105,7 +105,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 4
+  count: 61
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -203,7 +203,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:spider_eye
-  count: 1
+  count: 3
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
@@ -307,7 +307,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:dirt
-  count: 7
+  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:jungle_sapling
@@ -461,7 +461,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"大豆",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203037.0f]}'
@@ -498,7 +498,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 2
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"黑麦种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203041.0f]}'
@@ -657,6 +657,10 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ORANGE_SAPLING"}}'
   schema_version: 1
 - DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
   id: minecraft:end_stone
   count: 3
   schema_version: 1
@@ -680,7 +684,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 1
+  count: 51
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -688,7 +692,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 1
+  count: 60
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -788,7 +792,31 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:dirt
-  count: 18
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:carrot
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"木薯",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203066.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_CASSAVA"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:spruce_sapling
+  count: 30
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 47
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brown_mushroom
+  count: 17
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"松露",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203094.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_TRUFFLE"}}'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
