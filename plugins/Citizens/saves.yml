@@ -116,12 +116,12 @@ npc:
           command: npc speak &r与商品/道具类的物品命名时务必遵循文本规范哦~
           hand: RIGHT
       location:
-        bodyYaw: -165.36096
+        bodyYaw: -11.742912
         x: -465.6697
         y: 65.0
         z: 220.6424
-        yaw: -165.361
-        pitch: 0.0
+        yaw: -11.7429
+        pitch: 4.0698
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       skinlayers: {
         }
@@ -446,11 +446,8 @@ npc:
       scoreboardtrait:
         tags:
         - in.eid_2
-        - in.eid_3
         - in.eid_4
         - in.checked
-        - in.eid_6
-        - in.eid_8
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -502,11 +499,10 @@ npc:
       scoreboardtrait:
         tags:
         - in.eid_0
+        - in.eid_2
         - in.eid_3
+        - in.eid_4
         - in.checked
-        - in.eid_5
-        - in.eid_8
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -558,14 +554,8 @@ npc:
       scoreboardtrait:
         tags:
         - in.eid_0
-        - in.eid_1
-        - in.eid_2
         - in.eid_3
-        - in.eid_4
         - in.checked
-        - in.eid_5
-        - in.eid_6
-        - in.eid_8
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -616,11 +606,9 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_2
+        - in.eid_0
+        - in.eid_4
         - in.checked
-        - in.eid_5
-        - in.eid_7
-        - in.eid_8
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -671,13 +659,9 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_0
-        - in.eid_1
         - in.eid_2
         - in.eid_3
         - in.checked
-        - in.eid_5
-        - in.eid_8
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -728,9 +712,10 @@ npc:
           player: true
       scoreboardtrait:
         tags:
+        - in.eid_0
+        - in.eid_2
+        - in.eid_3
         - in.checked
-        - in.eid_7
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -783,10 +768,8 @@ npc:
         tags:
         - in.eid_0
         - in.eid_2
-        - in.eid_3
         - in.eid_4
         - in.checked
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -837,12 +820,8 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_0
-        - in.eid_1
-        - in.eid_3
+        - in.eid_4
         - in.checked
-        - in.eid_5
-        - in.eid_7
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -893,12 +872,9 @@ npc:
           player: true
       scoreboardtrait:
         tags:
+        - in.eid_0
         - in.eid_1
-        - in.eid_2
-        - in.eid_3
-        - in.eid_4
         - in.checked
-        - in.eid_6
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -949,13 +925,8 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_0
-        - in.eid_1
         - in.eid_3
-        - in.eid_4
         - in.checked
-        - in.eid_5
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1006,14 +977,10 @@ npc:
           player: true
       scoreboardtrait:
         tags:
+        - in.eid_0
         - in.eid_1
-        - in.eid_3
-        - in.eid_4
         - in.checked
-        - in.eid_6
-        - in.eid_7
-        - in.eid_8
-        - in.eid_9
+        - in.eid_5
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1064,10 +1031,8 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_3
+        - in.eid_2
         - in.checked
-        - in.eid_6
-        - in.eid_7
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1118,12 +1083,9 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_1
-        - in.eid_3
-        - in.eid_4
+        - in.eid_2
         - in.checked
         - in.eid_5
-        - in.eid_8
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1174,11 +1136,10 @@ npc:
           player: true
       scoreboardtrait:
         tags:
+        - in.eid_0
         - in.eid_1
         - in.eid_3
         - in.checked
-        - in.eid_7
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1229,11 +1190,10 @@ npc:
           player: true
       scoreboardtrait:
         tags:
+        - in.eid_0
         - in.eid_1
+        - in.eid_2
         - in.checked
-        - in.eid_5
-        - in.eid_8
-        - in.eid_9
         - CITIZENS_NPC
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
     navigator:
@@ -1285,9 +1245,6 @@ npc:
       scoreboardtrait:
         tags:
         - in.eid_1
-        - in.eid_2
-        - in.eid_3
-        - in.eid_4
         - in.checked
         - in.eid_5
         - CITIZENS_NPC
@@ -1339,11 +1296,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 270.00287
-        x: -421.2167
+        bodyYaw: 91.17993
+        x: -415.9463
         y: 95.0
-        z: -496.5
-        yaw: 270.0025
+        z: -496.4873
+        yaw: 91.0778
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
@@ -1396,20 +1353,18 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '11': in.eid_14
-          '12': CITIZENS_NPC
-          '13': in.eid_8
-          '0': in.eid_0
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_3
-          '4': in.eid_4
-          '5': in.checked
-          '6': in.eid_5
-          '7': in.eid_10
-          '8': in.eid_6
-          '9': in.eid_7
-          '10': in.eid_12
+          '0': in.eid_1
+          '11': CITIZENS_NPC
+          '1': in.eid_2
+          '2': in.eid_4
+          '3': in.checked
+          '4': in.eid_5
+          '5': in.eid_10
+          '6': in.eid_6
+          '7': in.eid_7
+          '8': in.eid_9
+          '9': in.eid_11
+          '10': in.eid_14
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
@@ -1511,12 +1466,12 @@ npc:
         skinName: cf5b393b-5a0b-4bff-b9b4-6106d52f1686
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTYyNzU4OTkyNTc1MiwKICAicHJvZmlsZUlkIiA6ICJkMGI4MjE1OThmMTE0NzI1ODBmNmNiZTliOGUxYmU3MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJqYmFydHl5IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzNmY2NmYjViMjUwODc0NDY2NjhjYWU3NjdhZmViMTAxY2Q5OTUzOTVmM2Y0MWM4ZTMwNDZiMWVkNjI5MjAwY2MiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==
       location:
-        bodyYaw: -61.770275
+        bodyYaw: -38.324867
         x: -535.5159
         y: 64.0
         z: 193.7
-        yaw: -61.7703
-        pitch: -2.7697
+        yaw: -38.3249
+        pitch: -2.8454
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {
         }
@@ -1555,11 +1510,11 @@ npc:
         skinName: 55e25eac-f92c-4f0d-b5df-e78e34e700b1
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTY1NTQyMDU2MDI5NywKICAicHJvZmlsZUlkIiA6ICJiMjdjMjlkZWZiNWU0OTEyYjFlYmQ5NDVkMmI2NzE0YSIsCiAgInByb2ZpbGVOYW1lIiA6ICJIRUtUMCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iNDQxOTFjODFiNGJkYjNjZGUxZDIyNzgzZmQ2YTU2NDM5OGZiZGFiOWY5MmZjNTMwMzE2MDBmNDBkMjFjOWQ3IgogICAgfQogIH0KfQ==
       location:
-        bodyYaw: 95.41341
+        bodyYaw: -59.688313
         x: -544.5237
         y: 64.0
         z: 193.7
-        yaw: 115.4134
+        yaw: -59.6883
         pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {

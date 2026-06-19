@@ -29,7 +29,7 @@ settings:
       max: 1024.0
     attackDamage:
       max: 2048.0
-  timeout-time: 60
+  timeout-time: 3600
   restart-on-crash: true
   restart-script: ./start.sh
   log-villager-deaths: true
