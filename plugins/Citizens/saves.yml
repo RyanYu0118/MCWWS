@@ -1339,11 +1339,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 90.00038
-        x: -444.1398
+        bodyYaw: 270.00287
+        x: -421.2167
         y: 95.0
         z: -496.5
-        yaw: 90.0003
+        yaw: 270.0025
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       sheeptrait: {
@@ -1396,14 +1396,20 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-        - in.eid_0
-        - in.eid_1
-        - in.eid_3
-        - in.eid_4
-        - in.checked
-        - in.eid_7
-        - in.eid_8
-        - CITIZENS_NPC
+          '11': in.eid_14
+          '12': CITIZENS_NPC
+          '13': in.eid_8
+          '0': in.eid_0
+          '1': in.eid_1
+          '2': in.eid_2
+          '3': in.eid_3
+          '4': in.eid_4
+          '5': in.checked
+          '6': in.eid_5
+          '7': in.eid_10
+          '8': in.eid_6
+          '9': in.eid_7
+          '10': in.eid_12
     traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
@@ -1505,12 +1511,12 @@ npc:
         skinName: cf5b393b-5a0b-4bff-b9b4-6106d52f1686
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTYyNzU4OTkyNTc1MiwKICAicHJvZmlsZUlkIiA6ICJkMGI4MjE1OThmMTE0NzI1ODBmNmNiZTliOGUxYmU3MCIsCiAgInByb2ZpbGVOYW1lIiA6ICJqYmFydHl5IiwKICAic2lnbmF0dXJlUmVxdWlyZWQiIDogdHJ1ZSwKICAidGV4dHVyZXMiIDogewogICAgIlNLSU4iIDogewogICAgICAidXJsIiA6ICJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlLzNmY2NmYjViMjUwODc0NDY2NjhjYWU3NjdhZmViMTAxY2Q5OTUzOTVmM2Y0MWM4ZTMwNDZiMWVkNjI5MjAwY2MiLAogICAgICAibWV0YWRhdGEiIDogewogICAgICAgICJtb2RlbCIgOiAic2xpbSIKICAgICAgfQogICAgfQogIH0KfQ==
       location:
-        bodyYaw: 50.42459
+        bodyYaw: -61.770275
         x: -535.5159
         y: 64.0
         z: 193.7
-        yaw: 50.4246
-        pitch: -10.9229
+        yaw: -61.7703
+        pitch: -2.7697
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
       gravity: {
         }

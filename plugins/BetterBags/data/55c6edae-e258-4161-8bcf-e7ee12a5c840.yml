@@ -36,14 +36,6 @@ items:
   count: 62
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:cod
   count: 4
   schema_version: 1
@@ -88,20 +80,8 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:stone_shovel
   count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
@@ -162,14 +142,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_AVOCADO_PIT"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:gold_ingot
   count: 6
   schema_version: 1
@@ -180,14 +152,6 @@ items:
 - DataVersion: 4671
   id: minecraft:apple
   count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:yellow_wool
@@ -212,10 +176,6 @@ items:
     minecraft:profile: '{id:[I;2086925263,-1453117158,-1362478585,1531017222],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2Q1NDE1NDFkYWFmZjUwODk2Y2QyNThiZGJkZDRjZjgwYzNiYTgxNjczNTcyNjA3OGJmZTM5MzkyN2U1N2YxIn19fQ=="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"蜘蛛头",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SPIDER_HEAD"}}'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:crimson_stem
-  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:iron_chestplate
@@ -248,10 +208,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_ASPARAGUS_SEEDS"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_sapling
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:player_head
   count: 1
   components:
@@ -262,76 +218,16 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PLANT_LIGHT"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:oak_sapling
   count: 10
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stripped_crimson_stem
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:jungle_sapling
   count: 27
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:crimson_stem
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:crimson_stem
-  count: 18
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:weeping_vines
   count: 32
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:nether_wart_block
-  count: 39
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:oak_sapling
@@ -346,8 +242,10 @@ items:
   count: 25
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_planks
-  count: 32
+  id: minecraft:iron_boots
+  count: 1
+  components:
+    minecraft:damage: '191'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:leather_helmet
@@ -378,18 +276,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"STRANGE_NETHER_GOO"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:red_mushroom
   count: 3
   schema_version: 1
@@ -410,10 +296,6 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"香草种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203088.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_VANILLA_PLANT"}}'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:netherrack
-  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
@@ -657,10 +539,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ORANGE_SAPLING"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:end_stone
   count: 3
   schema_version: 1
@@ -699,14 +577,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_KING_OYSTER_MUSHROOM"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:wooden_axe
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:wooden_axe
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:cobblestone
   count: 1
   schema_version: 1
@@ -715,76 +585,12 @@ items:
   count: 2
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stripped_spruce_log
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:spruce_sapling
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 36
+  count: 34
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dirt
-  count: 64
+  count: 17
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:dirt
