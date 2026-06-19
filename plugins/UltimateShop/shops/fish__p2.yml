@@ -5,13 +5,31 @@ settings:
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
-  layout:
-    - 0f00s00x0
-    - '000000000'
-    - 1ABCDEFG2
-    - 1HIJKLMN2
-    - 1OPQRSTU2
-    - a0403050b
+  menu-settings:
+    layout:
+      - 0f00s00x0
+      - '000000000'
+      - 1ABCDEFG2
+      - 1HIJKLMN2
+      - 1OPQRSTU2
+      - a0403050b
+    buttons:
+      '4':
+        display-item:
+          material: ARROW
+          name: '{lang:previous-page-button}'
+        actions:
+          '1':
+            type: shop_menu
+            shop: fish
+      '5':
+        display-item:
+          material: ARROW
+          name: '{lang:next-page-button}'
+        actions:
+          '1':
+            type: shop_menu
+            shop: fish__p3
 items:
   A:
     price-mode: CLASSIC_ALL
@@ -412,20 +430,3 @@ items:
         amount: '%mcwws.price_sell_prismarine_wall%'
         placeholder: '{amount}$'
         start-apply: 0
-buttons:
-  '4':
-    display-item:
-      material: ARROW
-      name: '{lang:previous-page-button}'
-    actions:
-      '1':
-        type: shop_menu
-        shop: fish
-  '5':
-    display-item:
-      material: ARROW
-      name: '{lang:next-page-button}'
-    actions:
-      '1':
-        type: shop_menu
-        shop: fish__p3

@@ -181,17 +181,9 @@ function buildShopDoc(shopId, itemIds, options = {}) {
     if (totalPages > 1) {
         const hasPrev = pageIndex > 0 && !!prevShopId;
         const hasNext = !!nextShopId;
-        doc.settings.layout = [
-            '0f00s00x0',
-            '000000000',
-            '1ABCDEFG2',
-            '1HIJKLMN2',
-            '1OPQRSTU2',
-            buildPaginationLayoutRow({ hasPrev, hasNext })
-        ];
-        doc.buttons = {};
-        if (pageIndex > 0 && prevShopId) {
-            doc.buttons[PREV_PAGE_BTN] = {
+        const menuButtons = {};
+        if (hasPrev) {
+            menuButtons[PREV_PAGE_BTN] = {
                 'display-item': {
                     material: 'ARROW',
                     name: '{lang:previous-page-button}'
@@ -204,8 +196,8 @@ function buildShopDoc(shopId, itemIds, options = {}) {
                 }
             };
         }
-        if (nextShopId) {
-            doc.buttons[NEXT_PAGE_BTN] = {
+        if (hasNext) {
+            menuButtons[NEXT_PAGE_BTN] = {
                 'display-item': {
                     material: 'ARROW',
                     name: '{lang:next-page-button}'
@@ -218,6 +210,19 @@ function buildShopDoc(shopId, itemIds, options = {}) {
                 }
             };
         }
+        // layout 必须写在 menu-settings 内才会覆盖 menus/example-shop-menu.yml，
+        // 否则底行仍用 a0003000b，47/51 格会被黑色玻璃板 (0) 占满。
+        doc.settings['menu-settings'] = {
+            layout: [
+                '0f00s00x0',
+                '000000000',
+                '1ABCDEFG2',
+                '1HIJKLMN2',
+                '1OPQRSTU2',
+                buildPaginationLayoutRow({ hasPrev, hasNext })
+            ],
+            buttons: menuButtons
+        };
     }
 
     return doc;
