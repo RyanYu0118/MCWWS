@@ -1,0 +1,119 @@
+settings:
+  menu: example-shop-menu
+  buy-more: true
+  shop-name: '{lang:archaeology-shop-name} (2/2)'
+  hide-message: false
+  secret-shop-items: false
+  allow-favourite: true
+  layout:
+    - 0f00s00x0
+    - '000000000'
+    - 1ABCDEFG2
+    - 1HIJKLMN2
+    - 1OPQRSTU2
+    - aN0030b
+items:
+  A:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SHEAF_POTTERY_SHERD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sheaf_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sheaf_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SHELTER_POTTERY_SHERD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_shelter_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_shelter_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SKULL_POTTERY_SHERD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_skull_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_skull_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  D:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SNIFFER_EGG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sniffer_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sniffer_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  E:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SNORT_POTTERY_SHERD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_snort_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_snort_pottery_sherd%'
+        placeholder: '{amount}$'
+        start-apply: 0
+buttons:
+  'N':
+    display-item:
+      material: ARROW
+      name: '{lang:previous-page-button}'
+    actions:
+      '1':
+        type: shop_menu
+        shop: archaeology

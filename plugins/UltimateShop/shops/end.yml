@@ -6,7 +6,7 @@ settings:
   secret-shop-items: false
   allow-favourite: true
 items:
-  i1:
+  A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -25,7 +25,7 @@ items:
         amount: '%mcwws.price_sell_dragon_breath%'
         placeholder: '{amount}$'
         start-apply: 0
-  i2:
+  B:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -44,7 +44,7 @@ items:
         amount: '%mcwws.price_sell_dragon_egg%'
         placeholder: '{amount}$'
         start-apply: 0
-  i3:
+  C:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -63,7 +63,7 @@ items:
         amount: '%mcwws.price_sell_dragon_head%'
         placeholder: '{amount}$'
         start-apply: 0
-  i4:
+  D:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -82,7 +82,7 @@ items:
         amount: '%mcwws.price_sell_end_crystal%'
         placeholder: '{amount}$'
         start-apply: 0
-  i5:
+  E:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -101,7 +101,7 @@ items:
         amount: '%mcwws.price_sell_end_stone%'
         placeholder: '{amount}$'
         start-apply: 0
-  i6:
+  F:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -120,7 +120,7 @@ items:
         amount: '%mcwws.price_sell_end_stone_brick_slab%'
         placeholder: '{amount}$'
         start-apply: 0
-  i7:
+  G:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -139,7 +139,7 @@ items:
         amount: '%mcwws.price_sell_end_stone_brick_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
-  i8:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -158,7 +158,7 @@ items:
         amount: '%mcwws.price_sell_end_stone_brick_wall%'
         placeholder: '{amount}$'
         start-apply: 0
-  i9:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -177,7 +177,7 @@ items:
         amount: '%mcwws.price_sell_end_stone_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
-  i10:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -196,7 +196,7 @@ items:
         amount: '%mcwws.price_sell_ender_chest%'
         placeholder: '{amount}$'
         start-apply: 0
-  i11:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -215,7 +215,7 @@ items:
         amount: '%mcwws.price_sell_purpur_block%'
         placeholder: '{amount}$'
         start-apply: 0
-  i12:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -234,7 +234,7 @@ items:
         amount: '%mcwws.price_sell_purpur_pillar%'
         placeholder: '{amount}$'
         start-apply: 0
-  i13:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -253,7 +253,7 @@ items:
         amount: '%mcwws.price_sell_purpur_slab%'
         placeholder: '{amount}$'
         start-apply: 0
-  i14:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -272,7 +272,7 @@ items:
         amount: '%mcwws.price_sell_purpur_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
-  i15:
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -291,7 +291,7 @@ items:
         amount: '%mcwws.price_sell_shulker_box%'
         placeholder: '{amount}$'
         start-apply: 0
-  i16:
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:

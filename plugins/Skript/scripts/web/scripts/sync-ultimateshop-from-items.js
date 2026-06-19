@@ -118,31 +118,103 @@ function buildProductEntry(itemId) {
     };
 }
 
+/** example-shop-menu 每页商品槽位（与 layout 中 A-U 一一对应） */
+const LAYOUT_PRODUCT_SLOTS = 'ABCDEFGHIJKLMNOPQRSTU'.split('');
+const SLOTS_PER_PAGE = LAYOUT_PRODUCT_SLOTS.length;
+
 function slotId(index) {
-    return `i${index}`;
+    const i = Number(index);
+    if (i >= 1 && i <= SLOTS_PER_PAGE) {
+        return LAYOUT_PRODUCT_SLOTS[i - 1];
+    }
+    return `p${i}`;
 }
 
-function buildShopDoc(shopId, itemIds) {
+function chunkArray(list, size) {
+    const chunks = [];
+    for (let i = 0; i < list.length; i += size) {
+        chunks.push(list.slice(i, i + size));
+    }
+    return chunks;
+}
+
+function buildShopDoc(shopId, itemIds, options = {}) {
     const meta = SHOP_META[shopId] || {
         shopName: shopId,
         menu: 'example-shop-menu'
     };
+    const pageIndex = Number(options.pageIndex) || 0;
+    const totalPages = Number(options.totalPages) || 1;
+    const prevShopId = options.prevShopId || null;
+    const nextShopId = options.nextShopId || null;
+    const pageLabel = totalPages > 1 ? ` (${pageIndex + 1}/${totalPages})` : '';
+
     const items = {};
-    itemIds.sort((a, b) => a.localeCompare(b));
     itemIds.forEach((itemId, idx) => {
         items[slotId(idx + 1)] = buildProductEntry(itemId);
     });
-    return {
+
+    const doc = {
         settings: {
             menu: meta.menu,
             'buy-more': true,
-            'shop-name': meta.shopName,
+            'shop-name': `${meta.shopName}${pageLabel}`,
             'hide-message': false,
             'secret-shop-items': false,
             'allow-favourite': true
         },
         items
     };
+
+    if (totalPages > 1) {
+        doc.settings.layout = [
+            '0f00s00x0',
+            '000000000',
+            '1ABCDEFG2',
+            '1HIJKLMN2',
+            '1OPQRSTU2',
+            pageIndex > 0 && nextShopId ? 'aN003Pb' : (nextShopId ? 'a0003Pb' : (pageIndex > 0 ? 'aN0030b' : 'a0003000b'))
+        ];
+        doc.buttons = {};
+        if (pageIndex > 0 && prevShopId) {
+            doc.buttons.N = {
+                'display-item': {
+                    material: 'ARROW',
+                    name: '{lang:previous-page-button}'
+                },
+                actions: {
+                    1: {
+                        type: 'shop_menu',
+                        shop: prevShopId
+                    }
+                }
+            };
+        }
+        if (nextShopId) {
+            doc.buttons.P = {
+                'display-item': {
+                    material: 'ARROW',
+                    name: '{lang:next-page-button}'
+                },
+                actions: {
+                    1: {
+                        type: 'shop_menu',
+                        shop: nextShopId
+                    }
+                }
+            };
+        }
+    }
+
+    return doc;
+}
+
+function shopPageFileName(shopId, pageIndex) {
+    return pageIndex === 0 ? `${shopId}.yml` : `${shopId}__p${pageIndex + 1}.yml`;
+}
+
+function shopPageId(shopId, pageIndex) {
+    return pageIndex === 0 ? shopId : `${shopId}__p${pageIndex + 1}`;
 }
 
 function main() {
@@ -161,11 +233,28 @@ function main() {
     let total = 0;
     Object.keys(shopBuckets).sort().forEach((shopId) => {
         if (preserve.has(shopId)) return;
-        const unique = [...new Set(shopBuckets[shopId])];
-        const doc = buildShopDoc(shopId, unique);
-        const outPath = path.join(SHOPS_DIR, `${shopId}.yml`);
-        fs.writeFileSync(outPath, yaml.dump(doc, { lineWidth: 120, noRefs: true }), 'utf8');
-        console.log(`${shopId}.yml → ${unique.length} 个商品`);
+        const unique = [...new Set(shopBuckets[shopId])].sort((a, b) => a.localeCompare(b));
+        const pages = chunkArray(unique, SLOTS_PER_PAGE);
+        const stalePattern = new RegExp(`^${shopId}__p\\d+\\.yml$`);
+        fs.readdirSync(SHOPS_DIR)
+            .filter((name) => stalePattern.test(name))
+            .forEach((name) => fs.unlinkSync(path.join(SHOPS_DIR, name)));
+
+        pages.forEach((pageItems, pageIndex) => {
+            const prevShopId = pageIndex > 0 ? shopPageId(shopId, pageIndex - 1) : null;
+            const nextShopId = pageIndex < pages.length - 1 ? shopPageId(shopId, pageIndex + 1) : null;
+            const doc = buildShopDoc(shopId, pageItems, {
+                pageIndex,
+                totalPages: pages.length,
+                prevShopId,
+                nextShopId
+            });
+            const outPath = path.join(SHOPS_DIR, shopPageFileName(shopId, pageIndex));
+            fs.writeFileSync(outPath, yaml.dump(doc, { lineWidth: 120, noRefs: true }), 'utf8');
+        });
+
+        const pageInfo = pages.length > 1 ? ` (${pages.length} 页)` : '';
+        console.log(`${shopId}.yml → ${unique.length} 个商品${pageInfo}`);
         total += unique.length;
     });
 
