@@ -11,7 +11,7 @@ settings:
     - 1ABCDEFG2
     - 1HIJKLMN2
     - 1OPQRSTU2
-    - a0N030P0b
+    - a0(030)0b
 items:
   A:
     price-mode: CLASSIC_ALL
@@ -413,7 +413,7 @@ items:
         placeholder: '{amount}$'
         start-apply: 0
 buttons:
-  'N':
+  (:
     display-item:
       material: ARROW
       name: '{lang:previous-page-button}'
@@ -421,7 +421,7 @@ buttons:
       '1':
         type: shop_menu
         shop: minerals__p4
-  P:
+  ):
     display-item:
       material: ARROW
       name: '{lang:next-page-button}'

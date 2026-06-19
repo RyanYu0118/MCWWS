@@ -139,10 +139,14 @@ function chunkArray(list, size) {
 }
 
 /** 54 格 GUI 底行：上一页=47(列2)，返回=49(列4)，下一页=51(列6) */
+/** 翻页按钮使用 ( )，避免与商品槽位 A-U 中的 N、P 等字母冲突 */
+const PREV_PAGE_BTN = '(';
+const NEXT_PAGE_BTN = ')';
+
 function buildPaginationLayoutRow({ hasPrev, hasNext }) {
     const row = ['a', '0', '0', '0', '3', '0', '0', '0', 'b'];
-    if (hasPrev) row[2] = 'N';
-    if (hasNext) row[6] = 'P';
+    if (hasPrev) row[2] = PREV_PAGE_BTN;
+    if (hasNext) row[6] = NEXT_PAGE_BTN;
     return row.join('');
 }
 
@@ -187,7 +191,7 @@ function buildShopDoc(shopId, itemIds, options = {}) {
         ];
         doc.buttons = {};
         if (pageIndex > 0 && prevShopId) {
-            doc.buttons.N = {
+            doc.buttons[PREV_PAGE_BTN] = {
                 'display-item': {
                     material: 'ARROW',
                     name: '{lang:previous-page-button}'
@@ -201,7 +205,7 @@ function buildShopDoc(shopId, itemIds, options = {}) {
             };
         }
         if (nextShopId) {
-            doc.buttons.P = {
+            doc.buttons[NEXT_PAGE_BTN] = {
                 'display-item': {
                     material: 'ARROW',
                     name: '{lang:next-page-button}'
