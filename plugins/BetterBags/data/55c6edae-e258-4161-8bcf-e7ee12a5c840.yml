@@ -41,7 +41,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:dirt
-  count: 4
+  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:cod
@@ -105,7 +105,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 1
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -306,8 +306,8 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
+  id: minecraft:dirt
+  count: 7
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:jungle_sapling
@@ -347,7 +347,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:spruce_planks
-  count: 11
+  count: 32
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:leather_helmet
@@ -657,10 +657,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ORANGE_SAPLING"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:end_stone
   count: 3
   schema_version: 1
@@ -683,20 +679,28 @@ items:
   count: 1
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
+  id: minecraft:brown_mushroom
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203095.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_ENOKI_MUSHROOMS"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
+  id: minecraft:brown_mushroom
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_KING_OYSTER_MUSHROOM"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
+  id: minecraft:wooden_axe
+  count: 1
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
-  count: 64
+  id: minecraft:wooden_axe
+  count: 1
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:cobblestone
@@ -707,11 +711,11 @@ items:
   count: 2
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
+  id: minecraft:dirt
   count: 64
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:spruce_log
+  id: minecraft:dirt
   count: 64
   schema_version: 1
 - DataVersion: 4671
@@ -733,6 +737,58 @@ items:
 - DataVersion: 4671
   id: minecraft:spruce_log
   count: 36
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 18
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

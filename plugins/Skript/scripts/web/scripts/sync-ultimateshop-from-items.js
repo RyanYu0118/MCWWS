@@ -138,6 +138,14 @@ function chunkArray(list, size) {
     return chunks;
 }
 
+/** 54 格 GUI 底行：上一页=47(列2)，返回=49(列4)，下一页=51(列6) */
+function buildPaginationLayoutRow({ hasPrev, hasNext }) {
+    const row = ['a', '0', '0', '0', '3', '0', '0', '0', 'b'];
+    if (hasPrev) row[2] = 'N';
+    if (hasNext) row[6] = 'P';
+    return row.join('');
+}
+
 function buildShopDoc(shopId, itemIds, options = {}) {
     const meta = SHOP_META[shopId] || {
         shopName: shopId,
@@ -167,13 +175,15 @@ function buildShopDoc(shopId, itemIds, options = {}) {
     };
 
     if (totalPages > 1) {
+        const hasPrev = pageIndex > 0 && !!prevShopId;
+        const hasNext = !!nextShopId;
         doc.settings.layout = [
             '0f00s00x0',
             '000000000',
             '1ABCDEFG2',
             '1HIJKLMN2',
             '1OPQRSTU2',
-            pageIndex > 0 && nextShopId ? 'aN003Pb' : (nextShopId ? 'a0003Pb' : (pageIndex > 0 ? 'aN0030b' : 'a0003000b'))
+            buildPaginationLayoutRow({ hasPrev, hasNext })
         ];
         doc.buttons = {};
         if (pageIndex > 0 && prevShopId) {
