@@ -7,8 +7,16 @@ depositories:
       amount: 134
   farmer:
     WHEAT_SEEDS:
-      amount: 52
+      amount: 71
+    WHEAT:
+      amount: 1
   hunter:
+    ROTTEN_FLESH:
+      amount: 8
+    ARROW:
+      amount: 2
+    GUNPOWDER:
+      amount: 11
     EGG:
       amount: 2
     PORKCHOP:
@@ -16,16 +24,26 @@ depositories:
     CHICKEN:
       amount: 4
     STRING:
+      amount: 52
+    SPIDER_EYE:
       amount: 2
-    MUTTON:
+    BONE:
       amount: 1
+    MUTTON:
+      amount: 2
     FEATHER:
       amount: 3
   miner:
+    LAPIS_LAZULI:
+      amount: 58
     DIAMOND:
       amount: 1
     IRON_INGOT:
-      amount: 27
+      amount: 30
+    COBBLESTONE:
+      amount: 128
+    COAL:
+      amount: 392
     GOLD_INGOT:
       amount: 6
     QUARTZ:
