@@ -1,50 +1,59 @@
-date: 20260619
+date: 20260630
 depositories:
   logger:
-    SPRUCE_LOG:
-      amount: 1012
-    SPRUCE_SAPLING:
-      amount: 134
-  farmer:
-    WHEAT_SEEDS:
-      amount: 71
-    WHEAT:
+    SALMON:
+      amount: 5
+    COD:
+      amount: 5
+    PUFFERFISH:
       amount: 1
+  farmer:
+    POTATO:
+      amount: 1
+    CARROT:
+      amount: 3
   hunter:
     ROTTEN_FLESH:
-      amount: 8
+      amount: 1513
+    SPIDER_EYE:
+      amount: 339
+    ENDER_PEARL:
+      amount: 21
     ARROW:
-      amount: 2
-    GUNPOWDER:
-      amount: 11
+      amount: 496
+    TOTEM_OF_UNDYING:
+      amount: 3
+    CHICKEN:
+      amount: 15
+    SLIME_BALL:
+      amount: 6
+    LEATHER:
+      amount: 65
+    BONE:
+      amount: 451
     EGG:
       amount: 2
     PORKCHOP:
-      amount: 6
-    CHICKEN:
-      amount: 4
-    STRING:
       amount: 52
-    SPIDER_EYE:
-      amount: 2
-    BONE:
-      amount: 1
-    MUTTON:
-      amount: 2
     FEATHER:
       amount: 3
-  miner:
-    LAPIS_LAZULI:
-      amount: 58
-    DIAMOND:
+    GUNPOWDER:
+      amount: 497
+    STRING:
+      amount: 429
+    RABBIT:
+      amount: 4
+    BEEF:
+      amount: 67
+    MUTTON:
+      amount: 43
+  fisherman:
+    TROPICAL_FISH:
       amount: 1
+  miner:
     IRON_INGOT:
-      amount: 30
-    COBBLESTONE:
-      amount: 128
-    COAL:
-      amount: 392
-    GOLD_INGOT:
-      amount: 6
-    QUARTZ:
-      amount: 11
+      amount: 38
+    FLINT:
+      amount: 385
+    CLAY_BALL:
+      amount: 197

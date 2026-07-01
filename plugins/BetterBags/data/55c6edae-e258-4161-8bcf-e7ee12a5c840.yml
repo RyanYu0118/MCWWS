@@ -8,8 +8,10 @@ items:
     minecraft:damage: '67'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:cooked_beef
-  count: 64
+  id: minecraft:mace
+  count: 1
+  components:
+    minecraft:damage: '8'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:cooked_beef
@@ -17,15 +19,11 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:cooked_beef
-  count: 64
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:cooked_beef
-  count: 62
+  count: 4
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"豆子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203069.0f]}'
@@ -33,7 +31,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 61
+  count: 64
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -49,7 +47,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
-  count: 10
+  count: 39
   components:
     minecraft:profile: '{id:[I;513989614,-308789711,-1654726514,-208727265],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViOTJhMTNmMDFiYWVjZTU2NjU0ZTgxNzgzM2Y5ODI5YmMwMjVhZDczMzYwOWMwYmRkMGQzYTM1OWM5ZDk0MyJ9fX0="}]}'
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种能填充周围世界的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
@@ -65,7 +63,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
-  count: 13
+  count: 29
   components:
     minecraft:profile: '{id:[I;-1651007436,-1562167852,-1773577206,-895997720],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjYwZThmOTcxZmNjODNjZjU3YTNlMTViNDU4MzE3MTE5ZTlmNjIzZDQ0MWJiZjE5N2U2ODEyNWM4MGEyM2YzMCJ9fX0="}]}'
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种在无尽的愤怒中沸腾的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
@@ -83,7 +81,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
-  count: 1
+  count: 6
   components:
     minecraft:profile: '{id:[I;2086925263,-1453117158,-1362478585,1531017222],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2Q1NDE1NDFkYWFmZjUwODk2Y2QyNThiZGJkZDRjZjgwYzNiYTgxNjczNTcyNjA3OGJmZTM5MzkyN2U1N2YxIn19fQ=="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"蜘蛛头",underlined:0b}],text:""}'
@@ -121,7 +119,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
-  count: 1
+  count: 4
   components:
     minecraft:profile: '{id:[I;-797899414,1943746049,-1545988062,758007199],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODExNzBkYTczNDFmMzIzZjhlNGEzZDBmOGNhMzc5ZjlhZjMxNTExZjM0NjY5OWY0YmYwZDA5ZGI5NWY2M2M2ZiJ9fX0="}]}'
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种散发着纯爱气息的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
@@ -131,7 +129,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:oak_sapling
-  count: 2
+  count: 5
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"柠檬树苗",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2201008.0f]}'
@@ -169,7 +167,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:vine
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"香草种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203088.0f]}'
@@ -177,7 +175,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 3
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"辣椒种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203063.0f]}'
@@ -193,7 +191,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:melon_seeds
-  count: 5
+  count: 6
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"欧芹种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203065.0f]}'
@@ -201,7 +199,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:melon_seeds
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"罗勒种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203056.0f]}'
@@ -209,7 +207,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 2
+  count: 5
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"高粱种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203043.0f]}'
@@ -217,7 +215,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 4
+  count: 5
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"大豆",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203037.0f]}'
@@ -225,7 +223,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 2
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"香瓜种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203085.0f]}'
@@ -242,7 +240,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"菠菜种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203058.0f]}'
@@ -250,7 +248,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 3
+  count: 7
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"黑麦种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203041.0f]}'
@@ -282,7 +280,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:beetroot_seeds
-  count: 4
+  count: 5
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"燕麦",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203036.0f]}'
@@ -290,7 +288,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"芝麻籽",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203086.0f]}'
@@ -298,7 +296,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:cocoa_beans
-  count: 3
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"红腰豆",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203081.0f]}'
@@ -322,7 +320,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"小扁豆",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203067.0f]}'
@@ -330,7 +328,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:pumpkin_seeds
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"花椰菜种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203076.0f]}'
@@ -346,7 +344,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:oak_sapling
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"橡树苹果树苗",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2200975.0f]}'
@@ -391,26 +389,24 @@ items:
     minecraft:stored_enchantments: '{"minecraft:bane_of_arthropods":4,"minecraft:protection":4}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '13'
+  id: minecraft:wheat
+  count: 9
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:golden_axe
   count: 1
   components:
-    minecraft:damage: '130'
+    minecraft:enchantments: '{"minecraft:unbreaking":3}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:damage: '109'
+    minecraft:enchantments: '{"minecraft:mending":1}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 51
+  count: 59
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -418,49 +414,40 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:brown_mushroom
-  count: 60
+  count: 64
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_KING_OYSTER_MUSHROOM"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
+  id: minecraft:honeycomb
+  count: 3
   components:
-    minecraft:damage: '127'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"蜂蜜蜂蜡",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HONEY_COMB"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:book
+  id: minecraft:ominous_bottle
+  count: 1
+  components:
+    minecraft:ominous_bottle_amplifier: '1'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:tide_armor_trim_smithing_template
   count: 2
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '122'
+  id: minecraft:sand
+  count: 54
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:netherite_horse_armor
   count: 1
-  components:
-    minecraft:damage: '52'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '7'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '58'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:carrot
-  count: 2
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"木薯",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203066.0f]}'
@@ -475,22 +462,16 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_TRUFFLE"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '90'
+  id: minecraft:name_tag
+  count: 2
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:bone_meal
   count: 64
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:golden_apple
-  count: 2
-  schema_version: 1
-- DataVersion: 4671
   id: minecraft:player_head
-  count: 25
+  count: 28
   components:
     minecraft:profile: '{id:[I;337476676,-1978910073,-2093625636,998260827],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjViMWRiNTQ3ZDFiNzk1NmQ0NTExYWNjYjE1MzNlMjE3NTZkN2NiYzM4ZWI2NDM1NWEyNjI2NDEyMjEyIn19fQ=="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"橙子",underlined:0b}],text:""}'
@@ -499,81 +480,48 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:bone_meal
-  count: 20
+  count: 32
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:arrow
-  count: 57
+  count: 64
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:oak_sapling
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"香蕉树苗",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203092.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_BANANA_SAPLING"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:cooked_mutton
+  id: minecraft:golden_helmet
   count: 1
   components:
-    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"这是恶魂体内为数不多的肉",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"据说味道极其鲜美",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"恶魂肉",underlined:0b}],text:""}'
-    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GHAST_ROU"}}'
+    minecraft:enchantments: '{"minecraft:mending":1,"minecraft:projectile_protection":4}'
+    minecraft:damage: '23'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
+  id: minecraft:player_head
+  count: 2
   components:
-    minecraft:damage: '112'
+    minecraft:profile: '{id:[I;-752970439,1500527458,-1853160468,1450518680],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQyMGM5YzQzZTA5NTg4MGRjZDJlMjgxYzgxZjQ3YjE2M2I0NzhmNThhNTg0YmI2MWY5M2U2ZTEwYTE1NWYzMSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"<未知>",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"Water雄蜂",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"WATER_DRONE","slimybees:bee_type":"species:water;species:water|productivity:normal;productivity:normal|fertility:high;fertility:high|lifespan:normal;lifespan:normal|range:normal;range:normal|plant:none;plant:none|effect:none;effect:none"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:player_head
   count: 1
   components:
-    minecraft:damage: '73'
+    minecraft:profile: '{id:[I;-752970439,1500527458,-1853160468,1450518680],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQyMGM5YzQzZTA5NTg4MGRjZDJlMjgxYzgxZjQ3YjE2M2I0NzhmNThhNTg0YmI2MWY5M2U2ZTEwYTE1NWYzMSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"<未知>",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"Water雌蜂",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"WATER_PRINCESS","slimybees:bee_type":"species:water;species:water|productivity:normal;productivity:normal|fertility:high;fertility:high|lifespan:normal;lifespan:normal|range:normal;range:normal|plant:none;plant:none|effect:none;effect:none"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:fire_charge
   count: 1
-  components:
-    minecraft:damage: '66'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '119'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '104'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '83'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '129'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '131'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '46'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:player_head
@@ -584,52 +532,25 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SLIME_HEAD"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:damage: '19'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
+  id: minecraft:golden_axe
   count: 1
   components:
-    minecraft:damage: '129'
+    minecraft:enchantments: '{"minecraft:unbreaking":2}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
+  id: minecraft:magma_cream
+  count: 12
   components:
-    minecraft:damage: '31'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '129'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '60'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '118'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '117'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:stone_sword
-  count: 1
-  components:
-    minecraft:damage: '96'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:1b,obfuscated:0b,strikethrough:0b,text:"一颗有魔力的粘液球",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"合成材料",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"魔法膏",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"MAGIC_CREAM"}}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:stone_pickaxe
@@ -653,7 +574,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:melon_seeds
-  count: 2
+  count: 5
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"薄荷种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203061.0f]}'
@@ -682,16 +603,14 @@ items:
     minecraft:damage: '143'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:diamond_leggings
-  count: 1
-  components:
-    minecraft:damage: '385'
+  id: minecraft:white_wool
+  count: 3
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:diamond_chestplate
-  count: 1
+  id: minecraft:tipped_arrow
+  count: 6
   components:
-    minecraft:damage: '385'
+    minecraft:potion_contents: '{potion:"minecraft:weakness"}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:diamond_boots
@@ -732,14 +651,10 @@ items:
     minecraft:custom_data: '{incendium:{item:"torch_of_lunacy"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:iron_shovel
+  id: minecraft:bow
   count: 1
   components:
-    minecraft:damage: '185'
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:cobblestone
-  count: 63
+    minecraft:damage: '359'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:enchanted_book
@@ -748,8 +663,10 @@ items:
     minecraft:stored_enchantments: '{"minecraft:bane_of_arthropods":3}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:experience_bottle
-  count: 50
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:lunge":1}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:diamond_leggings
@@ -761,7 +678,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:oak_sapling
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"菠萝植物",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2201024.0f]}'
@@ -776,16 +693,19 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BASIC_CIRCUIT_BOARD"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:jungle_sapling
+  id: minecraft:white_dye
   count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幽灵精华",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"DYNATECH_GHOSTLY_ESSENCE"}}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:stick
-  count: 50
+  count: 57
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:quartz
-  count: 2
+  count: 64
   components:
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
@@ -812,6 +732,1143 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"菠萝",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2201023.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PINEAPPLE"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:knockback":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;608927098,-1508492291,-1830827403,-1629476902],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDNiYTQxZmU4Mjc1Nzg3MWU4Y2JlYzlkZWQ5YWNiZmQxOTkzMGQ5MzM0MWNmODEzOWQxZGZiZmFhM2VjMmE1In19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"桃子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201019.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PEACH"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"番茄植物",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201038.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"TOMATO_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:armadillo_scute
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:prismarine_crystals
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"桃子树苗",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201020.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PEACH_SAPLING"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:healing"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:efficiency":3,"minecraft:impaling":4,"minecraft:protection":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:crossbow
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:piercing":1,"minecraft:unbreaking":1}'
+    minecraft:charged_projectiles: '[{count:1,id:"minecraft:arrow"}]'
+    minecraft:damage: '299'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_chestplate
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 9
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"椰子树苗",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200989.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"COCONUT_SAPLING"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:aqua_affinity":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:music_disc_lava_chicken
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:beef
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"你真的忍心这样对待你的坐骑吗？",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"马肉",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HORSE_ROU"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 12
+  components:
+    minecraft:profile: '{id:[I;1149408975,1338193398,-1267187406,-1978617216],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTU3ZmQ1NmNhMTU5Nzg3NzkzMjRkZjUxOTM1NGI2NjM5YThkOWJjMTE5MmM3YzNkZTkyNWEzMjliYWVmNmMifX19"}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"柠檬",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201007.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"LEMON"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;-326286836,-1688060214,-1679710278,389945234],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmQyN2RlZDU3Yjk0Y2Y3MTViMDQ4ZWY1MTdhYjNmODViZWY1YTdiZTY5ZjE0YjE1NzNlMTRlN2U0MmUyZTgifX19"}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"椰子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200988.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"COCONUT"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:crossbow
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:piercing":1}'
+    minecraft:damage: '177'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;754067959,-2058340199,-1293182713,1215574347],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNmRlYWVjMzQ0YWIwOTViNDhjZWFkNzUyN2Y3ZGVlNjFiMDYzZmY3OTFmNzZhOGZhNzY2NDJjODY3NmUyMTczIn19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"卫道士头",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"VINDICATOR_HEAD"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;-693960789,-1134281046,-1515865115,10068274],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjlkNjY0MzE5ZmYzODFiNGVlNjlhNjk3NzE1Yjc2NDJiMzJkNTRkNzI2Yzg3ZjY0NDBiZjAxN2E0YmNkNyJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"梅子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201025.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PLUM"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:infinity":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 3
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"梅子树苗",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201026.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PLUM_SAPLING"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;-1745674856,-1421657131,-1350432447,904298691],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTAwYzMwMjMzZmU0NmZiOTgzZWY2YzQ2YzAyYzllYzNlMmIyYjkxZmRmYjkxNmNiYTg3MjFiMjM1ZjI3M2Y5OCJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"令人烦躁",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"杂音",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ZAYIN"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_axe
+  count: 1
+  components:
+    minecraft:damage: '149'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:wildflowers
+  count: 13
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '108'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:repair_cost: '15'
+    minecraft:enchantments: '{"minecraft:flame":1,"minecraft:mending":1,"minecraft:power":5,"minecraft:punch":1,"minecraft:unbreaking":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:white_banner
+  count: 4
+  components:
+    minecraft:banner_patterns: '[{color:"cyan",pattern:"minecraft:rhombus"},{color:"light_gray",pattern:"minecraft:stripe_bottom"},{color:"gray",pattern:"minecraft:stripe_center"},{color:"light_gray",pattern:"minecraft:border"},{color:"black",pattern:"minecraft:stripe_middle"},{color:"light_gray",pattern:"minecraft:half_horizontal"},{color:"light_gray",pattern:"minecraft:circle"},{color:"black",pattern:"minecraft:border"}]'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
+    minecraft:rarity: '"uncommon"'
+    minecraft:item_name: '{translate:"block.minecraft.ominous_banner"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_shovel
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:efficiency":2}'
+    minecraft:damage: '128'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_axe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:sharpness":1}'
+    minecraft:damage: '249'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dune_armor_trim_smithing_template
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:blue_terracotta
+  count: 4
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:blue_bed
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:sugar
+  count: 14
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:lilac
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:white_dye
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:black_glazed_terracotta
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:light_blue_stained_glass_pane
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond_boots
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:damage: '306'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brown_mushroom
+  count: 3
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_KING_OYSTER_MUSHROOM"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brick_slab
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:lantern
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:red_tulip
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:flower_pot
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;732656920,-945013692,-1205893229,541355957],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2JiMzExZjNiYTFjMDdjM2QxMTQ3Y2QyMTBkODFmZTExZmQ4YWU5ZTNkYjIxMmEwZmE3NDg5NDZjMzYzMyJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"石榴",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201027.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"POMEGRANATE"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glass_bottle
+  count: 14
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cyan_dye
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:purple_dye
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:orange_dye
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:magenta_dye
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_axe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:unbreaking":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_hoe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:unbreaking":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brush
+  count: 1
+  components:
+    minecraft:damage: '1'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:sharpness":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:piercing":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_sword
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:bane_of_arthropods":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;1035723780,611660521,-1768732804,-1196949564],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNWE1MTUzNDc5ZDlmMTQ2YTVlZTNjOWUyMThmNWU3ZTg0YzRmYTM3NWU0Zjg2ZDMxNzcyYmE3MWY2NDY4In19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"酸橙",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201011.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"LIME"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:sentry_armor_trim_smithing_template
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bone
+  count: 30
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:respiration":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:ominous_bottle
+  count: 1
+  components:
+    minecraft:ominous_bottle_amplifier: '3'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dried_kelp
+  count: 6
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:silk_touch":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:melon_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"芜菁种子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203045.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_TURNIP_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1323517854,-134467287,-1394606051,451284190],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg0ZGY3OWM0OTEwNGIxOThjZGFkNmQ5OWZkMGQwYmNmMTUzMWM5MmQ0YWI2MjY5ZTQwYjdkM2NiYmI4ZTk4YyJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"溺尸头",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"DROWNED_HEAD"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_helmet
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:protection":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:leather
+  count: 4
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"示例生物掉落物品",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_MOB_DROP"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:lure":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1080090702,-825019446,-1655116938,-305399176],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNzJlYzRhNGJkOGE1OGY4MzYxZjhhMDMwM2UyMTk5ZDMzZDYyNGVhNWY5MmY3Y2IzNDE0ZmVlOTVlMmQ4NjEifX19"}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"green",italic:1b,obfuscated:0b,strikethrough:0b,text:"一个便携式的工作台",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"右键",underlined:0b},{color:"gray",italic:0b,text:"
+      打开"}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"便携工作台",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200013.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PORTABLE_CRAFTER"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:density":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:protection":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:power":4,"minecraft:smite":4}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{custom_color:16711935,custom_effects:[{ambient:1b,duration:45,id:"minecraft:regeneration",show_icon:1b}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{custom_color:8388608,custom_effects:[{ambient:1b,duration:180,id:"minecraft:strength",show_icon:1b}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond_helmet
+  count: 1
+  components:
+    minecraft:repair_cost: '7'
+    minecraft:enchantments: '{"minecraft:protection":4}'
+    minecraft:damage: '266'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:splash_potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:healing"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{custom_color:16753920,custom_effects:[{ambient:1b,duration:180,id:"minecraft:fire_resistance",show_icon:1b}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:breach":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:sharpness":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_leggings
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:blast_protection":4}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:breach":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:fire_protection":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:raw_copper
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:turtle_scute
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:loyalty":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:lure":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:aqua_affinity":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:fire_resistance"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:paper
+  count: 25
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:strength"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:deepslate_brick_stairs
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:saddle
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:porkchop
+  count: 7
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"惨！",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"海龟肉",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"TURTLE_ROU"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:lime_wool
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:red_wool
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '322'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond_helmet
+  count: 1
+  components:
+    minecraft:attribute_modifiers: '[{amount:3.0d,id:"minecraft:06967b5d-10a3-4f1c-826d-24a1d9c90e14",operation:"add_value",slot:"head",type:"minecraft:armor"},{amount:3.0d,id:"minecraft:10b46ecd-2d61-48f0-b1b9-77032640f0f2",operation:"add_value",slot:"head",type:"minecraft:armor_toughness"},{amount:0.10000000149011612d,id:"minecraft:c7eccb80-d5c6-4175-b563-f34563f68205",operation:"add_value",slot:"head",type:"minecraft:knockback_resistance"},{amount:-0.07999999821186066d,id:"minecraft:6400087b-5fdf-42d3-a6cf-e333ace081bc",operation:"add_multiplied_total",slot:"head",type:"minecraft:movement_speed"}]'
+    minecraft:enchantments: '{"minecraft:binding_curse":1,"minecraft:protection":3,"minecraft:unbreaking":2}'
+    minecraft:trim: '{material:"minecraft:netherite",pattern:"minecraft:silence"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;2110903505,-1856425464,-2073874132,-1728253291],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmM1MGUzZTYxNTBkMDdjY2EwOWVkNzA3YjI0NDA0M2M5NDM3ZGJkMWJlOThlZTA4YWUwMzQwY2NiNmQ1OGM4OSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"死灰无法复燃",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"碳化的心脏",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CREEPER_COAL_HEART"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_boots
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:protection":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1745674856,-1421657131,-1350432447,904298691],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTAwYzMwMjMzZmU0NmZiOTgzZWY2YzQ2YzAyYzllYzNlMmIyYjkxZmRmYjkxNmNiYTg3MjFiMjM1ZjI3M2Y5OCJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"杂音",underlined:0b}],text:""}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;-2071051064,1509372127,-1159019897,279712399],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZGQyZjc4MWYwM2MzNjViYmM1ZGQxZTcxODZhYjM4ZGM2OTQ2NWU4MzZjOWZlMDY2YTlhODQ0ZjM0YTRkYTkyIn19fQ=="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种思维轨迹",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"非线性思维",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"FEIXIANXINGSW"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:blast_protection":4}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brush
+  count: 1
+  components:
+    minecraft:damage: '13'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_helmet
+  count: 1
+  components:
+    minecraft:damage: '70'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '210'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:power":4,"minecraft:punch":2}'
+    minecraft:damage: '185'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '341'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:crossbow
+  count: 1
+  components:
+    minecraft:damage: '171'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"light_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"火龙果树苗",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200999.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"DRAGON_FRUIT_SAPLING"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;-1005254905,1077228028,-1290360958,1764476916],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODQ3ZDczYTkxYjUyMzkzZjJjMjdlNDUzZmI4OWFiM2Q3ODQwNTRkNDE0ZTM5MGQ1OGFiZDIyNTEyZWRkMmIifX19"}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"light_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"火龙果",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200998.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"DRAGON_FRUIT"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '383'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_pickaxe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:chainmail_leggings
+  count: 1
+  components:
+    minecraft:damage: '211'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_sword
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:knockback":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_axe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运斧",underlined:0b}],text:""}'
+    minecraft:damage: '6'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_axe
+  count: 1
+  components:
+    minecraft:damage: '239'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond_shovel
+  count: 1
+  components:
+    minecraft:damage: '6'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_shovel
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:mending":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:fishing_rod
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:luck_of_the_sea":1,"minecraft:lure":1,"minecraft:unbreaking":2}'
+    minecraft:damage: '38'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:golden_leggings
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:blast_protection":1,"minecraft:unbreaking":1}'
+    minecraft:damage: '65'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:coal
+  count: 41
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 6
+  components:
+    minecraft:profile: '{id:[I;1271302063,432027983,-1620355014,1090500715],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOGIzYTA5NWI2YjgxZTZiOTg1M2ExOTMyNGVlZGYwYmI5MzQ5NDE3MjU4ZGQxNzNiOGVmZjg3YTA4N2FhIn19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"碳",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200113.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CARBON"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:goat_horn
+  count: 1
+  components:
+    minecraft:instrument: '"minecraft:sing_goat_horn"'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:beef
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"“村
+      庄 英 雄”",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"人肉",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"VILLAGER_ROU"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cooked_mutton
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"这是恶魂体内为数不多的肉",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"据说味道极其鲜美",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"恶魂肉",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GHAST_ROU"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 4
+  components:
+    minecraft:profile: '{id:[I;732656920,-945013692,-1205893229,541355957],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2JiMzExZjNiYTFjMDdjM2QxMTQ3Y2QyMTBkODFmZTExZmQ4YWU5ZTNkYjIxMmEwZmE3NDg5NDZjMzYzMyJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"橡树苹果",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200974.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"OAK_APPLE"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:gunpowder
+  count: 8
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"铁粉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"IRON_DUST"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond
+  count: 7
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:wheat_seeds
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:copper_helmet
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:protection":2,"minecraft:unbreaking":2}'
+    minecraft:damage: '112'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:spider_eye
+  count: 4
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:string
+  count: 9
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:diamond_boots
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:damage: '106'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cobblestone
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:netherite_ingot
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 64
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_ink_sac
+  count: 32
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"方块掉落物品
+      2",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"RSC_EXAMPLE_DROP_FROM_BLOCK_ITEM_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:dirt
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:netherite_upgrade_smithing_template
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:gravel
+  count: 25
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_spear
+  count: 1
+  components:
+    minecraft:damage: '196'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:arrow
+  count: 13
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '101'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:density":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:smithing_table
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;694358337,483605146,-1322008687,676456538],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvN2E1OWJiMGE3YTMyOTY1YjNkOTBkOGVhZmE4OTlkMTgzNWY0MjQ1MDllYWRkNGU2YjcwOWFkYTUwYjljZiJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"末影人头",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ENDERMAN_HEAD"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:rotten_flesh
+  count: 18
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cooked_chicken
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;1167541184,-290637387,-1651854109,957463292],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjJiZTcxNjk4ODRhZDgyMGFjYWVkN2E3MTc2NzljZDBkOTFkY2QzZDZjMWRiODFlNmFjMjhhMmJjZDM1MzRhMCJ9fX0="}]}'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种静静地哼唱着周围自然旋律的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#A241BF",italic:0b,obfuscated:0b,strikethrough:0b,text:"农耕工艺
+      - 原始植物: 空气",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PLANT_AIR"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:raw_iron
+  count: 2
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_nugget
+  count: 6
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:quartz
+  count: 64
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2202001.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BORAX"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:quartz
+  count: 64
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2202001.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BORAX"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:clay_ball
+  count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:milk_bucket
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:gold_nugget
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:power":1}'
+    minecraft:damage: '196'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:unbreaking":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:unbreaking":3}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:efficiency":1}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:quartz
+  count: 11
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2202001.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BORAX"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cooked_porkchop
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:large_amethyst_bud
+  count: 3
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:copper_ingot
+  count: 15
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:glow_berries
+  count: 1
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:raw_iron
+  count: 56
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:protection":2}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_nugget
+  count: 36
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;941949324,292239869,-1599743385,1114114124],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDY3NGM2M2M4ZGI1ZjRjYTYyOGQ2OWEzYjFmOGEzNmUyOWQ4ZmQ3NzVlMWE2YmRiNmNhYmI0YmU0ZGIxMjEifX19"}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"尸壳头",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HUSK_HEAD"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:iron_nugget
+  count: 28
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
