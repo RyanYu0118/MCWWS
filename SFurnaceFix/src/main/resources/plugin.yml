@@ -1,0 +1,7 @@
+name: MCWWS_SFurnaceFix
+version: 1.0.0
+main: com.mcwws.sfurnacefix.SFurnaceFixPlugin
+api-version: '1.21'
+depend:
+  - Slimefun
+description: Block vanilla furnace GUI on Slimefun BlockMenu machines (Paper 1.21+)
