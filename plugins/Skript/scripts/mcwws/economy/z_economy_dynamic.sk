@@ -273,6 +273,23 @@ function mcwwsResetMarketItem(item: text):
     mcwwsRecalculateCachedPrice({_item})
     mcwwsExportItemPriceToWeb({_item})
 
+function mcwwsResetAllMarketItems():
+    delete {-market_stock::*}
+    delete {-market_buy_pressure::*}
+    delete {-market_sell_pressure::*}
+    delete {market_dirty_items::*}
+    loop {economy_items::*}:
+        set {_item} to loop-value
+        set {_eq} to mcwwsGetItemEquilibrium({_item})
+        set {-market_stock::%{_item}%} to {_eq}
+        set {-market_buy_pressure::%{_item}%} to 0
+        set {-market_sell_pressure::%{_item}%} to 0
+        mcwwsMarkMarketItemDirty({_item})
+    set {-market_last_tick} to now
+    mcwwsSaveMarketState()
+    updatePrices()
+    mcwwsExportAllPricesToWeb()
+
 on load:
     mcwwsLoadDynamicConfig()
     mcwwsLoadMarketState()
@@ -314,6 +331,12 @@ command /eco-market-reset [<text>]:
             stop
         mcwwsResetMarketItem({_item})
         send "§a[Economy-Dynamic] 已重置 §e%{_item}% §a的市场状态并刷新物价。"
+
+command /eco-market-reset-all:
+    permission: op
+    trigger:
+        mcwwsResetAllMarketItems()
+        send "§a[Economy-Dynamic] 已按当前算法重置全部 §e%size of {economy_items::*}% §a个物品的市场状态并刷新网页价格。"
 
 command /eco-market-info [<text>]:
     permission: op
