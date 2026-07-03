@@ -1680,6 +1680,25 @@ body {
     margin-top: 0.95rem;
 }
 
+.item-modal-link-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 40px;
+    padding: 0.55rem 1rem;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: rgba(15, 23, 42, 0.8);
+    color: var(--text-primary);
+    text-decoration: none;
+    transition: var(--transition-normal);
+}
+
+.item-modal-link-btn:hover {
+    border-color: rgba(255, 255, 255, 0.22);
+    background: rgba(30, 41, 59, 0.95);
+}
+
 .item-modal-action-hint {
     color: var(--text-muted);
     font-size: 0.82rem;

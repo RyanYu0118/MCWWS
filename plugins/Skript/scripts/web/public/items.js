@@ -22,6 +22,7 @@ let pointerBearingY = null;
 let livePriceRefreshTimer = null;
 let livePriceRefreshInFlight = false;
 let itemModalChart = null;
+let itemModalRefreshTimer = null;
 const ITEM_HISTORY_RANGES = [
     ['10m', '10分钟'],
     ['30m', '30分钟'],
@@ -57,6 +58,11 @@ const CART_STORAGE_KEY = 'mcwws_shop_cart';
 let shopCart = [];
 let cartDrawerOpen = false;
 
+function syncPageScrollLock() {
+    const hasActiveModal = !!document.querySelector('.modal.active, .modal.closing');
+    document.body.style.overflow = (cartDrawerOpen || hasActiveModal) ? 'hidden' : '';
+}
+
 function replaceUrlIfChanged(params) {
     const qs = params.toString();
     const next = qs
@@ -66,6 +72,15 @@ function replaceUrlIfChanged(params) {
     if (next !== cur) {
         history.replaceState(null, '', next);
     }
+}
+
+function buildItemDetailUrl(itemId) {
+    const params = new URLSearchParams(window.location.search);
+    params.set('detail', itemId);
+    const qs = params.toString();
+    return qs
+        ? `${window.location.pathname}?${qs}${window.location.hash || ''}`
+        : `${window.location.pathname}${window.location.hash || ''}`;
 }
 
 /** 从地址栏恢复：搜索、排序、复选框、页码（交易弹窗在数据加载后单独处理） */
@@ -148,6 +163,13 @@ function syncItemsStateToUrl() {
     else params.delete('add');
     params.delete('trade');
 
+    const itemModal = document.getElementById('itemModal');
+    const detailId = itemModal && itemModal.classList.contains('active') && itemModal.dataset.itemId
+        ? itemModal.dataset.itemId
+        : null;
+    if (detailId) params.set('detail', detailId);
+    else params.delete('detail');
+
     if (cartDrawerOpen) params.set('cart', '1');
     else params.delete('cart');
 
@@ -176,6 +198,16 @@ function tryOpenCartFromUrl() {
         params.delete('add');
         params.delete('trade');
         replaceUrlIfChanged(params);
+    }
+    const detailId = params.get('detail');
+    if (detailId) {
+        const detailItem = allItems.find((i) => i.id === detailId);
+        if (detailItem) {
+            void showItemDetails(detailId);
+        } else {
+            params.delete('detail');
+            replaceUrlIfChanged(params);
+        }
     }
 }
 
@@ -646,7 +678,7 @@ function openCartDrawer() {
     backdrop.hidden = false;
     backdrop.classList.add('is-visible');
     backdrop.setAttribute('aria-hidden', 'false');
-    document.body.style.overflow = 'hidden';
+    syncPageScrollLock();
     renderCartDrawer();
     void loadPendingOrdersUi();
     syncItemsStateToUrl();
@@ -664,7 +696,7 @@ function closeCartDrawer() {
     window.setTimeout(() => {
         if (!cartDrawerOpen) backdrop.hidden = true;
     }, 220);
-    document.body.style.overflow = '';
+    syncPageScrollLock();
     syncItemsStateToUrl();
 }
 
@@ -1076,6 +1108,7 @@ function showDialog(modal) {
     if (!modal) return;
     modal.classList.remove('closing');
     modal.classList.add('active');
+    syncPageScrollLock();
 }
 
 function hideDialog(modal, afterClose) {
@@ -1087,6 +1120,7 @@ function hideDialog(modal, afterClose) {
     modal.classList.remove('active');
     window.setTimeout(() => {
         modal.classList.remove('closing');
+        syncPageScrollLock();
         if (typeof afterClose === 'function') afterClose();
     }, 190);
 }
@@ -1167,6 +1201,125 @@ function destroyItemModalChart() {
     }
 }
 
+function stopItemModalAutoRefresh() {
+    if (itemModalRefreshTimer) {
+        window.clearInterval(itemModalRefreshTimer);
+        itemModalRefreshTimer = null;
+    }
+}
+
+function startItemModalAutoRefresh(itemId) {
+    stopItemModalAutoRefresh();
+    itemModalRefreshTimer = window.setInterval(() => {
+        void refreshOpenItemModal(itemId);
+    }, 1000);
+}
+
+function renderItemModalRecentTransactions(recentTxs) {
+    return recentTxs.slice(0, 10).map((tx) => `
+        <div class="item-modal-trade-row">
+            <div>
+                <div class="item-modal-trade-time">${escapeHtml(formatTime(tx.timestamp))}</div>
+                <div class="item-modal-trade-player">${escapeHtml(tx.playerName || '未知玩家')}</div>
+            </div>
+            <div class="item-modal-trade-meta">
+                <span class="type-badge ${(tx.type || '').toLowerCase()}">${txTypeLabel(tx.type)}</span>
+                <span>${Number(tx.amount || 0)} 件</span>
+                <span>${formatCurrency(tx.price)}</span>
+            </div>
+        </div>
+    `).join('') || '<div class="item-modal-empty">暂无最近交易</div>';
+}
+
+function updateItemModalSummary(itemId, itemData) {
+    const modal = document.getElementById('itemModal');
+    const modalTitle = document.getElementById('modalItemName');
+    const modalBody = document.getElementById('modalBody');
+    if (!modal || !modalBody || modal.dataset.itemId !== itemId) return;
+    const allItem = allItems.find((entry) => entry.id === itemId) || null;
+    const displayName = allItem?.name || itemData.displayName || itemId;
+    if (modalTitle) modalTitle.textContent = displayName;
+    const buyEl = modalBody.querySelector('[data-item-modal-buy]');
+    const sellEl = modalBody.querySelector('[data-item-modal-sell]');
+    const totalBuysEl = modalBody.querySelector('[data-item-modal-total-buys]');
+    const totalSellsEl = modalBody.querySelector('[data-item-modal-total-sells]');
+    const txListEl = modalBody.querySelector('[data-item-modal-recent-txs]');
+    if (buyEl) buyEl.textContent = formatCurrency(itemData.buyPrice);
+    if (sellEl) sellEl.textContent = formatCurrency(itemData.sellPrice);
+    if (totalBuysEl) totalBuysEl.textContent = String(Number(itemData.totalBuys || 0));
+    if (totalSellsEl) totalSellsEl.textContent = String(Number(itemData.totalSells || 0));
+    if (txListEl) {
+        txListEl.innerHTML = renderItemModalRecentTransactions(Array.isArray(itemData.recentTransactions) ? itemData.recentTransactions : []);
+    }
+}
+
+function renderItemHistoryChartInto(modalBody, priceHistory, rangeKey) {
+    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
+    if (!chartWrap) return;
+    if (!Array.isArray(priceHistory) || !priceHistory.length) {
+        destroyItemModalChart();
+        chartWrap.innerHTML = '<div class="item-modal-empty">该时间范围内暂无价格历史</div>';
+        return;
+    }
+    const labels = priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey));
+    const buyData = priceHistory.map((row) => row.avgBuyPrice);
+    const sellData = priceHistory.map((row) => row.avgSellPrice);
+    let canvas = modalBody.querySelector('#modalPriceChart');
+    if (!canvas) {
+        chartWrap.innerHTML = '<canvas id="modalPriceChart"></canvas>';
+        canvas = modalBody.querySelector('#modalPriceChart');
+    }
+    if (!canvas) return;
+    if (!itemModalChart) {
+        itemModalChart = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels,
+                datasets: [
+                    {
+                        label: '买入价',
+                        data: buyData,
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.10)',
+                        tension: 0.35,
+                        fill: true,
+                        stepped: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        spanGaps: true
+                    },
+                    {
+                        label: '卖出价',
+                        data: sellData,
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.10)',
+                        tension: 0.35,
+                        fill: true,
+                        stepped: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        spanGaps: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: { legend: { labels: { color: '#CBD5E1' } } },
+                scales: {
+                    x: { ticks: { color: '#94A3B8', maxRotation: 0, autoSkip: true }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
+                    y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
+                }
+            }
+        });
+        return;
+    }
+    itemModalChart.data.labels = labels;
+    itemModalChart.data.datasets[0].data = buyData;
+    itemModalChart.data.datasets[1].data = sellData;
+    itemModalChart.update('none');
+}
+
 function formatHistoryAxisLabel(timestamp, rangeKey) {
     const date = new Date(String(timestamp).replace(' ', 'T'));
     if (Number.isNaN(date.getTime())) return String(timestamp || '');
@@ -1195,80 +1348,50 @@ function setItemHistoryRangeButtonsActive(modalBody, activeKey) {
     });
 }
 
-async function loadItemHistoryRange(itemId, rangeKey = '7d') {
+async function loadItemHistoryRange(itemId, rangeKey = '7d', options = {}) {
+    const { showLoading = true } = options;
     const modal = document.getElementById('itemModal');
     const modalBody = document.getElementById('modalBody');
     const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
     if (!modal || !modalBody || !chartWrap) return;
     modal.dataset.historyRange = rangeKey;
     setItemHistoryRangeButtonsActive(modalBody, rangeKey);
-    chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    if (showLoading) {
+        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    }
     try {
         const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
         const priceHistory = await response.json();
         if (!response.ok) {
             throw new Error(priceHistory?.error || '读取价格历史失败');
         }
-        if (modal.dataset.itemId !== itemId) {
+        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
             return;
         }
-        if (!Array.isArray(priceHistory) || !priceHistory.length) {
-            destroyItemModalChart();
-            chartWrap.innerHTML = '<div class="item-modal-empty">该时间范围内暂无价格历史</div>';
-            return;
-        }
-        chartWrap.innerHTML = '<canvas id="modalPriceChart"></canvas>';
-        const canvas = modalBody.querySelector('#modalPriceChart');
-        if (!canvas) return;
-        destroyItemModalChart();
-        itemModalChart = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels: priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey)),
-                datasets: [
-                    {
-                        label: '买入价',
-                        data: priceHistory.map((row) => row.avgBuyPrice),
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.10)',
-                        tension: 0.35,
-                        fill: true,
-                        stepped: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        spanGaps: true
-                    },
-                    {
-                        label: '卖出价',
-                        data: priceHistory.map((row) => row.avgSellPrice),
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.10)',
-                        tension: 0.35,
-                        fill: true,
-                        stepped: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        spanGaps: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: {
-                    legend: {
-                        labels: { color: '#CBD5E1' }
-                    }
-                },
-                scales: {
-                    x: { ticks: { color: '#94A3B8', maxRotation: 0, autoSkip: true }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
-                    y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
-                }
-            }
-        });
+        renderItemHistoryChartInto(modalBody, priceHistory, rangeKey);
     } catch (error) {
         destroyItemModalChart();
         chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
+    }
+}
+
+async function refreshOpenItemModal(expectedItemId) {
+    const modal = document.getElementById('itemModal');
+    const modalBody = document.getElementById('modalBody');
+    if (!modal || !modalBody || !modal.classList.contains('active')) return;
+    const itemId = modal.dataset.itemId;
+    if (!itemId || (expectedItemId && itemId !== expectedItemId)) return;
+    try {
+        const response = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`);
+        const itemData = await response.json();
+        if (!response.ok) {
+            throw new Error(itemData?.error || '读取物品详情失败');
+        }
+        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) return;
+        updateItemModalSummary(itemId, itemData);
+        await loadItemHistoryRange(itemId, modal.dataset.historyRange || '7d', { showLoading: false });
+    } catch (error) {
+        console.warn('刷新物品详情失败:', error);
     }
 }
 
@@ -1279,15 +1402,25 @@ async function showItemDetails(itemId) {
     const item = allItems.find((entry) => entry.id === itemId) || null;
     if (!modal || !modalTitle || !modalBody) return;
 
+    stopItemModalAutoRefresh();
     const displayName = item?.name || itemId;
     modalTitle.textContent = displayName;
     modalBody.innerHTML = '<div class="loading-spinner"></div>';
     destroyItemModalChart();
     showDialog(modal);
     modal.dataset.itemId = itemId;
+    modal.dataset.historyRange = '7d';
+    syncItemsStateToUrl();
 
     try {
-        const itemData = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`).then((r) => r.json());
+        const response = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`);
+        const itemData = await response.json();
+        if (!response.ok) {
+            throw new Error(itemData?.error || '加载物品详情失败');
+        }
+        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
+            return;
+        }
         const mergedItem = item || {
             id: itemId,
             name: itemData.displayName || itemId,
@@ -1298,6 +1431,7 @@ async function showItemDetails(itemId) {
         const offers = mergedItem.ultimateShopOffers || [];
         const recentTxs = Array.isArray(itemData.recentTransactions) ? itemData.recentTransactions : [];
         const canAdd = offers.length > 0;
+        const detailUrl = buildItemDetailUrl(itemId);
         modalBody.innerHTML = `
             <div class="modal-item-info">
                 <div class="modal-item-icon">${getItemIconHtml(mergedItem.id, mergedItem.name)}</div>
@@ -1307,26 +1441,26 @@ async function showItemDetails(itemId) {
                     <div class="item-modal-stat-grid">
                         <div class="item-modal-stat">
                             <div class="item-modal-stat-label">系统买入</div>
-                            <div class="item-modal-stat-value item-modal-stat-value--buy">${formatCurrency(itemData.buyPrice)}</div>
+                            <div class="item-modal-stat-value item-modal-stat-value--buy" data-item-modal-buy>${formatCurrency(itemData.buyPrice)}</div>
                         </div>
                         <div class="item-modal-stat">
                             <div class="item-modal-stat-label">玩家回收</div>
-                            <div class="item-modal-stat-value item-modal-stat-value--sell">${formatCurrency(itemData.sellPrice)}</div>
+                            <div class="item-modal-stat-value item-modal-stat-value--sell" data-item-modal-sell>${formatCurrency(itemData.sellPrice)}</div>
                         </div>
                         <div class="item-modal-stat">
                             <div class="item-modal-stat-label">最近 20 笔买入</div>
-                            <div class="item-modal-stat-value">${Number(itemData.totalBuys || 0)}</div>
+                            <div class="item-modal-stat-value" data-item-modal-total-buys>${Number(itemData.totalBuys || 0)}</div>
                         </div>
                         <div class="item-modal-stat">
                             <div class="item-modal-stat-label">最近 20 笔回收</div>
-                            <div class="item-modal-stat-value">${Number(itemData.totalSells || 0)}</div>
+                            <div class="item-modal-stat-value" data-item-modal-total-sells>${Number(itemData.totalSells || 0)}</div>
                         </div>
                     </div>
-                    ${canAdd ? `
                     <div class="item-modal-actions">
-                        <button type="button" class="cart-offer-add-btn" data-item-modal-cart="${escapeHtml(mergedItem.id)}">加入购物车</button>
+                        ${canAdd ? `<button type="button" class="cart-offer-add-btn" data-item-modal-cart="${escapeHtml(mergedItem.id)}">加入购物车</button>` : ''}
+                        <a class="item-modal-link-btn" href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer">新标签页打开</a>
                         ${offers.length > 1 ? '<span class="item-modal-action-hint">默认加入当前首选上架位，可在购物车或多商店选择中调整。</span>' : ''}
-                    </div>` : ''}
+                    </div>
                 </div>
             </div>
             <h3 class="item-modal-section-title">价格历史</h3>
@@ -1339,20 +1473,8 @@ async function showItemDetails(itemId) {
                 <div class="loading-spinner"></div>
             </div>
             <h3 class="item-modal-section-title">最近交易</h3>
-            <div class="item-modal-trade-list">
-                ${recentTxs.slice(0, 10).map((tx) => `
-                    <div class="item-modal-trade-row">
-                        <div>
-                            <div class="item-modal-trade-time">${escapeHtml(formatTime(tx.timestamp))}</div>
-                            <div class="item-modal-trade-player">${escapeHtml(tx.playerName || '未知玩家')}</div>
-                        </div>
-                        <div class="item-modal-trade-meta">
-                            <span class="type-badge ${(tx.type || '').toLowerCase()}">${txTypeLabel(tx.type)}</span>
-                            <span>${Number(tx.amount || 0)} 件</span>
-                            <span>${formatCurrency(tx.price)}</span>
-                        </div>
-                    </div>
-                `).join('') || '<div class="item-modal-empty">暂无最近交易</div>'}
+            <div class="item-modal-trade-list" data-item-modal-recent-txs>
+                ${renderItemModalRecentTransactions(recentTxs)}
             </div>
         `;
 
@@ -1370,17 +1492,23 @@ async function showItemDetails(itemId) {
             });
         });
         void loadItemHistoryRange(itemId, '7d');
+        startItemModalAutoRefresh(itemId);
     } catch (error) {
         console.error('加载物品详情失败:', error);
-        modalBody.innerHTML = '<div class="item-modal-empty">加载物品详情失败</div>';
+        modalBody.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '加载物品详情失败')}</div>`;
     }
 }
 
 function closeModal() {
     const modal = document.getElementById('itemModal');
+    stopItemModalAutoRefresh();
     destroyItemModalChart();
     hideDialog(modal, () => {
-        if (modal) delete modal.dataset.itemId;
+        if (modal) {
+            delete modal.dataset.itemId;
+            delete modal.dataset.historyRange;
+        }
+        syncItemsStateToUrl();
     });
 }
 
