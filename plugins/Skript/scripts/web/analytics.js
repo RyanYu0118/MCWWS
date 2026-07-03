@@ -625,7 +625,7 @@ function createAnalyticsService(opts) {
             .sort((a, b) => a.time - b.time);
         const inRange = related.filter((tx) => tx.time >= rangeStartMs);
 
-        if (!inRange.length) {
+        if (!related.length) {
             return [
                 {
                     timestamp: formatTimestamp(PRICE_HISTORY_FALLBACK_START),
@@ -648,6 +648,21 @@ function createAnalyticsService(opts) {
                 if (tx.sell > 0) sellPrice = tx.sell;
             }
         });
+
+        if (!inRange.length) {
+            return [
+                {
+                    timestamp: formatTimestamp(new Date(rangeStartMs)),
+                    avgBuyPrice: buyPrice,
+                    avgSellPrice: sellPrice
+                },
+                {
+                    timestamp: formatTimestamp(new Date(nowMs)),
+                    avgBuyPrice: currentBuy,
+                    avgSellPrice: currentSell
+                }
+            ];
+        }
 
         const rows = [];
         const pushRow = (timeMs) => {
