@@ -318,6 +318,25 @@ function syncCartPricesFromCatalog() {
     }
 }
 
+function updateVisiblePriceTexts(latestItems) {
+    const grid = document.getElementById('itemsGrid');
+    if (!grid || !Array.isArray(latestItems) || !latestItems.length) return;
+    const latestById = new Map(latestItems.map((item) => [item.id, item]));
+    grid.querySelectorAll('[data-item-card-id]').forEach((card) => {
+        const itemId = card.getAttribute('data-item-card-id');
+        const item = latestById.get(itemId);
+        if (!item) return;
+        const buyEl = card.querySelector('[data-price-role="buy"]');
+        const sellEl = card.querySelector('[data-price-role="sell"]');
+        if (buyEl) {
+            buyEl.textContent = `￥${Number(item.buyPrice || 0).toFixed(2)}`;
+        }
+        if (sellEl) {
+            sellEl.textContent = `￥${Number(item.sellPrice || 0).toFixed(2)}`;
+        }
+    });
+}
+
 async function refreshLivePrices() {
     if (livePriceRefreshInFlight || document.hidden) {
         return;
@@ -327,11 +346,18 @@ async function refreshLivePrices() {
         const response = await fetch('/api/prices?t=' + Date.now());
         if (!response.ok) return;
         const rawData = await response.json();
-        allItems = buildCatalogItems(rawData);
-        updateShopCategoryCounts();
-        renderCategoryTabs();
-        updateLetterIndexButtons();
-        filterAndRenderItems();
+        const latestItems = buildCatalogItems(rawData);
+        if (latestItems.length !== allItems.length) {
+            allItems = latestItems;
+            updateShopCategoryCounts();
+            renderCategoryTabs();
+            updateLetterIndexButtons();
+            filterAndRenderItems();
+            syncCartPricesFromCatalog();
+            return;
+        }
+        allItems = latestItems;
+        updateVisiblePriceTexts(latestItems);
         syncCartPricesFromCatalog();
     } catch (error) {
         console.warn('实时刷新价格失败:', error);
@@ -1905,7 +1931,7 @@ function renderCards() {
         const safeId = escapeHtml(item.id);
 
         return `
-        <div class="glass card-hover" style="border-radius:12px; padding:20px; transition:all 0.3s ease; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
+        <div class="glass card-hover" data-item-card-id="${safeId}" style="border-radius:12px; padding:20px; transition:all 0.3s ease; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
             
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #3b82f6, #8b5cf6);"></div>
 
@@ -1921,11 +1947,11 @@ function renderCards() {
             <div style="background: rgba(15,23,42,0.6); padding:12px; border-radius:8px; border: 1px solid rgba(255,255,255,0.02);">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;">
                     <span style="color:#94A3B8; font-size:0.85rem;">系统买入</span>
-                    <strong style="color:#34D399; font-family: monospace; font-size: 1.05rem;">￥${item.buyPrice.toFixed(2)}</strong>
+                    <strong data-price-role="buy" style="color:#34D399; font-family: monospace; font-size: 1.05rem;">￥${item.buyPrice.toFixed(2)}</strong>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items: center;">
                     <span style="color:#94A3B8; font-size:0.85rem;">玩家回收</span>
-                    <strong style="color:#F87171; font-family: monospace; font-size: 1.05rem;">￥${item.sellPrice.toFixed(2)}</strong>
+                    <strong data-price-role="sell" style="color:#F87171; font-family: monospace; font-size: 1.05rem;">￥${item.sellPrice.toFixed(2)}</strong>
                 </div>
                 <div style="margin-top:14px; display:flex; justify-content:flex-end;">
                     <button type="button" class="${cartBtnClass}" data-item-id="${String(item.id).replace(/"/g, '&quot;')}">加入购物车</button>
