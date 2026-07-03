@@ -11,6 +11,7 @@
 #   min_dynamic_factor, max_dynamic_factor
 # )
 #
+# 均衡库存默认 = 10000 / 基准单买价（可按物品覆盖）
 # 最终价 = items.yml 基准价 × getMarketMultiplier（含分类加减）× dynamic_factor
 # 买卖同倍率，updatePrices() 仍保证 sell ≤ buy × 0.99
 
@@ -25,6 +26,22 @@ function mcwwsNormalizeEconomyItemId(raw: text) :: text:
     set {_id} to "%{_raw}%" in lower case
     replace all " " with "_" in {_id}
     return {_id}
+
+function mcwwsResolveUltimateShopMaterial(shopId: text, slot: text) :: text:
+    set {_shop} to "%{_shopId}%"
+    set {_slot} to "%{_slot}%"
+    if {-ultshop_material_cache::%{_shop}%::%{_slot}%} is set:
+        return "%{-ultshop_material_cache::%{_shop}%::%{_slot}%}%"
+    set {_path} to "plugins/UltimateShop/shops/%{_shop}%.yml"
+    if yaml file {_path} exists:
+        load yaml {_path} as "ultshop_lookup"
+        set {_material} to yaml value "items.%{_slot}%.products.1.material" from "ultshop_lookup"
+        unload yaml "ultshop_lookup"
+        if {_material} is set:
+            set {_material} to mcwwsNormalizeEconomyItemId("%{_material}%")
+            set {-ultshop_material_cache::%{_shop}%::%{_slot}%} to {_material}
+            return {_material}
+    return ""
 
 function mcwwsDynCfgNum(key: text, default: number) :: number:
     set {_v} to {-dyn_cfg::%{_key}%}
@@ -47,6 +64,7 @@ function mcwwsLoadDynamicConfig():
         set {-dyn_cfg::enabled} to yaml value "settings.enabled" from "dyn_cfg"
         set {-dyn_cfg::min_dynamic_factor} to yaml value "settings.min_dynamic_factor" from "dyn_cfg"
         set {-dyn_cfg::max_dynamic_factor} to yaml value "settings.max_dynamic_factor" from "dyn_cfg"
+        set {-dyn_cfg::equilibrium_budget} to yaml value "settings.equilibrium_budget" from "dyn_cfg"
         set {-dyn_cfg::default_equilibrium_stock} to yaml value "settings.default_equilibrium_stock" from "dyn_cfg"
         set {-dyn_cfg::stock_sensitivity} to yaml value "settings.stock_sensitivity" from "dyn_cfg"
         set {-dyn_cfg::buy_pressure_sensitivity} to yaml value "settings.buy_pressure_sensitivity" from "dyn_cfg"
@@ -68,6 +86,7 @@ function mcwwsLoadDynamicConfig():
         set {-dyn_cfg::enabled} to true
         set {-dyn_cfg::min_dynamic_factor} to 0.5
         set {-dyn_cfg::max_dynamic_factor} to 2.5
+        set {-dyn_cfg::equilibrium_budget} to 10000
         set {-dyn_cfg::default_equilibrium_stock} to 512
         set {-dyn_cfg::stock_sensitivity} to 0.35
         set {-dyn_cfg::buy_pressure_sensitivity} to 0.18
@@ -79,11 +98,20 @@ function mcwwsLoadDynamicConfig():
 
 function mcwwsGetItemEquilibrium(item: text) :: number:
     set {_eq} to {-dyn_item_cfg::equilibrium::%{_item}%}
+    if {_eq} is set:
+        if {_eq} <= 0:
+            return 1
+        return round({_eq})
+    set {_budget} to mcwwsDynCfgNum("equilibrium_budget", 10000)
+    set {_price} to {-base_price::buy::%{_item}%}
+    if {_price} is set:
+        if {_price} > 0:
+            set {_eq} to round({_budget} / {_price})
     if {_eq} is not set:
         set {_eq} to mcwwsDynCfgNum("default_equilibrium_stock", 512)
     if {_eq} <= 0:
-        return 512
-    return {_eq}
+        return 1
+    return round({_eq})
 
 function mcwwsEnsureMarketItemState(item: text):
     set {_eq} to mcwwsGetItemEquilibrium({_item})
@@ -177,6 +205,7 @@ function mcwwsRecordMarketTrade(item: text, amount: number, isBuy: boolean):
         stop
     if {-base_price::buy::%{_item}%} is not set:
         stop
+    mcwwsTickDynamicMarketIfNeeded()
     mcwwsEnsureMarketItemState({_item})
     if {_isBuy} is true:
         subtract {_amount} from {-market_stock::%{_item}%}
@@ -185,6 +214,9 @@ function mcwwsRecordMarketTrade(item: text, amount: number, isBuy: boolean):
         add {_amount} to {-market_stock::%{_item}%}
         add {_amount} to {-market_sell_pressure::%{_item}%}
     mcwwsMarkMarketItemDirty({_item})
+    mcwwsSaveMarketState()
+    mcwwsRecalculateCachedPrice({_item})
+    mcwwsExportItemPriceToWeb({_item})
 
 function mcwwsTickDynamicMarket():
     if mcwwsDynCfgBool("enabled", true) is false:
@@ -238,15 +270,22 @@ function mcwwsResetMarketItem(item: text):
     set {-market_sell_pressure::%{_item}%} to 0
     mcwwsMarkMarketItemDirty({_item})
     mcwwsSaveMarketState()
+    mcwwsRecalculateCachedPrice({_item})
+    mcwwsExportItemPriceToWeb({_item})
 
 on load:
     mcwwsLoadDynamicConfig()
     mcwwsLoadMarketState()
     send "§a[Economy-Dynamic] 动态定价引擎已加载（enabled=%{-dyn_cfg::enabled}%）。" to console
     updatePrices()
+    mcwwsExportAllPricesToWeb()
 
 on ItemFinishTransactionEvent:
-    set {_product} to event.getItem().getProduct()
+    set {_shop} to event.getShop().getShopName()
+    set {_slot} to event.getItem().getProduct()
+    set {_product} to mcwwsResolveUltimateShopMaterial({_shop}, {_slot})
+    if {_product} is "":
+        stop
     set {_amount} to event.getAmount()
     if {_amount} <= 0:
         stop
@@ -259,6 +298,8 @@ command /eco-market-reload:
     permission: op
     trigger:
         mcwwsLoadDynamicConfig()
+        updatePrices()
+        mcwwsExportAllPricesToWeb()
         send "§a[Economy-Dynamic] 动态定价配置已重载。"
 
 command /eco-market-reset [<text>]:
@@ -272,7 +313,6 @@ command /eco-market-reset [<text>]:
             send "§c未知物品: %{_item}%"
             stop
         mcwwsResetMarketItem({_item})
-        updatePrices()
         send "§a[Economy-Dynamic] 已重置 §e%{_item}% §a的市场状态并刷新物价。"
 
 command /eco-market-info [<text>]:

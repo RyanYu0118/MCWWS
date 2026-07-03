@@ -931,5 +931,33 @@ orders:
                 material: short_grass
                 shopTitle: 花卉商店
                 status: delivered
+    '36':
+        id: 8ee9095a-e376-4f52-bd38-55c256038687
+        numericId: 36
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 7.2
+        balanceAfter: 1.7648817075E8
+        economyChargedInGame: true
+        createdAt: '2026-07-03T16:31:23.571Z'
+        updatedAt: '2026-07-04 00:31:35'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-07-04 00:31:34'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: acacia_log
+                shopId: logs
+                slot: A
+                quantity: 1
+                unitBuyPrice: 7.2
+                lineTotal: 7.2
+                productAmount: 1
+                material: acacia_log
+                shopTitle: 原木商店 (1/5)
+                status: delivered
 
-next_id: 36
+next_id: 37

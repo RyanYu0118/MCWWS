@@ -19,6 +19,8 @@ let clockTimeTimer = null;
 let pointerBearingTimer = null;
 let pointerBearingX = null;
 let pointerBearingY = null;
+let livePriceRefreshTimer = null;
+let livePriceRefreshInFlight = false;
 
 const POINTER_COMPASS_TILT_COS = Math.cos(Math.PI / 4);
 const MC_FONT_SEP = ' / ';
@@ -187,7 +189,8 @@ document.addEventListener('DOMContentLoaded', async () => {
     window.MCWWS_BuildPasteDeps = window.MCWWS_LitematicaDeps;
     loadShopCart();
     updateCartBadge();
-    loadItems();
+    await loadItems();
+    ensureLivePriceRefreshTimer();
     setupEventListeners();
     if (window.MCWWS_AUTH) {
         void window.MCWWS_AUTH.init();
@@ -241,31 +244,7 @@ async function loadItems() {
         if (!response.ok) throw new Error('网络响应失败');
         const rawData = await response.json();
 
-        // 核心转换逻辑
-        LETTER_SORT_CACHE.clear();
-        allItems = Object.keys(rawData).map(key => ({
-            id: key,
-            name: rawData[key].displayName
-                || rawData[key].customDisplayName
-                || (window.getChineseName ? window.getChineseName(key) : key),
-            buyPrice: rawData[key].buy,
-            sellPrice: rawData[key].sell,
-            source: rawData[key].source || 'vanilla',
-            custom: rawData[key].custom === true,
-            shop: rawData[key].shop || null,
-            shopItem: rawData[key].item || null,
-            buyAmount: rawData[key].amount || 1,
-            displayName: rawData[key].displayName || rawData[key].customDisplayName || null,
-            loreLine: normalizeLoreLine(rawData[key].loreLine
-                || rawData[key].description
-                || rawData[key].lore
-                || (window.getItemLoreLine ? window.getItemLoreLine(key) : null)),
-            shopCategories: Array.isArray(rawData[key].shopCategories) ? rawData[key].shopCategories : [],
-            inShop: rawData[key].inShop === true,
-            ultimateShopOffers: Array.isArray(rawData[key].ultimateShopOffers)
-                ? rawData[key].ultimateShopOffers
-                : []
-        }));
+        allItems = buildCatalogItems(rawData);
 
         updateShopCategoryCounts();
         renderCategoryTabs();
@@ -273,6 +252,7 @@ async function loadItems() {
         initLetterIndexBar();
         updateLetterIndexButtons();
         filterAndRenderItems();
+        syncCartPricesFromCatalog();
         tryOpenCartFromUrl();
 
     } catch (error) {
@@ -282,6 +262,89 @@ async function loadItems() {
             grid.innerHTML = '<div style="color:#ef4444; text-align:center; grid-column:1/-1; padding: 40px; background: #1e293b; border-radius: 12px;">⚠️ 无法连接到后端数据库。</div>';
         }
     }
+}
+
+function buildCatalogItems(rawData) {
+    LETTER_SORT_CACHE.clear();
+    return Object.keys(rawData).map((key) => ({
+        id: key,
+        name: rawData[key].displayName
+            || rawData[key].customDisplayName
+            || (window.getChineseName ? window.getChineseName(key) : key),
+        buyPrice: rawData[key].buy,
+        sellPrice: rawData[key].sell,
+        source: rawData[key].source || 'vanilla',
+        custom: rawData[key].custom === true,
+        shop: rawData[key].shop || null,
+        shopItem: rawData[key].item || null,
+        buyAmount: rawData[key].amount || 1,
+        displayName: rawData[key].displayName || rawData[key].customDisplayName || null,
+        loreLine: normalizeLoreLine(rawData[key].loreLine
+            || rawData[key].description
+            || rawData[key].lore
+            || (window.getItemLoreLine ? window.getItemLoreLine(key) : null)),
+        shopCategories: Array.isArray(rawData[key].shopCategories) ? rawData[key].shopCategories : [],
+        inShop: rawData[key].inShop === true,
+        ultimateShopOffers: Array.isArray(rawData[key].ultimateShopOffers)
+            ? rawData[key].ultimateShopOffers
+            : []
+    }));
+}
+
+function syncCartPricesFromCatalog() {
+    if (!shopCart.length || !allItems.length) return;
+    let changed = false;
+    shopCart.forEach((entry) => {
+        const item = allItems.find((it) => it.id === entry.itemId);
+        if (!item) return;
+        const offer = (item.ultimateShopOffers || []).find((it) => String(it.shopId) === String(entry.shopId) && String(it.slot) === String(entry.slot));
+        if (!offer) return;
+        const nextUnitBuyPrice = resolveOfferUnitPrice(offer, item, 'buy');
+        if (entry.unitBuyPrice !== nextUnitBuyPrice) {
+            entry.unitBuyPrice = nextUnitBuyPrice;
+            changed = true;
+        }
+        if (entry.itemName !== item.name) {
+            entry.itemName = item.name;
+            changed = true;
+        }
+    });
+    if (changed) {
+        saveShopCart();
+        updateCartBadge();
+        if (cartDrawerOpen) {
+            renderCartDrawer();
+        }
+    }
+}
+
+async function refreshLivePrices() {
+    if (livePriceRefreshInFlight || document.hidden) {
+        return;
+    }
+    livePriceRefreshInFlight = true;
+    try {
+        const response = await fetch('/api/prices?t=' + Date.now());
+        if (!response.ok) return;
+        const rawData = await response.json();
+        allItems = buildCatalogItems(rawData);
+        updateShopCategoryCounts();
+        renderCategoryTabs();
+        updateLetterIndexButtons();
+        filterAndRenderItems();
+        syncCartPricesFromCatalog();
+    } catch (error) {
+        console.warn('实时刷新价格失败:', error);
+    } finally {
+        livePriceRefreshInFlight = false;
+    }
+}
+
+function ensureLivePriceRefreshTimer() {
+    if (livePriceRefreshTimer) return;
+    livePriceRefreshTimer = window.setInterval(() => {
+        void refreshLivePrices();
+    }, 5000);
 }
 
 function formatUltimateShopPrice(val) {

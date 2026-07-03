@@ -6,7 +6,9 @@ settings:
   # 动态倍率上下限（与分类加减倍率相乘后仍受此钳制）
   min_dynamic_factor: 0.5
   max_dynamic_factor: 2.5
-  # 虚拟市场均衡库存（每个物品默认目标库存）
+  # 预算库存算法：默认均衡库存 = equilibrium_budget / unit_buy
+  equilibrium_budget: 10000
+  # 当单价缺失或异常时才使用的后备均衡库存
   default_equilibrium_stock: 512
   # 库存偏离均衡时对价格的影响强度（库存越低 → 价格越高）
   stock_sensitivity: 0.35

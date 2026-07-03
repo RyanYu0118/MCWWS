@@ -31,7 +31,10 @@ on ItemFinishTransactionEvent:
     if {_p} is not set:
         stop
     set {_shop} to event.getShop().getShopName()
-    set {_product} to event.getItem().getProduct()
+    set {_slot} to event.getItem().getProduct()
+    set {_product} to mcwwsResolveUltimateShopMaterial({_shop}, {_slot})
+    if {_product} is "":
+        set {_product} to {_slot}
     set {_amount} to event.getAmount()
     if event.isBuyOrSell() is true:
         set {_type} to "BUY"
