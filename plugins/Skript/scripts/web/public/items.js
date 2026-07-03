@@ -21,6 +21,7 @@ let pointerBearingX = null;
 let pointerBearingY = null;
 let livePriceRefreshTimer = null;
 let livePriceRefreshInFlight = false;
+let itemModalChart = null;
 
 const POINTER_COMPASS_TILT_COS = Math.cos(Math.PI / 4);
 const MC_FONT_SEP = ' / ';
@@ -457,6 +458,61 @@ function getCartTotalBuyPrice() {
     }, 0);
 }
 
+function getCartEntriesForItem(itemId) {
+    return shopCart.filter((entry) => entry.itemId === itemId);
+}
+
+function getCartTotalQuantityForItem(itemId) {
+    return getCartEntriesForItem(itemId).reduce((sum, entry) => sum + (Number(entry.quantity) || 0), 0);
+}
+
+function getPreferredCartEntryForItem(itemId) {
+    return getCartEntriesForItem(itemId)[0] || null;
+}
+
+function getPreferredOfferForItem(item) {
+    const offers = item && Array.isArray(item.ultimateShopOffers) ? item.ultimateShopOffers : [];
+    if (!offers.length) return null;
+    const existing = getPreferredCartEntryForItem(item.id);
+    if (existing) {
+        const matched = offers.find((offer) => cartEntryKey(item.id, offer) === existing.key);
+        if (matched) return matched;
+    }
+    return offers[0];
+}
+
+function syncVisibleCardQuantities() {
+    const grid = document.getElementById('itemsGrid');
+    if (!grid) return;
+    grid.querySelectorAll('[data-item-card-id]').forEach((card) => {
+        const itemId = card.getAttribute('data-item-card-id');
+        const qty = getCartTotalQuantityForItem(itemId);
+        const qtyEl = card.querySelector('[data-card-qty-value]');
+        const decBtn = card.querySelector('[data-card-qty-action="dec"]');
+        if (qtyEl) qtyEl.textContent = String(qty);
+        if (decBtn) decBtn.disabled = qty <= 0;
+    });
+}
+
+function changeCardItemQuantity(itemId, delta) {
+    const item = allItems.find((entry) => entry.id === itemId);
+    if (!item) return;
+    if (delta > 0) {
+        const offer = getPreferredOfferForItem(item);
+        if (!offer) {
+            showToast('该物品未上架，无法加入购物车。', false);
+            return;
+        }
+        addToCart(item, offer, delta);
+        syncItemsStateToUrl();
+        return;
+    }
+    const entry = getPreferredCartEntryForItem(itemId);
+    if (!entry) return;
+    setCartLineQuantity(entry.key, entry.quantity + delta);
+    syncItemsStateToUrl();
+}
+
 async function loadPendingOrdersUi() {
     const box = document.getElementById('cartPendingOrders');
     if (!box) return;
@@ -624,6 +680,7 @@ function addToCart(item, offer, quantity = 1) {
     }
     saveShopCart();
     updateCartBadge();
+    syncVisibleCardQuantities();
     if (cartDrawerOpen) {
         renderCartDrawer();
     }
@@ -640,6 +697,7 @@ function setCartLineQuantity(key, quantity) {
     }
     saveShopCart();
     updateCartBadge();
+    syncVisibleCardQuantities();
     renderCartDrawer();
 }
 
@@ -647,6 +705,7 @@ function removeCartLine(key) {
     shopCart = shopCart.filter((e) => e.key !== key);
     saveShopCart();
     updateCartBadge();
+    syncVisibleCardQuantities();
     renderCartDrawer();
 }
 
@@ -654,6 +713,7 @@ function clearShopCart() {
     shopCart = [];
     saveShopCart();
     updateCartBadge();
+    syncVisibleCardQuantities();
     renderCartDrawer();
 }
 
@@ -1037,6 +1097,209 @@ function handleAddToCartClick(itemId) {
         return;
     }
     openCartOfferModal(item);
+}
+
+function formatCurrency(amount) {
+    return `￥${Number(amount || 0).toFixed(2)}`;
+}
+
+function formatTime(timestamp) {
+    const date = new Date(timestamp);
+    if (Number.isNaN(date.getTime())) {
+        return String(timestamp || '');
+    }
+    const diff = Date.now() - date.getTime();
+    const mins = Math.floor(diff / 60000);
+    if (mins < 1) return '刚刚';
+    if (mins < 60) return `${mins} 分钟前`;
+    const hours = Math.floor(mins / 60);
+    if (hours < 24) return `${hours} 小时前`;
+    const days = Math.floor(hours / 24);
+    if (days < 7) return `${days} 天前`;
+    return date.toLocaleString('zh-CN', { hour12: false });
+}
+
+function txTypeLabel(type) {
+    if (type === 'BUY') return '买入';
+    if (type === 'SELL') return '回收';
+    return type || '未知';
+}
+
+function categoryDisplayName(category) {
+    const raw = String(category || 'unknown');
+    const map = {
+        archaeology: '考古',
+        wood: '木材',
+        brick: '砖块',
+        minerals: '矿物',
+        redstone: '红石',
+        farming: '农作物',
+        fish: '渔业',
+        flowers: '花卉',
+        drops: '掉落物',
+        brewing: '酿造',
+        tools: '工具',
+        weapons: '武器',
+        armor: '护甲',
+        utility: '实用',
+        transport: '交通',
+        unknown: '未分类'
+    };
+    return map[raw] || raw.replace(/_/g, ' ');
+}
+
+function destroyItemModalChart() {
+    if (itemModalChart) {
+        itemModalChart.destroy();
+        itemModalChart = null;
+    }
+}
+
+async function showItemDetails(itemId) {
+    const modal = document.getElementById('itemModal');
+    const modalTitle = document.getElementById('modalItemName');
+    const modalBody = document.getElementById('modalBody');
+    const item = allItems.find((entry) => entry.id === itemId) || null;
+    if (!modal || !modalTitle || !modalBody) return;
+
+    const displayName = item?.name || itemId;
+    modalTitle.textContent = displayName;
+    modalBody.innerHTML = '<div class="loading-spinner"></div>';
+    destroyItemModalChart();
+    showDialog(modal);
+    modal.dataset.itemId = itemId;
+
+    try {
+        const [itemData, priceHistory] = await Promise.all([
+            fetch(`/api/shop/item/${encodeURIComponent(itemId)}`).then((r) => r.json()),
+            fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?hours=168`).then((r) => r.json())
+        ]);
+        const mergedItem = item || {
+            id: itemId,
+            name: itemData.displayName || itemId,
+            buyPrice: Number(itemData.buyPrice) || 0,
+            sellPrice: Number(itemData.sellPrice) || 0,
+            ultimateShopOffers: []
+        };
+        const offers = mergedItem.ultimateShopOffers || [];
+        const recentTxs = Array.isArray(itemData.recentTransactions) ? itemData.recentTransactions : [];
+        const canAdd = offers.length > 0;
+        modalBody.innerHTML = `
+            <div class="modal-item-info">
+                <div class="modal-item-icon">${getItemIconHtml(mergedItem.id, mergedItem.name)}</div>
+                <div style="min-width:0; flex:1;">
+                    <div style="font-size: 1.25rem; font-weight: 600; color: var(--text-primary);">${escapeHtml(mergedItem.name)}</div>
+                    <div style="color: var(--text-muted); margin: 0.35rem 0 0.75rem;">${escapeHtml(categoryDisplayName(itemData.category))}${MC_FONT_SEP}${escapeHtml(mergedItem.id)}</div>
+                    <div class="item-modal-stat-grid">
+                        <div class="item-modal-stat">
+                            <div class="item-modal-stat-label">系统买入</div>
+                            <div class="item-modal-stat-value item-modal-stat-value--buy">${formatCurrency(itemData.buyPrice)}</div>
+                        </div>
+                        <div class="item-modal-stat">
+                            <div class="item-modal-stat-label">玩家回收</div>
+                            <div class="item-modal-stat-value item-modal-stat-value--sell">${formatCurrency(itemData.sellPrice)}</div>
+                        </div>
+                        <div class="item-modal-stat">
+                            <div class="item-modal-stat-label">最近 20 笔买入</div>
+                            <div class="item-modal-stat-value">${Number(itemData.totalBuys || 0)}</div>
+                        </div>
+                        <div class="item-modal-stat">
+                            <div class="item-modal-stat-label">最近 20 笔回收</div>
+                            <div class="item-modal-stat-value">${Number(itemData.totalSells || 0)}</div>
+                        </div>
+                    </div>
+                    ${canAdd ? `
+                    <div class="item-modal-actions">
+                        <button type="button" class="cart-offer-add-btn" data-item-modal-cart="${escapeHtml(mergedItem.id)}">加入购物车</button>
+                        ${offers.length > 1 ? '<span class="item-modal-action-hint">默认加入当前首选上架位，可在购物车或多商店选择中调整。</span>' : ''}
+                    </div>` : ''}
+                </div>
+            </div>
+            <h3 class="item-modal-section-title">价格历史（7 天）</h3>
+            <div class="item-modal-chart-wrap">
+                ${priceHistory.length ? '<canvas id="modalPriceChart"></canvas>' : '<div class="item-modal-empty">暂无价格历史</div>'}
+            </div>
+            <h3 class="item-modal-section-title">最近交易</h3>
+            <div class="item-modal-trade-list">
+                ${recentTxs.slice(0, 10).map((tx) => `
+                    <div class="item-modal-trade-row">
+                        <div>
+                            <div class="item-modal-trade-time">${escapeHtml(formatTime(tx.timestamp))}</div>
+                            <div class="item-modal-trade-player">${escapeHtml(tx.playerName || '未知玩家')}</div>
+                        </div>
+                        <div class="item-modal-trade-meta">
+                            <span class="type-badge ${(tx.type || '').toLowerCase()}">${txTypeLabel(tx.type)}</span>
+                            <span>${Number(tx.amount || 0)} 件</span>
+                            <span>${formatCurrency(tx.price)}</span>
+                        </div>
+                    </div>
+                `).join('') || '<div class="item-modal-empty">暂无最近交易</div>'}
+            </div>
+        `;
+
+        mountItemIconsInContainer(modalBody);
+        if (window.McTextureAnim) window.McTextureAnim.initInContainer(modalBody);
+        if (window.McEnchantGlint) window.McEnchantGlint.initInContainer(modalBody);
+
+        modalBody.querySelector('[data-item-modal-cart]')?.addEventListener('click', () => {
+            closeModal();
+            handleAddToCartClick(itemId);
+        });
+
+        window.setTimeout(() => {
+            const canvas = document.getElementById('modalPriceChart');
+            if (!canvas || !priceHistory.length) return;
+            destroyItemModalChart();
+            itemModalChart = new Chart(canvas, {
+                type: 'line',
+                data: {
+                    labels: priceHistory.map((row) => row.timestamp.split(' ')[1] || row.timestamp),
+                    datasets: [
+                        {
+                            label: '买入价',
+                            data: priceHistory.map((row) => row.avgBuyPrice),
+                            borderColor: '#10B981',
+                            backgroundColor: 'rgba(16, 185, 129, 0.10)',
+                            tension: 0.35,
+                            fill: true
+                        },
+                        {
+                            label: '卖出价',
+                            data: priceHistory.map((row) => row.avgSellPrice),
+                            borderColor: '#EF4444',
+                            backgroundColor: 'rgba(239, 68, 68, 0.10)',
+                            tension: 0.35,
+                            fill: true
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            labels: { color: '#CBD5E1' }
+                        }
+                    },
+                    scales: {
+                        x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
+                        y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
+                    }
+                }
+            });
+        }, 40);
+    } catch (error) {
+        console.error('加载物品详情失败:', error);
+        modalBody.innerHTML = '<div class="item-modal-empty">加载物品详情失败</div>';
+    }
+}
+
+function closeModal() {
+    const modal = document.getElementById('itemModal');
+    destroyItemModalChart();
+    hideDialog(modal, () => {
+        if (modal) delete modal.dataset.itemId;
+    });
 }
 
 function closeTradeModal() {
@@ -1818,8 +2081,29 @@ function setupEventListeners() {
     const itemsGrid = document.getElementById('itemsGrid');
     if (itemsGrid) {
         itemsGrid.addEventListener('click', (e) => {
+            const qtyBtn = e.target.closest('[data-card-qty-action]');
+            if (qtyBtn) {
+                e.preventDefault();
+                e.stopPropagation();
+                const itemId = qtyBtn.getAttribute('data-item-id');
+                const action = qtyBtn.getAttribute('data-card-qty-action');
+                if (itemId && action === 'inc') {
+                    changeCardItemQuantity(itemId, 1);
+                } else if (itemId && action === 'dec') {
+                    changeCardItemQuantity(itemId, -1);
+                }
+                return;
+            }
             const btn = e.target.closest('.cart-btn, .trade-btn');
             if (!btn) {
+                if (e.target.closest('[data-no-card-open]')) {
+                    return;
+                }
+                const card = e.target.closest('[data-item-card-id]');
+                const itemId = card?.getAttribute('data-item-card-id');
+                if (itemId) {
+                    void showItemDetails(itemId);
+                }
                 return;
             }
             e.preventDefault();
@@ -1873,6 +2157,11 @@ function setupEventListeners() {
     document.addEventListener('keydown', (e) => {
         if (e.key === 'Escape' && cartDrawerOpen) {
             closeCartDrawer();
+            return;
+        }
+        if (e.key === 'Escape') {
+            closeTradeModal();
+            closeModal();
         }
     });
 
@@ -1897,6 +2186,14 @@ function setupEventListeners() {
         tradeModal.addEventListener('click', (e) => {
             if (e.target === tradeModal) {
                 closeTradeModal();
+            }
+        });
+    }
+    const itemModal = document.getElementById('itemModal');
+    if (itemModal) {
+        itemModal.addEventListener('click', (e) => {
+            if (e.target === itemModal) {
+                closeModal();
             }
         });
     }
@@ -1944,6 +2241,7 @@ function renderCards() {
         const offers = item.ultimateShopOffers || [];
         const canAdd = offers.length > 0;
         const cartBtnClass = canAdd ? 'cart-btn cart-btn--active' : 'cart-btn cart-btn--disabled';
+        const cartQty = getCartTotalQuantityForItem(item.id);
         const isClock = item.id === 'clock';
         const isPointerCompass = item.id === 'compass' || item.id === 'recovery_compass';
         const descriptionText = isClock
@@ -1958,7 +2256,7 @@ function renderCards() {
         const safeId = escapeHtml(item.id);
 
         return `
-        <div class="glass card-hover" data-item-card-id="${safeId}" style="border-radius:12px; padding:20px; transition:all 0.3s ease; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
+        <div class="glass card-hover item-card-clickable" data-item-card-id="${safeId}" style="border-radius:12px; padding:20px; transition:all 0.3s ease; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
             
             <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #3b82f6, #8b5cf6);"></div>
 
@@ -1981,7 +2279,13 @@ function renderCards() {
                     <strong data-price-role="sell" style="color:#F87171; font-family: monospace; font-size: 1.05rem;">￥${item.sellPrice.toFixed(2)}</strong>
                 </div>
                 <div style="margin-top:14px; display:flex; justify-content:flex-end;">
-                    <button type="button" class="${cartBtnClass}" data-item-id="${String(item.id).replace(/"/g, '&quot;')}">加入购物车</button>
+                    ${canAdd ? `
+                    <div class="cart-qty item-card-qty" data-no-card-open="1">
+                        <button type="button" class="cart-qty-btn item-card-qty-btn" data-card-qty-action="dec" data-item-id="${String(item.id).replace(/"/g, '&quot;')}" ${cartQty <= 0 ? 'disabled' : ''}>-</button>
+                        <span class="cart-qty-value item-card-qty-value" data-card-qty-value>${cartQty}</span>
+                        <button type="button" class="cart-qty-btn item-card-qty-btn" data-card-qty-action="inc" data-item-id="${String(item.id).replace(/"/g, '&quot;')}">+</button>
+                    </div>` : `
+                    <button type="button" class="${cartBtnClass}" data-item-id="${String(item.id).replace(/"/g, '&quot;')}" disabled>暂无上架</button>`}
                 </div>
             </div>
         </div>
