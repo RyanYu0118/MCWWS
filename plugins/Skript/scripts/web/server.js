@@ -200,6 +200,7 @@ const DB_DIR = path.join(__dirname, 'data');
 const USER_DB_FILE = path.join(DB_DIR, 'users.json');
 const TRANSACTIONS_CSV = path.join(DB_DIR, 'transactions.csv');
 const TRANSACTIONS_YAML = path.join(DB_DIR, 'transactions_store.yml');
+const PRICE_HISTORY_CSV = path.join(DB_DIR, 'price_history.csv');
 const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
 const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
@@ -246,14 +247,26 @@ if (!fs.existsSync(PENDING_ORDERS_PATH)) {
     fs.writeFileSync(PENDING_ORDERS_PATH, 'next_id: 1\norders: {}\n', 'utf8');
 }
 
+if (!fs.existsSync(PRICE_HISTORY_CSV)) {
+    fs.writeFileSync(
+        PRICE_HISTORY_CSV,
+        'timestamp,item,buy,sell\n',
+        'utf8'
+    );
+}
+
 const analytics = createAnalyticsService({
     transactionsCsvPath: TRANSACTIONS_CSV,
     transactionsYamlPath: TRANSACTIONS_YAML,
     legacyCsvPath: LEGACY_TRANSACTIONS_CSV,
     webPricePaths: PRICE_TABLE_PATHS,
+    priceHistoryCsvPath: PRICE_HISTORY_CSV,
     itemsDbPath: ITEMS_DB_PATH,
     ultimateShopShopsDir: ULTIMATE_SHOP_SHOPS_DIR
 });
+
+pollAndRecordPriceHistoryChanges();
+setInterval(pollAndRecordPriceHistoryChanges, 1000);
 
 if (!fs.existsSync(USER_DB_FILE)) {
     fs.writeFileSync(USER_DB_FILE, JSON.stringify([]), 'utf8');
@@ -325,6 +338,86 @@ function loadPriceTables() {
         });
     });
     return merged;
+}
+
+function loadBasePriceLookup() {
+    const db = loadYamlFile(ITEMS_DB_PATH);
+    const map = new Map();
+    Object.keys(db || {}).forEach((key) => {
+        const itemId = normalizeMaterialId(key) || key;
+        const row = db[key];
+        if (!itemId || !row || typeof row !== 'object') return;
+        map.set(itemId, {
+            buy: Number(row.unit_buy) || 0,
+            sell: Number(row.unit_sell) || 0
+        });
+    });
+    return map;
+}
+
+function loadLatestPriceHistoryState() {
+    const state = new Map();
+    if (!fs.existsSync(PRICE_HISTORY_CSV)) {
+        return state;
+    }
+    try {
+        const content = fs.readFileSync(PRICE_HISTORY_CSV, 'utf8');
+        content.split(/\r?\n/).forEach((line) => {
+            const trimmed = line.trim();
+            if (!trimmed || trimmed.startsWith('timestamp,item,')) return;
+            const [timestamp, rawItem, rawBuy, rawSell] = trimmed.split(',');
+            const itemId = normalizeMaterialId(rawItem);
+            if (!itemId || !timestamp) return;
+            state.set(itemId, {
+                buy: Number(rawBuy) || 0,
+                sell: Number(rawSell) || 0
+            });
+        });
+    } catch (error) {
+        console.error('读取价格历史状态失败:', error);
+    }
+    return state;
+}
+
+const basePriceLookup = loadBasePriceLookup();
+const latestPriceHistoryState = loadLatestPriceHistoryState();
+
+function appendPriceHistorySnapshotRows(rows) {
+    if (!rows.length) return;
+    fs.appendFileSync(PRICE_HISTORY_CSV, rows.join(''), 'utf8');
+}
+
+function pollAndRecordPriceHistoryChanges() {
+    try {
+        const rawPrices = loadPriceTables();
+        const nowIso = new Date().toISOString();
+        const lines = [];
+        Object.keys(rawPrices).forEach((rawKey) => {
+            const itemId = normalizeMaterialId(rawKey) || rawKey;
+            const row = rawPrices[rawKey];
+            if (!row || typeof row !== 'object') return;
+            const buy = Number(row.buy) || 0;
+            const sell = Number(row.sell) || 0;
+            const last = latestPriceHistoryState.get(itemId);
+            if (!last) {
+                const base = basePriceLookup.get(itemId);
+                const baseBuy = Number(base?.buy) || 0;
+                const baseSell = Number(base?.sell) || 0;
+                if (buy !== baseBuy || sell !== baseSell) {
+                    lines.push(`${nowIso},${itemId},${buy},${sell}\n`);
+                }
+                latestPriceHistoryState.set(itemId, { buy, sell });
+                return;
+            }
+            if (last.buy !== buy || last.sell !== sell) {
+                lines.push(`${nowIso},${itemId},${buy},${sell}\n`);
+                latestPriceHistoryState.set(itemId, { buy, sell });
+            }
+        });
+        appendPriceHistorySnapshotRows(lines);
+    } catch (error) {
+        console.error('记录价格历史失败:', error);
+    }
 }
 
 let materialNameIndexCache = null;

@@ -13,6 +13,7 @@ const PRICE_HISTORY_FALLBACK_START = new Date('2026-07-01T00:00:00+08:00');
  * @param {string} opts.legacyCsvPath
  * @param {string} [opts.webPricesPath]
  * @param {Array<{path:string, source?:string, custom?:boolean}>} [opts.webPricePaths]
+ * @param {string} [opts.priceHistoryCsvPath]
  * @param {string} opts.itemsDbPath
  * @param {string} opts.ultimateShopShopsDir
  */
@@ -23,6 +24,7 @@ function createAnalyticsService(opts) {
         legacyCsvPath,
         webPricesPath,
         webPricePaths,
+        priceHistoryCsvPath,
         itemsDbPath,
         ultimateShopShopsDir
     } = opts;
@@ -33,6 +35,10 @@ function createAnalyticsService(opts) {
         shopProductIndex: {},
         itemMeta: {},
         prices: {}
+    };
+    let priceHistoryCache = {
+        loadedAt: 0,
+        rows: []
     };
 
     function loadYamlFile(filePath) {
@@ -187,6 +193,60 @@ function createAnalyticsService(opts) {
             productId: null,
             source: 'dynamicshop'
         };
+    }
+
+    function parsePriceHistoryCsvLine(line) {
+        const parts = String(line || '').trim().split(',');
+        if (parts.length < 4) {
+            return null;
+        }
+        if (parts[0] === 'timestamp' && parts[1] === 'item') {
+            return null;
+        }
+        const [timestamp, item, buy, sell] = parts;
+        const itemNorm = normalizeMaterialId(item);
+        if (!itemNorm) {
+            return null;
+        }
+        const time = parseTimestamp(timestamp).getTime();
+        if (!time || Number.isNaN(time)) {
+            return null;
+        }
+        return {
+            timestamp,
+            item: itemNorm,
+            buy: Number(buy) || 0,
+            sell: Number(sell) || 0,
+            time
+        };
+    }
+
+    function loadPriceHistoryRows() {
+        if (!priceHistoryCsvPath || !fs.existsSync(priceHistoryCsvPath)) {
+            priceHistoryCache = { loadedAt: Date.now(), rows: [] };
+            return priceHistoryCache.rows;
+        }
+        const content = fs.readFileSync(priceHistoryCsvPath, 'utf8');
+        const rows = [];
+        content.split(/\r?\n/).forEach((line) => {
+            const parsed = parsePriceHistoryCsvLine(line);
+            if (parsed) {
+                rows.push(parsed);
+            }
+        });
+        rows.sort((a, b) => a.time - b.time);
+        priceHistoryCache = {
+            loadedAt: Date.now(),
+            rows
+        };
+        return rows;
+    }
+
+    function getPriceHistoryRows(forceReload = false) {
+        if (forceReload || Date.now() - priceHistoryCache.loadedAt > 1000) {
+            return loadPriceHistoryRows();
+        }
+        return priceHistoryCache.rows;
     }
 
     function parseMcwwsCsvLine(line, shopProductIndex, prices, itemMeta) {
@@ -549,7 +609,7 @@ function createAnalyticsService(opts) {
         return HISTORY_RANGE_PRESETS[key] || HISTORY_RANGE_PRESETS['7d'];
     }
 
-    function computePriceHistory(transactions, item, rangeOrHours) {
+    function computePriceHistory(item, rangeOrHours) {
         const { sinceMs, bucketMs } = resolveHistoryRangeConfig(rangeOrHours);
         const { itemMeta, prices } = getCache();
         const meta = itemMeta[item] || {};
@@ -560,12 +620,10 @@ function createAnalyticsService(opts) {
         const fallbackStartMs = PRICE_HISTORY_FALLBACK_START.getTime();
         const nowMs = Date.now();
         const rangeStartMs = Math.max(sinceMs == null ? fallbackStartMs : (nowMs - sinceMs), fallbackStartMs);
-        const related = transactions
-            .filter((tx) => tx.item === item)
-            .map((tx) => ({ ...tx, _time: parseTimestamp(tx.timestamp).getTime() }))
-            .filter((tx) => tx._time > 0)
-            .sort((a, b) => a._time - b._time);
-        const inRange = related.filter((tx) => tx._time >= rangeStartMs);
+        const related = getPriceHistoryRows()
+            .filter((row) => row.item === item)
+            .sort((a, b) => a.time - b.time);
+        const inRange = related.filter((tx) => tx.time >= rangeStartMs);
 
         if (!inRange.length) {
             return [
@@ -585,9 +643,9 @@ function createAnalyticsService(opts) {
         let buyPrice = fallbackBuy;
         let sellPrice = fallbackSell;
         related.forEach((tx) => {
-            if (tx._time < rangeStartMs) {
-                if (tx.type === 'BUY' && tx.unitPrice > 0) buyPrice = tx.unitPrice;
-                if (tx.type === 'SELL' && tx.unitPrice > 0) sellPrice = tx.unitPrice;
+            if (tx.time < rangeStartMs) {
+                if (tx.buy > 0) buyPrice = tx.buy;
+                if (tx.sell > 0) sellPrice = tx.sell;
             }
         });
 
@@ -607,16 +665,16 @@ function createAnalyticsService(opts) {
         pushRow(rangeStartMs);
 
         let txIndex = 0;
-        while (txIndex < related.length && related[txIndex]._time < rangeStartMs) {
+        while (txIndex < related.length && related[txIndex].time < rangeStartMs) {
             txIndex += 1;
         }
 
         let cursorMs = Math.ceil(rangeStartMs / bucketMs) * bucketMs;
         while (cursorMs <= nowMs) {
-            while (txIndex < related.length && related[txIndex]._time <= cursorMs) {
+            while (txIndex < related.length && related[txIndex].time <= cursorMs) {
                 const tx = related[txIndex];
-                if (tx.type === 'BUY' && tx.unitPrice > 0) buyPrice = tx.unitPrice;
-                if (tx.type === 'SELL' && tx.unitPrice > 0) sellPrice = tx.unitPrice;
+                if (tx.buy > 0) buyPrice = tx.buy;
+                if (tx.sell > 0) sellPrice = tx.sell;
                 txIndex += 1;
             }
             pushRow(cursorMs);
@@ -664,7 +722,7 @@ function createAnalyticsService(opts) {
         getEconomyHealth: () => computeEconomyHealth(getCache().transactions),
         getLeaderboard: (type, limit) => computeLeaderboard(getCache().transactions, type, limit),
         getTrends: (limit) => computeTrends(getCache().transactions, limit),
-        getPriceHistory: (item, rangeOrHours) => computePriceHistory(getCache().transactions, item, rangeOrHours),
+        getPriceHistory: (item, rangeOrHours) => computePriceHistory(item, rangeOrHours),
         getItemDetails: (item) => getItemDetails(item, getCache().transactions)
     };
 }
