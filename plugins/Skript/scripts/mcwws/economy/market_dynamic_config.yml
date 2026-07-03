@@ -1,0 +1,32 @@
+# MCWWS 动态定价参数（不修改 database/items.yml 基准价）
+# 公式见 economy_dynamic.sk 顶部注释；/eco-market-reload 重载本文件
+
+settings:
+  enabled: true
+  # 动态倍率上下限（与分类加减倍率相乘后仍受此钳制）
+  min_dynamic_factor: 0.5
+  max_dynamic_factor: 2.5
+  # 虚拟市场均衡库存（每个物品默认目标库存）
+  default_equilibrium_stock: 512
+  # 库存偏离均衡时对价格的影响强度（库存越低 → 价格越高）
+  stock_sensitivity: 0.35
+  # 近期买入/卖出量对价格的影响强度
+  buy_pressure_sensitivity: 0.18
+  sell_pressure_sensitivity: 0.18
+  # 买卖压力归一化：累计 N 个物品 ≈ 满档压力 1.0
+  pressure_scale: 256
+  # 每分钟对买卖压力施加的衰减（0~1，越小遗忘越快）
+  pressure_decay: 0.82
+  # 每电脑系统时间 1 分钟库存向均衡回归的比例（模拟补货/消耗）
+  stock_revert_rate: 0.002
+  # 是否持久化 market_state.yml
+  persist_state: true
+
+# 可选：单物品覆盖（键名与 items.yml 一致）
+# items:
+#   diamond:
+#     equilibrium_stock: 64
+#     stock_sensitivity: 0.5
+#     buy_pressure_sensitivity: 0.25
+#     sell_pressure_sensitivity: 0.25
+items: {}

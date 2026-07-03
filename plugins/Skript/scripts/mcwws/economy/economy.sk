@@ -2,6 +2,7 @@
 # 1. 核心计算函数 (极致性能内存版)
 # ==========================================
 function updatePrices():
+    mcwwsTickDynamicMarketIfNeeded()
     loop {economy_items::*}:
         set {_item} to loop-value
         
@@ -48,6 +49,10 @@ function getMarketMultiplier(item: text) :: number:
     # set {_online} to amount of all players
     # add ({_online} * 0.01) to {_multiplier}
 
+    # 动态市场倍率（库存 + 买卖压力，见 economy_dynamic.sk）
+    set {_dynamic} to getDynamicMarketMultiplier({_item})
+    set {_multiplier} to {_multiplier} * {_dynamic}
+
     return {_multiplier}
 
 # ==========================================
@@ -65,9 +70,9 @@ on load:
         set {-base_price::sell::%{_item}%} to yaml value "%{_item}%.unit_sell" from "item_db"
         set {-item_category::%{_item}%} to yaml value "%{_item}%.category" from "item_db"
         
-    # 立即执行一次初始化计算
-    updatePrices()
+    unload yaml "item_db"
     send "§a[Economy] 物品数据库已加载，并已缓存 %size of {economy_items::*}% 个物品的基础数据至内存。" to console
+    # 首次物价计算由 z_economy_dynamic.sk 在动态引擎就绪后执行
 
 # 每分钟自动刷新一次全服物价（后台静默执行）
 every 1 minute:
@@ -127,5 +132,9 @@ command /eco-check [<text>]:
             stop
             
         send "§b--- 物品经济信息: §e%{_i}% §b---"
+        send "§f基准买入价: §7%{-base_price::buy::%{_i}%}%"
+        send "§f基准卖出价: §7%{-base_price::sell::%{_i}%}%"
         send "§f当前买入价: §a%{-price_cache::buy::%{_i}%}%"
         send "§f当前卖出价: §6%{-price_cache::sell::%{_i}%}%"
+        if {-dyn_factor::%{_i}%} is set:
+            send "§f动态倍率: §e%{-dyn_factor::%{_i}%}% §7(库存/买卖压力，/eco-market-info 详情)"

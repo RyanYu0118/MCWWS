@@ -219,6 +219,7 @@ function mcwwsDeliverOrderLine(p: player, oid: text, lineIdx: number):
         mcwwsFailOrderDelivery({_p}, {_oid}, "BetterBags 发放失败（未加载数据或容量不足），请重新登录后重试")
         unload yaml "weborders"
         stop
+    mcwwsRecordMarketTrade({_material}, {_total}, true)
     set {_lineKey} to mcwwsLineYamlIndex({_lineIdx})
     set yaml value "orders.%{_oid}%.lines.%{_lineKey}%.status" from "weborders" to "delivered"
     set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"

@@ -1,0 +1,296 @@
+# MCWWS 动态定价引擎（基准价仍来自 database/items.yml，本脚本只叠加倍率）
+#
+# 虚拟库存 stock：玩家买入减少、卖出增加；每分钟向均衡库存回归。
+# 买卖压力 buy_pressure / sell_pressure：随交易累加，每分钟衰减。
+#
+# dynamic_factor = clamp(
+#   1
+#   + stock_k   * (equilibrium - stock) / equilibrium
+#   + buy_k     * buy_pressure  / pressure_scale
+#   - sell_k    * sell_pressure / pressure_scale,
+#   min_dynamic_factor, max_dynamic_factor
+# )
+#
+# 最终价 = items.yml 基准价 × getMarketMultiplier（含分类加减）× dynamic_factor
+# 买卖同倍率，updatePrices() 仍保证 sell ≤ buy × 0.99
+
+import:
+    cn.superiormc.ultimateshop.api.ItemFinishTransactionEvent
+
+options:
+    dyn_cfg: plugins/Skript/scripts/mcwws/economy/market_dynamic_config.yml
+    dyn_state: plugins/Skript/scripts/mcwws/economy/market_state.yml
+
+function mcwwsNormalizeEconomyItemId(raw: text) :: text:
+    set {_id} to "%{_raw}%" in lower case
+    replace all " " with "_" in {_id}
+    return {_id}
+
+function mcwwsDynCfgNum(key: text, default: number) :: number:
+    set {_v} to {-dyn_cfg::%{_key}%}
+    if {_v} is not set:
+        return {_default}
+    return {_v}
+
+function mcwwsDynCfgBool(key: text, default: boolean) :: boolean:
+    set {_v} to {-dyn_cfg::%{_key}%}
+    if {_v} is not set:
+        return {_default}
+    return {_v}
+
+function mcwwsLoadDynamicConfig():
+    delete {-dyn_cfg::*}
+    delete {-dyn_item_cfg::*}
+    set {_cfgPath} to "{@dyn_cfg}"
+    if yaml file {_cfgPath} exists:
+        load yaml {_cfgPath} as "dyn_cfg"
+        set {-dyn_cfg::enabled} to yaml value "settings.enabled" from "dyn_cfg"
+        set {-dyn_cfg::min_dynamic_factor} to yaml value "settings.min_dynamic_factor" from "dyn_cfg"
+        set {-dyn_cfg::max_dynamic_factor} to yaml value "settings.max_dynamic_factor" from "dyn_cfg"
+        set {-dyn_cfg::default_equilibrium_stock} to yaml value "settings.default_equilibrium_stock" from "dyn_cfg"
+        set {-dyn_cfg::stock_sensitivity} to yaml value "settings.stock_sensitivity" from "dyn_cfg"
+        set {-dyn_cfg::buy_pressure_sensitivity} to yaml value "settings.buy_pressure_sensitivity" from "dyn_cfg"
+        set {-dyn_cfg::sell_pressure_sensitivity} to yaml value "settings.sell_pressure_sensitivity" from "dyn_cfg"
+        set {-dyn_cfg::pressure_scale} to yaml value "settings.pressure_scale" from "dyn_cfg"
+        set {-dyn_cfg::pressure_decay} to yaml value "settings.pressure_decay" from "dyn_cfg"
+        set {-dyn_cfg::stock_revert_rate} to yaml value "settings.stock_revert_rate" from "dyn_cfg"
+        set {-dyn_cfg::persist_state} to yaml value "settings.persist_state" from "dyn_cfg"
+        set {dyn_cfg_item_nodes::*} to yaml nodes with keys "items" from "dyn_cfg"
+        loop {dyn_cfg_item_nodes::*}:
+            set {_node} to loop-value
+            set {_item} to mcwwsNormalizeEconomyItemId({_node})
+            set {-dyn_item_cfg::equilibrium::%{_item}%} to yaml value "items.%{_node}%.equilibrium_stock" from "dyn_cfg"
+            set {-dyn_item_cfg::stock_k::%{_item}%} to yaml value "items.%{_node}%.stock_sensitivity" from "dyn_cfg"
+            set {-dyn_item_cfg::buy_k::%{_item}%} to yaml value "items.%{_node}%.buy_pressure_sensitivity" from "dyn_cfg"
+            set {-dyn_item_cfg::sell_k::%{_item}%} to yaml value "items.%{_node}%.sell_pressure_sensitivity" from "dyn_cfg"
+        unload yaml "dyn_cfg"
+    else:
+        set {-dyn_cfg::enabled} to true
+        set {-dyn_cfg::min_dynamic_factor} to 0.5
+        set {-dyn_cfg::max_dynamic_factor} to 2.5
+        set {-dyn_cfg::default_equilibrium_stock} to 512
+        set {-dyn_cfg::stock_sensitivity} to 0.35
+        set {-dyn_cfg::buy_pressure_sensitivity} to 0.18
+        set {-dyn_cfg::sell_pressure_sensitivity} to 0.18
+        set {-dyn_cfg::pressure_scale} to 256
+        set {-dyn_cfg::pressure_decay} to 0.82
+        set {-dyn_cfg::stock_revert_rate} to 0.002
+        set {-dyn_cfg::persist_state} to true
+
+function mcwwsGetItemEquilibrium(item: text) :: number:
+    set {_eq} to {-dyn_item_cfg::equilibrium::%{_item}%}
+    if {_eq} is not set:
+        set {_eq} to mcwwsDynCfgNum("default_equilibrium_stock", 512)
+    if {_eq} <= 0:
+        return 512
+    return {_eq}
+
+function mcwwsEnsureMarketItemState(item: text):
+    set {_eq} to mcwwsGetItemEquilibrium({_item})
+    if {-market_stock::%{_item}%} is not set:
+        set {-market_stock::%{_item}%} to {_eq}
+    if {-market_buy_pressure::%{_item}%} is not set:
+        set {-market_buy_pressure::%{_item}%} to 0
+    if {-market_sell_pressure::%{_item}%} is not set:
+        set {-market_sell_pressure::%{_item}%} to 0
+
+function mcwwsLoadMarketState():
+    set {_statePath} to "{@dyn_state}"
+    if yaml file {_statePath} exists:
+        load yaml {_statePath} as "dyn_state"
+        set {dyn_state_nodes::*} to yaml nodes with keys "items" from "dyn_state"
+        loop {dyn_state_nodes::*}:
+            set {_node} to loop-value
+            set {_item} to mcwwsNormalizeEconomyItemId({_node})
+            set {-market_stock::%{_item}%} to yaml value "items.%{_node}%.stock" from "dyn_state"
+            set {-market_buy_pressure::%{_item}%} to yaml value "items.%{_node}%.buy_pressure" from "dyn_state"
+            set {-market_sell_pressure::%{_item}%} to yaml value "items.%{_node}%.sell_pressure" from "dyn_state"
+        unload yaml "dyn_state"
+
+function mcwwsSaveMarketState():
+    set {_statePath} to "{@dyn_state}"
+    if mcwwsDynCfgBool("persist_state", true) is false:
+        stop
+    load yaml {_statePath} as "dyn_state"
+    set yaml value "meta.version" from "dyn_state" to 1
+    set yaml value "meta.updated_at" from "dyn_state" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    loop {market_dirty_items::*}:
+        set {_item} to loop-value
+        mcwwsEnsureMarketItemState({_item})
+        set yaml value "items.%{_item}%.stock" from "dyn_state" to {-market_stock::%{_item}%}
+        set yaml value "items.%{_item}%.buy_pressure" from "dyn_state" to {-market_buy_pressure::%{_item}%}
+        set yaml value "items.%{_item}%.sell_pressure" from "dyn_state" to {-market_sell_pressure::%{_item}%}
+    delete {market_dirty_items::*}
+    save yaml "dyn_state"
+    unload yaml "dyn_state"
+
+function mcwwsMarkMarketItemDirty(item: text):
+    if {market_dirty_items::*} does not contain {_item}:
+        add {_item} to {market_dirty_items::*}
+
+function mcwwsClampDynamicFactor(factor: number) :: number:
+    set {_min} to mcwwsDynCfgNum("min_dynamic_factor", 0.5)
+    set {_max} to mcwwsDynCfgNum("max_dynamic_factor", 2.5)
+    if {_factor} < {_min}:
+        return {_min}
+    if {_factor} > {_max}:
+        return {_max}
+    return {_factor}
+
+function getDynamicMarketMultiplier(item: text) :: number:
+    if mcwwsDynCfgBool("enabled", true) is false:
+        set {-dyn_factor::%{_item}%} to 1.0
+        return 1.0
+    if {-base_price::buy::%{_item}%} is not set:
+        set {-dyn_factor::%{_item}%} to 1.0
+        return 1.0
+    mcwwsEnsureMarketItemState({_item})
+    set {_eq} to mcwwsGetItemEquilibrium({_item})
+    set {_stock} to {-market_stock::%{_item}%}
+    set {_buyP} to {-market_buy_pressure::%{_item}%}
+    set {_sellP} to {-market_sell_pressure::%{_item}%}
+    set {_stockK} to {-dyn_item_cfg::stock_k::%{_item}%}
+    if {_stockK} is not set:
+        set {_stockK} to mcwwsDynCfgNum("stock_sensitivity", 0.35)
+    set {_buyK} to {-dyn_item_cfg::buy_k::%{_item}%}
+    if {_buyK} is not set:
+        set {_buyK} to mcwwsDynCfgNum("buy_pressure_sensitivity", 0.18)
+    set {_sellK} to {-dyn_item_cfg::sell_k::%{_item}%}
+    if {_sellK} is not set:
+        set {_sellK} to mcwwsDynCfgNum("sell_pressure_sensitivity", 0.18)
+    set {_scale} to mcwwsDynCfgNum("pressure_scale", 256)
+    if {_scale} <= 0:
+        set {_scale} to 256
+    set {_stockDelta} to ({_eq} - {_stock}) / {_eq}
+    set {_factor} to 1 + ({_stockK} * {_stockDelta}) + ({_buyK} * {_buyP} / {_scale}) - ({_sellK} * {_sellP} / {_scale})
+    set {_factor} to mcwwsClampDynamicFactor({_factor})
+    set {-dyn_factor::%{_item}%} to round({_factor} * 1000) / 1000
+    return {-dyn_factor::%{_item}%}
+
+function mcwwsRecordMarketTrade(item: text, amount: number, isBuy: boolean):
+    if mcwwsDynCfgBool("enabled", true) is false:
+        stop
+    set {_item} to mcwwsNormalizeEconomyItemId({_item})
+    if {_item} is "":
+        stop
+    if {_amount} <= 0:
+        stop
+    if {-base_price::buy::%{_item}%} is not set:
+        stop
+    mcwwsEnsureMarketItemState({_item})
+    if {_isBuy} is true:
+        subtract {_amount} from {-market_stock::%{_item}%}
+        add {_amount} to {-market_buy_pressure::%{_item}%}
+    else:
+        add {_amount} to {-market_stock::%{_item}%}
+        add {_amount} to {-market_sell_pressure::%{_item}%}
+    mcwwsMarkMarketItemDirty({_item})
+
+function mcwwsTickDynamicMarket():
+    if mcwwsDynCfgBool("enabled", true) is false:
+        stop
+    set {_decay} to mcwwsDynCfgNum("pressure_decay", 0.82)
+    set {_revert} to mcwwsDynCfgNum("stock_revert_rate", 0.002)
+    loop {economy_items::*}:
+        set {_item} to loop-value
+        mcwwsEnsureMarketItemState({_item})
+        set {_eq} to mcwwsGetItemEquilibrium({_item})
+        set {_stock} to {-market_stock::%{_item}%}
+        set {_buyP} to {-market_buy_pressure::%{_item}%}
+        set {_sellP} to {-market_sell_pressure::%{_item}%}
+        set {_changed} to false
+        if {_buyP} > 0.001:
+            set {-market_buy_pressure::%{_item}%} to {_buyP} * {_decay}
+            set {_changed} to true
+        else:
+            set {-market_buy_pressure::%{_item}%} to 0
+        if {_sellP} > 0.001:
+            set {-market_sell_pressure::%{_item}%} to {_sellP} * {_decay}
+            set {_changed} to true
+        else:
+            set {-market_sell_pressure::%{_item}%} to 0
+        if {_revert} > 0:
+            set {_newStock} to {_stock} + (({_eq} - {_stock}) * {_revert})
+            set {_delta} to {_newStock} - {_stock}
+            if {_delta} < 0:
+                set {_delta} to 0 - {_delta}
+            if {_delta} > 0.01:
+                set {-market_stock::%{_item}%} to {_newStock}
+                set {_changed} to true
+        if {_changed} is true:
+            mcwwsMarkMarketItemDirty({_item})
+    mcwwsSaveMarketState()
+
+function mcwwsTickDynamicMarketIfNeeded():
+    set {_last} to {-market_last_tick}
+    if {_last} is set:
+        set {_elapsed} to difference between now and {_last}
+        if {_elapsed} < 60 seconds:
+            stop
+    set {-market_last_tick} to now
+    mcwwsTickDynamicMarket()
+
+function mcwwsResetMarketItem(item: text):
+    set {_item} to mcwwsNormalizeEconomyItemId({_item})
+    set {_eq} to mcwwsGetItemEquilibrium({_item})
+    set {-market_stock::%{_item}%} to {_eq}
+    set {-market_buy_pressure::%{_item}%} to 0
+    set {-market_sell_pressure::%{_item}%} to 0
+    mcwwsMarkMarketItemDirty({_item})
+    mcwwsSaveMarketState()
+
+on load:
+    mcwwsLoadDynamicConfig()
+    mcwwsLoadMarketState()
+    send "§a[Economy-Dynamic] 动态定价引擎已加载（enabled=%{-dyn_cfg::enabled}%）。" to console
+    updatePrices()
+
+on ItemFinishTransactionEvent:
+    set {_product} to event.getItem().getProduct()
+    set {_amount} to event.getAmount()
+    if {_amount} <= 0:
+        stop
+    if event.isBuyOrSell() is true:
+        mcwwsRecordMarketTrade({_product}, {_amount}, true)
+    else:
+        mcwwsRecordMarketTrade({_product}, {_amount}, false)
+
+command /eco-market-reload:
+    permission: op
+    trigger:
+        mcwwsLoadDynamicConfig()
+        send "§a[Economy-Dynamic] 动态定价配置已重载。"
+
+command /eco-market-reset [<text>]:
+    permission: op
+    trigger:
+        if arg-1 is not set:
+            send "§c用法: /eco-market-reset <物品ID>"
+            stop
+        set {_item} to mcwwsNormalizeEconomyItemId(arg-1)
+        if {-base_price::buy::%{_item}%} is not set:
+            send "§c未知物品: %{_item}%"
+            stop
+        mcwwsResetMarketItem({_item})
+        updatePrices()
+        send "§a[Economy-Dynamic] 已重置 §e%{_item}% §a的市场状态并刷新物价。"
+
+command /eco-market-info [<text>]:
+    permission: op
+    trigger:
+        if arg-1 is not set:
+            send "§c用法: /eco-market-info <物品ID>"
+            stop
+        set {_item} to mcwwsNormalizeEconomyItemId(arg-1)
+        if {-base_price::buy::%{_item}%} is not set:
+            send "§c未知物品: %{_item}%"
+            stop
+        mcwwsEnsureMarketItemState({_item})
+        set {_factor} to getDynamicMarketMultiplier({_item})
+        set {_eq} to mcwwsGetItemEquilibrium({_item})
+        send "§b--- 动态市场: §e%{_item}% §b---"
+        send "§f均衡库存: §7%{_eq}%"
+        send "§f当前库存: §7%{-market_stock::%{_item}%}%"
+        send "§f买入压力: §7%{-market_buy_pressure::%{_item}%}%"
+        send "§f卖出压力: §7%{-market_sell_pressure::%{_item}%}%"
+        send "§f动态倍率: §a%{_factor}%"

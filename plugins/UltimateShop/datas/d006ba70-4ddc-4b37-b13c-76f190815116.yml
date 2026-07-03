@@ -55,11 +55,6 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-05-10 02:06:12'
-  utility__p6:
-    C:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-06-23 22:27:21'
   example:
     R:
       buyUseTimes: 2
@@ -96,12 +91,11 @@ useTimes:
       buyUseTimes: 3
       totalBuyUseTimes: 3
       lastBuyTime: '2026-05-11 00:00:32'
-  utility__p2:
-    A:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-06-26 22:16:46'
   logs:
+    A:
+      buyUseTimes: 5
+      totalBuyUseTimes: 5
+      lastBuyTime: '2026-07-04 00:25:38'
     K:
       buyUseTimes: 1
       totalBuyUseTimes: 1
@@ -109,6 +103,24 @@ useTimes:
       totalSellUseTimes: 131
       lastBuyTime: '2026-05-10 02:06:40'
       lastSellTime: '2026-05-10 02:07:01'
+  farming:
+    A:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      sellUseTimes: 4
+      totalSellUseTimes: 4
+      lastBuyTime: '2026-05-14 23:01:04'
+      lastSellTime: '2026-05-15 23:02:07'
+  utility__p6:
+    C:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-06-23 22:27:21'
+  utility__p2:
+    A:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-06-26 22:16:46'
   minerals:
     A:
       buyUseTimes: 6
@@ -179,14 +191,6 @@ useTimes:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-06-23 22:40:20'
-  farming:
-    A:
-      buyUseTimes: 4
-      totalBuyUseTimes: 4
-      sellUseTimes: 4
-      totalSellUseTimes: 4
-      lastBuyTime: '2026-05-14 23:01:04'
-      lastSellTime: '2026-05-15 23:02:07'
 favourites:
   favourite:
   - minerals;;G
