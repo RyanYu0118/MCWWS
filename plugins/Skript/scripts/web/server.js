@@ -3440,6 +3440,24 @@ app.get('/api/shop/item/:item', (req, res) => {
     }
 });
 
+app.get('/api/shop/item-snapshot/:item', (req, res) => {
+    try {
+        const range = String(req.query.range || '').trim().toLowerCase();
+        const hoursRaw = Number(req.query.hours);
+        const rangeOrHours = range || (Number.isFinite(hoursRaw) && hoursRaw > 0 ? hoursRaw : '7d');
+        const item = normalizeMaterialId(req.params.item) || req.params.item;
+        res.json({
+            item: analytics.getItemDetails(item),
+            priceHistory: analytics.getPriceHistory(item, rangeOrHours),
+            range: rangeOrHours,
+            serverTime: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('读取物品详情快照失败:', error);
+        res.status(500).json({ error: '读取失败' });
+    }
+});
+
 app.post('/api/shop/checkout', (req, res) => {
     try {
         const user = authenticate(req);

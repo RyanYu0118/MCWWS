@@ -23,6 +23,8 @@ let livePriceRefreshTimer = null;
 let livePriceRefreshInFlight = false;
 let itemModalChart = null;
 let itemModalRefreshTimer = null;
+let itemModalRefreshInFlight = false;
+let itemModalRequestSeq = 0;
 const ITEM_HISTORY_RANGES = [
     ['10m', '10分钟'],
     ['30m', '30分钟'],
@@ -75,12 +77,7 @@ function replaceUrlIfChanged(params) {
 }
 
 function buildItemDetailUrl(itemId) {
-    const params = new URLSearchParams(window.location.search);
-    params.set('detail', itemId);
-    const qs = params.toString();
-    return qs
-        ? `${window.location.pathname}?${qs}${window.location.hash || ''}`
-        : `${window.location.pathname}${window.location.hash || ''}`;
+    return `item-detail.html?item=${encodeURIComponent(itemId)}`;
 }
 
 /** 从地址栏恢复：搜索、排序、复选框、页码（交易弹窗在数据加载后单独处理） */
@@ -1215,6 +1212,15 @@ function startItemModalAutoRefresh(itemId) {
     }, 1000);
 }
 
+async function fetchItemDetailSnapshot(itemId, rangeKey = '7d') {
+    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
+    const snapshot = await response.json();
+    if (!response.ok) {
+        throw new Error(snapshot?.error || '读取物品详情失败');
+    }
+    return snapshot;
+}
+
 function renderItemModalRecentTransactions(recentTxs) {
     return recentTxs.slice(0, 10).map((tx) => `
         <div class="item-modal-trade-row">
@@ -1320,6 +1326,27 @@ function renderItemHistoryChartInto(modalBody, priceHistory, rangeKey) {
     itemModalChart.update('none');
 }
 
+async function loadItemDetailSnapshotIntoModal(itemId, rangeKey = '7d', options = {}) {
+    const { showLoading = true } = options;
+    const modal = document.getElementById('itemModal');
+    const modalBody = document.getElementById('modalBody');
+    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
+    if (!modal || !modalBody || !chartWrap) return null;
+    const requestSeq = ++itemModalRequestSeq;
+    modal.dataset.historyRange = rangeKey;
+    setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+    if (showLoading) {
+        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    }
+    const snapshot = await fetchItemDetailSnapshot(itemId, rangeKey);
+    if (requestSeq !== itemModalRequestSeq || modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
+        return null;
+    }
+    updateItemModalSummary(itemId, snapshot.item || {});
+    renderItemHistoryChartInto(modalBody, Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], rangeKey);
+    return snapshot;
+}
+
 function formatHistoryAxisLabel(timestamp, rangeKey) {
     const date = new Date(String(timestamp).replace(' ', 'T'));
     if (Number.isNaN(date.getTime())) return String(timestamp || '');
@@ -1349,27 +1376,12 @@ function setItemHistoryRangeButtonsActive(modalBody, activeKey) {
 }
 
 async function loadItemHistoryRange(itemId, rangeKey = '7d', options = {}) {
-    const { showLoading = true } = options;
-    const modal = document.getElementById('itemModal');
-    const modalBody = document.getElementById('modalBody');
-    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
-    if (!modal || !modalBody || !chartWrap) return;
-    modal.dataset.historyRange = rangeKey;
-    setItemHistoryRangeButtonsActive(modalBody, rangeKey);
-    if (showLoading) {
-        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
-    }
     try {
-        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
-        const priceHistory = await response.json();
-        if (!response.ok) {
-            throw new Error(priceHistory?.error || '读取价格历史失败');
-        }
-        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
-            return;
-        }
-        renderItemHistoryChartInto(modalBody, priceHistory, rangeKey);
+        await loadItemDetailSnapshotIntoModal(itemId, rangeKey, options);
     } catch (error) {
+        const modalBody = document.getElementById('modalBody');
+        const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
+        if (!chartWrap) return;
         destroyItemModalChart();
         chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
     }
@@ -1377,21 +1389,16 @@ async function loadItemHistoryRange(itemId, rangeKey = '7d', options = {}) {
 
 async function refreshOpenItemModal(expectedItemId) {
     const modal = document.getElementById('itemModal');
-    const modalBody = document.getElementById('modalBody');
-    if (!modal || !modalBody || !modal.classList.contains('active')) return;
+    if (!modal || !modal.classList.contains('active') || document.hidden || itemModalRefreshInFlight) return;
     const itemId = modal.dataset.itemId;
     if (!itemId || (expectedItemId && itemId !== expectedItemId)) return;
+    itemModalRefreshInFlight = true;
     try {
-        const response = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`);
-        const itemData = await response.json();
-        if (!response.ok) {
-            throw new Error(itemData?.error || '读取物品详情失败');
-        }
-        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) return;
-        updateItemModalSummary(itemId, itemData);
-        await loadItemHistoryRange(itemId, modal.dataset.historyRange || '7d', { showLoading: false });
+        await loadItemDetailSnapshotIntoModal(itemId, modal.dataset.historyRange || '7d', { showLoading: false });
     } catch (error) {
         console.warn('刷新物品详情失败:', error);
+    } finally {
+        itemModalRefreshInFlight = false;
     }
 }
 
@@ -1403,6 +1410,8 @@ async function showItemDetails(itemId) {
     if (!modal || !modalTitle || !modalBody) return;
 
     stopItemModalAutoRefresh();
+    itemModalRefreshInFlight = false;
+    itemModalRequestSeq += 1;
     const displayName = item?.name || itemId;
     modalTitle.textContent = displayName;
     modalBody.innerHTML = '<div class="loading-spinner"></div>';
@@ -1413,11 +1422,8 @@ async function showItemDetails(itemId) {
     syncItemsStateToUrl();
 
     try {
-        const response = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`);
-        const itemData = await response.json();
-        if (!response.ok) {
-            throw new Error(itemData?.error || '加载物品详情失败');
-        }
+        const snapshot = await fetchItemDetailSnapshot(itemId, '7d');
+        const itemData = snapshot?.item || {};
         if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
             return;
         }
@@ -1491,7 +1497,7 @@ async function showItemDetails(itemId) {
                 void loadItemHistoryRange(itemId, btn.dataset.itemHistoryRange || '7d');
             });
         });
-        void loadItemHistoryRange(itemId, '7d');
+        renderItemHistoryChartInto(modalBody, Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], '7d');
         startItemModalAutoRefresh(itemId);
     } catch (error) {
         console.error('加载物品详情失败:', error);
@@ -1502,6 +1508,8 @@ async function showItemDetails(itemId) {
 function closeModal() {
     const modal = document.getElementById('itemModal');
     stopItemModalAutoRefresh();
+    itemModalRefreshInFlight = false;
+    itemModalRequestSeq += 1;
     destroyItemModalChart();
     hideDialog(modal, () => {
         if (modal) {

@@ -959,5 +959,33 @@ orders:
                 material: acacia_log
                 shopTitle: 原木商店 (1/5)
                 status: delivered
+    '37':
+        id: 90647b11-ae66-4b12-9990-70a61c57b290
+        numericId: 37
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 31.88
+        balanceAfter: 1.7648553956E8
+        economyChargedInGame: true
+        createdAt: '2026-07-03T18:47:23.946Z'
+        updatedAt: '2026-07-04 02:47:25'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-07-04 02:47:24'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: bricks
+                shopId: blocks
+                slot: E
+                quantity: 2
+                unitBuyPrice: 15.94
+                lineTotal: 31.88
+                productAmount: 1
+                material: bricks
+                shopTitle: 方块商店 (1/3)
+                status: delivered
 
-next_id: 37
+next_id: 38
