@@ -20,7 +20,7 @@ settings:
   # 每分钟对买卖压力施加的衰减（0~1，越小遗忘越快）
   pressure_decay: 0.82
   # 每电脑系统时间 1 分钟库存向均衡回归的比例（模拟补货/消耗）
-  stock_revert_rate: 0.002
+  stock_revert_rate: 0.005
   # 是否持久化 market_state.yml
   persist_state: true
 

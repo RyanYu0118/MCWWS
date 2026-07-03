@@ -93,7 +93,7 @@ function mcwwsLoadDynamicConfig():
         set {-dyn_cfg::sell_pressure_sensitivity} to 0.18
         set {-dyn_cfg::pressure_scale} to 256
         set {-dyn_cfg::pressure_decay} to 0.82
-        set {-dyn_cfg::stock_revert_rate} to 0.002
+        set {-dyn_cfg::stock_revert_rate} to 0.005
         set {-dyn_cfg::persist_state} to true
 
 function mcwwsGetItemEquilibrium(item: text) :: number:
@@ -222,7 +222,7 @@ function mcwwsTickDynamicMarket():
     if mcwwsDynCfgBool("enabled", true) is false:
         stop
     set {_decay} to mcwwsDynCfgNum("pressure_decay", 0.82)
-    set {_revert} to mcwwsDynCfgNum("stock_revert_rate", 0.002)
+    set {_revert} to mcwwsDynCfgNum("stock_revert_rate", 0.005)
     loop {economy_items::*}:
         set {_item} to loop-value
         mcwwsEnsureMarketItemState({_item})
