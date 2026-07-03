@@ -3326,9 +3326,11 @@ app.get('/api/analytics/trends', (req, res) => {
 
 app.get('/api/analytics/price-history/:item', (req, res) => {
     try {
-        const hours = Math.min(Number(req.query.hours) || 168, 24 * 30);
+        const range = String(req.query.range || '').trim().toLowerCase();
+        const hoursRaw = Number(req.query.hours);
+        const rangeOrHours = range || (Number.isFinite(hoursRaw) && hoursRaw > 0 ? hoursRaw : '7d');
         const item = normalizeMaterialId(req.params.item) || req.params.item;
-        res.json(analytics.getPriceHistory(item, hours));
+        res.json(analytics.getPriceHistory(item, rangeOrHours));
     } catch (error) {
         console.error('读取价格历史失败:', error);
         res.status(500).json({ error: '读取失败' });

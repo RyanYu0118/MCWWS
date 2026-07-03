@@ -15,118 +15,6 @@ useTimes:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-05-18 00:53:27'
-  wools:
-    O:
-      sellUseTimes: 1
-      totalSellUseTimes: 1
-      lastSellTime: '2026-05-10 02:06:12'
-  logs:
-    A:
-      buyUseTimes: 11
-      totalBuyUseTimes: 11
-      sellUseTimes: 11
-      totalSellUseTimes: 11
-      lastBuyTime: '2026-07-04 00:26:43'
-      lastSellTime: '2026-07-04 00:29:56'
-    K:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      sellUseTimes: 131
-      totalSellUseTimes: 131
-      lastBuyTime: '2026-05-10 02:06:40'
-      lastSellTime: '2026-05-10 02:07:01'
-  farming:
-    A:
-      buyUseTimes: 4
-      totalBuyUseTimes: 4
-      sellUseTimes: 4
-      totalSellUseTimes: 4
-      lastBuyTime: '2026-05-14 23:01:04'
-      lastSellTime: '2026-05-15 23:02:07'
-  minerals:
-    A:
-      buyUseTimes: 6
-      totalBuyUseTimes: 6
-      sellUseTimes: 12
-      totalSellUseTimes: 12
-      lastBuyTime: '2026-05-15 23:07:13'
-      lastSellTime: '2026-05-27 22:42:36'
-    C:
-      sellUseTimes: 49
-      totalSellUseTimes: 49
-      lastSellTime: '2026-05-10 23:47:12'
-    B:
-      sellUseTimes: 61
-      totalSellUseTimes: 61
-      lastSellTime: '2026-05-27 22:42:42'
-    G:
-      buyUseTimes: 3
-      totalBuyUseTimes: 3
-      sellUseTimes: 3
-      totalSellUseTimes: 3
-      lastBuyTime: '2026-05-31 15:05:38'
-      lastSellTime: '2026-05-31 15:05:44'
-    F:
-      buyUseTimes: 4
-      totalBuyUseTimes: 4
-      sellUseTimes: 4
-      totalSellUseTimes: 4
-      lastBuyTime: '2026-07-04 01:02:55'
-      lastSellTime: '2026-07-04 01:02:56'
-  transport:
-    F:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      sellUseTimes: 1
-      totalSellUseTimes: 1
-      lastBuyTime: '2026-05-10 14:41:43'
-      lastSellTime: '2026-05-10 14:41:45'
-  blocks2:
-    A:
-      buyUseTimes: 908
-      totalBuyUseTimes: 908
-      lastBuyTime: '2026-06-26 21:44:32'
-  example:
-    R:
-      buyUseTimes: 2
-      totalBuyUseTimes: 2
-      lastBuyTime: '2026-05-10 15:01:23'
-    N:
-      totalBuyUseTimes: 1
-      lastResetBuyTime: '2026-05-10 23:55:40'
-    O:
-      buyUseTimes: 8
-      totalBuyUseTimes: 8
-      lastBuyTime: '2026-05-10 15:01:40'
-    J:
-      buyUseTimes: 2
-      totalBuyUseTimes: 2
-      lastBuyTime: '2026-05-10 15:00:37'
-    L:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-05-10 15:04:05'
-    K:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-05-10 15:03:50'
-    F:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-05-10 15:04:31'
-    B:
-      buyUseTimes: 2
-      totalBuyUseTimes: 2
-      lastBuyTime: '2026-05-10 14:58:20'
-    C:
-      buyUseTimes: 3
-      totalBuyUseTimes: 3
-      lastBuyTime: '2026-05-11 00:00:32'
-  utility__p2:
-    A:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-06-26 22:16:46'
   redstone:
     J:
       buyUseTimes: 3
@@ -135,6 +23,55 @@ useTimes:
       totalSellUseTimes: 3
       lastBuyTime: '2026-07-04 01:02:31'
       lastSellTime: '2026-07-04 01:02:32'
+  blocks:
+    A:
+      buyUseTimes: 9
+      totalBuyUseTimes: 9
+      sellUseTimes: 9
+      totalSellUseTimes: 9
+      lastBuyTime: '2026-07-04 01:37:49'
+      lastSellTime: '2026-07-04 01:37:51'
+    B:
+      sellUseTimes: 4401
+      totalSellUseTimes: 4401
+      lastSellTime: '2026-05-15 23:02:06'
+    C:
+      sellUseTimes: 296
+      totalSellUseTimes: 296
+      lastSellTime: '2026-05-10 02:06:05'
+    M:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 9
+      totalSellUseTimes: 9
+      lastBuyTime: '2026-05-10 02:09:38'
+      lastSellTime: '2026-05-15 23:02:07'
+    P:
+      buyUseTimes: 21
+      totalBuyUseTimes: 21
+      sellUseTimes: 21
+      totalSellUseTimes: 21
+      lastBuyTime: '2026-07-04 01:00:06'
+      lastSellTime: '2026-07-04 01:00:15'
+    E:
+      buyUseTimes: 262
+      totalBuyUseTimes: 262
+      sellUseTimes: 186
+      totalSellUseTimes: 186
+      lastBuyTime: '2026-07-04 02:11:19'
+      lastSellTime: '2026-07-04 01:38:19'
+    F:
+      sellUseTimes: 14
+      totalSellUseTimes: 14
+      lastSellTime: '2026-05-15 23:02:07'
+    G:
+      sellUseTimes: 20
+      totalSellUseTimes: 20
+      lastSellTime: '2026-05-15 23:02:07'
+    H:
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastSellTime: '2026-05-10 14:37:11'
   minerals__p2:
     H:
       buyUseTimes: 1
@@ -171,6 +108,62 @@ useTimes:
       totalSellUseTimes: 3
       lastBuyTime: '2026-07-04 01:01:05'
       lastSellTime: '2026-07-04 01:01:09'
+  wools:
+    O:
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastSellTime: '2026-05-10 02:06:12'
+  example:
+    R:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      lastBuyTime: '2026-05-10 15:01:23'
+    N:
+      totalBuyUseTimes: 1
+      lastResetBuyTime: '2026-05-10 23:55:40'
+    O:
+      buyUseTimes: 8
+      totalBuyUseTimes: 8
+      lastBuyTime: '2026-05-10 15:01:40'
+    J:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      lastBuyTime: '2026-05-10 15:00:37'
+    L:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-05-10 15:04:05'
+    K:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-05-10 15:03:50'
+    F:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-05-10 15:04:31'
+    B:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      lastBuyTime: '2026-05-10 14:58:20'
+    C:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-05-11 00:00:32'
+  logs:
+    A:
+      buyUseTimes: 11
+      totalBuyUseTimes: 11
+      sellUseTimes: 11
+      totalSellUseTimes: 11
+      lastBuyTime: '2026-07-04 00:26:43'
+      lastSellTime: '2026-07-04 00:29:56'
+    K:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 131
+      totalSellUseTimes: 131
+      lastBuyTime: '2026-05-10 02:06:40'
+      lastSellTime: '2026-05-10 02:07:01'
   concretes:
     C:
       buyUseTimes: 10
@@ -183,79 +176,24 @@ useTimes:
       sellUseTimes: 64
       totalSellUseTimes: 64
       lastSellTime: '2026-05-10 02:06:05'
+  farming:
+    A:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      sellUseTimes: 4
+      totalSellUseTimes: 4
+      lastBuyTime: '2026-05-14 23:01:04'
+      lastSellTime: '2026-05-15 23:02:07'
   utility__p6:
     C:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-06-23 22:27:21'
-  glass__p2:
-    I:
-      buyUseTimes: 3
-      totalBuyUseTimes: 3
-      lastBuyTime: '2026-06-26 22:15:17'
-  nether:
-    U:
-      buyUseTimes: 720
-      totalBuyUseTimes: 720
-      lastBuyTime: '2026-06-29 00:31:11'
-  flowers:
-    P:
-      sellUseTimes: 8
-      totalSellUseTimes: 8
-      lastSellTime: '2026-05-10 02:06:05'
-    H:
-      sellUseTimes: 14
-      totalSellUseTimes: 14
-      lastSellTime: '2026-05-10 02:06:12'
-  blocks:
+  utility__p2:
     A:
-      buyUseTimes: 9
-      totalBuyUseTimes: 9
-      sellUseTimes: 9
-      totalSellUseTimes: 9
-      lastBuyTime: '2026-07-04 01:37:49'
-      lastSellTime: '2026-07-04 01:37:51'
-    B:
-      sellUseTimes: 4401
-      totalSellUseTimes: 4401
-      lastSellTime: '2026-05-15 23:02:06'
-    C:
-      sellUseTimes: 296
-      totalSellUseTimes: 296
-      lastSellTime: '2026-05-10 02:06:05'
-    M:
       buyUseTimes: 1
       totalBuyUseTimes: 1
-      sellUseTimes: 9
-      totalSellUseTimes: 9
-      lastBuyTime: '2026-05-10 02:09:38'
-      lastSellTime: '2026-05-15 23:02:07'
-    P:
-      buyUseTimes: 21
-      totalBuyUseTimes: 21
-      sellUseTimes: 21
-      totalSellUseTimes: 21
-      lastBuyTime: '2026-07-04 01:00:06'
-      lastSellTime: '2026-07-04 01:00:15'
-    E:
-      buyUseTimes: 250
-      totalBuyUseTimes: 250
-      sellUseTimes: 186
-      totalSellUseTimes: 186
-      lastBuyTime: '2026-07-04 01:38:17'
-      lastSellTime: '2026-07-04 01:38:19'
-    F:
-      sellUseTimes: 14
-      totalSellUseTimes: 14
-      lastSellTime: '2026-05-15 23:02:07'
-    G:
-      sellUseTimes: 20
-      totalSellUseTimes: 20
-      lastSellTime: '2026-05-15 23:02:07'
-    H:
-      sellUseTimes: 1
-      totalSellUseTimes: 1
-      lastSellTime: '2026-05-10 14:37:11'
+      lastBuyTime: '2026-06-26 22:16:46'
   minerals__p3:
     T:
       buyUseTimes: 1
@@ -271,11 +209,73 @@ useTimes:
       totalSellUseTimes: 2
       lastBuyTime: '2026-07-04 01:02:09'
       lastSellTime: '2026-07-04 01:02:10'
+  minerals:
+    A:
+      buyUseTimes: 6
+      totalBuyUseTimes: 6
+      sellUseTimes: 12
+      totalSellUseTimes: 12
+      lastBuyTime: '2026-05-15 23:07:13'
+      lastSellTime: '2026-05-27 22:42:36'
+    C:
+      sellUseTimes: 49
+      totalSellUseTimes: 49
+      lastSellTime: '2026-05-10 23:47:12'
+    B:
+      sellUseTimes: 61
+      totalSellUseTimes: 61
+      lastSellTime: '2026-05-27 22:42:42'
+    G:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      sellUseTimes: 3
+      totalSellUseTimes: 3
+      lastBuyTime: '2026-05-31 15:05:38'
+      lastSellTime: '2026-05-31 15:05:44'
+    F:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      sellUseTimes: 4
+      totalSellUseTimes: 4
+      lastBuyTime: '2026-07-04 01:02:55'
+      lastSellTime: '2026-07-04 01:02:56'
+  glass__p2:
+    I:
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-06-26 22:15:17'
+  nether:
+    U:
+      buyUseTimes: 720
+      totalBuyUseTimes: 720
+      lastBuyTime: '2026-06-29 00:31:11'
+  transport:
+    F:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastBuyTime: '2026-05-10 14:41:43'
+      lastSellTime: '2026-05-10 14:41:45'
+  flowers:
+    P:
+      sellUseTimes: 8
+      totalSellUseTimes: 8
+      lastSellTime: '2026-05-10 02:06:05'
+    H:
+      sellUseTimes: 14
+      totalSellUseTimes: 14
+      lastSellTime: '2026-05-10 02:06:12'
   glass:
     D:
       buyUseTimes: 3
       totalBuyUseTimes: 3
       lastBuyTime: '2026-06-26 22:15:19'
+  blocks2:
+    A:
+      buyUseTimes: 908
+      totalBuyUseTimes: 908
+      lastBuyTime: '2026-06-26 21:44:32'
   transport__p2:
     U:
       buyUseTimes: 1

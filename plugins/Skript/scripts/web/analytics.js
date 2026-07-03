@@ -4,6 +4,7 @@ const yaml = require('js-yaml');
 const crypto = require('crypto');
 
 const MAX_TRANSACTIONS = 10000;
+const PRICE_HISTORY_FALLBACK_START = new Date('2026-07-01T00:00:00+08:00');
 
 /**
  * @param {object} opts
@@ -119,7 +120,9 @@ function createAnalyticsService(opts) {
             if (row && typeof row === 'object') {
                 meta[normalizeMaterialId(itemId) || itemId] = {
                     category: row.category || 'unknown',
-                    displayName: row.name || itemId
+                    displayName: row.name || itemId,
+                    baseBuyPrice: Number(row.unit_buy) || 0,
+                    baseSellPrice: Number(row.unit_sell) || 0
                 };
             }
         });
@@ -510,36 +513,120 @@ function createAnalyticsService(opts) {
         return { hot, rising, falling };
     }
 
-    function computePriceHistory(transactions, item, hours) {
-        const cutoff = Date.now() - hours * 60 * 60 * 1000;
-        const buckets = {};
-        transactions
-            .filter((tx) => tx.item === item && parseTimestamp(tx.timestamp).getTime() >= cutoff)
-            .forEach((tx) => {
-                const d = parseTimestamp(tx.timestamp);
-                const key = formatTimestamp(new Date(d.getFullYear(), d.getMonth(), d.getDate(), d.getHours()));
-                if (!buckets[key]) {
-                    buckets[key] = { buySum: 0, buyCount: 0, sellSum: 0, sellCount: 0 };
-                }
-                if (tx.type === 'BUY') {
-                    buckets[key].buySum += tx.unitPrice || 0;
-                    buckets[key].buyCount += 1;
-                } else {
-                    buckets[key].sellSum += tx.unitPrice || 0;
-                    buckets[key].sellCount += 1;
-                }
-            });
+    const HISTORY_RANGE_PRESETS = {
+        '10m': { sinceMs: 10 * 60 * 1000, bucketMs: 1 * 1000 },
+        '30m': { sinceMs: 30 * 60 * 1000, bucketMs: 1 * 1000 },
+        '1h': { sinceMs: 1 * 60 * 60 * 1000, bucketMs: 1 * 1000 },
+        '6h': { sinceMs: 6 * 60 * 60 * 1000, bucketMs: 10 * 1000 },
+        '24h': { sinceMs: 24 * 60 * 60 * 1000, bucketMs: 30 * 1000 },
+        '7d': { sinceMs: 7 * 24 * 60 * 60 * 1000, bucketMs: 10 * 60 * 1000 },
+        '1mo': { sinceMs: 30 * 24 * 60 * 60 * 1000, bucketMs: 1 * 60 * 60 * 1000 },
+        '1y': { sinceMs: 365 * 24 * 60 * 60 * 1000, bucketMs: 24 * 60 * 60 * 1000 },
+        '3y': { sinceMs: 3 * 365 * 24 * 60 * 60 * 1000, bucketMs: 7 * 24 * 60 * 60 * 1000 },
+        all: { sinceMs: null, bucketMs: 30 * 24 * 60 * 60 * 1000 }
+    };
 
-        return Object.keys(buckets)
-            .sort()
-            .map((timestamp) => {
-                const b = buckets[timestamp];
-                return {
-                    timestamp,
-                    avgBuyPrice: b.buyCount > 0 ? b.buySum / b.buyCount : 0,
-                    avgSellPrice: b.sellCount > 0 ? b.sellSum / b.sellCount : 0
-                };
+    function resolveHistoryRangeConfig(rangeOrHours) {
+        if (typeof rangeOrHours === 'number' && Number.isFinite(rangeOrHours) && rangeOrHours > 0) {
+            const sinceMs = rangeOrHours * 60 * 60 * 1000;
+            let bucketMs = 60 * 60 * 1000;
+            if (rangeOrHours <= 1) {
+                bucketMs = 5 * 60 * 1000;
+            } else if (rangeOrHours <= 6) {
+                bucketMs = 30 * 60 * 1000;
+            } else if (rangeOrHours <= 24) {
+                bucketMs = 60 * 60 * 1000;
+            } else if (rangeOrHours <= 24 * 30) {
+                bucketMs = 24 * 60 * 60 * 1000;
+            } else if (rangeOrHours <= 24 * 365) {
+                bucketMs = 7 * 24 * 60 * 60 * 1000;
+            } else {
+                bucketMs = 30 * 24 * 60 * 60 * 1000;
+            }
+            return { sinceMs, bucketMs };
+        }
+        const key = String(rangeOrHours || '7d').trim().toLowerCase();
+        return HISTORY_RANGE_PRESETS[key] || HISTORY_RANGE_PRESETS['7d'];
+    }
+
+    function computePriceHistory(transactions, item, rangeOrHours) {
+        const { sinceMs, bucketMs } = resolveHistoryRangeConfig(rangeOrHours);
+        const { itemMeta, prices } = getCache();
+        const meta = itemMeta[item] || {};
+        const fallbackBuy = meta.baseBuyPrice > 0 ? meta.baseBuyPrice : (Number(prices[item]?.buy) || 0);
+        const fallbackSell = meta.baseSellPrice > 0 ? meta.baseSellPrice : (Number(prices[item]?.sell) || 0);
+        const currentBuy = Number(prices[item]?.buy) || fallbackBuy;
+        const currentSell = Number(prices[item]?.sell) || fallbackSell;
+        const fallbackStartMs = PRICE_HISTORY_FALLBACK_START.getTime();
+        const nowMs = Date.now();
+        const rangeStartMs = Math.max(sinceMs == null ? fallbackStartMs : (nowMs - sinceMs), fallbackStartMs);
+        const related = transactions
+            .filter((tx) => tx.item === item)
+            .map((tx) => ({ ...tx, _time: parseTimestamp(tx.timestamp).getTime() }))
+            .filter((tx) => tx._time > 0)
+            .sort((a, b) => a._time - b._time);
+        const inRange = related.filter((tx) => tx._time >= rangeStartMs);
+
+        if (!inRange.length) {
+            return [
+                {
+                    timestamp: formatTimestamp(PRICE_HISTORY_FALLBACK_START),
+                    avgBuyPrice: fallbackBuy,
+                    avgSellPrice: fallbackSell
+                },
+                {
+                    timestamp: formatTimestamp(new Date(nowMs)),
+                    avgBuyPrice: currentBuy,
+                    avgSellPrice: currentSell
+                }
+            ];
+        }
+
+        let buyPrice = fallbackBuy;
+        let sellPrice = fallbackSell;
+        related.forEach((tx) => {
+            if (tx._time < rangeStartMs) {
+                if (tx.type === 'BUY' && tx.unitPrice > 0) buyPrice = tx.unitPrice;
+                if (tx.type === 'SELL' && tx.unitPrice > 0) sellPrice = tx.unitPrice;
+            }
+        });
+
+        const rows = [];
+        const pushRow = (timeMs) => {
+            const last = rows[rows.length - 1];
+            if (last && last.timestamp === formatTimestamp(new Date(timeMs)) && last.avgBuyPrice === buyPrice && last.avgSellPrice === sellPrice) {
+                return;
+            }
+            rows.push({
+                timestamp: formatTimestamp(new Date(timeMs)),
+                avgBuyPrice: buyPrice,
+                avgSellPrice: sellPrice
             });
+        };
+
+        pushRow(rangeStartMs);
+
+        let txIndex = 0;
+        while (txIndex < related.length && related[txIndex]._time < rangeStartMs) {
+            txIndex += 1;
+        }
+
+        let cursorMs = Math.ceil(rangeStartMs / bucketMs) * bucketMs;
+        while (cursorMs <= nowMs) {
+            while (txIndex < related.length && related[txIndex]._time <= cursorMs) {
+                const tx = related[txIndex];
+                if (tx.type === 'BUY' && tx.unitPrice > 0) buyPrice = tx.unitPrice;
+                if (tx.type === 'SELL' && tx.unitPrice > 0) sellPrice = tx.unitPrice;
+                txIndex += 1;
+            }
+            pushRow(cursorMs);
+            cursorMs += bucketMs;
+        }
+
+        buyPrice = currentBuy;
+        sellPrice = currentSell;
+        pushRow(nowMs);
+        return rows;
     }
 
     function getItemDetails(item, transactions) {
@@ -577,7 +664,7 @@ function createAnalyticsService(opts) {
         getEconomyHealth: () => computeEconomyHealth(getCache().transactions),
         getLeaderboard: (type, limit) => computeLeaderboard(getCache().transactions, type, limit),
         getTrends: (limit) => computeTrends(getCache().transactions, limit),
-        getPriceHistory: (item, hours) => computePriceHistory(getCache().transactions, item, hours),
+        getPriceHistory: (item, rangeOrHours) => computePriceHistory(getCache().transactions, item, rangeOrHours),
         getItemDetails: (item) => getItemDetails(item, getCache().transactions)
     };
 }

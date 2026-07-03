@@ -22,6 +22,18 @@ let pointerBearingY = null;
 let livePriceRefreshTimer = null;
 let livePriceRefreshInFlight = false;
 let itemModalChart = null;
+const ITEM_HISTORY_RANGES = [
+    ['10m', '10分钟'],
+    ['30m', '30分钟'],
+    ['1h', '1小时'],
+    ['6h', '6小时'],
+    ['24h', '24小时'],
+    ['7d', '7天（默认）'],
+    ['1mo', '1个月'],
+    ['1y', '1年'],
+    ['3y', '3年'],
+    ['all', '全部']
+];
 
 const POINTER_COMPASS_TILT_COS = Math.cos(Math.PI / 4);
 const MC_FONT_SEP = ' / ';
@@ -1155,6 +1167,111 @@ function destroyItemModalChart() {
     }
 }
 
+function formatHistoryAxisLabel(timestamp, rangeKey) {
+    const date = new Date(String(timestamp).replace(' ', 'T'));
+    if (Number.isNaN(date.getTime())) return String(timestamp || '');
+    const pad = (n) => String(n).padStart(2, '0');
+    if (rangeKey === '10m' || rangeKey === '30m' || rangeKey === '1h' || rangeKey === '6h') {
+        return `${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+    if (rangeKey === '24h') {
+        return `${pad(date.getMonth() + 1)}-${pad(date.getDate())} ${pad(date.getHours())}:${pad(date.getMinutes())}`;
+    }
+    if (rangeKey === '7d' || rangeKey === '1mo') {
+        return `${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+    if (rangeKey === '1y') {
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+    }
+    if (rangeKey === '3y' || rangeKey === 'all') {
+        return `${date.getFullYear()}-${pad(date.getMonth() + 1)}`;
+    }
+    return `${date.getFullYear()}-${pad(date.getMonth() + 1)}-${pad(date.getDate())}`;
+}
+
+function setItemHistoryRangeButtonsActive(modalBody, activeKey) {
+    modalBody?.querySelectorAll('[data-item-history-range]').forEach((btn) => {
+        btn.classList.toggle('active', btn.dataset.itemHistoryRange === activeKey);
+    });
+}
+
+async function loadItemHistoryRange(itemId, rangeKey = '7d') {
+    const modal = document.getElementById('itemModal');
+    const modalBody = document.getElementById('modalBody');
+    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
+    if (!modal || !modalBody || !chartWrap) return;
+    modal.dataset.historyRange = rangeKey;
+    setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+    chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    try {
+        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
+        const priceHistory = await response.json();
+        if (!response.ok) {
+            throw new Error(priceHistory?.error || '读取价格历史失败');
+        }
+        if (modal.dataset.itemId !== itemId) {
+            return;
+        }
+        if (!Array.isArray(priceHistory) || !priceHistory.length) {
+            destroyItemModalChart();
+            chartWrap.innerHTML = '<div class="item-modal-empty">该时间范围内暂无价格历史</div>';
+            return;
+        }
+        chartWrap.innerHTML = '<canvas id="modalPriceChart"></canvas>';
+        const canvas = modalBody.querySelector('#modalPriceChart');
+        if (!canvas) return;
+        destroyItemModalChart();
+        itemModalChart = new Chart(canvas, {
+            type: 'line',
+            data: {
+                labels: priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey)),
+                datasets: [
+                    {
+                        label: '买入价',
+                        data: priceHistory.map((row) => row.avgBuyPrice),
+                        borderColor: '#10B981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.10)',
+                        tension: 0.35,
+                        fill: true,
+                        stepped: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        spanGaps: true
+                    },
+                    {
+                        label: '卖出价',
+                        data: priceHistory.map((row) => row.avgSellPrice),
+                        borderColor: '#EF4444',
+                        backgroundColor: 'rgba(239, 68, 68, 0.10)',
+                        tension: 0.35,
+                        fill: true,
+                        stepped: true,
+                        pointRadius: 0,
+                        pointHoverRadius: 4,
+                        spanGaps: true
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        labels: { color: '#CBD5E1' }
+                    }
+                },
+                scales: {
+                    x: { ticks: { color: '#94A3B8', maxRotation: 0, autoSkip: true }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
+                    y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
+                }
+            }
+        });
+    } catch (error) {
+        destroyItemModalChart();
+        chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
+    }
+}
+
 async function showItemDetails(itemId) {
     const modal = document.getElementById('itemModal');
     const modalTitle = document.getElementById('modalItemName');
@@ -1170,10 +1287,7 @@ async function showItemDetails(itemId) {
     modal.dataset.itemId = itemId;
 
     try {
-        const [itemData, priceHistory] = await Promise.all([
-            fetch(`/api/shop/item/${encodeURIComponent(itemId)}`).then((r) => r.json()),
-            fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?hours=168`).then((r) => r.json())
-        ]);
+        const itemData = await fetch(`/api/shop/item/${encodeURIComponent(itemId)}`).then((r) => r.json());
         const mergedItem = item || {
             id: itemId,
             name: itemData.displayName || itemId,
@@ -1215,9 +1329,14 @@ async function showItemDetails(itemId) {
                     </div>` : ''}
                 </div>
             </div>
-            <h3 class="item-modal-section-title">价格历史（7 天）</h3>
-            <div class="item-modal-chart-wrap">
-                ${priceHistory.length ? '<canvas id="modalPriceChart"></canvas>' : '<div class="item-modal-empty">暂无价格历史</div>'}
+            <h3 class="item-modal-section-title">价格历史</h3>
+            <div class="item-history-range-tabs">
+                ${ITEM_HISTORY_RANGES.map(([key, label]) => `
+                    <button type="button" class="tab-btn${key === '7d' ? ' active' : ''}" data-item-history-range="${escapeHtml(key)}">${escapeHtml(label)}</button>
+                `).join('')}
+            </div>
+            <div class="item-modal-chart-wrap" data-item-history-chart>
+                <div class="loading-spinner"></div>
             </div>
             <h3 class="item-modal-section-title">最近交易</h3>
             <div class="item-modal-trade-list">
@@ -1245,49 +1364,12 @@ async function showItemDetails(itemId) {
             closeModal();
             handleAddToCartClick(itemId);
         });
-
-        window.setTimeout(() => {
-            const canvas = document.getElementById('modalPriceChart');
-            if (!canvas || !priceHistory.length) return;
-            destroyItemModalChart();
-            itemModalChart = new Chart(canvas, {
-                type: 'line',
-                data: {
-                    labels: priceHistory.map((row) => row.timestamp.split(' ')[1] || row.timestamp),
-                    datasets: [
-                        {
-                            label: '买入价',
-                            data: priceHistory.map((row) => row.avgBuyPrice),
-                            borderColor: '#10B981',
-                            backgroundColor: 'rgba(16, 185, 129, 0.10)',
-                            tension: 0.35,
-                            fill: true
-                        },
-                        {
-                            label: '卖出价',
-                            data: priceHistory.map((row) => row.avgSellPrice),
-                            borderColor: '#EF4444',
-                            backgroundColor: 'rgba(239, 68, 68, 0.10)',
-                            tension: 0.35,
-                            fill: true
-                        }
-                    ]
-                },
-                options: {
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                        legend: {
-                            labels: { color: '#CBD5E1' }
-                        }
-                    },
-                    scales: {
-                        x: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
-                        y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
-                    }
-                }
+        modalBody.querySelectorAll('[data-item-history-range]').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                void loadItemHistoryRange(itemId, btn.dataset.itemHistoryRange || '7d');
             });
-        }, 40);
+        });
+        void loadItemHistoryRange(itemId, '7d');
     } catch (error) {
         console.error('加载物品详情失败:', error);
         modalBody.innerHTML = '<div class="item-modal-empty">加载物品详情失败</div>';
