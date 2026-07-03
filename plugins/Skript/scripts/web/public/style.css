@@ -2436,6 +2436,27 @@ body {
     box-shadow: none;
 }
 
+.item-card-price-flash {
+    animation: item-card-price-flash 0.75s ease-out;
+}
+
+@keyframes item-card-price-flash {
+    0% {
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+    18% {
+        border-color: rgba(255, 255, 255, 0.95);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.98),
+            0 0 22px rgba(255, 255, 255, 0.35);
+    }
+    100% {
+        border-color: rgba(255, 255, 255, 0.05);
+        box-shadow: 0 0 0 0 rgba(255, 255, 255, 0);
+    }
+}
+
 .cart-offer-add-btn {
     border: none;
     cursor: pointer;

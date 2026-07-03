@@ -318,6 +318,21 @@ function syncCartPricesFromCatalog() {
     }
 }
 
+function triggerPriceChangeFlash(card) {
+    if (!card) return;
+    const cls = 'item-card-price-flash';
+    card.classList.remove(cls);
+    void card.offsetWidth;
+    card.classList.add(cls);
+    if (card._priceFlashTimer) {
+        window.clearTimeout(card._priceFlashTimer);
+    }
+    card._priceFlashTimer = window.setTimeout(() => {
+        card.classList.remove(cls);
+        card._priceFlashTimer = null;
+    }, 760);
+}
+
 function updateVisiblePriceTexts(latestItems) {
     const grid = document.getElementById('itemsGrid');
     if (!grid || !Array.isArray(latestItems) || !latestItems.length) return;
@@ -328,11 +343,23 @@ function updateVisiblePriceTexts(latestItems) {
         if (!item) return;
         const buyEl = card.querySelector('[data-price-role="buy"]');
         const sellEl = card.querySelector('[data-price-role="sell"]');
+        let changed = false;
         if (buyEl) {
-            buyEl.textContent = `￥${Number(item.buyPrice || 0).toFixed(2)}`;
+            const nextBuy = `￥${Number(item.buyPrice || 0).toFixed(2)}`;
+            if (buyEl.textContent !== nextBuy) {
+                buyEl.textContent = nextBuy;
+                changed = true;
+            }
         }
         if (sellEl) {
-            sellEl.textContent = `￥${Number(item.sellPrice || 0).toFixed(2)}`;
+            const nextSell = `￥${Number(item.sellPrice || 0).toFixed(2)}`;
+            if (sellEl.textContent !== nextSell) {
+                sellEl.textContent = nextSell;
+                changed = true;
+            }
+        }
+        if (changed) {
+            triggerPriceChangeFlash(card);
         }
     });
 }
@@ -370,7 +397,7 @@ function ensureLivePriceRefreshTimer() {
     if (livePriceRefreshTimer) return;
     livePriceRefreshTimer = window.setInterval(() => {
         void refreshLivePrices();
-    }, 5000);
+    }, 1000);
 }
 
 function formatUltimateShopPrice(val) {

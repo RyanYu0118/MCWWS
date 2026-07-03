@@ -137,7 +137,10 @@ function mcwwsLoadMarketState():
 
 function mcwwsSaveMarketState():
     set {_statePath} to "{@dyn_state}"
+    if {market_dirty_items::*} is not set:
+        stop
     if mcwwsDynCfgBool("persist_state", true) is false:
+        delete {market_dirty_items::*}
         stop
     load yaml {_statePath} as "dyn_state"
     set yaml value "meta.version" from "dyn_state" to 1
@@ -155,6 +158,10 @@ function mcwwsSaveMarketState():
 function mcwwsMarkMarketItemDirty(item: text):
     if {market_dirty_items::*} does not contain {_item}:
         add {_item} to {market_dirty_items::*}
+
+function mcwwsFlushDynamicMarketWrites():
+    mcwwsSaveMarketState()
+    mcwwsExportDirtyPricesToWeb()
 
 function mcwwsClampDynamicFactor(factor: number) :: number:
     set {_min} to mcwwsDynCfgNum("min_dynamic_factor", 0.5)
@@ -205,7 +212,6 @@ function mcwwsRecordMarketTrade(item: text, amount: number, isBuy: boolean):
         stop
     if {-base_price::buy::%{_item}%} is not set:
         stop
-    mcwwsTickDynamicMarketIfNeeded()
     mcwwsEnsureMarketItemState({_item})
     if {_isBuy} is true:
         subtract {_amount} from {-market_stock::%{_item}%}
@@ -214,9 +220,8 @@ function mcwwsRecordMarketTrade(item: text, amount: number, isBuy: boolean):
         add {_amount} to {-market_stock::%{_item}%}
         add {_amount} to {-market_sell_pressure::%{_item}%}
     mcwwsMarkMarketItemDirty({_item})
-    mcwwsSaveMarketState()
     mcwwsRecalculateCachedPrice({_item})
-    mcwwsExportItemPriceToWeb({_item})
+    mcwwsMarkWebPriceDirty({_item})
 
 function mcwwsTickDynamicMarket():
     if mcwwsDynCfgBool("enabled", true) is false:
@@ -251,7 +256,6 @@ function mcwwsTickDynamicMarket():
                 set {_changed} to true
         if {_changed} is true:
             mcwwsMarkMarketItemDirty({_item})
-    mcwwsSaveMarketState()
 
 function mcwwsTickDynamicMarketIfNeeded():
     set {_last} to {-market_last_tick}
@@ -296,6 +300,10 @@ on load:
     send "§a[Economy-Dynamic] 动态定价引擎已加载（enabled=%{-dyn_cfg::enabled}%）。" to console
     updatePrices()
     mcwwsExportAllPricesToWeb()
+
+every 1 second:
+    mcwwsTickDynamicMarketIfNeeded()
+    mcwwsFlushDynamicMarketWrites()
 
 on ItemFinishTransactionEvent:
     set {_shop} to event.getShop().getShopName()
