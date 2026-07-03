@@ -265,9 +265,6 @@ const analytics = createAnalyticsService({
     ultimateShopShopsDir: ULTIMATE_SHOP_SHOPS_DIR
 });
 
-pollAndRecordPriceHistoryChanges();
-setInterval(pollAndRecordPriceHistoryChanges, 1000);
-
 if (!fs.existsSync(USER_DB_FILE)) {
     fs.writeFileSync(USER_DB_FILE, JSON.stringify([]), 'utf8');
 }
@@ -419,6 +416,9 @@ function pollAndRecordPriceHistoryChanges() {
         console.error('记录价格历史失败:', error);
     }
 }
+
+pollAndRecordPriceHistoryChanges();
+setInterval(pollAndRecordPriceHistoryChanges, 1000);
 
 let materialNameIndexCache = null;
 let materialNameIndexMtime = 0;
