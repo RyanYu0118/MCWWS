@@ -33,9 +33,33 @@ function mcwwsMarkWebOrderEconomyCharged(oid: text):
     save yaml "weborders"
     unload yaml "weborders"
 
+function mcwwsEnsureEconomyDeductionsYaml():
+    set {_path} to "plugins/Skript/scripts/web/data/economy_deductions.yml"
+    set {_file} to new File({_path})
+    set {_needsInit} to false
+    if {_file}.exists() is false:
+        set {_needsInit} to true
+    else:
+        set {_size} to {_file}.length()
+        if {_size} <= 0:
+            send "§c[MCWWS] economy_deductions.yml 为空，已重建。" to console
+            set {_needsInit} to true
+        else:
+            set {_bytes} to Files.readAllBytes({_file}.toPath())
+            set {_text} to new String({_bytes}, StandardCharsets.UTF_8)
+            if {_text} does not contain "next_id":
+                send "§c[MCWWS] economy_deductions.yml 已损坏，已重建。" to console
+                set {_needsInit} to true
+    if {_needsInit} is true:
+        load yaml {_path} as "econq_init"
+        set yaml value "next_id" from "econq_init" to 1
+        save yaml "econq_init"
+        unload yaml "econq_init"
+
 function mcwwsMarkEcoDeductionDoneForOrder(oid: text):
     set {_key} to "%{_oid}%"
     set {_path} to "plugins/Skript/scripts/web/data/economy_deductions.yml"
+    mcwwsEnsureEconomyDeductionsYaml()
     load yaml {_path} as "econq"
     set {_keys::*} to yaml nodes with keys "pending" from "econq"
     set {_changed} to false
@@ -63,9 +87,10 @@ function mcwwsProcessEcoTakeTextQueue() :: number:
     set {_file} to new File({_rel})
     if {_file}.exists() is false:
         return 0
-    set {_bytes} to Files.readAllBytes({_file}.toPath())
-    if {_bytes}.length is 0:
+    set {_size} to {_file}.length()
+    if {_size} <= 0:
         return 0
+    set {_bytes} to Files.readAllBytes({_file}.toPath())
     set {_text} to new String({_bytes}, StandardCharsets.UTF_8)
     Files.delete({_file}.toPath())
     set {_lines::*} to {_text} split at nl
@@ -92,6 +117,7 @@ function mcwwsProcessEcoTakeTextQueue() :: number:
 
 function mcwwsProcessEcoTakeYamlQueue() :: number:
     set {_count} to 0
+    mcwwsEnsureEconomyDeductionsYaml()
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
     set {_keys::*} to yaml nodes with keys "pending" from "econq"
     if size of {_keys::*} is 0:
@@ -144,6 +170,7 @@ function mcwwsIsEcoTakeDoneForOrder(oid: text) :: boolean:
         return true
     if "%{_charged}%" is "true":
         return true
+    mcwwsEnsureEconomyDeductionsYaml()
     load yaml "plugins/Skript/scripts/web/data/economy_deductions.yml" as "econq"
     set {_keys::*} to yaml nodes with keys "pending" from "econq"
     loop {_keys::*}:

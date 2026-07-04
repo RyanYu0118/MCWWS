@@ -304,7 +304,10 @@ function loadYamlFile(filePath) {
 
 function saveYamlFile(filePath, data) {
     fs.mkdirSync(path.dirname(filePath), { recursive: true });
-    fs.writeFileSync(filePath, yaml.dump(data || {}, { lineWidth: 120, noRefs: true }), 'utf8');
+    const payload = yaml.dump(data || {}, { lineWidth: 120, noRefs: true });
+    const tempPath = `${filePath}.tmp`;
+    fs.writeFileSync(tempPath, payload, 'utf8');
+    fs.renameSync(tempPath, filePath);
     yamlFileCache.delete(filePath);
 }
 
