@@ -1192,7 +1192,9 @@ function categoryDisplayName(category) {
 }
 
 function destroyItemModalChart() {
-    if (itemModalChart) {
+    if (window.McPriceHistoryChart) {
+        itemModalChart = window.McPriceHistoryChart.destroy(itemModalChart);
+    } else if (itemModalChart) {
         itemModalChart.destroy();
         itemModalChart = null;
     }
@@ -1267,9 +1269,6 @@ function renderItemHistoryChartInto(modalBody, priceHistory, rangeKey) {
         chartWrap.innerHTML = '<div class="item-modal-empty">该时间范围内暂无价格历史</div>';
         return;
     }
-    const labels = priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey));
-    const buyData = priceHistory.map((row) => row.avgBuyPrice);
-    const sellData = priceHistory.map((row) => row.avgSellPrice);
     let canvas = chartWrap.querySelector('#modalPriceChart');
     if (!canvas || !canvas.isConnected || (itemModalChart && itemModalChart.canvas !== canvas)) {
         destroyItemModalChart();
@@ -1277,54 +1276,12 @@ function renderItemHistoryChartInto(modalBody, priceHistory, rangeKey) {
         canvas = chartWrap.querySelector('#modalPriceChart');
     }
     if (!canvas) return;
-    if (!itemModalChart) {
-        itemModalChart = new Chart(canvas, {
-            type: 'line',
-            data: {
-                labels,
-                datasets: [
-                    {
-                        label: '买入价',
-                        data: buyData,
-                        borderColor: '#10B981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.10)',
-                        tension: 0.35,
-                        fill: true,
-                        stepped: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        spanGaps: true
-                    },
-                    {
-                        label: '卖出价',
-                        data: sellData,
-                        borderColor: '#EF4444',
-                        backgroundColor: 'rgba(239, 68, 68, 0.10)',
-                        tension: 0.35,
-                        fill: true,
-                        stepped: true,
-                        pointRadius: 0,
-                        pointHoverRadius: 4,
-                        spanGaps: true
-                    }
-                ]
-            },
-            options: {
-                responsive: true,
-                maintainAspectRatio: false,
-                plugins: { legend: { labels: { color: '#CBD5E1' } } },
-                scales: {
-                    x: { ticks: { color: '#94A3B8', maxRotation: 0, autoSkip: true }, grid: { color: 'rgba(51, 65, 85, 0.5)' } },
-                    y: { ticks: { color: '#94A3B8' }, grid: { color: 'rgba(51, 65, 85, 0.5)' } }
-                }
-            }
-        });
-        return;
-    }
-    itemModalChart.data.labels = labels;
-    itemModalChart.data.datasets[0].data = buyData;
-    itemModalChart.data.datasets[1].data = sellData;
-    itemModalChart.update('none');
+    itemModalChart = window.McPriceHistoryChart.render({
+        chart: itemModalChart,
+        canvas,
+        priceHistory,
+        rangeKey
+    });
 }
 
 async function loadItemDetailSnapshotIntoModal(itemId, rangeKey = '7d', options = {}) {

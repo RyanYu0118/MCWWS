@@ -1785,6 +1785,11 @@ body {
     border-radius: 10px;
     background: rgba(15, 23, 42, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
+    overscroll-behavior: contain;
+}
+
+.item-modal-chart-wrap canvas {
+    cursor: crosshair;
 }
 
 .item-modal-trade-list {
