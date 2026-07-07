@@ -159,7 +159,22 @@
         window.__mcwwsPriceHistoryZoomReady = true;
     }
 
-    function buildChartOptions() {
+    function getDataBounds(priceHistory) {
+        const xs = priceHistory
+            .map((row) => parseTimestamp(row.timestamp))
+            .filter(Number.isFinite);
+        if (!xs.length) return null;
+        return {
+            min: Math.min(...xs),
+            max: Math.max(...xs)
+        };
+    }
+
+    function buildChartOptions(bounds) {
+        const xLimits = bounds
+            ? { min: bounds.min, max: bounds.max, minRange: 60 * 1000 }
+            : { minRange: 60 * 1000 };
+
         return {
             responsive: true,
             maintainAspectRatio: false,
@@ -190,13 +205,14 @@
                     pan: {
                         enabled: true,
                         mode: 'x',
-                        threshold: 6,
+                        scaleMode: 'x',
+                        threshold: 4,
                         onPanComplete({ chart }) {
                             chart.update('none');
                         }
                     },
                     limits: {
-                        x: { minRange: 60 * 1000 }
+                        x: xLimits
                     }
                 }
             },
@@ -249,12 +265,27 @@
         return null;
     }
 
+    function attachInteractionHints(chartWrap) {
+        if (!chartWrap || chartWrap.dataset.hintsReady === '1') return;
+        chartWrap.dataset.hintsReady = '1';
+        chartWrap.title = '滚轮缩放时间轴 · 按住鼠标左键左右拖拽平移';
+        chartWrap.classList.add('item-modal-chart-wrap--interactive');
+        if (!chartWrap.nextElementSibling?.classList.contains('item-modal-chart-hint')) {
+            const hint = document.createElement('div');
+            hint.className = 'item-modal-chart-hint';
+            hint.textContent = '滚轮缩放 · 按住拖拽左右平移';
+            chartWrap.insertAdjacentElement('afterend', hint);
+        }
+    }
+
     function render({ chart, canvas, priceHistory, rangeKey }) {
         ensureReady();
         const data = buildChartData(priceHistory);
-        const options = buildChartOptions();
+        const bounds = getDataBounds(priceHistory);
+        const options = buildChartOptions(bounds);
         const rangeChanged = Boolean(chart && chart.$historyRangeKey && chart.$historyRangeKey !== rangeKey);
         const canvasChanged = Boolean(chart && chart.canvas !== canvas);
+        const chartWrap = canvas?.closest('[data-item-history-chart]') || canvas?.parentElement;
 
         if (!chart || canvasChanged) {
             destroyChart(chart);
@@ -264,7 +295,18 @@
                 options
             });
             chart.$historyRangeKey = rangeKey;
+            chart.$historyBounds = bounds;
+            attachInteractionHints(chartWrap);
             return chart;
+        }
+
+        chart.$historyBounds = bounds;
+        if (bounds && chart.options?.plugins?.zoom?.limits) {
+            chart.options.plugins.zoom.limits.x = {
+                min: bounds.min,
+                max: bounds.max,
+                minRange: 60 * 1000
+            };
         }
 
         chart.data.datasets[0].data = data.datasets[0].data;
@@ -274,6 +316,7 @@
             chart.resetZoom();
         }
         chart.$historyRangeKey = rangeKey;
+        attachInteractionHints(chartWrap);
         return chart;
     }
 
