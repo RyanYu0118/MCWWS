@@ -174,10 +174,11 @@ function renderDetailChart(priceHistory, rangeKey) {
     const labels = priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey));
     const buyData = priceHistory.map((row) => row.avgBuyPrice);
     const sellData = priceHistory.map((row) => row.avgSellPrice);
-    let canvas = document.getElementById('itemDetailChart');
-    if (!canvas) {
+    let canvas = chartWrap.querySelector('#itemDetailChart');
+    if (!canvas || !canvas.isConnected || (detailChart && detailChart.canvas !== canvas)) {
+        destroyDetailChart();
         chartWrap.innerHTML = '<canvas id="itemDetailChart"></canvas>';
-        canvas = document.getElementById('itemDetailChart');
+        canvas = chartWrap.querySelector('#itemDetailChart');
     }
     if (!canvas) return;
     if (!detailChart) {
@@ -324,11 +325,55 @@ async function loadDetailSnapshot(showLoading = true) {
     const chartWrap = content?.querySelector('[data-item-history-chart]');
     const requestSeq = ++detailRequestSeq;
     if (showLoading && chartWrap) {
+        destroyDetailChart();
         chartWrap.innerHTML = '<div class="loading-spinner"></div>';
     }
-    const snapshot = await fetchItemDetailSnapshot(currentItemId, currentRange);
-    if (requestSeq !== detailRequestSeq) return;
-    updateDetailContent(snapshot);
+    try {
+        const [snapshotResponse, historyResponse] = await Promise.all([
+            fetch(`/api/shop/item/${encodeURIComponent(currentItemId)}`),
+            fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=${encodeURIComponent(currentRange)}`)
+        ]);
+        const snapshotItem = await snapshotResponse.json();
+        const priceHistory = await historyResponse.json();
+        if (!snapshotResponse.ok) {
+            throw new Error(snapshotItem?.error || '读取物品详情失败');
+        }
+        if (!historyResponse.ok) {
+            throw new Error(priceHistory?.error || '读取价格历史失败');
+        }
+        if (requestSeq !== detailRequestSeq) return;
+        updateDetailContent({
+            item: snapshotItem,
+            priceHistory: Array.isArray(priceHistory) ? priceHistory : [],
+            serverTime: new Date().toISOString()
+        });
+    } catch (error) {
+        if (requestSeq !== detailRequestSeq) return;
+        throw error;
+    }
+}
+
+async function loadDetailHistoryRange(rangeKey = currentRange, showLoading = true) {
+    currentRange = rangeKey;
+    const content = document.getElementById('itemDetailContent');
+    const chartWrap = content?.querySelector('[data-item-history-chart]');
+    if (!chartWrap) return;
+    setRangeButtonsActive(rangeKey);
+    if (showLoading) {
+        destroyDetailChart();
+        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    }
+    try {
+        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=${encodeURIComponent(rangeKey)}`);
+        const priceHistory = await response.json();
+        if (!response.ok) {
+            throw new Error(priceHistory?.error || '读取价格历史失败');
+        }
+        renderDetailChart(Array.isArray(priceHistory) ? priceHistory : [], rangeKey);
+    } catch (error) {
+        destroyDetailChart();
+        chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
+    }
 }
 
 async function refreshDetailPage() {
@@ -351,7 +396,7 @@ function bindInteractions() {
         const btn = event.target.closest('[data-item-history-range]');
         if (!btn) return;
         currentRange = btn.dataset.itemHistoryRange || '7d';
-        void loadDetailSnapshot(true);
+        void loadDetailHistoryRange(currentRange, true);
     });
 }
 

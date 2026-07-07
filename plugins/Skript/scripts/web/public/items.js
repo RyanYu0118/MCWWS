@@ -1270,10 +1270,11 @@ function renderItemHistoryChartInto(modalBody, priceHistory, rangeKey) {
     const labels = priceHistory.map((row) => formatHistoryAxisLabel(row.timestamp, rangeKey));
     const buyData = priceHistory.map((row) => row.avgBuyPrice);
     const sellData = priceHistory.map((row) => row.avgSellPrice);
-    let canvas = modalBody.querySelector('#modalPriceChart');
-    if (!canvas) {
+    let canvas = chartWrap.querySelector('#modalPriceChart');
+    if (!canvas || !canvas.isConnected || (itemModalChart && itemModalChart.canvas !== canvas)) {
+        destroyItemModalChart();
         chartWrap.innerHTML = '<canvas id="modalPriceChart"></canvas>';
-        canvas = modalBody.querySelector('#modalPriceChart');
+        canvas = chartWrap.querySelector('#modalPriceChart');
     }
     if (!canvas) return;
     if (!itemModalChart) {
@@ -1336,6 +1337,7 @@ async function loadItemDetailSnapshotIntoModal(itemId, rangeKey = '7d', options 
     modal.dataset.historyRange = rangeKey;
     setItemHistoryRangeButtonsActive(modalBody, rangeKey);
     if (showLoading) {
+        destroyItemModalChart();
         chartWrap.innerHTML = '<div class="loading-spinner"></div>';
     }
     const snapshot = await fetchItemDetailSnapshot(itemId, rangeKey);
@@ -1376,12 +1378,28 @@ function setItemHistoryRangeButtonsActive(modalBody, activeKey) {
 }
 
 async function loadItemHistoryRange(itemId, rangeKey = '7d', options = {}) {
+    const { showLoading = true } = options;
+    const modal = document.getElementById('itemModal');
+    const modalBody = document.getElementById('modalBody');
+    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
+    if (!modal || !modalBody || !chartWrap) return;
+    modal.dataset.historyRange = rangeKey;
+    setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+    if (showLoading) {
+        destroyItemModalChart();
+        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
+    }
     try {
-        await loadItemDetailSnapshotIntoModal(itemId, rangeKey, options);
+        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
+        const priceHistory = await response.json();
+        if (!response.ok) {
+            throw new Error(priceHistory?.error || '读取价格历史失败');
+        }
+        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
+            return;
+        }
+        renderItemHistoryChartInto(modalBody, Array.isArray(priceHistory) ? priceHistory : [], rangeKey);
     } catch (error) {
-        const modalBody = document.getElementById('modalBody');
-        const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
-        if (!chartWrap) return;
         destroyItemModalChart();
         chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
     }
