@@ -51,96 +51,69 @@
         return `${p.month}月${p.day}日`;
     }
 
-    function dayKey(p) {
-        return `${p.year}-${p.month}-${p.day}`;
-    }
-
-    function hourKey(p) {
-        return `${dayKey(p)}-${p.hour}`;
-    }
-
-    function minuteKey(p) {
-        return `${hourKey(p)}-${p.minute}`;
-    }
-
-    function hasConsecutiveDuplicate(labels) {
-        for (let i = 1; i < labels.length; i += 1) {
-            if (labels[i] === labels[i - 1]) return true;
-        }
-        return false;
-    }
-
-    function isFirstOfGroup(index, allParts, keyFn) {
-        if (index === 0) return true;
-        return keyFn(allParts[index]) !== keyFn(allParts[index - 1]);
-    }
-
     function formatTooltipTitle(ms) {
         if (!Number.isFinite(ms)) return '';
         const p = getParts(ms);
         return `${p.year}-${pad(p.month)}-${pad(p.day)} ${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}`;
     }
 
-    function formatAdaptiveTicks(tickValues) {
-        const parts = tickValues.map((ms) => getParts(ms));
-        if (!parts.length) return () => '';
+    const NICE_TIME_STEPS_MS = [
+        1_000, 2_000, 5_000, 10_000, 15_000, 30_000,
+        60_000, 2 * 60_000, 5 * 60_000, 10 * 60_000, 15 * 60_000, 30 * 60_000,
+        3_600_000, 2 * 3_600_000, 3 * 3_600_000, 6 * 3_600_000, 12 * 3_600_000,
+        86_400_000, 2 * 86_400_000, 7 * 86_400_000,
+        30 * 86_400_000, 90 * 86_400_000, 365 * 86_400_000
+    ];
 
-        const dayLabels = parts.map(dayLabel);
-        const dayDup = hasConsecutiveDuplicate(dayLabels);
-        const spanMs = tickValues[tickValues.length - 1] - tickValues[0];
-
-        if (!dayDup) {
-            return (idx) => {
-                const p = parts[idx];
-                if (spanMs > 400 * 24 * 60 * 60 * 1000) {
-                    const label = `${p.year}年${p.month}月`;
-                    return isFirstOfGroup(idx, parts, (pt) => `${pt.year}-${pt.month}`) ? label : '';
-                }
-                if (spanMs > 2 * 24 * 60 * 60 * 1000) {
-                    return dayLabel(p);
-                }
-                return `${dayLabel(p)} ${pad(p.hour)}:${pad(p.minute)}`;
-            };
-        }
-
-        const hourLabels = parts.map((p) => `${dayLabel(p)} ${pad(p.hour)}`);
-        const hourDup = hasConsecutiveDuplicate(hourLabels);
-
-        if (!hourDup) {
-            return (idx) => {
-                const p = parts[idx];
-                if (isFirstOfGroup(idx, parts, dayKey)) return dayLabel(p);
-                return `${pad(p.hour)}:00`;
-            };
-        }
-
-        const minuteLabels = parts.map((p) => `${pad(p.hour)}:${pad(p.minute)}`);
-        const minuteDup = hasConsecutiveDuplicate(minuteLabels);
-
-        if (!minuteDup) {
-            return (idx) => {
-                const p = parts[idx];
-                if (isFirstOfGroup(idx, parts, hourKey)) return `${pad(p.hour)}:00`;
-                return `${pad(p.hour)}:${pad(p.minute)}`;
-            };
-        }
-
-        return (idx) => {
-            const p = parts[idx];
-            if (isFirstOfGroup(idx, parts, minuteKey)) return `${pad(p.hour)}:${pad(p.minute)}`;
-            return `${pad(p.second)}秒`;
-        };
+    function tickToMs(value) {
+        if (value instanceof Date) return value.getTime();
+        return Number(value);
     }
 
-    function createTickCallback() {
-        return function adaptiveTickCallback(value, index, ticks) {
-            const tickValues = ticks.map((tick) => Number(tick.value)).filter(Number.isFinite);
-            const signature = `${tickValues.length}:${tickValues[0] || 0}:${tickValues[tickValues.length - 1] || 0}`;
-            if (this.$adaptiveTickSignature !== signature) {
-                this.$adaptiveTickSignature = signature;
-                this.$adaptiveTickFormatter = formatAdaptiveTicks(tickValues);
-            }
-            return this.$adaptiveTickFormatter ? this.$adaptiveTickFormatter(index) : '';
+    function estimateTickStepMs(ticks) {
+        const values = ticks
+            .map((tick) => tickToMs(tick.value))
+            .filter(Number.isFinite)
+            .sort((a, b) => a - b);
+        if (values.length < 2) return 0;
+        let minStep = Infinity;
+        for (let i = 1; i < values.length; i += 1) {
+            const step = values[i] - values[i - 1];
+            if (step > 0) minStep = Math.min(minStep, step);
+        }
+        if (!Number.isFinite(minStep)) {
+            return values[values.length - 1] - values[0];
+        }
+        for (const nice of NICE_TIME_STEPS_MS) {
+            if (nice >= minStep * 0.75) return nice;
+        }
+        return minStep;
+    }
+
+    function formatUniformTimeLabel(ms, stepMs) {
+        const p = getParts(ms);
+        if (stepMs >= 365 * 86_400_000) {
+            return `${p.year}年`;
+        }
+        if (stepMs >= 28 * 86_400_000) {
+            return `${p.year}年${p.month}月`;
+        }
+        if (stepMs >= 86_400_000) {
+            return dayLabel(p);
+        }
+        if (stepMs >= 3_600_000) {
+            return `${dayLabel(p)} ${pad(p.hour)}:00`;
+        }
+        if (stepMs >= 60_000) {
+            return `${pad(p.hour)}:${pad(p.minute)}`;
+        }
+        return `${pad(p.hour)}:${pad(p.minute)}:${pad(p.second)}`;
+    }
+
+    function createUniformTimeTickCallback() {
+        return function uniformTimeTickCallback(value, index, ticks) {
+            const stepMs = estimateTickStepMs(ticks);
+            return formatUniformTimeLabel(tickToMs(value), stepMs);
         };
     }
 
@@ -263,7 +236,7 @@
                         mode: 'x',
                         onZoomComplete({ chart }) {
                             markManualViewportChange(chart, chartWrap);
-                            chart.update('none');
+                            chart.update();
                         }
                     },
                     pan: {
@@ -273,7 +246,7 @@
                         threshold: 4,
                         onPanComplete({ chart }) {
                             markManualViewportChange(chart, chartWrap);
-                            chart.update('none');
+                            chart.update();
                         }
                     },
                     limits: {
@@ -283,12 +256,29 @@
             },
             scales: {
                 x: {
-                    type: 'linear',
+                    type: 'time',
+                    time: {
+                        tooltipFormat: 'yyyy-MM-dd HH:mm:ss',
+                        displayFormats: {
+                            millisecond: 'HH:mm:ss.SSS',
+                            second: 'HH:mm:ss',
+                            minute: 'HH:mm',
+                            hour: 'M/d HH:mm',
+                            day: 'M/d',
+                            week: 'M/d',
+                            month: 'yyyy/M',
+                            quarter: 'yyyy/M',
+                            year: 'yyyy'
+                        }
+                    },
                     ticks: {
                         color: '#94A3B8',
                         maxRotation: 0,
                         autoSkip: true,
-                        callback: createTickCallback()
+                        maxTicksLimit: 8,
+                        source: 'auto',
+                        major: { enabled: true },
+                        callback: createUniformTimeTickCallback()
                     },
                     grid: { color: 'rgba(51, 65, 85, 0.5)' }
                 },
