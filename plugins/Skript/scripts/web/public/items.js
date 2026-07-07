@@ -1292,7 +1292,9 @@ async function loadItemDetailSnapshotIntoModal(itemId, rangeKey = '7d', options 
     if (!modal || !modalBody || !chartWrap) return null;
     const requestSeq = ++itemModalRequestSeq;
     modal.dataset.historyRange = rangeKey;
-    setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+    if (!window.McPriceHistoryChart?.isViewportCustomized(itemModalChart)) {
+        setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+    }
     if (showLoading) {
         destroyItemModalChart();
         chartWrap.innerHTML = '<div class="loading-spinner"></div>';

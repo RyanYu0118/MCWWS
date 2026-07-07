@@ -170,7 +170,24 @@
         };
     }
 
-    function buildChartOptions(bounds) {
+    function clearPresetRangeHighlight(chartWrap) {
+        if (!chartWrap) return;
+        const tabs = chartWrap.previousElementSibling;
+        const scope = tabs?.classList?.contains('item-history-range-tabs')
+            ? tabs
+            : chartWrap.closest('#modalBody, #itemDetailContent');
+        scope?.querySelectorAll('[data-item-history-range]').forEach((btn) => {
+            btn.classList.remove('active');
+        });
+    }
+
+    function markManualViewportChange(chart, chartWrap) {
+        if (!chart || chart.$historyViewportCustomized) return;
+        chart.$historyViewportCustomized = true;
+        clearPresetRangeHighlight(chartWrap);
+    }
+
+    function buildChartOptions(bounds, chartWrap) {
         const xLimits = bounds
             ? { min: bounds.min, max: bounds.max, minRange: 60 * 1000 }
             : { minRange: 60 * 1000 };
@@ -199,6 +216,7 @@
                         },
                         mode: 'x',
                         onZoomComplete({ chart }) {
+                            markManualViewportChange(chart, chartWrap);
                             chart.update('none');
                         }
                     },
@@ -208,6 +226,7 @@
                         scaleMode: 'x',
                         threshold: 4,
                         onPanComplete({ chart }) {
+                            markManualViewportChange(chart, chartWrap);
                             chart.update('none');
                         }
                     },
@@ -282,10 +301,10 @@
         ensureReady();
         const data = buildChartData(priceHistory);
         const bounds = getDataBounds(priceHistory);
-        const options = buildChartOptions(bounds);
         const rangeChanged = Boolean(chart && chart.$historyRangeKey && chart.$historyRangeKey !== rangeKey);
         const canvasChanged = Boolean(chart && chart.canvas !== canvas);
         const chartWrap = canvas?.closest('[data-item-history-chart]') || canvas?.parentElement;
+        const options = buildChartOptions(bounds, chartWrap);
 
         if (!chart || canvasChanged) {
             destroyChart(chart);
@@ -296,6 +315,7 @@
             });
             chart.$historyRangeKey = rangeKey;
             chart.$historyBounds = bounds;
+            chart.$historyViewportCustomized = false;
             attachInteractionHints(chartWrap);
             return chart;
         }
@@ -312,8 +332,11 @@
         chart.data.datasets[0].data = data.datasets[0].data;
         chart.data.datasets[1].data = data.datasets[1].data;
         chart.update('none');
-        if (rangeChanged && typeof chart.resetZoom === 'function') {
-            chart.resetZoom();
+        if (rangeChanged) {
+            chart.$historyViewportCustomized = false;
+            if (typeof chart.resetZoom === 'function') {
+                chart.resetZoom();
+            }
         }
         chart.$historyRangeKey = rangeKey;
         attachInteractionHints(chartWrap);
@@ -323,6 +346,9 @@
     window.McPriceHistoryChart = {
         ensureReady,
         render,
-        destroy: destroyChart
+        destroy: destroyChart,
+        isViewportCustomized(chart) {
+            return Boolean(chart?.$historyViewportCustomized);
+        }
     };
 })();

@@ -273,7 +273,9 @@ function updateDetailContent(snapshot) {
     if (txListEl) {
         txListEl.innerHTML = renderRecentTransactions(Array.isArray(itemData.recentTransactions) ? itemData.recentTransactions : []);
     }
-    setRangeButtonsActive(currentRange);
+    if (!window.McPriceHistoryChart?.isViewportCustomized(detailChart)) {
+        setRangeButtonsActive(currentRange);
+    }
     renderDetailChart(Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], currentRange);
 }
 
