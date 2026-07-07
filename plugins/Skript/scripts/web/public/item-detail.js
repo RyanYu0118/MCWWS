@@ -134,8 +134,8 @@ function startDetailRefresh() {
     }, 1000);
 }
 
-async function fetchItemDetailSnapshot(itemId, rangeKey = '7d') {
-    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
+async function fetchItemDetailSnapshot(itemId) {
+    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`);
     const snapshot = await response.json();
     if (!response.ok) {
         throw new Error(snapshot?.error || '读取物品详情失败');
@@ -290,7 +290,7 @@ async function loadDetailSnapshot(showLoading = true) {
     try {
         const [snapshotResponse, historyResponse] = await Promise.all([
             fetch(`/api/shop/item/${encodeURIComponent(currentItemId)}`),
-            fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=${encodeURIComponent(currentRange)}`)
+            fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=full`)
         ]);
         const snapshotItem = await snapshotResponse.json();
         const priceHistory = await historyResponse.json();
@@ -312,26 +312,11 @@ async function loadDetailSnapshot(showLoading = true) {
     }
 }
 
-async function loadDetailHistoryRange(rangeKey = currentRange, showLoading = true) {
+function loadDetailHistoryRange(rangeKey = currentRange) {
     currentRange = rangeKey;
-    const content = document.getElementById('itemDetailContent');
-    const chartWrap = content?.querySelector('[data-item-history-chart]');
-    if (!chartWrap) return;
     setRangeButtonsActive(rangeKey);
-    if (showLoading) {
-        destroyDetailChart();
-        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
-    }
-    try {
-        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=${encodeURIComponent(rangeKey)}`);
-        const priceHistory = await response.json();
-        if (!response.ok) {
-            throw new Error(priceHistory?.error || '读取价格历史失败');
-        }
-        renderDetailChart(Array.isArray(priceHistory) ? priceHistory : [], rangeKey);
-    } catch (error) {
-        destroyDetailChart();
-        chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
+    if (detailChart && window.McPriceHistoryChart) {
+        window.McPriceHistoryChart.applyPresetRange(detailChart, rangeKey, { force: true });
     }
 }
 
@@ -355,7 +340,7 @@ function bindInteractions() {
         const btn = event.target.closest('[data-item-history-range]');
         if (!btn) return;
         currentRange = btn.dataset.itemHistoryRange || '7d';
-        void loadDetailHistoryRange(currentRange, true);
+        loadDetailHistoryRange(currentRange);
     });
 }
 

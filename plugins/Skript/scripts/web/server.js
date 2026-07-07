@@ -3447,12 +3447,12 @@ app.get('/api/shop/item-snapshot/:item', (req, res) => {
     try {
         const range = String(req.query.range || '').trim().toLowerCase();
         const hoursRaw = Number(req.query.hours);
-        const rangeOrHours = range || (Number.isFinite(hoursRaw) && hoursRaw > 0 ? hoursRaw : '7d');
+        const viewportRange = range || (Number.isFinite(hoursRaw) && hoursRaw > 0 ? hoursRaw : '7d');
         const item = normalizeMaterialId(req.params.item) || req.params.item;
         res.json({
             item: analytics.getItemDetails(item),
-            priceHistory: analytics.getPriceHistory(item, rangeOrHours),
-            range: rangeOrHours,
+            priceHistory: analytics.getPriceHistory(item, 'full'),
+            range: viewportRange,
             serverTime: new Date().toISOString()
         });
     } catch (error) {

@@ -609,7 +609,75 @@ function createAnalyticsService(opts) {
         return HISTORY_RANGE_PRESETS[key] || HISTORY_RANGE_PRESETS['7d'];
     }
 
+    function computeFullPriceHistorySeries(item) {
+        const { itemMeta, prices } = getCache();
+        const meta = itemMeta[item] || {};
+        const fallbackBuy = meta.baseBuyPrice > 0 ? meta.baseBuyPrice : (Number(prices[item]?.buy) || 0);
+        const fallbackSell = meta.baseSellPrice > 0 ? meta.baseSellPrice : (Number(prices[item]?.sell) || 0);
+        const currentBuy = Number(prices[item]?.buy) || fallbackBuy;
+        const currentSell = Number(prices[item]?.sell) || fallbackSell;
+        const fallbackStartMs = PRICE_HISTORY_FALLBACK_START.getTime();
+        const nowMs = Date.now();
+        const related = getPriceHistoryRows()
+            .filter((row) => row.item === item)
+            .sort((a, b) => a.time - b.time);
+
+        if (!related.length) {
+            return [
+                {
+                    timestamp: formatTimestamp(PRICE_HISTORY_FALLBACK_START),
+                    avgBuyPrice: fallbackBuy,
+                    avgSellPrice: fallbackSell
+                },
+                {
+                    timestamp: formatTimestamp(new Date(nowMs)),
+                    avgBuyPrice: currentBuy,
+                    avgSellPrice: currentSell
+                }
+            ];
+        }
+
+        let buyPrice = fallbackBuy;
+        let sellPrice = fallbackSell;
+        related.forEach((tx) => {
+            if (tx.time < fallbackStartMs) {
+                if (tx.buy > 0) buyPrice = tx.buy;
+                if (tx.sell > 0) sellPrice = tx.sell;
+            }
+        });
+
+        const rows = [];
+        const pushRow = (timeMs, buy, sell) => {
+            const ts = formatTimestamp(new Date(timeMs));
+            const last = rows[rows.length - 1];
+            if (last && last.timestamp === ts && last.avgBuyPrice === buy && last.avgSellPrice === sell) {
+                return;
+            }
+            rows.push({
+                timestamp: ts,
+                avgBuyPrice: buy,
+                avgSellPrice: sell
+            });
+        };
+
+        pushRow(fallbackStartMs, buyPrice, sellPrice);
+        related.forEach((tx) => {
+            if (tx.time < fallbackStartMs) {
+                return;
+            }
+            if (tx.buy > 0) buyPrice = tx.buy;
+            if (tx.sell > 0) sellPrice = tx.sell;
+            pushRow(tx.time, buyPrice, sellPrice);
+        });
+        pushRow(nowMs, currentBuy, currentSell);
+        return rows;
+    }
+
     function computePriceHistory(item, rangeOrHours) {
+        const rangeKey = String(rangeOrHours ?? '7d').trim().toLowerCase();
+        if (rangeKey === 'full') {
+            return computeFullPriceHistorySeries(item);
+        }
         const { sinceMs, bucketMs } = resolveHistoryRangeConfig(rangeOrHours);
         const { itemMeta, prices } = getCache();
         const meta = itemMeta[item] || {};

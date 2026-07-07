@@ -159,6 +159,52 @@
         window.__mcwwsPriceHistoryZoomReady = true;
     }
 
+    const PRESET_RANGE_MS = {
+        '10m': 10 * 60 * 1000,
+        '30m': 30 * 60 * 1000,
+        '1h': 60 * 60 * 1000,
+        '6h': 6 * 60 * 60 * 1000,
+        '24h': 24 * 60 * 60 * 1000,
+        '7d': 7 * 24 * 60 * 60 * 1000,
+        '1mo': 30 * 24 * 60 * 60 * 1000,
+        '1y': 365 * 24 * 60 * 60 * 1000,
+        '3y': 3 * 365 * 24 * 60 * 60 * 1000,
+        all: null
+    };
+
+    function getPresetViewport(bounds, rangeKey) {
+        if (!bounds) return null;
+        const span = PRESET_RANGE_MS[rangeKey];
+        if (span == null || rangeKey === 'all') {
+            return { min: bounds.min, max: bounds.max };
+        }
+        return {
+            min: Math.max(bounds.min, bounds.max - span),
+            max: bounds.max
+        };
+    }
+
+    function setXViewport(chart, viewport) {
+        if (!chart || !viewport) return;
+        if (typeof chart.zoomScale === 'function') {
+            chart.zoomScale('x', viewport, 'none');
+            return;
+        }
+        chart.options.scales.x.min = viewport.min;
+        chart.options.scales.x.max = viewport.max;
+        chart.update('none');
+    }
+
+    function applyPresetRange(chart, rangeKey, options = {}) {
+        const { force = false } = options;
+        if (!chart || (!force && chart.$historyViewportCustomized)) return;
+        const viewport = getPresetViewport(chart.$historyBounds, rangeKey);
+        if (!viewport) return;
+        chart.$historyViewportCustomized = false;
+        chart.$historyRangeKey = rangeKey;
+        setXViewport(chart, viewport);
+    }
+
     function getDataBounds(priceHistory) {
         const xs = priceHistory
             .map((row) => parseTimestamp(row.timestamp))
@@ -317,6 +363,7 @@
             chart.$historyBounds = bounds;
             chart.$historyViewportCustomized = false;
             attachInteractionHints(chartWrap);
+            applyPresetRange(chart, rangeKey, { force: true });
             return chart;
         }
 
@@ -331,12 +378,13 @@
 
         chart.data.datasets[0].data = data.datasets[0].data;
         chart.data.datasets[1].data = data.datasets[1].data;
-        chart.update('none');
+
         if (rangeChanged) {
-            chart.$historyViewportCustomized = false;
-            if (typeof chart.resetZoom === 'function') {
-                chart.resetZoom();
-            }
+            applyPresetRange(chart, rangeKey, { force: true });
+        } else if (!chart.$historyViewportCustomized && chart.$historyRangeKey) {
+            applyPresetRange(chart, chart.$historyRangeKey, { force: true });
+        } else {
+            chart.update('none');
         }
         chart.$historyRangeKey = rangeKey;
         attachInteractionHints(chartWrap);
@@ -347,6 +395,8 @@
         ensureReady,
         render,
         destroy: destroyChart,
+        applyPresetRange,
+        getPresetViewport,
         isViewportCustomized(chart) {
             return Boolean(chart?.$historyViewportCustomized);
         }

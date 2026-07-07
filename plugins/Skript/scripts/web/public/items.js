@@ -1214,8 +1214,8 @@ function startItemModalAutoRefresh(itemId) {
     }, 1000);
 }
 
-async function fetchItemDetailSnapshot(itemId, rangeKey = '7d') {
-    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
+async function fetchItemDetailSnapshot(itemId) {
+    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`);
     const snapshot = await response.json();
     if (!response.ok) {
         throw new Error(snapshot?.error || '读取物品详情失败');
@@ -1291,20 +1291,21 @@ async function loadItemDetailSnapshotIntoModal(itemId, rangeKey = '7d', options 
     const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
     if (!modal || !modalBody || !chartWrap) return null;
     const requestSeq = ++itemModalRequestSeq;
-    modal.dataset.historyRange = rangeKey;
+    const viewportRange = modal.dataset.historyRange || rangeKey;
+    modal.dataset.historyRange = viewportRange;
     if (!window.McPriceHistoryChart?.isViewportCustomized(itemModalChart)) {
-        setItemHistoryRangeButtonsActive(modalBody, rangeKey);
+        setItemHistoryRangeButtonsActive(modalBody, viewportRange);
     }
     if (showLoading) {
         destroyItemModalChart();
         chartWrap.innerHTML = '<div class="loading-spinner"></div>';
     }
-    const snapshot = await fetchItemDetailSnapshot(itemId, rangeKey);
+    const snapshot = await fetchItemDetailSnapshot(itemId);
     if (requestSeq !== itemModalRequestSeq || modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
         return null;
     }
     updateItemModalSummary(itemId, snapshot.item || {});
-    renderItemHistoryChartInto(modalBody, Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], rangeKey);
+    renderItemHistoryChartInto(modalBody, Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], viewportRange);
     return snapshot;
 }
 
@@ -1336,31 +1337,14 @@ function setItemHistoryRangeButtonsActive(modalBody, activeKey) {
     });
 }
 
-async function loadItemHistoryRange(itemId, rangeKey = '7d', options = {}) {
-    const { showLoading = true } = options;
+function loadItemHistoryRange(itemId, rangeKey = '7d') {
     const modal = document.getElementById('itemModal');
     const modalBody = document.getElementById('modalBody');
-    const chartWrap = modalBody?.querySelector('[data-item-history-chart]');
-    if (!modal || !modalBody || !chartWrap) return;
+    if (!modal || !modalBody || modal.dataset.itemId !== itemId) return;
     modal.dataset.historyRange = rangeKey;
     setItemHistoryRangeButtonsActive(modalBody, rangeKey);
-    if (showLoading) {
-        destroyItemModalChart();
-        chartWrap.innerHTML = '<div class="loading-spinner"></div>';
-    }
-    try {
-        const response = await fetch(`/api/analytics/price-history/${encodeURIComponent(itemId)}?range=${encodeURIComponent(rangeKey)}`);
-        const priceHistory = await response.json();
-        if (!response.ok) {
-            throw new Error(priceHistory?.error || '读取价格历史失败');
-        }
-        if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
-            return;
-        }
-        renderItemHistoryChartInto(modalBody, Array.isArray(priceHistory) ? priceHistory : [], rangeKey);
-    } catch (error) {
-        destroyItemModalChart();
-        chartWrap.innerHTML = `<div class="item-modal-empty">${escapeHtml(error.message || '读取价格历史失败')}</div>`;
+    if (itemModalChart && window.McPriceHistoryChart) {
+        window.McPriceHistoryChart.applyPresetRange(itemModalChart, rangeKey, { force: true });
     }
 }
 
@@ -1399,7 +1383,7 @@ async function showItemDetails(itemId) {
     syncItemsStateToUrl();
 
     try {
-        const snapshot = await fetchItemDetailSnapshot(itemId, '7d');
+        const snapshot = await fetchItemDetailSnapshot(itemId);
         const itemData = snapshot?.item || {};
         if (modal.dataset.itemId !== itemId || !modal.classList.contains('active')) {
             return;
@@ -1471,7 +1455,7 @@ async function showItemDetails(itemId) {
         });
         modalBody.querySelectorAll('[data-item-history-range]').forEach((btn) => {
             btn.addEventListener('click', () => {
-                void loadItemHistoryRange(itemId, btn.dataset.itemHistoryRange || '7d');
+                loadItemHistoryRange(itemId, btn.dataset.itemHistoryRange || '7d');
             });
         });
         renderItemHistoryChartInto(modalBody, Array.isArray(snapshot.priceHistory) ? snapshot.priceHistory : [], '7d');
