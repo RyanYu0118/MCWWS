@@ -164,6 +164,33 @@ function mcwwsPasteSetAnchor(p: player, oid: text):
     send "§7contentHash: §f%{_hash}%" to {_p}
     send "§7请确认 Litematica 投影对齐后执行 §f/build paste %{_oid}%" to {_p}
 
+function mcwwsRunConsoleCommand(cmd: text):
+    set {_sender} to Bukkit.getConsoleSender()
+    set {_ok} to Bukkit.dispatchCommand({_sender}, {_cmd})
+    if {_ok} is false:
+        execute console command {_cmd}
+
+function mcwwsPasteWorldEditPermissionNodes() :: texts:
+    return "fawe.worldeditregion" and "worldedit.schematic.load" and "worldedit.clipboard.paste"
+
+function mcwwsPasteGrantWorldEditPermissions(p: player) :: texts:
+    delete {_granted::*}
+    set {_name} to name of {_p}
+    set {_dur} to "30s"
+    loop mcwwsPasteWorldEditPermissionNodes():
+        if {_p} has permission loop-value:
+            continue
+        mcwwsRunConsoleCommand("lp user %{_name}% permission settemp %loop-value% true %{_dur}%")
+        add loop-value to {_granted::*}
+    return {_granted::*}
+
+function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
+    if {_grantedNodes::*} is not set:
+        stop
+    set {_name} to name of {_p}
+    loop {_grantedNodes::*}:
+        mcwwsRunConsoleCommand("lp user %{_name}% permission unsettemp %loop-value%")
+
 function mcwwsPasteExecute(p: player, oid: text):
     if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
         send "§c订单不存在或不属于你。" to {_p}
@@ -205,12 +232,19 @@ function mcwwsPasteExecute(p: player, oid: text):
     set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
     teleport {_p} to {_anchor}
     send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
+    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p})
+    if size of {_tempPerms::*} > 0:
+        send "§7已授予临时 WorldEdit 权限，正在载入原理图…" to {_p}
+    else:
+        send "§7正在载入原理图…" to {_p}
+    wait 10 ticks
     send "§7载入原理图 §f%{_schem}% §7（WorldEdit 剪贴板）…" to {_p}
-    wait 5 ticks
     make {_p} execute command "//schem load %{_schem}%"
     wait 80 ticks
     make {_p} execute command "//paste -a"
     wait 20 ticks
+    mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
+    wait 5 ticks
     load yaml {_path} as "pastes"
     set {_prevStatus} to yaml value "orders.%{_oid}%.status" from "pastes"
     if {_prevStatus} is "pasting":
