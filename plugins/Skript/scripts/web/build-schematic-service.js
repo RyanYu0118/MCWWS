@@ -248,6 +248,13 @@ function createPasteOrder({
         } catch (exportError) {
             throw new Error(`WorldEdit 原理图导出失败：${exportError.message || exportError}`);
         }
+        const schemPath = path.join(
+            require('./litematic-to-schem').FAWE_SCHEM_DIR,
+            `${schemExport.schemFileName}.schem`
+        );
+        if (!fs.existsSync(schemPath)) {
+            throw new Error(`原理图文件未生成（FAWE 目录）：${schemPath}`);
+        }
         const store = loadPasteOrdersStore();
         const orderUuid = crypto.randomUUID();
         const numericId = Number(store.next_id) || 1;

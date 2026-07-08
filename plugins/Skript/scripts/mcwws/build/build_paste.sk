@@ -9,12 +9,38 @@ function mcwwsServerRootFile(relPath: text) :: object:
     return new File({_root}, {_relPath})
 
 function mcwwsSchemAbsolutePath(schemName: text) :: text:
-    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schemName}%.schem")
+    return mcwwsSchemAbsolutePathInDir("plugins/FastAsyncWorldEdit/schematics", {_schemName})
+
+function mcwwsSchemAbsolutePathInDir(relDir: text, schemName: text) :: text:
+    set {_file} to mcwwsServerRootFile("%{_relDir}%/%{_schemName}%.schem")
     return {_file}.getAbsolutePath()
 
 function mcwwsSchemFileExists(schemName: text) :: boolean:
-    set {_file} to mcwwsServerRootFile("plugins/WorldEdit/schematics/%{_schemName}%.schem")
+    loop "plugins/FastAsyncWorldEdit/schematics" and "plugins/WorldEdit/schematics":
+        set {_file} to mcwwsServerRootFile("%loop-value%/%{_schemName}%.schem")
+        if {_file}.exists() is true:
+            return true
+    return false
+
+function mcwwsSchemFileExistsInDir(relDir: text, schemName: text) :: boolean:
+    set {_file} to mcwwsServerRootFile("%{_relDir}%/%{_schemName}%.schem")
     return {_file}.exists()
+
+function mcwwsResolveSchemName(contentHash: text, storedName: text) :: text:
+    set {_hash} to lowercase "%{_contentHash}%"
+    set {_shortKey} to subtext of {_hash} from 1 to 16
+    set {_short} to "mcwws_%{_shortKey}%"
+    if {_storedName} is not "":
+        if mcwwsSchemFileExists({_storedName}) is true:
+            return {_storedName}
+    if mcwwsSchemFileExists({_short}) is true:
+        return {_short}
+    set {_full} to "mcwws_%{_hash}%"
+    if mcwwsSchemFileExists({_full}) is true:
+        return {_full}
+    if {_storedName} is not "":
+        return {_storedName}
+    return {_short}
 
 function mcwwsPasteYamlPath() :: text:
     return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
@@ -150,10 +176,8 @@ function mcwwsPasteExecute(p: player, oid: text):
             send "§c订单状态为 %{_status}%，无法粘贴。" to {_p}
         stop
     set {_hash} to mcwwsReadPasteOrderField({_oid}, "contentHash")
-    set {_schem} to mcwwsReadPasteOrderField({_oid}, "schemFileName")
-    if {_schem} is "":
-        set {_hashShort} to subtext of {_hash} from 1 to 16
-        set {_schem} to "mcwws_%{_hashShort}%"
+    set {_storedSchem} to mcwwsReadPasteOrderField({_oid}, "schemFileName")
+    set {_schem} to mcwwsResolveSchemName({_hash}, {_storedSchem})
     set {_worldName} to mcwwsReadPasteOrderField({_oid}, "anchor.world")
     set {_ax} to mcwwsReadPasteOrderField({_oid}, "anchor.x") parsed as number
     set {_ay} to mcwwsReadPasteOrderField({_oid}, "anchor.y") parsed as number
@@ -166,9 +190,11 @@ function mcwwsPasteExecute(p: player, oid: text):
         send "§c锚点世界不存在: %{_worldName}%" to {_p}
         stop
     if mcwwsSchemFileExists({_schem}) is false:
-        send "§c找不到原理图 §e%{_schem}%.schem" to {_p}
-        send "§7路径: §f%mcwwsSchemAbsolutePath({_schem})%" to {_p}
-        send "§7请让管理员执行: §fnode plugins/Skript/scripts/web/tools/reexport-schem.js %{_hash}%" to {_p}
+        send "§c找不到投影原理图 §e%{_schem}%.schem" to {_p}
+        send "§7FAWE 目录: §f%mcwwsSchemAbsolutePathInDir("plugins/FastAsyncWorldEdit/schematics", {_schem})%" to {_p}
+        send "§7请让管理员在服务器上执行:" to {_p}
+        send "§fnode plugins/Skript/scripts/web/tools/reexport-schem.js %{_hash}%" to {_p}
+        send "§7然后重新 §f/build anchor %{_oid}% §7再 §f/build paste %{_oid}%" to {_p}
         stop
     set {_path} to mcwwsPasteYamlPath()
     load yaml {_path} as "pastes"
@@ -178,12 +204,13 @@ function mcwwsPasteExecute(p: player, oid: text):
     unload yaml "pastes"
     set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
     teleport {_p} to {_anchor}
-    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}%.schem §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
+    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
+    send "§7载入原理图 §f%{_schem}% §7（WorldEdit 剪贴板）…" to {_p}
     wait 5 ticks
-    make {_p} execute command "/schem load ""%{_schem}%.schem"""
-    wait 40 ticks
+    make {_p} execute command "//schem load %{_schem}%"
+    wait 80 ticks
     make {_p} execute command "//paste -a"
-    wait 40 ticks
+    wait 20 ticks
     load yaml {_path} as "pastes"
     set {_prevStatus} to yaml value "orders.%{_oid}%.status" from "pastes"
     if {_prevStatus} is "pasting":
@@ -194,8 +221,8 @@ function mcwwsPasteExecute(p: player, oid: text):
         save yaml "pastes"
         unload yaml "pastes"
         send "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。" to {_p}
-        send "§7建筑应出现在锚点 §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}% §7附近（约 19×21×19 区域）。" to {_p}
-        send "§7若看不到，请站在锚点处执行 §f//paste -a §7或联系管理员。" to {_p}
+        send "§7建筑应出现在锚点 §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}% §7附近。" to {_p}
+        send "§7若仍是旧建筑，说明原理图未载入；请确认 §fplugins/FastAsyncWorldEdit/schematics/%{_schem}%.schem §7存在后重试。" to {_p}
     else:
         unload yaml "pastes"
     send "§7contentHash: §f%{_hash}%" to {_p}

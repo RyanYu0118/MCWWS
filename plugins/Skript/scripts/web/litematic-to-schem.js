@@ -15,7 +15,12 @@ const {
 } = litematicParser;
 
 const SERVER_ROOT = path.resolve(__dirname, '..', '..', '..', '..');
-const DEFAULT_WE_SCHEM_DIR = path.join(SERVER_ROOT, 'plugins', 'WorldEdit', 'schematics');
+/** FAWE 实际读取的原理图目录（worldedit-config.yml → saving.dir） */
+const FAWE_SCHEM_DIR = path.join(SERVER_ROOT, 'plugins', 'FastAsyncWorldEdit', 'schematics');
+/** 兼容：纯 WorldEdit 时的目录 */
+const LEGACY_WE_SCHEM_DIR = path.join(SERVER_ROOT, 'plugins', 'WorldEdit', 'schematics');
+const DEFAULT_WE_SCHEM_DIR = FAWE_SCHEM_DIR;
+const SCHEM_EXPORT_DIRS = [FAWE_SCHEM_DIR, LEGACY_WE_SCHEM_DIR];
 const DEFAULT_DATA_VERSION = 3955;
 
 function blockIndexV3(x, z, y, width, length) {
@@ -117,7 +122,8 @@ function encodeVarints(indices) {
 }
 
 function schemFileBaseName(contentHash) {
-    return `mcwws_${String(contentHash || '').toLowerCase().slice(0, 16)}`;
+    const hash = String(contentHash || '').toLowerCase();
+    return `mcwws_${hash.slice(0, 16)}`;
 }
 
 async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {}) {
@@ -205,12 +211,18 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     const gz = zlib.gzipSync(raw);
 
     const baseName = schemFileBaseName(contentHash);
-    const outDir = options.outDir || DEFAULT_WE_SCHEM_DIR;
-    if (!fs.existsSync(outDir)) {
-        fs.mkdirSync(outDir, { recursive: true });
-    }
-    const outPath = path.join(outDir, `${baseName}.schem`);
-    fs.writeFileSync(outPath, gz);
+    const dirs = options.outDirs || (options.outDir ? [options.outDir] : SCHEM_EXPORT_DIRS);
+    let outPath = '';
+    dirs.forEach((dir) => {
+        if (!fs.existsSync(dir)) {
+            fs.mkdirSync(dir, { recursive: true });
+        }
+        const target = path.join(dir, `${baseName}.schem`);
+        fs.writeFileSync(target, gz);
+        if (!outPath || dir === FAWE_SCHEM_DIR) {
+            outPath = target;
+        }
+    });
 
     return {
         schemFileName: baseName,
@@ -224,7 +236,11 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
 }
 
 module.exports = {
+    SERVER_ROOT,
+    FAWE_SCHEM_DIR,
+    LEGACY_WE_SCHEM_DIR,
     DEFAULT_WE_SCHEM_DIR,
+    SCHEM_EXPORT_DIRS,
     schemFileBaseName,
     exportWorldEditSchemFromBuffer,
     collectMergedBlocks
