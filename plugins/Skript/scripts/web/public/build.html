@@ -87,7 +87,8 @@
                     <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncDisconnectBtn" hidden>断开</button>
                 </div>
             </div>
-            <p class="build-client-sync-unsupported" hidden>当前浏览器不支持本地文件夹访问；请改用 Chrome / Edge 桌面版，或继续手动上传 .litematic 文件。</p>
+            <p class="build-client-sync-unsupported" id="buildClientSyncUnsupported" hidden></p>
+            <input type="file" id="buildClientSyncFolderInput" webkitdirectory directory multiple hidden>
             <div id="buildClientSyncBody" class="build-client-sync-body"></div>
         </section>
 
@@ -217,8 +218,8 @@
     <script src="material-list-parser.js?v=2"></script>
     <script src="shop-cart-shared.js?v=1" defer></script>
     <script src="litematica-import.js?v=3" defer></script>
-    <script src="litematica-client-sync.js?v=1"></script>
-    <script src="build-client-sync-ui.js?v=1"></script>
+    <script src="litematica-client-sync.js?v=3"></script>
+    <script src="build-client-sync-ui.js?v=3"></script>
     <script src="build-paste-import.js?v=2" defer></script>
     <script src="build.js?v=2" defer></script>
 </body>
