@@ -76,11 +76,27 @@
             </button>
         </section>
 
+        <section class="build-client-sync glass" id="buildClientSyncSection" aria-label="客户端 Litematica 同步">
+            <div class="build-client-sync-header">
+                <div>
+                    <h2 class="build-client-sync-title">客户端 Litematica 同步</h2>
+                    <p class="build-client-sync-subtitle" id="buildClientSyncStatus">未连接</p>
+                </div>
+                <div class="build-client-sync-header-actions">
+                    <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildClientSyncConnectBtn">选择 .minecraft 文件夹</button>
+                    <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncDisconnectBtn" hidden>断开</button>
+                </div>
+            </div>
+            <p class="build-client-sync-unsupported" hidden>当前浏览器不支持本地文件夹访问；请改用 Chrome / Edge 桌面版，或继续手动上传 .litematic 文件。</p>
+            <div id="buildClientSyncBody" class="build-client-sync-body"></div>
+        </section>
+
         <section class="build-tool-hints glass">
             <h3 class="build-tool-hints-title">使用说明</h3>
             <ul class="build-tool-hints-list">
                 <li><strong>材料清单</strong>：在游戏内用 Litematica 导出材料列表，粘贴或上传 JSON 文件即可计价购料。</li>
                 <li><strong>投影粘贴</strong>：须与游戏内加载的同一 .litematic 文件；付款后进游戏执行 <code>/build orders</code> 查看订单，<code>/build anchor</code> 设锚点，<code>/build paste</code> 粘贴。</li>
+                <li><strong>客户端同步</strong>：连接本机 <code>.minecraft</code> 后，可实时读取 Litematica 放置原点、旋转与镜像；旋转/镜像仅影响游戏内预览，服务器粘贴仍按未旋转原理图执行。</li>
                 <li>购物车与商店系统共用，可在「商店目录」继续浏览其他物品。</li>
             </ul>
         </section>
@@ -201,7 +217,9 @@
     <script src="material-list-parser.js?v=2"></script>
     <script src="shop-cart-shared.js?v=1" defer></script>
     <script src="litematica-import.js?v=3" defer></script>
-    <script src="build-paste-import.js?v=1" defer></script>
-    <script src="build.js?v=1" defer></script>
+    <script src="litematica-client-sync.js?v=1"></script>
+    <script src="build-client-sync-ui.js?v=1"></script>
+    <script src="build-paste-import.js?v=2" defer></script>
+    <script src="build.js?v=2" defer></script>
 </body>
 </html>

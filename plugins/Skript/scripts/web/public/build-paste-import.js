@@ -5,6 +5,7 @@
     let modalOpen = false;
     let lastQuote = null;
     let lastCheckout = null;
+    let lastClientPlacement = null;
 
     function formatMoney(value) {
         const n = Number(value);
@@ -66,6 +67,7 @@
         }
         lastQuote = null;
         lastCheckout = null;
+        lastClientPlacement = null;
     }
 
     function resetModal() {
@@ -105,7 +107,8 @@
         });
     }
 
-    async function handleFile(file) {
+    async function handleFile(file, options = {}) {
+        lastClientPlacement = options.clientPlacement || null;
         const deps = getDeps();
         const showToast = deps.showToast || (() => {});
         const escapeHtml = deps.escapeHtml || ((s) => String(s));
@@ -141,7 +144,8 @@
                 escapeHtml,
                 getItemIconHtml,
                 mountItemIconsInContainer,
-                fileName: file.name
+                fileName: file.name,
+                clientPlacement: lastClientPlacement
             });
         } catch (error) {
             if (body) {
@@ -159,10 +163,27 @@
         const lines = Array.isArray(quote.lines) ? quote.lines : [];
         const title = quote.listName || ctx.fileName || '投影粘贴';
         const hashShort = String(quote.contentHash || '').slice(0, 12);
+        const sync = window.MCWWS_LitematicaClientSync;
+        const placement = ctx.clientPlacement;
+        const clientBlock = placement ? `
+            <div class="build-paste-client-box">
+                <p class="build-paste-client-title">客户端当前投影（Litematica）</p>
+                <div class="build-paste-client-grid">
+                    <span>名称 ${ctx.escapeHtml(placement.name || '—')}</span>
+                    <span>原点 ${ctx.escapeHtml(sync?.formatPos?.(placement.origin) || '—')}</span>
+                    <span>旋转 ${ctx.escapeHtml(sync?.labelRotation?.(placement.rotation) || placement.rotation || '无')}</span>
+                    <span>镜像 ${ctx.escapeHtml(sync?.labelMirror?.(placement.mirror) || placement.mirror || '无')}</span>
+                </div>
+                ${(placement.rotation && placement.rotation !== 'NONE') || (placement.mirror && placement.mirror !== 'NONE')
+                    ? '<p class="build-paste-client-warn">游戏内已旋转/镜像；服务器粘贴不会自动应用相同变换，锚点请按 Litematica 对齐。</p>'
+                    : ''}
+            </div>
+        ` : '';
 
         body.innerHTML = `
             <div class="litematica-quote-head">
                 <h3 class="litematica-quote-title">${ctx.escapeHtml(title)}</h3>
+                ${clientBlock}
                 <p class="litematica-quote-meta">
                     非空气方块 ${quote.blockCount || 0} · 区域 ${quote.regionCount || 0}
                     · 可购 ${ctx.escapeHtml(formatMoney(quote.purchasableTotal))}
@@ -328,7 +349,11 @@
         resetModal();
     }
 
-    window.MCWWS_BuildPasteImport = { init, open: openModal };
+    window.MCWWS_BuildPasteImport = {
+        init,
+        open: openModal,
+        importFile: (file, options) => handleFile(file, options || {})
+    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', init);
