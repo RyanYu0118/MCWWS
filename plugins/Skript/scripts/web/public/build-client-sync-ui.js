@@ -42,7 +42,8 @@
             configFiles: (snapshot.configFiles || []).map((f) => ({
                 path: f.path,
                 label: f.label,
-                placementCount: f.placementCount
+                placementCount: f.placementCount,
+                modifiedAt: f.modifiedAt
             })),
             parseHint: snapshot.parseHint,
             hasTransform: snapshot.hasTransform

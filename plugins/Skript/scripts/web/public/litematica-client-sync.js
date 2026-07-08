@@ -65,7 +65,8 @@
             configFiles: configFiles.map((f) => ({
                 path: f.path,
                 placementCount: f.placementCount,
-                label: f.label
+                label: f.label,
+                modifiedAt: f.modifiedAt
             })),
             parseHint: state.parseHint
         });
@@ -219,12 +220,28 @@
         };
     }
 
-    function buildConfigLabel(path, placementCount) {
+    function buildConfigLabel(path, placementCount, modifiedAt) {
         const short = path
             .replace(/^config\/litematica\//, 'config/')
             .replace(/^litematica\/world_specific_data\//, 'world/')
             .replace(/^litematica\/placements\//, 'saved/');
-        return `${short} (${placementCount} 个投影)`;
+        const timeLabel = modifiedAt ? formatFileTime(modifiedAt) : '';
+        const timePart = timeLabel ? ` · ${timeLabel}` : '';
+        return `${short} (${placementCount} 个投影${timePart})`;
+    }
+
+    function formatFileTime(ts) {
+        try {
+            return new Date(ts).toLocaleString('zh-CN', {
+                month: '2-digit',
+                day: '2-digit',
+                hour: '2-digit',
+                minute: '2-digit',
+                hour12: false
+            });
+        } catch (_) {
+            return '';
+        }
     }
 
     function normalizeIndexedPath(relativePath) {
@@ -417,15 +434,30 @@
 
     async function probeConfigFile(meta) {
         try {
-            const text = await readTextFile(meta.path);
+            let modifiedAt = 0;
+            let text = '';
+            if (connectionMode === 'handle' && rootHandle) {
+                const fileHandle = await getPathHandle(meta.path);
+                const file = await fileHandle.getFile();
+                modifiedAt = file.lastModified || 0;
+                text = await file.text();
+            } else if (connectionMode === 'files') {
+                const file = getFileFromIndex(meta.path);
+                if (!file) throw new Error('missing file');
+                modifiedAt = file.lastModified || 0;
+                text = await file.text();
+            } else {
+                text = await readTextFile(meta.path);
+            }
             const parsed = parseWorldConfig(text, meta.path);
             return {
                 ...meta,
+                modifiedAt,
                 placementCount: parsed.placements.length,
                 parseHint: parsed.parseHint
             };
         } catch (_) {
-            return { ...meta, placementCount: 0, parseHint: '读取失败' };
+            return { ...meta, modifiedAt: 0, placementCount: 0, parseHint: '读取失败' };
         }
     }
 
@@ -444,7 +476,8 @@
 
         const probed = await Promise.all(found.map((f) => probeConfigFile(f)));
         probed.sort((a, b) => {
-            if (b.placementCount !== a.placementCount) return b.placementCount - a.placementCount;
+            const timeDiff = (b.modifiedAt || 0) - (a.modifiedAt || 0);
+            if (timeDiff !== 0) return timeDiff;
             return a.path.localeCompare(b.path, 'zh-CN');
         });
 
@@ -452,8 +485,9 @@
             path: f.path,
             kind: f.kind,
             placementCount: f.placementCount,
+            modifiedAt: f.modifiedAt || 0,
             parseHint: f.parseHint,
-            label: buildConfigLabel(f.path, f.placementCount)
+            label: buildConfigLabel(f.path, f.placementCount, f.modifiedAt)
         }));
     }
 
@@ -461,8 +495,6 @@
         if (!files.length) return '';
         const withPlacements = files.find((f) => f.placementCount > 0);
         if (withPlacements) return withPlacements.path;
-        const overworld = files.find((f) => /overworld/i.test(f.path));
-        if (overworld) return overworld.path;
         return files[0].path;
     }
 
