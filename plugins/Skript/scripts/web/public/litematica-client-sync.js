@@ -43,7 +43,6 @@
     let state = {
         connected: false,
         connectionMode: 'none',
-        polling: false,
         lastError: '',
         lastUpdatedAt: null,
         placements: [],
@@ -54,9 +53,33 @@
     };
     const listeners = new Set();
 
-    function emit() {
+    function computeDataRevision() {
+        return JSON.stringify({
+            connected: state.connected,
+            connectionMode: state.connectionMode,
+            lastError: state.lastError,
+            selectedConfigPath,
+            selectedPlacementIndex: state.selectedPlacementIndex,
+            lastUpdatedAt: state.lastUpdatedAt,
+            placements: state.placements,
+            configFiles: configFiles.map((f) => ({
+                path: f.path,
+                placementCount: f.placementCount,
+                label: f.label
+            })),
+            parseHint: state.parseHint
+        });
+    }
+
+    let lastEmittedRevision = '';
+
+    function emit(force = false) {
+        const revision = computeDataRevision();
+        if (!force && revision === lastEmittedRevision) return;
+        lastEmittedRevision = revision;
+        const snapshot = getSnapshot();
         listeners.forEach((fn) => {
-            try { fn(getSnapshot()); } catch (e) { console.warn('[LitematicaSync]', e); }
+            try { fn(snapshot); } catch (e) { console.warn('[LitematicaSync]', e); }
         });
     }
 
@@ -534,8 +557,6 @@
 
     async function pollOnce() {
         if (!isConnected()) return;
-        state.polling = true;
-        emit();
         try {
             if (connectionMode === 'files') {
                 await refreshPlacements();
@@ -545,10 +566,8 @@
             }
         } catch (error) {
             state.lastError = error.message || String(error);
-        } finally {
-            state.polling = false;
-            emit();
         }
+        emit();
     }
 
     function startPolling() {
@@ -584,7 +603,7 @@
         await refreshConfigFileList();
         await refreshPlacements();
         startPolling();
-        emit();
+        emit(true);
         return getSnapshot();
     }
 
@@ -612,7 +631,7 @@
         await refreshConfigFileList();
         await refreshPlacements();
         stopPolling();
-        emit();
+        emit(true);
         return getSnapshot();
     }
 
@@ -657,7 +676,7 @@
             await refreshConfigFileList();
             await refreshPlacements();
             startPolling();
-            emit();
+            emit(true);
             return getSnapshot();
         } catch (_) {
             return null;
@@ -674,7 +693,6 @@
         state = {
             connected: false,
             connectionMode: 'none',
-            polling: false,
             lastError: '',
             lastUpdatedAt: null,
             placements: [],
@@ -684,7 +702,8 @@
             supportHint: ''
         };
         await clearStoredDirHandle();
-        emit();
+        lastEmittedRevision = '';
+        emit(true);
     }
 
     async function setWorldFile(filePath) {
@@ -694,7 +713,7 @@
 
     function setSelectedPlacementIndex(index) {
         state.selectedPlacementIndex = Number(index);
-        emit();
+        emit(true);
     }
 
     function isSupported() {

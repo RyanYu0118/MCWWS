@@ -3738,6 +3738,8 @@ body {
     align-items: center;
     gap: 0.45rem;
     font-size: 0.85rem;
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 
 .build-client-sync-dot {

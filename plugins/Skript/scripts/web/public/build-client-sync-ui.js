@@ -1,8 +1,12 @@
 /**
- * 建造工具 — 客户端 Litematica 配置同步面板
+ * 建造工具 — 客户端 Litematica 配置同步面板（增量更新，避免轮询闪烁）
  */
 (function () {
     const sync = () => window.MCWWS_LitematicaClientSync;
+
+    let shellMounted = false;
+    let lastDataKey = '';
+    let lastSelectedIndex = -1;
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -24,13 +28,25 @@
     function showToast(message, ok) {
         if (window.MCWWS_ShopCart?.showToast) {
             window.MCWWS_ShopCart.showToast(message, ok);
-            return;
         }
-        const body = document.getElementById('buildClientSyncBody');
-        if (body && !sync()?.getSnapshot?.()?.connected) {
-            body.insertAdjacentHTML('afterbegin',
-                `<div class="litematica-import-error${ok ? ' build-client-sync-toast-ok' : ''}">${escapeHtml(message)}</div>`);
-        }
+    }
+
+    function dataKey(snapshot) {
+        return JSON.stringify({
+            connected: snapshot.connected,
+            connectionMode: snapshot.connectionMode,
+            lastError: snapshot.lastError,
+            selectedWorldFile: snapshot.selectedWorldFile,
+            lastUpdatedAt: snapshot.lastUpdatedAt,
+            placements: snapshot.placements,
+            configFiles: (snapshot.configFiles || []).map((f) => ({
+                path: f.path,
+                label: f.label,
+                placementCount: f.placementCount
+            })),
+            parseHint: snapshot.parseHint,
+            hasTransform: snapshot.hasTransform
+        });
     }
 
     function renderSupportBanner() {
@@ -38,111 +54,54 @@
         const el = document.getElementById('buildClientSyncUnsupported');
         if (!api || !el) return;
         const info = api.getSupportInfo();
-        if (!info.canConnect) {
-            el.hidden = false;
-            el.textContent = info.hint;
-            return;
-        }
         el.hidden = false;
         el.classList.add('build-client-sync-support-hint');
-        el.textContent = info.hint;
+        el.textContent = info.canConnect ? info.hint : info.hint;
     }
 
-    function renderPlacements(snapshot) {
+    function bindShellEvents(body) {
+        body.querySelector('#buildClientSyncWorldSelect')?.addEventListener('change', (e) => {
+            void sync().setWorldFile(e.target.value);
+        });
+        body.querySelector('#buildClientSyncRefreshBtn')?.addEventListener('click', () => {
+            void sync().pollOnce();
+        });
+        body.querySelector('#buildClientSyncReselectBtn')?.addEventListener('click', () => {
+            void connect();
+        });
+        body.querySelector('#buildClientSyncImportPasteBtn')?.addEventListener('click', () => {
+            void importSelectedToPaste();
+        });
+        body.addEventListener('click', (e) => {
+            const row = e.target.closest('[data-placement-index]');
+            if (!row) return;
+            sync().setSelectedPlacementIndex(Number(row.getAttribute('data-placement-index')));
+        });
+    }
+
+    function mountConnectedShell(snapshot) {
         const body = document.getElementById('buildClientSyncBody');
         if (!body) return;
 
-        if (!snapshot.connected) {
-            const info = sync()?.getSupportInfo?.() || {};
-            body.innerHTML = `
-                <p class="build-client-sync-intro">
-                    点击上方按钮选择本机 <code>.minecraft</code> 文件夹，同步 Litematica 的<strong>放置原点、旋转、镜像</strong>。
-                </p>
-                <p class="build-client-sync-note">
-                    ${escapeHtml(info.hint || '请使用 Chrome / Edge 桌面版。')}
-                    ${info.mode === 'fallback' ? ' 兼容模式下请在弹窗中选中 <strong>.minecraft</strong> 文件夹并确认。' : ''}
-                </p>
-            `;
-            return;
-        }
-
-        if (snapshot.lastError) {
-            body.innerHTML = `<div class="litematica-import-error">⚠️ ${escapeHtml(snapshot.lastError)}</div>`;
-            return;
-        }
-
-        const placements = snapshot.placements || [];
-        const selected = snapshot.selectedPlacement;
-        const configFiles = snapshot.configFiles || [];
-        const worldOptions = configFiles.map((file) => {
-            const sel = file.path === snapshot.selectedWorldFile ? ' selected' : '';
-            return `<option value="${escapeHtml(file.path)}"${sel}>${escapeHtml(file.label || file.path)}</option>`;
-        }).join('');
-
-        const emptyHint = placements.length ? '' : `
-            <div class="build-client-sync-empty-help">
-                <p><strong>当前配置文件里没有投影记录，常见原因：</strong></p>
-                <ul>
-                    <li>选错了配置文件 — 多人服务器会按<strong>服务器名</strong>分文件，请在下拉框里找带服务器 IP/名称、且显示「N 个投影」的项</li>
-                    <li>游戏内尚未写入磁盘 — 加载投影后，请<strong>切换维度</strong>或<strong>退出世界</strong>一次</li>
-                    <li>兼容模式下改了游戏配置 — 需点<strong>重新选择文件夹</strong>刷新</li>
-                </ul>
-                ${snapshot.parseHint ? `<p class="build-client-sync-parse-hint">解析提示：${escapeHtml(snapshot.parseHint)}</p>` : ''}
-                ${configFiles.some((f) => f.placementCount > 0)
-                    ? '<p>检测到有其它配置文件含投影，请从下拉框切换。</p>'
-                    : '<p>已扫描全部路径，目前未发现含投影的配置文件。</p>'}
-            </div>`;
-
-        const rows = placements.length
-            ? placements.map((p) => {
-                const isSelected = selected && selected.index === p.index;
-                const rowClass = isSelected ? 'build-client-sync-row is-selected' : 'build-client-sync-row';
-                const transformWarn = (p.rotation !== 'NONE' || p.mirror !== 'NONE')
-                    ? '<span class="build-client-sync-transform-tag">已变换</span>'
-                    : '';
-                return `
-                    <tr class="${rowClass}" data-placement-index="${p.index}">
-                        <td>${escapeHtml(p.name)}${transformWarn}</td>
-                        <td><code>${escapeHtml(p.schematicFileName || '—')}</code></td>
-                        <td>${escapeHtml(sync().formatPos(p.origin))}</td>
-                        <td>${escapeHtml(sync().labelRotation(p.rotation))}</td>
-                        <td>${escapeHtml(sync().labelMirror(p.mirror))}</td>
-                        <td>${p.enabled ? '开启' : '关闭'}</td>
-                    </tr>`;
-            }).join('')
-            : `<tr><td colspan="6" class="build-client-sync-empty">该配置中暂无投影放置记录</td></tr>`;
-
-        const transformNote = snapshot.hasTransform
-            ? `<p class="build-client-sync-warn">当前投影含旋转/镜像：Litematica 预览与服务器 <code>/build paste</code>（无旋转）可能不一致，请以游戏内对齐为准。</p>`
-            : '';
-
         const modeNote = snapshot.connectionMode === 'files'
-            ? '<p class="build-client-sync-note">兼容模式：游戏内修改配置后，请点「重新选择文件夹」刷新。</p>'
-            : '';
+            ? '<p class="build-client-sync-note" id="buildClientSyncModeNote">兼容模式：游戏内修改配置后，请点「重新选择文件夹」刷新。</p>'
+            : '<p class="build-client-sync-note" id="buildClientSyncModeNote" hidden></p>';
 
         body.innerHTML = `
             ${modeNote}
             <div class="build-client-sync-toolbar">
                 <label class="build-client-sync-field">
                     <span>配置文件</span>
-                    <select id="buildClientSyncWorldSelect"${worldOptions ? '' : ' disabled'}>
-                        ${worldOptions || '<option>未找到 Litematica JSON 配置</option>'}
-                    </select>
+                    <select id="buildClientSyncWorldSelect"></select>
                 </label>
                 <div class="build-client-sync-status">
-                    <span class="build-client-sync-dot${snapshot.polling ? ' is-polling' : ''}"></span>
-                    上次刷新 ${formatTime(snapshot.lastUpdatedAt)}${snapshot.polling ? ' · 读取中…' : ''}
+                    <span class="build-client-sync-dot" id="buildClientSyncDot" aria-hidden="true"></span>
+                    <span id="buildClientSyncRefreshTime">上次刷新 —</span>
                 </div>
             </div>
-            ${selected ? `
-                <div class="build-client-sync-highlight glass">
-                    <strong>${escapeHtml(selected.name)}</strong>
-                    <span>原点 ${escapeHtml(sync().formatPos(selected.origin))}</span>
-                    <span>旋转 ${escapeHtml(sync().labelRotation(selected.rotation))}</span>
-                    <span>镜像 ${escapeHtml(sync().labelMirror(selected.mirror))}</span>
-                </div>` : ''}
-            ${transformNote}
-            ${emptyHint}
+            <div class="build-client-sync-highlight glass" id="buildClientSyncHighlight" hidden></div>
+            <p class="build-client-sync-warn" id="buildClientSyncTransformNote" hidden></p>
+            <div id="buildClientSyncEmptyHelp" hidden></div>
             <div class="build-client-sync-table-wrap">
                 <table class="build-client-sync-table">
                     <thead>
@@ -155,35 +114,222 @@
                             <th>放置</th>
                         </tr>
                     </thead>
-                    <tbody>${rows}</tbody>
+                    <tbody id="buildClientSyncTableBody"></tbody>
                 </table>
             </div>
             <div class="build-client-sync-actions">
-                <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildClientSyncImportPasteBtn"${selected ? '' : ' disabled'}>
+                <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildClientSyncImportPasteBtn" disabled>
                     用当前投影导入「投影粘贴」
                 </button>
                 <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncRefreshBtn">立即刷新</button>
                 <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncReselectBtn">重新选择文件夹</button>
             </div>
         `;
+        bindShellEvents(body);
+        shellMounted = true;
+        patchConnectedView(snapshot);
+    }
 
-        document.getElementById('buildClientSyncWorldSelect')?.addEventListener('change', (e) => {
-            void sync().setWorldFile(e.target.value);
+    function updateConfigSelect(snapshot) {
+        const select = document.getElementById('buildClientSyncWorldSelect');
+        if (!select) return;
+
+        const configFiles = snapshot.configFiles || [];
+        const isFocused = document.activeElement === select;
+        const optionsKey = configFiles.map((f) => `${f.path}|${f.label}`).join('\n');
+
+        if (select.dataset.optionsKey !== optionsKey) {
+            if (isFocused) return;
+            select.innerHTML = configFiles.length
+                ? configFiles.map((file) => {
+                    const sel = file.path === snapshot.selectedWorldFile ? ' selected' : '';
+                    return `<option value="${escapeHtml(file.path)}"${sel}>${escapeHtml(file.label || file.path)}</option>`;
+                }).join('')
+                : '<option>未找到 Litematica JSON 配置</option>';
+            select.disabled = !configFiles.length;
+            select.dataset.optionsKey = optionsKey;
+        } else if (select.value !== snapshot.selectedWorldFile) {
+            select.value = snapshot.selectedWorldFile || '';
+        }
+    }
+
+    function buildPlacementRows(snapshot) {
+        const placements = snapshot.placements || [];
+        const selected = snapshot.selectedPlacement;
+        const api = sync();
+
+        if (!placements.length) {
+            return '<tr><td colspan="6" class="build-client-sync-empty">该配置中暂无投影放置记录</td></tr>';
+        }
+
+        return placements.map((p) => {
+            const isSelected = selected && selected.index === p.index;
+            const rowClass = isSelected ? 'build-client-sync-row is-selected' : 'build-client-sync-row';
+            const transformWarn = (p.rotation !== 'NONE' || p.mirror !== 'NONE')
+                ? '<span class="build-client-sync-transform-tag">已变换</span>'
+                : '';
+            return `
+                <tr class="${rowClass}" data-placement-index="${p.index}">
+                    <td>${escapeHtml(p.name)}${transformWarn}</td>
+                    <td><code>${escapeHtml(p.schematicFileName || '—')}</code></td>
+                    <td>${escapeHtml(api.formatPos(p.origin))}</td>
+                    <td>${escapeHtml(api.labelRotation(p.rotation))}</td>
+                    <td>${escapeHtml(api.labelMirror(p.mirror))}</td>
+                    <td>${p.enabled ? '开启' : '关闭'}</td>
+                </tr>`;
+        }).join('');
+    }
+
+    function patchSelectionOnly(snapshot) {
+        const tbody = document.getElementById('buildClientSyncTableBody');
+        if (!tbody) return;
+        const selectedIndex = snapshot.selectedPlacement?.index ?? -1;
+        tbody.querySelectorAll('[data-placement-index]').forEach((row) => {
+            const idx = Number(row.getAttribute('data-placement-index'));
+            row.classList.toggle('is-selected', idx === selectedIndex);
+            row.classList.toggle('build-client-sync-row', true);
         });
-        document.getElementById('buildClientSyncRefreshBtn')?.addEventListener('click', () => {
-            void sync().pollOnce();
-        });
-        document.getElementById('buildClientSyncReselectBtn')?.addEventListener('click', () => {
-            void connect();
-        });
-        document.getElementById('buildClientSyncImportPasteBtn')?.addEventListener('click', () => {
-            void importSelectedToPaste();
-        });
-        body.querySelectorAll('[data-placement-index]').forEach((row) => {
-            row.addEventListener('click', () => {
-                sync().setSelectedPlacementIndex(Number(row.getAttribute('data-placement-index')));
-            });
-        });
+        patchHighlight(snapshot);
+        const importBtn = document.getElementById('buildClientSyncImportPasteBtn');
+        if (importBtn) importBtn.disabled = !snapshot.selectedPlacement;
+    }
+
+    function patchHighlight(snapshot) {
+        const el = document.getElementById('buildClientSyncHighlight');
+        const selected = snapshot.selectedPlacement;
+        const api = sync();
+        if (!el) return;
+        if (!selected) {
+            el.hidden = true;
+            return;
+        }
+        el.hidden = false;
+        el.innerHTML = `
+            <strong>${escapeHtml(selected.name)}</strong>
+            <span>原点 ${escapeHtml(api.formatPos(selected.origin))}</span>
+            <span>旋转 ${escapeHtml(api.labelRotation(selected.rotation))}</span>
+            <span>镜像 ${escapeHtml(api.labelMirror(selected.mirror))}</span>
+        `;
+    }
+
+    function patchEmptyHelp(snapshot) {
+        const el = document.getElementById('buildClientSyncEmptyHelp');
+        if (!el) return;
+        if ((snapshot.placements || []).length) {
+            el.hidden = true;
+            el.innerHTML = '';
+            return;
+        }
+        const configFiles = snapshot.configFiles || [];
+        el.hidden = false;
+        el.className = 'build-client-sync-empty-help';
+        el.innerHTML = `
+            <p><strong>当前配置文件里没有投影记录，常见原因：</strong></p>
+            <ul>
+                <li>选错了配置文件 — 多人服务器会按<strong>服务器名</strong>分文件，请在下拉框里找带服务器 IP/名称、且显示「N 个投影」的项</li>
+                <li>游戏内尚未写入磁盘 — 加载投影后，请<strong>切换维度</strong>或<strong>退出世界</strong>一次</li>
+                <li>兼容模式下改了游戏配置 — 需点<strong>重新选择文件夹</strong>刷新</li>
+            </ul>
+            ${snapshot.parseHint ? `<p class="build-client-sync-parse-hint">解析提示：${escapeHtml(snapshot.parseHint)}</p>` : ''}
+            ${configFiles.some((f) => f.placementCount > 0)
+                ? '<p>检测到有其它配置文件含投影，请从下拉框切换。</p>'
+                : '<p>已扫描全部路径，目前未发现含投影的配置文件。</p>'}
+        `;
+    }
+
+    function patchConnectedView(snapshot) {
+        updateConfigSelect(snapshot);
+
+        const timeEl = document.getElementById('buildClientSyncRefreshTime');
+        if (timeEl) {
+            timeEl.textContent = `上次刷新 ${formatTime(snapshot.lastUpdatedAt)}`;
+        }
+
+        const transformNote = document.getElementById('buildClientSyncTransformNote');
+        if (transformNote) {
+            if (snapshot.hasTransform) {
+                transformNote.hidden = false;
+                transformNote.innerHTML = '当前投影含旋转/镜像：Litematica 预览与服务器 <code>/build paste</code>（无旋转）可能不一致，请以游戏内对齐为准。';
+            } else {
+                transformNote.hidden = true;
+            }
+        }
+
+        const tbody = document.getElementById('buildClientSyncTableBody');
+        if (tbody) {
+            const rowsHtml = buildPlacementRows(snapshot);
+            if (tbody.dataset.rowsKey !== rowsHtml) {
+                tbody.innerHTML = rowsHtml;
+                tbody.dataset.rowsKey = rowsHtml;
+            } else {
+                patchSelectionOnly(snapshot);
+            }
+        }
+
+        patchHighlight(snapshot);
+        patchEmptyHelp(snapshot);
+
+        const importBtn = document.getElementById('buildClientSyncImportPasteBtn');
+        if (importBtn) importBtn.disabled = !snapshot.selectedPlacement;
+    }
+
+    function renderDisconnected(snapshot) {
+        const body = document.getElementById('buildClientSyncBody');
+        if (!body) return;
+        shellMounted = false;
+        lastDataKey = '';
+        lastSelectedIndex = -1;
+        const info = sync()?.getSupportInfo?.() || {};
+        body.innerHTML = `
+            <p class="build-client-sync-intro">
+                点击上方按钮选择本机 <code>.minecraft</code> 文件夹，同步 Litematica 的<strong>放置原点、旋转、镜像</strong>。
+            </p>
+            <p class="build-client-sync-note">
+                ${escapeHtml(info.hint || '请使用 Chrome / Edge 桌面版。')}
+                ${info.mode === 'fallback' ? ' 兼容模式下请在弹窗中选中 <strong>.minecraft</strong> 文件夹并确认。' : ''}
+            </p>
+        `;
+    }
+
+    function renderError(snapshot) {
+        const body = document.getElementById('buildClientSyncBody');
+        if (!body) return;
+        shellMounted = false;
+        lastDataKey = '';
+        body.innerHTML = `<div class="litematica-import-error">⚠️ ${escapeHtml(snapshot.lastError)}</div>`;
+    }
+
+    function renderPlacements(snapshot) {
+        if (!snapshot.connected) {
+            renderDisconnected(snapshot);
+            return;
+        }
+        if (snapshot.lastError) {
+            renderError(snapshot);
+            return;
+        }
+
+        const key = dataKey(snapshot);
+        const selectedIndex = snapshot.selectedPlacement?.index ?? -1;
+
+        if (!shellMounted) {
+            mountConnectedShell(snapshot);
+            lastDataKey = key;
+            lastSelectedIndex = selectedIndex;
+            return;
+        }
+
+        if (key === lastDataKey) {
+            if (selectedIndex !== lastSelectedIndex) {
+                patchSelectionOnly(snapshot);
+                lastSelectedIndex = selectedIndex;
+            }
+            return;
+        }
+
+        patchConnectedView(snapshot);
+        lastDataKey = key;
+        lastSelectedIndex = selectedIndex;
     }
 
     async function importSelectedToPaste() {
@@ -213,9 +359,10 @@
         const disconnectBtn = document.getElementById('buildClientSyncDisconnectBtn');
         const modeLabel = snapshot.connectionMode === 'files' ? ' · 兼容模式' : '';
         if (statusEl) {
-            statusEl.textContent = snapshot.connected
+            const next = snapshot.connected
                 ? `已连接${modeLabel} · ${snapshot.selectedWorldFile ? basename(snapshot.selectedWorldFile) : '等待配置'} · ${(snapshot.placements || []).length} 个投影`
                 : '未连接';
+            if (statusEl.textContent !== next) statusEl.textContent = next;
         }
         if (connectBtn) connectBtn.hidden = !!snapshot.connected;
         if (disconnectBtn) disconnectBtn.hidden = !snapshot.connected;
@@ -250,7 +397,6 @@
         if (!api || !section) return;
 
         renderSupportBanner();
-
         api.subscribe(render);
 
         document.getElementById('buildClientSyncConnectBtn')?.addEventListener('click', () => { void connect(); });
