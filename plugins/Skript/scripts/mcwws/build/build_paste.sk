@@ -85,6 +85,7 @@ function mcwwsReadPasteOrderField(oid: text, field: text) :: text:
 
 function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build orders §7- 我的粘贴订单" to {_p}
+    send "§6[投影粘贴] §f/build go <订单号> §7- 当前位置设锚点并粘贴（一步完成）" to {_p}
     send "§6[投影粘贴] §f/build anchor <订单号> §7- 在当前位置设粘贴锚点" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 执行粘贴（须先 anchor）" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
@@ -105,13 +106,19 @@ command /build [<text>] [<text>]:
             if arg-2 is not set:
                 send "§c用法: /build anchor <订单号>" to player
                 stop
-            mcwwsPasteSetAnchor(player, arg-2)
+            mcwwsPasteSetAnchor(player, arg-2, false)
             stop
         if {_sub} is "paste":
             if arg-2 is not set:
                 send "§c用法: /build paste <订单号>" to player
                 stop
             mcwwsPasteExecute(player, arg-2)
+            stop
+        if {_sub} is "go":
+            if arg-2 is not set:
+                send "§c用法: /build go <订单号>" to player
+                stop
+            mcwwsPasteGo(player, arg-2)
             stop
         send "§c未知子命令。输入 /build 查看帮助。" to player
 
@@ -135,7 +142,7 @@ function mcwwsListPasteOrders(p: player):
     if {_found} is 0:
         send "§7暂无粘贴订单。请先在商店网页上传 .litematic 并付款。" to {_p}
 
-function mcwwsPasteSetAnchor(p: player, oid: text):
+function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean):
     if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
         send "§c订单不存在或不属于你。" to {_p}
         stop
@@ -162,7 +169,13 @@ function mcwwsPasteSetAnchor(p: player, oid: text):
     unload yaml "pastes"
     send "§a[投影粘贴] §f订单 §e#%{_oid}% §a锚点已设置。" to {_p}
     send "§7contentHash: §f%{_hash}%" to {_p}
-    send "§7请确认 Litematica 投影对齐后执行 §f/build paste %{_oid}%" to {_p}
+    if {_quiet} is false:
+        send "§7请确认 Litematica 投影对齐后执行 §f/build paste %{_oid}% §7或一步完成 §f/build go %{_oid}%" to {_p}
+
+function mcwwsPasteGo(p: player, oid: text):
+    mcwwsPasteSetAnchor({_p}, {_oid}, true)
+    wait 2 ticks
+    mcwwsPasteExecute({_p}, {_oid})
 
 function mcwwsRunConsoleCommand(cmd: text):
     set {_sender} to Bukkit.getConsoleSender()

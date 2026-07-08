@@ -411,7 +411,7 @@ orders:
         status: delivered
         total: 20
         createdAt: '2026-05-31T10:42:28.396Z'
-        updatedAt: '2026-05-31 18:42:38'
+        updatedAt: '2026-07-09 01:39:50'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-05-31 18:42:37'
@@ -428,6 +428,7 @@ orders:
                 material: apple
                 shopTitle: Example Shop
                 status: delivered
+        economyChargedInGame: true
     '17':
         id: 3bfa5f7d-447e-4668-938c-647b3411eb24
         numericId: 17

@@ -82,7 +82,7 @@
                     <p class="litematica-dropzone-hint">须与游戏内 Litematica 加载的同一文件；上传后显示 contentHash 供核对</p>
                     <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildPastePickBtn">选择 .litematic</button>
                 </div>
-                <p class="litematica-import-note">未上架材料（含基岩）当前免费；仅商店可购材料计费。付款后请在游戏内使用 <code>/build anchor &lt;订单号&gt;</code> 与 <code>/build paste &lt;订单号&gt;</code>。</p>
+                <p class="litematica-import-note">未上架材料（含基岩）当前免费；仅商店可购材料计费。付款后站到粘贴原点执行 <code>/build go &lt;订单号&gt;</code> 即可一步完成锚点与粘贴。</p>
             `;
             bindDropzone(body.querySelector('#buildPasteDropzone'));
         }
@@ -274,10 +274,9 @@
             <ol class="build-paste-steps">
                 <li>确认 Litematica 加载的投影与上传文件一致（哈希相同）</li>
                 <li>站到建筑<strong>粘贴原点</strong>（投影最小角对应位置）</li>
-                <li>执行 <code>/build anchor ${ctx.escapeHtml(String(data.pasteOrderId))}</code></li>
-                <li>执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code></li>
+                <li>执行 <code>/build go ${ctx.escapeHtml(String(data.pasteOrderId))}</code></li>
             </ol>
-            <p class="litematica-import-note">粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效；全程 contentHash 不变。</p>
+            <p class="litematica-import-note">也可分步执行 <code>/build anchor ${ctx.escapeHtml(String(data.pasteOrderId))}</code> 再 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code>。粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效；全程 contentHash 不变。</p>
         `;
         if (footer) footer.hidden = true;
     }
