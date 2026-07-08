@@ -175,7 +175,7 @@
                     <span>镜像 ${ctx.escapeHtml(sync?.labelMirror?.(placement.mirror) || placement.mirror || '无')}</span>
                 </div>
                 ${(placement.rotation && placement.rotation !== 'NONE') || (placement.mirror && placement.mirror !== 'NONE')
-                    ? '<p class="build-paste-client-warn">已记录旋转/镜像；付款后服务器粘贴将自动应用相同变换，请站在 Litematica 放置原点执行 /build go。</p>'
+                    ? '<p class="build-paste-client-warn">已记录旋转/镜像；结账时会生成对应变换原理图，请站在 Litematica 放置原点执行 /build go。</p>'
                     : ''}
             </div>
         ` : '';

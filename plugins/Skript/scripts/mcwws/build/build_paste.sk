@@ -125,6 +125,23 @@ function mcwwsPasteNormalizeMirror(input: text) :: text:
         return "FRONT_BACK"
     return "NONE"
 
+function mcwwsPasteTransformIsBaked(oid: text) :: boolean:
+    set {_val} to mcwwsReadPasteOrderField({_oid}, "transformBaked")
+    if {_val} is "true":
+        return true
+    if {_val} is "1":
+        return true
+    return false
+
+function mcwwsPasteReadAnchorAdjust(oid: text, axis: text) :: number:
+    set {_val} to mcwwsReadPasteOrderField({_oid}, "pasteAnchorAdjust.%{_axis}%")
+    if {_val} is "":
+        return 0
+    set {_num} to {_val} parsed as number
+    if {_num} is not set:
+        return 0
+    return {_num}
+
 function mcwwsPasteTransformNeedsWorldEdit(rotation: text, mirror: text) :: boolean:
     if {_rotation} is not "NONE":
         return true
@@ -350,11 +367,22 @@ function mcwwsPasteExecute(p: player, oid: text):
     unload yaml "pastes"
     set {_rotation} to mcwwsPasteNormalizeRotation(mcwwsReadPasteOrderField({_oid}, "rotation"))
     set {_mirror} to mcwwsPasteNormalizeMirror(mcwwsReadPasteOrderField({_oid}, "mirror"))
-    set {_needsTransform} to mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror})
-    set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
+    set {_transformBaked} to mcwwsPasteTransformIsBaked({_oid})
+    set {_needsTransform} to false
+    if {_transformBaked} is false:
+        set {_needsTransform} to mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror})
+    set {_adjx} to mcwwsPasteReadAnchorAdjust({_oid}, "x")
+    set {_adjy} to mcwwsPasteReadAnchorAdjust({_oid}, "y")
+    set {_adjz} to mcwwsPasteReadAnchorAdjust({_oid}, "z")
+    set {_px} to {_ax} + {_adjx}
+    set {_py} to {_ay} + {_adjy}
+    set {_pz} to {_az} + {_adjz}
+    set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
     teleport {_p} to {_anchor}
-    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
-    if {_needsTransform} is true:
+    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% %{_px}%, %{_py}%, %{_pz}%" to {_p}
+    if {_transformBaked} is true:
+        send "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+    else if {_needsTransform} is true:
         send "§7变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
     set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsTransform})
     if size of {_tempPerms::*} > 0:

@@ -277,14 +277,16 @@ function markQuoteConsumed(numericId, pasteOrderId) {
     return quote;
 }
 
-async function ensureWorldEditSchemExport(contentHash) {
+async function ensureWorldEditSchemExport(contentHash, options = {}) {
     const hash = String(contentHash || '').toLowerCase();
     const litematicPath = schematicFilePath(hash);
     if (!fs.existsSync(litematicPath)) {
         throw new Error('投影文件不存在，请重新上传。');
     }
     const buffer = fs.readFileSync(litematicPath);
-    return exportWorldEditSchemFromBuffer(buffer, hash);
+    const rotation = normalizePasteRotation(options.rotation);
+    const mirror = normalizePasteMirror(options.mirror);
+    return exportWorldEditSchemFromBuffer(buffer, hash, { rotation, mirror });
 }
 
 function createPasteOrder({
@@ -302,9 +304,14 @@ function createPasteOrder({
         if (!verify.ok) {
             throw new Error('粘贴订单创建失败：存储的投影文件与 contentHash 不一致。');
         }
+        const normalizedRotation = normalizePasteRotation(rotation);
+        const normalizedMirror = normalizePasteMirror(mirror);
         let schemExport;
         try {
-            schemExport = await ensureWorldEditSchemExport(contentHash);
+            schemExport = await ensureWorldEditSchemExport(contentHash, {
+                rotation: normalizedRotation,
+                mirror: normalizedMirror
+            });
         } catch (exportError) {
             throw new Error(`WorldEdit 原理图导出失败：${exportError.message || exportError}`);
         }
@@ -346,10 +353,17 @@ function createPasteOrder({
             total,
             status: 'awaiting_anchor',
             anchor: anchor || null,
-            rotation: normalizePasteRotation(rotation),
-            mirror: normalizePasteMirror(mirror),
+            rotation: normalizedRotation,
+            mirror: normalizedMirror,
             schemFileName,
             schemOriginOffset,
+            schemSize: schemExport?.width ? {
+                width: schemExport.width,
+                height: schemExport.height,
+                length: schemExport.length
+            } : null,
+            transformBaked: !!schemExport?.transformBaked,
+            pasteAnchorAdjust: schemExport?.pasteAnchorAdjust || { x: 0, y: 0, z: 0 },
             schematicPath: schematicFilePath(contentHash),
             createdAt: now.toISOString(),
             pasteTokenExpiresAt: new Date(now.getTime() + PASTE_TOKEN_TTL_MS).toISOString(),

@@ -126,7 +126,84 @@ function schemFileBaseName(contentHash) {
     return `mcwws_${hash.slice(0, 16)}`;
 }
 
+/** 与 Litematica PositionUtils.getTransformedBlockPos 一致（先镜像后旋转，绕放置原点） */
+function transformLocalPos(x, y, z, mirror, rotation) {
+    let lx = Math.trunc(Number(x) || 0);
+    let ly = Math.trunc(Number(y) || 0);
+    let lz = Math.trunc(Number(z) || 0);
+
+    if (mirror === 'LEFT_RIGHT') {
+        lz = -lz;
+    } else if (mirror === 'FRONT_BACK') {
+        lx = -lx;
+    }
+
+    switch (rotation) {
+        case 'CLOCKWISE_90':
+            return { x: -lz, y: ly, z: lx };
+        case 'COUNTERCLOCKWISE_90':
+            return { x: lz, y: ly, z: -lx };
+        case 'CLOCKWISE_180':
+            return { x: -lx, y: ly, z: -lz };
+        default:
+            return { x: lx, y: ly, z: lz };
+    }
+}
+
+function normalizeExportRotation(value) {
+    const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (raw === 'CLOCKWISE_90' || raw === 'CW90' || raw === 'CW_90' || raw === '90' || raw === 'R90') {
+        return 'CLOCKWISE_90';
+    }
+    if (raw === 'CLOCKWISE_180' || raw === 'CW180' || raw === 'CW_180' || raw === '180' || raw === 'R180') {
+        return 'CLOCKWISE_180';
+    }
+    if (raw === 'COUNTERCLOCKWISE_90' || raw === 'CCW90' || raw === 'CCW_90' || raw === '270' || raw === 'R270') {
+        return 'COUNTERCLOCKWISE_90';
+    }
+    return 'NONE';
+}
+
+function normalizeExportMirror(value) {
+    const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (raw === 'LEFT_RIGHT' || raw === 'LEFTRIGHT' || raw === 'LR' || raw === 'LEFT') {
+        return 'LEFT_RIGHT';
+    }
+    if (raw === 'FRONT_BACK' || raw === 'FRONTBACK' || raw === 'FB' || raw === 'FRONT' || raw === 'BACK') {
+        return 'FRONT_BACK';
+    }
+    return 'NONE';
+}
+
+function exportTransformNeedsBake(rotation, mirror) {
+    return normalizeExportRotation(rotation) !== 'NONE' || normalizeExportMirror(mirror) !== 'NONE';
+}
+
+function schemTransformSuffix(rotation, mirror) {
+    const rot = normalizeExportRotation(rotation);
+    const mir = normalizeExportMirror(mirror);
+    if (!exportTransformNeedsBake(rot, mir)) {
+        return '';
+    }
+    const parts = [];
+    if (rot === 'CLOCKWISE_90') parts.push('r90');
+    else if (rot === 'CLOCKWISE_180') parts.push('r180');
+    else if (rot === 'COUNTERCLOCKWISE_90') parts.push('r270');
+    if (mir === 'LEFT_RIGHT') parts.push('mlr');
+    else if (mir === 'FRONT_BACK') parts.push('mfb');
+    return `_${parts.join('_')}`;
+}
+
+function schemFileNameForTransform(contentHash, rotation, mirror) {
+    const base = schemFileBaseName(contentHash);
+    const suffix = schemTransformSuffix(rotation, mirror);
+    return suffix ? `${base}${suffix}` : base;
+}
+
 async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {}) {
+    const rotation = normalizeExportRotation(options.rotation);
+    const mirror = normalizeExportMirror(options.mirror);
+    const transformBaked = exportTransformNeedsBake(rotation, mirror);
     const { parsed } = await nbt.parse(buffer);
     const root = nbt.simplify(parsed);
     const placed = collectMergedBlocks(root);
@@ -153,6 +230,49 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     const height = maxY - minY + 1;
     const length = maxZ - minZ + 1;
 
+    let transformedBlocks = placed.map((block) => ({
+        x: block.x - minX,
+        y: block.y - minY,
+        z: block.z - minZ,
+        state: block.state
+    }));
+
+    let pasteAnchorAdjust = { x: 0, y: 0, z: 0 };
+    let outWidth = width;
+    let outHeight = height;
+    let outLength = length;
+
+    if (transformBaked) {
+        transformedBlocks = transformedBlocks.map((block) => {
+            const t = transformLocalPos(block.x, block.y, block.z, mirror, rotation);
+            return { x: t.x, y: t.y, z: t.z, state: block.state };
+        });
+        let tMinX = Infinity;
+        let tMinY = Infinity;
+        let tMinZ = Infinity;
+        let tMaxX = -Infinity;
+        let tMaxY = -Infinity;
+        let tMaxZ = -Infinity;
+        transformedBlocks.forEach((block) => {
+            tMinX = Math.min(tMinX, block.x);
+            tMinY = Math.min(tMinY, block.y);
+            tMinZ = Math.min(tMinZ, block.z);
+            tMaxX = Math.max(tMaxX, block.x);
+            tMaxY = Math.max(tMaxY, block.y);
+            tMaxZ = Math.max(tMaxZ, block.z);
+        });
+        pasteAnchorAdjust = { x: tMinX, y: tMinY, z: tMinZ };
+        transformedBlocks = transformedBlocks.map((block) => ({
+            x: block.x - tMinX,
+            y: block.y - tMinY,
+            z: block.z - tMinZ,
+            state: block.state
+        }));
+        outWidth = tMaxX - tMinX + 1;
+        outHeight = tMaxY - tMinY + 1;
+        outLength = tMaxZ - tMinZ + 1;
+    }
+
     const paletteList = ['minecraft:air'];
     const paletteIndex = new Map([['minecraft:air', 0]]);
     function paletteIdFor(state) {
@@ -163,17 +283,14 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
         return paletteIndex.get(state);
     }
 
-    placed.forEach((block) => {
+    transformedBlocks.forEach((block) => {
         paletteIdFor(block.state);
     });
 
-    const volume = width * height * length;
+    const volume = outWidth * outHeight * outLength;
     const dataIndices = new Array(volume).fill(0);
-    placed.forEach((block) => {
-        const rx = block.x - minX;
-        const ry = block.y - minY;
-        const rz = block.z - minZ;
-        const index = blockIndexV3(rx, rz, ry, width, length);
+    transformedBlocks.forEach((block) => {
+        const index = blockIndexV3(block.x, block.z, block.y, outWidth, outLength);
         dataIndices[index] = paletteIdFor(block.state);
     });
 
@@ -186,9 +303,9 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     const schematicBody = nbt.comp({
         Version: nbt.int(3),
         DataVersion: nbt.int(dataVersion),
-        Width: nbt.short(width),
-        Height: nbt.short(height),
-        Length: nbt.short(length),
+        Width: nbt.short(outWidth),
+        Height: nbt.short(outHeight),
+        Length: nbt.short(outLength),
         Offset: nbt.intArray([0, 0, 0]),
         Metadata: nbt.comp({
             WorldEdit: nbt.comp({
@@ -210,7 +327,7 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     const raw = nbt.writeUncompressed(schemRoot, 'big');
     const gz = zlib.gzipSync(raw);
 
-    const baseName = schemFileBaseName(contentHash);
+    const baseName = schemFileNameForTransform(contentHash, rotation, mirror);
     const dirs = options.outDirs || (options.outDir ? [options.outDir] : SCHEM_EXPORT_DIRS);
     let outPath = '';
     dirs.forEach((dir) => {
@@ -227,11 +344,15 @@ async function exportWorldEditSchemFromBuffer(buffer, contentHash, options = {})
     return {
         schemFileName: baseName,
         schemPath: outPath,
-        width,
-        height,
-        length,
-        blockCount: placed.length,
-        originOffset: { x: minX, y: minY, z: minZ }
+        width: outWidth,
+        height: outHeight,
+        length: outLength,
+        blockCount: transformedBlocks.length,
+        originOffset: { x: minX, y: minY, z: minZ },
+        rotation,
+        mirror,
+        transformBaked,
+        pasteAnchorAdjust
     };
 }
 
@@ -242,6 +363,12 @@ module.exports = {
     DEFAULT_WE_SCHEM_DIR,
     SCHEM_EXPORT_DIRS,
     schemFileBaseName,
+    schemFileNameForTransform,
+    schemTransformSuffix,
+    normalizeExportRotation,
+    normalizeExportMirror,
+    exportTransformNeedsBake,
+    transformLocalPos,
     exportWorldEditSchemFromBuffer,
     collectMergedBlocks
 };
