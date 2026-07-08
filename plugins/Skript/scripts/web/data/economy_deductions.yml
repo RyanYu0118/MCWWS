@@ -1,338 +1,347 @@
-next_id: 29
-
+next_id: 30
 pending:
-    '1':
-        id: 1
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 2
-        orderId: 12
-        status: done
-        createdAt: '2026-05-31T10:27:27.852Z'
-        processedAt: '2026-05-31 18:27:30'
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '2':
-        id: 2
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 1
-        orderId: 13
-        status: done
-        createdAt: '2026-05-31T10:30:45.711Z'
-        processedAt: '2026-05-31 18:30:46'
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '3':
-        id: 3
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 64
-        orderId: 14
-        status: done
-        createdAt: '2026-05-31T10:31:11.808Z'
-        processedAt: '2026-05-31 18:31:13'
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '4':
-        id: 4
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 1
-        orderId: 15
-        status: done
-        createdAt: '2026-05-31T10:37:40.859Z'
-        balanceAfter: 8849.39
-        processedAt: '2026-05-31 18:37:42'
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '5':
-        id: 5
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 20
-        orderId: 16
-        status: done
-        createdAt: '2026-05-31T10:42:28.399Z'
-        processedAt: '2026-05-31T10:42:28.399Z'
-        mode: file-immediate
-        balanceAfter: 8830.39
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '6':
-        id: 6
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 10
-        orderId: 17
-        status: done
-        createdAt: '2026-05-31T10:43:47.619Z'
-        processedAt: '2026-05-31T10:43:47.619Z'
-        mode: file-immediate
-        balanceAfter: 8840.39
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:47:53'
-    '7':
-        id: 7
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 8
-        orderId: 18
-        status: done
-        createdAt: '2026-05-31T10:48:16.156Z'
-        processedAt: '2026-05-31T10:48:16.156Z'
-        mode: file-immediate
-        balanceAfter: 8832.39
-        needsMemorySync: false
-        memorySyncedAt: '2026-05-31 18:53:04'
-    '8':
-        id: 8
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 8
-        orderId: 19
-        status: done
-        createdAt: '2026-05-31T10:54:49.129Z'
-        processedAt: '2026-05-31T10:54:49.129Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 8824.39
-        memorySyncedAt: '2026-05-31 18:54:50'
-    '9':
-        id: 9
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 2.5
-        orderId: 20
-        status: done
-        createdAt: '2026-05-31T10:56:08.661Z'
-        processedAt: '2026-05-31T10:56:08.661Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 8821.89
-        memorySyncedAt: '2026-05-31 18:56:20'
-    '10':
-        id: 10
-        uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
-        playerId: Song_zi
-        amount: 25
-        orderId: 21
-        status: done
-        createdAt: '2026-06-01T07:20:18.632Z'
-        processedAt: '2026-06-01T07:20:18.632Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 8799.39
-        memorySyncedAt: '2026-06-01 15:20:18'
-    '11':
-        id: 11
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 6
-        orderId: 22
-        status: done
-        createdAt: '2026-06-01T12:05:54.856Z'
-        processedAt: '2026-06-01T12:05:54.856Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 215012.71
-        memorySyncedAt: '2026-06-01 20:11:40'
-    '12':
-        id: 12
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 6
-        orderId: 23
-        status: done
-        createdAt: '2026-06-01T12:06:09.661Z'
-        processedAt: '2026-06-01T12:06:09.661Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 215006.71
-        memorySyncedAt: '2026-06-01 20:11:40'
-    '13':
-        id: 13
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 7.2
-        orderId: 24
-        status: done
-        createdAt: '2026-06-01T12:13:22.538Z'
-        processedAt: '2026-06-01T12:13:22.538Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 214999.51
-        memorySyncedAt: '2026-06-01 20:13:24'
-    '14':
-        id: 14
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 61
-        orderId: 25
-        status: done
-        createdAt: '2026-06-01T12:15:16.409Z'
-        processedAt: '2026-06-01T12:15:16.409Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 214938.51
-        memorySyncedAt: '2026-06-01 20:24:02'
-    '15':
-        id: 15
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 5
-        orderId: 26
-        status: done
-        createdAt: '2026-06-01T12:36:29.367Z'
-        processedAt: '2026-06-01T12:36:29.367Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 214994.51
-        memorySyncedAt: '2026-06-01 20:36:38'
-    '16':
-        id: 16
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 2
-        orderId: 27
-        status: done
-        createdAt: '2026-06-01T12:37:57.165Z'
-        processedAt: '2026-06-01T12:37:57.165Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 214997.51
-        memorySyncedAt: '2026-06-01 20:37:58'
-    '17':
-        id: 17
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 2
-        orderId: 28
-        status: done
-        createdAt: '2026-06-01T12:39:41.182Z'
-        processedAt: '2026-06-01T12:39:41.182Z'
-        mode: file-checkout
-        needsMemorySync: false
-        balanceAfter: 214663.51
-        memorySyncedAt: '2026-06-01 20:39:42'
-    '18':
-        id: 18
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 2.3
-        orderId: 29
-        status: done
-        createdAt: '2026-06-01T14:03:53.965Z'
-        processedAt: '2026-06-01T14:03:53.965Z'
-        mode: file-checkout
-        needsMemorySync: true
-        balanceAfter: 214539.21
-    '19':
-        id: 19
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 6
-        orderId: 30
-        status: pending
-        createdAt: '2026-06-01T14:11:39.941Z'
-        mode: eco-take
-        balanceAfter: 214534.51
-    '20':
-        id: 20
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 2
-        orderId: 31
-        status: done
-        createdAt: '2026-06-01T14:27:01.041Z'
-        mode: eco-take
-        balanceAfter: 214537.51
-        processedAt: '2026-06-01T15:20:02.108Z'
-    '21':
-        id: 21
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 2
-        orderId: 32
-        status: done
-        createdAt: '2026-06-01T14:27:23.922Z'
-        mode: eco-take
-        balanceAfter: 214535.51
-        processedAt: '2026-06-01T15:20:02.108Z'
-    '22':
-        id: 22
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 4.3
-        orderId: 33
-        status: done
-        createdAt: '2026-06-01T14:27:57.672Z'
-        mode: eco-take
-        balanceAfter: 214531.21
-        processedAt: '2026-06-01T15:20:02.108Z'
-    '23':
-        id: 23
-        uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-        playerId: GuuuuuLei
-        amount: 2
-        orderId: 34
-        status: done
-        createdAt: '2026-06-17T09:47:59.259Z'
-        mode: eco-take
-        balanceAfter: 1426.22
-        processedAt: '2026-06-17 17:48:00'
-    '24':
-        id: 24
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 1
-        orderId: 35
-        status: done
-        createdAt: '2026-06-17T13:45:05.926Z'
-        mode: eco-take
-        balanceAfter: 200154.41
-        processedAt: '2026-06-17 21:54:07'
-    '25':
-        id: 25
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 5683.19
-        orderId: 3
-        status: done
-        createdAt: '2026-06-17T16:21:02.380Z'
-        mode: eco-take
-        balanceAfter: 194431.22
-        processedAt: '2026-06-18 00:21:02'
-    '26':
-        id: 26
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 5683.19
-        orderId: 4
-        status: done
-        createdAt: '2026-06-17T16:57:24.685Z'
-        mode: eco-take
-        balanceAfter: 188748.03
-        processedAt: '2026-06-18 00:57:25'
-    '27':
-        id: 27
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 7.2
-        orderId: 36
-        status: done
-        createdAt: '2026-07-03T16:31:23.578Z'
-        mode: eco-take
-        balanceAfter: 1.7648817075E8
-        processedAt: '2026-07-04 00:31:23'
-    '28':
-        id: 28
-        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-        playerId: Ryan_yu__
-        amount: 31.88
-        orderId: 37
-        status: done
-        createdAt: '2026-07-03T18:47:23.954Z'
-        mode: eco-take
-        balanceAfter: 1.7648553956E8
-        processedAt: '2026-07-04 02:47:24'
+  '1':
+    id: 1
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 2
+    orderId: 12
+    status: done
+    createdAt: '2026-05-31T10:27:27.852Z'
+    processedAt: '2026-05-31 18:27:30'
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '2':
+    id: 2
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 1
+    orderId: 13
+    status: done
+    createdAt: '2026-05-31T10:30:45.711Z'
+    processedAt: '2026-05-31 18:30:46'
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '3':
+    id: 3
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 64
+    orderId: 14
+    status: done
+    createdAt: '2026-05-31T10:31:11.808Z'
+    processedAt: '2026-05-31 18:31:13'
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '4':
+    id: 4
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 1
+    orderId: 15
+    status: done
+    createdAt: '2026-05-31T10:37:40.859Z'
+    balanceAfter: 8849.39
+    processedAt: '2026-05-31 18:37:42'
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '5':
+    id: 5
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 20
+    orderId: 16
+    status: done
+    createdAt: '2026-05-31T10:42:28.399Z'
+    processedAt: '2026-05-31T10:42:28.399Z'
+    mode: file-immediate
+    balanceAfter: 8830.39
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '6':
+    id: 6
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 10
+    orderId: 17
+    status: done
+    createdAt: '2026-05-31T10:43:47.619Z'
+    processedAt: '2026-05-31T10:43:47.619Z'
+    mode: file-immediate
+    balanceAfter: 8840.39
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:47:53'
+  '7':
+    id: 7
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 8
+    orderId: 18
+    status: done
+    createdAt: '2026-05-31T10:48:16.156Z'
+    processedAt: '2026-05-31T10:48:16.156Z'
+    mode: file-immediate
+    balanceAfter: 8832.39
+    needsMemorySync: false
+    memorySyncedAt: '2026-05-31 18:53:04'
+  '8':
+    id: 8
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 8
+    orderId: 19
+    status: done
+    createdAt: '2026-05-31T10:54:49.129Z'
+    processedAt: '2026-05-31T10:54:49.129Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 8824.39
+    memorySyncedAt: '2026-05-31 18:54:50'
+  '9':
+    id: 9
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 2.5
+    orderId: 20
+    status: done
+    createdAt: '2026-05-31T10:56:08.661Z'
+    processedAt: '2026-05-31T10:56:08.661Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 8821.89
+    memorySyncedAt: '2026-05-31 18:56:20'
+  '10':
+    id: 10
+    uuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    amount: 25
+    orderId: 21
+    status: done
+    createdAt: '2026-06-01T07:20:18.632Z'
+    processedAt: '2026-06-01T07:20:18.632Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 8799.39
+    memorySyncedAt: '2026-06-01 15:20:18'
+  '11':
+    id: 11
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 6
+    orderId: 22
+    status: done
+    createdAt: '2026-06-01T12:05:54.856Z'
+    processedAt: '2026-06-01T12:05:54.856Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 215012.71
+    memorySyncedAt: '2026-06-01 20:11:40'
+  '12':
+    id: 12
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 6
+    orderId: 23
+    status: done
+    createdAt: '2026-06-01T12:06:09.661Z'
+    processedAt: '2026-06-01T12:06:09.661Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 215006.71
+    memorySyncedAt: '2026-06-01 20:11:40'
+  '13':
+    id: 13
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 7.2
+    orderId: 24
+    status: done
+    createdAt: '2026-06-01T12:13:22.538Z'
+    processedAt: '2026-06-01T12:13:22.538Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 214999.51
+    memorySyncedAt: '2026-06-01 20:13:24'
+  '14':
+    id: 14
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 61
+    orderId: 25
+    status: done
+    createdAt: '2026-06-01T12:15:16.409Z'
+    processedAt: '2026-06-01T12:15:16.409Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 214938.51
+    memorySyncedAt: '2026-06-01 20:24:02'
+  '15':
+    id: 15
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 5
+    orderId: 26
+    status: done
+    createdAt: '2026-06-01T12:36:29.367Z'
+    processedAt: '2026-06-01T12:36:29.367Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 214994.51
+    memorySyncedAt: '2026-06-01 20:36:38'
+  '16':
+    id: 16
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 2
+    orderId: 27
+    status: done
+    createdAt: '2026-06-01T12:37:57.165Z'
+    processedAt: '2026-06-01T12:37:57.165Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 214997.51
+    memorySyncedAt: '2026-06-01 20:37:58'
+  '17':
+    id: 17
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 2
+    orderId: 28
+    status: done
+    createdAt: '2026-06-01T12:39:41.182Z'
+    processedAt: '2026-06-01T12:39:41.182Z'
+    mode: file-checkout
+    needsMemorySync: false
+    balanceAfter: 214663.51
+    memorySyncedAt: '2026-06-01 20:39:42'
+  '18':
+    id: 18
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 2.3
+    orderId: 29
+    status: done
+    createdAt: '2026-06-01T14:03:53.965Z'
+    processedAt: '2026-06-01T14:03:53.965Z'
+    mode: file-checkout
+    needsMemorySync: true
+    balanceAfter: 214539.21
+  '19':
+    id: 19
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 6
+    orderId: 30
+    status: pending
+    createdAt: '2026-06-01T14:11:39.941Z'
+    mode: eco-take
+    balanceAfter: 214534.51
+  '20':
+    id: 20
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 2
+    orderId: 31
+    status: done
+    createdAt: '2026-06-01T14:27:01.041Z'
+    mode: eco-take
+    balanceAfter: 214537.51
+    processedAt: '2026-06-01T15:20:02.108Z'
+  '21':
+    id: 21
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 2
+    orderId: 32
+    status: done
+    createdAt: '2026-06-01T14:27:23.922Z'
+    mode: eco-take
+    balanceAfter: 214535.51
+    processedAt: '2026-06-01T15:20:02.108Z'
+  '22':
+    id: 22
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 4.3
+    orderId: 33
+    status: done
+    createdAt: '2026-06-01T14:27:57.672Z'
+    mode: eco-take
+    balanceAfter: 214531.21
+    processedAt: '2026-06-01T15:20:02.108Z'
+  '23':
+    id: 23
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    amount: 2
+    orderId: 34
+    status: done
+    createdAt: '2026-06-17T09:47:59.259Z'
+    mode: eco-take
+    balanceAfter: 1426.22
+    processedAt: '2026-06-17 17:48:00'
+  '24':
+    id: 24
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 1
+    orderId: 35
+    status: done
+    createdAt: '2026-06-17T13:45:05.926Z'
+    mode: eco-take
+    balanceAfter: 200154.41
+    processedAt: '2026-06-17 21:54:07'
+  '25':
+    id: 25
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 5683.19
+    orderId: 3
+    status: done
+    createdAt: '2026-06-17T16:21:02.380Z'
+    mode: eco-take
+    balanceAfter: 194431.22
+    processedAt: '2026-06-18 00:21:02'
+  '26':
+    id: 26
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 5683.19
+    orderId: 4
+    status: done
+    createdAt: '2026-06-17T16:57:24.685Z'
+    mode: eco-take
+    balanceAfter: 188748.03
+    processedAt: '2026-06-18 00:57:25'
+  '27':
+    id: 27
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 7.2
+    orderId: 36
+    status: done
+    createdAt: '2026-07-03T16:31:23.578Z'
+    mode: eco-take
+    balanceAfter: 176488170.75
+    processedAt: '2026-07-04 00:31:23'
+  '28':
+    id: 28
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 31.88
+    orderId: 37
+    status: done
+    createdAt: '2026-07-03T18:47:23.954Z'
+    mode: eco-take
+    balanceAfter: 176485539.56
+    processedAt: '2026-07-04 02:47:24'
+  '29':
+    id: 29
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    amount: 32
+    orderId: 38
+    status: pending
+    createdAt: '2026-07-08T14:04:49.116Z'
+    mode: eco-take
+    balanceAfter: 166485459.29

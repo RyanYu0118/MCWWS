@@ -219,16 +219,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         console.warn('[物品图标] Three.js 未加载（检查 vendor/three.module.min.js），仍使用 PNG');
     }
     initItemsHeroCompass();
-    window.MCWWS_LitematicaDeps = {
-        allItems: () => allItems,
-        addToCart,
-        openCartDrawer,
-        showToast,
-        escapeHtml,
-        getItemIconHtml,
-        mountItemIconsInContainer
-    };
-    window.MCWWS_BuildPasteDeps = window.MCWWS_LitematicaDeps;
     loadShopCart();
     updateCartBadge();
     await loadItems();

@@ -37,6 +37,9 @@
             <a href="items.html" class="nav-link active">
                 <span class="nav-icon">🛒</span> 物品目录
             </a>
+            <a href="build.html" class="nav-link">
+                <span class="nav-icon">🏗️</span> 建造工具
+            </a>
             </div>
         <div class="nav-actions">
             <span class="item-count" id="itemCount">-- 个物品</span>
@@ -121,8 +124,6 @@
                         <span class="checkmark"></span>
                         逆序
                     </label>
-                    <button type="button" id="litematicaImportBtn" class="filter-select litematica-import-btn" title="导入 Litematica 材料清单 JSON">导入材料清单</button>
-                    <button type="button" id="buildPasteBtn" class="filter-select build-paste-btn" title="上传 .litematic 投影并购买粘贴">投影粘贴</button>
                 </div>
                 <div class="page-controls items-pagination">
                     <button id="pageFirst" class="pagination-btn" type="button">首页</button>
@@ -181,42 +182,6 @@
                 <button type="button" class="modal-close" onclick="closeTradeModal()">×</button>
             </div>
             <div id="tradeModalBody" class="modal-body"></div>
-        </div>
-    </div>
-
-    <div id="litematicaImportModal" class="modal litematica-import-modal" aria-hidden="true">
-        <div class="modal-content glass litematica-import-content">
-            <div class="modal-header">
-                <h2 id="litematicaImportTitle">导入 Litematica 材料清单</h2>
-                <button type="button" class="modal-close" id="litematicaImportClose" aria-label="关闭">×</button>
-            </div>
-            <div id="litematicaImportBody" class="modal-body litematica-import-body"></div>
-            <div id="litematicaImportFooter" class="litematica-import-footer" hidden>
-                <div class="litematica-import-total">
-                    <span>可购材料合计</span>
-                    <strong id="litematicaImportTotal">￥0.00</strong>
-                </div>
-                <button type="button" id="litematicaAddCartBtn" class="cart-drawer-btn cart-drawer-btn--primary">加入购物车</button>
-            </div>
-            <input type="file" id="litematicaFileInput" accept=".json,.txt,application/json,text/plain" hidden>
-        </div>
-    </div>
-
-    <div id="buildPasteModal" class="modal litematica-import-modal build-paste-modal" aria-hidden="true">
-        <div class="modal-content glass litematica-import-content">
-            <div class="modal-header">
-                <h2 id="buildPasteTitle">投影粘贴</h2>
-                <button type="button" class="modal-close" id="buildPasteClose" aria-label="关闭">×</button>
-            </div>
-            <div id="buildPasteBody" class="modal-body litematica-import-body"></div>
-            <div id="buildPasteFooter" class="litematica-import-footer" hidden>
-                <div class="litematica-import-total">
-                    <span>应付（仅商店可购材料）</span>
-                    <strong id="buildPasteTotal">￥0.00</strong>
-                </div>
-                <button type="button" id="buildPastePayBtn" class="cart-drawer-btn cart-drawer-btn--primary">付款并生成粘贴订单</button>
-            </div>
-            <input type="file" id="buildPasteFileInput" accept=".litematic,application/octet-stream" hidden>
         </div>
     </div>
 
@@ -292,11 +257,8 @@
     <script src="enchant-glint.js?v=2.5.28" defer></script>
     <script src="texture-animation.js?v=2.5.65" defer></script>
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
-    <script src="material-list-parser.js?v=2"></script>
     <script src="price-history-chart.js?v=7"></script>
     <script src="items.js?v=2.5.75" defer></script>
-    <script src="litematica-import.js?v=3" defer></script>
-    <script src="build-paste-import.js?v=1" defer></script>
 </body>
 
 </html>
