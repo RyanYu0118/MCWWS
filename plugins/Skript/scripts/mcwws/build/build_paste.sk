@@ -171,7 +171,7 @@ function mcwwsRunConsoleCommand(cmd: text):
         execute console command {_cmd}
 
 function mcwwsPasteWorldEditPermissionNodes() :: texts:
-    return "fawe.worldeditregion" and "worldedit.schematic.load" and "worldedit.clipboard.paste"
+    return "fawe.worldeditregion" and "worldedit.schematic.load" and "worldedit.clipboard.paste" and "fawe.bypass.regions"
 
 function mcwwsPasteGrantWorldEditPermissions(p: player) :: texts:
     delete {_granted::*}

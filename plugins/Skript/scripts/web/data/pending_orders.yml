@@ -303,7 +303,7 @@ orders:
         status: delivered
         total: 2
         createdAt: '2026-05-31T10:27:27.846Z'
-        updatedAt: '2026-05-31 18:27:30'
+        updatedAt: '2026-07-09 00:29:14'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-05-31 18:27:30'
@@ -320,6 +320,7 @@ orders:
                 material: magenta_concrete
                 shopTitle: 混凝土商店
                 status: delivered
+        economyChargedInGame: true
     '13':
         id: 4a34f88f-faca-49ee-bcdd-4f596b04b2fc
         numericId: 13
@@ -329,7 +330,7 @@ orders:
         status: delivered
         total: 1
         createdAt: '2026-05-31T10:30:45.706Z'
-        updatedAt: '2026-05-31 18:30:47'
+        updatedAt: '2026-07-09 00:30:13'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-05-31 18:30:46'
@@ -346,6 +347,7 @@ orders:
                 material: dandelion
                 shopTitle: 花卉商店
                 status: delivered
+        economyChargedInGame: true
     '14':
         id: 6d4ebf34-af04-40de-b86a-941bb9d8a720
         numericId: 14
@@ -355,7 +357,7 @@ orders:
         status: delivered
         total: 64
         createdAt: '2026-05-31T10:31:11.806Z'
-        updatedAt: '2026-05-31 18:31:21'
+        updatedAt: '2026-07-09 00:34:59'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-05-31 18:31:20'
@@ -372,6 +374,7 @@ orders:
                 material: leather_chestplate
                 shopTitle: Example Shop
                 status: delivered
+        economyChargedInGame: true
     '15':
         id: 7cc40ffa-afea-46e5-95c7-8af42398eace
         numericId: 15
