@@ -15,6 +15,64 @@ const PENDING_PASTE_ORDERS_PATH = path.join(__dirname, 'data', 'pending_paste_or
 const QUOTE_TTL_MS = 24 * 60 * 60 * 1000;
 const PASTE_TOKEN_TTL_MS = 15 * 60 * 1000;
 
+const PASTE_ROTATION_VALUES = new Set(['NONE', 'CLOCKWISE_90', 'CLOCKWISE_180', 'COUNTERCLOCKWISE_90']);
+const PASTE_MIRROR_VALUES = new Set(['NONE', 'LEFT_RIGHT', 'FRONT_BACK']);
+
+const PASTE_ROTATION_ALIASES = {
+    CW90: 'CLOCKWISE_90',
+    CW_90: 'CLOCKWISE_90',
+    '90': 'CLOCKWISE_90',
+    R90: 'CLOCKWISE_90',
+    CW180: 'CLOCKWISE_180',
+    CW_180: 'CLOCKWISE_180',
+    '180': 'CLOCKWISE_180',
+    R180: 'CLOCKWISE_180',
+    CCW90: 'COUNTERCLOCKWISE_90',
+    CCW_90: 'COUNTERCLOCKWISE_90',
+    '270': 'COUNTERCLOCKWISE_90',
+    R270: 'COUNTERCLOCKWISE_90',
+    '-90': 'COUNTERCLOCKWISE_90'
+};
+
+const PASTE_MIRROR_ALIASES = {
+    LR: 'LEFT_RIGHT',
+    LEFTRIGHT: 'LEFT_RIGHT',
+    LEFT: 'LEFT_RIGHT',
+    FB: 'FRONT_BACK',
+    FRONTBACK: 'FRONT_BACK',
+    FRONT: 'FRONT_BACK',
+    BACK: 'FRONT_BACK'
+};
+
+function normalizePasteRotation(value) {
+    const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (PASTE_ROTATION_VALUES.has(raw)) {
+        return raw;
+    }
+    const alias = PASTE_ROTATION_ALIASES[raw.replace(/_/g, '')] || PASTE_ROTATION_ALIASES[raw];
+    if (alias) {
+        return alias;
+    }
+    return 'NONE';
+}
+
+function normalizePasteMirror(value) {
+    const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (PASTE_MIRROR_VALUES.has(raw)) {
+        return raw;
+    }
+    const compact = raw.replace(/_/g, '');
+    const alias = PASTE_MIRROR_ALIASES[compact] || PASTE_MIRROR_ALIASES[raw];
+    if (alias) {
+        return alias;
+    }
+    return 'NONE';
+}
+
+function pasteTransformNeedsWorldEdit(rotation, mirror) {
+    return normalizePasteRotation(rotation) !== 'NONE' || normalizePasteMirror(mirror) !== 'NONE';
+}
+
 function ensureDirs() {
     if (!fs.existsSync(SCHEMATICS_DIR)) {
         fs.mkdirSync(SCHEMATICS_DIR, { recursive: true });
@@ -236,7 +294,9 @@ function createPasteOrder({
     playerId,
     username,
     total,
-    anchor
+    anchor,
+    rotation,
+    mirror
 }) {
     return verifyStoredSchematicHash(contentHash).then(async (verify) => {
         if (!verify.ok) {
@@ -286,6 +346,8 @@ function createPasteOrder({
             total,
             status: 'awaiting_anchor',
             anchor: anchor || null,
+            rotation: normalizePasteRotation(rotation),
+            mirror: normalizePasteMirror(mirror),
             schemFileName,
             schemOriginOffset,
             schematicPath: schematicFilePath(contentHash),
@@ -311,7 +373,7 @@ function getPasteOrderByToken(pasteToken) {
     return Object.values(store.orders).find((order) => order.pasteToken === pasteToken) || null;
 }
 
-function updatePasteOrderAnchor(numericId, anchor, playerUuid) {
+function updatePasteOrderAnchor(numericId, anchor, playerUuid, options = {}) {
     const store = loadPasteOrdersStore();
     const order = store.orders[String(numericId)];
     if (!order) {
@@ -326,6 +388,12 @@ function updatePasteOrderAnchor(numericId, anchor, playerUuid) {
     order.anchor = anchor;
     order.status = 'ready';
     order.anchorSetAt = new Date().toISOString();
+    if (options.rotation != null) {
+        order.rotation = normalizePasteRotation(options.rotation);
+    }
+    if (options.mirror != null) {
+        order.mirror = normalizePasteMirror(options.mirror);
+    }
     savePasteOrdersStore(store);
     return { order };
 }
@@ -386,6 +454,11 @@ module.exports = {
     PENDING_PASTE_ORDERS_PATH,
     QUOTE_TTL_MS,
     PASTE_TOKEN_TTL_MS,
+    PASTE_ROTATION_VALUES,
+    PASTE_MIRROR_VALUES,
+    normalizePasteRotation,
+    normalizePasteMirror,
+    pasteTransformNeedsWorldEdit,
     readBufferFromRequestBody,
     ingestSchematicBuffer,
     verifyStoredSchematicHash,

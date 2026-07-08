@@ -250,7 +250,7 @@
         if (transformNote) {
             if (snapshot.hasTransform) {
                 transformNote.hidden = false;
-                transformNote.innerHTML = '当前投影含旋转/镜像：Litematica 预览与服务器 <code>/build paste</code>（无旋转）可能不一致，请以游戏内对齐为准。';
+                transformNote.innerHTML = '当前投影含旋转/镜像：结账导入投影粘贴后，服务器将按相同变换粘贴；请站在 Litematica 放置原点执行 <code>/build go</code>。';
             } else {
                 transformNote.hidden = true;
             }

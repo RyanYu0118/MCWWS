@@ -3172,7 +3172,9 @@ app.post('/api/build/checkout', async (req, res) => {
             playerUuid: uuid,
             playerId,
             username: user.username,
-            total
+            total,
+            rotation: req.body?.rotation,
+            mirror: req.body?.mirror
         });
         buildSchematicService.markQuoteConsumed(quote.numericId, pasteOrder.numericId);
 
@@ -3193,12 +3195,14 @@ app.post('/api/build/checkout', async (req, res) => {
             pasteToken: pasteOrder.pasteToken,
             contentHash: pasteOrder.contentHash,
             contentHashVersion: pasteOrder.contentHashVersion,
+            rotation: pasteOrder.rotation,
+            mirror: pasteOrder.mirror,
             total,
             balanceAfter,
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             status: pasteOrder.status,
             pasteTokenExpiresAt: pasteOrder.pasteTokenExpiresAt,
-            message: '付款成功。请在游戏内设置粘贴锚点后执行粘贴；全程 contentHash 不变。',
+            message: '付款成功。请在游戏内站到 Litematica 放置原点执行 /build go；全程 contentHash 不变。',
             nextStep: 'POST /api/build/paste/anchor 绑定锚点，再由服务器执行粘贴。'
         });
     } catch (error) {

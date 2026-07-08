@@ -85,12 +85,70 @@ function mcwwsReadPasteOrderField(oid: text, field: text) :: text:
 
 function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build orders §7- 我的粘贴订单" to {_p}
-    send "§6[投影粘贴] §f/build go <订单号> §7- 当前位置设锚点并粘贴（一步完成）" to {_p}
-    send "§6[投影粘贴] §f/build anchor <订单号> §7- 在当前位置设粘贴锚点" to {_p}
+    send "§6[投影粘贴] §f/build go <订单号> [旋转] [镜像] §7- 设锚点并粘贴（一步完成）" to {_p}
+    send "§6[投影粘贴] §f/build anchor <订单号> [旋转] [镜像] §7- 在当前位置设粘贴锚点" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 执行粘贴（须先 anchor）" to {_p}
+    send "§7旋转: §fnone§7/§f90§7/§f180§7/§f270 §7· 镜像: §fnone§7/§flr§7/§ffb" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
 
-command /build [<text>] [<text>]:
+function mcwwsPasteNormalizeRotation(input: text) :: text:
+    if {_input} is not set:
+        return "NONE"
+    set {_v} to uppercase "%{_input}%"
+    replace all " " with "" in {_v}
+    replace all "-" with "" in {_v}
+    if {_v} is "":
+        return "NONE"
+    if {_v} is "NONE":
+        return "NONE"
+    if {_v} is "CLOCKWISE_90", "CW90", "CW_90", "90" or "R90":
+        return "CLOCKWISE_90"
+    if {_v} is "CLOCKWISE_180", "CW180", "CW_180", "180" or "R180":
+        return "CLOCKWISE_180"
+    if {_v} is "COUNTERCLOCKWISE_90", "CCW90", "CCW_90", "270" or "R270":
+        return "COUNTERCLOCKWISE_90"
+    return "NONE"
+
+function mcwwsPasteNormalizeMirror(input: text) :: text:
+    if {_input} is not set:
+        return "NONE"
+    set {_v} to uppercase "%{_input}%"
+    replace all " " with "" in {_v}
+    replace all "-" with "" in {_v}
+    if {_v} is "":
+        return "NONE"
+    if {_v} is "NONE":
+        return "NONE"
+    if {_v} is "LEFT_RIGHT", "LEFTRIGHT", "LR" or "LEFT":
+        return "LEFT_RIGHT"
+    if {_v} is "FRONT_BACK", "FRONTBACK", "FB", "FRONT" or "BACK":
+        return "FRONT_BACK"
+    return "NONE"
+
+function mcwwsPasteTransformNeedsWorldEdit(rotation: text, mirror: text) :: boolean:
+    if {_rotation} is not "NONE":
+        return true
+    if {_mirror} is not "NONE":
+        return true
+    return false
+
+function mcwwsPasteRotationLabel(rotation: text) :: text:
+    if {_rotation} is "CLOCKWISE_90":
+        return "顺时针 90°"
+    if {_rotation} is "CLOCKWISE_180":
+        return "180°"
+    if {_rotation} is "COUNTERCLOCKWISE_90":
+        return "逆时针 90°"
+    return "无"
+
+function mcwwsPasteMirrorLabel(mirror: text) :: text:
+    if {_mirror} is "LEFT_RIGHT":
+        return "左右"
+    if {_mirror} is "FRONT_BACK":
+        return "前后"
+    return "无"
+
+command /build [<text>] [<text>] [<text>] [<text>]:
     trigger:
         if arg-1 is not set:
             mcwwsSendPasteHelp(player)
@@ -104,9 +162,9 @@ command /build [<text>] [<text>]:
             stop
         if {_sub} is "anchor":
             if arg-2 is not set:
-                send "§c用法: /build anchor <订单号>" to player
+                send "§c用法: /build anchor <订单号> [旋转] [镜像]" to player
                 stop
-            mcwwsPasteSetAnchor(player, arg-2, false)
+            mcwwsPasteSetAnchor(player, arg-2, false, arg-3, arg-4)
             stop
         if {_sub} is "paste":
             if arg-2 is not set:
@@ -116,9 +174,9 @@ command /build [<text>] [<text>]:
             stop
         if {_sub} is "go":
             if arg-2 is not set:
-                send "§c用法: /build go <订单号>" to player
+                send "§c用法: /build go <订单号> [旋转] [镜像]" to player
                 stop
-            mcwwsPasteGo(player, arg-2)
+            mcwwsPasteGo(player, arg-2, arg-3, arg-4)
             stop
         send "§c未知子命令。输入 /build 查看帮助。" to player
 
@@ -137,12 +195,17 @@ function mcwwsListPasteOrders(p: player):
         set {_status} to mcwwsReadPasteOrderField("%{_oid}%", "status")
         set {_hash} to mcwwsReadPasteOrderField("%{_oid}%", "contentHash")
         set {_hashShort} to subtext of {_hash} from 1 to 12
-        send "§e#%{_oid}% §7[%{_status}%] §fhash…%{_hashShort}%" to {_p}
+        set {_transformLine} to ""
+        set {_rotation} to mcwwsPasteNormalizeRotation(mcwwsReadPasteOrderField("%{_oid}%", "rotation"))
+        set {_mirror} to mcwwsPasteNormalizeMirror(mcwwsReadPasteOrderField("%{_oid}%", "mirror"))
+        if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
+            set {_transformLine} to " §7旋转§f%mcwwsPasteRotationLabel({_rotation})% §7镜像§f%mcwwsPasteMirrorLabel({_mirror})%"
+        send "§e#%{_oid}% §7[%{_status}%] §fhash…%{_hashShort}%%{_transformLine}%" to {_p}
         add 1 to {_found}
     if {_found} is 0:
         send "§7暂无粘贴订单。请先在商店网页上传 .litematic 并付款。" to {_p}
 
-function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean):
+function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean, rotationArg: text, mirrorArg: text):
     if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
         send "§c订单不存在或不属于你。" to {_p}
         stop
@@ -165,15 +228,30 @@ function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean):
     set yaml value "orders.%{_oid}%.anchor.pitch" from "pastes" to pitch of {_loc}
     set yaml value "orders.%{_oid}%.status" from "pastes" to "ready"
     set yaml value "orders.%{_oid}%.anchorSetAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    if {_rotationArg} is set:
+        set yaml value "orders.%{_oid}%.rotation" from "pastes" to mcwwsPasteNormalizeRotation({_rotationArg})
+    else if yaml value "orders.%{_oid}%.rotation" from "pastes" is not set:
+        set yaml value "orders.%{_oid}%.rotation" from "pastes" to "NONE"
+    if {_mirrorArg} is set:
+        set yaml value "orders.%{_oid}%.mirror" from "pastes" to mcwwsPasteNormalizeMirror({_mirrorArg})
+    else if yaml value "orders.%{_oid}%.mirror" from "pastes" is not set:
+        set yaml value "orders.%{_oid}%.mirror" from "pastes" to "NONE"
+    set {_rotation} to yaml value "orders.%{_oid}%.rotation" from "pastes"
+    set {_mirror} to yaml value "orders.%{_oid}%.mirror" from "pastes"
     save yaml "pastes"
     unload yaml "pastes"
     send "§a[投影粘贴] §f订单 §e#%{_oid}% §a锚点已设置。" to {_p}
     send "§7contentHash: §f%{_hash}%" to {_p}
+    if mcwwsPasteTransformNeedsWorldEdit("%{_rotation}%", "%{_mirror}%") is true:
+        set {_rotLabel} to mcwwsPasteRotationLabel("%{_rotation}%")
+        set {_mirLabel} to mcwwsPasteMirrorLabel("%{_mirror}%")
+        send "§7变换: §f旋转 %{_rotLabel}% §7· §f镜像 %{_mirLabel}%" to {_p}
+        send "§7请站在 Litematica 放置原点（变换中心）再粘贴。" to {_p}
     if {_quiet} is false:
         send "§7请确认 Litematica 投影对齐后执行 §f/build paste %{_oid}% §7或一步完成 §f/build go %{_oid}%" to {_p}
 
-function mcwwsPasteGo(p: player, oid: text):
-    mcwwsPasteSetAnchor({_p}, {_oid}, true)
+function mcwwsPasteGo(p: player, oid: text, rotationArg: text, mirrorArg: text):
+    mcwwsPasteSetAnchor({_p}, {_oid}, true, {_rotationArg}, {_mirrorArg})
     wait 2 ticks
     mcwwsPasteExecute({_p}, {_oid})
 
@@ -183,19 +261,47 @@ function mcwwsRunConsoleCommand(cmd: text):
     if {_ok} is false:
         execute console command {_cmd}
 
-function mcwwsPasteWorldEditPermissionNodes() :: texts:
-    return "fawe.worldeditregion" and "worldedit.schematic.load" and "worldedit.clipboard.paste" and "fawe.bypass.regions"
+function mcwwsPasteWorldEditPermissionNodes(needsTransform: boolean) :: texts:
+    set {_nodes::*} to "fawe.worldeditregion" and "worldedit.schematic.load" and "worldedit.clipboard.paste" and "fawe.bypass.regions"
+    if {_needsTransform} is true:
+        add "worldedit.clipboard.rotate" to {_nodes::*}
+        add "worldedit.clipboard.flip" to {_nodes::*}
+    return {_nodes::*}
 
-function mcwwsPasteGrantWorldEditPermissions(p: player) :: texts:
+function mcwwsPasteGrantWorldEditPermissions(p: player, needsTransform: boolean) :: texts:
     delete {_granted::*}
     set {_name} to name of {_p}
     set {_dur} to "30s"
-    loop mcwwsPasteWorldEditPermissionNodes():
+    loop mcwwsPasteWorldEditPermissionNodes({_needsTransform}):
         if {_p} has permission loop-value:
             continue
         mcwwsRunConsoleCommand("lp user %{_name}% permission settemp %loop-value% true %{_dur}%")
         add loop-value to {_granted::*}
     return {_granted::*}
+
+function mcwwsPasteApplyClipboardTransform(p: player, rotation: text, mirror: text):
+    set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
+    set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
+    if {_mirror} is "LEFT_RIGHT":
+        send "§7应用镜像: §f左右" to {_p}
+        make {_p} execute command "//flip north"
+        wait 20 ticks
+    else if {_mirror} is "FRONT_BACK":
+        send "§7应用镜像: §f前后" to {_p}
+        make {_p} execute command "//flip east"
+        wait 20 ticks
+    if {_rotation} is "CLOCKWISE_90":
+        send "§7应用旋转: §f顺时针 90°" to {_p}
+        make {_p} execute command "//rotate 90"
+        wait 20 ticks
+    else if {_rotation} is "CLOCKWISE_180":
+        send "§7应用旋转: §f180°" to {_p}
+        make {_p} execute command "//rotate 180"
+        wait 20 ticks
+    else if {_rotation} is "COUNTERCLOCKWISE_90":
+        send "§7应用旋转: §f逆时针 90°" to {_p}
+        make {_p} execute command "//rotate 270"
+        wait 20 ticks
 
 function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
     if {_grantedNodes::*} is not set:
@@ -242,10 +348,15 @@ function mcwwsPasteExecute(p: player, oid: text):
     set yaml value "orders.%{_oid}%.pasteStartedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
     save yaml "pastes"
     unload yaml "pastes"
+    set {_rotation} to mcwwsPasteNormalizeRotation(mcwwsReadPasteOrderField({_oid}, "rotation"))
+    set {_mirror} to mcwwsPasteNormalizeMirror(mcwwsReadPasteOrderField({_oid}, "mirror"))
+    set {_needsTransform} to mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror})
     set {_anchor} to location at {_ax}, {_ay}, {_az} in {_world}
     teleport {_p} to {_anchor}
     send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
-    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p})
+    if {_needsTransform} is true:
+        send "§7变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsTransform})
     if size of {_tempPerms::*} > 0:
         send "§7已授予临时 WorldEdit 权限，正在载入原理图…" to {_p}
     else:
@@ -254,6 +365,8 @@ function mcwwsPasteExecute(p: player, oid: text):
     send "§7载入原理图 §f%{_schem}% §7（WorldEdit 剪贴板）…" to {_p}
     make {_p} execute command "//schem load %{_schem}%"
     wait 80 ticks
+    if {_needsTransform} is true:
+        mcwwsPasteApplyClipboardTransform({_p}, {_rotation}, {_mirror})
     make {_p} execute command "//paste -a"
     wait 20 ticks
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})

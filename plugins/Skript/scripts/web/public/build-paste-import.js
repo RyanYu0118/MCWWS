@@ -175,7 +175,7 @@
                     <span>镜像 ${ctx.escapeHtml(sync?.labelMirror?.(placement.mirror) || placement.mirror || '无')}</span>
                 </div>
                 ${(placement.rotation && placement.rotation !== 'NONE') || (placement.mirror && placement.mirror !== 'NONE')
-                    ? '<p class="build-paste-client-warn">游戏内已旋转/镜像；服务器粘贴不会自动应用相同变换，锚点请按 Litematica 对齐。</p>'
+                    ? '<p class="build-paste-client-warn">已记录旋转/镜像；付款后服务器粘贴将自动应用相同变换，请站在 Litematica 放置原点执行 /build go。</p>'
                     : ''}
             </div>
         ` : '';
@@ -262,10 +262,27 @@
         const body = document.getElementById('buildPasteBody');
         const footer = document.getElementById('buildPasteFooter');
         if (!body) return;
+        const sync = window.MCWWS_LitematicaClientSync;
+        const rotation = data.rotation || 'NONE';
+        const mirror = data.mirror || 'NONE';
+        const hasTransform = rotation !== 'NONE' || mirror !== 'NONE';
+        const transformBlock = hasTransform ? `
+            <div class="build-paste-client-box">
+                <p class="build-paste-client-title">粘贴变换（与 Litematica 一致）</p>
+                <div class="build-paste-client-grid">
+                    <span>旋转 ${ctx.escapeHtml(sync?.labelRotation?.(rotation) || rotation)}</span>
+                    <span>镜像 ${ctx.escapeHtml(sync?.labelMirror?.(mirror) || mirror)}</span>
+                </div>
+            </div>
+        ` : '';
+        const anchorHint = hasTransform
+            ? '站到 Litematica <strong>放置原点</strong>（变换中心，见客户端同步中的原点坐标）'
+            : '站到建筑<strong>粘贴原点</strong>（投影最小角对应位置）';
         body.innerHTML = `
             <div class="litematica-quote-head">
                 <h3 class="litematica-quote-title">粘贴订单已创建</h3>
                 <p class="litematica-quote-meta">订单 #${ctx.escapeHtml(String(data.pasteOrderId))} · 金额 ${ctx.escapeHtml(formatMoney(data.total))}</p>
+                ${transformBlock}
                 <div class="build-paste-hash-box">
                     <span class="build-paste-hash-label">contentHash</span>
                     <code class="build-paste-hash-value">${ctx.escapeHtml(data.contentHash || '')}</code>
@@ -273,7 +290,7 @@
             </div>
             <ol class="build-paste-steps">
                 <li>确认 Litematica 加载的投影与上传文件一致（哈希相同）</li>
-                <li>站到建筑<strong>粘贴原点</strong>（投影最小角对应位置）</li>
+                <li>${anchorHint}</li>
                 <li>执行 <code>/build go ${ctx.escapeHtml(String(data.pasteOrderId))}</code></li>
             </ol>
             <p class="litematica-import-note">也可分步执行 <code>/build anchor ${ctx.escapeHtml(String(data.pasteOrderId))}</code> 再 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code>。粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效；全程 contentHash 不变。</p>
@@ -299,16 +316,22 @@
         if (payBtn) payBtn.disabled = true;
 
         try {
+            const placement = lastClientPlacement;
+            const payload = {
+                quoteId: lastQuote.quoteId,
+                contentHash: lastQuote.contentHash
+            };
+            if (placement) {
+                if (placement.rotation) payload.rotation = placement.rotation;
+                if (placement.mirror) payload.mirror = placement.mirror;
+            }
             const res = await fetch('/api/build/checkout', {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
                     ...auth.headers()
                 },
-                body: JSON.stringify({
-                    quoteId: lastQuote.quoteId,
-                    contentHash: lastQuote.contentHash
-                })
+                body: JSON.stringify(payload)
             });
             const data = await res.json();
             if (!res.ok) {
