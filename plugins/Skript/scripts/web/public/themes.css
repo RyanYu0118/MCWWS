@@ -110,54 +110,56 @@
     --accent: #000000;
     --accent-light: #000000;
 
-    --bg-primary: #f2f2f7;
-    --bg-secondary: rgba(0, 0, 0, 0.04);
-    --bg-tertiary: rgba(0, 0, 0, 0.07);
-    --bg-card: rgba(255, 255, 255, 0.72);
+    --bg-primary: #ebedf2;
+    --bg-secondary: #f2f3f6;
+    --bg-tertiary: #f7f8fa;
+    --bg-card: #fafbfc;
 
     --text-primary: #000000;
     --text-secondary: #000000;
     --text-muted: #000000;
 
-    --border: rgba(0, 0, 0, 0.1);
-    --border-glow: rgba(0, 0, 0, 0.18);
+    --border: rgba(0, 0, 0, 0.08);
+    --border-glow: rgba(0, 0, 0, 0.12);
 
-    --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.06);
-    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.08);
-    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.12);
+    --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.05);
+    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.06);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.08);
     --shadow-glow: 0 0 48px rgba(0, 0, 0, 0.04);
 
-    --glass-bg: rgba(255, 255, 255, 0.65);
-    --glass-border: rgba(255, 255, 255, 0.85);
+    --glass-bg: rgba(250, 251, 252, 0.88);
+    --glass-border: rgba(255, 255, 255, 0.72);
     --glass-blur: 32px;
 
     --gradient-primary: linear-gradient(135deg, #000000 0%, #000000 100%);
-    --gradient-hero: linear-gradient(180deg, #f2f2f7 0%, #e8e8ed 50%, #f2f2f7 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 100%);
+    --gradient-hero: linear-gradient(180deg, #f4f5f7 0%, #ebedf2 50%, #f4f5f7 100%);
+    --gradient-card: linear-gradient(145deg, #fcfcfd 0%, #f4f5f7 100%);
 
-    --navbar-bg: rgba(255, 255, 255, 0.72);
-    --navbar-border: rgba(0, 0, 0, 0.08);
+    --navbar-bg: rgba(248, 249, 251, 0.86);
+    --navbar-border: rgba(0, 0, 0, 0.07);
     --modal-overlay: rgba(0, 0, 0, 0.35);
 
-    --surface-hover: rgba(0, 0, 0, 0.06);
+    --surface-hover: #eceef2;
     --surface-hover-border: rgba(0, 0, 0, 0.08);
-    --surface-active: rgba(0, 0, 0, 0.08);
-    --surface-muted: rgba(0, 0, 0, 0.04);
-    --surface-panel: rgba(255, 255, 255, 0.94);
-    --surface-panel-soft: rgba(255, 255, 255, 0.82);
-    --surface-input: rgba(255, 255, 255, 0.85);
-    --surface-input-border: rgba(0, 0, 0, 0.12);
+    --surface-active: #e4e6eb;
+    --surface-muted: #f0f1f4;
+    --surface-panel: #f6f7f9;
+    --surface-panel-soft: #f3f4f6;
+    --surface-input: #fcfcfd;
+    --surface-input-border: rgba(0, 0, 0, 0.1);
+    --surface-box: #f0f1f4;
+    --surface-inset: #e8eaef;
 
-    --glass-fill-top: rgba(255, 255, 255, 0.92);
-    --glass-fill-mid: rgba(255, 255, 255, 0.72);
-    --glass-fill-bottom: rgba(255, 255, 255, 0.55);
-    --glass-edge: rgba(255, 255, 255, 0.95);
-    --glass-inset: rgba(255, 255, 255, 0.98);
+    --glass-fill-top: rgba(252, 252, 253, 0.96);
+    --glass-fill-mid: rgba(247, 248, 250, 0.9);
+    --glass-fill-bottom: rgba(241, 243, 246, 0.84);
+    --glass-edge: rgba(255, 255, 255, 0.78);
+    --glass-inset: rgba(255, 255, 255, 0.55);
 
     --hero-glow: rgba(0, 0, 0, 0.04);
     --card-hover-border: rgba(0, 0, 0, 0.14);
     --card-hover-glow: rgba(0, 0, 0, 0.06);
-    --card-inset: rgba(255, 255, 255, 0.95);
+    --card-inset: rgba(255, 255, 255, 0.72);
 
     --btn-solid-bg: linear-gradient(180deg, #000000 0%, #000000 100%);
     --btn-solid-fg: #ffffff;
@@ -168,10 +170,10 @@
     --input-focus-ring: rgba(0, 0, 0, 0.08);
 
     --body-bg-backdrop:
-        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(255, 255, 255, 0.95) 0%, transparent 58%),
-        radial-gradient(ellipse 70% 50% at 85% 20%, rgba(0, 0, 0, 0.03) 0%, transparent 55%),
-        radial-gradient(ellipse 75% 55% at 50% 100%, rgba(0, 0, 0, 0.02) 0%, transparent 60%),
-        linear-gradient(165deg, #f2f2f7 0%, #e8e8ed 45%, #f2f2f7 100%);
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(252, 252, 253, 0.95) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 50% at 85% 20%, rgba(235, 237, 242, 0.55) 0%, transparent 55%),
+        radial-gradient(ellipse 75% 55% at 50% 100%, rgba(228, 230, 235, 0.35) 0%, transparent 60%),
+        linear-gradient(165deg, #f2f3f6 0%, #ebedf2 45%, #f2f3f6 100%);
 
     --noise-opacity: 0.06;
     --noise-blend: soft-light;
@@ -358,55 +360,171 @@ textarea:focus {
 }
 
 /* style.css 硬编码面板 — 浅色适配 */
-[data-color-scheme="light"] .nav-link.active,
-[data-color-scheme="light"] .auth-button:hover {
-    background: var(--surface-active);
-}
-
-[data-color-scheme="light"] .auth-button,
-[data-color-scheme="light"] .auth-toggle-btn {
-    background: var(--surface-muted);
-    border-color: var(--border);
+[data-color-scheme="light"] .nav-link.active {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
 }
 
 [data-color-scheme="light"] .auth-toggle-btn.active {
-    background: var(--surface-active);
-    color: var(--text-primary);
-}
-
-[data-color-scheme="light"] .form-field input {
-    background: var(--surface-input);
-    border-color: var(--surface-input-border);
-}
-
-[data-color-scheme="light"] .mcwws-auth-avatar-btn,
-[data-color-scheme="light"] .mcwws-auth-popover-body,
-[data-color-scheme="light"] .mcwws-auth-popover-body::before {
-    background: var(--surface-panel-soft);
-}
-
-[data-color-scheme="light"] .cart-drawer,
-[data-color-scheme="light"] .cart-drawer-footer {
-    background: var(--surface-panel);
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
 }
 
 [data-color-scheme="light"] .cart-backdrop {
     background: var(--backdrop-dim);
 }
 
-[data-color-scheme="light"] .cart-line {
-    background: var(--bg-secondary);
-    border-color: var(--border);
-}
-
 [data-color-scheme="light"] .hero-clock-panel {
-    background: linear-gradient(135deg, rgba(255, 255, 255, 0.92) 0%, rgba(255, 255, 255, 0.75) 100%);
+    background: linear-gradient(135deg, #fafbfc 0%, #f0f1f4 100%);
     border-color: var(--border);
 }
 
-[data-color-scheme="light"] .build-client-sync-row:hover,
+/* 浅色层次：底 → 卡片 → 嵌套块 → 输入框（由浅到略深，均接近白） */
+[data-color-scheme="light"] .time-btn,
+[data-color-scheme="light"] .tab-btn,
+[data-color-scheme="light"] .page-btn,
+[data-color-scheme="light"] .pagination-btn,
+[data-color-scheme="light"] .auth-button,
+[data-color-scheme="light"] .auth-toggle-btn,
+[data-color-scheme="light"] .cart-drawer-close,
+[data-color-scheme="light"] .cart-qty {
+    background: var(--bg-tertiary);
+    border-color: var(--border);
+}
+
+/* 浅色：分类筛选按钮略深于通用 chip，层次更清晰 */
+[data-color-scheme="light"] .category-btn {
+    background: #f0f1f4;
+    border-color: var(--border);
+}
+
+[data-color-scheme="light"] .category-btn:hover {
+    background: #eceef2;
+}
+
+/* 浅色：选中态黑底白字（覆盖上方未选中层次） */
+[data-color-scheme="light"] .category-btn.active,
+[data-color-scheme="light"] .time-btn.active,
+[data-color-scheme="light"] .tab-btn.active {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
 [data-color-scheme="light"] .category-btn.active .category-count {
-    background: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.22);
+    color: inherit;
+}
+
+[data-color-scheme="light"] .build-client-sync-row.is-selected {
+    background: #000000;
+    color: #ffffff;
+}
+
+[data-color-scheme="light"] .stat-card,
+[data-color-scheme="light"] .chart-card,
+[data-color-scheme="light"] .leaderboard-item,
+[data-color-scheme="light"] .shop-item-card,
+[data-color-scheme="light"] .trade-offer-card,
+[data-color-scheme="light"] .cart-line,
+[data-color-scheme="light"] .litematica-quote-summary {
+    background: var(--bg-card);
+    border-color: var(--border);
+}
+
+[data-color-scheme="light"] .shop-item-card-prices,
+[data-color-scheme="light"] .item-modal-trade-row,
+[data-color-scheme="light"] .item-modal-chart-wrap,
+[data-color-scheme="light"] .build-paste-hash-box,
+[data-color-scheme="light"] .build-client-sync-toolbar-meta,
+[data-color-scheme="light"] .build-client-sync-table th,
+[data-color-scheme="light"] .litematica-quote-table th,
+[data-color-scheme="light"] .litematica-dropzone {
+    background: var(--surface-box);
+    border-color: var(--border);
+}
+
+[data-color-scheme="light"] .filter-select,
+[data-color-scheme="light"] .search-input,
+[data-color-scheme="light"] .form-field input,
+[data-color-scheme="light"] .item-modal-link-btn {
+    background: var(--surface-input);
+    border-color: var(--surface-input-border);
+}
+
+/* 物品弹窗数量控件：深色黑底 / 浅色白底 */
+:root,
+[data-color-scheme="dark"] {
+    --item-modal-qty-bg: #000000;
+    --item-modal-qty-fg: #ffffff;
+    --item-modal-qty-border: rgba(255, 255, 255, 0.14);
+    --item-modal-qty-hover: #1a1a1a;
+}
+
+[data-color-scheme="light"] {
+    --item-modal-qty-bg: #ffffff;
+    --item-modal-qty-fg: #000000;
+    --item-modal-qty-border: rgba(0, 0, 0, 0.12);
+    --item-modal-qty-hover: #f2f2f2;
+}
+
+.item-modal-qty {
+    background: var(--item-modal-qty-bg);
+    border: 1px solid var(--item-modal-qty-border);
+}
+
+.item-modal-qty-btn {
+    background: var(--item-modal-qty-bg);
+    color: var(--item-modal-qty-fg);
+}
+
+.item-modal-qty-btn:hover:not(:disabled) {
+    background: var(--item-modal-qty-hover);
+}
+
+.item-modal-qty-value {
+    background: var(--item-modal-qty-bg);
+    color: var(--item-modal-qty-fg);
+}
+
+[data-color-scheme="light"] .cart-drawer,
+[data-color-scheme="light"] .cart-drawer-footer,
+[data-color-scheme="light"] .mcwws-auth-popover-body,
+[data-color-scheme="light"] .mcwws-auth-popover-body::before,
+[data-color-scheme="light"] .mcwws-auth-avatar-btn {
+    background: var(--surface-panel);
+    border-color: var(--border);
+}
+
+[data-color-scheme="light"] .health-bar {
+    background: var(--surface-inset);
+}
+
+[data-color-scheme="light"] .time-btn:hover,
+[data-color-scheme="light"] .tab-btn:hover,
+[data-color-scheme="light"] .leaderboard-item:hover,
+[data-color-scheme="light"] .page-btn:hover:not(:disabled),
+[data-color-scheme="light"] .pagination-btn:hover:not(:disabled),
+[data-color-scheme="light"] .item-modal-link-btn:hover,
+[data-color-scheme="light"] .auth-button:hover {
+    background: var(--surface-hover);
+}
+
+[data-color-scheme="light"] .trade-btn--disabled,
+[data-color-scheme="light"] .cart-btn--disabled {
+    background: var(--surface-muted);
+    color: #000000;
+    border: 1px solid var(--border);
+}
+
+[data-color-scheme="light"] .build-client-sync-row:hover {
+    background: var(--surface-hover);
+}
+
+[data-color-scheme="light"] .glass {
+    border-color: rgba(255, 255, 255, 0.65);
 }
 
 [data-color-scheme="light"] .build-paste-client-box {
@@ -430,6 +548,10 @@ textarea:focus {
 [data-color-scheme="light"] input::placeholder,
 [data-color-scheme="light"] textarea::placeholder {
     color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-color-scheme="light"] .litematica-dropzone-title {
+    color: #000000;
 }
 
 [data-color-scheme="light"] .build-client-sync-support-hint {

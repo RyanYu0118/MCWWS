@@ -523,6 +523,43 @@ function syncVisibleCardQuantities() {
         if (qtyEl) qtyEl.textContent = String(qty);
         if (decBtn) decBtn.disabled = qty <= 0;
     });
+    const modal = document.getElementById('itemModal');
+    const modalItemId = modal?.dataset?.itemId;
+    if (modalItemId) syncItemModalQuantity(modalItemId);
+}
+
+function syncItemModalQuantity(itemId) {
+    const modal = document.getElementById('itemModal');
+    if (!modal || modal.dataset.itemId !== itemId || !modal.classList.contains('active')) return;
+    const qty = getCartTotalQuantityForItem(itemId);
+    const qtyEl = modal.querySelector('[data-modal-qty-value]');
+    const decBtn = modal.querySelector('[data-modal-qty-action="dec"]');
+    if (qtyEl) qtyEl.textContent = String(qty);
+    if (decBtn) decBtn.disabled = qty <= 0;
+}
+
+function renderItemModalQtyHtml(itemId) {
+    const qty = getCartTotalQuantityForItem(itemId);
+    const safeId = escapeHtml(itemId);
+    return `
+        <div class="cart-qty item-modal-qty" data-item-modal-qty>
+            <button type="button" class="cart-qty-btn item-modal-qty-btn" data-modal-qty-action="dec" data-item-id="${safeId}" ${qty <= 0 ? 'disabled' : ''} aria-label="减少">-</button>
+            <span class="cart-qty-value item-modal-qty-value" data-modal-qty-value>${qty}</span>
+            <button type="button" class="cart-qty-btn item-modal-qty-btn" data-modal-qty-action="inc" data-item-id="${safeId}" aria-label="增加">+</button>
+        </div>
+    `;
+}
+
+function bindItemModalQtyControls(modalBody, itemId) {
+    modalBody.querySelector('[data-item-modal-qty]')?.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-modal-qty-action]');
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const action = btn.getAttribute('data-modal-qty-action');
+        if (action === 'inc') changeCardItemQuantity(itemId, 1);
+        else if (action === 'dec') changeCardItemQuantity(itemId, -1);
+    });
 }
 
 function changeCardItemQuantity(itemId, delta) {
@@ -1414,9 +1451,9 @@ async function showItemDetails(itemId) {
                         </div>
                     </div>
                     <div class="item-modal-actions">
-                        ${canAdd ? `<button type="button" class="cart-offer-add-btn" data-item-modal-cart="${escapeHtml(mergedItem.id)}">加入购物车</button>` : ''}
+                        ${canAdd ? renderItemModalQtyHtml(mergedItem.id) : ''}
                         <a class="item-modal-link-btn" href="${escapeHtml(detailUrl)}" target="_blank" rel="noopener noreferrer">新标签页打开</a>
-                        ${offers.length > 1 ? '<span class="item-modal-action-hint">默认加入当前首选上架位，可在购物车或多商店选择中调整。</span>' : ''}
+                        ${offers.length > 1 ? '<span class="item-modal-action-hint">多商店上架时，数量变更作用于当前首选上架位。</span>' : ''}
                     </div>
                 </div>
             </div>
@@ -1439,10 +1476,7 @@ async function showItemDetails(itemId) {
         if (window.McTextureAnim) window.McTextureAnim.initInContainer(modalBody);
         if (window.McEnchantGlint) window.McEnchantGlint.initInContainer(modalBody);
 
-        modalBody.querySelector('[data-item-modal-cart]')?.addEventListener('click', () => {
-            closeModal();
-            handleAddToCartClick(itemId);
-        });
+        bindItemModalQtyControls(modalBody, itemId);
         modalBody.querySelectorAll('[data-item-history-range]').forEach((btn) => {
             btn.addEventListener('click', () => {
                 loadItemHistoryRange(itemId, btn.dataset.itemHistoryRange || '7d');
@@ -2438,7 +2472,7 @@ function renderCards() {
                 </div>
             </div>
             
-            <div style="background: rgba(15,23,42,0.6); padding:12px; border-radius:8px; border: 1px solid rgba(255,255,255,0.02);">
+            <div class="shop-item-card-prices">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;">
                     <span style="color:var(--text-secondary); font-size:0.85rem;">系统买入</span>
                     <strong data-price-role="buy" style="color:#34D399; font-family: monospace; font-size: 1.05rem;">￥${item.buyPrice.toFixed(2)}</strong>
