@@ -1,0 +1,321 @@
+/* MCWWS 备选主题：iOS 26 液态玻璃风格 */
+
+/* ═══ 默认主题语义变量补充 ═══ */
+:root,
+[data-theme="default"] {
+    --navbar-bg: rgba(15, 23, 42, 0.9);
+    --navbar-border: var(--border);
+    --modal-overlay: rgba(2, 6, 23, 0.72);
+}
+
+/* ═══ iOS 26 玻璃主题 ═══ */
+[data-theme="ios26-glass"] {
+    color-scheme: dark;
+
+    --primary: #0A84FF;
+    --primary-light: #64B5FF;
+    --primary-dark: #0066CC;
+
+    --accent: #5AC8FA;
+    --accent-light: #8DD7FF;
+
+    --success: #30D158;
+    --success-light: #6EE78A;
+    --danger: #FF453A;
+    --danger-light: #FF6961;
+    --warning: #FFD60A;
+
+    --bg-primary: #07070d;
+    --bg-secondary: rgba(255, 255, 255, 0.06);
+    --bg-tertiary: rgba(255, 255, 255, 0.1);
+    --bg-card: rgba(255, 255, 255, 0.08);
+
+    --text-primary: rgba(255, 255, 255, 0.96);
+    --text-secondary: rgba(255, 255, 255, 0.78);
+    --text-muted: rgba(255, 255, 255, 0.52);
+
+    --border: rgba(255, 255, 255, 0.14);
+    --border-glow: rgba(10, 132, 255, 0.35);
+
+    --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.28);
+    --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.32);
+    --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.38);
+    --shadow-glow: 0 0 48px rgba(10, 132, 255, 0.18);
+
+    --glass-bg: rgba(255, 255, 255, 0.1);
+    --glass-border: rgba(255, 255, 255, 0.22);
+    --glass-blur: 32px;
+
+    --gradient-primary: linear-gradient(135deg, #0A84FF 0%, #5AC8FA 45%, #BF5AF2 100%);
+    --gradient-hero: linear-gradient(160deg, #07070d 0%, #101025 40%, #0a0a14 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+
+    --radius-sm: 12px;
+    --radius-md: 18px;
+    --radius-lg: 24px;
+    --radius-xl: 32px;
+
+    --navbar-bg: rgba(255, 255, 255, 0.07);
+    --navbar-border: rgba(255, 255, 255, 0.16);
+    --modal-overlay: rgba(0, 0, 0, 0.45);
+}
+
+[data-theme="ios26-glass"] body {
+    background: var(--bg-primary);
+    position: relative;
+    isolation: isolate;
+}
+
+[data-theme="ios26-glass"] body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -2;
+    background:
+        radial-gradient(ellipse 90% 70% at 12% 8%, rgba(10, 132, 255, 0.42) 0%, transparent 58%),
+        radial-gradient(ellipse 75% 55% at 88% 18%, rgba(191, 90, 242, 0.34) 0%, transparent 55%),
+        radial-gradient(ellipse 80% 60% at 55% 95%, rgba(48, 209, 255, 0.22) 0%, transparent 60%),
+        radial-gradient(ellipse 50% 40% at 70% 55%, rgba(255, 55, 95, 0.12) 0%, transparent 50%),
+        linear-gradient(165deg, #07070d 0%, #0d0d1a 45%, #080810 100%);
+    pointer-events: none;
+}
+
+[data-theme="ios26-glass"] body::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    opacity: 0.35;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    pointer-events: none;
+    mix-blend-mode: overlay;
+}
+
+[data-theme="ios26-glass"] .glass {
+    background: linear-gradient(
+        145deg,
+        rgba(255, 255, 255, 0.16) 0%,
+        rgba(255, 255, 255, 0.06) 42%,
+        rgba(255, 255, 255, 0.03) 100%
+    );
+    backdrop-filter: blur(var(--glass-blur)) saturate(185%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(185%);
+    border: 1px solid rgba(255, 255, 255, 0.22);
+    box-shadow:
+        var(--shadow-md),
+        inset 0 1px 0 rgba(255, 255, 255, 0.2),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+}
+
+[data-theme="ios26-glass"] .navbar {
+    background: var(--navbar-bg);
+    backdrop-filter: blur(40px) saturate(180%);
+    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    border-bottom: 1px solid var(--navbar-border);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+}
+
+[data-theme="ios26-glass"] .nav-link {
+    border-radius: 999px;
+}
+
+[data-theme="ios26-glass"] .nav-link:hover,
+[data-theme="ios26-glass"] .nav-link.active {
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+[data-theme="ios26-glass"] .hero-glow,
+[data-theme="ios26-glass"] .services-hub-hero-glow {
+    background: radial-gradient(ellipse at center, rgba(10, 132, 255, 0.28) 0%, rgba(191, 90, 242, 0.12) 45%, transparent 72%);
+    filter: blur(8px);
+}
+
+[data-theme="ios26-glass"] .stat-card,
+[data-theme="ios26-glass"] .services-module-card,
+[data-theme="ios26-glass"] .build-tool-card,
+[data-theme="ios26-glass"] .item-card {
+    transition: transform var(--transition-normal), box-shadow var(--transition-normal), border-color var(--transition-normal);
+}
+
+[data-theme="ios26-glass"] .stat-card:hover,
+[data-theme="ios26-glass"] .services-module-card:hover,
+[data-theme="ios26-glass"] .build-tool-card:hover,
+[data-theme="ios26-glass"] .item-card:hover {
+    transform: translateY(-3px) scale(1.01);
+    border-color: rgba(255, 255, 255, 0.32);
+    box-shadow:
+        var(--shadow-lg),
+        0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+        0 0 32px rgba(10, 132, 255, 0.12);
+}
+
+[data-theme="ios26-glass"] .cart-drawer-btn--primary,
+[data-theme="ios26-glass"] .refresh-btn,
+[data-theme="ios26-glass"] .mcwws-auth-popover-action {
+    background: linear-gradient(180deg, rgba(10, 132, 255, 0.95) 0%, rgba(0, 102, 204, 0.92) 100%);
+    border: 1px solid rgba(255, 255, 255, 0.25);
+    box-shadow: 0 4px 16px rgba(10, 132, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="ios26-glass"] .cart-drawer-btn--ghost {
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.16);
+    backdrop-filter: blur(12px);
+}
+
+[data-theme="ios26-glass"] .modal {
+    background: var(--modal-overlay);
+    backdrop-filter: blur(12px) saturate(140%);
+}
+
+[data-theme="ios26-glass"] .hero-search,
+[data-theme="ios26-glass"] input[type="text"],
+[data-theme="ios26-glass"] input[type="password"],
+[data-theme="ios26-glass"] input[type="number"],
+[data-theme="ios26-glass"] select,
+[data-theme="ios26-glass"] textarea {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    backdrop-filter: blur(16px);
+    border-radius: var(--radius-md) !important;
+}
+
+[data-theme="ios26-glass"] .hero-search:focus,
+[data-theme="ios26-glass"] input:focus,
+[data-theme="ios26-glass"] select:focus,
+[data-theme="ios26-glass"] textarea:focus {
+    border-color: rgba(10, 132, 255, 0.55) !important;
+    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+}
+
+[data-theme="ios26-glass"] .services-hub-page {
+    background: transparent;
+}
+
+[data-theme="ios26-glass"] .litematica-dropzone {
+    background: rgba(255, 255, 255, 0.05);
+    border-color: rgba(255, 255, 255, 0.2);
+}
+
+/* ═══ 主题切换器 ═══ */
+.mcwws-theme-switcher {
+    position: relative;
+    flex-shrink: 0;
+}
+
+.mcwws-theme-switcher-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    height: 36px;
+    padding: 0 12px;
+    border-radius: 999px;
+    border: 1px solid var(--border);
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    cursor: pointer;
+    font-size: 13px;
+    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+}
+
+.mcwws-theme-switcher-btn:hover {
+    color: var(--text-primary);
+    border-color: var(--border-glow);
+    background: var(--bg-tertiary);
+}
+
+.mcwws-theme-switcher-icon {
+    font-size: 15px;
+    line-height: 1;
+    opacity: 0.9;
+}
+
+.mcwws-theme-switcher-menu {
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
+    min-width: 220px;
+    padding: 10px;
+    border-radius: var(--radius-md);
+    z-index: 1200;
+}
+
+.mcwws-theme-switcher-title {
+    margin: 0 0 8px;
+    padding: 0 8px 6px;
+    font-size: 11px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.mcwws-theme-option {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    width: 100%;
+    padding: 10px 12px;
+    margin: 0;
+    border: 1px solid transparent;
+    border-radius: var(--radius-sm);
+    background: transparent;
+    color: var(--text-primary);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--transition-fast), border-color var(--transition-fast);
+}
+
+.mcwws-theme-option:hover {
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.mcwws-theme-option.is-active {
+    background: rgba(139, 92, 246, 0.15);
+    border-color: var(--border-glow);
+}
+
+[data-theme="ios26-glass"] .mcwws-theme-option.is-active {
+    background: rgba(10, 132, 255, 0.18);
+    border-color: rgba(10, 132, 255, 0.4);
+}
+
+.mcwws-theme-option-label {
+    font-size: 14px;
+}
+
+.mcwws-theme-option-desc {
+    font-size: 11px;
+    color: var(--text-muted);
+}
+
+.mcwws-theme-switcher--map {
+    margin-bottom: 8px;
+}
+
+.mcwws-theme-switcher--float {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 9999;
+}
+
+.mcwws-theme-switcher-bar {
+    display: flex;
+    justify-content: center;
+    margin-bottom: 12px;
+}
+
+@media (max-width: 640px) {
+    .mcwws-theme-switcher-label {
+        display: none;
+    }
+
+    .mcwws-theme-switcher-btn {
+        width: 36px;
+        padding: 0;
+        justify-content: center;
+    }
+}

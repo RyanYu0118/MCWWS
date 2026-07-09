@@ -61,6 +61,12 @@ body, h1, h2, h3, h4, h5, h6, p, span, div, input, button, select, strong, b, a 
     --glass-border: rgba(255, 255, 255, 0.1);
     --glass-blur: 12px;
 
+    /* Chrome */
+    --navbar-bg: rgba(15, 23, 42, 0.9);
+    --navbar-border: var(--border);
+    --modal-overlay: rgba(2, 6, 23, 0.72);
+}
+
     /* Gradients */
     --gradient-primary: linear-gradient(135deg, #8B5CF6 0%, #06B6D4 100%);
     --gradient-hero: linear-gradient(135deg, #0F172A 0%, #1E293B 50%, #0F172A 100%);
@@ -116,9 +122,9 @@ body {
     left: 0;
     right: 0;
     height: 64px;
-    background: rgba(15, 23, 42, 0.9);
+    background: var(--navbar-bg);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--border);
+    border-bottom: 1px solid var(--navbar-border);
     display: flex;
     align-items: center;
     justify-content: space-between;
