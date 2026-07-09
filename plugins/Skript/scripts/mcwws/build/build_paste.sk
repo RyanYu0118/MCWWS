@@ -7,7 +7,6 @@ import:
     java.nio.charset.StandardCharsets
     java.util.UUID
     org.bukkit.Bukkit
-    org.bukkit.GameMode
     com.sk89q.worldedit.WorldEdit
     com.sk89q.worldedit.bukkit.BukkitAdapter
     com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats
@@ -70,32 +69,33 @@ function mcwwsPasteSchemTransformSuffix(rotation: text, mirror: text) :: text:
     return {_suffix}
 
 function mcwwsResolveSchemNameForOrder(oid: text, contentHash: text, storedName: text) :: text:
+    set {_rotation} to mcwwsReadPasteOrderField({_oid}, "rotation")
+    set {_mirror} to mcwwsReadPasteOrderField({_oid}, "mirror")
+    set {_suffix} to mcwwsPasteSchemTransformSuffix({_rotation}, {_mirror})
+    if {_suffix} is not "":
+        set {_hash} to lowercase "%{_contentHash}%"
+        set {_shortKey} to subtext of {_hash} from 1 to 16
+        set {_candidate} to "mcwws_%{_shortKey}%%{_suffix}%"
+        if mcwwsSchemFileExists({_candidate}) is true:
+            return {_candidate}
     set {_stored} to "%{_storedName}%"
     if {_stored} is not "":
         if mcwwsSchemFileExists({_stored}) is true:
             return {_stored}
-    if mcwwsPasteTransformIsBaked({_oid}) is true:
-        set {_hash} to lowercase "%{_contentHash}%"
-        set {_shortKey} to subtext of {_hash} from 1 to 16
-        set {_rotation} to mcwwsReadPasteOrderField({_oid}, "rotation")
-        set {_mirror} to mcwwsReadPasteOrderField({_oid}, "mirror")
-        set {_candidate} to "mcwws_%{_shortKey}%%mcwwsPasteSchemTransformSuffix({_rotation}, {_mirror})%"
-        if mcwwsSchemFileExists({_candidate}) is true:
-            return {_candidate}
     return mcwwsResolveSchemName({_contentHash}, {_storedName})
 
 function mcwwsPasteApplyGamemode(p: player, gm: text):
     set {_g} to lowercase "%{_gm}%"
     if {_g} is "spectator":
-        {_p}.setGameMode(GameMode.SPECTATOR)
+        set gamemode of {_p} to spectator
         stop
     if {_g} is "creative":
-        {_p}.setGameMode(GameMode.CREATIVE)
+        set gamemode of {_p} to creative
         stop
     if {_g} is "adventure":
-        {_p}.setGameMode(GameMode.ADVENTURE)
+        set gamemode of {_p} to adventure
         stop
-    {_p}.setGameMode(GameMode.SURVIVAL)
+    set gamemode of {_p} to survival
 
 function mcwwsPasteYamlPath() :: text:
     return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
@@ -355,7 +355,10 @@ command /build [<text>] [<text>] [<text>] [<text>] [<text>] [<text>] [<text>]:
             if arg-2 is not set:
                 send "§c用法: /build paste <订单号>" to player
                 stop
-            mcwwsPasteExecute(player, arg-2)
+            set {mcwws.paste.executor} to player
+            wait 1 tick
+            mcwwsPasteExecuteInternal(arg-2, false)
+            delete {mcwws.paste.executor}
             stop
         if {_sub} is "undo":
             if arg-2 is not set:
@@ -399,6 +402,7 @@ command /mcwwspasteasplayer <text>:
             send "§c订单不存在或不属于你。" to player
             stop
         set {mcwws.paste.executor} to player
+        wait 1 tick
         mcwwsPasteExecuteInternal({_oid}, true)
         delete {mcwws.paste.executor}
 
@@ -536,6 +540,8 @@ function mcwwsPasteHoldPlayerTicks(p: player, anchor: location, ticks: number):
     loop {_ticks} times:
         if {mcwws.paste.hold.%{_key}%.active} is not true:
             stop loop
+        if gamemode of {_p} is not spectator:
+            set gamemode of {_p} to spectator
         teleport {_p} to {_anchor}
         if mod(loop-number, 20) is 0:
             mcwwsPasteShowHoldTitle({_p})
@@ -560,33 +566,32 @@ function mcwwsPasteEndPlayerHold(p: player):
 function mcwwsPasteAbortPlayerHold(p: player):
     mcwwsPasteEndPlayerHold({_p})
 
-function mcwwsPasteExecuteLegacyPlayerRelative(p: player, schem: text, world: world, px: number, py: number, pz: number, rotation: text, mirror: text):
-    set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
-    mcwwsPasteBeginPlayerHold({_p}, {_anchor})
-    send "§7旧订单未烘焙变换，使用玩家相对粘贴…" to {_p}
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
-    make {_p} execute command "//schem load %{_schem}%"
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
-    mcwwsPasteApplyClipboardTransform({_p}, {_anchor}, {_rotation}, {_mirror})
-    make {_p} execute command "//paste -a"
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
-    mcwwsPasteEndPlayerHold({_p})
-
-function mcwwsPasteExecutePlayerSchemAt(p: player, schem: text, world: world, px: number, py: number, pz: number, oid: text, transformBaked: boolean) :: boolean:
+function mcwwsPasteExecutePlayerSchemAt(p: player, schem: text, world: world, px: number, py: number, pz: number, oid: text, rotation: text, mirror: text, transformBaked: boolean) :: boolean:
     set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
     mcwwsPasteBeginPlayerHold({_p}, {_anchor})
     send "§7原理图: §e%{_schem}% §7→ 角点 %{_px}%, %{_py}%, %{_pz}%" to {_p}
+    set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
+    set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
     if {_transformBaked} is true:
-        send "§7变换已烘焙进原理图，将以你的身份执行 WorldEdit 粘贴…" to {_p}
-    else:
-        send "§7将以你的身份执行 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
+        send "§7变换已烘焙: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+    else if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
+        send "§7将应用变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
     mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
-    make {_p} execute command "//schem load %{_schem}%"
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
-    make {_p} execute command "//paste -a"
+    set {_ok} to false
+    if {_transformBaked} is true:
+        send "§7以你的身份执行绝对坐标粘贴…" to {_p}
+        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
+    else:
+        send "§7以你的身份加载原理图并粘贴（支持 §f//undo§7）…" to {_p}
+        make {_p} execute command "//schem load %{_schem}%"
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
+        if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
+            mcwwsPasteApplyClipboardTransform({_p}, {_anchor}, {_rotation}, {_mirror})
+        make {_p} execute command "//paste -a"
+        set {_ok} to true
     mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     mcwwsPasteEndPlayerHold({_p})
-    return true
+    return {_ok}
 
 function mcwwsPasteApplyClipboardTransform(p: player, anchor: location, rotation: text, mirror: text):
     set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
@@ -623,6 +628,7 @@ function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
 
 function mcwwsPasteExecute(p: player, oid: text):
     set {mcwws.paste.executor} to {_p}
+    wait 1 tick
     mcwwsPasteExecuteInternal({_oid}, false)
     delete {mcwws.paste.executor}
 
@@ -703,16 +709,14 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     mcwwsPasteNotify({_p}, "§7绝对粘贴角点: §f%{_px}%, %{_py}%, %{_pz}% §7（无需站到位）")
     if {_transformBaked} is true:
         mcwwsPasteNotify({_p}, "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
+    else if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
+        mcwwsPasteNotify({_p}, "§7将用 WorldEdit 应用变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
+    mcwwsPasteNotify({_p}, "§7使用原理图: §e%{_schem}%")
     set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, true)
     if size of {_tempPerms::*} > 0:
         send "§7已授予临时 WorldEdit 权限…" to {_p}
     wait 2 ticks
-    set {_ok} to false
-    if {_needsLegacyTransform} is true:
-        mcwwsPasteExecuteLegacyPlayerRelative({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_rotation}, {_mirror})
-        set {_ok} to true
-    else:
-        set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_transformBaked})
+    set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_rotation}, {_mirror}, {_transformBaked})
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is not true:
         if {_p} is set:
