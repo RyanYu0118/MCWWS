@@ -7,6 +7,7 @@ import:
     java.nio.charset.StandardCharsets
     java.util.UUID
     org.bukkit.Bukkit
+    org.bukkit.GameMode
     com.sk89q.worldedit.WorldEdit
     com.sk89q.worldedit.bukkit.BukkitAdapter
     com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats
@@ -51,6 +52,50 @@ function mcwwsResolveSchemName(contentHash: text, storedName: text) :: text:
     if {_storedName} is not "":
         return {_storedName}
     return {_short}
+
+function mcwwsPasteSchemTransformSuffix(rotation: text, mirror: text) :: text:
+    set {_suffix} to ""
+    set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
+    set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
+    if {_rotation} is "CLOCKWISE_90":
+        set {_suffix} to "%{_suffix}%_r90"
+    else if {_rotation} is "CLOCKWISE_180":
+        set {_suffix} to "%{_suffix}%_r180"
+    else if {_rotation} is "COUNTERCLOCKWISE_90":
+        set {_suffix} to "%{_suffix}%_r270"
+    if {_mirror} is "LEFT_RIGHT":
+        set {_suffix} to "%{_suffix}%_mlr"
+    else if {_mirror} is "FRONT_BACK":
+        set {_suffix} to "%{_suffix}%_mfb"
+    return {_suffix}
+
+function mcwwsResolveSchemNameForOrder(oid: text, contentHash: text, storedName: text) :: text:
+    set {_stored} to "%{_storedName}%"
+    if {_stored} is not "":
+        if mcwwsSchemFileExists({_stored}) is true:
+            return {_stored}
+    if mcwwsPasteTransformIsBaked({_oid}) is true:
+        set {_hash} to lowercase "%{_contentHash}%"
+        set {_shortKey} to subtext of {_hash} from 1 to 16
+        set {_rotation} to mcwwsReadPasteOrderField({_oid}, "rotation")
+        set {_mirror} to mcwwsReadPasteOrderField({_oid}, "mirror")
+        set {_candidate} to "mcwws_%{_shortKey}%%mcwwsPasteSchemTransformSuffix({_rotation}, {_mirror})%"
+        if mcwwsSchemFileExists({_candidate}) is true:
+            return {_candidate}
+    return mcwwsResolveSchemName({_contentHash}, {_storedName})
+
+function mcwwsPasteApplyGamemode(p: player, gm: text):
+    set {_g} to lowercase "%{_gm}%"
+    if {_g} is "spectator":
+        {_p}.setGameMode(GameMode.SPECTATOR)
+        stop
+    if {_g} is "creative":
+        {_p}.setGameMode(GameMode.CREATIVE)
+        stop
+    if {_g} is "adventure":
+        {_p}.setGameMode(GameMode.ADVENTURE)
+        stop
+    {_p}.setGameMode(GameMode.SURVIVAL)
 
 function mcwwsPasteYamlPath() :: text:
     return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
@@ -205,8 +250,10 @@ function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build go <订单号> [x y z] §7- 设锚点并绝对坐标粘贴" to {_p}
     send "§6[投影粘贴] §f/build anchor <订单号> [x y z] §7- 设置 Litematica 放置原点（可填坐标）" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 按已存锚点绝对坐标粘贴（无需站到位）" to {_p}
-    send "§7也可在网页点击「网页粘贴」，无需进游戏。" to {_p}
-    send "§7粘贴完成后订单属主可用 §f//undo §7撤销（FAWE 历史）。" to {_p}
+    send "§6[投影粘贴] §f/build undo <订单号> §7- 撤销上一次粘贴（等同 //undo）" to {_p}
+    send "§7也可在网页点击「网页粘贴」；在线时自动用 WorldEdit 粘贴以支持撤销。" to {_p}
+    send "§7若 //undo 无效，请确认未开启 §f//fast §7且粘贴时你在服务器在线。" to {_p}
+    send "§7在线粘贴时会短暂切换旁观并锁定粘贴原点（悬浮建筑适用）。" to {_p}
     send "§7悬浮建筑请用 §f/build anchor <订单号> <x> <y> <z> §7填入 Litematica 原点坐标。" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
 
@@ -311,6 +358,16 @@ command /build [<text>] [<text>] [<text>] [<text>] [<text>] [<text>] [<text>]:
                 stop
             mcwwsPasteExecute(player, arg-2)
             stop
+        if {_sub} is "undo":
+            if arg-2 is not set:
+                send "§c用法: /build undo <订单号>" to player
+                stop
+            if mcwwsPasteOrderBelongsTo(player, arg-2) is false:
+                send "§c订单不存在或不属于你。" to player
+                stop
+            send "§7正在执行 WorldEdit 撤销…" to player
+            make player execute command "//undo"
+            stop
         if {_sub} is "go":
             if arg-2 is not set:
                 send "§c用法: /build go <订单号> [x y z] [旋转] [镜像]" to player
@@ -329,7 +386,20 @@ command /mcwwswebpaste <text>:
         set {_oid} to arg-1
         set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
         set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
-        mcwwsPasteExecuteInternal({_oid}, {_p}, true)
+        if {_p} is set:
+            make {_p} execute command "/mcwwspasteasplayer %{_oid}%"
+        else:
+            mcwwsPasteExecuteInternal({_oid}, true)
+
+command /mcwwspasteasplayer <text>:
+    trigger:
+        set {_oid} to arg-1
+        if mcwwsPasteOrderBelongsTo(player, {_oid}) is false:
+            send "§c订单不存在或不属于你。" to player
+            stop
+        set {mcwws.paste.executor} to player
+        mcwwsPasteExecuteInternal({_oid}, true)
+        delete {mcwws.paste.executor}
 
 function mcwwsListPasteOrders(p: player):
     set {_path} to mcwwsPasteYamlPath()
@@ -410,7 +480,7 @@ function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean, coordX: text,
 function mcwwsPasteGo(p: player, oid: text, coordX: text, coordY: text, coordZ: text, rotationArg: text, mirrorArg: text):
     mcwwsPasteSetAnchor({_p}, {_oid}, true, {_coordX}, {_coordY}, {_coordZ}, {_rotationArg}, {_mirrorArg})
     wait 2 ticks
-    mcwwsPasteExecuteInternal({_oid}, {_p}, false)
+    mcwwsPasteExecute({_p}, {_oid})
 
 function mcwwsRunConsoleCommand(cmd: text):
     set {_sender} to Bukkit.getConsoleSender()
@@ -418,62 +488,131 @@ function mcwwsRunConsoleCommand(cmd: text):
     if {_ok} is false:
         execute console command {_cmd}
 
-function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean) :: texts:
+function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean, playerWePaste: boolean) :: texts:
     set {_nodes::*} to "fawe.worldeditregion" and "fawe.bypass.regions"
     if {_legacyTransform} is true:
         add "worldedit.schematic.load" to {_nodes::*}
         add "worldedit.clipboard.paste" to {_nodes::*}
         add "worldedit.clipboard.rotate" to {_nodes::*}
         add "worldedit.clipboard.flip" to {_nodes::*}
+    else if {_playerWePaste} is true:
+        add "worldedit.schematic.load" to {_nodes::*}
+        add "worldedit.clipboard.paste" to {_nodes::*}
     return {_nodes::*}
 
-function mcwwsPasteGrantWorldEditPermissions(p: player, legacyTransform: boolean) :: texts:
+function mcwwsPasteGrantWorldEditPermissions(p: player, legacyTransform: boolean, playerWePaste: boolean) :: texts:
     delete {_granted::*}
     if {_p} is not set:
         return {_granted::*}
     set {_name} to name of {_p}
     set {_dur} to "30s"
-    loop mcwwsPasteWorldEditPermissionNodes({_legacyTransform}):
+    loop mcwwsPasteWorldEditPermissionNodes({_legacyTransform}, {_playerWePaste}):
         if {_p} has permission loop-value:
             continue
         mcwwsRunConsoleCommand("lp user %{_name}% permission settemp %loop-value% true %{_dur}%")
         add loop-value to {_granted::*}
     return {_granted::*}
 
+function mcwwsPastePlayerHoldKey(p: player) :: text:
+    return mcwwsPlayerUuidKey({_p})
+
+function mcwwsPasteShowHoldTitle(p: player):
+    send title "§6正在粘贴投影" with subtitle "§7旁观模式中 · 已锁定粘贴原点" to {_p} for 3 seconds with fadein 0 ticks and fade out 10 ticks
+
+function mcwwsPasteBeginPlayerHold(p: player, anchor: location):
+    set {_key} to mcwwsPastePlayerHoldKey({_p})
+    set {mcwws.paste.hold.%{_key}%.saved-gm} to gamemode of {_p}
+    set {mcwws.paste.hold.%{_key}%.saved-loc} to location of {_p}
+    set {mcwws.paste.hold.%{_key}%.anchor} to {_anchor}
+    set {mcwws.paste.hold.%{_key}%.active} to true
+    mcwwsPasteApplyGamemode({_p}, "spectator")
+    teleport {_p} to {_anchor}
+    mcwwsPasteShowHoldTitle({_p})
+    send "§7粘贴期间已切换旁观并锁定坐标（悬浮建筑亦适用）。" to {_p}
+
+function mcwwsPasteHoldPlayerTicks(p: player, anchor: location, ticks: number):
+    set {_key} to mcwwsPastePlayerHoldKey({_p})
+    loop {_ticks} times:
+        if {mcwws.paste.hold.%{_key}%.active} is not true:
+            stop loop
+        teleport {_p} to {_anchor}
+        if mod(loop-number, 20) is 0:
+            mcwwsPasteShowHoldTitle({_p})
+        wait 1 tick
+
+function mcwwsPasteEndPlayerHold(p: player):
+    set {_key} to mcwwsPastePlayerHoldKey({_p})
+    if {mcwws.paste.hold.%{_key}%.active} is not true:
+        stop
+    set {_gm} to {mcwws.paste.hold.%{_key}%.saved-gm}
+    set {_loc} to {mcwws.paste.hold.%{_key}%.saved-loc}
+    if {_gm} is set:
+        mcwwsPasteApplyGamemode({_p}, "%{_gm}%")
+    if {_loc} is set:
+        teleport {_p} to {_loc}
+    send title "§a粘贴完成" with subtitle "§7已恢复你的模式与位置" to {_p} for 2 seconds with fadein 5 ticks and fade out 15 ticks
+    delete {mcwws.paste.hold.%{_key}%.saved-gm}
+    delete {mcwws.paste.hold.%{_key}%.saved-loc}
+    delete {mcwws.paste.hold.%{_key}%.anchor}
+    delete {mcwws.paste.hold.%{_key}%.active}
+
+function mcwwsPasteAbortPlayerHold(p: player):
+    mcwwsPasteEndPlayerHold({_p})
+
 function mcwwsPasteExecuteLegacyPlayerRelative(p: player, schem: text, world: world, px: number, py: number, pz: number, rotation: text, mirror: text):
     set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
-    teleport {_p} to {_anchor}
-    send "§7旧订单未烘焙变换，使用玩家相对粘贴（请站好位置）…" to {_p}
-    wait 10 ticks
+    mcwwsPasteBeginPlayerHold({_p}, {_anchor})
+    send "§7旧订单未烘焙变换，使用玩家相对粘贴…" to {_p}
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
     make {_p} execute command "//schem load %{_schem}%"
-    wait 80 ticks
-    mcwwsPasteApplyClipboardTransform({_p}, {_rotation}, {_mirror})
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
+    mcwwsPasteApplyClipboardTransform({_p}, {_anchor}, {_rotation}, {_mirror})
     make {_p} execute command "//paste -a"
-    wait 20 ticks
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
+    mcwwsPasteEndPlayerHold({_p})
 
-function mcwwsPasteApplyClipboardTransform(p: player, rotation: text, mirror: text):
+function mcwwsPasteExecutePlayerSchemAt(p: player, schem: text, world: world, px: number, py: number, pz: number, oid: text, transformBaked: boolean) :: boolean:
+    set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
+    mcwwsPasteBeginPlayerHold({_p}, {_anchor})
+    send "§7原理图: §e%{_schem}% §7→ 角点 %{_px}%, %{_py}%, %{_pz}%" to {_p}
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
+    set {_ok} to false
+    if {_transformBaked} is true:
+        send "§7烘焙变换：使用绝对坐标 API 粘贴…" to {_p}
+        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
+    else:
+        send "§7使用 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
+        make {_p} execute command "//schem load %{_schem}%"
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
+        make {_p} execute command "//paste -a"
+        set {_ok} to true
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
+    mcwwsPasteEndPlayerHold({_p})
+    return {_ok}
+
+function mcwwsPasteApplyClipboardTransform(p: player, anchor: location, rotation: text, mirror: text):
     set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
     set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
     if {_mirror} is "LEFT_RIGHT":
         send "§7应用镜像: §f左右" to {_p}
         make {_p} execute command "//flip north"
-        wait 20 ticks
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     else if {_mirror} is "FRONT_BACK":
         send "§7应用镜像: §f前后" to {_p}
         make {_p} execute command "//flip east"
-        wait 20 ticks
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     if {_rotation} is "CLOCKWISE_90":
         send "§7应用旋转: §f顺时针 90°" to {_p}
         make {_p} execute command "//rotate 90"
-        wait 20 ticks
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     else if {_rotation} is "CLOCKWISE_180":
         send "§7应用旋转: §f180°" to {_p}
         make {_p} execute command "//rotate 180"
-        wait 20 ticks
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     else if {_rotation} is "COUNTERCLOCKWISE_90":
         send "§7应用旋转: §f逆时针 90°" to {_p}
         make {_p} execute command "//rotate 270"
-        wait 20 ticks
+        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
 
 function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
     if {_p} is not set:
@@ -485,9 +624,14 @@ function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
         mcwwsRunConsoleCommand("lp user %{_name}% permission unsettemp %loop-value%")
 
 function mcwwsPasteExecute(p: player, oid: text):
-    mcwwsPasteExecuteInternal({_oid}, {_p}, false)
+    set {mcwws.paste.executor} to {_p}
+    mcwwsPasteExecuteInternal({_oid}, false)
+    delete {mcwws.paste.executor}
 
-function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
+function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
+    delete {_p}
+    if {mcwws.paste.executor} is set:
+        set {_p} to {mcwws.paste.executor}
     if {_fromWebQueue} is false:
         if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
             mcwwsPasteNotify({_p}, "§c订单不存在或不属于你。")
@@ -503,7 +647,7 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
         stop
     set {_hash} to mcwwsReadPasteOrderField({_oid}, "contentHash")
     set {_storedSchem} to mcwwsReadPasteOrderField({_oid}, "schemFileName")
-    set {_schem} to mcwwsResolveSchemName({_hash}, {_storedSchem})
+    set {_schem} to mcwwsResolveSchemNameForOrder({_oid}, {_hash}, {_storedSchem})
     set {_worldName} to mcwwsReadPasteOrderField({_oid}, "anchor.world")
     set {_ax} to mcwwsReadPasteOrderField({_oid}, "anchor.x") parsed as number
     set {_ay} to mcwwsReadPasteOrderField({_oid}, "anchor.y") parsed as number
@@ -565,7 +709,10 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
     mcwwsPasteNotify({_p}, "§7绝对粘贴角点: §f%{_px}%, %{_py}%, %{_pz}% §7（无需站到位）")
     if {_transformBaked} is true:
         mcwwsPasteNotify({_p}, "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
-    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform})
+    set {_usePlayerWe} to false
+    if {_p} is set:
+        set {_usePlayerWe} to true
+    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, {_usePlayerWe})
     if {_p} is set:
         if size of {_tempPerms::*} > 0:
             send "§7已授予临时 WorldEdit 权限…" to {_p}
@@ -574,10 +721,15 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
     if {_needsLegacyTransform} is true:
         mcwwsPasteExecuteLegacyPlayerRelative({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_rotation}, {_mirror})
         set {_ok} to true
+    else if {_p} is set:
+        set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_transformBaked})
     else:
+        mcwwsPasteNotify({_p}, "§7玩家不在线，使用服务端 API 粘贴（无法 //undo）。")
         set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is not true:
+        if {_p} is set:
+            mcwwsPasteAbortPlayerHold({_p})
         mcwwsPasteMarkFailed({_oid}, "绝对坐标粘贴失败")
         if {_fromWebQueue} is true:
             mcwwsPasteSetWebQueue({_oid}, "failed", "绝对坐标粘贴失败")
@@ -600,7 +752,10 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
         unload yaml "pastes"
         mcwwsPasteNotify({_p}, "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。")
         mcwwsPasteNotify({_p}, "§7放置原点: §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%")
-        mcwwsPasteNotify({_p}, "§7订单属主可执行 §f//undo §7撤销本次粘贴。")
+        if {_usePlayerWe} is true:
+            mcwwsPasteNotify({_p}, "§7可执行 §f/build undo %{_oid}% §7或 §f//undo §7撤销。")
+        else:
+            mcwwsPasteNotify({_p}, "§7本次为离线 API 粘贴，无法 //undo；请上线后重新粘贴。")
     else:
         unload yaml "pastes"
     mcwwsPasteNotify({_p}, "§7contentHash: §f%{_hash}%")
@@ -693,6 +848,17 @@ function mcwwsProcessWebPasteQueue():
 
 every 2 seconds:
     mcwwsProcessWebPasteQueue()
+
+on quit:
+    set {_key} to mcwwsPastePlayerHoldKey(player)
+    if {mcwws.paste.hold.%{_key}%.active} is true:
+        set {_gm} to {mcwws.paste.hold.%{_key}%.saved-gm}
+        if {_gm} is set:
+            mcwwsPasteApplyGamemode(player, "%{_gm}%")
+        delete {mcwws.paste.hold.%{_key}%.saved-gm}
+        delete {mcwws.paste.hold.%{_key}%.saved-loc}
+        delete {mcwws.paste.hold.%{_key}%.anchor}
+        delete {mcwws.paste.hold.%{_key}%.active}
 
 on load:
     mcwwsInitPasteOrders()
