@@ -1,5 +1,5 @@
 /**
- * Litematica 投影粘贴：上传 .litematic → 报价 → 付款 → 网页设锚点 → 网页粘贴（无需进游戏）
+ * Litematica 投影粘贴：上传 .litematic → 报价 → 付款 → 网页设锚点 → 在线时网页粘贴
  */
 (function () {
     let modalOpen = false;
@@ -518,7 +518,7 @@
                 pasteActionBlock = `
                     <div class="build-paste-client-box">
                         <p class="build-paste-client-title">网页粘贴进行中…</p>
-                        <p class="litematica-import-note">服务器正在执行粘贴，请稍候（无需进游戏）。</p>
+                        <p class="litematica-import-note">服务器正在以你的身份执行粘贴，请保持在线…</p>
                     </div>`;
             } else if (isFailed) {
                 pasteActionBlock = `
@@ -530,8 +530,8 @@
             } else {
                 pasteActionBlock = `
                     <div class="build-paste-client-box">
-                        <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildPasteWebTriggerBtn">网页粘贴（无需进游戏）</button>
-                        <p class="litematica-import-note">也可进游戏执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code></p>
+                        <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildPasteWebTriggerBtn">网页粘贴（需在线）</button>
+                        <p class="litematica-import-note">需使用下单账号登录服务器；粘贴期间将短暂切换旁观。也可进游戏执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code></p>
                     </div>`;
             }
         }
@@ -557,7 +557,7 @@
             <ol class="build-paste-steps">
                 <li>确认 Litematica 加载的投影与上传文件一致（哈希相同）</li>
                 <li>${stepAnchor}</li>
-                <li>点击「网页粘贴」，服务器将按绝对坐标自动粘贴</li>
+                <li>点击「网页粘贴」或进游戏执行 <code>/build paste</code>（需订单所属玩家在线）</li>
             </ol>
             <p class="litematica-import-note">粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效。</p>
         `;

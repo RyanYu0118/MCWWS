@@ -3245,7 +3245,7 @@ app.post('/api/build/checkout', async (req, res) => {
             anchor: pasteOrder.anchor,
             pasteTokenExpiresAt: pasteOrder.pasteTokenExpiresAt,
             message: pasteOrder.anchor
-                ? '付款成功，锚点已由网页设置。可点击「网页粘贴」或执行 /build paste。'
+                ? '付款成功，锚点已由网页设置。请保持在线并点击「网页粘贴」，或执行 /build paste。'
                 : '付款成功。请在网页客户端同步或 POST /api/build/paste/anchor 设置锚点。',
             nextStep: pasteOrder.anchor
                 ? 'POST /api/build/paste/trigger 网页粘贴，或执行 /build paste <订单号>'
@@ -3384,6 +3384,15 @@ app.post('/api/build/paste/trigger', (req, res) => {
             });
         }
 
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+        if (!isPlayerOnlineForEconomy(uuid, playerId)) {
+            return res.status(409).json({
+                error: '粘贴需订单所属玩家在线；请使用同一游戏账号登录服务器后再点击网页粘贴。'
+            });
+        }
+
         const result = buildSchematicService.enqueueWebPaste(pasteOrderId, uuid);
         if (result.error) {
             return res.status(409).json({ error: result.error });
@@ -3397,7 +3406,7 @@ app.post('/api/build/paste/trigger', (req, res) => {
             status: result.order.status,
             webPasteQueue: result.order.webPasteQueue,
             anchor: result.order.anchor,
-            message: '已加入粘贴队列，服务器将自动执行（无需进游戏）。'
+            message: '已加入粘贴队列；请保持在线，服务器将以你的身份执行粘贴。'
         });
     } catch (error) {
         console.error('网页粘贴入队失败:', error);

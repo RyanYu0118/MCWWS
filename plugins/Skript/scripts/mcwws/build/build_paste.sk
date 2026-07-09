@@ -1,4 +1,4 @@
-# MCWWS 投影粘贴：网页付款 → 锚点坐标 → WorldEdit API 绝对坐标粘贴
+# MCWWS 投影粘贴：网页付款 → 锚点坐标 → 玩家在线并以本人身份 WorldEdit 粘贴
 
 import:
     java.io.File
@@ -199,12 +199,11 @@ function mcwwsPasteResolveHistoryUuid(p: player, oid: text) :: object:
     return UUID.fromString({_raw})
 
 function mcwwsPasteCreateHistoryEditSession(p: player, world: world, oid: text) :: object:
+    if {_p} is not set:
+        return null
     set {_weWorld} to BukkitAdapter.adapt({_world})
-    if {_p} is set:
-        set {_actor} to BukkitAdapter.adapt({_p})
-    else:
-        set {_actor} to BukkitAdapter.adapt(Bukkit.getConsoleSender())
-    set {_historyUuid} to mcwwsPasteResolveHistoryUuid({_p}, {_oid})
+    set {_actor} to BukkitAdapter.adapt({_p})
+    set {_historyUuid} to uuid of {_p}
     set {_builder} to WorldEdit.getInstance().newEditSessionBuilder()
     {_builder}.world({_weWorld})
     {_builder}.actor({_actor})
@@ -251,8 +250,8 @@ function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build anchor <订单号> [x y z] §7- 设置 Litematica 放置原点（可填坐标）" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 按已存锚点绝对坐标粘贴（无需站到位）" to {_p}
     send "§6[投影粘贴] §f/build undo <订单号> §7- 撤销上一次粘贴（等同 //undo）" to {_p}
-    send "§7也可在网页点击「网页粘贴」；在线时自动用 WorldEdit 粘贴以支持撤销。" to {_p}
-    send "§7若 //undo 无效，请确认未开启 §f//fast §7且粘贴时你在服务器在线。" to {_p}
+    send "§7也可在网页点击「网页粘贴」（需订单所属玩家在线）；粘贴将以你的身份执行并支持 §f//undo§7。" to {_p}
+    send "§7若 //undo 无效，请确认未开启 §f//fast§7。" to {_p}
     send "§7在线粘贴时会短暂切换旁观并锁定粘贴原点（悬浮建筑适用）。" to {_p}
     send "§7悬浮建筑请用 §f/build anchor <订单号> <x> <y> <z> §7填入 Litematica 原点坐标。" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
@@ -389,7 +388,9 @@ command /mcwwswebpaste <text>:
         if {_p} is set:
             make {_p} execute command "/mcwwspasteasplayer %{_oid}%"
         else:
-            mcwwsPasteExecuteInternal({_oid}, true)
+            set {_failReason} to "订单所属玩家不在线，无法以本人身份粘贴"
+            mcwwsPasteSetWebQueue({_oid}, "failed", {_failReason})
+            send "§c[MCWWS] 网页粘贴 #%{_oid}% 失败: %{_failReason}%" to console
 
 command /mcwwspasteasplayer <text>:
     trigger:
@@ -475,7 +476,7 @@ function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean, coordX: text,
         set {_mirLabel} to mcwwsPasteMirrorLabel("%{_mirror}%")
         send "§7变换: §f旋转 %{_rotLabel}% §7· §f镜像 %{_mirLabel}%" to {_p}
     if {_quiet} is false:
-        send "§7执行 §f/build paste %{_oid}% §7或在网页点击「网页粘贴」。" to {_p}
+        send "§7执行 §f/build paste %{_oid}% §7或在网页点击「网页粘贴」（需在线）。" to {_p}
 
 function mcwwsPasteGo(p: player, oid: text, coordX: text, coordY: text, coordZ: text, rotationArg: text, mirrorArg: text):
     mcwwsPasteSetAnchor({_p}, {_oid}, true, {_coordX}, {_coordY}, {_coordZ}, {_rotationArg}, {_mirrorArg})
@@ -575,20 +576,17 @@ function mcwwsPasteExecutePlayerSchemAt(p: player, schem: text, world: world, px
     set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
     mcwwsPasteBeginPlayerHold({_p}, {_anchor})
     send "§7原理图: §e%{_schem}% §7→ 角点 %{_px}%, %{_py}%, %{_pz}%" to {_p}
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
-    set {_ok} to false
     if {_transformBaked} is true:
-        send "§7烘焙变换：使用绝对坐标 API 粘贴…" to {_p}
-        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
+        send "§7变换已烘焙进原理图，将以你的身份执行 WorldEdit 粘贴…" to {_p}
     else:
-        send "§7使用 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
-        make {_p} execute command "//schem load %{_schem}%"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
-        make {_p} execute command "//paste -a"
-        set {_ok} to true
+        send "§7将以你的身份执行 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10)
+    make {_p} execute command "//schem load %{_schem}%"
+    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80)
+    make {_p} execute command "//paste -a"
     mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20)
     mcwwsPasteEndPlayerHold({_p})
-    return {_ok}
+    return true
 
 function mcwwsPasteApplyClipboardTransform(p: player, anchor: location, rotation: text, mirror: text):
     set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
@@ -632,10 +630,17 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     delete {_p}
     if {mcwws.paste.executor} is set:
         set {_p} to {mcwws.paste.executor}
-    if {_fromWebQueue} is false:
-        if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
-            mcwwsPasteNotify({_p}, "§c订单不存在或不属于你。")
-            stop
+    if {_p} is not set:
+        set {_failReason} to "需订单所属玩家在线并以本人身份粘贴"
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", {_failReason})
+        send "§c[MCWWS] 网页粘贴 #%{_oid}% 失败: %{_failReason}%" to console
+        stop
+    if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
+        mcwwsPasteNotify({_p}, "§c订单不存在或不属于你。")
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "订单不属于当前玩家")
+        stop
     set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
     if {_status} is not "ready":
         if {_status} is "awaiting_anchor":
@@ -688,17 +693,6 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     if {_transformBaked} is false:
         if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
             set {_needsLegacyTransform} to true
-    if {_needsLegacyTransform} is true:
-        if {_p} is not set:
-            set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
-            set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
-        if {_p} is not set:
-            set {_failReason} to "旧订单未烘焙变换，需玩家在线或重新下单"
-            mcwwsPasteMarkFailed({_oid}, {_failReason})
-            if {_fromWebQueue} is true:
-                mcwwsPasteSetWebQueue({_oid}, "failed", {_failReason})
-            send "§c[MCWWS] 网页粘贴 #%{_oid}% 失败: %{_failReason}%" to console
-            stop
     set {_adjx} to mcwwsPasteReadAnchorAdjust({_oid}, "x")
     set {_adjy} to mcwwsPasteReadAnchorAdjust({_oid}, "y")
     set {_adjz} to mcwwsPasteReadAnchorAdjust({_oid}, "z")
@@ -709,23 +703,16 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     mcwwsPasteNotify({_p}, "§7绝对粘贴角点: §f%{_px}%, %{_py}%, %{_pz}% §7（无需站到位）")
     if {_transformBaked} is true:
         mcwwsPasteNotify({_p}, "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
-    set {_usePlayerWe} to false
-    if {_p} is set:
-        set {_usePlayerWe} to true
-    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, {_usePlayerWe})
-    if {_p} is set:
-        if size of {_tempPerms::*} > 0:
-            send "§7已授予临时 WorldEdit 权限…" to {_p}
+    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, true)
+    if size of {_tempPerms::*} > 0:
+        send "§7已授予临时 WorldEdit 权限…" to {_p}
     wait 2 ticks
     set {_ok} to false
     if {_needsLegacyTransform} is true:
         mcwwsPasteExecuteLegacyPlayerRelative({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_rotation}, {_mirror})
         set {_ok} to true
-    else if {_p} is set:
-        set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_transformBaked})
     else:
-        mcwwsPasteNotify({_p}, "§7玩家不在线，使用服务端 API 粘贴（无法 //undo）。")
-        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
+        set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_transformBaked})
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is not true:
         if {_p} is set:
@@ -752,10 +739,7 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
         unload yaml "pastes"
         mcwwsPasteNotify({_p}, "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。")
         mcwwsPasteNotify({_p}, "§7放置原点: §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%")
-        if {_usePlayerWe} is true:
-            mcwwsPasteNotify({_p}, "§7可执行 §f/build undo %{_oid}% §7或 §f//undo §7撤销。")
-        else:
-            mcwwsPasteNotify({_p}, "§7本次为离线 API 粘贴，无法 //undo；请上线后重新粘贴。")
+        mcwwsPasteNotify({_p}, "§7可执行 §f/build undo %{_oid}% §7或 §f//undo §7撤销。")
     else:
         unload yaml "pastes"
     mcwwsPasteNotify({_p}, "§7contentHash: §f%{_hash}%")

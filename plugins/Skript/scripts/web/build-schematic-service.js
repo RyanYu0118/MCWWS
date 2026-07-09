@@ -506,7 +506,10 @@ function enqueueWebPaste(numericId, playerUuid) {
         return { error: '粘贴订单不存在。' };
     }
     const normUuid = String(playerUuid || '').trim().toLowerCase();
-    if (order.playerUuid && normUuid && order.playerUuid.toLowerCase() !== normUuid) {
+    if (!normUuid) {
+        return { error: '无法识别玩家身份。' };
+    }
+    if (order.playerUuid && order.playerUuid.toLowerCase() !== normUuid) {
         return { error: '无权操作此订单。' };
     }
     if (order.status !== 'ready') {

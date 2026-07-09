@@ -103,7 +103,7 @@
         panel.hidden = false;
         panel.innerHTML = `
             <div class="build-client-sync-paste-orders">
-                <p class="build-paste-client-title">待粘贴订单（网页操作）</p>
+                <p class="build-paste-client-title">待粘贴订单（需下单账号在线）</p>
                 <label class="build-paste-anchor-world-field">
                     <span>默认世界名</span>
                     <input type="text" id="buildClientSyncAnchorWorld" class="build-paste-anchor-world-input" value="${escapeHtml(defaultWorld)}" placeholder="world">
@@ -116,7 +116,7 @@
                     const isPasting = order.status === 'pasting' || queue === 'pending' || queue === 'processing';
                     let actionBtn = '';
                     if (order.status === 'ready' && !isPasting) {
-                        actionBtn = `<button type="button" class="cart-drawer-btn cart-drawer-btn--primary build-client-sync-web-paste" data-order-id="${order.pasteOrderId}" data-content-hash="${escapeHtml(order.contentHash)}">网页粘贴</button>`;
+                        actionBtn = `<button type="button" class="cart-drawer-btn cart-drawer-btn--primary build-client-sync-web-paste" data-order-id="${order.pasteOrderId}" data-content-hash="${escapeHtml(order.contentHash)}">网页粘贴（需在线）</button>`;
                     } else if (order.status === 'awaiting_anchor') {
                         actionBtn = `<button type="button" class="cart-drawer-btn cart-drawer-btn--ghost build-client-sync-bind-anchor" data-order-id="${order.pasteOrderId}" data-content-hash="${escapeHtml(order.contentHash)}">用当前投影设锚点</button>`;
                     } else if (isPasting) {
