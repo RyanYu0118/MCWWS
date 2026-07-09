@@ -526,4 +526,50 @@ html.is-theme-animating body::after {
     .mcwws-theme-toggle-icon {
         transition: none;
     }
+
+    html.mcwws-page-enter-pending body,
+    html.mcwws-page-enter body,
+    html.mcwws-page-exit body {
+        opacity: 1 !important;
+        transform: none !important;
+    }
+}
+
+/* ═══ 站内页面切换过渡 ═══ */
+html.mcwws-page-enter-pending body {
+    opacity: 0;
+}
+
+html.mcwws-page-enter body,
+html.mcwws-page-exit body {
+    transition:
+        opacity var(--page-transition-duration, 0.45s) ease,
+        transform var(--page-transition-duration, 0.45s) ease;
+    will-change: opacity, transform;
+}
+
+html.mcwws-page-enter body {
+    opacity: 0;
+    transform: translateY(10px);
+}
+
+html.mcwws-page-enter-active body {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+html.mcwws-page-exit body {
+    opacity: 0;
+    transform: translateY(-8px);
+    pointer-events: none;
+}
+
+html.mcwws-page-exit .navbar,
+html.mcwws-page-exit .services-map-auth-float,
+html.mcwws-page-exit .mcwws-theme-switcher--float {
+    transition:
+        opacity var(--page-transition-duration, 0.45s) ease,
+        transform var(--page-transition-duration, 0.45s) ease;
+    opacity: 0;
+    transform: translateY(-4px);
 }

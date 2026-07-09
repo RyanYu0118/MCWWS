@@ -1,4 +1,4 @@
-/* DS-WEB-VERSION: 2.5.76 */
+/* DS-WEB-VERSION: 2.5.77 */
 /* ═══════════════════════════════════════════════════════════════════════
    流浪世界服务器商店系统 PREMIUM DASHBOARD STYLES
    Modern dark theme with glassmorphism effects
@@ -4457,4 +4457,9 @@ body.services-map-clean .services-map-auth-float {
 .litematica-import-total strong {
     color: #34d399;
     font-size: 1.2rem;
+}
+
+/* 页面切换：防首帧闪烁（完整动画见 themes.css） */
+html.mcwws-page-enter-pending body {
+    opacity: 0;
 }
