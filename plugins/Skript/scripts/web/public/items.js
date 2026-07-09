@@ -2388,7 +2388,7 @@ function renderCards() {
     }
 
     if (filteredItems.length === 0) {
-        grid.innerHTML = '<div style="text-align:center; color:#94a3b8; grid-column:1/-1; padding: 40px;">没有找到匹配的物品 📦</div>';
+        grid.innerHTML = '<div style="text-align:center; color:var(--text-secondary); grid-column:1/-1; padding: 40px;">没有找到匹配的物品 📦</div>';
         renderPagination();
         syncItemsStateToUrl();
         return;
@@ -2419,7 +2419,7 @@ function renderCards() {
                 ? '移动鼠标查看方位'
             : (duplicateNames.has(item.name) && item.loreLine ? item.loreLine : '');
         const loreLine = descriptionText
-            ? `<span class="scrolling-text" style="margin-top:2px; font-size:0.82rem; color:#94a3b8;" title="${escapeHtml(descriptionText)}"><span class="scrolling-text-inner"${isClock ? ' data-clock-time-desc="1"' : ''}${isPointerCompass ? ' data-pointer-bearing-desc="1"' : ''}>${escapeHtml(descriptionText)}</span></span>`
+            ? `<span class="scrolling-text" style="margin-top:2px; font-size:0.82rem; color:var(--text-muted);" title="${escapeHtml(descriptionText)}"><span class="scrolling-text-inner"${isClock ? ' data-clock-time-desc="1"' : ''}${isPointerCompass ? ' data-pointer-bearing-desc="1"' : ''}>${escapeHtml(descriptionText)}</span></span>`
             : '';
         const safeName = escapeHtml(item.name);
         const safeId = escapeHtml(item.id);
@@ -2432,19 +2432,19 @@ function renderCards() {
             <div style="display:flex; align-items:center; margin-bottom:15px; margin-top: 5px;">
                 ${getItemIconHtml(item.id, item.name)}
                 <div style="min-width:0; width:100%;">
-                    <h3 class="scrolling-text" style="margin:0; font-size:1.1rem; color:#F1F5F9; font-weight: 600;" title="${safeName}"><span class="scrolling-text-inner">${safeName}</span></h3>
+                    <h3 class="scrolling-text" style="margin:0; font-size:1.1rem; color:var(--text-primary); font-weight: 600;" title="${safeName}"><span class="scrolling-text-inner">${safeName}</span></h3>
                     ${loreLine}
-                    <span class="scrolling-text scrolling-id" style="font-size:0.75rem; color:#64748b; text-transform: lowercase;" title="${safeId}"><span class="scrolling-text-inner scrolling-id-text">${safeId}</span></span>
+                    <span class="scrolling-text scrolling-id" style="font-size:0.75rem; color:var(--text-muted); text-transform: lowercase;" title="${safeId}"><span class="scrolling-text-inner scrolling-id-text">${safeId}</span></span>
                 </div>
             </div>
             
             <div style="background: rgba(15,23,42,0.6); padding:12px; border-radius:8px; border: 1px solid rgba(255,255,255,0.02);">
                 <div style="display:flex; justify-content:space-between; margin-bottom:8px; align-items: center;">
-                    <span style="color:#94A3B8; font-size:0.85rem;">系统买入</span>
+                    <span style="color:var(--text-secondary); font-size:0.85rem;">系统买入</span>
                     <strong data-price-role="buy" style="color:#34D399; font-family: monospace; font-size: 1.05rem;">￥${item.buyPrice.toFixed(2)}</strong>
                 </div>
                 <div style="display:flex; justify-content:space-between; align-items: center;">
-                    <span style="color:#94A3B8; font-size:0.85rem;">玩家回收</span>
+                    <span style="color:var(--text-secondary); font-size:0.85rem;">玩家回收</span>
                     <strong data-price-role="sell" style="color:#F87171; font-family: monospace; font-size: 1.05rem;">￥${item.sellPrice.toFixed(2)}</strong>
                 </div>
                 <div style="margin-top:14px; display:flex; justify-content:flex-end;">

@@ -102,22 +102,22 @@
 [data-color-scheme="light"] {
     color-scheme: light;
 
-    --primary: #171717;
+    --primary: #000000;
     --primary-light: #000000;
-    --primary-dark: #404040;
+    --primary-dark: #000000;
     --on-primary: #ffffff;
 
-    --accent: #262626;
-    --accent-light: #525252;
+    --accent: #000000;
+    --accent-light: #000000;
 
     --bg-primary: #f2f2f7;
     --bg-secondary: rgba(0, 0, 0, 0.04);
     --bg-tertiary: rgba(0, 0, 0, 0.07);
     --bg-card: rgba(255, 255, 255, 0.72);
 
-    --text-primary: rgba(0, 0, 0, 0.88);
-    --text-secondary: rgba(0, 0, 0, 0.62);
-    --text-muted: rgba(0, 0, 0, 0.42);
+    --text-primary: #000000;
+    --text-secondary: #000000;
+    --text-muted: #000000;
 
     --border: rgba(0, 0, 0, 0.1);
     --border-glow: rgba(0, 0, 0, 0.18);
@@ -131,7 +131,7 @@
     --glass-border: rgba(255, 255, 255, 0.85);
     --glass-blur: 32px;
 
-    --gradient-primary: linear-gradient(135deg, #171717 0%, #525252 100%);
+    --gradient-primary: linear-gradient(135deg, #000000 0%, #000000 100%);
     --gradient-hero: linear-gradient(180deg, #f2f2f7 0%, #e8e8ed 50%, #f2f2f7 100%);
     --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.95) 0%, rgba(255, 255, 255, 0.55) 100%);
 
@@ -159,7 +159,7 @@
     --card-hover-glow: rgba(0, 0, 0, 0.06);
     --card-inset: rgba(255, 255, 255, 0.95);
 
-    --btn-solid-bg: linear-gradient(180deg, rgba(23, 23, 23, 0.95) 0%, rgba(64, 64, 64, 0.92) 100%);
+    --btn-solid-bg: linear-gradient(180deg, #000000 0%, #000000 100%);
     --btn-solid-fg: #ffffff;
     --btn-solid-border: rgba(0, 0, 0, 0.12);
     --btn-solid-shadow: 0 4px 16px rgba(0, 0, 0, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.12);
@@ -188,6 +188,7 @@ body {
     background: var(--bg-primary);
     position: relative;
     isolation: isolate;
+    color: var(--text-primary);
 }
 
 body::before {
@@ -419,6 +420,35 @@ textarea:focus {
 
 [data-color-scheme="light"] .mcwws-auth-popover-services-link:hover {
     background: var(--surface-hover);
+}
+
+[data-color-scheme="light"] ::placeholder {
+    color: rgba(0, 0, 0, 0.45);
+}
+
+[data-color-scheme="light"] .hero-search::placeholder,
+[data-color-scheme="light"] input::placeholder,
+[data-color-scheme="light"] textarea::placeholder {
+    color: rgba(0, 0, 0, 0.45) !important;
+}
+
+[data-color-scheme="light"] .build-client-sync-support-hint {
+    color: #000000;
+}
+
+[data-color-scheme="light"] .trade-btn--disabled,
+[data-color-scheme="light"] .cart-btn--disabled {
+    color: #000000;
+}
+
+[data-color-scheme="light"] .build-paste-hash-label,
+[data-color-scheme="light"] .build-paste-hash-value,
+[data-color-scheme="light"] .build-paste-meta,
+[data-color-scheme="light"] .build-paste-note,
+[data-color-scheme="light"] .litematica-import-hint,
+[data-color-scheme="light"] .litematica-import-meta,
+[data-color-scheme="light"] .services-map-loading {
+    color: #000000;
 }
 
 /* ═══ 主题切换过渡 ═══ */

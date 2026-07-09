@@ -326,7 +326,7 @@
 
         const body = document.getElementById('buildPasteBody');
         if (body) {
-            body.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;color:#94a3b8;margin-top:12px;">正在解析投影并计算报价…</p>';
+            body.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;color:var(--text-muted);margin-top:12px;">正在解析投影并计算报价…</p>';
         }
 
         try {

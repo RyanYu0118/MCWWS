@@ -132,7 +132,7 @@
         if (!file) return;
         const body = document.getElementById('litematicaImportBody');
         if (body) {
-            body.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;color:#94a3b8;margin-top:12px;">正在解析并计算价格…</p>';
+            body.innerHTML = '<div class="loading-spinner"></div><p style="text-align:center;color:var(--text-muted);margin-top:12px;">正在解析并计算价格…</p>';
         }
 
         try {
