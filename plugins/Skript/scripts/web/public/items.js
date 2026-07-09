@@ -2425,9 +2425,9 @@ function renderCards() {
         const safeId = escapeHtml(item.id);
 
         return `
-        <div class="glass card-hover item-card-clickable" data-item-card-id="${safeId}" style="border-radius:12px; padding:20px; transition:all 0.3s ease; position:relative; overflow:hidden; border:1px solid rgba(255,255,255,0.05); background: var(--bg-card);">
+        <div class="glass shop-item-card item-card-clickable" data-item-card-id="${safeId}">
             
-            <div style="position: absolute; top: 0; left: 0; width: 100%; height: 3px; background: linear-gradient(90deg, #3b82f6, #8b5cf6);"></div>
+            <div class="shop-item-card-accent" aria-hidden="true"></div>
 
             <div style="display:flex; align-items:center; margin-bottom:15px; margin-top: 5px;">
                 ${getItemIconHtml(item.id, item.name)}
