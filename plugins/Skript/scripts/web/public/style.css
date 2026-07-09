@@ -4191,6 +4191,40 @@ body.services-map-clean .services-map-auth-float {
     color: #7dd3fc;
 }
 
+.build-paste-checkout-summary {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+    margin-bottom: 12px;
+}
+
+.build-paste-fee-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: #94a3b8;
+    font-size: 13px;
+}
+
+.build-paste-fee-row strong {
+    color: #e2e8f0;
+    font-weight: 600;
+}
+
+.build-paste-fee-row--total {
+    padding-top: 8px;
+    border-top: 1px solid rgba(148, 163, 184, 0.2);
+    color: #cbd5e1;
+    font-size: 14px;
+}
+
+.build-paste-fee-row--total strong {
+    color: #f8fafc;
+    font-size: 16px;
+}
+
 .litematica-import-modal .litematica-import-content {
     width: min(920px, 96vw);
     max-height: 90vh;

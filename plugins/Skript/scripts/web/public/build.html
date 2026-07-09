@@ -71,15 +71,15 @@
             <button type="button" class="build-tool-card glass" id="buildPasteCard">
                 <span class="build-tool-icon" aria-hidden="true">🏗️</span>
                 <h2 class="build-tool-name">投影粘贴</h2>
-                <p class="build-tool-desc">上传 .litematic 投影文件，支付材料费用后于游戏内使用 /build 命令粘贴建筑</p>
+                <p class="build-tool-desc">上传 .litematic 投影文件，支付材料费 + 自动建造费（材料费 100%）后网页一键粘贴</p>
                 <span class="build-tool-cta">打开投影粘贴 →</span>
             </button>
         </section>
 
-        <section class="build-client-sync glass" id="buildClientSyncSection" aria-label="客户端 Litematica 同步">
+        <section class="build-client-sync glass" id="buildClientSyncSection" aria-label="客户端 Litematica 同步（推荐）">
             <div class="build-client-sync-header">
                 <div>
-                    <h2 class="build-client-sync-title">客户端 Litematica 同步</h2>
+                    <h2 class="build-client-sync-title">客户端 Litematica 同步（推荐）</h2>
                     <p class="build-client-sync-subtitle" id="buildClientSyncStatus">未连接</p>
                 </div>
                 <div class="build-client-sync-header-actions">
@@ -96,8 +96,8 @@
             <h3 class="build-tool-hints-title">使用说明</h3>
             <ul class="build-tool-hints-list">
                 <li><strong>材料清单</strong>：在游戏内用 Litematica 导出材料列表，粘贴或上传 JSON 文件即可计价购料。</li>
-                <li><strong>投影粘贴</strong>：付款时若已连接客户端同步，会<strong>自动写入锚点</strong>；设好锚点后点击「网页粘贴」，<strong>无需进游戏</strong>。也可执行 <code>/build paste &lt;订单号&gt;</code>。</li>
-                <li><strong>客户端同步</strong>：读取 Litematica 放置原点与世界名提示；设锚点与粘贴均无需站在建筑位置。</li>
+                <li><strong>投影粘贴</strong>：费用 = 商店材料费 + 自动建造费（材料费的 100%）。付款时若已连接客户端同步，会<strong>自动写入锚点</strong>；设好锚点后点击「网页粘贴」，<strong>无需进游戏</strong>。</li>
+                <li><strong>客户端同步（推荐）</strong>：读取 Litematica 放置原点与世界名提示；设锚点与粘贴均无需站在建筑位置。</li>
                 <li>购物车与商店系统共用，可在「商店目录」继续浏览其他物品。</li>
             </ul>
         </section>
@@ -133,9 +133,19 @@
             </div>
             <div id="buildPasteBody" class="modal-body litematica-import-body"></div>
             <div id="buildPasteFooter" class="litematica-import-footer" hidden>
-                <div class="litematica-import-total">
-                    <span>应付（仅商店可购材料）</span>
-                    <strong id="buildPasteTotal">￥0.00</strong>
+                <div class="build-paste-checkout-summary">
+                    <div class="build-paste-fee-row">
+                        <span>商店材料费</span>
+                        <strong id="buildPasteMaterialTotal">￥0.00</strong>
+                    </div>
+                    <div class="build-paste-fee-row">
+                        <span>自动建造费（材料费 100%）</span>
+                        <strong id="buildPasteServiceFee">￥0.00</strong>
+                    </div>
+                    <div class="litematica-import-total build-paste-fee-row build-paste-fee-row--total">
+                        <span>应付合计</span>
+                        <strong id="buildPasteTotal">￥0.00</strong>
+                    </div>
                 </div>
                 <button type="button" id="buildPastePayBtn" class="cart-drawer-btn cart-drawer-btn--primary">付款并生成粘贴订单</button>
             </div>

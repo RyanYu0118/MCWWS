@@ -14,6 +14,22 @@
         return `￥${n.toFixed(2)}`;
     }
 
+    function quoteCheckoutAmounts(quote) {
+        const material = Number(quote?.materialTotal);
+        const fee = Number(quote?.buildServiceFee);
+        const total = Number(quote?.checkoutTotal ?? quote?.purchasableTotal);
+        const materialTotal = Number.isFinite(material)
+            ? material
+            : (Number.isFinite(total) && Number.isFinite(fee) ? total - fee : total);
+        const buildServiceFee = Number.isFinite(fee) ? fee : 0;
+        const checkoutTotal = Number.isFinite(total) ? total : materialTotal + buildServiceFee;
+        return {
+            materialTotal: Math.max(0, materialTotal),
+            buildServiceFee: Math.max(0, buildServiceFee),
+            checkoutTotal: Math.max(0, checkoutTotal)
+        };
+    }
+
     function getDeps() {
         return window.MCWWS_BuildPasteDeps || window.MCWWS_LitematicaDeps || {};
     }
@@ -268,7 +284,7 @@
                     <p class="litematica-dropzone-hint">须与游戏内 Litematica 加载的同一文件；上传后显示 contentHash 供核对</p>
                     <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildPastePickBtn">选择 .litematic</button>
                 </div>
-                <p class="litematica-import-note">未上架材料（含基岩）当前免费；仅商店可购材料计费。付款后可用坐标设锚点并绝对坐标粘贴，无需站到位。</p>
+                <p class="litematica-import-note">未上架材料（含基岩）当前免费；商店材料费另收 100% 自动建造费。付款后可用坐标设锚点并网页粘贴，无需站到位。</p>
             `;
             bindDropzone(body.querySelector('#buildPasteDropzone'));
         }
@@ -369,13 +385,17 @@
             </div>
         ` : '';
 
+        const amounts = quoteCheckoutAmounts(quote);
+
         body.innerHTML = `
             <div class="litematica-quote-head">
                 <h3 class="litematica-quote-title">${ctx.escapeHtml(title)}</h3>
                 ${clientBlock}
                 <p class="litematica-quote-meta">
                     非空气方块 ${quote.blockCount || 0} · 区域 ${quote.regionCount || 0}
-                    · 可购 ${ctx.escapeHtml(formatMoney(quote.purchasableTotal))}
+                    · 材料 ${ctx.escapeHtml(formatMoney(amounts.materialTotal))}
+                    · 建造费 ${ctx.escapeHtml(formatMoney(amounts.buildServiceFee))}
+                    · 合计 ${ctx.escapeHtml(formatMoney(amounts.checkoutTotal))}
                     · 免费材料 ${quote.freeUnlistedCount || 0} 种
                 </p>
                 <div class="build-paste-hash-box">
@@ -433,13 +453,17 @@
 
         if (footer) {
             footer.hidden = false;
+            const materialEl = document.getElementById('buildPasteMaterialTotal');
+            const feeEl = document.getElementById('buildPasteServiceFee');
             const totalEl = document.getElementById('buildPasteTotal');
             const payBtn = document.getElementById('buildPastePayBtn');
-            if (totalEl) totalEl.textContent = formatMoney(quote.purchasableTotal);
+            if (materialEl) materialEl.textContent = formatMoney(amounts.materialTotal);
+            if (feeEl) feeEl.textContent = formatMoney(amounts.buildServiceFee);
+            if (totalEl) totalEl.textContent = formatMoney(amounts.checkoutTotal);
             if (payBtn) {
                 payBtn.disabled = false;
-                payBtn.textContent = Number(quote.purchasableTotal) > 0
-                    ? `付款 ${formatMoney(quote.purchasableTotal)} 并生成粘贴订单`
+                payBtn.textContent = amounts.checkoutTotal > 0
+                    ? `付款 ${formatMoney(amounts.checkoutTotal)} 并生成粘贴订单`
                     : '确认并生成粘贴订单（免费）';
             }
         }
@@ -517,10 +541,11 @@
                     <p class="build-paste-client-title">粘贴已完成</p>
                 </div>`;
         }
+        const checkoutAmounts = quoteCheckoutAmounts(data);
         body.innerHTML = `
             <div class="litematica-quote-head">
                 <h3 class="litematica-quote-title">粘贴订单已创建</h3>
-                <p class="litematica-quote-meta">订单 #${ctx.escapeHtml(String(data.pasteOrderId))} · 金额 ${ctx.escapeHtml(formatMoney(data.total))} · 状态 ${ctx.escapeHtml(data.status || '')}</p>
+                <p class="litematica-quote-meta">订单 #${ctx.escapeHtml(String(data.pasteOrderId))} · 材料 ${ctx.escapeHtml(formatMoney(checkoutAmounts.materialTotal))} · 建造费 ${ctx.escapeHtml(formatMoney(checkoutAmounts.buildServiceFee))} · 合计 ${ctx.escapeHtml(formatMoney(data.total ?? checkoutAmounts.checkoutTotal))} · 状态 ${ctx.escapeHtml(data.status || '')}</p>
                 ${transformBlock}
                 ${anchorBlock}
                 ${pasteActionBlock}

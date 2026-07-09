@@ -220,6 +220,8 @@ function createBuildQuote({
     materials,
     quoteLines,
     purchasableTotal,
+    materialTotal,
+    buildServiceFee,
     freeUnlistedTotal,
     playerUuid,
     playerId,
@@ -229,6 +231,9 @@ function createBuildQuote({
     const quoteUuid = crypto.randomUUID();
     const numericId = Number(store.next_id) || 1;
     const now = new Date();
+    const normCheckout = Math.round(Number(purchasableTotal) * 100) / 100;
+    const normMaterial = Math.round(Number(materialTotal ?? purchasableTotal) * 100) / 100;
+    const normFee = Math.round(Number(buildServiceFee ?? 0) * 100) / 100;
     const quote = {
         id: quoteUuid,
         numericId,
@@ -237,7 +242,9 @@ function createBuildQuote({
         listName: String(listName || '').trim(),
         materials,
         quoteLines,
-        purchasableTotal,
+        materialTotal: normMaterial,
+        buildServiceFee: normFee,
+        purchasableTotal: normCheckout,
         freeUnlistedTotal,
         playerUuid: playerUuid || '',
         playerId: playerId || '',
