@@ -8,6 +8,7 @@
     --primary: #f5f5f5;
     --primary-light: #ffffff;
     --primary-dark: #d4d4d4;
+    --on-primary: #0a0a0a;
 
     --accent: #e5e5e5;
     --accent-light: #fafafa;
@@ -104,6 +105,7 @@
     --primary: #171717;
     --primary-light: #000000;
     --primary-dark: #404040;
+    --on-primary: #ffffff;
 
     --accent: #262626;
     --accent-light: #525252;
@@ -402,8 +404,8 @@ textarea:focus {
 }
 
 [data-color-scheme="light"] .build-client-sync-row:hover,
-[data-color-scheme="light"] .build-client-sync-row.is-selected {
-    background: var(--surface-hover);
+[data-color-scheme="light"] .category-btn.active .category-count {
+    background: rgba(255, 255, 255, 0.2);
 }
 
 [data-color-scheme="light"] .build-paste-client-box {

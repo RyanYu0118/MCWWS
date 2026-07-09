@@ -1,4 +1,4 @@
-/* DS-WEB-VERSION: 2.5.77 */
+/* DS-WEB-VERSION: 2.5.78 */
 /* ═══════════════════════════════════════════════════════════════════════
    流浪世界服务器商店系统 PREMIUM DASHBOARD STYLES
    Modern dark theme with glassmorphism effects
@@ -579,6 +579,7 @@ body {
 
 .refresh-btn:hover {
     background: var(--primary);
+    color: var(--on-primary, #0a0a0a);
 }
 
 .refresh-icon {
@@ -983,7 +984,7 @@ body {
 
 .time-btn.active {
     background: var(--primary);
-    color: white;
+    color: var(--on-primary, #0a0a0a);
 }
 
 .chart-container {
@@ -1037,7 +1038,7 @@ body {
 
 .tab-btn.active {
     background: var(--primary);
-    color: white;
+    color: var(--on-primary, #0a0a0a);
 }
 
 .leaderboard-content,
@@ -1068,7 +1069,7 @@ body {
     align-items: center;
     justify-content: center;
     background: var(--gradient-primary);
-    color: white;
+    color: var(--on-primary, #0a0a0a);
     font-weight: 700;
     border-radius: 50%;
     font-size: 0.85rem;
@@ -1392,7 +1393,7 @@ body {
     display: none;
     width: 5px;
     height: 10px;
-    border: solid white;
+    border: solid var(--on-primary, #0a0a0a);
     border-width: 0 2px 2px 0;
     transform: rotate(45deg);
     margin-bottom: 2px;
@@ -1502,6 +1503,7 @@ body {
 .page-btn:hover:not(:disabled) {
     background: var(--primary);
     border-color: var(--primary);
+    color: var(--on-primary, #0a0a0a);
 }
 
 .page-btn:disabled {
@@ -2199,7 +2201,12 @@ body {
 
 .category-btn.active {
     background: var(--primary);
-    color: white;
+    color: var(--on-primary, #0a0a0a);
+}
+
+.category-btn.active .category-count {
+    background: rgba(0, 0, 0, 0.12);
+    color: inherit;
 }
 
 .category-count {
@@ -2264,6 +2271,7 @@ body {
 .pagination-btn:hover:not(:disabled) {
     background: var(--primary);
     border-color: var(--primary);
+    color: var(--on-primary, #0a0a0a);
     transform: translateY(-1px);
 }
 
