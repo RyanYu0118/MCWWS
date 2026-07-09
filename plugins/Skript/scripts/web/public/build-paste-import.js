@@ -82,7 +82,7 @@
                     <p class="litematica-dropzone-hint">须与游戏内 Litematica 加载的同一文件；上传后显示 contentHash 供核对</p>
                     <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildPastePickBtn">选择 .litematic</button>
                 </div>
-                <p class="litematica-import-note">未上架材料（含基岩）当前免费；仅商店可购材料计费。付款后站到粘贴原点执行 <code>/build go &lt;订单号&gt;</code> 即可一步完成锚点与粘贴。</p>
+                <p class="litematica-import-note">未上架材料（含基岩）当前免费；仅商店可购材料计费。付款后可用坐标设锚点并绝对坐标粘贴，无需站到位。</p>
             `;
             bindDropzone(body.querySelector('#buildPasteDropzone'));
         }
@@ -276,8 +276,8 @@
             </div>
         ` : '';
         const anchorHint = hasTransform
-            ? '站到 Litematica <strong>放置原点</strong>（变换中心，见客户端同步中的原点坐标）'
-            : '站到建筑<strong>粘贴原点</strong>（投影最小角对应位置）';
+            ? '在<strong>当前世界</strong>执行 <code>/build anchor ' + ctx.escapeHtml(String(data.pasteOrderId)) + ' x y z</code>（Litematica 放置原点，见客户端同步）'
+            : '在<strong>当前世界</strong>执行 <code>/build anchor ' + ctx.escapeHtml(String(data.pasteOrderId)) + ' x y z</code>，或站在原点执行 <code>/build anchor ' + ctx.escapeHtml(String(data.pasteOrderId)) + '</code>';
         body.innerHTML = `
             <div class="litematica-quote-head">
                 <h3 class="litematica-quote-title">粘贴订单已创建</h3>
@@ -291,9 +291,9 @@
             <ol class="build-paste-steps">
                 <li>确认 Litematica 加载的投影与上传文件一致（哈希相同）</li>
                 <li>${anchorHint}</li>
-                <li>执行 <code>/build go ${ctx.escapeHtml(String(data.pasteOrderId))}</code></li>
+                <li>执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code>（绝对坐标粘贴，无需站到位）</li>
             </ol>
-            <p class="litematica-import-note">也可分步执行 <code>/build anchor ${ctx.escapeHtml(String(data.pasteOrderId))}</code> 再 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code>。粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效；全程 contentHash 不变。</p>
+            <p class="litematica-import-note">一步完成：<code>/build go ${ctx.escapeHtml(String(data.pasteOrderId))} x y z</code>。粘贴凭证 ${ctx.escapeHtml(String(data.pasteTokenExpiresAt || ''))} 前有效。</p>
         `;
         if (footer) footer.hidden = true;
     }
