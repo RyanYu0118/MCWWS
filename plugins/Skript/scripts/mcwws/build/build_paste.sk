@@ -7,6 +7,7 @@ import:
     java.nio.charset.StandardCharsets
     java.util.UUID
     org.bukkit.Bukkit
+    org.bukkit.GameMode
     com.sk89q.worldedit.WorldEdit
     com.sk89q.worldedit.bukkit.BukkitAdapter
     com.sk89q.worldedit.extent.clipboard.io.ClipboardFormats
@@ -84,18 +85,35 @@ function mcwwsResolveSchemNameForOrder(oid: text, contentHash: text, storedName:
             return {_stored}
     return mcwwsResolveSchemName({_contentHash}, {_storedName})
 
+function mcwwsPasteAnchorLocation(world: world, px: number, py: number, pz: number) :: location:
+    return location at {_px} + 0.5, {_py}, {_pz} + 0.5 in {_world}
+
+function mcwwsPasteSchemNeedsRuntimeTransform(schem: text, rotation: text, mirror: text) :: boolean:
+    if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is false:
+        return false
+    set {_suffix} to mcwwsPasteSchemTransformSuffix({_rotation}, {_mirror})
+    if {_suffix} is "":
+        return false
+    if {_schem} contains {_suffix}:
+        return false
+    return true
+
 function mcwwsPasteApplyGamemode(p: player, gm: text):
     set {_g} to lowercase "%{_gm}%"
     if {_g} is "spectator":
         set gamemode of {_p} to spectator
+        {_p}.setGameMode(GameMode.SPECTATOR)
         stop
     if {_g} is "creative":
         set gamemode of {_p} to creative
+        {_p}.setGameMode(GameMode.CREATIVE)
         stop
     if {_g} is "adventure":
         set gamemode of {_p} to adventure
+        {_p}.setGameMode(GameMode.ADVENTURE)
         stop
     set gamemode of {_p} to survival
+    {_p}.setGameMode(GameMode.SURVIVAL)
 
 function mcwwsPasteYamlPath() :: text:
     return "plugins/Skript/scripts/web/data/pending_paste_orders.yml"
@@ -533,28 +551,25 @@ function mcwwsPasteBeginPlayerHold(p: player, anchor: location):
     set {mcwws.paste.hold.%{_key}%.saved-gm} to gamemode of {_p}
     set {mcwws.paste.hold.%{_key}%.saved-loc} to location of {_p}
     set {mcwws.paste.hold.%{_key}%.anchor} to {_anchor}
+    set {mcwws.paste.hold.%{_key}%.phase} to "spectator"
+    set {mcwws.paste.hold.%{_key}%.tick} to 0
     set {mcwws.paste.hold.%{_key}%.active} to true
     mcwwsPasteApplyGamemode({_p}, "spectator")
     teleport {_p} to {_anchor}
     mcwwsPasteShowHoldTitle({_p}, "spectator")
-    send "§7粘贴期间将切换旁观锁定坐标，执行 WorldEdit 时临时切创造以支持 §f//undo§7。" to {_p}
+    send "§7已传送至粘贴角点并切换旁观；WorldEdit 执行时将临时切创造以支持 §f//undo§7。" to {_p}
 
-function mcwwsPasteHoldPlayerTicks(p: player, anchor: location, ticks: number, holdMode: text):
+function mcwwsPasteSetHoldPhase(p: player, phase: text):
     set {_key} to mcwwsPastePlayerHoldKey({_p})
-    set {_mode} to lowercase "%{_holdMode}%"
-    loop {_ticks} times:
-        if {mcwws.paste.hold.%{_key}%.active} is not true:
-            stop loop
-        if {_mode} is "creative":
-            if gamemode of {_p} is not creative:
-                set gamemode of {_p} to creative
-        else:
-            if gamemode of {_p} is not spectator:
-                set gamemode of {_p} to spectator
+    set {mcwws.paste.hold.%{_key}%.phase} to {_phase}
+    if {_phase} is "creative":
+        mcwwsPasteApplyGamemode({_p}, "creative")
+    else:
+        mcwwsPasteApplyGamemode({_p}, "spectator")
+    set {_anchor} to {mcwws.paste.hold.%{_key}%.anchor}
+    if {_anchor} is set:
         teleport {_p} to {_anchor}
-        if mod(loop-number, 20) is 0:
-            mcwwsPasteShowHoldTitle({_p}, {_holdMode})
-        wait 1 tick
+    mcwwsPasteShowHoldTitle({_p}, {_phase})
 
 function mcwwsPasteEndPlayerHold(p: player):
     set {_key} to mcwwsPastePlayerHoldKey({_p})
@@ -562,68 +577,20 @@ function mcwwsPasteEndPlayerHold(p: player):
         stop
     set {_gm} to {mcwws.paste.hold.%{_key}%.saved-gm}
     set {_loc} to {mcwws.paste.hold.%{_key}%.saved-loc}
+    delete {mcwws.paste.hold.%{_key}%.active}
+    delete {mcwws.paste.hold.%{_key}%.phase}
+    delete {mcwws.paste.hold.%{_key}%.tick}
+    delete {mcwws.paste.hold.%{_key}%.anchor}
     if {_gm} is set:
         mcwwsPasteApplyGamemode({_p}, "%{_gm}%")
     if {_loc} is set:
         teleport {_p} to {_loc}
-    send title "§a粘贴完成" with subtitle "§7已恢复你的模式与位置" to {_p} for 2 seconds with fadein 5 ticks and fade out 15 ticks
     delete {mcwws.paste.hold.%{_key}%.saved-gm}
     delete {mcwws.paste.hold.%{_key}%.saved-loc}
-    delete {mcwws.paste.hold.%{_key}%.anchor}
-    delete {mcwws.paste.hold.%{_key}%.active}
+    send title "§a粘贴完成" with subtitle "§7已恢复你的模式与位置" to {_p} for 2 seconds with fadein 5 ticks and fade out 15 ticks
 
 function mcwwsPasteAbortPlayerHold(p: player):
     mcwwsPasteEndPlayerHold({_p})
-
-function mcwwsPasteExecutePlayerSchemAt(p: player, schem: text, world: world, px: number, py: number, pz: number, oid: text, rotation: text, mirror: text, transformBaked: boolean) :: boolean:
-    set {_anchor} to location at {_px}, {_py}, {_pz} in {_world}
-    set {_worldName} to name of {_world}
-    mcwwsPasteBeginPlayerHold({_p}, {_anchor})
-    send "§7原理图: §e%{_schem}% §7→ 角点 %{_px}%, %{_py}%, %{_pz}%" to {_p}
-    set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
-    set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
-    if {_transformBaked} is true:
-        send "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
-    else if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
-        send "§7将应用变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 10, "spectator")
-    send "§7以你的身份执行 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
-    set gamemode of {_p} to creative
-    mcwwsPasteShowHoldTitle({_p}, "creative")
-    make {_p} execute command "//world %{_worldName}%"
-    make {_p} execute command "//schem load %{_schem}%"
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 80, "creative")
-    if {_transformBaked} is false:
-        if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
-            mcwwsPasteApplyClipboardTransform({_p}, {_anchor}, {_rotation}, {_mirror})
-    make {_p} execute command "//paste -a"
-    mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
-    mcwwsPasteEndPlayerHold({_p})
-    return true
-
-function mcwwsPasteApplyClipboardTransform(p: player, anchor: location, rotation: text, mirror: text):
-    set {_rotation} to mcwwsPasteNormalizeRotation({_rotation})
-    set {_mirror} to mcwwsPasteNormalizeMirror({_mirror})
-    if {_mirror} is "LEFT_RIGHT":
-        send "§7应用镜像: §f左右" to {_p}
-        make {_p} execute command "//flip north"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
-    else if {_mirror} is "FRONT_BACK":
-        send "§7应用镜像: §f前后" to {_p}
-        make {_p} execute command "//flip east"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
-    if {_rotation} is "CLOCKWISE_90":
-        send "§7应用旋转: §f顺时针 90°" to {_p}
-        make {_p} execute command "//rotate 90"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
-    else if {_rotation} is "CLOCKWISE_180":
-        send "§7应用旋转: §f180°" to {_p}
-        make {_p} execute command "//rotate 180"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
-    else if {_rotation} is "COUNTERCLOCKWISE_90":
-        send "§7应用旋转: §f逆时针 90°" to {_p}
-        make {_p} execute command "//rotate 270"
-        mcwwsPasteHoldPlayerTicks({_p}, {_anchor}, 20, "creative")
 
 function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
     if {_p} is not set:
@@ -724,7 +691,47 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     if size of {_tempPerms::*} > 0:
         send "§7已授予临时 WorldEdit 权限…" to {_p}
     wait 2 ticks
-    set {_ok} to mcwwsPasteExecutePlayerSchemAt({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_oid}, {_rotation}, {_mirror}, {_transformBaked})
+    set {_anchor} to mcwwsPasteAnchorLocation({_world}, {_px}, {_py}, {_pz})
+    set {_runtimeTransform} to mcwwsPasteSchemNeedsRuntimeTransform({_schem}, {_rotation}, {_mirror})
+    mcwwsPasteBeginPlayerHold({_p}, {_anchor})
+    send "§7原理图: §e%{_schem}% §7→ 角点 %{_px}%, %{_py}%, %{_pz}%" to {_p}
+    if {_runtimeTransform} is false:
+        if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
+            send "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+    else:
+        send "§7将用 WorldEdit 应用变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+    wait 60 ticks
+    mcwwsPasteSetHoldPhase({_p}, "creative")
+    wait 5 ticks
+    send "§7以你的身份执行 WorldEdit 粘贴（支持 §f//undo§7）…" to {_p}
+    make {_p} execute command "//world %{_worldName}%"
+    make {_p} execute command "//schem load %{_schem}%"
+    wait 100 ticks
+    if {_runtimeTransform} is true:
+        if {_mirror} is "LEFT_RIGHT":
+            send "§7应用镜像: §f左右" to {_p}
+            make {_p} execute command "//flip north"
+            wait 25 ticks
+        else if {_mirror} is "FRONT_BACK":
+            send "§7应用镜像: §f前后" to {_p}
+            make {_p} execute command "//flip east"
+            wait 25 ticks
+        if {_rotation} is "CLOCKWISE_90":
+            send "§7应用旋转: §f顺时针 90°" to {_p}
+            make {_p} execute command "//rotate 90"
+            wait 25 ticks
+        else if {_rotation} is "CLOCKWISE_180":
+            send "§7应用旋转: §f180°" to {_p}
+            make {_p} execute command "//rotate 180"
+            wait 25 ticks
+        else if {_rotation} is "COUNTERCLOCKWISE_90":
+            send "§7应用旋转: §f逆时针 90°" to {_p}
+            make {_p} execute command "//rotate 270"
+            wait 25 ticks
+    make {_p} execute command "//paste -a"
+    wait 40 ticks
+    mcwwsPasteEndPlayerHold({_p})
+    set {_ok} to true
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is not true:
         if {_p} is set:
@@ -842,6 +849,31 @@ function mcwwsProcessWebPasteQueue():
     if {_n} is 0:
         mcwwsProcessWebPasteYamlQueue()
 
+every 1 tick:
+    loop all players:
+        set {_key} to mcwwsPastePlayerHoldKey(loop-player)
+        if {mcwws.paste.hold.%{_key}%.active} is not true:
+            continue
+        set {_anchor} to {mcwws.paste.hold.%{_key}%.anchor}
+        if {_anchor} is not set:
+            continue
+        set {_phase} to {mcwws.paste.hold.%{_key}%.phase}
+        if {_phase} is "creative":
+            if gamemode of loop-player is not creative:
+                mcwwsPasteApplyGamemode(loop-player, "creative")
+        else:
+            if gamemode of loop-player is not spectator:
+                mcwwsPasteApplyGamemode(loop-player, "spectator")
+        teleport loop-player to {_anchor}
+        if {mcwws.paste.hold.%{_key}%.tick} is not set:
+            set {mcwws.paste.hold.%{_key}%.tick} to 0
+        add 1 to {mcwws.paste.hold.%{_key}%.tick}
+        if mod({mcwws.paste.hold.%{_key}%.tick}, 20) is 0:
+            if {_phase} is "creative":
+                mcwwsPasteShowHoldTitle(loop-player, "creative")
+            else:
+                mcwwsPasteShowHoldTitle(loop-player, "spectator")
+
 every 2 seconds:
     mcwwsProcessWebPasteQueue()
 
@@ -854,6 +886,8 @@ on quit:
         delete {mcwws.paste.hold.%{_key}%.saved-gm}
         delete {mcwws.paste.hold.%{_key}%.saved-loc}
         delete {mcwws.paste.hold.%{_key}%.anchor}
+        delete {mcwws.paste.hold.%{_key}%.phase}
+        delete {mcwws.paste.hold.%{_key}%.tick}
         delete {mcwws.paste.hold.%{_key}%.active}
 
 on load:
