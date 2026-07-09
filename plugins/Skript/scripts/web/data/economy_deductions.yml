@@ -1,4 +1,4 @@
-next_id: 54
+next_id: 56
 
 pending:
     '1':
@@ -233,10 +233,11 @@ pending:
         playerId: Ryan_yu__
         amount: 6
         orderId: 30
-        status: pending
+        status: done
         createdAt: '2026-06-01T14:11:39.941Z'
         mode: eco-take
         balanceAfter: 214534.51
+        processedAt: '2026-07-09 14:47:47'
     '20':
         id: 20
         uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -611,3 +612,25 @@ pending:
         mode: eco-take
         balanceAfter: 1.6633766035E8
         processedAt: '2026-07-09T06:39:27.962Z'
+    '54':
+        id: 54
+        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        amount: 11366.38
+        orderId: 29
+        status: done
+        createdAt: '2026-07-09T06:46:14.148Z'
+        mode: eco-take
+        balanceAfter: 1.6632629397E8
+        processedAt: '2026-07-09 14:46:14'
+    '55':
+        id: 55
+        uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        amount: 11366.38
+        orderId: 30
+        status: done
+        createdAt: '2026-07-09T06:47:46.267Z'
+        mode: eco-take
+        balanceAfter: 1.6631492759E8
+        processedAt: '2026-07-09 14:47:47'

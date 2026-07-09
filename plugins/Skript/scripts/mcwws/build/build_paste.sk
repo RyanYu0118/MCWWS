@@ -5,6 +5,7 @@ import:
     java.io.FileInputStream
     java.nio.file.Files
     java.nio.charset.StandardCharsets
+    java.util.UUID
     org.bukkit.Bukkit
     com.sk89q.worldedit.WorldEdit
     com.sk89q.worldedit.bukkit.BukkitAdapter
@@ -144,7 +145,35 @@ function mcwwsPasteResolveAnchorLocation(p: player, coordX: text, coordY: text, 
                 return location at {_x}, {_y}, {_z} in world of {_p}
     return location of {_p}
 
-function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pasteX: number, pasteY: number, pasteZ: number) :: boolean:
+function mcwwsPasteResolveHistoryUuid(p: player, oid: text) :: object:
+    if {_p} is set:
+        return uuid of {_p}
+    set {_raw} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
+    if {_raw} is "":
+        return null
+    return UUID.fromString({_raw})
+
+function mcwwsPasteCreateHistoryEditSession(p: player, world: world, oid: text) :: object:
+    set {_weWorld} to BukkitAdapter.adapt({_world})
+    if {_p} is set:
+        set {_actor} to BukkitAdapter.adapt({_p})
+    else:
+        set {_actor} to BukkitAdapter.adapt(Bukkit.getConsoleSender())
+    set {_historyUuid} to mcwwsPasteResolveHistoryUuid({_p}, {_oid})
+    set {_builder} to WorldEdit.getInstance().newEditSessionBuilder()
+    {_builder}.world({_weWorld})
+    {_builder}.actor({_actor})
+    {_builder}.maxBlocks(-1)
+    {_builder}.fastMode(false)
+    if {_historyUuid} is set:
+        {_builder}.changeSet(true, {_historyUuid})
+    set {_session} to {_builder}.build()
+    if {_session} is not set:
+        return null
+    {_session}.setTrackingHistory(true)
+    return {_session}
+
+function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pasteX: number, pasteY: number, pasteZ: number, oid: text) :: boolean:
     set {_file} to mcwwsFindSchemFile({_schemName})
     if {_file} is not set:
         return false
@@ -160,17 +189,14 @@ function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pas
     set {_clipboard} to {_reader}.read()
     {_reader}.close()
     {_stream}.close()
-    if {_p} is set:
-        set {_actor} to BukkitAdapter.adapt({_p})
-    else:
-        set {_actor} to BukkitAdapter.adapt(Bukkit.getConsoleSender())
-    set {_session} to WorldEdit.getInstance().getEditSessionFactory().getEditSession({_weWorld}, -1, {_actor})
+    set {_session} to mcwwsPasteCreateHistoryEditSession({_p}, {_world}, {_oid})
     if {_session} is not set:
         return false
     set {_dest} to BlockVector3.at({_ix}, {_iy}, {_iz})
     set {_holder} to new ClipboardHolder({_clipboard})
     set {_operation} to {_holder}.createPaste({_session}).to({_dest}).ignoreAirBlocks(true).build()
     Operations.complete({_operation})
+    {_session}.flushQueue()
     {_session}.close()
     return true
 
@@ -180,6 +206,7 @@ function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build anchor <订单号> [x y z] §7- 设置 Litematica 放置原点（可填坐标）" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 按已存锚点绝对坐标粘贴（无需站到位）" to {_p}
     send "§7也可在网页点击「网页粘贴」，无需进游戏。" to {_p}
+    send "§7粘贴完成后订单属主可用 §f//undo §7撤销（FAWE 历史）。" to {_p}
     send "§7悬浮建筑请用 §f/build anchor <订单号> <x> <y> <z> §7填入 Litematica 原点坐标。" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
 
@@ -548,7 +575,7 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
         mcwwsPasteExecuteLegacyPlayerRelative({_p}, {_schem}, {_world}, {_px}, {_py}, {_pz}, {_rotation}, {_mirror})
         set {_ok} to true
     else:
-        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz})
+        set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz}, {_oid})
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is not true:
         mcwwsPasteMarkFailed({_oid}, "绝对坐标粘贴失败")
@@ -573,6 +600,7 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
         unload yaml "pastes"
         mcwwsPasteNotify({_p}, "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。")
         mcwwsPasteNotify({_p}, "§7放置原点: §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%")
+        mcwwsPasteNotify({_p}, "§7订单属主可执行 §f//undo §7撤销本次粘贴。")
     else:
         unload yaml "pastes"
     mcwwsPasteNotify({_p}, "§7contentHash: §f%{_hash}%")
