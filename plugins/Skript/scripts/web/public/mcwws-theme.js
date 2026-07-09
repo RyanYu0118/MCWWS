@@ -17,12 +17,12 @@ const MCWWS_THEME_CATALOG = [
     {
         id: 'default',
         label: '默认深色',
-        description: '经典紫青渐变玻璃风格'
+        description: '简约黑白玻璃风格'
     },
     {
         id: 'ios26-glass',
         label: 'iOS 26 玻璃',
-        description: '液态玻璃 · 高斯模糊 · 饱和光晕'
+        description: '液态玻璃 · 简约黑白背景'
     }
 ];
 

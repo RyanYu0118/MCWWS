@@ -1,23 +1,23 @@
-/* MCWWS 备选主题：iOS 26 液态玻璃风格 */
+/* MCWWS 备选主题：iOS 26 液态玻璃（简约黑白背景） */
 
 /* ═══ 默认主题语义变量补充 ═══ */
 :root,
 [data-theme="default"] {
-    --navbar-bg: rgba(15, 23, 42, 0.9);
+    --navbar-bg: rgba(8, 8, 8, 0.92);
     --navbar-border: var(--border);
-    --modal-overlay: rgba(2, 6, 23, 0.72);
+    --modal-overlay: rgba(0, 0, 0, 0.78);
 }
 
 /* ═══ iOS 26 玻璃主题 ═══ */
 [data-theme="ios26-glass"] {
     color-scheme: dark;
 
-    --primary: #0A84FF;
-    --primary-light: #64B5FF;
-    --primary-dark: #0066CC;
+    --primary: #f5f5f5;
+    --primary-light: #ffffff;
+    --primary-dark: #d4d4d4;
 
-    --accent: #5AC8FA;
-    --accent-light: #8DD7FF;
+    --accent: #e5e5e5;
+    --accent-light: #fafafa;
 
     --success: #30D158;
     --success-light: #6EE78A;
@@ -25,39 +25,39 @@
     --danger-light: #FF6961;
     --warning: #FFD60A;
 
-    --bg-primary: #07070d;
+    --bg-primary: #050505;
     --bg-secondary: rgba(255, 255, 255, 0.06);
     --bg-tertiary: rgba(255, 255, 255, 0.1);
-    --bg-card: rgba(255, 255, 255, 0.08);
+    --bg-card: rgba(255, 255, 255, 0.06);
 
     --text-primary: rgba(255, 255, 255, 0.96);
     --text-secondary: rgba(255, 255, 255, 0.78);
     --text-muted: rgba(255, 255, 255, 0.52);
 
     --border: rgba(255, 255, 255, 0.14);
-    --border-glow: rgba(10, 132, 255, 0.35);
+    --border-glow: rgba(255, 255, 255, 0.22);
 
     --shadow-sm: 0 2px 12px rgba(0, 0, 0, 0.28);
     --shadow-md: 0 8px 28px rgba(0, 0, 0, 0.32);
     --shadow-lg: 0 16px 48px rgba(0, 0, 0, 0.38);
-    --shadow-glow: 0 0 48px rgba(10, 132, 255, 0.18);
+    --shadow-glow: 0 0 48px rgba(255, 255, 255, 0.04);
 
-    --glass-bg: rgba(255, 255, 255, 0.1);
-    --glass-border: rgba(255, 255, 255, 0.22);
+    --glass-bg: rgba(255, 255, 255, 0.08);
+    --glass-border: rgba(255, 255, 255, 0.18);
     --glass-blur: 32px;
 
-    --gradient-primary: linear-gradient(135deg, #0A84FF 0%, #5AC8FA 45%, #BF5AF2 100%);
-    --gradient-hero: linear-gradient(160deg, #07070d 0%, #101025 40%, #0a0a14 100%);
-    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.12) 0%, rgba(255, 255, 255, 0.03) 100%);
+    --gradient-primary: linear-gradient(135deg, #ffffff 0%, #a3a3a3 100%);
+    --gradient-hero: linear-gradient(180deg, #050505 0%, #0f0f0f 50%, #050505 100%);
+    --gradient-card: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.02) 100%);
 
     --radius-sm: 12px;
     --radius-md: 18px;
     --radius-lg: 24px;
     --radius-xl: 32px;
 
-    --navbar-bg: rgba(255, 255, 255, 0.07);
-    --navbar-border: rgba(255, 255, 255, 0.16);
-    --modal-overlay: rgba(0, 0, 0, 0.45);
+    --navbar-bg: rgba(255, 255, 255, 0.06);
+    --navbar-border: rgba(255, 255, 255, 0.14);
+    --modal-overlay: rgba(0, 0, 0, 0.55);
 }
 
 [data-theme="ios26-glass"] body {
@@ -72,11 +72,10 @@
     inset: 0;
     z-index: -2;
     background:
-        radial-gradient(ellipse 90% 70% at 12% 8%, rgba(10, 132, 255, 0.42) 0%, transparent 58%),
-        radial-gradient(ellipse 75% 55% at 88% 18%, rgba(191, 90, 242, 0.34) 0%, transparent 55%),
-        radial-gradient(ellipse 80% 60% at 55% 95%, rgba(48, 209, 255, 0.22) 0%, transparent 60%),
-        radial-gradient(ellipse 50% 40% at 70% 55%, rgba(255, 55, 95, 0.12) 0%, transparent 50%),
-        linear-gradient(165deg, #07070d 0%, #0d0d1a 45%, #080810 100%);
+        radial-gradient(ellipse 80% 60% at 15% 10%, rgba(255, 255, 255, 0.07) 0%, transparent 58%),
+        radial-gradient(ellipse 70% 50% at 85% 20%, rgba(255, 255, 255, 0.05) 0%, transparent 55%),
+        radial-gradient(ellipse 75% 55% at 50% 100%, rgba(255, 255, 255, 0.04) 0%, transparent 60%),
+        linear-gradient(165deg, #050505 0%, #0c0c0c 45%, #050505 100%);
     pointer-events: none;
 }
 
@@ -85,7 +84,7 @@
     position: fixed;
     inset: 0;
     z-index: -1;
-    opacity: 0.35;
+    opacity: 0.22;
     background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.5'/%3E%3C/svg%3E");
     background-size: 180px 180px;
     pointer-events: none;
@@ -95,25 +94,25 @@
 [data-theme="ios26-glass"] .glass {
     background: linear-gradient(
         145deg,
-        rgba(255, 255, 255, 0.16) 0%,
-        rgba(255, 255, 255, 0.06) 42%,
-        rgba(255, 255, 255, 0.03) 100%
+        rgba(255, 255, 255, 0.14) 0%,
+        rgba(255, 255, 255, 0.05) 42%,
+        rgba(255, 255, 255, 0.02) 100%
     );
-    backdrop-filter: blur(var(--glass-blur)) saturate(185%);
-    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(185%);
-    border: 1px solid rgba(255, 255, 255, 0.22);
+    backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(120%);
+    border: 1px solid rgba(255, 255, 255, 0.18);
     box-shadow:
         var(--shadow-md),
-        inset 0 1px 0 rgba(255, 255, 255, 0.2),
-        inset 0 -1px 0 rgba(255, 255, 255, 0.04);
+        inset 0 1px 0 rgba(255, 255, 255, 0.16),
+        inset 0 -1px 0 rgba(255, 255, 255, 0.03);
 }
 
 [data-theme="ios26-glass"] .navbar {
     background: var(--navbar-bg);
-    backdrop-filter: blur(40px) saturate(180%);
-    -webkit-backdrop-filter: blur(40px) saturate(180%);
+    backdrop-filter: blur(40px) saturate(120%);
+    -webkit-backdrop-filter: blur(40px) saturate(120%);
     border-bottom: 1px solid var(--navbar-border);
-    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 4px 24px rgba(0, 0, 0, 0.25);
 }
 
 [data-theme="ios26-glass"] .nav-link {
@@ -123,12 +122,12 @@
 [data-theme="ios26-glass"] .nav-link:hover,
 [data-theme="ios26-glass"] .nav-link.active {
     background: rgba(255, 255, 255, 0.1);
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 [data-theme="ios26-glass"] .hero-glow,
 [data-theme="ios26-glass"] .services-hub-hero-glow {
-    background: radial-gradient(ellipse at center, rgba(10, 132, 255, 0.28) 0%, rgba(191, 90, 242, 0.12) 45%, transparent 72%);
+    background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.08) 0%, transparent 72%);
     filter: blur(8px);
 }
 
@@ -146,23 +145,23 @@
 [data-theme="ios26-glass"] .item-card:hover,
 [data-theme="ios26-glass"] .shop-item-card:hover {
     transform: translateY(-3px) scale(1.01);
-    border-color: rgba(255, 255, 255, 0.28);
+    border-color: rgba(255, 255, 255, 0.26);
     box-shadow:
         var(--shadow-lg),
-        0 0 28px rgba(10, 132, 255, 0.12);
+        0 0 28px rgba(255, 255, 255, 0.06);
 }
 
 [data-theme="ios26-glass"] .shop-item-card.glass {
     box-shadow:
         var(--shadow-md),
-        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 [data-theme="ios26-glass"] .shop-item-card.glass:hover {
     box-shadow:
         var(--shadow-lg),
-        0 0 28px rgba(10, 132, 255, 0.12),
-        inset 0 1px 0 rgba(255, 255, 255, 0.14);
+        0 0 28px rgba(255, 255, 255, 0.06),
+        inset 0 1px 0 rgba(255, 255, 255, 0.12);
 }
 
 [data-theme="ios26-glass"] .shop-item-card.item-card-price-flash {
@@ -175,8 +174,8 @@
     }
     20% {
         box-shadow:
-            0 0 0 1px rgba(10, 132, 255, 0.42),
-            0 0 18px rgba(10, 132, 255, 0.2);
+            0 0 0 1px rgba(255, 255, 255, 0.32),
+            0 0 18px rgba(255, 255, 255, 0.1);
     }
     100% {
         box-shadow: var(--shadow-md);
@@ -186,20 +185,21 @@
 [data-theme="ios26-glass"] .cart-drawer-btn--primary,
 [data-theme="ios26-glass"] .refresh-btn,
 [data-theme="ios26-glass"] .mcwws-auth-popover-action {
-    background: linear-gradient(180deg, rgba(10, 132, 255, 0.95) 0%, rgba(0, 102, 204, 0.92) 100%);
-    border: 1px solid rgba(255, 255, 255, 0.25);
-    box-shadow: 0 4px 16px rgba(10, 132, 255, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.25);
+    background: linear-gradient(180deg, rgba(255, 255, 255, 0.95) 0%, rgba(212, 212, 212, 0.92) 100%);
+    color: #0a0a0a;
+    border: 1px solid rgba(255, 255, 255, 0.28);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28), inset 0 1px 0 rgba(255, 255, 255, 0.35);
 }
 
 [data-theme="ios26-glass"] .cart-drawer-btn--ghost {
-    background: rgba(255, 255, 255, 0.08);
-    border: 1px solid rgba(255, 255, 255, 0.16);
+    background: rgba(255, 255, 255, 0.07);
+    border: 1px solid rgba(255, 255, 255, 0.14);
     backdrop-filter: blur(12px);
 }
 
 [data-theme="ios26-glass"] .modal {
     background: var(--modal-overlay);
-    backdrop-filter: blur(12px) saturate(140%);
+    backdrop-filter: blur(12px) saturate(110%);
 }
 
 [data-theme="ios26-glass"] .hero-search,
@@ -208,8 +208,8 @@
 [data-theme="ios26-glass"] input[type="number"],
 [data-theme="ios26-glass"] select,
 [data-theme="ios26-glass"] textarea {
-    background: rgba(255, 255, 255, 0.08) !important;
-    border: 1px solid rgba(255, 255, 255, 0.18) !important;
+    background: rgba(255, 255, 255, 0.07) !important;
+    border: 1px solid rgba(255, 255, 255, 0.16) !important;
     backdrop-filter: blur(16px);
     border-radius: var(--radius-md) !important;
 }
@@ -218,8 +218,8 @@
 [data-theme="ios26-glass"] input:focus,
 [data-theme="ios26-glass"] select:focus,
 [data-theme="ios26-glass"] textarea:focus {
-    border-color: rgba(10, 132, 255, 0.55) !important;
-    box-shadow: 0 0 0 3px rgba(10, 132, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.38) !important;
+    box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
 }
 
 [data-theme="ios26-glass"] .services-hub-page {
@@ -227,8 +227,12 @@
 }
 
 [data-theme="ios26-glass"] .litematica-dropzone {
-    background: rgba(255, 255, 255, 0.05);
-    border-color: rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.04);
+    border-color: rgba(255, 255, 255, 0.16);
+}
+
+[data-theme="ios26-glass"] .shop-item-card-accent {
+    background: linear-gradient(90deg, rgba(255, 255, 255, 0.42), rgba(255, 255, 255, 0.08));
 }
 
 /* ═══ 主题切换器 ═══ */
@@ -305,13 +309,8 @@
 }
 
 .mcwws-theme-option.is-active {
-    background: rgba(139, 92, 246, 0.15);
+    background: rgba(255, 255, 255, 0.1);
     border-color: var(--border-glow);
-}
-
-[data-theme="ios26-glass"] .mcwws-theme-option.is-active {
-    background: rgba(10, 132, 255, 0.18);
-    border-color: rgba(10, 132, 255, 0.4);
 }
 
 .mcwws-theme-option-label {

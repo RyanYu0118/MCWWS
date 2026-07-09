@@ -13,21 +13,21 @@
     padding: 0;
     border: 2px solid rgba(255, 255, 255, 0.14);
     border-radius: 10px;
-    background: rgba(15, 23, 42, 0.65);
+    background: rgba(14, 14, 14, 0.65);
     cursor: pointer;
     overflow: hidden;
     transition: border-color 0.15s, box-shadow 0.15s, transform 0.1s;
 }
 
 .mcwws-auth-widget.is-logged-in .mcwws-auth-avatar-btn {
-    border-color: rgba(34, 211, 238, 0.45);
-    box-shadow: 0 0 0 1px rgba(34, 211, 238, 0.12);
+    border-color: rgba(255, 255, 255, 0.38);
+    box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.1);
 }
 
 .mcwws-auth-avatar-btn:hover,
 .mcwws-auth-avatar-btn:focus-visible {
-    border-color: rgba(139, 92, 246, 0.75);
-    box-shadow: 0 4px 14px rgba(99, 102, 241, 0.28);
+    border-color: rgba(255, 255, 255, 0.45);
+    box-shadow: 0 4px 14px rgba(255, 255, 255, 0.1);
     outline: none;
 }
 
@@ -98,7 +98,7 @@
     position: relative;
     padding: 12px 14px;
     border-radius: 12px;
-    background: rgba(15, 23, 42, 0.97);
+    background: rgba(14, 14, 14, 0.97);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
 }
@@ -110,7 +110,7 @@
     right: 14px;
     width: 10px;
     height: 10px;
-    background: rgba(15, 23, 42, 0.97);
+    background: rgba(14, 14, 14, 0.97);
     border-left: 1px solid rgba(255, 255, 255, 0.1);
     border-top: 1px solid rgba(255, 255, 255, 0.1);
     transform: rotate(45deg);
@@ -152,7 +152,7 @@
 }
 
 .mcwws-auth-popover-action:hover {
-    background: rgba(139, 92, 246, 0.22);
+    background: rgba(255, 255, 255, 0.16);
 }
 
 .mcwws-auth-widget.is-logged-in .mcwws-auth-popover-action {
@@ -239,6 +239,6 @@
     height: 100%;
     width: 0;
     border-radius: inherit;
-    background: linear-gradient(90deg, #22d3ee, #38bdf8);
+    background: linear-gradient(90deg, #e5e5e5, #a3a3a3);
     transition: width 0.25s ease;
 }
