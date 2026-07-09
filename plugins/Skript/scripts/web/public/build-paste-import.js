@@ -531,7 +531,7 @@
                 pasteActionBlock = `
                     <div class="build-paste-client-box">
                         <button type="button" class="cart-drawer-btn cart-drawer-btn--primary" id="buildPasteWebTriggerBtn">网页粘贴（需在线）</button>
-                        <p class="litematica-import-note">需使用下单账号登录服务器；粘贴期间将短暂切换旁观。也可进游戏执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code></p>
+                        <p class="litematica-import-note">请保持游戏内在线；粘贴将以你的身份执行。也可进游戏执行 <code>/build paste ${ctx.escapeHtml(String(data.pasteOrderId))}</code></p>
                     </div>`;
             }
         }

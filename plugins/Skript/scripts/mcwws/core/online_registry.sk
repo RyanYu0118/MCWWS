@@ -1,0 +1,35 @@
+# MCWWS 在线玩家列表：供网页服务判断游戏内是否在线（以 Bukkit 在线列表为准，不依赖 BlueMap）
+
+import:
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
+
+function mcwwsRefreshOnlinePlayersRegistry():
+    set {_rel} to "plugins/Skript/scripts/web/data/online_players.txt"
+    delete {_lines::*}
+    loop all players:
+        add "%mcwwsPlayerUuidKey(loop-player)%|%name of loop-player%" to {_lines::*}
+    set {_text} to join {_lines::*} with nl
+    if size of {_lines::*} > 0:
+        set {_text} to "%{_text}%%nl%"
+    set {_file} to new File({_rel})
+    set {_parent} to {_file}.getParentFile()
+    if {_parent}.exists() is false:
+        {_parent}.mkdirs()
+    set {_bytes} to {_text}.getBytes(StandardCharsets.UTF_8)
+    Files.write({_file}.toPath(), {_bytes})
+
+on join:
+    wait 1 tick
+    mcwwsRefreshOnlinePlayersRegistry()
+
+on quit:
+    wait 1 tick
+    mcwwsRefreshOnlinePlayersRegistry()
+
+every 15 seconds:
+    mcwwsRefreshOnlinePlayersRegistry()
+
+on load:
+    mcwwsRefreshOnlinePlayersRegistry()

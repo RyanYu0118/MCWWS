@@ -1019,7 +1019,7 @@ orders:
         balanceAfter: 1.6648545929E8
         economyChargedInGame: true
         createdAt: '2026-07-08T14:04:49.109Z'
-        updatedAt: '2026-07-08 22:31:46'
+        updatedAt: '2026-07-09 17:19:13'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-07-08 22:31:45'
@@ -1036,5 +1036,8 @@ orders:
                 material: bricks
                 shopTitle: 方块商店 (1/3)
                 status: delivered
+    '39':
+        economyChargedInGame: true
+        updatedAt: '2026-07-09 17:20:21'
 
 next_id: 39

@@ -205,6 +205,7 @@ const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
 const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
 const PASTE_QUEUE_PATH = path.join(DB_DIR, 'paste_queue.txt');
+const ONLINE_PLAYERS_PATH = path.join(DB_DIR, 'online_players.txt');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -1947,6 +1948,55 @@ function writeEssentialsBalance(uuid, amount) {
 }
 
 function isPlayerOnlineForEconomy(uuid, playerId) {
+    return isPlayerOnlineInGame(uuid, playerId);
+}
+
+function readSkriptOnlinePlayerRegistry() {
+    if (!fs.existsSync(ONLINE_PLAYERS_PATH)) {
+        return null;
+    }
+    try {
+        const text = fs.readFileSync(ONLINE_PLAYERS_PATH, 'utf8');
+        const players = [];
+        for (const line of text.split(/\r?\n/)) {
+            const trimmed = line.trim();
+            if (!trimmed) {
+                continue;
+            }
+            const sep = trimmed.indexOf('|');
+            if (sep <= 0) {
+                continue;
+            }
+            const uuid = trimmed.slice(0, sep).trim().toLowerCase();
+            const name = trimmed.slice(sep + 1).trim();
+            if (uuid) {
+                players.push({ uuid, name });
+            }
+        }
+        return players;
+    } catch {
+        return null;
+    }
+}
+
+/** 以 Skript 写入的 Bukkit 在线列表为准，BlueMap 仅作备用 */
+function isPlayerOnlineInGame(uuid, playerId) {
+    const normUuid = String(uuid || '').trim().toLowerCase();
+    const normName = String(playerId || '').trim().toLowerCase();
+    if (!normUuid && !normName) {
+        return false;
+    }
+    const registry = readSkriptOnlinePlayerRegistry();
+    if (registry) {
+        for (const entry of registry) {
+            if (normUuid && entry.uuid === normUuid) {
+                return true;
+            }
+            if (normName && String(entry.name || '').trim().toLowerCase() === normName) {
+                return true;
+            }
+        }
+    }
     return Boolean(readBlueMapLivePlayerLocation(uuid, playerId));
 }
 
@@ -2343,7 +2393,11 @@ function readBlueMapLivePlayerLocation(uuid, playerName) {
     if (!normUuid && !normName) {
         return null;
     }
-    for (const mapId of BLUEMAP_LIVE_MAP_IDS) {
+    for (const mapId of (fs.existsSync(BLUEMAP_WEB_MAPS_DIR)
+        ? fs.readdirSync(BLUEMAP_WEB_MAPS_DIR, { withFileTypes: true })
+            .filter((entry) => entry.isDirectory())
+            .map((entry) => entry.name)
+        : BLUEMAP_LIVE_MAP_IDS)) {
         const file = path.join(BLUEMAP_WEB_MAPS_DIR, mapId, 'live', 'players.json');
         if (!fs.existsSync(file)) {
             continue;
@@ -3387,9 +3441,20 @@ app.post('/api/build/paste/trigger', (req, res) => {
         if (!uuid) {
             return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
         }
-        if (!isPlayerOnlineForEconomy(uuid, playerId)) {
+        const orderUuid = String(order.playerUuid || '').trim().toLowerCase();
+        if (orderUuid && orderUuid !== uuid.toLowerCase()) {
             return res.status(409).json({
-                error: '粘贴需订单所属玩家在线；请使用同一游戏账号登录服务器后再点击网页粘贴。'
+                error: '无权操作此订单：网页登录账号与下单账号不一致。',
+                orderPlayerUuid: order.playerUuid,
+                currentPlayerUuid: uuid
+            });
+        }
+        if (!isPlayerOnlineInGame(uuid, playerId)) {
+            return res.status(409).json({
+                error: `未在游戏内检测到玩家「${playerId}」在线。请确认已进入服务器后再点击网页粘贴。`,
+                playerId,
+                uuid,
+                hint: '在线状态以游戏服务器为准；若你已在游戏中仍提示离线，请稍等几秒后重试或执行 /sk reload mcwws/core/online_registry'
             });
         }
 
