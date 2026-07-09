@@ -419,91 +419,83 @@ textarea:focus {
     background: var(--surface-hover);
 }
 
-/* ═══ 主题切换器 ═══ */
+/* ═══ 主题切换过渡 ═══ */
+html.is-theme-animating,
+html.is-theme-animating *,
+html.is-theme-animating *::before,
+html.is-theme-animating *::after {
+    transition:
+        background-color var(--theme-transition-duration, 0.45s) ease,
+        color var(--theme-transition-duration, 0.45s) ease,
+        border-color var(--theme-transition-duration, 0.45s) ease,
+        box-shadow var(--theme-transition-duration, 0.45s) ease,
+        fill var(--theme-transition-duration, 0.45s) ease,
+        stroke var(--theme-transition-duration, 0.45s) ease,
+        opacity var(--theme-transition-duration, 0.45s) ease !important;
+}
+
+html.is-theme-animating body::before,
+html.is-theme-animating body::after {
+    transition:
+        opacity var(--theme-transition-duration, 0.45s) ease,
+        background var(--theme-transition-duration, 0.45s) ease !important;
+}
+
+/* ═══ 主题切换器（月亮 / 太阳 一键切换）═══ */
 .mcwws-theme-switcher {
     position: relative;
     flex-shrink: 0;
 }
 
-.mcwws-theme-switcher-btn {
+.mcwws-theme-toggle {
     display: inline-flex;
     align-items: center;
-    gap: 6px;
+    gap: 2px;
     height: 36px;
-    padding: 0 12px;
+    padding: 0 4px;
     border-radius: 999px;
     border: 1px solid var(--border);
     background: var(--bg-secondary);
-    color: var(--text-secondary);
     cursor: pointer;
-    font-size: 13px;
-    transition: background var(--transition-fast), border-color var(--transition-fast), color var(--transition-fast);
+    transition:
+        background var(--transition-fast),
+        border-color var(--transition-fast),
+        box-shadow var(--transition-fast);
 }
 
-.mcwws-theme-switcher-btn:hover {
-    color: var(--text-primary);
+.mcwws-theme-toggle:hover {
     border-color: var(--border-glow);
     background: var(--bg-tertiary);
+    box-shadow: var(--shadow-sm);
 }
 
-.mcwws-theme-switcher-icon {
+.mcwws-theme-toggle:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--input-focus-ring);
+}
+
+.mcwws-theme-toggle-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    border-radius: 999px;
     font-size: 15px;
     line-height: 1;
-    opacity: 0.9;
+    opacity: 0.38;
+    transform: scale(0.9);
+    transition:
+        opacity 0.28s ease,
+        transform 0.28s ease,
+        background 0.28s ease;
 }
 
-.mcwws-theme-switcher-menu {
-    position: absolute;
-    top: calc(100% + 8px);
-    right: 0;
-    min-width: 200px;
-    padding: 10px;
-    border-radius: var(--radius-md);
-    z-index: 1200;
-}
-
-.mcwws-theme-switcher-title {
-    margin: 0 0 8px;
-    padding: 0 8px 6px;
-    font-size: 11px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    color: var(--text-muted);
-}
-
-.mcwws-theme-option {
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 2px;
-    width: 100%;
-    padding: 10px 12px;
-    margin: 0;
-    border: 1px solid transparent;
-    border-radius: var(--radius-sm);
-    background: transparent;
-    color: var(--text-primary);
-    text-align: left;
-    cursor: pointer;
-    transition: background var(--transition-fast), border-color var(--transition-fast);
-}
-
-.mcwws-theme-option:hover {
-    background: var(--surface-hover);
-}
-
-.mcwws-theme-option.is-active {
+.mcwws-theme-toggle[data-active="dark"] .mcwws-theme-toggle-icon--moon,
+.mcwws-theme-toggle[data-active="light"] .mcwws-theme-toggle-icon--sun {
+    opacity: 1;
+    transform: scale(1.05);
     background: var(--surface-active);
-    border-color: var(--border-glow);
-}
-
-.mcwws-theme-option-label {
-    font-size: 14px;
-}
-
-.mcwws-theme-option-desc {
-    font-size: 11px;
-    color: var(--text-muted);
 }
 
 .mcwws-theme-switcher--map {
@@ -523,14 +515,15 @@ textarea:focus {
     margin-bottom: 12px;
 }
 
-@media (max-width: 640px) {
-    .mcwws-theme-switcher-label {
-        display: none;
+@media (prefers-reduced-motion: reduce) {
+    html.is-theme-animating,
+    html.is-theme-animating *,
+    html.is-theme-animating *::before,
+    html.is-theme-animating *::after {
+        transition: none !important;
     }
 
-    .mcwws-theme-switcher-btn {
-        width: 36px;
-        padding: 0;
-        justify-content: center;
+    .mcwws-theme-toggle-icon {
+        transition: none;
     }
 }

@@ -26,50 +26,60 @@
     document.documentElement.setAttribute('data-color-scheme', normalizeScheme(readSavedScheme()));
 })();
 
-const MCWWS_COLOR_SCHEME_CATALOG = [
-    {
-        id: 'dark',
-        label: '深色',
-        description: 'iOS 26 玻璃 · 简约黑白',
-        icon: '🌙'
-    },
-    {
-        id: 'light',
-        label: '浅色',
-        description: 'iOS 26 玻璃 · 明亮界面',
-        icon: '☀️'
-    }
-];
+const MCWWS_COLOR_SCHEME_TRANSITION_MS = 450;
 
 function mcwwsColorSchemeGet() {
     const current = document.documentElement.getAttribute('data-color-scheme');
     return current === 'light' ? 'light' : 'dark';
 }
 
-function mcwwsColorSchemeApply(schemeId) {
+function mcwwsColorSchemeUpdateToggleButton(toggleBtn) {
+    if (!toggleBtn) {
+        return;
+    }
+    const scheme = mcwwsColorSchemeGet();
+    toggleBtn.dataset.active = scheme;
+    toggleBtn.setAttribute(
+        'aria-label',
+        scheme === 'light' ? '当前浅色主题，单击切换为深色' : '当前深色主题，单击切换为浅色'
+    );
+    toggleBtn.setAttribute('title', scheme === 'light' ? '切换为深色' : '切换为浅色');
+}
+
+function mcwwsColorSchemeSyncToggleUi() {
+    mcwwsColorSchemeUpdateToggleButton(document.querySelector('.mcwws-theme-toggle'));
+}
+
+function mcwwsColorSchemeApply(schemeId, options) {
+    const animate = !options || options.animate !== false;
     const scheme = schemeId === 'light' ? 'light' : 'dark';
-    document.documentElement.setAttribute('data-color-scheme', scheme);
+    const root = document.documentElement;
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shouldAnimate = animate && !prefersReducedMotion;
+
+    if (shouldAnimate) {
+        root.classList.add('is-theme-animating');
+    }
+
+    root.setAttribute('data-color-scheme', scheme);
     try {
         localStorage.setItem('mcwws.web.colorScheme', scheme);
     } catch (_) { /* ignore */ }
 
-    document.querySelectorAll('.mcwws-theme-option').forEach((btn) => {
-        const active = btn.getAttribute('data-color-scheme') === scheme;
-        btn.classList.toggle('is-active', active);
-        btn.setAttribute('aria-pressed', active ? 'true' : 'false');
-    });
+    mcwwsColorSchemeSyncToggleUi();
 
-    const toggleBtn = document.querySelector('.mcwws-theme-switcher-btn');
-    if (toggleBtn) {
-        const meta = MCWWS_COLOR_SCHEME_CATALOG.find((item) => item.id === scheme) || MCWWS_COLOR_SCHEME_CATALOG[0];
-        toggleBtn.title = `当前：${meta.label}，点击切换`;
-        const iconEl = toggleBtn.querySelector('.mcwws-theme-switcher-icon');
-        if (iconEl) {
-            iconEl.textContent = meta.icon;
-        }
+    if (shouldAnimate) {
+        window.setTimeout(() => {
+            root.classList.remove('is-theme-animating');
+        }, MCWWS_COLOR_SCHEME_TRANSITION_MS);
     }
 
     window.dispatchEvent(new CustomEvent('mcwws-color-scheme-change', { detail: { scheme } }));
+}
+
+function mcwwsColorSchemeToggle() {
+    const next = mcwwsColorSchemeGet() === 'light' ? 'dark' : 'light';
+    mcwwsColorSchemeApply(next);
 }
 
 function mcwwsColorSchemeBuildSwitcher() {
@@ -78,67 +88,27 @@ function mcwwsColorSchemeBuildSwitcher() {
     wrap.setAttribute('role', 'group');
     wrap.setAttribute('aria-label', '界面主题');
 
-    const current = mcwwsColorSchemeGet();
-    const currentMeta = MCWWS_COLOR_SCHEME_CATALOG.find((item) => item.id === current) || MCWWS_COLOR_SCHEME_CATALOG[0];
-
     const btn = document.createElement('button');
     btn.type = 'button';
-    btn.className = 'mcwws-theme-switcher-btn';
-    btn.setAttribute('aria-haspopup', 'true');
-    btn.setAttribute('aria-expanded', 'false');
-    btn.title = `当前：${currentMeta.label}，点击切换`;
-    btn.innerHTML = `<span class="mcwws-theme-switcher-icon" aria-hidden="true">${currentMeta.icon}</span><span class="mcwws-theme-switcher-label">主题</span>`;
-
-    const menu = document.createElement('div');
-    menu.className = 'mcwws-theme-switcher-menu glass';
-    menu.hidden = true;
-
-    const title = document.createElement('p');
-    title.className = 'mcwws-theme-switcher-title';
-    title.textContent = '界面主题';
-    menu.appendChild(title);
-
-    MCWWS_COLOR_SCHEME_CATALOG.forEach((item) => {
-        const option = document.createElement('button');
-        option.type = 'button';
-        option.className = 'mcwws-theme-option';
-        option.setAttribute('data-color-scheme', item.id);
-        option.setAttribute('aria-pressed', mcwwsColorSchemeGet() === item.id ? 'true' : 'false');
-        if (mcwwsColorSchemeGet() === item.id) {
-            option.classList.add('is-active');
-        }
-        option.innerHTML = `<span class="mcwws-theme-option-label">${item.icon} ${item.label}</span><span class="mcwws-theme-option-desc">${item.description}</span>`;
-        option.addEventListener('click', () => {
-            mcwwsColorSchemeApply(item.id);
-            menu.hidden = true;
-            btn.setAttribute('aria-expanded', 'false');
-        });
-        menu.appendChild(option);
-    });
+    btn.className = 'mcwws-theme-toggle';
+    btn.innerHTML = [
+        '<span class="mcwws-theme-toggle-icon mcwws-theme-toggle-icon--moon" aria-hidden="true">🌙</span>',
+        '<span class="mcwws-theme-toggle-icon mcwws-theme-toggle-icon--sun" aria-hidden="true">☀️</span>'
+    ].join('');
 
     btn.addEventListener('click', (e) => {
         e.stopPropagation();
-        const open = menu.hidden;
-        menu.hidden = !open;
-        btn.setAttribute('aria-expanded', open ? 'true' : 'false');
+        mcwwsColorSchemeToggle();
     });
 
-    document.addEventListener('click', () => {
-        if (!menu.hidden) {
-            menu.hidden = true;
-            btn.setAttribute('aria-expanded', 'false');
-        }
-    });
-
-    menu.addEventListener('click', (e) => e.stopPropagation());
-
+    mcwwsColorSchemeUpdateToggleButton(btn);
     wrap.appendChild(btn);
-    wrap.appendChild(menu);
     return wrap;
 }
 
 function mcwwsColorSchemeMountSwitcher() {
     if (document.getElementById('mcwwsThemeSwitcher')) {
+        mcwwsColorSchemeSyncToggleUi();
         return;
     }
     const switcher = mcwwsColorSchemeBuildSwitcher();
@@ -177,7 +147,7 @@ if (document.readyState === 'loading') {
 }
 
 window.MCWWS_COLOR_SCHEME = {
-    catalog: MCWWS_COLOR_SCHEME_CATALOG,
     get: mcwwsColorSchemeGet,
-    apply: mcwwsColorSchemeApply
+    apply: mcwwsColorSchemeApply,
+    toggle: mcwwsColorSchemeToggle
 };
