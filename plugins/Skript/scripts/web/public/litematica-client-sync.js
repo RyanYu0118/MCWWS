@@ -141,6 +141,25 @@
         return hasSchematic && hasOrigin;
     }
 
+    function inferWorldNameFromConfigPath(sourcePath) {
+        const path = String(sourcePath || '').replace(/\\/g, '/');
+        const match = path.match(/world_specific_data\/(?:.+?\/)?([^/]+)\.json$/i);
+        if (!match) {
+            return 'world';
+        }
+        const base = match[1].toLowerCase();
+        if (base.includes('overworld') || base.includes('minecraft_overworld')) {
+            return 'world';
+        }
+        if (base.includes('the_nether') || base.includes('nether')) {
+            return 'world_nether';
+        }
+        if (base.includes('the_end') || base.endsWith('_end')) {
+            return 'world_the_end';
+        }
+        return match[1];
+    }
+
     function mapPlacementEntry(entry, index, selectedIndex, sourcePath) {
         const origin = entry.origin ?? entry.pos;
         return {
@@ -156,7 +175,8 @@
             enableRender: entry.enable_render !== false,
             ignoreEntities: !!entry.ignore_entities,
             locked: !!entry.locked,
-            sourcePath
+            sourcePath,
+            worldHint: inferWorldNameFromConfigPath(sourcePath)
         };
     }
 
@@ -769,6 +789,20 @@
         formatPos,
         labelRotation,
         labelMirror,
+        inferWorldNameFromConfigPath,
+        buildAnchorFromPlacement(placement, worldName) {
+            if (!placement?.origin) return null;
+            const world = String(worldName || placement.worldHint || 'world').trim();
+            if (!world) return null;
+            return {
+                world,
+                x: Math.trunc(Number(placement.origin.x) || 0),
+                y: Math.trunc(Number(placement.origin.y) || 0),
+                z: Math.trunc(Number(placement.origin.z) || 0),
+                yaw: 0,
+                pitch: 0
+            };
+        },
         isSupported
     };
 })();

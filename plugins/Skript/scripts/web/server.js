@@ -204,6 +204,7 @@ const PRICE_HISTORY_CSV = path.join(DB_DIR, 'price_history.csv');
 const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
 const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
+const PASTE_QUEUE_PATH = path.join(DB_DIR, 'paste_queue.txt');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -1975,6 +1976,21 @@ function appendEcoTakeQueueLine(playerId, amount, orderId) {
     }
 }
 
+/** Skript 轮询执行：pasteOrderId|playerUuid */
+function appendPasteQueueLine(pasteOrderId, playerUuid) {
+    const oid = String(pasteOrderId || '').trim();
+    const uuid = String(playerUuid || '').trim().toLowerCase();
+    if (!oid || !uuid) {
+        return;
+    }
+    const line = `${oid}|${uuid}\n`;
+    try {
+        fs.appendFileSync(PASTE_QUEUE_PATH, line, 'utf8');
+    } catch (error) {
+        console.error('写入 paste_queue.txt 失败:', error);
+    }
+}
+
 function enqueueEssentialsDeduction({
     uuid,
     playerId,
@@ -3174,7 +3190,8 @@ app.post('/api/build/checkout', async (req, res) => {
             username: user.username,
             total,
             rotation: req.body?.rotation,
-            mirror: req.body?.mirror
+            mirror: req.body?.mirror,
+            anchor: req.body?.anchor
         });
         buildSchematicService.markQuoteConsumed(quote.numericId, pasteOrder.numericId);
 
@@ -3201,9 +3218,14 @@ app.post('/api/build/checkout', async (req, res) => {
             balanceAfter,
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             status: pasteOrder.status,
+            anchor: pasteOrder.anchor,
             pasteTokenExpiresAt: pasteOrder.pasteTokenExpiresAt,
-            message: '付款成功。请在游戏内站到 Litematica 放置原点执行 /build go；全程 contentHash 不变。',
-            nextStep: 'POST /api/build/paste/anchor 绑定锚点，再由服务器执行粘贴。'
+            message: pasteOrder.anchor
+                ? '付款成功，锚点已由网页设置。可点击「网页粘贴」或执行 /build paste。'
+                : '付款成功。请在网页客户端同步或 POST /api/build/paste/anchor 设置锚点。',
+            nextStep: pasteOrder.anchor
+                ? 'POST /api/build/paste/trigger 网页粘贴，或执行 /build paste <订单号>'
+                : 'POST /api/build/paste/anchor 绑定锚点，再 POST /api/build/paste/trigger 粘贴。'
         });
     } catch (error) {
         console.error('投影粘贴结账失败:', error);
@@ -3246,12 +3268,16 @@ app.post('/api/build/paste/anchor', (req, res) => {
 
         const result = buildSchematicService.updatePasteOrderAnchor(pasteOrderId, {
             world,
-            x: Math.floor(x),
-            y: Math.floor(y),
-            z: Math.floor(z),
+            x,
+            y,
+            z,
             yaw: Number.isFinite(yaw) ? yaw : 0,
             pitch: Number.isFinite(pitch) ? pitch : 0
-        }, uuid);
+        }, uuid, {
+            rotation: req.body?.rotation,
+            mirror: req.body?.mirror,
+            source: req.body?.source || 'web'
+        });
         if (result.error) {
             return res.status(409).json({ error: result.error });
         }
@@ -3308,6 +3334,53 @@ app.post('/api/build/paste/consume', async (req, res) => {
     }
 });
 
+app.post('/api/build/paste/trigger', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        const uuid = resolvePlayerUuid(playerId);
+        const pasteOrderId = String(req.body?.pasteOrderId || '').trim();
+        const contentHash = String(req.body?.contentHash || '').trim().toLowerCase();
+        if (!pasteOrderId) {
+            return res.status(400).json({ error: '缺少 pasteOrderId。' });
+        }
+
+        const order = buildSchematicService.getPasteOrder(pasteOrderId);
+        if (!order) {
+            return res.status(404).json({ error: '粘贴订单不存在。' });
+        }
+        if (contentHash && order.contentHash !== contentHash) {
+            return res.status(409).json({
+                error: 'contentHash 与粘贴订单不一致。',
+                orderContentHash: order.contentHash,
+                providedContentHash: contentHash
+            });
+        }
+
+        const result = buildSchematicService.enqueueWebPaste(pasteOrderId, uuid);
+        if (result.error) {
+            return res.status(409).json({ error: result.error });
+        }
+
+        appendPasteQueueLine(pasteOrderId, uuid);
+
+        res.json({
+            pasteOrderId: result.order.numericId,
+            contentHash: result.order.contentHash,
+            status: result.order.status,
+            webPasteQueue: result.order.webPasteQueue,
+            anchor: result.order.anchor,
+            message: '已加入粘贴队列，服务器将自动执行（无需进游戏）。'
+        });
+    } catch (error) {
+        console.error('网页粘贴入队失败:', error);
+        res.status(500).json({ error: error.message || '网页粘贴入队失败' });
+    }
+});
+
 app.get('/api/build/paste/orders', (req, res) => {
     try {
         const user = authenticate(req);
@@ -3325,6 +3398,14 @@ app.get('/api/build/paste/orders', (req, res) => {
                 status: order.status,
                 total: order.total,
                 anchor: order.anchor,
+                rotation: order.rotation,
+                mirror: order.mirror,
+                transformBaked: order.transformBaked,
+                webPasteQueue: order.webPasteQueue || '',
+                webPasteQueueError: order.webPasteQueueError || '',
+                webPasteQueuedAt: order.webPasteQueuedAt || '',
+                webPasteProcessedAt: order.webPasteProcessedAt || '',
+                failureReason: order.failureReason || '',
                 createdAt: order.createdAt,
                 pasteTokenExpiresAt: order.pasteTokenExpiresAt
             }))

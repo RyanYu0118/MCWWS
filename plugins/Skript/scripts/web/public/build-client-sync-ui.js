@@ -7,6 +7,149 @@
     let shellMounted = false;
     let lastDataKey = '';
     let lastSelectedIndex = -1;
+    let cachedPasteOrders = [];
+    let pasteOrdersLoadedAt = 0;
+
+    async function fetchPasteOrders(force = false) {
+        const auth = window.MCWWS_AUTH;
+        if (!auth?.getToken?.()) {
+            cachedPasteOrders = [];
+            return cachedPasteOrders;
+        }
+        if (!force && Date.now() - pasteOrdersLoadedAt < 8000 && cachedPasteOrders.length) {
+            return cachedPasteOrders;
+        }
+        try {
+            const res = await fetch('/api/build/paste/orders', { headers: auth.headers() });
+            const data = await res.json();
+            if (!res.ok) throw new Error(data.error || '读取订单失败');
+            cachedPasteOrders = (data.orders || []).filter((o) =>
+                o.status === 'awaiting_anchor'
+                || o.status === 'ready'
+                || o.status === 'pasting'
+                || o.webPasteQueue === 'pending'
+                || o.webPasteQueue === 'processing'
+            );
+            pasteOrdersLoadedAt = Date.now();
+        } catch (_) {
+            cachedPasteOrders = [];
+        }
+        return cachedPasteOrders;
+    }
+
+    async function bindAnchorToOrder(pasteOrderId, contentHash) {
+        const placement = sync()?.getSelectedPlacement();
+        if (!placement) {
+            showToast('请先在下方表格中选择投影', false);
+            return;
+        }
+        const worldInput = document.getElementById('buildClientSyncAnchorWorld');
+        const world = worldInput?.value?.trim() || placement.worldHint || 'world';
+        const pasteApi = window.MCWWS_BuildPasteImport;
+        if (!pasteApi?.setAnchorForOrder) {
+            showToast('投影粘贴模块未加载', false);
+            return;
+        }
+        try {
+            await pasteApi.setAnchorForOrder(pasteOrderId, contentHash, placement, world);
+            showToast(`订单 #${pasteOrderId} 锚点已设置`, true);
+            await fetchPasteOrders(true);
+            renderPasteOrdersPanel();
+        } catch (error) {
+            showToast(error.message || '设锚点失败', false);
+        }
+    }
+
+    async function triggerWebPasteForOrder(pasteOrderId, contentHash) {
+        const pasteApi = window.MCWWS_BuildPasteImport;
+        if (!pasteApi?.triggerWebPaste) {
+            showToast('投影粘贴模块未加载', false);
+            return;
+        }
+        try {
+            await pasteApi.triggerWebPaste(pasteOrderId, contentHash, {
+                escapeHtml
+            });
+            await fetchPasteOrders(true);
+            renderPasteOrdersPanel();
+        } catch (_) {
+            await fetchPasteOrders(true);
+            renderPasteOrdersPanel();
+        }
+    }
+
+    function renderPasteOrdersPanel() {
+        const panel = document.getElementById('buildClientSyncPasteOrders');
+        if (!panel) return;
+        const auth = window.MCWWS_AUTH;
+        if (!auth?.getToken?.()) {
+            panel.hidden = true;
+            return;
+        }
+        const orders = cachedPasteOrders.filter((o) =>
+            o.status === 'awaiting_anchor'
+            || o.status === 'ready'
+            || o.status === 'pasting'
+            || o.webPasteQueue === 'pending'
+            || o.webPasteQueue === 'processing'
+        );
+        if (!orders.length) {
+            panel.hidden = true;
+            panel.innerHTML = '';
+            return;
+        }
+        const placement = sync()?.getSelectedPlacement();
+        const defaultWorld = placement?.worldHint || 'world';
+        panel.hidden = false;
+        panel.innerHTML = `
+            <div class="build-client-sync-paste-orders">
+                <p class="build-paste-client-title">待粘贴订单（网页操作）</p>
+                <label class="build-paste-anchor-world-field">
+                    <span>默认世界名</span>
+                    <input type="text" id="buildClientSyncAnchorWorld" class="build-paste-anchor-world-input" value="${escapeHtml(defaultWorld)}" placeholder="world">
+                </label>
+                ${orders.map((order) => {
+                    const anchorText = order.anchor?.world
+                        ? `${order.anchor.world} ${order.anchor.x}, ${order.anchor.y}, ${order.anchor.z}`
+                        : '未设锚点';
+                    const queue = order.webPasteQueue || '';
+                    const isPasting = order.status === 'pasting' || queue === 'pending' || queue === 'processing';
+                    let actionBtn = '';
+                    if (order.status === 'ready' && !isPasting) {
+                        actionBtn = `<button type="button" class="cart-drawer-btn cart-drawer-btn--primary build-client-sync-web-paste" data-order-id="${order.pasteOrderId}" data-content-hash="${escapeHtml(order.contentHash)}">网页粘贴</button>`;
+                    } else if (order.status === 'awaiting_anchor') {
+                        actionBtn = `<button type="button" class="cart-drawer-btn cart-drawer-btn--ghost build-client-sync-bind-anchor" data-order-id="${order.pasteOrderId}" data-content-hash="${escapeHtml(order.contentHash)}">用当前投影设锚点</button>`;
+                    } else if (isPasting) {
+                        actionBtn = '<span class="litematica-status">粘贴中…</span>';
+                    } else if (order.status === 'ready') {
+                        actionBtn = '<span class="litematica-status litematica-status--ok">已就绪</span>';
+                    }
+                    return `
+                        <div class="build-client-sync-paste-order">
+                            <span>#${order.pasteOrderId} · ${escapeHtml(order.status)}</span>
+                            <code>${escapeHtml(anchorText)}</code>
+                            ${actionBtn}
+                        </div>`;
+                }).join('')}
+            </div>
+        `;
+        panel.querySelectorAll('.build-client-sync-bind-anchor').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                void bindAnchorToOrder(
+                    btn.getAttribute('data-order-id'),
+                    btn.getAttribute('data-content-hash')
+                );
+            });
+        });
+        panel.querySelectorAll('.build-client-sync-web-paste').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                void triggerWebPasteForOrder(
+                    btn.getAttribute('data-order-id'),
+                    btn.getAttribute('data-content-hash')
+                );
+            });
+        });
+    }
 
     function escapeHtml(value) {
         return String(value ?? '')
@@ -125,6 +268,7 @@
                 <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncRefreshBtn">立即刷新</button>
                 <button type="button" class="cart-drawer-btn cart-drawer-btn--ghost" id="buildClientSyncReselectBtn">重新选择文件夹</button>
             </div>
+            <div id="buildClientSyncPasteOrders" hidden></div>
         `;
         bindShellEvents(body);
         shellMounted = true;
@@ -208,6 +352,7 @@
         el.innerHTML = `
             <strong>${escapeHtml(selected.name)}</strong>
             <span>原点 ${escapeHtml(api.formatPos(selected.origin))}</span>
+            <span>世界 ${escapeHtml(selected.worldHint || 'world')}</span>
             <span>旋转 ${escapeHtml(api.labelRotation(selected.rotation))}</span>
             <span>镜像 ${escapeHtml(api.labelMirror(selected.mirror))}</span>
         `;
@@ -250,7 +395,7 @@
         if (transformNote) {
             if (snapshot.hasTransform) {
                 transformNote.hidden = false;
-                transformNote.innerHTML = '当前投影含旋转/镜像：结账导入投影粘贴后，服务器将按相同变换粘贴；请站在 Litematica 放置原点执行 <code>/build go</code>。';
+                transformNote.innerHTML = '当前投影含旋转/镜像：结账导入投影粘贴后，服务器将按相同变换粘贴；可在网页一键粘贴。';
             } else {
                 transformNote.hidden = true;
             }
@@ -269,6 +414,7 @@
 
         patchHighlight(snapshot);
         patchEmptyHelp(snapshot);
+        void fetchPasteOrders().then(() => renderPasteOrdersPanel());
 
         const importBtn = document.getElementById('buildClientSyncImportPasteBtn');
         if (importBtn) importBtn.disabled = !snapshot.selectedPlacement;

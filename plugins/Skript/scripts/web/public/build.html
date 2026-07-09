@@ -96,8 +96,8 @@
             <h3 class="build-tool-hints-title">使用说明</h3>
             <ul class="build-tool-hints-list">
                 <li><strong>材料清单</strong>：在游戏内用 Litematica 导出材料列表，粘贴或上传 JSON 文件即可计价购料。</li>
-                <li><strong>投影粘贴</strong>：付款后设置 Litematica 放置原点坐标，执行 <code>/build paste &lt;订单号&gt;</code> 即可在<strong>绝对坐标</strong>粘贴（无需站到位，支持悬浮建筑）。</li>
-                <li><strong>客户端同步</strong>：连接本机 <code>.minecraft</code> 后可读取放置原点坐标，用于 <code>/build anchor &lt;订单号&gt; x y z</code> 或 <code>/build go &lt;订单号&gt; x y z</code>。</li>
+                <li><strong>投影粘贴</strong>：付款时若已连接客户端同步，会<strong>自动写入锚点</strong>；设好锚点后点击「网页粘贴」，<strong>无需进游戏</strong>。也可执行 <code>/build paste &lt;订单号&gt;</code>。</li>
+                <li><strong>客户端同步</strong>：读取 Litematica 放置原点与世界名提示；设锚点与粘贴均无需站在建筑位置。</li>
                 <li>购物车与商店系统共用，可在「商店目录」继续浏览其他物品。</li>
             </ul>
         </section>

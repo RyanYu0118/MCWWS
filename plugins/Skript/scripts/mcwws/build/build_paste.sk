@@ -3,6 +3,8 @@
 import:
     java.io.File
     java.io.FileInputStream
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
     org.bukkit.Bukkit
     com.sk89q.worldedit.WorldEdit
     com.sk89q.worldedit.bukkit.BukkitAdapter
@@ -59,6 +61,35 @@ function mcwwsPasteMarkFailed(oid: text, reason: text):
     set yaml value "orders.%{_oid}%.failureReason" from "pastes" to {_reason}
     save yaml "pastes"
     unload yaml "pastes"
+
+function mcwwsPasteSetWebQueue(oid: text, queueStatus: text, queueError: text):
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.webPasteQueue" from "pastes" to {_queueStatus}
+    if {_queueError} is not "":
+        set yaml value "orders.%{_oid}%.webPasteQueueError" from "pastes" to {_queueError}
+    else:
+        set yaml value "orders.%{_oid}%.webPasteQueueError" from "pastes" to ""
+    if {_queueStatus} is "processing":
+        set yaml value "orders.%{_oid}%.webPasteProcessingAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    if {_queueStatus} is "done" or "failed":
+        set yaml value "orders.%{_oid}%.webPasteProcessedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "pastes"
+    unload yaml "pastes"
+
+function mcwwsFindOnlinePlayerByUuid(uuidKey: text) :: player:
+    set {_target} to mcwwsUuidKey({_uuidKey})
+    if {_target} is "":
+        stop
+    loop all players:
+        if mcwwsPlayerUuidKey(loop-player) is {_target}:
+            return loop-player
+
+function mcwwsPasteNotify(p: player, msg: text):
+    if {_p} is set:
+        send {_msg} to {_p}
+    else:
+        send {_msg} to console
 
 function mcwwsInitPasteOrders():
     set {_path} to mcwwsPasteYamlPath()
@@ -129,7 +160,11 @@ function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pas
     set {_clipboard} to {_reader}.read()
     {_reader}.close()
     {_stream}.close()
-    set {_session} to WorldEdit.getInstance().getEditSessionFactory().getEditSession({_weWorld}, BukkitAdapter.adapt({_p}))
+    if {_p} is set:
+        set {_actor} to BukkitAdapter.adapt({_p})
+    else:
+        set {_actor} to BukkitAdapter.adapt(Bukkit.getConsoleSender())
+    set {_session} to WorldEdit.getInstance().getEditSessionFactory().getEditSession({_weWorld}, {_actor})
     set {_dest} to BlockVector3.at({_ix}, {_iy}, {_iz})
     set {_holder} to new ClipboardHolder({_clipboard})
     set {_operation} to {_holder}.createPaste({_session}).to({_dest}).ignoreAirBlocks(true).build()
@@ -142,6 +177,7 @@ function mcwwsSendPasteHelp(p: player):
     send "§6[投影粘贴] §f/build go <订单号> [x y z] §7- 设锚点并绝对坐标粘贴" to {_p}
     send "§6[投影粘贴] §f/build anchor <订单号> [x y z] §7- 设置 Litematica 放置原点（可填坐标）" to {_p}
     send "§6[投影粘贴] §f/build paste <订单号> §7- 按已存锚点绝对坐标粘贴（无需站到位）" to {_p}
+    send "§7也可在网页点击「网页粘贴」，无需进游戏。" to {_p}
     send "§7悬浮建筑请用 §f/build anchor <订单号> <x> <y> <z> §7填入 Litematica 原点坐标。" to {_p}
     send "§7网页付款后 contentHash 全程不变；请用与 Litematica 相同的 .litematic 文件。" to {_p}
 
@@ -331,12 +367,12 @@ function mcwwsPasteSetAnchor(p: player, oid: text, quiet: boolean, coordX: text,
         set {_mirLabel} to mcwwsPasteMirrorLabel("%{_mirror}%")
         send "§7变换: §f旋转 %{_rotLabel}% §7· §f镜像 %{_mirLabel}%" to {_p}
     if {_quiet} is false:
-        send "§7执行 §f/build paste %{_oid}% §7即可在绝对坐标粘贴（无需站到位）。" to {_p}
+        send "§7执行 §f/build paste %{_oid}% §7或在网页点击「网页粘贴」。" to {_p}
 
 function mcwwsPasteGo(p: player, oid: text, coordX: text, coordY: text, coordZ: text, rotationArg: text, mirrorArg: text):
     mcwwsPasteSetAnchor({_p}, {_oid}, true, {_coordX}, {_coordY}, {_coordZ}, {_rotationArg}, {_mirrorArg})
     wait 2 ticks
-    mcwwsPasteExecute({_p}, {_oid})
+    mcwwsPasteExecuteInternal({_oid}, {_p}, false)
 
 function mcwwsRunConsoleCommand(cmd: text):
     set {_sender} to Bukkit.getConsoleSender()
@@ -355,6 +391,8 @@ function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean) :: texts:
 
 function mcwwsPasteGrantWorldEditPermissions(p: player, legacyTransform: boolean) :: texts:
     delete {_granted::*}
+    if {_p} is not set:
+        return {_granted::*}
     set {_name} to name of {_p}
     set {_dur} to "30s"
     loop mcwwsPasteWorldEditPermissionNodes({_legacyTransform}):
@@ -400,6 +438,8 @@ function mcwwsPasteApplyClipboardTransform(p: player, rotation: text, mirror: te
         wait 20 ticks
 
 function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
+    if {_p} is not set:
+        stop
     if {_grantedNodes::*} is not set:
         stop
     set {_name} to name of {_p}
@@ -407,15 +447,21 @@ function mcwwsPasteRevokeWorldEditPermissions(p: player, grantedNodes: texts):
         mcwwsRunConsoleCommand("lp user %{_name}% permission unsettemp %loop-value%")
 
 function mcwwsPasteExecute(p: player, oid: text):
-    if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
-        send "§c订单不存在或不属于你。" to {_p}
-        stop
+    mcwwsPasteExecuteInternal({_oid}, {_p}, false)
+
+function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
+    if {_fromWebQueue} is false:
+        if mcwwsPasteOrderBelongsTo({_p}, {_oid}) is false:
+            mcwwsPasteNotify({_p}, "§c订单不存在或不属于你。")
+            stop
     set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
     if {_status} is not "ready":
         if {_status} is "awaiting_anchor":
-            send "§c请先执行 /build anchor %{_oid}% 设置粘贴原点。" to {_p}
+            mcwwsPasteNotify({_p}, "§c请先设置粘贴锚点。")
         else:
-            send "§c订单状态为 %{_status}%，无法粘贴。" to {_p}
+            mcwwsPasteNotify({_p}, "§c订单状态为 %{_status}%，无法粘贴。")
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "订单状态为 %{_status}%")
         stop
     set {_hash} to mcwwsReadPasteOrderField({_oid}, "contentHash")
     set {_storedSchem} to mcwwsReadPasteOrderField({_oid}, "schemFileName")
@@ -425,23 +471,32 @@ function mcwwsPasteExecute(p: player, oid: text):
     set {_ay} to mcwwsReadPasteOrderField({_oid}, "anchor.y") parsed as number
     set {_az} to mcwwsReadPasteOrderField({_oid}, "anchor.z") parsed as number
     if {_worldName} is "":
-        send "§c锚点未设置。" to {_p}
+        mcwwsPasteNotify({_p}, "§c锚点未设置。")
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "锚点未设置")
         stop
     set {_world} to world {_worldName}
     if {_world} is not set:
-        send "§c锚点世界不存在: %{_worldName}%" to {_p}
+        mcwwsPasteNotify({_p}, "§c锚点世界不存在: %{_worldName}%")
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "锚点世界不存在")
         stop
     if mcwwsSchemFileExists({_schem}) is false:
-        send "§c找不到投影原理图 §e%{_schem}%.schem" to {_p}
-        send "§7FAWE 目录: §f%mcwwsSchemAbsolutePathInDir("plugins/FastAsyncWorldEdit/schematics", {_schem})%" to {_p}
-        send "§7请让管理员在服务器上执行:" to {_p}
-        send "§fnode plugins/Skript/scripts/web/tools/reexport-schem.js %{_hash}%" to {_p}
-        send "§7然后重新 §f/build anchor %{_oid}% §7再 §f/build paste %{_oid}%" to {_p}
+        mcwwsPasteNotify({_p}, "§c找不到投影原理图 §e%{_schem}%.schem")
+        if {_p} is set:
+            send "§7FAWE 目录: §f%mcwwsSchemAbsolutePathInDir("plugins/FastAsyncWorldEdit/schematics", {_schem})%" to {_p}
+            send "§7请让管理员在服务器上执行:" to {_p}
+            send "§fnode plugins/Skript/scripts/web/tools/reexport-schem.js %{_hash}%" to {_p}
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "找不到原理图文件")
         stop
     set {_path} to mcwwsPasteYamlPath()
     load yaml {_path} as "pastes"
     set yaml value "orders.%{_oid}%.status" from "pastes" to "pasting"
     set yaml value "orders.%{_oid}%.pasteStartedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    if {_fromWebQueue} is true:
+        set yaml value "orders.%{_oid}%.webPasteQueue" from "pastes" to "processing"
+        set yaml value "orders.%{_oid}%.webPasteQueueError" from "pastes" to ""
     save yaml "pastes"
     unload yaml "pastes"
     set {_rotation} to mcwwsPasteNormalizeRotation(mcwwsReadPasteOrderField({_oid}, "rotation"))
@@ -451,19 +506,31 @@ function mcwwsPasteExecute(p: player, oid: text):
     if {_transformBaked} is false:
         if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
             set {_needsLegacyTransform} to true
+    if {_needsLegacyTransform} is true:
+        if {_p} is not set:
+            set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
+            set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
+        if {_p} is not set:
+            set {_failReason} to "旧订单未烘焙变换，需玩家在线或重新下单"
+            mcwwsPasteMarkFailed({_oid}, {_failReason})
+            if {_fromWebQueue} is true:
+                mcwwsPasteSetWebQueue({_oid}, "failed", {_failReason})
+            send "§c[MCWWS] 网页粘贴 #%{_oid}% 失败: %{_failReason}%" to console
+            stop
     set {_adjx} to mcwwsPasteReadAnchorAdjust({_oid}, "x")
     set {_adjy} to mcwwsPasteReadAnchorAdjust({_oid}, "y")
     set {_adjz} to mcwwsPasteReadAnchorAdjust({_oid}, "z")
     set {_px} to floor({_ax} + {_adjx})
     set {_py} to floor({_ay} + {_adjy})
     set {_pz} to floor({_az} + {_adjz})
-    send "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% 原点 %{_ax}%, %{_ay}%, %{_az}%" to {_p}
-    send "§7绝对粘贴角点: §f%{_px}%, %{_py}%, %{_pz}% §7（无需站到位）" to {_p}
+    mcwwsPasteNotify({_p}, "§a[投影粘贴] §f正在粘贴 §e%{_schem}% §7→ §f%{_worldName}% 原点 %{_ax}%, %{_ay}%, %{_az}%")
+    mcwwsPasteNotify({_p}, "§7绝对粘贴角点: §f%{_px}%, %{_py}%, %{_pz}% §7（无需站到位）")
     if {_transformBaked} is true:
-        send "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%" to {_p}
+        mcwwsPasteNotify({_p}, "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
     set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform})
-    if size of {_tempPerms::*} > 0:
-        send "§7已授予临时 WorldEdit 权限…" to {_p}
+    if {_p} is set:
+        if size of {_tempPerms::*} > 0:
+            send "§7已授予临时 WorldEdit 权限…" to {_p}
     wait 2 ticks
     set {_ok} to false
     if {_needsLegacyTransform} is true:
@@ -474,7 +541,9 @@ function mcwwsPasteExecute(p: player, oid: text):
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
     if {_ok} is false:
         mcwwsPasteMarkFailed({_oid}, "绝对坐标粘贴失败")
-        send "§c[投影粘贴] 粘贴失败，请确认原理图存在且 WorldEdit/FAWE 可用。" to {_p}
+        if {_fromWebQueue} is true:
+            mcwwsPasteSetWebQueue({_oid}, "failed", "绝对坐标粘贴失败")
+        mcwwsPasteNotify({_p}, "§c[投影粘贴] 粘贴失败，请确认原理图存在且 WorldEdit/FAWE 可用。")
         stop
     wait 5 ticks
     load yaml {_path} as "pastes"
@@ -484,13 +553,115 @@ function mcwwsPasteExecute(p: player, oid: text):
         set yaml value "orders.%{_oid}%.pastedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
         set yaml value "orders.%{_oid}%.pasteToken" from "pastes" to ""
         set yaml value "orders.%{_oid}%.failureReason" from "pastes" to ""
+        if {_fromWebQueue} is true:
+            set yaml value "orders.%{_oid}%.webPasteQueue" from "pastes" to "done"
+            set yaml value "orders.%{_oid}%.webPasteQueueError" from "pastes" to ""
+            set yaml value "orders.%{_oid}%.webPasteProcessedAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
         save yaml "pastes"
         unload yaml "pastes"
-        send "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。" to {_p}
-        send "§7放置原点: §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%" to {_p}
+        mcwwsPasteNotify({_p}, "§a[投影粘贴] §f订单 §e#%{_oid}% §a粘贴完成。")
+        mcwwsPasteNotify({_p}, "§7放置原点: §f%{_worldName}% %{_ax}%, %{_ay}%, %{_az}%")
     else:
         unload yaml "pastes"
-    send "§7contentHash: §f%{_hash}%" to {_p}
+    mcwwsPasteNotify({_p}, "§7contentHash: §f%{_hash}%")
+
+function mcwwsPasteBeginWebQueue(oid: text) :: boolean:
+    set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
+    if {_status} is not "ready":
+        return false
+    set {_queue} to mcwwsReadPasteOrderField({_oid}, "webPasteQueue")
+    if {_queue} is not "pending":
+        return false
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set yaml value "orders.%{_oid}%.webPasteQueue" from "pastes" to "processing"
+    set yaml value "orders.%{_oid}%.webPasteProcessingAt" from "pastes" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "pastes"
+    unload yaml "pastes"
+    return true
+
+async function mcwwsPasteExecuteQueued(oid: text):
+    while {mcwws.pasteQueueBusy} is true:
+        wait 10 ticks
+    set {mcwws.pasteQueueBusy} to true
+    set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
+    set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
+    wait 2 ticks
+    mcwwsPasteExecuteInternal({_oid}, {_p}, true)
+    delete {mcwws.pasteQueueBusy}
+
+function mcwwsProcessWebPasteTextQueue() :: number:
+    set {_count} to 0
+    set {_rel} to "plugins/Skript/scripts/web/data/paste_queue.txt"
+    set {_file} to new File({_rel})
+    if {_file}.exists() is false:
+        return 0
+    set {_size} to {_file}.length()
+    if {_size} <= 0:
+        return 0
+    set {_bytes} to Files.readAllBytes({_file}.toPath())
+    set {_text} to new String({_bytes}, StandardCharsets.UTF_8)
+    Files.delete({_file}.toPath())
+    set {_lines::*} to {_text} split at nl
+    set {_rest::*} to ""
+    loop {_lines::*}:
+        set {_line} to loop-value
+        if {_line} is "":
+            continue
+        if {_count} is 0:
+            set {_parts::*} to {_line} split at "|"
+            if size of {_parts::*} < 1:
+                continue
+            set {_oid} to {_parts::1}
+            if mcwwsPasteBeginWebQueue({_oid}) is false:
+                add {_line} to {_rest::*}
+                continue
+            send "§a[MCWWS] 网页粘贴队列: 开始处理订单 #%{_oid}%" to console
+            mcwwsPasteExecuteQueued({_oid})
+            add 1 to {_count}
+        else:
+            add {_line} to {_rest::*}
+    if size of {_rest::*} > 0:
+        set {_restText} to join {_rest::*} with nl
+        set {_restText} to "%{_restText}%%nl%"
+        set {_out} to new File({_rel})
+        set {_outBytes} to {_restText}.getBytes(StandardCharsets.UTF_8)
+        Files.write({_out}.toPath(), {_outBytes})
+    return {_count}
+
+function mcwwsProcessWebPasteYamlQueue() :: number:
+    if {mcwws.pasteQueueBusy} is true:
+        return 0
+    set {_path} to mcwwsPasteYamlPath()
+    load yaml {_path} as "pastes"
+    set {_max} to yaml value "next_id" from "pastes"
+    unload yaml "pastes"
+    if {_max} is not set:
+        return 0
+    if {_max} <= 1:
+        return 0
+    loop ({_max} - 1) times:
+        set {_oid} to "%loop-number%"
+        set {_queue} to mcwwsReadPasteOrderField({_oid}, "webPasteQueue")
+        if {_queue} is not "pending":
+            continue
+        set {_status} to mcwwsReadPasteOrderField({_oid}, "status")
+        if {_status} is not "ready":
+            continue
+        if mcwwsPasteBeginWebQueue({_oid}) is false:
+            continue
+        send "§a[MCWWS] 网页粘贴 YAML 队列: 开始处理订单 #%{_oid}%" to console
+        mcwwsPasteExecuteQueued({_oid})
+        return 1
+    return 0
+
+function mcwwsProcessWebPasteQueue():
+    set {_n} to mcwwsProcessWebPasteTextQueue()
+    if {_n} is 0:
+        mcwwsProcessWebPasteYamlQueue()
+
+every 2 seconds:
+    mcwwsProcessWebPasteQueue()
 
 on load:
     mcwwsInitPasteOrders()

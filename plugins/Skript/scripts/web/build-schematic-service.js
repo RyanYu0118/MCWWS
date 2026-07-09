@@ -289,6 +289,27 @@ async function ensureWorldEditSchemExport(contentHash, options = {}) {
     return exportWorldEditSchemFromBuffer(buffer, hash, { rotation, mirror });
 }
 
+function normalizePasteAnchor(anchor) {
+    if (!anchor || typeof anchor !== 'object') {
+        return null;
+    }
+    const world = String(anchor.world || '').trim();
+    const x = Number(anchor.x);
+    const y = Number(anchor.y);
+    const z = Number(anchor.z);
+    if (!world || !Number.isFinite(x) || !Number.isFinite(y) || !Number.isFinite(z)) {
+        return null;
+    }
+    return {
+        world,
+        x: Math.floor(x),
+        y: Math.floor(y),
+        z: Math.floor(z),
+        yaw: Number.isFinite(Number(anchor.yaw)) ? Number(anchor.yaw) : 0,
+        pitch: Number.isFinite(Number(anchor.pitch)) ? Number(anchor.pitch) : 0
+    };
+}
+
 function createPasteOrder({
     contentHash,
     quoteId,
@@ -340,6 +361,7 @@ function createPasteOrder({
                 console.warn('[build-schematic] 读取 meta 失败:', metaError.message);
             }
         }
+        const normalizedAnchor = normalizePasteAnchor(anchor);
         const order = {
             id: orderUuid,
             numericId,
@@ -351,8 +373,9 @@ function createPasteOrder({
             playerId,
             username,
             total,
-            status: 'awaiting_anchor',
-            anchor: anchor || null,
+            status: normalizedAnchor ? 'ready' : 'awaiting_anchor',
+            anchor: normalizedAnchor,
+            anchorSetAt: normalizedAnchor ? now.toISOString() : '',
             rotation: normalizedRotation,
             mirror: normalizedMirror,
             schemFileName,
@@ -399,7 +422,11 @@ function updatePasteOrderAnchor(numericId, anchor, playerUuid, options = {}) {
     if (order.status !== 'awaiting_anchor' && order.status !== 'ready') {
         return { error: `订单状态为 ${order.status}，无法设置锚点。` };
     }
-    order.anchor = anchor;
+    const normalizedAnchor = normalizePasteAnchor(anchor);
+    if (!normalizedAnchor) {
+        return { error: '锚点坐标或世界名无效。' };
+    }
+    order.anchor = normalizedAnchor;
     order.status = 'ready';
     order.anchorSetAt = new Date().toISOString();
     if (options.rotation != null) {
@@ -407,6 +434,9 @@ function updatePasteOrderAnchor(numericId, anchor, playerUuid, options = {}) {
     }
     if (options.mirror != null) {
         order.mirror = normalizePasteMirror(options.mirror);
+    }
+    if (options.source != null) {
+        order.anchorSource = String(options.source);
     }
     savePasteOrdersStore(store);
     return { order };
@@ -462,6 +492,38 @@ function completePasteOrder(numericId, success, failureReason) {
     return order;
 }
 
+function enqueueWebPaste(numericId, playerUuid) {
+    const store = loadPasteOrdersStore();
+    const order = store.orders[String(numericId)];
+    if (!order) {
+        return { error: '粘贴订单不存在。' };
+    }
+    const normUuid = String(playerUuid || '').trim().toLowerCase();
+    if (order.playerUuid && normUuid && order.playerUuid.toLowerCase() !== normUuid) {
+        return { error: '无权操作此订单。' };
+    }
+    if (order.status !== 'ready') {
+        return { error: `订单状态为 ${order.status}，无法粘贴。` };
+    }
+    if (!order.anchor?.world) {
+        return { error: '请先设置锚点。' };
+    }
+    const queue = String(order.webPasteQueue || '').trim();
+    if (queue === 'pending' || queue === 'processing') {
+        return { error: '粘贴已在队列中，请稍候。' };
+    }
+    if (order.status === 'pasting') {
+        return { error: '粘贴正在进行中。' };
+    }
+    const nowIso = new Date().toISOString();
+    order.webPasteQueue = 'pending';
+    order.webPasteQueuedAt = nowIso;
+    order.webPasteQueueError = '';
+    order.webPasteProcessedAt = '';
+    savePasteOrdersStore(store);
+    return { order };
+}
+
 module.exports = {
     SCHEMATICS_DIR,
     BUILD_QUOTES_PATH,
@@ -472,6 +534,7 @@ module.exports = {
     PASTE_MIRROR_VALUES,
     normalizePasteRotation,
     normalizePasteMirror,
+    normalizePasteAnchor,
     pasteTransformNeedsWorldEdit,
     readBufferFromRequestBody,
     ingestSchematicBuffer,
@@ -486,6 +549,7 @@ module.exports = {
     assertPasteOrderHash,
     consumePasteToken,
     completePasteOrder,
+    enqueueWebPaste,
     ensureWorldEditSchemExport,
     schematicFilePath,
     loadPasteOrdersStore
