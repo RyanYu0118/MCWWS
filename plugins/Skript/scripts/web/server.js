@@ -666,15 +666,18 @@ function quoteMaterialLines(materials, listName) {
     };
 }
 
+/** 投影粘贴自动建造费：在商店材料费基础上额外收取的比例（1 = 100%） */
+const BUILD_PASTE_SERVICE_FEE_RATE = 1;
+
 /** 投影粘贴报价：商店可购材料正常计价，未上架/无价/无法识别一律免费 */
 function quoteBuildPasteLines(materials, listName) {
     const base = quoteMaterialLines(materials, listName);
-    let purchasableTotal = 0;
+    let materialTotal = 0;
     let freeUnlistedTotal = 0;
     let freeUnlistedCount = 0;
     const lines = base.lines.map((line) => {
         if (line.status === 'ok') {
-            purchasableTotal = Math.round((purchasableTotal + line.lineTotal) * 100) / 100;
+            materialTotal = Math.round((materialTotal + line.lineTotal) * 100) / 100;
             return {
                 ...line,
                 checkoutLineTotal: line.lineTotal,
@@ -697,15 +700,20 @@ function quoteBuildPasteLines(materials, listName) {
             statusLabel: `${line.statusLabel || line.status}（免费）`
         };
     });
-    purchasableTotal = Math.round(purchasableTotal * 100) / 100;
+    materialTotal = Math.round(materialTotal * 100) / 100;
     freeUnlistedTotal = Math.round(freeUnlistedTotal * 100) / 100;
+    const buildServiceFee = Math.round(materialTotal * BUILD_PASTE_SERVICE_FEE_RATE * 100) / 100;
+    const checkoutTotal = Math.round((materialTotal + buildServiceFee) * 100) / 100;
     return {
         ...base,
         lines,
-        purchasableTotal,
+        materialTotal,
+        buildServiceFee,
+        buildServiceFeeRate: BUILD_PASTE_SERVICE_FEE_RATE,
+        purchasableTotal: checkoutTotal,
         freeUnlistedTotal,
         freeUnlistedCount,
-        checkoutTotal: purchasableTotal,
+        checkoutTotal,
         referenceTotal: freeUnlistedTotal
     };
 }
@@ -3011,6 +3019,8 @@ app.post('/api/build/quote', async (req, res) => {
             materials: ingest.materials,
             quoteLines: pricing.lines,
             purchasableTotal: pricing.checkoutTotal,
+            materialTotal: pricing.materialTotal,
+            buildServiceFee: pricing.buildServiceFee,
             freeUnlistedTotal: pricing.freeUnlistedTotal,
             playerUuid: uuid || '',
             playerId,
@@ -3027,7 +3037,11 @@ app.post('/api/build/quote', async (req, res) => {
             blockCount: ingest.blockCount,
             regionCount: ingest.regionCount,
             lineCount: pricing.lineCount,
+            materialTotal: pricing.materialTotal,
+            buildServiceFee: pricing.buildServiceFee,
+            buildServiceFeeRate: pricing.buildServiceFeeRate,
             purchasableTotal: pricing.checkoutTotal,
+            checkoutTotal: pricing.checkoutTotal,
             freeUnlistedTotal: pricing.freeUnlistedTotal,
             freeUnlistedCount: pricing.freeUnlistedCount,
             lines: pricing.lines,

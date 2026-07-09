@@ -164,7 +164,9 @@ function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pas
         set {_actor} to BukkitAdapter.adapt({_p})
     else:
         set {_actor} to BukkitAdapter.adapt(Bukkit.getConsoleSender())
-    set {_session} to WorldEdit.getInstance().getEditSessionFactory().getEditSession({_weWorld}, {_actor})
+    set {_session} to WorldEdit.getInstance().getEditSessionFactory().getEditSession({_weWorld}, -1, {_actor})
+    if {_session} is not set:
+        return false
     set {_dest} to BlockVector3.at({_ix}, {_iy}, {_iz})
     set {_holder} to new ClipboardHolder({_clipboard})
     set {_operation} to {_holder}.createPaste({_session}).to({_dest}).ignoreAirBlocks(true).build()
@@ -255,7 +257,7 @@ function mcwwsPasteMirrorLabel(mirror: text) :: text:
         return "前后"
     return "无"
 
-command /build [<text>] [<text>] [<text>] [<text>] [<text>] [<text>]:
+command /build [<text>] [<text>] [<text>] [<text>] [<text>] [<text>] [<text>]:
     trigger:
         if arg-1 is not set:
             mcwwsSendPasteHelp(player)
@@ -292,6 +294,15 @@ command /build [<text>] [<text>] [<text>] [<text>] [<text>] [<text>]:
                 mcwwsPasteGo(player, arg-2, "notset", "notset", "notset", arg-3, arg-4)
             stop
         send "§c未知子命令。输入 /build 查看帮助。" to player
+
+command /mcwwswebpaste <text>:
+    trigger:
+        if command sender is not console:
+            stop
+        set {_oid} to arg-1
+        set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
+        set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
+        mcwwsPasteExecuteInternal({_oid}, {_p}, true)
 
 function mcwwsListPasteOrders(p: player):
     set {_path} to mcwwsPasteYamlPath()
@@ -539,11 +550,12 @@ function mcwwsPasteExecuteInternal(oid: text, p: player, fromWebQueue: boolean):
     else:
         set {_ok} to mcwwsPasteSchemAtAbsolute({_p}, {_world}, {_schem}, {_px}, {_py}, {_pz})
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})
-    if {_ok} is false:
+    if {_ok} is not true:
         mcwwsPasteMarkFailed({_oid}, "绝对坐标粘贴失败")
         if {_fromWebQueue} is true:
             mcwwsPasteSetWebQueue({_oid}, "failed", "绝对坐标粘贴失败")
         mcwwsPasteNotify({_p}, "§c[投影粘贴] 粘贴失败，请确认原理图存在且 WorldEdit/FAWE 可用。")
+        send "§c[MCWWS] 订单 #%{_oid}% 粘贴失败（EditSession 或原理图异常）" to console
         stop
     wait 5 ticks
     load yaml {_path} as "pastes"
@@ -580,15 +592,8 @@ function mcwwsPasteBeginWebQueue(oid: text) :: boolean:
     unload yaml "pastes"
     return true
 
-async function mcwwsPasteExecuteQueued(oid: text):
-    while {mcwws.pasteQueueBusy} is true:
-        wait 10 ticks
-    set {mcwws.pasteQueueBusy} to true
-    set {_ownerUuid} to mcwwsReadPasteOrderField({_oid}, "playerUuid")
-    set {_p} to mcwwsFindOnlinePlayerByUuid({_ownerUuid})
-    wait 2 ticks
-    mcwwsPasteExecuteInternal({_oid}, {_p}, true)
-    delete {mcwws.pasteQueueBusy}
+function mcwwsPasteScheduleWebQueue(oid: text):
+    mcwwsRunConsoleCommand("mcwwswebpaste %{_oid}%")
 
 function mcwwsProcessWebPasteTextQueue() :: number:
     set {_count} to 0
@@ -617,7 +622,7 @@ function mcwwsProcessWebPasteTextQueue() :: number:
                 add {_line} to {_rest::*}
                 continue
             send "§a[MCWWS] 网页粘贴队列: 开始处理订单 #%{_oid}%" to console
-            mcwwsPasteExecuteQueued({_oid})
+            mcwwsPasteScheduleWebQueue({_oid})
             add 1 to {_count}
         else:
             add {_line} to {_rest::*}
@@ -630,8 +635,6 @@ function mcwwsProcessWebPasteTextQueue() :: number:
     return {_count}
 
 function mcwwsProcessWebPasteYamlQueue() :: number:
-    if {mcwws.pasteQueueBusy} is true:
-        return 0
     set {_path} to mcwwsPasteYamlPath()
     load yaml {_path} as "pastes"
     set {_max} to yaml value "next_id" from "pastes"
@@ -651,7 +654,7 @@ function mcwwsProcessWebPasteYamlQueue() :: number:
         if mcwwsPasteBeginWebQueue({_oid}) is false:
             continue
         send "§a[MCWWS] 网页粘贴 YAML 队列: 开始处理订单 #%{_oid}%" to console
-        mcwwsPasteExecuteQueued({_oid})
+        mcwwsPasteScheduleWebQueue({_oid})
         return 1
     return 0
 
