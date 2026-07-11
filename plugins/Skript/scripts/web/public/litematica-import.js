@@ -142,7 +142,8 @@
                 throw new Error('未识别到任何材料条目，请确认导出格式为 JSON 或 Litematica 表格 TXT。');
             }
 
-            const res = await fetch('/api/shop/material-quote', {
+            const quoteUrl = '/api/shop/material-quote';
+            const res = await fetch(quoteUrl, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
@@ -150,10 +151,13 @@
                     materials: parsed.materials
                 })
             });
-            const quote = await res.json();
-            if (!res.ok) {
-                throw new Error(quote.error || '计价失败');
-            }
+            const quote = window.MCWWS_readJsonResponse
+                ? await window.MCWWS_readJsonResponse(res, quoteUrl)
+                : await (async () => {
+                    const data = await res.json();
+                    if (!res.ok) throw new Error(data.error || '计价失败');
+                    return data;
+                })();
 
             lastQuote = quote;
             renderQuote(quote, {

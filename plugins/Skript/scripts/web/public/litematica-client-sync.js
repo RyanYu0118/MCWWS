@@ -278,6 +278,74 @@
         return normalized;
     }
 
+    /** 兼容 webkitdirectory：用户可能误选了 config 或 .minecraft 上一级目录 */
+    function normalizeFileIndexForMinecraftRoot() {
+        if (!fileIndex.size) return { ok: false, reason: 'empty' };
+
+        const keys = [...fileIndex.keys()];
+        const hasStandardRoot = keys.some((key) =>
+            key === 'config/litematica'
+            || key.startsWith('config/litematica/')
+            || key.startsWith('litematica/world_specific_data/')
+            || key.startsWith('litematica/placements/')
+        );
+        if (hasStandardRoot) {
+            return { ok: true, mode: 'standard' };
+        }
+
+        // 误选了 .minecraft/config 文件夹：路径形如 litematica/...
+        const looksLikeConfigDir = keys.some((key) =>
+            key.startsWith('litematica/') || key === 'litematica'
+        );
+        if (looksLikeConfigDir) {
+            const rebased = new Map();
+            for (const [path, file] of fileIndex.entries()) {
+                rebased.set(`config/${path}`, file);
+            }
+            fileIndex = rebased;
+            return { ok: true, mode: 'rebased-config' };
+        }
+
+        // 误选了 Minecraft 启动器根目录：仅有 versions、libraries 等，没有完整 config
+        const hasDotMinecraftPrefix = keys.some((key) =>
+            key.startsWith('.minecraft/config/litematica/')
+            || key.startsWith('.minecraft/litematica/')
+        );
+        if (hasDotMinecraftPrefix) {
+            const rebased = new Map();
+            for (const [path, file] of fileIndex.entries()) {
+                const stripped = normalizeIndexedPath(path);
+                if (stripped) rebased.set(stripped, file);
+            }
+            fileIndex = rebased;
+            return { ok: true, mode: 'rebased-dot-minecraft' };
+        }
+
+        // 宽松：任意 litematica 相关 json
+        const loose = keys.some((key) =>
+            /(^|\/)litematica(\/|\.)/i.test(key) && key.endsWith('.json')
+        );
+        if (loose) {
+            return { ok: true, mode: 'loose' };
+        }
+
+        const sample = keys
+            .filter((key) => key.includes('config') || key.includes('litematica'))
+            .slice(0, 6);
+        return { ok: false, reason: 'no-litematica', sample };
+    }
+
+    async function hasLitematicaLayout() {
+        const normalized = normalizeFileIndexForMinecraftRoot();
+        if (connectionMode === 'files') {
+            if (normalized.ok) return true;
+            return false;
+        }
+        return (await pathExists('config/litematica'))
+            || (await pathExists('litematica/world_specific_data'))
+            || (await pathExists('litematica/placements'));
+    }
+
     function buildFileIndexFromFileList(fileList) {
         fileIndex.clear();
         for (const file of fileList) {
@@ -667,11 +735,16 @@
         if (!fileIndex.size) {
             throw new Error('所选文件夹为空或无法读取。');
         }
-        const hasLitematicaData = await pathExists('config/litematica')
-            || await pathExists('litematica/world_specific_data')
-            || await pathExists('litematica/placements');
+        const layout = normalizeFileIndexForMinecraftRoot();
+        const hasLitematicaData = layout.ok || await hasLitematicaLayout();
         if (!hasLitematicaData) {
-            throw new Error('未在该文件夹中找到 Litematica 配置。请直接选择 .minecraft 文件夹（含 config/litematica 或 litematica 子目录）。');
+            const sample = layout.sample?.length
+                ? ` 当前读到的路径示例：${layout.sample.join('、')}`
+                : '';
+            throw new Error(
+                '未在该文件夹中找到 Litematica 配置。请直接选择 .minecraft 文件夹（需含 config/litematica 或 litematica 子目录；安装 Litematica 并至少进一次游戏后才会生成）。'
+                + sample
+            );
         }
 
         rootHandle = null;

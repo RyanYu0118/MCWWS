@@ -1608,6 +1608,63 @@ toolinv:
           minecraft:tooltip_display: '{hidden_components:["minecraft:unbreakable"]}'
           minecraft:custom_name: '{extra:[{bold:1b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Multitool",underlined:0b}],text:""}'
         schema_version: 1
+  d006ba70-4ddc-4b37-b13c-76f190815116:
+    a:
+      itemstack:
+        ==: org.bukkit.inventory.ItemStack
+        DataVersion: 4671
+        id: minecraft:diamond_sword
+        count: 1
+        components:
+          minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"奖励样品",underlined:0b}],text:""}]'
+          minecraft:enchantments: '{"minecraft:sharpness":10,"minecraft:unbreaking":10}'
+          minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"超级钻石剑",underlined:0b}],text:""}'
+          minecraft:damage: '719'
+        schema_version: 1
+    b:
+      itemstack:
+        ==: org.bukkit.inventory.ItemStack
+        DataVersion: 4671
+        id: minecraft:netherite_pickaxe
+        count: 1
+        components:
+          minecraft:repair_cost: '3'
+          minecraft:unbreakable: '{}'
+          minecraft:enchantments: '{"minecraft:efficiency":5,"minecraft:fortune":3}'
+        schema_version: 1
+    c:
+      itemstack:
+        ==: org.bukkit.inventory.ItemStack
+        DataVersion: 4671
+        id: minecraft:netherite_axe
+        count: 1
+        components:
+          minecraft:repair_cost: '7'
+          minecraft:unbreakable: '{}'
+          minecraft:enchantments: '{"minecraft:breach":4,"minecraft:efficiency":5,"minecraft:silk_touch":1}'
+        schema_version: 1
+    d:
+      itemstack:
+        ==: org.bukkit.inventory.ItemStack
+        DataVersion: 4671
+        id: minecraft:diamond_shovel
+        count: 1
+        components:
+          minecraft:damage: '1025'
+        schema_version: 1
+    e:
+      itemstack:
+        ==: org.bukkit.inventory.ItemStack
+        DataVersion: 4671
+        id: minecraft:feather
+        count: 1
+        components:
+          minecraft:unbreakable: '{}'
+          minecraft:lore: '[{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"Click
+            this feather to generate your Multitool.",underlined:0b}],text:""}]'
+          minecraft:tooltip_display: '{hidden_components:["minecraft:unbreakable"]}'
+          minecraft:custom_name: '{extra:[{bold:1b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Multitool",underlined:0b}],text:""}'
+        schema_version: 1
   55c6edae-e258-4161-8bcf-e7ee12a5c840:
     a:
       itemstack:
@@ -1669,61 +1726,4 @@ toolinv:
           minecraft:unbreakable: '{}'
           minecraft:custom_name: '{extra:[{bold:1b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Multitool",underlined:0b}],text:""}'
           minecraft:tooltip_display: '{hidden_components:["minecraft:unbreakable"]}'
-        schema_version: 1
-  d006ba70-4ddc-4b37-b13c-76f190815116:
-    a:
-      itemstack:
-        ==: org.bukkit.inventory.ItemStack
-        DataVersion: 4671
-        id: minecraft:diamond_sword
-        count: 1
-        components:
-          minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"奖励样品",underlined:0b}],text:""}]'
-          minecraft:enchantments: '{"minecraft:sharpness":10,"minecraft:unbreaking":10}'
-          minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"超级钻石剑",underlined:0b}],text:""}'
-          minecraft:damage: '719'
-        schema_version: 1
-    b:
-      itemstack:
-        ==: org.bukkit.inventory.ItemStack
-        DataVersion: 4671
-        id: minecraft:netherite_pickaxe
-        count: 1
-        components:
-          minecraft:repair_cost: '3'
-          minecraft:unbreakable: '{}'
-          minecraft:enchantments: '{"minecraft:efficiency":5,"minecraft:fortune":3}'
-        schema_version: 1
-    c:
-      itemstack:
-        ==: org.bukkit.inventory.ItemStack
-        DataVersion: 4671
-        id: minecraft:netherite_axe
-        count: 1
-        components:
-          minecraft:repair_cost: '7'
-          minecraft:unbreakable: '{}'
-          minecraft:enchantments: '{"minecraft:breach":4,"minecraft:efficiency":5,"minecraft:silk_touch":1}'
-        schema_version: 1
-    d:
-      itemstack:
-        ==: org.bukkit.inventory.ItemStack
-        DataVersion: 4671
-        id: minecraft:diamond_shovel
-        count: 1
-        components:
-          minecraft:damage: '1025'
-        schema_version: 1
-    e:
-      itemstack:
-        ==: org.bukkit.inventory.ItemStack
-        DataVersion: 4671
-        id: minecraft:feather
-        count: 1
-        components:
-          minecraft:unbreakable: '{}'
-          minecraft:lore: '[{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"Click
-            this feather to generate your Multitool.",underlined:0b}],text:""}]'
-          minecraft:tooltip_display: '{hidden_components:["minecraft:unbreakable"]}'
-          minecraft:custom_name: '{extra:[{bold:1b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Multitool",underlined:0b}],text:""}'
         schema_version: 1

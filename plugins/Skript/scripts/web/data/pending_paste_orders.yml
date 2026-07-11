@@ -1,4 +1,4 @@
-next_id: 43
+next_id: 45
 
 orders:
     '1':
@@ -1627,3 +1627,97 @@ orders:
         webPasteProcessedAt: '2026-07-09 17:42:17'
         webPasteProcessingAt: '2026-07-09 17:42:07'
         pasteStartedAt: '2026-07-09 17:42:07'
+    '43':
+        id: 8d8d464b-ee1d-4468-b76d-a6383f672b87
+        numericId: 43
+        pasteToken: ''
+        contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
+        contentHashVersion: mcwws:content-v1
+        quoteId: 50
+        playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+        playerId: GuuuuuLei
+        username: Gu Lei
+        total: 11366.38
+        status: completed
+        anchor:
+            world: world
+            x: -646
+            y: 64
+            z: 334
+            yaw: 0
+            pitch: 0
+        anchorSetAt: '2026-07-11T15:22:44.990Z'
+        rotation: NONE
+        mirror: NONE
+        schemFileName: mcwws_e353234a24b78a67
+        schemOriginOffset:
+            x: 0
+            y: 0
+            z: 0
+        schemSize:
+            width: 19
+            height: 21
+            length: 19
+        transformBaked: false
+        pasteAnchorAdjust:
+            x: 0
+            y: 0
+            z: 0
+        schematicPath: D:\Minecraft\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67.litematic
+        createdAt: '2026-07-11T15:22:44.990Z'
+        pasteTokenExpiresAt: '2026-07-11T15:37:44.990Z'
+        pastedAt: '2026-07-11 23:23:04'
+        failureReason: ''
+        webPasteQueue: done
+        webPasteQueuedAt: '2026-07-11T15:22:53.685Z'
+        webPasteQueueError: ''
+        webPasteProcessedAt: '2026-07-11 23:23:04'
+        webPasteProcessingAt: '2026-07-11 23:22:54'
+        pasteStartedAt: '2026-07-11 23:22:54'
+    '44':
+        id: 2f5be242-4e3c-4883-beb2-c0ce948c985d
+        numericId: 44
+        pasteToken: ''
+        contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
+        contentHashVersion: mcwws:content-v1
+        quoteId: 51
+        playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+        playerId: GuuuuuLei
+        username: Gu Lei
+        total: 11366.38
+        status: completed
+        anchor:
+            world: world
+            x: -620
+            y: 64
+            z: 365
+            yaw: 0
+            pitch: 0
+        anchorSetAt: '2026-07-11T15:28:04.551Z'
+        rotation: CLOCKWISE_90
+        mirror: FRONT_BACK
+        schemFileName: mcwws_e353234a24b78a67_r90_mfb
+        schemOriginOffset:
+            x: 0
+            y: 0
+            z: 0
+        schemSize:
+            width: 19
+            height: 21
+            length: 19
+        transformBaked: true
+        pasteAnchorAdjust:
+            x: -18
+            y: 0
+            z: -18
+        schematicPath: D:\Minecraft\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67.litematic
+        createdAt: '2026-07-11T15:28:04.551Z'
+        pasteTokenExpiresAt: '2026-07-11T15:43:04.551Z'
+        pastedAt: '2026-07-11 23:28:28'
+        failureReason: ''
+        webPasteQueue: done
+        webPasteQueuedAt: '2026-07-11T15:28:16.619Z'
+        webPasteQueueError: ''
+        webPasteProcessedAt: '2026-07-11 23:28:28'
+        webPasteProcessingAt: '2026-07-11 23:28:18'
+        pasteStartedAt: '2026-07-11 23:28:18'

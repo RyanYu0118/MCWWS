@@ -20,9 +20,14 @@
             return cachedPasteOrders;
         }
         try {
-            const res = await fetch('/api/build/paste/orders', { headers: auth.headers() });
-            const data = await res.json();
-            if (!res.ok) throw new Error(data.error || '读取订单失败');
+            const url = '/api/build/paste/orders';
+            const res = await fetch(url, { headers: auth.headers() });
+            const data = window.MCWWS_readJsonResponse
+                ? await window.MCWWS_readJsonResponse(res, url)
+                : await res.json();
+            if (!res.ok && !window.MCWWS_readJsonResponse) {
+                throw new Error(data.error || '读取订单失败');
+            }
             cachedPasteOrders = (data.orders || []).filter((o) =>
                 o.status === 'awaiting_anchor'
                 || o.status === 'ready'
@@ -193,6 +198,23 @@
         });
     }
 
+    function updateConnectButtonLabel() {
+        const connectBtn = document.getElementById('buildClientSyncConnectBtn');
+        const api = sync();
+        if (!connectBtn || !api) return;
+        const info = api.getSupportInfo();
+        if (info.mode === 'picker') {
+            connectBtn.textContent = '选择 .minecraft 文件夹';
+            connectBtn.title = '使用系统文件夹选择器（支持自动刷新）';
+        } else if (info.mode === 'fallback') {
+            connectBtn.textContent = '选择 .minecraft 文件夹';
+            connectBtn.title = '兼容模式：系统弹窗可能显示「上传」，请选中 .minecraft 文件夹后点确定/上传';
+        } else {
+            connectBtn.textContent = '当前浏览器不支持';
+            connectBtn.title = info.hint || '';
+        }
+    }
+
     function renderSupportBanner() {
         const api = sync();
         const el = document.getElementById('buildClientSyncUnsupported');
@@ -200,7 +222,12 @@
         const info = api.getSupportInfo();
         el.hidden = false;
         el.classList.add('build-client-sync-support-hint');
-        el.textContent = info.canConnect ? info.hint : info.hint;
+        if (info.mode === 'fallback') {
+            el.textContent = `${info.hint} 弹窗里若看到「上传」按钮，这是浏览器兼容模式的正常显示，并非上传文件到网站；请进入 .minecraft 文件夹后点确定。`;
+        } else {
+            el.textContent = info.canConnect ? info.hint : info.hint;
+        }
+        updateConnectButtonLabel();
     }
 
     function bindShellEvents(body) {
@@ -433,7 +460,7 @@
             </p>
             <p class="build-client-sync-note">
                 ${escapeHtml(info.hint || '请使用 Chrome / Edge 桌面版。')}
-                ${info.mode === 'fallback' ? ' 兼容模式下请在弹窗中选中 <strong>.minecraft</strong> 文件夹并确认。' : ''}
+                ${info.mode === 'fallback' ? ' 兼容模式下系统弹窗可能显示「<strong>上传</strong>」，请进入 <strong>.minecraft</strong> 文件夹（能看到 <strong>config</strong> 子文件夹）后点确定。' : ''}
             </p>
         `;
     }

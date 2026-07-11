@@ -1065,13 +1065,44 @@ orders:
                 shopTitle: 运输商店 (2/3)
                 status: delivered
     '40':
+        id: 5c3168ec-a154-44d8-8103-9975e406e729
+        numericId: 40
+        playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+        playerId: GuuuuuLei
+        username: Gu Lei
+        status: delivered
+        total: 1485
+        balanceAfter: 104476.16
         economyChargedInGame: true
-        updatedAt: '2026-07-09 17:28:05'
+        createdAt: '2026-07-11T15:42:24.819Z'
+        updatedAt: '2026-07-11 23:42:33'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-07-11 23:42:33'
+        lineCount: 1
+        lines:
+            '1':
+                itemId: heart_pottery_sherd
+                shopId: archaeology
+                slot: N
+                quantity: 15
+                unitBuyPrice: 99
+                lineTotal: 1485
+                productAmount: 1
+                material: heart_pottery_sherd
+                shopTitle: 考古商店 (1/2)
+                status: delivered
     '41':
         economyChargedInGame: true
         updatedAt: '2026-07-09 17:33:22'
     '42':
         economyChargedInGame: true
         updatedAt: '2026-07-09 17:42:05'
+    '43':
+        economyChargedInGame: true
+        updatedAt: '2026-07-11 23:22:46'
+    '44':
+        economyChargedInGame: true
+        updatedAt: '2026-07-11 23:28:05'
 
-next_id: 40
+next_id: 41

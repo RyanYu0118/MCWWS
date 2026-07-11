@@ -271,10 +271,15 @@ function renderCategoryTabs() {
 async function loadItems() {
     try {
         await loadShopCategories();
-        const response = await fetch('/api/prices?t=' + new Date().getTime());
+        const pricesUrl = '/api/prices?t=' + new Date().getTime();
+        const response = await fetch(pricesUrl);
 
-        if (!response.ok) throw new Error('网络响应失败');
-        const rawData = await response.json();
+        const rawData = window.MCWWS_readJsonResponse
+            ? await window.MCWWS_readJsonResponse(response, pricesUrl)
+            : await (async () => {
+                if (!response.ok) throw new Error('网络响应失败');
+                return response.json();
+            })();
 
         allItems = buildCatalogItems(rawData);
 
@@ -291,7 +296,8 @@ async function loadItems() {
         console.error('加载物品数据出错:', error);
         const grid = document.getElementById('itemsGrid');
         if (grid) {
-            grid.innerHTML = '<div style="color:#ef4444; text-align:center; grid-column:1/-1; padding: 40px; background: #1e293b; border-radius: 12px;">⚠️ 无法连接到后端数据库。</div>';
+            const msg = error?.message || '无法连接到后端数据库。';
+            grid.innerHTML = `<div style="color:#ef4444; text-align:center; grid-column:1/-1; padding: 40px; background: #1e293b; border-radius: 12px;">⚠️ ${escapeHtml(msg)}</div>`;
         }
     }
 }
@@ -1242,7 +1248,11 @@ function startItemModalAutoRefresh(itemId) {
 }
 
 async function fetchItemDetailSnapshot(itemId) {
-    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`);
+    const url = `/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`;
+    const response = await fetch(url);
+    if (window.MCWWS_readJsonResponse) {
+        return window.MCWWS_readJsonResponse(response, url);
+    }
     const snapshot = await response.json();
     if (!response.ok) {
         throw new Error(snapshot?.error || '读取物品详情失败');

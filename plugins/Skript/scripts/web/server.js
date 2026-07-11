@@ -3831,6 +3831,13 @@ app.post('/api/buy', (req, res) => {
     }
 });
 
+app.use('/api', (req, res) => {
+    res.status(404).json({
+        error: '接口不存在',
+        path: req.originalUrl
+    });
+});
+
 function localIpv4Addresses() {
     const addresses = [];
     Object.values(os.networkInterfaces()).forEach((entries) => {

@@ -135,7 +135,11 @@ function startDetailRefresh() {
 }
 
 async function fetchItemDetailSnapshot(itemId) {
-    const response = await fetch(`/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`);
+    const url = `/api/shop/item-snapshot/${encodeURIComponent(itemId)}?range=full`;
+    const response = await fetch(url);
+    if (window.MCWWS_readJsonResponse) {
+        return window.MCWWS_readJsonResponse(response, url);
+    }
     const snapshot = await response.json();
     if (!response.ok) {
         throw new Error(snapshot?.error || '读取物品详情失败');
@@ -285,18 +289,21 @@ async function loadDetailSnapshot(showLoading = true) {
         chartWrap.innerHTML = '<div class="loading-spinner"></div>';
     }
     try {
+        const itemUrl = `/api/shop/item/${encodeURIComponent(currentItemId)}`;
+        const historyUrl = `/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=full`;
         const [snapshotResponse, historyResponse] = await Promise.all([
-            fetch(`/api/shop/item/${encodeURIComponent(currentItemId)}`),
-            fetch(`/api/analytics/price-history/${encodeURIComponent(currentItemId)}?range=full`)
+            fetch(itemUrl),
+            fetch(historyUrl)
         ]);
-        const snapshotItem = await snapshotResponse.json();
-        const priceHistory = await historyResponse.json();
-        if (!snapshotResponse.ok) {
-            throw new Error(snapshotItem?.error || '读取物品详情失败');
-        }
-        if (!historyResponse.ok) {
-            throw new Error(priceHistory?.error || '读取价格历史失败');
-        }
+        const readJson = window.MCWWS_readJsonResponse
+            ? (res, url) => window.MCWWS_readJsonResponse(res, url)
+            : async (res) => {
+                const data = await res.json();
+                if (!res.ok) throw new Error(data?.error || '请求失败');
+                return data;
+            };
+        const snapshotItem = await readJson(snapshotResponse, itemUrl);
+        const priceHistory = await readJson(historyResponse, historyUrl);
         if (requestSeq !== detailRequestSeq) return;
         updateDetailContent({
             item: snapshotItem,
