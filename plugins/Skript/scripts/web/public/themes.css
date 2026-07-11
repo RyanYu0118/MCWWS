@@ -573,26 +573,25 @@ textarea:focus {
     color: #000000;
 }
 
-/* ═══ 主题切换过渡 ═══ */
-html.is-theme-animating,
-html.is-theme-animating *,
-html.is-theme-animating *::before,
-html.is-theme-animating *::after {
-    transition:
-        background-color var(--theme-transition-duration, 0.45s) ease,
-        color var(--theme-transition-duration, 0.45s) ease,
-        border-color var(--theme-transition-duration, 0.45s) ease,
-        box-shadow var(--theme-transition-duration, 0.45s) ease,
-        fill var(--theme-transition-duration, 0.45s) ease,
-        stroke var(--theme-transition-duration, 0.45s) ease,
-        opacity var(--theme-transition-duration, 0.45s) ease !important;
+/* ═══ 主题切换过渡（单层合成 / View Transition，避免全页 * 过渡卡顿）═══ */
+::view-transition-old(root),
+::view-transition-new(root) {
+    animation-duration: var(--theme-transition-duration, 0.32s);
+    animation-timing-function: ease-in-out;
 }
 
-html.is-theme-animating body::before,
-html.is-theme-animating body::after {
-    transition:
-        opacity var(--theme-transition-duration, 0.45s) ease,
-        background var(--theme-transition-duration, 0.45s) ease !important;
+.mcwws-theme-switch-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 2147483645;
+    pointer-events: none;
+    opacity: 1;
+    transition: opacity var(--theme-transition-duration, 0.32s) ease;
+    will-change: opacity;
+}
+
+.mcwws-theme-switch-overlay--out {
+    opacity: 0;
 }
 
 /* ═══ 主题切换器（月亮 / 太阳 一键切换）═══ */
@@ -670,10 +669,14 @@ html.is-theme-animating body::after {
 }
 
 @media (prefers-reduced-motion: reduce) {
-    html.is-theme-animating,
-    html.is-theme-animating *,
-    html.is-theme-animating *::before,
-    html.is-theme-animating *::after {
+    ::view-transition-group(*),
+    ::view-transition-old(*),
+    ::view-transition-new(*) {
+        animation: none !important;
+    }
+
+    .mcwws-theme-switch-overlay {
+        display: none !important;
         transition: none !important;
     }
 

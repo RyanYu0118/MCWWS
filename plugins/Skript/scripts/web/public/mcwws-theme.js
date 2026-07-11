@@ -26,7 +26,11 @@
     document.documentElement.setAttribute('data-color-scheme', normalizeScheme(readSavedScheme()));
 })();
 
-const MCWWS_COLOR_SCHEME_TRANSITION_MS = 450;
+const MCWWS_COLOR_SCHEME_TRANSITION_MS = 320;
+const MCWWS_THEME_OVERLAY_COLORS = {
+    dark: '#050505',
+    light: '#ebedf2'
+};
 
 function mcwwsColorSchemeGet() {
     const current = document.documentElement.getAttribute('data-color-scheme');
@@ -50,31 +54,71 @@ function mcwwsColorSchemeSyncToggleUi() {
     mcwwsColorSchemeUpdateToggleButton(document.querySelector('.mcwws-theme-toggle'));
 }
 
-function mcwwsColorSchemeApply(schemeId, options) {
-    const animate = !options || options.animate !== false;
-    const scheme = schemeId === 'light' ? 'light' : 'dark';
+function mcwwsColorSchemeApplyCore(scheme) {
     const root = document.documentElement;
-    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    const shouldAnimate = animate && !prefersReducedMotion;
-
-    if (shouldAnimate) {
-        root.classList.add('is-theme-animating');
-    }
-
     root.setAttribute('data-color-scheme', scheme);
     try {
         localStorage.setItem('mcwws.web.colorScheme', scheme);
     } catch (_) { /* ignore */ }
-
     mcwwsColorSchemeSyncToggleUi();
+    window.dispatchEvent(new CustomEvent('mcwws-color-scheme-change', { detail: { scheme } }));
+}
 
-    if (shouldAnimate) {
-        window.setTimeout(() => {
-            root.classList.remove('is-theme-animating');
-        }, MCWWS_COLOR_SCHEME_TRANSITION_MS);
+function mcwwsColorSchemeOverlayTransition(fromScheme, applyCore) {
+    const host = document.body || document.documentElement;
+    let overlay = document.getElementById('mcwws-theme-switch-overlay');
+    if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.id = 'mcwws-theme-switch-overlay';
+        overlay.className = 'mcwws-theme-switch-overlay';
+        host.appendChild(overlay);
     }
 
-    window.dispatchEvent(new CustomEvent('mcwws-color-scheme-change', { detail: { scheme } }));
+    overlay.classList.remove('mcwws-theme-switch-overlay--out');
+    overlay.style.background = MCWWS_THEME_OVERLAY_COLORS[fromScheme] || MCWWS_THEME_OVERLAY_COLORS.dark;
+    overlay.style.opacity = '1';
+
+    applyCore();
+
+    requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+            overlay.classList.add('mcwws-theme-switch-overlay--out');
+        });
+    });
+
+    const cleanup = () => {
+        overlay.classList.remove('mcwws-theme-switch-overlay--out');
+        overlay.remove();
+    };
+
+    overlay.addEventListener('transitionend', (event) => {
+        if (event.propertyName === 'opacity') {
+            cleanup();
+        }
+    }, { once: true });
+
+    window.setTimeout(cleanup, MCWWS_COLOR_SCHEME_TRANSITION_MS + 80);
+}
+
+function mcwwsColorSchemeApply(schemeId, options) {
+    const animate = !options || options.animate !== false;
+    const scheme = schemeId === 'light' ? 'light' : 'dark';
+    const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const shouldAnimate = animate && !prefersReducedMotion;
+    const fromScheme = mcwwsColorSchemeGet();
+    const applyCore = () => mcwwsColorSchemeApplyCore(scheme);
+
+    if (!shouldAnimate || fromScheme === scheme) {
+        applyCore();
+        return;
+    }
+
+    if (typeof document.startViewTransition === 'function') {
+        document.startViewTransition(applyCore);
+        return;
+    }
+
+    mcwwsColorSchemeOverlayTransition(fromScheme, applyCore);
 }
 
 function mcwwsColorSchemeToggle() {
