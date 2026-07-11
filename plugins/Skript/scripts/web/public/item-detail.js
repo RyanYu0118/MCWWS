@@ -196,6 +196,7 @@ function updateHeader(snapshot) {
     const subtitleEl = document.getElementById('itemDetailSubtitle');
     const updatedEl = document.getElementById('itemDetailUpdated');
     const listLink = document.getElementById('itemDetailListLink');
+    const iconEl = document.getElementById('itemDetailIcon');
     if (titleEl) titleEl.textContent = title;
     if (subtitleEl) subtitleEl.textContent = `${categoryDisplayName(itemData.category)} · ${currentItemId}`;
     if (updatedEl) {
@@ -205,6 +206,12 @@ function updateHeader(snapshot) {
     if (listLink) {
         listLink.href = `items.html?detail=${encodeURIComponent(currentItemId)}`;
     }
+    if (iconEl && currentItemId) {
+        iconEl.innerHTML = getItemIconHtml(currentItemId, title);
+        mountItemIconsInContainer(iconEl);
+        if (window.McTextureAnim) window.McTextureAnim.initInContainer(iconEl);
+        if (window.McEnchantGlint) window.McEnchantGlint.initInContainer(iconEl);
+    }
 }
 
 function ensureDetailMarkup(snapshot) {
@@ -212,29 +219,22 @@ function ensureDetailMarkup(snapshot) {
     if (!content || content.dataset.rendered === '1') return;
     const itemData = snapshot?.item || {};
     content.innerHTML = `
-        <div class="modal-item-info">
-            <div class="modal-item-icon">${getItemIconHtml(currentItemId, itemData.displayName || currentItemId)}</div>
-            <div style="min-width:0; flex:1;">
-                <div style="font-size: 1.4rem; font-weight: 700; color: var(--text-primary);">${escapeHtml(itemData.displayName || currentItemId)}</div>
-                <div style="color: var(--text-muted); margin: 0.35rem 0 0.85rem;">${escapeHtml(categoryDisplayName(itemData.category))} · ${escapeHtml(currentItemId)}</div>
-                <div class="item-modal-stat-grid">
-                    <div class="item-modal-stat">
-                        <div class="item-modal-stat-label">系统买入</div>
-                        <div class="item-modal-stat-value item-modal-stat-value--buy" data-item-detail-buy>${formatCurrency(itemData.buyPrice)}</div>
-                    </div>
-                    <div class="item-modal-stat">
-                        <div class="item-modal-stat-label">玩家回收</div>
-                        <div class="item-modal-stat-value item-modal-stat-value--sell" data-item-detail-sell>${formatCurrency(itemData.sellPrice)}</div>
-                    </div>
-                    <div class="item-modal-stat">
-                        <div class="item-modal-stat-label">最近 20 笔买入</div>
-                        <div class="item-modal-stat-value" data-item-detail-total-buys>${Number(itemData.totalBuys || 0)}</div>
-                    </div>
-                    <div class="item-modal-stat">
-                        <div class="item-modal-stat-label">最近 20 笔回收</div>
-                        <div class="item-modal-stat-value" data-item-detail-total-sells>${Number(itemData.totalSells || 0)}</div>
-                    </div>
-                </div>
+        <div class="item-modal-stat-grid item-detail-stat-grid">
+            <div class="item-modal-stat">
+                <div class="item-modal-stat-label">系统买入</div>
+                <div class="item-modal-stat-value item-modal-stat-value--buy" data-item-detail-buy>${formatCurrency(itemData.buyPrice)}</div>
+            </div>
+            <div class="item-modal-stat">
+                <div class="item-modal-stat-label">玩家回收</div>
+                <div class="item-modal-stat-value item-modal-stat-value--sell" data-item-detail-sell>${formatCurrency(itemData.sellPrice)}</div>
+            </div>
+            <div class="item-modal-stat">
+                <div class="item-modal-stat-label">最近 20 笔买入</div>
+                <div class="item-modal-stat-value" data-item-detail-total-buys>${Number(itemData.totalBuys || 0)}</div>
+            </div>
+            <div class="item-modal-stat">
+                <div class="item-modal-stat-label">最近 20 笔回收</div>
+                <div class="item-modal-stat-value" data-item-detail-total-sells>${Number(itemData.totalSells || 0)}</div>
             </div>
         </div>
         <h3 class="item-modal-section-title">价格历史</h3>
@@ -252,9 +252,6 @@ function ensureDetailMarkup(snapshot) {
         </div>
     `;
     content.dataset.rendered = '1';
-    mountItemIconsInContainer(content);
-    if (window.McTextureAnim) window.McTextureAnim.initInContainer(content);
-    if (window.McEnchantGlint) window.McEnchantGlint.initInContainer(content);
 }
 
 function updateDetailContent(snapshot) {

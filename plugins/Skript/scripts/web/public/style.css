@@ -1765,23 +1765,43 @@ body {
 }
 
 .item-detail-page {
-    padding-top: 2rem;
-    padding-bottom: 3rem;
-}
-
-.item-detail-shell {
     max-width: 1180px;
-    margin: 0 auto;
-    padding: 1.5rem;
-    border-radius: var(--radius-xl);
+    padding-top: calc(64px + 1.5rem);
+    padding-bottom: 3rem;
 }
 
 .item-detail-head {
     display: flex;
     align-items: flex-start;
     justify-content: space-between;
+    gap: 1.25rem;
+    margin-bottom: 0.75rem;
+    flex-wrap: wrap;
+}
+
+.item-detail-head-main {
+    display: flex;
+    align-items: center;
     gap: 1rem;
-    margin-bottom: 1rem;
+    min-width: 0;
+}
+
+.item-detail-icon {
+    flex-shrink: 0;
+    width: 72px;
+    height: 72px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.item-detail-icon .item-icon-mount,
+.item-detail-icon > * {
+    margin-right: 0 !important;
+}
+
+.item-detail-head-text {
+    min-width: 0;
 }
 
 .item-detail-head h1 {
@@ -1805,19 +1825,49 @@ body {
 .item-detail-updated {
     color: var(--text-muted);
     font-size: 0.85rem;
-    margin-bottom: 1rem;
+    margin-bottom: 1.25rem;
 }
 
 .item-detail-content .item-modal-chart-wrap {
     height: 360px;
 }
 
-.item-detail-content .modal-item-info {
-    align-items: flex-start;
-}
-
 .item-detail-content .item-modal-trade-list {
     max-height: none;
+}
+
+.item-detail-stat-grid {
+    margin-top: 0;
+}
+
+.item-detail-page .item-modal-stat {
+    background: transparent;
+    border: none;
+    border-radius: 0;
+    padding: 0.25rem 0;
+}
+
+.item-detail-page .item-modal-chart-wrap {
+    padding: 0;
+    border: none;
+    border-radius: 0;
+    background: transparent;
+}
+
+.item-detail-page .item-modal-trade-row {
+    padding: 0.85rem 0;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    border-radius: 0;
+    background: transparent;
+}
+
+.item-detail-page .item-modal-trade-row:last-child {
+    border-bottom: none;
+}
+
+.item-detail-page .item-modal-section-title:first-child {
+    margin-top: 0;
 }
 
 .item-modal-action-hint {

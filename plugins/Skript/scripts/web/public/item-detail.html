@@ -8,10 +8,10 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>物品详情 - 流浪世界服务器商店系统</title>
     <meta name="description" content="查看单个商店物品的实时价格、价格历史与最近交易">
-    <link rel="stylesheet" href="style.css?v=2.5.78">
+    <link rel="stylesheet" href="style.css?v=2.5.81">
     <script src="mcwws-theme.js?v=3"></script>
     <script src="mcwws-page-transition.js?v=2"></script>
-    <link rel="stylesheet" href="themes.css?v=18">
+    <link rel="stylesheet" href="themes.css?v=19">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
@@ -42,22 +42,23 @@
     </nav>
 
     <main class="container item-detail-page">
-        <section class="glass item-detail-shell">
-            <div class="item-detail-head">
-                <div>
+        <header class="item-detail-head">
+            <div class="item-detail-head-main">
+                <div id="itemDetailIcon" class="item-detail-icon" aria-hidden="true"></div>
+                <div class="item-detail-head-text">
                     <h1 id="itemDetailTitle">物品详情</h1>
                     <p id="itemDetailSubtitle" class="item-detail-subtitle">正在加载物品数据...</p>
                 </div>
-                <div class="item-detail-actions">
-                    <a id="itemDetailListLink" class="item-modal-link-btn" href="items.html">在目录中查看</a>
-                    <a class="item-modal-link-btn" href="items.html">返回物品目录</a>
-                </div>
             </div>
-            <div id="itemDetailUpdated" class="item-detail-updated">每秒自动刷新</div>
-            <div id="itemDetailContent" class="item-detail-content">
-                <div class="loading-spinner"></div>
+            <div class="item-detail-actions">
+                <a id="itemDetailListLink" class="item-modal-link-btn" href="items.html">在目录中查看</a>
+                <a class="item-modal-link-btn" href="items.html">返回物品目录</a>
             </div>
-        </section>
+        </header>
+        <div id="itemDetailUpdated" class="item-detail-updated">每秒自动刷新</div>
+        <div id="itemDetailContent" class="item-detail-content">
+            <div class="loading-spinner"></div>
+        </div>
     </main>
 
     <footer class="footer">
@@ -81,7 +82,7 @@
     <script src="texture-animation.js?v=2.5.65" defer></script>
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
     <script src="price-history-chart.js?v=7"></script>
-    <script src="item-detail.js?v=4" defer></script>
+    <script src="item-detail.js?v=5" defer></script>
 </body>
 
 </html>

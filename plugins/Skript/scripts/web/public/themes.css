@@ -446,6 +446,18 @@ textarea:focus {
     border-color: var(--border);
 }
 
+[data-color-scheme="light"] .item-detail-page .item-modal-stat,
+[data-color-scheme="light"] .item-detail-page .item-modal-chart-wrap {
+    background: transparent;
+    border-color: transparent;
+}
+
+[data-color-scheme="light"] .item-detail-page .item-modal-trade-row {
+    background: transparent;
+    border-color: transparent;
+    border-bottom-color: var(--border);
+}
+
 [data-color-scheme="light"] .filter-select,
 [data-color-scheme="light"] .search-input,
 [data-color-scheme="light"] .form-field input,
