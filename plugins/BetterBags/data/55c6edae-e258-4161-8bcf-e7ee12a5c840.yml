@@ -535,8 +535,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:golden_axe
@@ -625,8 +625,8 @@ items:
     minecraft:banner_patterns: '[{color:"yellow",pattern:"minecraft:base"},{color:"black",pattern:"minecraft:half_horizontal_bottom"},{color:"yellow",pattern:"minecraft:triangle_bottom"},{color:"red",pattern:"minecraft:rhombus"},{color:"black",pattern:"minecraft:circle"},{color:"red",pattern:"minecraft:flower"},{color:"black",pattern:"minecraft:triangle_top"}]'
     minecraft:lore: '[{color:"#77CC00",fallback:"Releases radiation",italic:0b,translate:"incendium.item.radiation_shield.desc1"},{color:"#77CC00",fallback:"when
       blocking an attack",italic:0b,translate:"incendium.item.radiation_shield.desc2"},"",{color:"#FF8000",fallback:"Incendium",italic:1b,translate:"incendium"}]'
-    minecraft:custom_name: '{color:"#44FF00",fallback:"Radiation Shield",italic:0b,translate:"incendium.item.radiation_shield.name"}'
     minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
+    minecraft:custom_name: '{color:"#44FF00",fallback:"Radiation Shield",italic:0b,translate:"incendium.item.radiation_shield.name"}'
     minecraft:custom_model_data: '{floats:[1450302.0f]}'
     minecraft:custom_data: '{incendium:{item:"radiation_shield"}}'
     minecraft:damage: '77'
@@ -1001,8 +1001,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
     minecraft:damage: '306'
   schema_version: 1
 - DataVersion: 4671
@@ -1477,8 +1477,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:chainmail_leggings
@@ -1496,8 +1496,8 @@ items:
   id: minecraft:golden_axe
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运斧",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运斧",underlined:0b}],text:""}'
     minecraft:damage: '6'
   schema_version: 1
 - DataVersion: 4671
@@ -1636,8 +1636,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
     minecraft:damage: '106'
   schema_version: 1
 - DataVersion: 4671
@@ -1985,8 +1985,8 @@ items:
   id: minecraft:stick
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:knockback":5}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"爷爷的拐杖",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:knockback":5}'
     minecraft:custom_model_data: '{floats:[2200012.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GRANDPAS_WALKING_STICK"}}'
   schema_version: 1

@@ -95,7 +95,7 @@
                             <div class="mcwws-auth-popover-progress-fill"></div>
                         </div>
                     </div>
-                    ${isMap ? '<a href="home.html" class="mcwws-auth-popover-services-link">🏠 更多服务</a>' : ''}
+                    ${isMap ? '<div id="mapAuthThemeSlot" class="mcwws-auth-popover-theme-row"></div><a href="home.html" class="mcwws-auth-popover-services-link">🏠 更多服务</a>' : ''}
                     <button type="button" id="${actionId}" class="mcwws-auth-popover-action">登录 / 注册</button>
                 </div>
             </div>
@@ -163,6 +163,10 @@
         widget.className = 'mcwws-auth-widget';
         widget.id = isMap ? 'mapAuthWidget' : 'mcwwsAuthWidget';
         widget.innerHTML = buildAuthWidgetHtml(btn.id, isMap);
+
+        if (isMap && window.MCWWS_COLOR_SCHEME?.mountSwitcher) {
+            window.MCWWS_COLOR_SCHEME.mountSwitcher();
+        }
 
         if (status) {
             status.replaceWith(widget);

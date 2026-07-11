@@ -4212,6 +4212,28 @@ body.services-map-clean .services-map-auth-float {
     background: rgba(255, 255, 255, 0.16);
 }
 
+.mcwws-auth-popover-theme-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 0.75rem;
+    margin-top: 10px;
+    padding: 0.5rem 0.75rem;
+    border: 1px solid rgba(255, 255, 255, 0.12);
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.06);
+}
+
+.mcwws-auth-popover-theme-label {
+    font-size: 0.85rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.mcwws-theme-switcher--popover .mcwws-theme-toggle {
+    height: 32px;
+}
+
 .services-map-footer {
     flex: 0 0 auto;
 }

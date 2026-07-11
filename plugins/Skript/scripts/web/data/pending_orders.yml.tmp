@@ -1,0 +1,805 @@
+orders:
+  '1':
+    id: 9260601b-bd88-4cd5-a379-d94074784a47
+    numericId: 1
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 3
+    createdAt: '2026-05-31T08:46:54.990Z'
+    updatedAt: '2026-05-31 16:49:08'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31T16:49:08.480+08:00'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: oxeye_daisy
+        shopId: flowers
+        slot: Q
+        quantity: 3
+        unitBuyPrice: 1
+        lineTotal: 3
+        productAmount: 1
+        material: oxeye_daisy
+        shopTitle: 花卉商店
+        status: delivered
+  '2':
+    id: c15eb3aa-5d88-471c-af3d-a24cad5cd59a
+    numericId: 2
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 21.6
+    createdAt: '2026-05-31T08:56:34.710Z'
+    updatedAt: '2026-05-31 16:56:44'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 16:56:44'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: birch_log
+        shopId: logs
+        slot: D
+        quantity: 3
+        unitBuyPrice: 7.2
+        lineTotal: 21.6
+        productAmount: 1
+        material: birch_log
+        shopTitle: 原木商店
+        status: delivered
+  '3':
+    id: d0fd40d5-d493-46de-8f51-5b14df547735
+    numericId: 3
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 9.2
+    createdAt: '2026-05-31T09:38:53.643Z'
+    updatedAt: '2026-06-18 00:21:02'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 17:39:03'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: white_stained_glass
+        shopId: glass
+        slot: P
+        quantity: 4
+        unitBuyPrice: 2.3
+        lineTotal: 9.2
+        productAmount: 1
+        material: white_stained_glass
+        shopTitle: 玻璃商店
+        status: delivered
+    economyChargedInGame: true
+  '4':
+    id: b5db5ddb-a74f-4058-af1e-a1f29ded3133
+    numericId: 4
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 14
+    createdAt: '2026-05-31T09:47:50.839Z'
+    updatedAt: '2026-06-18 00:57:25'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 17:48:51'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: white_tulip
+        shopId: flowers
+        slot: E
+        quantity: 7
+        unitBuyPrice: 2
+        lineTotal: 14
+        productAmount: 1
+        material: white_tulip
+        shopTitle: 花卉商店
+        status: delivered
+    economyChargedInGame: true
+  '5':
+    id: 4c12066c-d4bd-4ace-a8d9-b4d709c91227
+    numericId: 5
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 7.2
+    createdAt: '2026-05-31T10:13:12.111Z'
+    updatedAt: '2026-07-08 22:48:20'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:13:21'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: jungle_log
+        shopId: logs
+        slot: F
+        quantity: 1
+        unitBuyPrice: 7.2
+        lineTotal: 7.2
+        productAmount: 1
+        material: jungle_log
+        shopTitle: 原木商店
+        status: delivered
+    economyChargedInGame: true
+  '6':
+    id: c4575037-13cc-4062-9242-966fe190cd21
+    numericId: 6
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 2.3
+    createdAt: '2026-05-31T10:13:32.519Z'
+    updatedAt: '2026-07-08 23:01:11'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:13:36'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: orange_stained_glass
+        shopId: glass
+        slot: B
+        quantity: 1
+        unitBuyPrice: 2.3
+        lineTotal: 2.3
+        productAmount: 1
+        material: orange_stained_glass
+        shopTitle: 玻璃商店
+        status: delivered
+    economyChargedInGame: true
+  '7':
+    id: cfcd548c-6940-4b67-abdb-74692a4dae2d
+    numericId: 7
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 3
+    createdAt: '2026-05-31T10:14:23.056Z'
+    updatedAt: '2026-07-08 23:02:29'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:14:36'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: rooted_dirt
+        shopId: blocks
+        slot: D
+        quantity: 1
+        unitBuyPrice: 3
+        lineTotal: 3
+        productAmount: 1
+        material: rooted_dirt
+        shopTitle: 方块商店
+        status: delivered
+    economyChargedInGame: true
+  '8':
+    id: e6b83033-f6cb-44a9-9c76-a37c902067a0
+    numericId: 8
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 500
+    createdAt: '2026-05-31T10:15:04.197Z'
+    updatedAt: '2026-07-09 00:00:56'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:15:06'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: heart_of_the_sea
+        shopId: special
+        slot: B
+        quantity: 1
+        unitBuyPrice: 500
+        lineTotal: 500
+        productAmount: 1
+        material: heart_of_the_sea
+        shopTitle: 特殊物品商店
+        status: delivered
+    economyChargedInGame: true
+  '9':
+    id: 0798cc43-fa34-4877-854a-11122572a776
+    numericId: 9
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 500
+    createdAt: '2026-05-31T10:15:55.733Z'
+    updatedAt: '2026-07-09 00:12:47'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:16:08'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: heart_of_the_sea
+        shopId: special
+        slot: B
+        quantity: 1
+        unitBuyPrice: 500
+        lineTotal: 500
+        productAmount: 1
+        material: heart_of_the_sea
+        shopTitle: 特殊物品商店
+        status: delivered
+    economyChargedInGame: true
+  '10':
+    id: db7fb50e-d68e-47d6-a273-64253b9de7ca
+    numericId: 10
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 1
+    createdAt: '2026-05-31T10:20:06.225Z'
+    updatedAt: '2026-07-09 00:14:02'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:20:08'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: sugar_cane
+        shopId: farming
+        slot: J
+        quantity: 1
+        unitBuyPrice: 1
+        lineTotal: 1
+        productAmount: 1
+        material: sugar_cane
+        shopTitle: 农作物商店
+        status: delivered
+    economyChargedInGame: true
+  '11':
+    id: ce6b7f21-cb24-4003-af07-ab1857f029c3
+    numericId: 11
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 4
+    createdAt: '2026-05-31T10:22:44.208Z'
+    updatedAt: '2026-07-09 00:15:07'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:22:49'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: sugar_cane
+        shopId: farming
+        slot: J
+        quantity: 4
+        unitBuyPrice: 1
+        lineTotal: 4
+        productAmount: 1
+        material: sugar_cane
+        shopTitle: 农作物商店
+        status: delivered
+    economyChargedInGame: true
+  '12':
+    id: ea1707a9-3727-4862-8966-64ce6955071d
+    numericId: 12
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 2
+    createdAt: '2026-05-31T10:27:27.846Z'
+    updatedAt: '2026-07-09 00:29:14'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:27:30'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: magenta_concrete
+        shopId: concretes
+        slot: J
+        quantity: 1
+        unitBuyPrice: 2
+        lineTotal: 2
+        productAmount: 1
+        material: magenta_concrete
+        shopTitle: 混凝土商店
+        status: delivered
+    economyChargedInGame: true
+  '13':
+    id: 4a34f88f-faca-49ee-bcdd-4f596b04b2fc
+    numericId: 13
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 1
+    createdAt: '2026-05-31T10:30:45.706Z'
+    updatedAt: '2026-07-09 00:30:13'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:30:46'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: dandelion
+        shopId: flowers
+        slot: L
+        quantity: 1
+        unitBuyPrice: 1
+        lineTotal: 1
+        productAmount: 1
+        material: dandelion
+        shopTitle: 花卉商店
+        status: delivered
+    economyChargedInGame: true
+  '14':
+    id: 6d4ebf34-af04-40de-b86a-941bb9d8a720
+    numericId: 14
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 64
+    createdAt: '2026-05-31T10:31:11.806Z'
+    updatedAt: '2026-07-09 00:34:59'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:31:20'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: leather_chestplate
+        shopId: example
+        slot: M
+        quantity: 1
+        unitBuyPrice: 64
+        lineTotal: 64
+        productAmount: 1
+        material: leather_chestplate
+        shopTitle: Example Shop
+        status: delivered
+    economyChargedInGame: true
+  '15':
+    id: 7cc40ffa-afea-46e5-95c7-8af42398eace
+    numericId: 15
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 1
+    createdAt: '2026-05-31T10:37:40.854Z'
+    updatedAt: '2026-07-09 01:34:04'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:37:49'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: dandelion
+        shopId: flowers
+        slot: L
+        quantity: 1
+        unitBuyPrice: 1
+        lineTotal: 1
+        productAmount: 1
+        material: dandelion
+        shopTitle: 花卉商店
+        status: delivered
+    economyChargedInGame: true
+  '16':
+    id: 008a9588-1301-460d-a9d5-a2de4f207ba7
+    numericId: 16
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 20
+    createdAt: '2026-05-31T10:42:28.396Z'
+    updatedAt: '2026-07-09 01:39:50'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:42:37'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: apple
+        shopId: example
+        slot: P
+        quantity: 2
+        unitBuyPrice: 10
+        lineTotal: 20
+        productAmount: 1
+        material: apple
+        shopTitle: Example Shop
+        status: delivered
+    economyChargedInGame: true
+  '17':
+    id: 3bfa5f7d-447e-4668-938c-647b3411eb24
+    numericId: 17
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 10
+    createdAt: '2026-05-31T10:43:47.616Z'
+    updatedAt: '2026-07-09 01:55:46'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:43:52'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: apple
+        shopId: example
+        slot: P
+        quantity: 1
+        unitBuyPrice: 10
+        lineTotal: 10
+        productAmount: 1
+        material: apple
+        shopTitle: Example Shop
+        status: delivered
+    economyChargedInGame: true
+  '18':
+    id: 15a5f52c-44cd-4477-b818-4f0327320b97
+    numericId: 18
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 8
+    createdAt: '2026-05-31T10:48:16.154Z'
+    updatedAt: '2026-07-09 01:58:24'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:48:26'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: magenta_wool
+        shopId: wools
+        slot: J
+        quantity: 1
+        unitBuyPrice: 8
+        lineTotal: 8
+        productAmount: 1
+        material: magenta_wool
+        shopTitle: 羊毛商店
+        status: delivered
+    economyChargedInGame: true
+  '19':
+    id: 513e286a-50fa-41cd-9d39-79df643e4fd1
+    numericId: 19
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 8
+    createdAt: '2026-05-31T10:54:49.123Z'
+    updatedAt: '2026-07-09 02:00:35'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:55:01'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: leather
+        shopId: drops
+        slot: K
+        quantity: 1
+        unitBuyPrice: 8
+        lineTotal: 8
+        productAmount: 1
+        material: leather
+        shopTitle: 掉落物商店
+        status: delivered
+    economyChargedInGame: true
+  '20':
+    id: 27baa643-df26-42ed-889b-40614df524e1
+    numericId: 20
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 2.5
+    createdAt: '2026-05-31T10:56:08.657Z'
+    updatedAt: '2026-07-09 02:02:08'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-05-31 18:56:21'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: magenta_stained_glass
+        shopId: glass
+        slot: J
+        quantity: 1
+        unitBuyPrice: 2.5
+        lineTotal: 2.5
+        productAmount: 1
+        material: magenta_stained_glass
+        shopTitle: 玻璃商店
+        status: delivered
+    economyChargedInGame: true
+  '21':
+    id: d13b3922-aa82-4136-84d5-64ae8c80cf8e
+    numericId: 21
+    playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+    playerId: Song_zi
+    username: Song Yi
+    status: delivered
+    total: 25
+    createdAt: '2026-06-01T07:20:18.625Z'
+    updatedAt: '2026-07-09 02:03:19'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 15:20:27'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: obsidian
+        shopId: blocks
+        slot: T
+        quantity: 1
+        unitBuyPrice: 25
+        lineTotal: 25
+        productAmount: 1
+        material: obsidian
+        shopTitle: 方块商店
+        status: delivered
+    economyChargedInGame: true
+  '22':
+    id: 0cf704b7-2b05-4376-b147-72bc47bcf76e
+    numericId: 22
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 6
+    createdAt: '2026-06-01T12:05:54.850Z'
+    updatedAt: '2026-07-09 02:07:13'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:11:42'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: birch_sapling
+        shopId: logs
+        slot: L
+        quantity: 3
+        unitBuyPrice: 2
+        lineTotal: 6
+        productAmount: 1
+        material: birch_sapling
+        shopTitle: 原木商店
+        status: delivered
+    economyChargedInGame: true
+  '23':
+    id: 6606d353-ba5b-4aac-a428-56cb14a247ca
+    numericId: 23
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 6
+    createdAt: '2026-06-01T12:06:09.658Z'
+    updatedAt: '2026-07-09 02:09:51'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:11:43'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: birch_sapling
+        shopId: logs
+        slot: L
+        quantity: 3
+        unitBuyPrice: 2
+        lineTotal: 6
+        productAmount: 1
+        material: birch_sapling
+        shopTitle: 原木商店
+        status: delivered
+    economyChargedInGame: true
+  '24':
+    id: 758825cc-169c-47fc-8a81-fa276c7039b6
+    numericId: 24
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 7.2
+    createdAt: '2026-06-01T12:13:22.535Z'
+    updatedAt: '2026-07-09 02:11:49'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:13:36'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: jungle_log
+        shopId: logs
+        slot: F
+        quantity: 1
+        unitBuyPrice: 7.2
+        lineTotal: 7.2
+        productAmount: 1
+        material: jungle_log
+        shopTitle: 原木商店
+        status: delivered
+    economyChargedInGame: true
+  '25':
+    id: 43b89d0c-1c60-4de8-a28f-02cae9d3ad06
+    numericId: 25
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 61
+    createdAt: '2026-06-01T12:15:16.406Z'
+    updatedAt: '2026-07-09 09:47:49'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:24:04'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: powered_rail
+        shopId: transport
+        slot: B
+        quantity: 1
+        unitBuyPrice: 61
+        lineTotal: 61
+        productAmount: 1
+        material: powered_rail
+        shopTitle: 运输商店
+        status: delivered
+    economyChargedInGame: true
+  '26':
+    id: 5bec21db-c30d-46cd-a749-4e56f7f741aa
+    numericId: 26
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 5
+    balanceAfter: 214994.51
+    economyChargedInGame: true
+    createdAt: '2026-06-01T12:36:29.359Z'
+    updatedAt: '2026-07-09 14:17:51'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:36:39'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: light_blue_stained_glass
+        shopId: glass
+        slot: F
+        quantity: 2
+        unitBuyPrice: 2.5
+        lineTotal: 5
+        productAmount: 1
+        material: light_blue_stained_glass
+        shopTitle: 玻璃商店
+        status: delivered
+  '27':
+    id: e590819e-785a-4ca4-86dd-af1b9bf77388
+    numericId: 27
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 2
+    balanceAfter: 214997.51
+    economyChargedInGame: true
+    createdAt: '2026-06-01T12:37:57.161Z'
+    updatedAt: '2026-07-09 14:37:33'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:38:09'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: white_concrete
+        shopId: concretes
+        slot: P
+        quantity: 1
+        unitBuyPrice: 2
+        lineTotal: 2
+        productAmount: 1
+        material: white_concrete
+        shopTitle: 混凝土商店
+        status: delivered
+  '28':
+    id: 7ceb1fff-9c55-4d2b-8215-804522b3e59e
+    numericId: 28
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 2
+    balanceAfter: 214663.51
+    economyChargedInGame: true
+    createdAt: '2026-06-01T12:39:41.177Z'
+    updatedAt: '2026-07-09 14:39:28'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 20:39:54'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: white_concrete
+        shopId: concretes
+        slot: P
+        quantity: 1
+        unitBuyPrice: 2
+        lineTotal: 2
+        productAmount: 1
+        material: white_concrete
+        shopTitle: 混凝土商店
+        status: delivered
+  '29':
+    id: 3601d00e-d997-4fb1-b89a-44c3d23670d0
+    numericId: 29
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 2.3
+    balanceAfter: 214539.21
+    economyChargedInGame: true
+    createdAt: '2026-06-01T14:03:53.962Z'
+    updatedAt: '2026-07-09 14:46:14'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 22:04:27'
+    lineCount: 1
+    lines:
+      '1':
+        itemId: white_stained_glass
+        shopId: glass
+        slot: P
+        quantity: 1
+        unitBuyPrice: 2.3
+        lineTotal: 2.3
+        productAmount: 1
+        material: white_stained_glass
+        shopTitle: 玻璃商店
+        status: delivered
+  '30':
+    id: b61a578d-b82d-41c3-b648-f87e5de95da2
+    numericId: 30
+    playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    username: Ryan Yu
+    status: delivered
+    total: 6
+    balanceAfter: 214534.51
+    economyChargedInGame: true
+    createdAt: '2026-06-01T14:11:39.935Z'
+    updatedAt: '2026-07-09 14:47:47'
+    failureReason: ''
+    deliveringLine: 0
+    deliveringStartedAt: '2026-06-01 22:12:08'
+    lineCount: 0
+    lines:
+      '1': null
+next_id: 1

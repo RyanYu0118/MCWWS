@@ -552,6 +552,11 @@ textarea:focus {
     background: var(--surface-hover);
 }
 
+[data-color-scheme="light"] .mcwws-auth-popover-theme-row {
+    background: var(--surface-muted);
+    border-color: var(--border);
+}
+
 [data-color-scheme="light"] ::placeholder {
     color: rgba(0, 0, 0, 0.45);
 }
@@ -663,8 +668,8 @@ textarea:focus {
     background: var(--surface-active);
 }
 
-.mcwws-theme-switcher--map {
-    margin-bottom: 8px;
+.mcwws-theme-switcher--popover {
+    margin-left: auto;
 }
 
 .mcwws-theme-switcher--float {

@@ -151,6 +151,27 @@ function mcwwsColorSchemeBuildSwitcher() {
 }
 
 function mcwwsColorSchemeMountSwitcher() {
+    const mapThemeSlot = document.getElementById('mapAuthThemeSlot');
+    if (mapThemeSlot) {
+        let switcher = document.getElementById('mcwwsThemeSwitcher');
+        if (!switcher) {
+            switcher = mcwwsColorSchemeBuildSwitcher();
+            switcher.id = 'mcwwsThemeSwitcher';
+        }
+        switcher.classList.add('mcwws-theme-switcher--popover');
+        if (!mapThemeSlot.querySelector('.mcwws-auth-popover-theme-label')) {
+            const label = document.createElement('span');
+            label.className = 'mcwws-auth-popover-theme-label';
+            label.textContent = '界面主题';
+            mapThemeSlot.appendChild(label);
+        }
+        if (!mapThemeSlot.contains(switcher)) {
+            mapThemeSlot.appendChild(switcher);
+        }
+        mcwwsColorSchemeSyncToggleUi();
+        return;
+    }
+
     if (document.getElementById('mcwwsThemeSwitcher')) {
         mcwwsColorSchemeSyncToggleUi();
         return;
@@ -161,13 +182,6 @@ function mcwwsColorSchemeMountSwitcher() {
     const navActions = document.querySelector('.nav-actions');
     if (navActions) {
         navActions.insertBefore(switcher, navActions.firstChild);
-        return;
-    }
-
-    const mapFloat = document.getElementById('mapAuthFloat');
-    if (mapFloat) {
-        switcher.classList.add('mcwws-theme-switcher--map');
-        mapFloat.insertBefore(switcher, mapFloat.firstChild);
         return;
     }
 
@@ -193,5 +207,6 @@ if (document.readyState === 'loading') {
 window.MCWWS_COLOR_SCHEME = {
     get: mcwwsColorSchemeGet,
     apply: mcwwsColorSchemeApply,
-    toggle: mcwwsColorSchemeToggle
+    toggle: mcwwsColorSchemeToggle,
+    mountSwitcher: mcwwsColorSchemeMountSwitcher
 };
