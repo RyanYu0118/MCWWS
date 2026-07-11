@@ -698,41 +698,22 @@ textarea:focus {
     navigation: auto;
 }
 
-/* ═══ 站内页面切换过渡（回退：遮罩 + 轻量内容位移） ═══ */
+/* ═══ 站内页面切换过渡（回退：遮罩；勿对 body 使用 transform，否则 fixed 顶栏会延迟置顶）═══ */
 html.mcwws-pt-curtain::after {
     will-change: opacity;
 }
 
-html.mcwws-page-enter body,
 html.mcwws-page-exit body {
-    transition:
-        opacity var(--page-transition-duration, 0.28s) ease,
-        transform var(--page-transition-duration, 0.28s) ease;
-    will-change: opacity, transform;
-}
-
-html.mcwws-page-enter body {
-    opacity: 1;
-    transform: translateY(8px);
-}
-
-html.mcwws-page-enter-active body {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-html.mcwws-page-exit body {
-    opacity: 0.88;
-    transform: translateY(-4px);
     pointer-events: none;
 }
 
+html.mcwws-page-enter .navbar,
+html.mcwws-page-enter-active .navbar,
 html.mcwws-page-exit .navbar,
-html.mcwws-page-exit .services-map-auth-float,
+html.mcwws-page-enter .mcwws-theme-switcher--float,
+html.mcwws-page-enter-active .mcwws-theme-switcher--float,
 html.mcwws-page-exit .mcwws-theme-switcher--float {
-    transition:
-        opacity var(--page-transition-duration, 0.28s) ease,
-        transform var(--page-transition-duration, 0.28s) ease;
-    opacity: 0.75;
-    transform: translateY(-3px);
+    transform: none !important;
+    opacity: 1 !important;
+    transition: none !important;
 }

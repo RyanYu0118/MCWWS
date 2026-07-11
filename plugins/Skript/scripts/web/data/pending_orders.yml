@@ -1037,8 +1037,33 @@ orders:
                 shopTitle: 方块商店 (1/3)
                 status: delivered
     '39':
+        id: 1dccbac5-3ec0-42e7-82da-2a4a97d83dd5
+        numericId: 39
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: pending
+        total: 117
+        balanceAfter: 1.6618978041E8
         economyChargedInGame: true
-        updatedAt: '2026-07-09 17:20:21'
+        createdAt: '2026-07-11T04:14:08.197Z'
+        updatedAt: '2026-07-11 12:14:08'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: ''
+        lineCount: 1
+        lines:
+            '1':
+                itemId: saddle
+                shopId: transport__p2
+                slot: U
+                quantity: 3
+                unitBuyPrice: 39
+                lineTotal: 117
+                productAmount: 1
+                material: saddle
+                shopTitle: 运输商店 (2/3)
+                status: pending
     '40':
         economyChargedInGame: true
         updatedAt: '2026-07-09 17:28:05'
@@ -1049,4 +1074,4 @@ orders:
         economyChargedInGame: true
         updatedAt: '2026-07-09 17:42:05'
 
-next_id: 39
+next_id: 40
