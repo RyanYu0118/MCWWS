@@ -1197,6 +1197,16 @@ items:
     minecraft:stored_enchantments: '{"minecraft:lure":3}'
   schema_version: 1
 - DataVersion: 4671
+  id: minecraft:bowl
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"green",italic:1b,obfuscated:0b,strikethrough:0b,text:"可以获得各种各样的矿物",underlined:0b}],text:""},"",{extra:[{color:"yellow",italic:0b,text:"右键"},{color:"gray",italic:0b,text:"
+      从沙砾中淘金"}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"淘金盘",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200053.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GOLD_PAN"}}'
+  schema_version: 1
+- DataVersion: 4671
   id: minecraft:enchanted_book
   count: 1
   components:
@@ -2017,7 +2027,7 @@ items:
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:rotten_flesh
-  count: 5
+  count: 34
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:leather
@@ -2054,6 +2064,10 @@ items:
 - DataVersion: 4671
   id: minecraft:light
   count: 64
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:cooked_mutton
+  count: 3
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
