@@ -1,18 +1,92 @@
 /**
- * MCWWS 站内页面切换过渡（淡出 → 导航 → 淡入）
+ * MCWWS 站内页面切换过渡
+ * - 支持浏览器：原生 cross-document View Transition（交叉淡入，无黑屏空档）
+ * - 回退：遮罩层过渡 + 链接 prefetch + body 就绪即淡入（不等 DOMContentLoaded）
  */
-(function initMcwwsPageTransitionEarly() {
+(function initMcwwsPageTransitionCritical() {
+    const STYLE_ID = 'mcwws-pt-critical';
+    let entering = false;
     try {
-        if (sessionStorage.getItem('mcwws.pageTransition') === 'out') {
-            document.documentElement.classList.add('mcwws-page-enter-pending');
-        }
+        entering = sessionStorage.getItem('mcwws.pageTransition') === 'out';
     } catch (_) { /* ignore */ }
+
+    const css = `
+html.mcwws-pt-curtain::after {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 2147483646;
+    background: #050505;
+    opacity: 0;
+    pointer-events: none;
+}
+html[data-color-scheme="light"].mcwws-pt-curtain::after {
+    background: #ebedf2;
+}
+html.mcwws-pt-curtain.mcwws-pt-curtain-cover::after {
+    opacity: 1;
+    pointer-events: auto;
+}
+html.mcwws-pt-curtain.mcwws-pt-curtain-enter::after {
+    opacity: 1;
+    transition: none;
+}
+html.mcwws-pt-curtain.mcwws-pt-curtain-enter-active::after {
+    opacity: 0;
+    transition: opacity var(--page-transition-duration, 0.28s) ease;
+}
+`;
+
+    if (!document.getElementById(STYLE_ID)) {
+        const el = document.createElement('style');
+        el.id = STYLE_ID;
+        el.textContent = css;
+        document.head.appendChild(el);
+    }
+
+    if (entering) {
+        document.documentElement.classList.add(
+            'mcwws-pt-curtain',
+            'mcwws-pt-curtain-enter',
+            'mcwws-pt-curtain-cover'
+        );
+    }
 })();
 
-const MCWWS_PAGE_TRANSITION_MS = 450;
+const MCWWS_PAGE_TRANSITION_MS = 280;
+const MCWWS_PAGE_NAV_DELAY_MS = 240;
+const prefetchedHrefs = new Set();
+let enterScheduled = false;
 
 function mcwwsPageTransitionPrefersReducedMotion() {
     return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+}
+
+function mcwwsPageTransitionUsesNative() {
+    if (mcwwsPageTransitionPrefersReducedMotion()) {
+        return false;
+    }
+    try {
+        return CSS.supports('navigation', 'auto');
+    } catch (_) {
+        return false;
+    }
+}
+
+function mcwwsPageTransitionClearState() {
+    document.documentElement.classList.remove(
+        'mcwws-pt-curtain',
+        'mcwws-pt-curtain-cover',
+        'mcwws-pt-curtain-enter',
+        'mcwws-pt-curtain-enter-active',
+        'mcwws-page-exit',
+        'mcwws-page-enter',
+        'mcwws-page-enter-active',
+        'mcwws-page-enter-pending'
+    );
+    try {
+        sessionStorage.removeItem('mcwws.pageTransition');
+    } catch (_) { /* ignore */ }
 }
 
 function mcwwsPageTransitionIsInternalLink(anchor) {
@@ -45,17 +119,28 @@ function mcwwsPageTransitionIsInternalLink(anchor) {
     return true;
 }
 
+function mcwwsPageTransitionWhenBodyReady(callback) {
+    if (document.body) {
+        callback();
+        return;
+    }
+    const observer = new MutationObserver(() => {
+        if (document.body) {
+            observer.disconnect();
+            callback();
+        }
+    });
+    observer.observe(document.documentElement, { childList: true });
+}
+
 function mcwwsPageTransitionPlayEnter() {
     if (mcwwsPageTransitionPrefersReducedMotion()) {
-        document.documentElement.classList.remove('mcwws-page-enter-pending');
-        try {
-            sessionStorage.removeItem('mcwws.pageTransition');
-        } catch (_) { /* ignore */ }
+        mcwwsPageTransitionClearState();
         return;
     }
 
     const root = document.documentElement;
-    if (!root.classList.contains('mcwws-page-enter-pending')) {
+    if (!root.classList.contains('mcwws-pt-curtain-enter')) {
         return;
     }
 
@@ -64,16 +149,30 @@ function mcwwsPageTransitionPlayEnter() {
     } catch (_) { /* ignore */ }
 
     root.classList.add('mcwws-page-enter');
-    root.classList.remove('mcwws-page-enter-pending');
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {
-            root.classList.add('mcwws-page-enter-active');
+            root.classList.remove('mcwws-pt-curtain-enter');
+            root.classList.add('mcwws-pt-curtain-enter-active', 'mcwws-page-enter-active');
             window.setTimeout(() => {
-                root.classList.remove('mcwws-page-enter', 'mcwws-page-enter-active');
-            }, MCWWS_PAGE_TRANSITION_MS);
+                root.classList.remove(
+                    'mcwws-pt-curtain',
+                    'mcwws-pt-curtain-cover',
+                    'mcwws-pt-curtain-enter-active',
+                    'mcwws-page-enter',
+                    'mcwws-page-enter-active'
+                );
+            }, MCWWS_PAGE_TRANSITION_MS + 40);
         });
     });
+}
+
+function mcwwsPageTransitionScheduleEnter() {
+    if (enterScheduled) {
+        return;
+    }
+    enterScheduled = true;
+    mcwwsPageTransitionWhenBodyReady(mcwwsPageTransitionPlayEnter);
 }
 
 function mcwwsPageTransitionNavigate(href) {
@@ -87,17 +186,49 @@ function mcwwsPageTransitionNavigate(href) {
         return;
     }
 
-    root.classList.add('mcwws-page-exit');
+    root.classList.add('mcwws-pt-curtain', 'mcwws-page-exit');
     try {
         sessionStorage.setItem('mcwws.pageTransition', 'out');
     } catch (_) { /* ignore */ }
 
+    requestAnimationFrame(() => {
+        root.classList.add('mcwws-pt-curtain-cover');
+    });
+
     window.setTimeout(() => {
         window.location.href = href;
-    }, MCWWS_PAGE_TRANSITION_MS);
+    }, MCWWS_PAGE_NAV_DELAY_MS);
+}
+
+function mcwwsPageTransitionPrefetchHref(href) {
+    if (!href || prefetchedHrefs.has(href)) {
+        return;
+    }
+    prefetchedHrefs.add(href);
+    const link = document.createElement('link');
+    link.rel = 'prefetch';
+    link.href = href;
+    link.as = 'document';
+    document.head.appendChild(link);
+}
+
+function mcwwsPageTransitionOnLinkPointerOver(event) {
+    if (mcwwsPageTransitionUsesNative()) {
+        return;
+    }
+    const link = event.target.closest('a[href]');
+    if (!mcwwsPageTransitionIsInternalLink(link)) {
+        return;
+    }
+    try {
+        mcwwsPageTransitionPrefetchHref(new URL(link.href, window.location.href).href);
+    } catch (_) { /* ignore */ }
 }
 
 function mcwwsPageTransitionOnLinkClick(event) {
+    if (mcwwsPageTransitionUsesNative()) {
+        return;
+    }
     if (event.defaultPrevented) {
         return;
     }
@@ -127,31 +258,29 @@ function mcwwsPageTransitionOnLinkClick(event) {
 }
 
 function mcwwsPageTransitionInit() {
-    mcwwsPageTransitionPlayEnter();
+    mcwwsPageTransitionScheduleEnter();
     document.addEventListener('click', mcwwsPageTransitionOnLinkClick);
+    document.addEventListener('mouseover', mcwwsPageTransitionOnLinkPointerOver, { passive: true });
 
     window.addEventListener('pageshow', (event) => {
         if (event.persisted) {
-            document.documentElement.classList.remove(
-                'mcwws-page-exit',
-                'mcwws-page-enter',
-                'mcwws-page-enter-active',
-                'mcwws-page-enter-pending'
-            );
-            try {
-                sessionStorage.removeItem('mcwws.pageTransition');
-            } catch (_) { /* ignore */ }
+            enterScheduled = false;
+            mcwwsPageTransitionClearState();
+            mcwwsPageTransitionScheduleEnter();
         }
     });
 }
 
+mcwwsPageTransitionScheduleEnter();
+
 if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', mcwwsPageTransitionInit);
+    document.addEventListener('DOMContentLoaded', mcwwsPageTransitionInit, { once: true });
 } else {
     mcwwsPageTransitionInit();
 }
 
 window.MCWWS_PAGE_TRANSITION = {
     navigate: mcwwsPageTransitionNavigate,
-    durationMs: MCWWS_PAGE_TRANSITION_MS
+    durationMs: MCWWS_PAGE_TRANSITION_MS,
+    usesNative: mcwwsPageTransitionUsesNative
 };

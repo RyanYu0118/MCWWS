@@ -681,30 +681,36 @@ html.is-theme-animating body::after {
         transition: none;
     }
 
-    html.mcwws-page-enter-pending body,
     html.mcwws-page-enter body,
-    html.mcwws-page-exit body {
+    html.mcwws-page-exit body,
+    html.mcwws-pt-curtain::after {
+        transition: none !important;
         opacity: 1 !important;
         transform: none !important;
     }
 }
 
-/* ═══ 站内页面切换过渡 ═══ */
-html.mcwws-page-enter-pending body {
-    opacity: 0;
+/* 原生 cross-document View Transition（Chrome 126+ 等） */
+@view-transition {
+    navigation: auto;
+}
+
+/* ═══ 站内页面切换过渡（回退：遮罩 + 轻量内容位移） ═══ */
+html.mcwws-pt-curtain::after {
+    will-change: opacity;
 }
 
 html.mcwws-page-enter body,
 html.mcwws-page-exit body {
     transition:
-        opacity var(--page-transition-duration, 0.45s) ease,
-        transform var(--page-transition-duration, 0.45s) ease;
+        opacity var(--page-transition-duration, 0.28s) ease,
+        transform var(--page-transition-duration, 0.28s) ease;
     will-change: opacity, transform;
 }
 
 html.mcwws-page-enter body {
-    opacity: 0;
-    transform: translateY(10px);
+    opacity: 1;
+    transform: translateY(8px);
 }
 
 html.mcwws-page-enter-active body {
@@ -713,8 +719,8 @@ html.mcwws-page-enter-active body {
 }
 
 html.mcwws-page-exit body {
-    opacity: 0;
-    transform: translateY(-8px);
+    opacity: 0.88;
+    transform: translateY(-4px);
     pointer-events: none;
 }
 
@@ -722,8 +728,8 @@ html.mcwws-page-exit .navbar,
 html.mcwws-page-exit .services-map-auth-float,
 html.mcwws-page-exit .mcwws-theme-switcher--float {
     transition:
-        opacity var(--page-transition-duration, 0.45s) ease,
-        transform var(--page-transition-duration, 0.45s) ease;
-    opacity: 0;
-    transform: translateY(-4px);
+        opacity var(--page-transition-duration, 0.28s) ease,
+        transform var(--page-transition-duration, 0.28s) ease;
+    opacity: 0.75;
+    transform: translateY(-3px);
 }
