@@ -3827,6 +3827,33 @@ body {
     margin-bottom: 0.85rem;
 }
 
+.build-client-sync-paste-settings {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.5rem 0.75rem;
+    margin: -0.35rem 0 0.85rem;
+    padding: 0.55rem 0.75rem;
+    border-radius: 10px;
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    font-size: 0.85rem;
+}
+
+.build-client-sync-paste-settings-label {
+    color: var(--text-muted);
+}
+
+.build-client-sync-paste-settings-value {
+    color: var(--text-primary);
+    font-weight: 600;
+}
+
+.build-client-sync-paste-settings-sub {
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+}
+
 .build-client-sync-field {
     display: flex;
     flex-direction: column;

@@ -366,8 +366,12 @@
         const title = quote.listName || ctx.fileName || '投影粘贴';
         const hashShort = String(quote.contentHash || '').slice(0, 12);
         const sync = getSyncApi();
+        const syncSnapshot = sync?.getSnapshot?.() || {};
         const placement = ctx.clientPlacement;
         const defaultWorld = placement ? defaultWorldName(placement) : 'world';
+        const pasteReplaceLabel = syncSnapshot.pasteReplaceBehavior
+            ? (sync?.labelReplaceBehavior?.(syncSnapshot.pasteReplaceBehavior) || syncSnapshot.pasteReplaceBehavior)
+            : '';
         const clientBlock = placement ? `
             <div class="build-paste-client-box">
                 <p class="build-paste-client-title">客户端当前投影（Litematica）</p>
@@ -376,6 +380,7 @@
                     <span>原点 ${ctx.escapeHtml(sync?.formatPos?.(placement.origin) || '—')}</span>
                     <span>旋转 ${ctx.escapeHtml(sync?.labelRotation?.(placement.rotation) || placement.rotation || '无')}</span>
                     <span>镜像 ${ctx.escapeHtml(sync?.labelMirror?.(placement.mirror) || placement.mirror || '无')}</span>
+                    ${pasteReplaceLabel ? `<span>粘贴替换 ${ctx.escapeHtml(pasteReplaceLabel)}</span>` : ''}
                 </div>
                 <label class="build-paste-anchor-world-field">
                     <span>服务器世界名（Bukkit）</span>

@@ -32,6 +32,17 @@
         FRONT_BACK: '前后'
     };
 
+    const REPLACE_BEHAVIOR_LABELS = {
+        NONE: '仅空气（不替换）',
+        WITH_NON_AIR: '替换非空气',
+        ALL: '全部替换'
+    };
+
+    const LITEMATICA_MOD_CONFIG_PATHS = [
+        'config/litematica/litematica.json',
+        'config/litematica.json'
+    ];
+
     let rootHandle = null;
     let connectionMode = 'none'; // 'handle' | 'files'
     /** @type {Map<string, File>} */
@@ -49,7 +60,9 @@
         selectedPlacementIndex: -1,
         worldFileName: '',
         parseHint: '',
-        supportHint: ''
+        supportHint: '',
+        pasteReplaceBehavior: '',
+        placementReplaceBehavior: ''
     };
     const listeners = new Set();
 
@@ -68,7 +81,9 @@
                 label: f.label,
                 modifiedAt: f.modifiedAt
             })),
-            parseHint: state.parseHint
+            parseHint: state.parseHint,
+            pasteReplaceBehavior: state.pasteReplaceBehavior,
+            placementReplaceBehavior: state.placementReplaceBehavior
         });
     }
 
@@ -132,6 +147,65 @@
 
     function labelMirror(value) {
         return MIRROR_LABELS[value] || value || '无';
+    }
+
+    function findConfigValueDeep(obj, key) {
+        if (!obj || typeof obj !== 'object') return null;
+        if (Object.prototype.hasOwnProperty.call(obj, key) && obj[key] != null && obj[key] !== '') {
+            return obj[key];
+        }
+        for (const value of Object.values(obj)) {
+            if (!value || typeof value !== 'object' || Array.isArray(value)) continue;
+            const found = findConfigValueDeep(value, key);
+            if (found != null && found !== '') return found;
+        }
+        return null;
+    }
+
+    function normalizeReplaceBehavior(value) {
+        const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+        if (raw === 'WITH_NON_AIR_BLOCKS' || raw === 'WITHNONAIR' || raw === 'NON_AIR') {
+            return 'WITH_NON_AIR';
+        }
+        if (raw === 'ALL_BLOCKS' || raw === 'REPLACE_ALL') {
+            return 'ALL';
+        }
+        if (REPLACE_BEHAVIOR_LABELS[raw]) {
+            return raw;
+        }
+        return 'NONE';
+    }
+
+    function labelReplaceBehavior(value) {
+        const normalized = normalizeReplaceBehavior(value);
+        return REPLACE_BEHAVIOR_LABELS[normalized] || value || REPLACE_BEHAVIOR_LABELS.NONE;
+    }
+
+    async function loadGenericSettings() {
+        state.pasteReplaceBehavior = '';
+        state.placementReplaceBehavior = '';
+        if (!isConnected()) return;
+
+        for (const configPath of LITEMATICA_MOD_CONFIG_PATHS) {
+            try {
+                if (!(await pathExists(configPath))) continue;
+                const text = await readTextFile(configPath);
+                const data = JSON.parse(text);
+                const paste = findConfigValueDeep(data, 'pasteReplaceBehavior');
+                const placement = findConfigValueDeep(data, 'placementReplaceBehavior');
+                if (paste != null) {
+                    state.pasteReplaceBehavior = normalizeReplaceBehavior(paste);
+                }
+                if (placement != null) {
+                    state.placementReplaceBehavior = normalizeReplaceBehavior(placement);
+                }
+                if (paste != null || placement != null) {
+                    return;
+                }
+            } catch (_) {
+                // try next path
+            }
+        }
     }
 
     function isPlacementEntry(entry) {
@@ -678,6 +752,7 @@
     async function pollOnce() {
         if (!isConnected()) return;
         try {
+            await loadGenericSettings();
             if (connectionMode === 'files') {
                 await refreshPlacements();
             } else {
@@ -720,6 +795,7 @@
         state.connectionMode = 'handle';
         state.supportHint = support.hint;
         state.lastError = '';
+        await loadGenericSettings();
         await refreshConfigFileList();
         await refreshPlacements();
         startPolling();
@@ -753,6 +829,7 @@
         state.connectionMode = 'files';
         state.supportHint = getSupportInfo().hint;
         state.lastError = '';
+        await loadGenericSettings();
         await refreshConfigFileList();
         await refreshPlacements();
         stopPolling();
@@ -797,7 +874,10 @@
             const ok = await ensureReadPermission(handle);
             if (!ok) return null;
             rootHandle = handle;
+            connectionMode = 'handle';
             state.connected = true;
+            state.connectionMode = 'handle';
+            await loadGenericSettings();
             await refreshConfigFileList();
             await refreshPlacements();
             startPolling();
@@ -824,7 +904,9 @@
             selectedPlacementIndex: -1,
             worldFileName: '',
             parseHint: '',
-            supportHint: ''
+            supportHint: '',
+            pasteReplaceBehavior: '',
+            placementReplaceBehavior: ''
         };
         await clearStoredDirHandle();
         lastEmittedRevision = '';
@@ -862,6 +944,8 @@
         formatPos,
         labelRotation,
         labelMirror,
+        labelReplaceBehavior,
+        normalizeReplaceBehavior,
         inferWorldNameFromConfigPath,
         buildAnchorFromPlacement(placement, worldName) {
             if (!placement?.origin) return null;

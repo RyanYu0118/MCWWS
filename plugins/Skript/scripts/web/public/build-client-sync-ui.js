@@ -270,6 +270,7 @@
                     <span id="buildClientSyncRefreshTime">上次刷新 —</span>
                 </div>
             </div>
+            <div class="build-client-sync-paste-settings" id="buildClientSyncPasteSettings" hidden></div>
             <div class="build-client-sync-highlight glass" id="buildClientSyncHighlight" hidden></div>
             <p class="build-client-sync-warn" id="buildClientSyncTransformNote" hidden></p>
             <div id="buildClientSyncEmptyHelp" hidden></div>
@@ -366,6 +367,27 @@
         if (importBtn) importBtn.disabled = !snapshot.selectedPlacement;
     }
 
+    function patchPasteSettings(snapshot) {
+        const el = document.getElementById('buildClientSyncPasteSettings');
+        const api = sync();
+        if (!el) return;
+        if (!snapshot.connected || !snapshot.pasteReplaceBehavior) {
+            el.hidden = true;
+            el.innerHTML = '';
+            return;
+        }
+        el.hidden = false;
+        const pasteLabel = api?.labelReplaceBehavior?.(snapshot.pasteReplaceBehavior) || snapshot.pasteReplaceBehavior;
+        const placementLabel = snapshot.placementReplaceBehavior
+            ? (api?.labelReplaceBehavior?.(snapshot.placementReplaceBehavior) || snapshot.placementReplaceBehavior)
+            : '';
+        el.innerHTML = `
+            <span class="build-client-sync-paste-settings-label">Litematica 粘贴替换</span>
+            <span class="build-client-sync-paste-settings-value" title="对应游戏内 Generic → pasteReplaceBehavior（Ctrl+M 切换）">${escapeHtml(pasteLabel)}</span>
+            ${placementLabel ? `<span class="build-client-sync-paste-settings-sub" title="placementReplaceBehavior">放置模式 ${escapeHtml(placementLabel)}</span>` : ''}
+        `;
+    }
+
     function patchHighlight(snapshot) {
         const el = document.getElementById('buildClientSyncHighlight');
         const selected = snapshot.selectedPlacement;
@@ -382,6 +404,7 @@
             <span>世界 ${escapeHtml(selected.worldHint || 'world')}</span>
             <span>旋转 ${escapeHtml(api.labelRotation(selected.rotation))}</span>
             <span>镜像 ${escapeHtml(api.labelMirror(selected.mirror))}</span>
+            ${snapshot.pasteReplaceBehavior ? `<span>粘贴替换 ${escapeHtml(api.labelReplaceBehavior(snapshot.pasteReplaceBehavior))}</span>` : ''}
         `;
     }
 
@@ -440,6 +463,7 @@
         }
 
         patchHighlight(snapshot);
+        patchPasteSettings(snapshot);
         patchEmptyHelp(snapshot);
         void fetchPasteOrders().then(() => renderPasteOrdersPanel());
 
