@@ -11,7 +11,7 @@
     const IDB_NAME = 'mcwws-litematica-sync';
     const IDB_STORE = 'handles';
     const IDB_KEY = 'minecraftDir';
-    const POLL_MS = 2000;
+    const POLL_MS = 1000;
 
     const SCAN_ROOTS = [
         'config/litematica',
@@ -43,6 +43,14 @@
         'config/litematica.json'
     ];
 
+    const PASTE_REPLACE_MODE_OPTIONS = [
+        ['NONE', '仅空气'],
+        ['WITH_NON_AIR', '替换非空气'],
+        ['ALL', '全部替换']
+    ];
+
+    const PASTE_REPLACE_MANUAL_STORAGE_KEY = 'mcwws.pasteReplaceManual';
+
     let rootHandle = null;
     let connectionMode = 'none'; // 'handle' | 'files'
     /** @type {Map<string, File>} */
@@ -62,9 +70,50 @@
         parseHint: '',
         supportHint: '',
         pasteReplaceBehavior: '',
-        placementReplaceBehavior: ''
+        placementReplaceBehavior: '',
+        pasteReplaceManual: false,
+        pasteReplaceManualMode: 'NONE'
     };
     const listeners = new Set();
+
+    function loadPasteReplaceManualPrefs() {
+        try {
+            const raw = localStorage.getItem(PASTE_REPLACE_MANUAL_STORAGE_KEY);
+            if (!raw) return;
+            const parsed = JSON.parse(raw);
+            state.pasteReplaceManual = !!parsed.enabled;
+            state.pasteReplaceManualMode = normalizeReplaceBehavior(parsed.mode || 'NONE');
+        } catch (_) { /* ignore */ }
+    }
+
+    function savePasteReplaceManualPrefs() {
+        try {
+            localStorage.setItem(PASTE_REPLACE_MANUAL_STORAGE_KEY, JSON.stringify({
+                enabled: state.pasteReplaceManual,
+                mode: state.pasteReplaceManualMode
+            }));
+        } catch (_) { /* ignore */ }
+    }
+
+    function getEffectivePasteReplaceBehavior() {
+        if (state.pasteReplaceManual) {
+            return state.pasteReplaceManualMode || 'NONE';
+        }
+        return state.pasteReplaceBehavior || 'NONE';
+    }
+
+    function getPasteReplaceBehaviorSource() {
+        return state.pasteReplaceManual ? 'manual' : (state.pasteReplaceBehavior ? 'litematica' : 'default');
+    }
+
+    function setPasteReplaceManual(enabled, mode) {
+        state.pasteReplaceManual = !!enabled;
+        if (mode != null) {
+            state.pasteReplaceManualMode = normalizeReplaceBehavior(mode);
+        }
+        savePasteReplaceManualPrefs();
+        emit(true);
+    }
 
     function computeDataRevision() {
         return JSON.stringify({
@@ -83,7 +132,10 @@
             })),
             parseHint: state.parseHint,
             pasteReplaceBehavior: state.pasteReplaceBehavior,
-            placementReplaceBehavior: state.placementReplaceBehavior
+            placementReplaceBehavior: state.placementReplaceBehavior,
+            pasteReplaceManual: state.pasteReplaceManual,
+            pasteReplaceManualMode: state.pasteReplaceManualMode,
+            effectivePasteReplaceBehavior: getEffectivePasteReplaceBehavior()
         });
     }
 
@@ -101,13 +153,16 @@
 
     function getSnapshot() {
         const selected = getSelectedPlacement();
+        const effectivePasteReplaceBehavior = getEffectivePasteReplaceBehavior();
         return {
             ...state,
             configFiles: configFiles.map((f) => ({ ...f })),
             worldFiles: configFiles.map((f) => f.path),
             selectedWorldFile: selectedConfigPath,
             selectedPlacement: selected,
-            hasTransform: selected && (selected.rotation !== 'NONE' || selected.mirror !== 'NONE')
+            hasTransform: selected && (selected.rotation !== 'NONE' || selected.mirror !== 'NONE'),
+            effectivePasteReplaceBehavior,
+            pasteReplaceBehaviorSource: getPasteReplaceBehaviorSource()
         };
     }
 
@@ -180,6 +235,8 @@
         const normalized = normalizeReplaceBehavior(value);
         return REPLACE_BEHAVIOR_LABELS[normalized] || value || REPLACE_BEHAVIOR_LABELS.NONE;
     }
+
+    loadPasteReplaceManualPrefs();
 
     async function loadGenericSettings() {
         state.pasteReplaceBehavior = '';
@@ -906,7 +963,9 @@
             parseHint: '',
             supportHint: '',
             pasteReplaceBehavior: '',
-            placementReplaceBehavior: ''
+            placementReplaceBehavior: '',
+            pasteReplaceManual: state.pasteReplaceManual,
+            pasteReplaceManualMode: state.pasteReplaceManualMode
         };
         await clearStoredDirHandle();
         lastEmittedRevision = '';
@@ -946,6 +1005,9 @@
         labelMirror,
         labelReplaceBehavior,
         normalizeReplaceBehavior,
+        getEffectivePasteReplaceBehavior,
+        setPasteReplaceManual,
+        PASTE_REPLACE_MODE_OPTIONS,
         inferWorldNameFromConfigPath,
         buildAnchorFromPlacement(placement, worldName) {
             if (!placement?.origin) return null;

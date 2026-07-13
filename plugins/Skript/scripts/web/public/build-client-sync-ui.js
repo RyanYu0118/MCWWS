@@ -243,6 +243,19 @@
         body.querySelector('#buildClientSyncImportPasteBtn')?.addEventListener('click', () => {
             void importSelectedToPaste();
         });
+        body.querySelector('#buildClientSyncPasteManualToggle')?.addEventListener('change', (e) => {
+            const api = sync();
+            if (!api) return;
+            const mode = body.querySelector('input[name="buildClientSyncPasteReplaceMode"]:checked')?.value || 'NONE';
+            api.setPasteReplaceManual(e.target.checked, mode);
+        });
+        body.querySelectorAll('input[name="buildClientSyncPasteReplaceMode"]').forEach((input) => {
+            input.addEventListener('change', () => {
+                const toggle = body.querySelector('#buildClientSyncPasteManualToggle');
+                if (!toggle?.checked) return;
+                sync()?.setPasteReplaceManual(true, input.value);
+            });
+        });
         body.addEventListener('click', (e) => {
             const row = e.target.closest('[data-placement-index]');
             if (!row) return;
@@ -270,7 +283,29 @@
                     <span id="buildClientSyncRefreshTime">上次刷新 —</span>
                 </div>
             </div>
-            <div class="build-client-sync-paste-settings" id="buildClientSyncPasteSettings" hidden></div>
+            <div class="build-client-sync-paste-settings" id="buildClientSyncPasteSettings" hidden>
+                <div class="build-client-sync-paste-settings-head">
+                    <span class="build-client-sync-paste-settings-label">Litematica 粘贴替换</span>
+                    <span class="build-client-sync-paste-settings-read" id="buildClientSyncPasteReadValue" title="从 litematica.json 读取">—</span>
+                </div>
+                <label class="build-client-sync-paste-manual-toggle">
+                    <input type="checkbox" id="buildClientSyncPasteManualToggle">
+                    <span>手动指定（覆盖读取值）</span>
+                </label>
+                <div class="build-client-sync-paste-mode-options" id="buildClientSyncPasteModeOptions" hidden>
+                    ${(sync()?.PASTE_REPLACE_MODE_OPTIONS || [
+                        ['NONE', '仅空气'],
+                        ['WITH_NON_AIR', '替换非空气'],
+                        ['ALL', '全部替换']
+                    ]).map(([value, label]) => `
+                        <label class="build-client-sync-paste-mode-option">
+                            <input type="radio" name="buildClientSyncPasteReplaceMode" value="${escapeHtml(value)}">
+                            <span>${escapeHtml(label)}</span>
+                        </label>
+                    `).join('')}
+                </div>
+                <p class="build-client-sync-paste-effective" id="buildClientSyncPasteEffective" hidden></p>
+            </div>
             <div class="build-client-sync-highlight glass" id="buildClientSyncHighlight" hidden></div>
             <p class="build-client-sync-warn" id="buildClientSyncTransformNote" hidden></p>
             <div id="buildClientSyncEmptyHelp" hidden></div>
@@ -368,24 +403,52 @@
     }
 
     function patchPasteSettings(snapshot) {
-        const el = document.getElementById('buildClientSyncPasteSettings');
+        const panel = document.getElementById('buildClientSyncPasteSettings');
         const api = sync();
-        if (!el) return;
-        if (!snapshot.connected || !snapshot.pasteReplaceBehavior) {
-            el.hidden = true;
-            el.innerHTML = '';
+        if (!panel) return;
+        if (!snapshot.connected) {
+            panel.hidden = true;
             return;
         }
-        el.hidden = false;
-        const pasteLabel = api?.labelReplaceBehavior?.(snapshot.pasteReplaceBehavior) || snapshot.pasteReplaceBehavior;
-        const placementLabel = snapshot.placementReplaceBehavior
-            ? (api?.labelReplaceBehavior?.(snapshot.placementReplaceBehavior) || snapshot.placementReplaceBehavior)
-            : '';
-        el.innerHTML = `
-            <span class="build-client-sync-paste-settings-label">Litematica 粘贴替换</span>
-            <span class="build-client-sync-paste-settings-value" title="对应游戏内 Generic → pasteReplaceBehavior（Ctrl+M 切换）">${escapeHtml(pasteLabel)}</span>
-            ${placementLabel ? `<span class="build-client-sync-paste-settings-sub" title="placementReplaceBehavior">放置模式 ${escapeHtml(placementLabel)}</span>` : ''}
-        `;
+        panel.hidden = false;
+
+        const readEl = document.getElementById('buildClientSyncPasteReadValue');
+        const toggle = document.getElementById('buildClientSyncPasteManualToggle');
+        const optionsEl = document.getElementById('buildClientSyncPasteModeOptions');
+        const effectiveEl = document.getElementById('buildClientSyncPasteEffective');
+
+        if (readEl) {
+            const readLabel = snapshot.pasteReplaceBehavior
+                ? (api?.labelReplaceBehavior?.(snapshot.pasteReplaceBehavior) || snapshot.pasteReplaceBehavior)
+                : '未读取到（可在下方手动指定）';
+            readEl.textContent = `读取：${readLabel}`;
+        }
+
+        if (toggle && document.activeElement !== toggle) {
+            toggle.checked = !!snapshot.pasteReplaceManual;
+        }
+        if (optionsEl) {
+            optionsEl.hidden = !snapshot.pasteReplaceManual;
+        }
+
+        const manualMode = snapshot.pasteReplaceManualMode || 'NONE';
+        panel.querySelectorAll('input[name="buildClientSyncPasteReplaceMode"]').forEach((input) => {
+            const shouldCheck = input.value === manualMode;
+            if (document.activeElement !== input) {
+                input.checked = shouldCheck;
+            }
+            input.disabled = !snapshot.pasteReplaceManual;
+        });
+
+        if (effectiveEl) {
+            const effective = snapshot.effectivePasteReplaceBehavior || api?.getEffectivePasteReplaceBehavior?.() || 'NONE';
+            const effectiveLabel = api?.labelReplaceBehavior?.(effective) || effective;
+            const sourceNote = snapshot.pasteReplaceManual
+                ? '当前使用手动指定'
+                : (snapshot.pasteReplaceBehavior ? '当前跟随 Litematica 读取' : '当前使用默认');
+            effectiveEl.hidden = false;
+            effectiveEl.textContent = `${sourceNote} · 生效：${effectiveLabel}`;
+        }
     }
 
     function patchHighlight(snapshot) {
@@ -404,7 +467,7 @@
             <span>世界 ${escapeHtml(selected.worldHint || 'world')}</span>
             <span>旋转 ${escapeHtml(api.labelRotation(selected.rotation))}</span>
             <span>镜像 ${escapeHtml(api.labelMirror(selected.mirror))}</span>
-            ${snapshot.pasteReplaceBehavior ? `<span>粘贴替换 ${escapeHtml(api.labelReplaceBehavior(snapshot.pasteReplaceBehavior))}</span>` : ''}
+            ${snapshot.effectivePasteReplaceBehavior ? `<span>粘贴替换 ${escapeHtml(api.labelReplaceBehavior(snapshot.effectivePasteReplaceBehavior))}${snapshot.pasteReplaceManual ? '（手动）' : ''}</span>` : ''}
         `;
     }
 
@@ -522,6 +585,8 @@
                 patchSelectionOnly(snapshot);
                 lastSelectedIndex = selectedIndex;
             }
+            patchPasteSettings(snapshot);
+            patchHighlight(snapshot);
             return;
         }
 

@@ -458,6 +458,12 @@ textarea:focus {
     border-bottom-color: var(--border);
 }
 
+[data-color-scheme="light"] .build-client-sync-paste-mode-option:has(input:checked) {
+    background: #000000;
+    color: #ffffff;
+    border-color: #000000;
+}
+
 [data-color-scheme="light"] .filter-select,
 [data-color-scheme="light"] .search-input,
 [data-color-scheme="light"] .form-field input,
