@@ -256,7 +256,13 @@ function mcwwsPasteSchemAtAbsolute(p: player, world: world, schemName: text, pas
         return false
     set {_dest} to BlockVector3.at({_ix}, {_iy}, {_iz})
     set {_holder} to new ClipboardHolder({_clipboard})
-    set {_operation} to {_holder}.createPaste({_session}).to({_dest}).ignoreAirBlocks(true).build()
+    set {_replaceBehavior} to mcwwsPasteNormalizeReplaceBehavior(mcwwsReadPasteOrderField({_oid}, "pasteReplaceBehavior"))
+    set {_pasteBuilder} to {_holder}.createPaste({_session}).to({_dest})
+    if {_replaceBehavior} is "WITH_NON_AIR":
+        set {_pasteBuilder} to {_pasteBuilder}.ignoreAirBlocks(true)
+    else:
+        set {_pasteBuilder} to {_pasteBuilder}.ignoreAirBlocks(false)
+    set {_operation} to {_pasteBuilder}.build()
     Operations.complete({_operation})
     {_session}.flushQueue()
     {_session}.close()
@@ -307,6 +313,28 @@ function mcwwsPasteNormalizeMirror(input: text) :: text:
     if {_v} is "FRONT_BACK", "FRONTBACK", "FB", "FRONT" or "BACK":
         return "FRONT_BACK"
     return "NONE"
+
+function mcwwsPasteNormalizeReplaceBehavior(input: text) :: text:
+    if {_input} is not set:
+        return "NONE"
+    set {_v} to uppercase "%{_input}%"
+    replace all " " with "" in {_v}
+    replace all "-" with "" in {_v}
+    if {_v} is "":
+        return "NONE"
+    if {_v} is "ALL":
+        return "ALL"
+    if {_v} is "WITH_NON_AIR", "WITH_NON_AIR_BLOCKS", "WITHNONAIR" or "NON_AIR":
+        return "WITH_NON_AIR"
+    return "NONE"
+
+function mcwwsPasteReplaceBehaviorLabel(mode: text) :: text:
+    set {_mode} to mcwwsPasteNormalizeReplaceBehavior({_mode})
+    if {_mode} is "ALL":
+        return "全部替换"
+    if {_mode} is "WITH_NON_AIR":
+        return "放置非空气方块"
+    return "仅在空气放置"
 
 function mcwwsPasteTransformIsBaked(oid: text) :: boolean:
     set {_val} to mcwwsReadPasteOrderField({_oid}, "transformBaked")
@@ -511,7 +539,7 @@ function mcwwsRunConsoleCommand(cmd: text):
     if {_ok} is false:
         execute console command {_cmd}
 
-function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean, playerWePaste: boolean) :: texts:
+function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean, playerWePaste: boolean, replaceBehavior: text) :: texts:
     set {_nodes::*} to "fawe.worldeditregion" and "fawe.bypass.regions"
     if {_legacyTransform} is true:
         add "worldedit.schematic.load" to {_nodes::*}
@@ -521,15 +549,17 @@ function mcwwsPasteWorldEditPermissionNodes(legacyTransform: boolean, playerWePa
     else if {_playerWePaste} is true:
         add "worldedit.schematic.load" to {_nodes::*}
         add "worldedit.clipboard.paste" to {_nodes::*}
+    if mcwwsPasteNormalizeReplaceBehavior({_replaceBehavior}) is "NONE":
+        add "worldedit.global-mask" to {_nodes::*}
     return {_nodes::*}
 
-function mcwwsPasteGrantWorldEditPermissions(p: player, legacyTransform: boolean, playerWePaste: boolean) :: texts:
+function mcwwsPasteGrantWorldEditPermissions(p: player, legacyTransform: boolean, playerWePaste: boolean, replaceBehavior: text) :: texts:
     delete {_granted::*}
     if {_p} is not set:
         return {_granted::*}
     set {_name} to name of {_p}
     set {_dur} to "30s"
-    loop mcwwsPasteWorldEditPermissionNodes({_legacyTransform}, {_playerWePaste}):
+    loop mcwwsPasteWorldEditPermissionNodes({_legacyTransform}, {_playerWePaste}, {_replaceBehavior}):
         if {_p} has permission loop-value:
             continue
         mcwwsRunConsoleCommand("lp user %{_name}% permission settemp %loop-value% true %{_dur}%")
@@ -669,6 +699,7 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
     unload yaml "pastes"
     set {_rotation} to mcwwsPasteNormalizeRotation(mcwwsReadPasteOrderField({_oid}, "rotation"))
     set {_mirror} to mcwwsPasteNormalizeMirror(mcwwsReadPasteOrderField({_oid}, "mirror"))
+    set {_replaceBehavior} to mcwwsPasteNormalizeReplaceBehavior(mcwwsReadPasteOrderField({_oid}, "pasteReplaceBehavior"))
     set {_transformBaked} to mcwwsPasteTransformIsBaked({_oid})
     set {_needsLegacyTransform} to false
     if {_transformBaked} is false:
@@ -686,8 +717,9 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
         mcwwsPasteNotify({_p}, "§7变换已烘焙进原理图: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
     else if mcwwsPasteTransformNeedsWorldEdit({_rotation}, {_mirror}) is true:
         mcwwsPasteNotify({_p}, "§7将用 WorldEdit 应用变换: §f旋转 %mcwwsPasteRotationLabel({_rotation})% §7· §f镜像 %mcwwsPasteMirrorLabel({_mirror})%")
+    mcwwsPasteNotify({_p}, "§7粘贴模式: §f%mcwwsPasteReplaceBehaviorLabel({_replaceBehavior})%")
     mcwwsPasteNotify({_p}, "§7使用原理图: §e%{_schem}%")
-    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, true)
+    set {_tempPerms::*} to mcwwsPasteGrantWorldEditPermissions({_p}, {_needsLegacyTransform}, true, {_replaceBehavior})
     if size of {_tempPerms::*} > 0:
         send "§7已授予临时 WorldEdit 权限…" to {_p}
     wait 2 ticks
@@ -728,8 +760,21 @@ function mcwwsPasteExecuteInternal(oid: text, fromWebQueue: boolean):
             send "§7应用旋转: §f逆时针 90°" to {_p}
             make {_p} execute command "//rotate 270"
             wait 25 ticks
-    make {_p} execute command "//paste -a"
+    if {_replaceBehavior} is "NONE":
+        send "§7粘贴模式: §f仅在空气放置 §7（仅在世界空气处粘贴）" to {_p}
+        make {_p} execute command "//gmask !#existing"
+        wait 25 ticks
+        make {_p} execute command "//paste"
+    else if {_replaceBehavior} is "WITH_NON_AIR":
+        send "§7粘贴模式: §f放置非空气方块" to {_p}
+        make {_p} execute command "//paste -a"
+    else:
+        send "§7粘贴模式: §f全部替换" to {_p}
+        make {_p} execute command "//paste"
     wait 40 ticks
+    if {_replaceBehavior} is "NONE":
+        make {_p} execute command "//gmask"
+        wait 10 ticks
     mcwwsPasteEndPlayerHold({_p})
     set {_ok} to true
     mcwwsPasteRevokeWorldEditPermissions({_p}, {_tempPerms::*})

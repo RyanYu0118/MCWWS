@@ -69,6 +69,19 @@ function normalizePasteMirror(value) {
     return 'NONE';
 }
 
+const PASTE_REPLACE_VALUES = new Set(['NONE', 'WITH_NON_AIR', 'ALL']);
+
+function normalizePasteReplaceBehavior(value) {
+    const raw = String(value || 'NONE').trim().toUpperCase().replace(/[\s-]+/g, '_');
+    if (PASTE_REPLACE_VALUES.has(raw)) {
+        return raw;
+    }
+    if (raw === 'WITH_NON_AIR_BLOCKS' || raw === 'WITHNONAIR' || raw === 'NON_AIR') {
+        return 'WITH_NON_AIR';
+    }
+    return 'NONE';
+}
+
 function pasteTransformNeedsWorldEdit(rotation, mirror) {
     return normalizePasteRotation(rotation) !== 'NONE' || normalizePasteMirror(mirror) !== 'NONE';
 }
@@ -326,7 +339,8 @@ function createPasteOrder({
     total,
     anchor,
     rotation,
-    mirror
+    mirror,
+    pasteReplaceBehavior
 }) {
     return verifyStoredSchematicHash(contentHash).then(async (verify) => {
         if (!verify.ok) {
@@ -334,6 +348,7 @@ function createPasteOrder({
         }
         const normalizedRotation = normalizePasteRotation(rotation);
         const normalizedMirror = normalizePasteMirror(mirror);
+        const normalizedReplaceBehavior = normalizePasteReplaceBehavior(pasteReplaceBehavior);
         let schemExport;
         try {
             schemExport = await ensureWorldEditSchemExport(contentHash, {
@@ -385,6 +400,7 @@ function createPasteOrder({
             anchorSetAt: normalizedAnchor ? now.toISOString() : '',
             rotation: normalizedRotation,
             mirror: normalizedMirror,
+            pasteReplaceBehavior: normalizedReplaceBehavior,
             schemFileName,
             schemOriginOffset,
             schemSize: schemExport?.width ? {
@@ -544,6 +560,7 @@ module.exports = {
     PASTE_MIRROR_VALUES,
     normalizePasteRotation,
     normalizePasteMirror,
+    normalizePasteReplaceBehavior,
     normalizePasteAnchor,
     pasteTransformNeedsWorldEdit,
     readBufferFromRequestBody,

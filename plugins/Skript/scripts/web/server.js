@@ -3267,7 +3267,8 @@ app.post('/api/build/checkout', async (req, res) => {
             total,
             rotation: req.body?.rotation,
             mirror: req.body?.mirror,
-            anchor: req.body?.anchor
+            anchor: req.body?.anchor,
+            pasteReplaceBehavior: req.body?.pasteReplaceBehavior
         });
         buildSchematicService.markQuoteConsumed(quote.numericId, pasteOrder.numericId);
 
@@ -3290,6 +3291,7 @@ app.post('/api/build/checkout', async (req, res) => {
             contentHashVersion: pasteOrder.contentHashVersion,
             rotation: pasteOrder.rotation,
             mirror: pasteOrder.mirror,
+            pasteReplaceBehavior: pasteOrder.pasteReplaceBehavior,
             total,
             materialTotal: quote.materialTotal,
             buildServiceFee: quote.buildServiceFee,

@@ -294,9 +294,9 @@
                 </label>
                 <div class="build-client-sync-paste-mode-options" id="buildClientSyncPasteModeOptions" hidden>
                     ${(sync()?.PASTE_REPLACE_MODE_OPTIONS || [
-                        ['NONE', '仅空气'],
-                        ['WITH_NON_AIR', '替换非空气'],
-                        ['ALL', '全部替换']
+                        ['ALL', '全部替换'],
+                        ['NONE', '仅在空气放置'],
+                        ['WITH_NON_AIR', '放置非空气方块']
                     ]).map(([value, label]) => `
                         <label class="build-client-sync-paste-mode-option">
                             <input type="radio" name="buildClientSyncPasteReplaceMode" value="${escapeHtml(value)}">

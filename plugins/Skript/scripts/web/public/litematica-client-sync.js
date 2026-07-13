@@ -33,8 +33,8 @@
     };
 
     const REPLACE_BEHAVIOR_LABELS = {
-        NONE: '仅空气（不替换）',
-        WITH_NON_AIR: '替换非空气',
+        NONE: '仅在空气放置',
+        WITH_NON_AIR: '放置非空气方块',
         ALL: '全部替换'
     };
 
@@ -44,9 +44,9 @@
     ];
 
     const PASTE_REPLACE_MODE_OPTIONS = [
-        ['NONE', '仅空气'],
-        ['WITH_NON_AIR', '替换非空气'],
-        ['ALL', '全部替换']
+        ['ALL', '全部替换'],
+        ['NONE', '仅在空气放置'],
+        ['WITH_NON_AIR', '放置非空气方块']
     ];
 
     const PASTE_REPLACE_MANUAL_STORAGE_KEY = 'mcwws.pasteReplaceManual';
