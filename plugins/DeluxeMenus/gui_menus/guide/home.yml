@@ -337,19 +337,20 @@ items:
     #  - '[openguimenu] clothes'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'bag':
-    material: BUNDLE
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
+    material: basehead-eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNjkxYzdiZDA0MTZmNjhkNmU5YjU4NmU3ODE4Mjg2M2E0ZmQwNGY5MDI5YzgwNWY5MjFhMTdjNzAzZDUyZWRlMSJ9fX0=
     slot: 25
     priority: 1
     update: true
     hide_attributes: true
-    display_name: '&b我的背包'
+    display_name: '&f背包'
     lore:
-      - '&f点击打开扩展包'
+      - '&f背包内物品数：打开后查看'
+      - '&f背包容量：按当前等级决定'
+      - '&f槽位数量：按当前等级决定'
+      - ''
+      - '&e点击打开扩展背包'
     left_click_commands:
-      - '[player] geekplayerbag open<delay=2>'
+      - '[player] bags open<delay=2>'
       - '[close]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'back_to_death':
