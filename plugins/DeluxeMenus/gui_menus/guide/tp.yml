@@ -407,49 +407,19 @@ items:
         - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
         - '[close]'
 
-  'items_storage_and_exchange_centre_b':
-    material: furnace
-    update: true
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 29
-    priority: 1
-    hide_attributes: true
-    display_name: '&bISEC (Items Storage and Exchange Centre)'
-    lore:
-      - '&a物品存储与交换中心'
-      - '&7MCWWS-A013'
-      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
-    left_click_commands:
-      - '[player] res tp items_storage_and_exchange_centre'
-      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-5000)+64%'
-      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64%'
-      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-      - '[close]'
-    left_click_requirement:
-      requirements:
-        money:
-          type: javascript
-          expression: '%math_16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-204))^2+({player_y}-(70))^2+({player_z}-(197))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64% <= %vault_eco_balance%'
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
-
   'lake_bank':
     material: gold_block
     update: true
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 30
+    slot: 12
     priority: 1
     hide_attributes: true
     display_name: '&bLake Bank'
     lore:
       - '&a湖·银行'
-      - '&7MCWWS-A014'
+      - '&7MCWWS-A013'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-445))^2+({player_y}-(66))^2+({player_z}-(169))^2)-100)-16/1225*abs(sqrt(({player_x}-(-445))^2+({player_y}-(66))^2+({player_z}-(169))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp lake_bank'
@@ -467,49 +437,19 @@ items:
         - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
         - '[close]'
 
-  'plant_processing_and_dye_technology_base_b':
-    material: green_dye
-    update: true
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 31
-    priority: 1
-    hide_attributes: true
-    display_name: '&bPlant Processing & Dye Technology Base'
-    lore:
-      - '&a植物加工与染料工艺基地'
-      - '&7MCWWS-A015'
-      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-100)-16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
-    left_click_commands:
-      - '[player] res tp plant_processing_and_dye_technology_base'
-      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-100)-16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-5000)+64%'
-      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64%'
-      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-      - '[close]'
-    left_click_requirement:
-      requirements:
-        money:
-          type: javascript
-          expression: '%math_16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-100)-16/1225*abs(sqrt(({player_x}-(-158))^2+({player_y}-(66))^2+({player_z}-(147))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64% <= %vault_eco_balance%'
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
-
   'shopping_mall':
     material: beacon
     update: true
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 32
+    slot: 13
     priority: 1
     hide_attributes: true
     display_name: '&bShopping Mall'
     lore:
       - '&a商业广场'
-      - '&7MCWWS-A016'
+      - '&7MCWWS-A014'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-218))^2+({player_y}-(65))^2+({player_z}-(-127))^2)-100)-16/1225*abs(sqrt(({player_x}-(-218))^2+({player_y}-(65))^2+({player_z}-(-127))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp shopping_mall'
@@ -527,79 +467,19 @@ items:
         - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
         - '[close]'
 
-  'pixel_centre_b':
-    material: white_stained_glass
-    update: true
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 33
-    priority: 1
-    hide_attributes: true
-    display_name: '&bPixel Centre'
-    lore:
-      - '&aPixel商业中心'
-      - '&7MCWWS-A017'
-      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-100)-16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
-    left_click_commands:
-      - '[player] res tp pixel_centre'
-      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-100)-16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-5000)+64%'
-      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64%'
-      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-      - '[close]'
-    left_click_requirement:
-      requirements:
-        money:
-          type: javascript
-          expression: '%math_16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-100)-16/1225*abs(sqrt(({player_x}-(-335))^2+({player_y}-(64))^2+({player_z}-(172))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64% <= %vault_eco_balance%'
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
-
-  'technology_mansion_b':
-    material: cyan_stained_glass
-    update: true
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 34
-    priority: 1
-    hide_attributes: true
-    display_name: '&bTechnology Mansion'
-    lore:
-      - '&a科技大厦'
-      - '&7MCWWS-A018'
-      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-100)-16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
-    left_click_commands:
-      - '[player] res tp technology_mansion'
-      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-100)-16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-5000)+64%'
-      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64%'
-      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-      - '[close]'
-    left_click_requirement:
-      requirements:
-        money:
-          type: javascript
-          expression: '%math_16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-100)-16/1225*abs(sqrt(({player_x}-(-405))^2+({player_y}-(65))^2+({player_z}-(356))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_ifmatch:0_else:64% <= %vault_eco_balance%'
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
-
   'minecraft_university':
     material: bricks
     update: true
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 35
+    slot: 14
     priority: 1
     hide_attributes: true
     display_name: '&bMinecraft University'
     lore:
       - '&aMC大学'
-      - '&7MCWWS-A019'
+      - '&7MCWWS-A015'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-152))^2+({player_y}-(66))^2+({player_z}-(352))^2)-100)-16/1225*abs(sqrt(({player_x}-(-152))^2+({player_y}-(66))^2+({player_z}-(352))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp minecraft_university'
@@ -623,13 +503,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 36
+    slot: 15
     priority: 1
     hide_attributes: true
     display_name: '&bFarmland'
     lore:
       - '&a农业区'
-      - '&7MCWWS-A020'
+      - '&7MCWWS-A016'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-212))^2+({player_y}-(64))^2+({player_z}-(-252))^2)-100)-16/1225*abs(sqrt(({player_x}-(-212))^2+({player_y}-(64))^2+({player_z}-(-252))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp farmland'
@@ -653,13 +533,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 37
+    slot: 16
     priority: 1
     hide_attributes: true
     display_name: '&bTrial Area'
     lore:
       - '&a试验田 &c注意危险！'
-      - '&7MCWWS-A021'
+      - '&7MCWWS-A017'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(505))^2+({player_y}-(67))^2+({player_z}-(226))^2)-100)-16/1225*abs(sqrt(({player_x}-(505))^2+({player_y}-(67))^2+({player_z}-(226))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp trial_area'
@@ -683,13 +563,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 38
+    slot: 17
     priority: 1
     hide_attributes: true
     display_name: '&bHall&k~&rween Isl&k~&rnd&k'
     lore:
       - '&a万&k~&r&a圣节岛&k~'
-      - '&7MCWWS-A022'
+      - '&7MCWWS-A018'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-323))^2+({player_y}-(66))^2+({player_z}-(2595))^2)-100)-16/1225*abs(sqrt(({player_x}-(-323))^2+({player_y}-(66))^2+({player_z}-(2595))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp halloween_island'
@@ -713,13 +593,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 39
+    slot: 18
     priority: 1
     hide_attributes: true
     display_name: '&bSky City'
     lore:
       - '&a天空之城'
-      - '&7MCWWS-A023'
+      - '&7MCWWS-A019'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(1229))^2+({player_y}-(216))^2+({player_z}-(5734))^2)-100)-16/1225*abs(sqrt(({player_x}-(1229))^2+({player_y}-(216))^2+({player_z}-(5734))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp sky_city'
@@ -743,13 +623,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 40
+    slot: 19
     priority: 1
     hide_attributes: true
     display_name: '&bCottage In Wild'
     lore:
       - '&a远郊别墅'
-      - '&7MCWWS-A024'
+      - '&7MCWWS-A020'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(1596))^2+({player_y}-(64))^2+({player_z}-(7975))^2)-100)-16/1225*abs(sqrt(({player_x}-(1596))^2+({player_y}-(64))^2+({player_z}-(7975))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp cottage_in_wild'
@@ -773,13 +653,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 41
+    slot: 20
     priority: 1
     hide_attributes: true
     display_name: '&bTree Farm'
     lore:
       - '&a树场'
-      - '&7MCWWS-A025'
+      - '&7MCWWS-A021'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-211))^2+({player_y}-(74))^2+({player_z}-(-527))^2)-100)-16/1225*abs(sqrt(({player_x}-(-211))^2+({player_y}-(74))^2+({player_z}-(-527))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp tree_farm'
@@ -803,13 +683,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 42
+    slot: 21
     priority: 1
     hide_attributes: true
     display_name: '&eMining Area'
     lore:
       - '&a矿区'
-      - '&7MCWWS-A026'
+      - '&7MCWWS-A022'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-208))^2+({player_y}-(83))^2+({player_z}-(-933))^2)-100)-16/1225*abs(sqrt(({player_x}-(-208))^2+({player_y}-(83))^2+({player_z}-(-933))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp mining_area'
@@ -833,13 +713,13 @@ items:
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 43
+    slot: 22
     priority: 1
     hide_attributes: true
     display_name: '&eLibrary Garden'
     lore:
       - '&a图书馆花园'
-      - '&7MCWWS-A027'
+      - '&7MCWWS-A023'
       - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-464))^2+({player_y}-(65))^2+({player_z}-(219))^2)-100)-16/1225*abs(sqrt(({player_x}-(-464))^2+({player_y}-(65))^2+({player_z}-(219))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_ifmatch:_else: + ¥64维度转接费%'
     left_click_commands:
       - '[player] res tp library_garden'
