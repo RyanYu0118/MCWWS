@@ -1,4 +1,4 @@
-menu_title: '&l| 主世界   &7&l| 下界     | 末地'
+menu_title: '&a&l| 主世界   &7&l| 下界     | 末地'
 open_command:
   - menutp
 open_commands:
@@ -35,6 +35,25 @@ items:
     left_click_commands:
       - '[openguimenu] home'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+  'cycle_dimension':
+    material: ENDER_EYE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 53
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&d▶ 切换维度'
+    lore:
+      - ''
+      - '&7当前：&a主世界'
+      - '&7点击循环：&a主世界 &7→ &c下界 &7→ &d末地 &7→ &a主世界'
+      - ''
+      - '&e下次将打开：&c下界地点'
+    left_click_commands:
+      - '[openguimenu] tp_nether'
+      - '[sound] BLOCK_PORTAL_TRIGGER'
 
   'minecraft_mansion':
     material: dark_oak_wood

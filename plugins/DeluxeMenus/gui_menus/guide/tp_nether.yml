@@ -1,0 +1,175 @@
+menu_title: '&7&l| 主世界   &c&l| 下界   &7&l| 末地'
+open_command:
+  - menutp_nether
+open_commands:
+update_interval: 1
+size: 54
+items:
+  'last page':
+    material: BLACK_STAINED_GLASS_PANE
+    model_data: 2200009
+    slot: 47
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&7上一页'
+  'next page':
+    material: LIME_STAINED_GLASS_PANE
+    model_data: 2200009
+    slot: 51
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&a下一页'
+  'back':
+    material: COMPASS
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 49
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&b返回主页'
+    left_click_commands:
+      - '[openguimenu] home'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+  'cycle_dimension':
+    material: ENDER_EYE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 53
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&d▶ 切换维度'
+    lore:
+      - ''
+      - '&7当前：&c下界'
+      - '&7点击循环：&a主世界 &7→ &c下界 &7→ &d末地 &7→ &a主世界'
+      - ''
+      - '&e下次将打开：&d末地地点'
+    left_click_commands:
+      - '[openguimenu] tp_end'
+      - '[sound] BLOCK_PORTAL_TRIGGER'
+
+  'ghast_farm_n':
+    material: GHAST_TEAR
+    update: true
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 0
+    priority: 1
+    hide_attributes: true
+    display_name: '&cGhast Farm'
+    lore:
+      - '&a恶魂农场'
+      - '&7MCWWS-N001'
+      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-100)-16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:_else: + ¥64维度转接费%'
+    left_click_commands:
+      - '[player] res tp ghast_farm_n'
+      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-100)-16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-5000)+64%'
+      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64%'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+      - '[close]'
+    left_click_requirement:
+      requirements:
+        money:
+          type: javascript
+          expression: '%math_16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-100)-16/1225*abs(sqrt(({player_x}-(-33))^2+({player_y}-(139))^2+({player_z}-(-244))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64% <= %vault_eco_balance%'
+      deny_commands:
+        - '[message] &c啊哦，你零钱不够捏......'
+        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
+        - '[close]'
+
+  'guardian_farm_n':
+    material: PRISMARINE_SHARD
+    update: true
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 1
+    priority: 1
+    hide_attributes: true
+    display_name: '&cGuardian Farm (Nether)'
+    lore:
+      - '&a守卫者农场（下界）'
+      - '&7MCWWS-N002'
+      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:_else: + ¥64维度转接费%'
+    left_click_commands:
+      - '[player] res tp guardian_farm_n'
+      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-5000)+64%'
+      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64%'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+      - '[close]'
+    left_click_requirement:
+      requirements:
+        money:
+          type: javascript
+          expression: '%math_16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-100)-16/1225*abs(sqrt(({player_x}-(-31))^2+({player_y}-(128))^2+({player_z}-(197))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64% <= %vault_eco_balance%'
+      deny_commands:
+        - '[message] &c啊哦，你零钱不够捏......'
+        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
+        - '[close]'
+
+  'industrial_base_n':
+    material: NETHER_BRICKS
+    update: true
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 2
+    priority: 1
+    hide_attributes: true
+    display_name: '&cIndustrial Base'
+    lore:
+      - '&a工业基地'
+      - '&7MCWWS-N003'
+      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-100)-16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:_else: + ¥64维度转接费%'
+    left_click_commands:
+      - '[player] res tp industrial_base_n'
+      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-100)-16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-5000)+64%'
+      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64%'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+      - '[close]'
+    left_click_requirement:
+      requirements:
+        money:
+          type: javascript
+          expression: '%math_16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-100)-16/1225*abs(sqrt(({player_x}-(-48))^2+({player_y}-(130))^2+({player_z}-(-16))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64% <= %vault_eco_balance%'
+      deny_commands:
+        - '[message] &c啊哦，你零钱不够捏......'
+        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
+        - '[close]'
+
+  'wither_skeleton_farm':
+    material: WITHER_SKELETON_SKULL
+    update: true
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 3
+    priority: 1
+    hide_attributes: true
+    display_name: '&cWither Skeleton Farm'
+    lore:
+      - '&a凋灵骷髅农场'
+      - '&7MCWWS-N004'
+      - '&6¥%math_16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-100)-16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-5000)+64%&7%changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:_else: + ¥64维度转接费%'
+    left_click_commands:
+      - '[player] res tp wither_skeleton_farm'
+      - '[takemoney] %math_16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-100)-16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-5000)+64%'
+      - '[takemoney] %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64%'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+      - '[close]'
+    left_click_requirement:
+      requirements:
+        money:
+          type: javascript
+          expression: '%math_16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-100)-16/1225*abs(sqrt(({player_x}-(359))^2+({player_y}-(29))^2+({player_z}-(111))^2)-5000)+64% + %changeoutput_equals_input:{player_world}_matcher:world_nether_ifmatch:0_else:64% <= %vault_eco_balance%'
+      deny_commands:
+        - '[message] &c啊哦，你零钱不够捏......'
+        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
+        - '[close]'

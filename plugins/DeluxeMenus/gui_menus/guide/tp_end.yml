@@ -1,0 +1,73 @@
+menu_title: '&7&l| 主世界   | 下界   &d&l| 末地'
+open_command:
+  - menutp_end
+open_commands:
+update_interval: 1
+size: 54
+items:
+  'last page':
+    material: BLACK_STAINED_GLASS_PANE
+    model_data: 2200009
+    slot: 47
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&7上一页'
+  'next page':
+    material: LIME_STAINED_GLASS_PANE
+    model_data: 2200009
+    slot: 51
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&a下一页'
+  'back':
+    material: COMPASS
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 49
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&b返回主页'
+    left_click_commands:
+      - '[openguimenu] home'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+  'cycle_dimension':
+    material: ENDER_EYE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 53
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&d▶ 切换维度'
+    lore:
+      - ''
+      - '&7当前：&d末地'
+      - '&7点击循环：&a主世界 &7→ &c下界 &7→ &d末地 &7→ &a主世界'
+      - ''
+      - '&e下次将打开：&a主世界地点'
+    left_click_commands:
+      - '[openguimenu] tp'
+      - '[sound] BLOCK_PORTAL_TRIGGER'
+
+  'empty_notice':
+    material: END_STONE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 22
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&d末地固定地点'
+    lore:
+      - ''
+      - '&7当前末地还没有登记固定地点。'
+      - '&7若已在 Residence 中创建末地领地，'
+      - '&7可在 &ftp_end.yml &7中按主世界/下界格式追加。'
+      - ''
+      - '&e点击右侧「切换维度」可返回主世界。'
