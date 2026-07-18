@@ -10,9 +10,11 @@ function mcwwsRefreshOnlinePlayersRegistry():
     delete {_lines::*}
     loop all players:
         add "%mcwwsPlayerUuidKey(loop-player)%|%name of loop-player%" to {_lines::*}
-    set {_text} to join {_lines::*} with nl
-    if size of {_lines::*} > 0:
-        set {_text} to "%{_text}%%nl%"
+    # 无人在线时 join 会得到 null，Files.write 会 NPE；空文件写 "" 即可
+    if size of {_lines::*} < 1:
+        set {_text} to ""
+    else:
+        set {_text} to "%join {_lines::*} with nl%%nl%"
     set {_file} to new File({_rel})
     set {_parent} to {_file}.getParentFile()
     if {_parent}.exists() is false:
