@@ -22,7 +22,7 @@ bag-slot: 4 # 0-8 - 快捷栏槽位 /
 sell-all: false # 布尔值(true/false)
 
 # 数据自动保存的时间间隔（单位：秒）
-save-interval: 600 # 整数类型 / 设为-1则关闭自动保存
+save-interval: 60 # 整数类型 / 设为-1则关闭自动保存
 
 # 玩家背包的检测刷新间隔（单位：秒）
 update-interval: -1 # 整数类型 / 设为-1则关闭检测刷新
