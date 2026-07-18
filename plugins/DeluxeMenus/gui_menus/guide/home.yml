@@ -361,14 +361,16 @@ items:
     priority: 1
     update: true
     hide_attributes: true
-    display_name: '&b返回至死亡点'
+    display_name: '&b返回上一记录点'
     lore:
-      - '&f点击返回至死亡点！'
+      - '&f点击返回 Essentials 记录的上一位置'
       - '&f点数：64点/次'
     left_click_commands:
-      - '[player] back'
+      - '[console] lp user %player_name% permission settemp essentials.back true 15s'
+      - '[player] essentials:back'
       - '[takemoney] 64'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
+      - '[close]'
     left_click_requirement:
       requirements:
         money:

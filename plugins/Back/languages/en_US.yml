@@ -14,10 +14,10 @@
 # This configuration will display the Back Messages
 Back:
   Prefix: "&b[&eBack&b]&r"
-  Message: "%back_prefix% &eYou have been teleported to your last location"
-  Failed: "%back_prefix% &cYour teleport has been failed. No location found!"
-  NoPermission: "%back_prefix% &cYou don't have permission to perform this command!"
-  Reload: "%back_prefix% &aPlugin reloaded successfully!"
+  Message: "%back_prefix% &a已传送至你的死亡点"
+  Failed: "%back_prefix% &c传送失败：没有找到可用的死亡点，未扣费。"
+  NoPermission: "%back_prefix% &c你没有权限使用此命令！"
+  Reload: "%back_prefix% &a插件已重载！"
 
 # Configuration 1.1
 # This configuration will display the Help Page Messages
@@ -71,6 +71,6 @@ WorldBlacklist:
 # without withdraw money if the Vault is enabled.
 Vault:
   Enable: false
-  TeleportCost: 10
-  Withdraw: "&e$%back_withdraw% &bwere taken from your account"
-  NoMoney: "&cYou need $%back_cost% to teleport!"
+  TeleportCost: 64
+  Withdraw: "%back_prefix% &eCharged &6$%back_withdraw%"
+  NoMoney: "%back_prefix% &cNot enough money. Need $%back_cost%"

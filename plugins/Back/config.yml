@@ -1,23 +1,7 @@
-# Plugin develloped by GFelberg 
-# Config.yml		        
-
-# language: en
-# Thanks for downloading my plugin. For more plugins, dont forget to look my updates!
-# If you find any bugs or ideas to the plugin, pm me at spigot.
-
-# language: br/pt
-# Obrigado por baixar meu plugin. Para mais plugins, não esqueça de olhar as atualizações!
-# Se você achar qualquer erro ou ideia para o plugin, mande messagem no spigot.
-
-# Permissions
-
-# back.back : Access to Back command
-# back.reload : Access to Reload the Plugin
-
-# Configuration 1.0
-# This area will be used to manage the Back Command
+# Plugin developed by GFelberg
+# Config.yml
 
 Back:
   Prefix: '&b&l[&eBack&b&l]&r'
-  Message: '&eYou have been teleported to your last location'
-  Failed: '&cYour teleport has been failed. No location found!'
+  Message: '&aTeleported to your death location.'
+  Failed: '&cTeleport failed: no death location found. No money taken.'
