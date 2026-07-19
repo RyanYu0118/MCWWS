@@ -91,6 +91,24 @@ items:
       - '[player] ca gui'
       - '[close]'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+  'shop':
+    material: EMERALD
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 3
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&b>>> 商店系统 <<<'
+    lore:
+      - ''
+      - '&f点击打开物品买卖商店'
+      - '&7指令：/shop'
+    left_click_commands:
+      - '[close]'
+      - '[player] shop menu main'
+      - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'spawn_private':
     material: STONE_PRESSURE_PLATE
     model_data: 2200464
