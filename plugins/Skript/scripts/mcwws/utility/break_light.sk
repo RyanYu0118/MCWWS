@@ -9,6 +9,7 @@ import:
     org.bukkit.util.Transformation
     org.bukkit.event.block.BlockBreakEvent
     org.bukkit.inventory.ItemStack
+    org.bukkit.inventory.ItemFlag
     org.bukkit.entity.ItemDisplay
     org.bukkit.entity.Display
     org.joml.Vector3f
@@ -55,7 +56,7 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     return true
 
 function mcwwsLightItemForLevel(level: number) :: object:
-    # 仅设置 level 贴图，不改动含水；用于世界图标与选择 UI
+    # 仅设置 level 贴图；隐藏额外提示（含水等 block_state 标签）
     set {_lv} to {_level}
     if {_lv} < 0:
         set {_lv} to 0
@@ -63,9 +64,9 @@ function mcwwsLightItemForLevel(level: number) :: object:
         set {_lv} to 15
     set {_item} to new ItemStack(Material.LIGHT, 1)
     set {_meta} to {_item}.getItemMeta()
-    set {_bd} to Material.LIGHT.createBlockData()
-    {_bd}.setLevel({_lv})
+    set {_bd} to Bukkit.createBlockData("minecraft:light[level=%{_lv}%]")
     {_meta}.setBlockData({_bd})
+    {_meta}.addItemFlags(ItemFlag.HIDE_ADDITIONAL_TOOLTIP)
     {_item}.setItemMeta({_meta})
     return {_item}
 
