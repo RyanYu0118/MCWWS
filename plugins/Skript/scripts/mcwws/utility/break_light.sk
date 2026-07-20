@@ -1,5 +1,6 @@
-# MCWWS：生存/冒险左键拆除光源并掉落；站立右键调节亮度（同创造）
-# 手持光源时：用 ItemDisplay 显示中间 2D 图标（非粒子），贴近原版状态提示
+# MCWWS：生存/冒险左键拆除光源并掉落；站立右键调节已放光源亮度
+# 生存：手持光源对空气右键 → 选择放置亮度 0–15（默认 15）；物品外观始终为原版 15
+# 手持光源时：用 ItemDisplay 显示中间 2D 图标（非粒子）
 
 import:
     org.bukkit.Bukkit
@@ -13,6 +14,7 @@ import:
     org.joml.Vector3f
     org.joml.Quaternionf
     java.util.UUID
+    java.util.Arrays
 
 function mcwwsIsLightRayPassable(type: object) :: boolean:
     if {_type} is Material.AIR:
@@ -52,17 +54,9 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
     return true
 
-function mcwwsLightItemForLevel(level: number) :: object:
-    set {_item} to new ItemStack(Material.LIGHT, 1)
-    set {_meta} to {_item}.getItemMeta()
-    set {_bd} to Material.LIGHT.createBlockData()
-    {_bd}.setLevel({_level})
-    {_meta}.setBlockData({_bd})
-    {_item}.setItemMeta({_meta})
-    return {_item}
-
-function mcwwsGetLightLevel(block: object) :: number:
-    return {_block}.getBlockData().getLevel()
+function mcwwsLightIconItem() :: object:
+    # 物品/图标永远用原版默认外观（亮度 15），不写 block_state / 含水
+    return new ItemStack(Material.LIGHT, 1)
 
 function mcwwsCycleLightLevel(p: player, block: object) :: boolean:
     set {_data} to {_block}.getBlockData()
@@ -73,17 +67,48 @@ function mcwwsCycleLightLevel(p: player, block: object) :: boolean:
     {_block}.setBlockData({_data})
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
     play sound "ui.button.click" with volume 0.4 and pitch 1.2 at {_loc} for {_p}
-    # 同步该玩家看到的 ItemDisplay 图标亮度贴图
-    set {_puuid} to "%uuid of {_p}%"
-    set {_key} to mcwwsLightBlockKey({_block})
-    set {_uuidText} to {mcwws.lightIcon::%{_puuid}%::%{_key}%}
-    if {_uuidText} is set:
-        set {_id} to UUID.fromString({_uuidText})
-        set {_ent} to Bukkit.getEntity({_id})
-        if {_ent} is set:
-            if "%{_ent}%" is not "null":
-                {_ent}.setItemStack(mcwwsLightItemForLevel({_level}))
     return true
+
+function mcwwsGetPlaceLightLevel(p: player) :: number:
+    set {_uuid} to "%uuid of {_p}%"
+    if {mcwws.lightPlaceLevel::%{_uuid}%} is not set:
+        return 15
+    return {mcwws.lightPlaceLevel::%{_uuid}%}
+
+function mcwwsSetPlaceLightLevel(p: player, level: number):
+    set {_lv} to {_level}
+    if {_lv} < 0:
+        set {_lv} to 0
+    if {_lv} > 15:
+        set {_lv} to 15
+    set {mcwws.lightPlaceLevel::%uuid of {_p}%} to {_lv}
+
+function mcwwsOpenLightLevelMenu(p: player):
+    set {_cur} to mcwwsGetPlaceLightLevel({_p})
+    set {_gui} to a new chest inventory with 2 rows named "选择光源亮度"
+    loop integers from 0 to 15:
+        set {_lv} to loop-number
+        set {_item} to mcwwsLightIconItem()
+        set {_meta} to {_item}.getItemMeta()
+        {_meta}.setDisplayName("§e亮度 §f%{_lv}%")
+        if {_lv} is {_cur}:
+            {_meta}.setLore(Arrays.asList("§a当前选择"))
+            {_meta}.setEnchantmentGlintOverride(true)
+        else:
+            {_meta}.setLore(Arrays.asList("§7点击后，之后放置的光源均为该亮度"))
+        {_item}.setItemMeta({_meta})
+        set slot {_lv} of {_gui} to {_item}
+    loop integers from 16 to 17:
+        set slot loop-number of {_gui} to gray stained glass pane named " "
+    add {_gui} to {mcwws.lightLevelGui::*}
+    open {_gui} to {_p}
+
+function mcwwsApplyPlaceLightLevel(p: player, block: object):
+    # 只改 level，保留原有 waterlogged 等状态；物品外观仍为默认 15
+    set {_level} to mcwwsGetPlaceLightLevel({_p})
+    set {_data} to {_block}.getBlockData()
+    {_data}.setLevel({_level})
+    {_block}.setBlockData({_data})
 
 function mcwwsLightBlockKey(block: object) :: text:
     set {_loc} to {_block}.getLocation()
@@ -113,7 +138,7 @@ function mcwwsSpawnLightIcon(p: player, block: object, key: text):
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
     set {_world} to {_block}.getWorld()
     set {_display} to {_world}.spawn({_loc}, ItemDisplay.class)
-    {_display}.setItemStack(mcwwsLightItemForLevel(mcwwsGetLightLevel({_block})))
+    {_display}.setItemStack(mcwwsLightIconItem())
     {_display}.setBillboard(Display.Billboard.CENTER)
     # ItemDisplay 默认朝向与 Billboard 相反，绕 Y 轴转 180° 正面朝向玩家
     {_display}.setTransformation(new Transformation(new Vector3f(0, 0, 0), new Quaternionf().rotationY(3.1415927), new Vector3f(1, 1, 1), new Quaternionf()))
@@ -167,13 +192,16 @@ on unload:
         mcwwsClearLightIcons(loop-player)
     delete {mcwws.lightProtect::*}
     delete {mcwws.recentPlace::*}
+    delete {mcwws.lightLevelGui::*}
 
-# 刚放下的光源短时保护，避免「潜行放置后立刻被拆除脚本拆成掉落物」
+# 刚放下的光源短时保护；生存模式应用所选放置亮度
 on place:
     set {mcwws.recentPlace::%uuid of player%} to 8
     if event-block is light:
         set {_key} to mcwwsLightBlockKey(event-block)
         set {mcwws.lightProtect::%{_key}%} to 10
+        if gamemode of player is survival:
+            mcwwsApplyPlaceLightLevel(player, event-block)
 
 on left click:
     if gamemode of player is creative:
@@ -197,7 +225,7 @@ on left click:
     cancel event
     mcwwsBreakLightAsPlayer(player, {_block})
 
-# 站立 + 手持光源 + 右键：循环亮度 0→15（同创造），潜行右键仍用于放置
+# 站立 + 手持光源 + 右键已放光源：循环亮度（同创造）
 on right click:
     if gamemode of player is creative:
         stop
@@ -214,3 +242,32 @@ on right click:
         stop
     cancel event
     mcwwsCycleLightLevel(player, {_block})
+
+# 生存 + 手持光源 + 对空气右键：打开亮度选择（0–15，默认 15）
+on right click on air:
+    if gamemode of player is not survival:
+        stop
+    if tool of player is not light:
+        stop
+    cancel event
+    mcwwsOpenLightLevelMenu(player)
+
+on inventory click:
+    if {mcwws.lightLevelGui::*} contains event-inventory:
+        cancel event
+        set {_slot} to index of event-slot
+        if {_slot} is set:
+            if {_slot} >= 0:
+                if {_slot} <= 15:
+                    mcwwsSetPlaceLightLevel(player, {_slot})
+                    close player's inventory
+                    send "§6[光源] §f之后放置的光源亮度已设为 §e%{_slot}%" to player
+                    play sound "ui.button.click" with volume 0.5 and pitch 1 to player
+
+on inventory drag:
+    if {mcwws.lightLevelGui::*} contains event-inventory:
+        cancel event
+
+on inventory close:
+    if {mcwws.lightLevelGui::*} contains event-inventory:
+        remove event-inventory from {mcwws.lightLevelGui::*}
