@@ -1,4 +1,4 @@
-# MCWWS：生存/冒险左键拆除光源并掉落
+# MCWWS：生存/冒险左键拆除光源并掉落；站立右键调节亮度（同创造）
 # 手持光源时：用 ItemDisplay 显示中间 2D 图标（非粒子），贴近原版状态提示
 
 import:
@@ -52,6 +52,39 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
     return true
 
+function mcwwsLightItemForLevel(level: number) :: object:
+    set {_item} to new ItemStack(Material.LIGHT, 1)
+    set {_meta} to {_item}.getItemMeta()
+    set {_bd} to Material.LIGHT.createBlockData()
+    {_bd}.setLevel({_level})
+    {_meta}.setBlockData({_bd})
+    {_item}.setItemMeta({_meta})
+    return {_item}
+
+function mcwwsGetLightLevel(block: object) :: number:
+    return {_block}.getBlockData().getLevel()
+
+function mcwwsCycleLightLevel(p: player, block: object) :: boolean:
+    set {_data} to {_block}.getBlockData()
+    set {_level} to {_data}.getLevel() + 1
+    if {_level} > 15:
+        set {_level} to 0
+    {_data}.setLevel({_level})
+    {_block}.setBlockData({_data})
+    set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
+    play sound "ui.button.click" with volume 0.4 and pitch 1.2 at {_loc} for {_p}
+    # 同步该玩家看到的 ItemDisplay 图标亮度贴图
+    set {_puuid} to "%uuid of {_p}%"
+    set {_key} to mcwwsLightBlockKey({_block})
+    set {_uuidText} to {mcwws.lightIcon::%{_puuid}%::%{_key}%}
+    if {_uuidText} is set:
+        set {_id} to UUID.fromString({_uuidText})
+        set {_ent} to Bukkit.getEntity({_id})
+        if {_ent} is set:
+            if "%{_ent}%" is not "null":
+                {_ent}.setItemStack(mcwwsLightItemForLevel({_level}))
+    return true
+
 function mcwwsLightBlockKey(block: object) :: text:
     set {_loc} to {_block}.getLocation()
     set {_w} to {_loc}.getWorld().getName()
@@ -80,7 +113,7 @@ function mcwwsSpawnLightIcon(p: player, block: object, key: text):
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
     set {_world} to {_block}.getWorld()
     set {_display} to {_world}.spawn({_loc}, ItemDisplay.class)
-    {_display}.setItemStack(new ItemStack(Material.LIGHT, 1))
+    {_display}.setItemStack(mcwwsLightItemForLevel(mcwwsGetLightLevel({_block})))
     {_display}.setBillboard(Display.Billboard.CENTER)
     # ItemDisplay 默认朝向与 Billboard 相反，绕 Y 轴转 180° 正面朝向玩家
     {_display}.setTransformation(new Transformation(new Vector3f(0, 0, 0), new Quaternionf().rotationY(3.1415927), new Vector3f(1, 1, 1), new Quaternionf()))
@@ -163,3 +196,21 @@ on left click:
         stop
     cancel event
     mcwwsBreakLightAsPlayer(player, {_block})
+
+# 站立 + 手持光源 + 右键：循环亮度 0→15（同创造），潜行右键仍用于放置
+on right click:
+    if gamemode of player is creative:
+        stop
+    if gamemode of player is spectator:
+        stop
+    if player is sneaking:
+        stop
+    if tool of player is not light:
+        stop
+    set {_block} to mcwwsFindLookedLight(player, 5)
+    if {_block} is not set:
+        stop
+    if "%{_block}%" is "null":
+        stop
+    cancel event
+    mcwwsCycleLightLevel(player, {_block})
