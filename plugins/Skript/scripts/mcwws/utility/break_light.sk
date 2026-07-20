@@ -1,19 +1,43 @@
-# MCWWS：生存/冒险左键拆除光源并掉落；手持光源时补中间标记粒子
+# MCWWS：生存/冒险左键拆除光源并掉落
+# 手持光源时：用 ItemDisplay 显示中间 2D 图标（非粒子），贴近原版状态提示
 
 import:
     org.bukkit.Bukkit
     org.bukkit.Material
-    org.bukkit.Particle
     org.bukkit.util.BlockIterator
+    org.bukkit.util.Transformation
     org.bukkit.event.block.BlockBreakEvent
     org.bukkit.inventory.ItemStack
+    org.bukkit.entity.ItemDisplay
+    org.bukkit.entity.Display
+    org.joml.Vector3f
+    org.joml.Quaternionf
+    java.util.UUID
+
+function mcwwsIsLightRayPassable(type: object) :: boolean:
+    if {_type} is Material.AIR:
+        return true
+    if {_type} is Material.CAVE_AIR:
+        return true
+    if {_type} is Material.VOID_AIR:
+        return true
+    if {_type} is Material.LIGHT:
+        return true
+    if {_type} is Material.WATER:
+        return true
+    if {_type} is Material.BUBBLE_COLUMN:
+        return true
+    return false
 
 function mcwwsFindLookedLight(p: player, range: number) :: object:
     set {_iter} to new BlockIterator({_p}, {_range})
     while {_iter}.hasNext():
         set {_block} to {_iter}.next()
-        if {_block}.getType() is Material.LIGHT:
+        set {_type} to {_block}.getType()
+        if {_type} is Material.LIGHT:
             return {_block}
+        if mcwwsIsLightRayPassable({_type}) is false:
+            return null
     return null
 
 function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
@@ -28,21 +52,75 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
     return true
 
-function mcwwsShowLightMarkers(p: player):
-    set {_data} to Material.LIGHT.createBlockData()
+function mcwwsLightBlockKey(block: object) :: text:
+    set {_loc} to {_block}.getLocation()
+    set {_w} to {_loc}.getWorld().getName()
+    set {_x} to {_loc}.getBlockX()
+    set {_y} to {_loc}.getBlockY()
+    set {_z} to {_loc}.getBlockZ()
+    return "%{_w}%_%{_x}%_%{_y}%_%{_z}%"
+
+function mcwwsRemoveLightIconEntity(uuidText: text):
+    set {_id} to UUID.fromString({_uuidText})
+    set {_ent} to Bukkit.getEntity({_id})
+    if {_ent} is set:
+        if "%{_ent}%" is not "null":
+            {_ent}.remove()
+
+function mcwwsClearLightIcons(p: player):
+    set {_puuid} to "%uuid of {_p}%"
+    loop {mcwws.lightIcon::%{_puuid}%::*}:
+        mcwwsRemoveLightIconEntity(loop-value)
+        delete {mcwws.lightIcon::%{_puuid}%::%loop-index%}
+
+function mcwwsSpawnLightIcon(p: player, block: object, key: text):
+    set {_plugin} to Bukkit.getPluginManager().getPlugin("Skript")
+    if {_plugin} is not set:
+        stop
+    set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
+    set {_world} to {_block}.getWorld()
+    set {_display} to {_world}.spawn({_loc}, ItemDisplay.class)
+    {_display}.setItemStack(new ItemStack(Material.LIGHT, 1))
+    {_display}.setBillboard(Display.Billboard.CENTER)
+    # ItemDisplay 默认朝向与 Billboard 相反，绕 Y 轴转 180° 正面朝向玩家
+    {_display}.setTransformation(new Transformation(new Vector3f(0, 0, 0), new Quaternionf().rotationY(3.1415927), new Vector3f(1, 1, 1), new Quaternionf()))
+    {_display}.setVisibleByDefault(false)
+    {_display}.setShadowStrength(0)
+    {_display}.setShadowRadius(0)
+    {_p}.showEntity({_plugin}, {_display})
+    set {_puuid} to "%uuid of {_p}%"
+    set {mcwws.lightIcon::%{_puuid}%::%{_key}%} to {_display}.getUniqueId().toString()
+
+# 手持光源：刷新附近光源格上的 ItemDisplay 图标（仅对该玩家可见）
+function mcwwsRefreshLightIcons(p: player):
+    set {_puuid} to "%uuid of {_p}%"
+    delete {_needed::*}
     loop blocks in radius 8 around {_p}:
         if loop-block is light:
-            set {_loc} to location of loop-block
-            add 0.5 to y-coordinate of {_loc}
-            add 0.5 to x-coordinate of {_loc}
-            add 0.5 to z-coordinate of {_loc}
-            {_p}.spawnParticle(Particle.BLOCK_MARKER, {_loc}, 1, {_data})
+            set {_b} to loop-block
+            set {_key} to mcwwsLightBlockKey({_b})
+            set {_needed::%{_key}%} to true
+            if {mcwws.lightIcon::%{_puuid}%::%{_key}%} is not set:
+                mcwwsSpawnLightIcon({_p}, {_b}, {_key})
+    loop {mcwws.lightIcon::%{_puuid}%::*}:
+        set {_key} to loop-index
+        if {_needed::%{_key}%} is not set:
+            mcwwsRemoveLightIconEntity(loop-value)
+            delete {mcwws.lightIcon::%{_puuid}%::%{_key}%}
 
-# 手持光源时显示中间标记（原版粒子缺失时的补偿）
 every 10 ticks:
     loop all players:
         if tool of loop-player is light:
-            mcwwsShowLightMarkers(loop-player)
+            mcwwsRefreshLightIcons(loop-player)
+        else:
+            mcwwsClearLightIcons(loop-player)
+
+on quit:
+    mcwwsClearLightIcons(player)
+
+on unload:
+    loop all players:
+        mcwwsClearLightIcons(loop-player)
 
 on left click:
     if gamemode of player is creative:
