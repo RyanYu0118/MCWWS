@@ -1,5 +1,8 @@
-ryan_crystal:
-    displayName: "Ryan 水晶"
-    loreLine: "示例自定义物品，用于测试自定义物品价格表。"
-    buy: 128.0
-    sell: 96.0
+# MCWWS 自定义物品价格表（网页「MCWWS」分类 + 可与 UltimateShop 店铺对应）
+# 物品 ID 建议使用原版 material 小写名，便于发放与映射。
+
+light:
+  displayName: "光源方块"
+  loreLine: "合成：一圈荧石粉 + 中间发酵蛛眼 → 8 个"
+  buy: 4.0
+  sell: 3.5

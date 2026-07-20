@@ -234,15 +234,15 @@ buttons:
         shop: daily
   Q:
     display-item:
-      material: KNOWLEDGE_BOOK
-      name: '{lang:example-name}'
+      material: LIGHT
+      name: '{lang:mcwws-name}'
       lore:
-        - '{lang:example-lore-1}'
-        - '{lang:example-lore-2}'
+        - '{lang:mcwws-lore-1}'
+        - '{lang:mcwws-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: example
+        shop: mcwws
   R:
     display-item:
       material: BRUSH

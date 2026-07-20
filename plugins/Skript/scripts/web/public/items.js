@@ -253,7 +253,7 @@ function renderCategoryTabs() {
     const tabs = document.getElementById('categoryTabs');
     if (!tabs) return;
 
-    const customBtn = '<button class="category-btn" data-scope="custom">自定义</button>';
+    const customBtn = '<button class="category-btn" data-scope="custom">MCWWS</button>';
     const dynamic = shopCategoryList.map((cat) => {
         const count = cat.itemCount != null ? ` (${cat.itemCount})` : '';
         return `<button class="category-btn" data-scope="${escapeHtml(cat.id)}" title="${escapeHtml(cat.name)}">${escapeHtml(cat.name)}${count}</button>`;
