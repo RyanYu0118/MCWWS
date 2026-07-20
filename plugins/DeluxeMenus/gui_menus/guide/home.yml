@@ -495,9 +495,35 @@ items:
     display_name: '&e服务器管理'
     lore:
       - '&f点击管理服务器'
+      - '&7仅管理员 / Ryan_yu__'
+    view_requirement:
+      minimum_requirements: 1
+      requirements:
+        is_owner:
+          type: string equals
+          input: '%player_name%'
+          output: 'Ryan_yu__'
+        is_op:
+          type: string equals
+          input: '%player_is_op%'
+          output: 'yes'
     left_click_commands:
       - '[openguimenu] server'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
+    left_click_requirement:
+      minimum_requirements: 1
+      requirements:
+        is_owner:
+          type: string equals
+          input: '%player_name%'
+          output: 'Ryan_yu__'
+        is_op:
+          type: string equals
+          input: '%player_is_op%'
+          output: 'yes'
+      deny_commands:
+        - '[message] &c你没有权限打开服务器管理。'
+        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
   'more_com':
     material: COMMAND_BLOCK
     enchantments:
