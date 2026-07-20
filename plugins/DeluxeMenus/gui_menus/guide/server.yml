@@ -3,16 +3,10 @@ update_interval: 1
 open_command: []
 size: 27
 open_requirement:
-  minimum_requirements: 1
   requirements:
-    is_owner:
-      type: string equals
-      input: '%player_name%'
-      output: 'Ryan_yu__'
-    is_op:
-      type: string equals
-      input: '%player_is_op%'
-      output: 'yes'
+    admin:
+      type: javascript
+      expression: "'%player_name%' == 'Ryan_yu__' || '%player_is_op%' == 'yes'"
   deny_commands:
     - '[message] &c你没有权限打开服务器管理。'
     - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
@@ -32,26 +26,13 @@ items:
     lore:
       - ''
       - '&f执行：&a/sk reload all'
+      - '&7以你的身份执行，聊天栏可见日志'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] sk reload all'
-      - '[message] &a已执行 &e/sk reload all'
+      - '[console] lp user %player_name% permission settemp skript.admin true 15s'
+      - '[player] sk reload all<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-    shift_left_click_requirement:
-      minimum_requirements: 1
-      requirements:
-        is_owner:
-          type: string equals
-          input: '%player_name%'
-          output: 'Ryan_yu__'
-        is_op:
-          type: string equals
-          input: '%player_is_op%'
-          output: 'yes'
-      deny_commands:
-        - '[message] &c你没有权限执行此操作。'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
   'reload_cc':
     material: CRAFTING_TABLE
     enchantments:
@@ -65,26 +46,14 @@ items:
     lore:
       - ''
       - '&f执行：&a/cc reload'
+      - '&7以你的身份执行，聊天栏可见日志'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] cc reload'
-      - '[message] &a已执行 &e/cc reload'
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.reload true 15s'
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.* true 15s'
+      - '[player] cc reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-    shift_left_click_requirement:
-      minimum_requirements: 1
-      requirements:
-        is_owner:
-          type: string equals
-          input: '%player_name%'
-          output: 'Ryan_yu__'
-        is_op:
-          type: string equals
-          input: '%player_is_op%'
-          output: 'yes'
-      deny_commands:
-        - '[message] &c你没有权限执行此操作。'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
   'reload_shop':
     material: EMERALD
     enchantments:
@@ -98,26 +67,13 @@ items:
     lore:
       - ''
       - '&f执行：&a/shop reload'
+      - '&7以你的身份执行，聊天栏可见日志'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] shop reload'
-      - '[message] &a已执行 &e/shop reload'
+      - '[console] lp user %player_name% permission settemp ultimateshop.reload true 15s'
+      - '[player] shop reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-    shift_left_click_requirement:
-      minimum_requirements: 1
-      requirements:
-        is_owner:
-          type: string equals
-          input: '%player_name%'
-          output: 'Ryan_yu__'
-        is_op:
-          type: string equals
-          input: '%player_is_op%'
-          output: 'yes'
-      deny_commands:
-        - '[message] &c你没有权限执行此操作。'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
   'reload_dm':
     material: NETHER_STAR
     enchantments:
@@ -131,26 +87,13 @@ items:
     lore:
       - ''
       - '&f执行：&a/dm reload'
+      - '&7以你的身份执行，聊天栏可见日志'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] dm reload'
-      - '[message] &a已执行 &e/dm reload'
+      - '[console] lp user %player_name% permission settemp deluxemenus.admin true 15s'
+      - '[player] dm reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-    shift_left_click_requirement:
-      minimum_requirements: 1
-      requirements:
-        is_owner:
-          type: string equals
-          input: '%player_name%'
-          output: 'Ryan_yu__'
-        is_op:
-          type: string equals
-          input: '%player_is_op%'
-          output: 'yes'
-      deny_commands:
-        - '[message] &c你没有权限执行此操作。'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
   'back':
     material: ARROW
     slot: 22
