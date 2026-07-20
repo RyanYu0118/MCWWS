@@ -1,9 +1,9 @@
-# MCWWS：生存/冒险模式下左键拆除光源方块并掉落
-# 原版光源几乎无法挖掘，本脚本沿视线检测 LIGHT 并移除
+# MCWWS：生存/冒险左键拆除光源并掉落；手持光源时补中间标记粒子
 
 import:
     org.bukkit.Bukkit
     org.bukkit.Material
+    org.bukkit.Particle
     org.bukkit.util.BlockIterator
     org.bukkit.event.block.BlockBreakEvent
     org.bukkit.inventory.ItemStack
@@ -22,10 +22,27 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     if {_event}.isCancelled() is true:
         return false
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
+    set {_world} to {_block}.getWorld()
     {_block}.setType(Material.AIR)
-    drop item new ItemStack(Material.LIGHT, 1) at {_loc}
+    {_world}.dropItemNaturally({_loc}, new ItemStack(Material.LIGHT, 1))
     play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
     return true
+
+function mcwwsShowLightMarkers(p: player):
+    set {_data} to Material.LIGHT.createBlockData()
+    loop blocks in radius 8 around {_p}:
+        if loop-block is light:
+            set {_loc} to location of loop-block
+            add 0.5 to y-coordinate of {_loc}
+            add 0.5 to x-coordinate of {_loc}
+            add 0.5 to z-coordinate of {_loc}
+            {_p}.spawnParticle(Particle.BLOCK_MARKER, {_loc}, 1, {_data})
+
+# 手持光源时显示中间标记（原版粒子缺失时的补偿）
+every 10 ticks:
+    loop all players:
+        if tool of loop-player is light:
+            mcwwsShowLightMarkers(loop-player)
 
 on left click:
     if gamemode of player is creative:
