@@ -27,10 +27,13 @@ items:
       - ''
       - '&f执行：&a/sk reload all'
       - '&7以你的身份执行，聊天栏可见日志'
+      - '&7重载后会自动恢复本界面'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp skript.admin true 15s'
+      - '[console] lp user %player_name% permission settemp skript.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
       - '[player] sk reload all<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'reload_cc':
@@ -47,11 +50,14 @@ items:
       - ''
       - '&f执行：&a/cc reload'
       - '&7以你的身份执行，聊天栏可见日志'
+      - '&7重载后会自动恢复本界面'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp customcrafting.cmd.reload true 15s'
-      - '[console] lp user %player_name% permission settemp customcrafting.cmd.* true 15s'
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.reload true 30s'
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.* true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
       - '[player] cc reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'reload_shop':
@@ -68,10 +74,13 @@ items:
       - ''
       - '&f执行：&a/shop reload'
       - '&7以你的身份执行，聊天栏可见日志'
+      - '&7重载后会自动恢复本界面'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp ultimateshop.reload true 15s'
+      - '[console] lp user %player_name% permission settemp ultimateshop.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
       - '[player] shop reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'reload_dm':
@@ -88,10 +97,13 @@ items:
       - ''
       - '&f执行：&a/dm reload'
       - '&7以你的身份执行，聊天栏可见日志'
+      - '&7重载后会自动恢复本界面'
       - ''
       - '&cShift+左键 &7确认执行'
     shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp deluxemenus.admin true 15s'
+      - '[console] lp user %player_name% permission settemp deluxemenus.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
       - '[player] dm reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'back':
