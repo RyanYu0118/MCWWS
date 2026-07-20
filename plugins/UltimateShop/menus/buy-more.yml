@@ -5,7 +5,7 @@ layout:
   - '000000000'
   - '0abcdefg0'
   - '000000000'
-  - '123456780'
+  - '012345670'
   - '000D0E000'
   - 'A0000000C'
 
@@ -37,20 +37,12 @@ amount-items:
   4:
     display-item:
       material: LIME_STAINED_GLASS_PANE
-      amount: 6
-      name: '&a选择数量 &f×6'
-      lore:
-        - '{lang:buy-more-set-6}'
-    set-amount: 6
-  5:
-    display-item:
-      material: LIME_STAINED_GLASS_PANE
       amount: 8
       name: '&a选择数量 &f×8'
       lore:
         - '{lang:buy-more-set-8}'
     set-amount: 8
-  6:
+  5:
     display-item:
       material: LIME_STAINED_GLASS_PANE
       amount: 16
@@ -58,7 +50,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-16}'
     set-amount: 16
-  7:
+  6:
     display-item:
       material: LIME_STAINED_GLASS_PANE
       amount: 32
@@ -66,7 +58,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-32}'
     set-amount: 32
-  8:
+  7:
     display-item:
       material: LIME_STAINED_GLASS_PANE
       amount: 64
