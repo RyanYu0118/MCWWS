@@ -1,0 +1,41 @@
+# MCWWS：生存/冒险模式下左键拆除光源方块并掉落
+# 原版光源几乎无法挖掘，本脚本沿视线检测 LIGHT 并移除
+
+import:
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.util.BlockIterator
+    org.bukkit.event.block.BlockBreakEvent
+    org.bukkit.inventory.ItemStack
+
+function mcwwsFindLookedLight(p: player, range: number) :: object:
+    set {_iter} to new BlockIterator({_p}, {_range})
+    while {_iter}.hasNext():
+        set {_block} to {_iter}.next()
+        if {_block}.getType() is Material.LIGHT:
+            return {_block}
+    return null
+
+function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
+    set {_event} to new BlockBreakEvent({_block}, {_p})
+    Bukkit.getPluginManager().callEvent({_event})
+    if {_event}.isCancelled() is true:
+        return false
+    set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
+    {_block}.setType(Material.AIR)
+    drop item new ItemStack(Material.LIGHT, 1) at {_loc}
+    play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
+    return true
+
+on left click:
+    if gamemode of player is creative:
+        stop
+    if gamemode of player is spectator:
+        stop
+    set {_block} to mcwwsFindLookedLight(player, 5)
+    if {_block} is not set:
+        stop
+    if "%{_block}%" is "null":
+        stop
+    cancel event
+    mcwwsBreakLightAsPlayer(player, {_block})
