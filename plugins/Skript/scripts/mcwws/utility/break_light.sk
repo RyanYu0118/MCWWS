@@ -108,6 +108,16 @@ function mcwwsRefreshLightIcons(p: player):
             mcwwsRemoveLightIconEntity(loop-value)
             delete {mcwws.lightIcon::%{_puuid}%::%{_key}%}
 
+every 1 tick:
+    loop {mcwws.lightProtect::*}:
+        remove 1 from {mcwws.lightProtect::%loop-index%}
+        if {mcwws.lightProtect::%loop-index%} < 1:
+            delete {mcwws.lightProtect::%loop-index%}
+    loop {mcwws.recentPlace::*}:
+        remove 1 from {mcwws.recentPlace::%loop-index%}
+        if {mcwws.recentPlace::%loop-index%} < 1:
+            delete {mcwws.recentPlace::%loop-index%}
+
 every 10 ticks:
     loop all players:
         if tool of loop-player is light:
@@ -117,20 +127,39 @@ every 10 ticks:
 
 on quit:
     mcwwsClearLightIcons(player)
+    delete {mcwws.recentPlace::%uuid of player%}
 
 on unload:
     loop all players:
         mcwwsClearLightIcons(loop-player)
+    delete {mcwws.lightProtect::*}
+    delete {mcwws.recentPlace::*}
+
+# 刚放下的光源短时保护，避免「潜行放置后立刻被拆除脚本拆成掉落物」
+on place:
+    set {mcwws.recentPlace::%uuid of player%} to 8
+    if event-block is light:
+        set {_key} to mcwwsLightBlockKey(event-block)
+        set {mcwws.lightProtect::%{_key}%} to 10
 
 on left click:
     if gamemode of player is creative:
         stop
     if gamemode of player is spectator:
         stop
+    # 潜行时优先放置/交互，不触发拆除（与潜行右键放置冲突）
+    if player is sneaking:
+        stop
+    set {_uuid} to "%uuid of player%"
+    if {mcwws.recentPlace::%{_uuid}%} is set:
+        stop
     set {_block} to mcwwsFindLookedLight(player, 5)
     if {_block} is not set:
         stop
     if "%{_block}%" is "null":
+        stop
+    set {_key} to mcwwsLightBlockKey({_block})
+    if {mcwws.lightProtect::%{_key}%} is set:
         stop
     cancel event
     mcwwsBreakLightAsPlayer(player, {_block})
