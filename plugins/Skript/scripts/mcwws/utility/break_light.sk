@@ -54,9 +54,93 @@ function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
     play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
     return true
 
-function mcwwsLightIconItem() :: object:
-    # 物品/图标永远用原版默认外观（亮度 15），不写 block_state / 含水
-    return new ItemStack(Material.LIGHT, 1)
+# MCWWS：生存/冒险左键拆除光源并掉落；站立右键调节已放光源亮度
+# 生存：手持光源对空气右键 → 选择放置亮度 0–15（默认 15）；手持物品外观仍为原版默认
+# 世界图标 / 选择 UI：按真实亮度显示对应贴图
+
+import:
+    org.bukkit.Bukkit
+    org.bukkit.Material
+    org.bukkit.util.BlockIterator
+    org.bukkit.util.Transformation
+    org.bukkit.event.block.BlockBreakEvent
+    org.bukkit.inventory.ItemStack
+    org.bukkit.entity.ItemDisplay
+    org.bukkit.entity.Display
+    org.joml.Vector3f
+    org.joml.Quaternionf
+    java.util.UUID
+    java.util.Arrays
+
+function mcwwsIsLightRayPassable(type: object) :: boolean:
+    if {_type} is Material.AIR:
+        return true
+    if {_type} is Material.CAVE_AIR:
+        return true
+    if {_type} is Material.VOID_AIR:
+        return true
+    if {_type} is Material.LIGHT:
+        return true
+    if {_type} is Material.WATER:
+        return true
+    if {_type} is Material.BUBBLE_COLUMN:
+        return true
+    return false
+
+function mcwwsFindLookedLight(p: player, range: number) :: object:
+    set {_iter} to new BlockIterator({_p}, {_range})
+    while {_iter}.hasNext():
+        set {_block} to {_iter}.next()
+        set {_type} to {_block}.getType()
+        if {_type} is Material.LIGHT:
+            return {_block}
+        if mcwwsIsLightRayPassable({_type}) is false:
+            return null
+    return null
+
+function mcwwsBreakLightAsPlayer(p: player, block: object) :: boolean:
+    set {_event} to new BlockBreakEvent({_block}, {_p})
+    Bukkit.getPluginManager().callEvent({_event})
+    if {_event}.isCancelled() is true:
+        return false
+    set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
+    set {_world} to {_block}.getWorld()
+    {_block}.setType(Material.AIR)
+    {_world}.dropItemNaturally({_loc}, new ItemStack(Material.LIGHT, 1))
+    play sound "block.stone.break" with volume 1 and pitch 0.8 at {_loc} for {_p}
+    return true
+
+function mcwwsLightItemForLevel(level: number) :: object:
+    # 仅设置 level 贴图，不改动含水；用于世界图标与选择 UI
+    set {_lv} to {_level}
+    if {_lv} < 0:
+        set {_lv} to 0
+    if {_lv} > 15:
+        set {_lv} to 15
+    set {_item} to new ItemStack(Material.LIGHT, 1)
+    set {_meta} to {_item}.getItemMeta()
+    set {_bd} to Material.LIGHT.createBlockData()
+    {_bd}.setLevel({_lv})
+    {_meta}.setBlockData({_bd})
+    {_item}.setItemMeta({_meta})
+    return {_item}
+
+function mcwwsGetLightLevel(block: object) :: number:
+    return {_block}.getBlockData().getLevel()
+
+function mcwwsUpdateLightIconItem(p: player, block: object):
+    set {_puuid} to "%uuid of {_p}%"
+    set {_key} to mcwwsLightBlockKey({_block})
+    set {_uuidText} to {mcwws.lightIcon::%{_puuid}%::%{_key}%}
+    if {_uuidText} is not set:
+        stop
+    set {_id} to UUID.fromString({_uuidText})
+    set {_ent} to Bukkit.getEntity({_id})
+    if {_ent} is not set:
+        stop
+    if "%{_ent}%" is "null":
+        stop
+    {_ent}.setItemStack(mcwwsLightItemForLevel(mcwwsGetLightLevel({_block})))
 
 function mcwwsCycleLightLevel(p: player, block: object) :: boolean:
     set {_data} to {_block}.getBlockData()
@@ -67,6 +151,7 @@ function mcwwsCycleLightLevel(p: player, block: object) :: boolean:
     {_block}.setBlockData({_data})
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
     play sound "ui.button.click" with volume 0.4 and pitch 1.2 at {_loc} for {_p}
+    mcwwsUpdateLightIconItem({_p}, {_block})
     return true
 
 function mcwwsGetPlaceLightLevel(p: player) :: number:
@@ -88,7 +173,7 @@ function mcwwsOpenLightLevelMenu(p: player):
     set {_gui} to a new chest inventory with 2 rows named "选择光源亮度"
     loop integers from 0 to 15:
         set {_lv} to loop-number
-        set {_item} to mcwwsLightIconItem()
+        set {_item} to mcwwsLightItemForLevel({_lv})
         set {_meta} to {_item}.getItemMeta()
         {_meta}.setDisplayName("§e亮度 §f%{_lv}%")
         if {_lv} is {_cur}:
@@ -104,11 +189,12 @@ function mcwwsOpenLightLevelMenu(p: player):
     open {_gui} to {_p}
 
 function mcwwsApplyPlaceLightLevel(p: player, block: object):
-    # 只改 level，保留原有 waterlogged 等状态；物品外观仍为默认 15
+    # 只改 level，保留原有 waterlogged；手持物品仍为默认外观
     set {_level} to mcwwsGetPlaceLightLevel({_p})
     set {_data} to {_block}.getBlockData()
     {_data}.setLevel({_level})
     {_block}.setBlockData({_data})
+    mcwwsUpdateLightIconItem({_p}, {_block})
 
 function mcwwsLightBlockKey(block: object) :: text:
     set {_loc} to {_block}.getLocation()
@@ -138,7 +224,7 @@ function mcwwsSpawnLightIcon(p: player, block: object, key: text):
     set {_loc} to {_block}.getLocation().add(0.5, 0.5, 0.5)
     set {_world} to {_block}.getWorld()
     set {_display} to {_world}.spawn({_loc}, ItemDisplay.class)
-    {_display}.setItemStack(mcwwsLightIconItem())
+    {_display}.setItemStack(mcwwsLightItemForLevel(mcwwsGetLightLevel({_block})))
     {_display}.setBillboard(Display.Billboard.CENTER)
     # ItemDisplay 默认朝向与 Billboard 相反，绕 Y 轴转 180° 正面朝向玩家
     {_display}.setTransformation(new Transformation(new Vector3f(0, 0, 0), new Quaternionf().rotationY(3.1415927), new Vector3f(1, 1, 1), new Quaternionf()))
@@ -160,6 +246,8 @@ function mcwwsRefreshLightIcons(p: player):
             set {_needed::%{_key}%} to true
             if {mcwws.lightIcon::%{_puuid}%::%{_key}%} is not set:
                 mcwwsSpawnLightIcon({_p}, {_b}, {_key})
+            else:
+                mcwwsUpdateLightIconItem({_p}, {_b})
     loop {mcwws.lightIcon::%{_puuid}%::*}:
         set {_key} to loop-index
         if {_needed::%{_key}%} is not set:
