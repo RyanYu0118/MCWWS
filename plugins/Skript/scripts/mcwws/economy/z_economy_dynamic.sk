@@ -179,6 +179,10 @@ function getDynamicMarketMultiplier(item: text) :: number:
     if {-base_price::buy::%{_item}%} is not set:
         set {-dyn_factor::%{_item}%} to 1.0
         return 1.0
+    # MCWWS 自定义商品保持 items.yml / custom_prices 基准价，不参与动态浮动
+    if {-item_category::%{_item}%} is "mcwws":
+        set {-dyn_factor::%{_item}%} to 1.0
+        return 1.0
     mcwwsEnsureMarketItemState({_item})
     set {_eq} to mcwwsGetItemEquilibrium({_item})
     set {_stock} to {-market_stock::%{_item}%}
