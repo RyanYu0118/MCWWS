@@ -3,7 +3,7 @@
 # - sk reload all：wait 会被中断，改由本脚本 on load 读取持久变量再打开
 
 function mcwwsTryReopenServerMenu(playerName: text):
-    set {_key} to "%{_playerName}%"
+    set {_key} to {_playerName}
     if {mcwws.reopenServerMenu::%{_key}%} is not set:
         stop
     delete {mcwws.reopenServerMenu::%{_key}%}
@@ -19,7 +19,7 @@ command /mcwws_queue_reopen_server [<text>]:
     trigger:
         if arg-1 is not set:
             stop
-        set {_name} to "%arg-1%"
+        set {_name} to arg-1
         set {mcwws.reopenServerMenu::%{_name}%} to true
         # 非 sk reload：约 2.5 秒后重开；sk reload all 会取消此 wait，改走 on load
         wait 50 ticks
@@ -28,4 +28,5 @@ command /mcwws_queue_reopen_server [<text>]:
 on load:
     wait 40 ticks
     loop {mcwws.reopenServerMenu::*}:
-        mcwwsTryReopenServerMenu("%loop-index%")
+        set {_idx} to loop-index
+        mcwwsTryReopenServerMenu({_idx})
