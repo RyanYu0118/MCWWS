@@ -37,7 +37,8 @@ const SHOP_META = {
     nether: { shopName: '{lang:nether-shop-name}', menu: 'example-shop-menu' },
     discs: { shopName: '{lang:discs-shop-name}', menu: 'example-shop-menu' },
     daily: { shopName: '{lang:daily-shop-name}', menu: 'daily-shop-menu' },
-    example: { shopName: 'Example Shop', menu: 'example-shop-menu' }
+    example: { shopName: 'Example Shop', menu: 'example-shop-menu' },
+    mcwws: { shopName: '{lang:mcwws-shop-name}', menu: 'example-shop-menu' }
 };
 
 function normalizeId(id) {
@@ -77,6 +78,7 @@ function resolveShopForItem(itemId, category) {
         end: 'end',
         nether: 'nether',
         discs: 'discs',
+        mcwws: 'mcwws',
         brick: 'blocks',
         earth: 'blocks',
         sand: 'blocks',
