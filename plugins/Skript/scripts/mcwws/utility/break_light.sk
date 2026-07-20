@@ -228,8 +228,16 @@ on unload:
     delete {mcwws.lightLevelGui::*}
 
 # 刚放下的光源短时保护；生存模式应用所选放置亮度
+# 用其它方块顶替光源格时掉落光源（原版不会掉）
 on place:
     set {mcwws.recentPlace::%uuid of player%} to 8
+    if gamemode of player is not creative:
+        if gamemode of player is not spectator:
+            set {_replaced} to event.getBlockReplacedState().getType()
+            if {_replaced} is Material.LIGHT:
+                if event-block is not light:
+                    set {_loc} to event-block.getLocation().add(0.5, 0.5, 0.5)
+                    event-block.getWorld().dropItemNaturally({_loc}, new ItemStack(Material.LIGHT, 1))
     if event-block is light:
         set {_key} to mcwwsLightBlockKey(event-block)
         set {mcwws.lightProtect::%{_key}%} to 10
