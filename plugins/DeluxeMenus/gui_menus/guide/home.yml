@@ -370,7 +370,7 @@ items:
       - '&eShift+左键 &7领取背包头颅'
       - '&eShift+右键 &7收回背包头颅'
     left_click_commands:
-      - '[player] bags open'
+      - '[player] bags open<delay=2>'
       - '[close]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     shift_left_click_commands:
