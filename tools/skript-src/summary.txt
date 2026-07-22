@@ -1,0 +1,30 @@
+Summary for plugins/Skript-2.15.2.jar
+Decompiled with CFR 0.152
+
+
+ch.njol.skript.classes.data.BukkitEventValues
+----------------------------
+
+register(org.skriptlang.skript.bukkit.lang.eventvalue.EventValueRegistry )
+  Exception : java.lang.UnsupportedOperationException
+
+
+ch.njol.skript.conditions.CondContains
+----------------------------
+
+check(org.bukkit.event.Event )
+  Unable to fully structure code
+
+
+ch.njol.skript.lang.SkriptParser
+----------------------------
+
+parse(java.util.Iterator<? extends org.skriptlang.skript.registration.SyntaxInfo<? extends T>> )
+  Unable to fully structure code
+
+
+ch.njol.skript.patterns.TypePatternElement
+----------------------------
+
+match(java.lang.String ch.njol.skript.patterns.MatchResult )
+  Unable to fully structure code

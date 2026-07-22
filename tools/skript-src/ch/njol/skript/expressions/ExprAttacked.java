@@ -1,0 +1,131 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  io.papermc.paper.event.player.PrePlayerAttackEntityEvent
+ *  org.bukkit.entity.Entity
+ *  org.bukkit.event.Event
+ *  org.bukkit.event.entity.EntityDamageEvent
+ *  org.bukkit.event.entity.EntityDeathEvent
+ *  org.bukkit.event.entity.EntityEvent
+ *  org.bukkit.event.entity.ProjectileHitEvent
+ *  org.bukkit.event.vehicle.VehicleDamageEvent
+ *  org.bukkit.event.vehicle.VehicleDestroyEvent
+ *  org.bukkit.event.vehicle.VehicleEvent
+ *  org.jetbrains.annotations.Nullable
+ */
+package ch.njol.skript.expressions;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Events;
+import ch.njol.skript.doc.Example;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.entity.EntityData;
+import ch.njol.skript.lang.EventRestrictedSyntax;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.ExpressionType;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.skript.lang.util.SimpleExpression;
+import ch.njol.skript.log.ErrorQuality;
+import ch.njol.skript.registrations.Classes;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import io.papermc.paper.event.player.PrePlayerAttackEntityEvent;
+import java.lang.reflect.Array;
+import org.bukkit.entity.Entity;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDamageEvent;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.EntityEvent;
+import org.bukkit.event.entity.ProjectileHitEvent;
+import org.bukkit.event.vehicle.VehicleDamageEvent;
+import org.bukkit.event.vehicle.VehicleDestroyEvent;
+import org.bukkit.event.vehicle.VehicleEvent;
+import org.jetbrains.annotations.Nullable;
+
+@Name(value="Attacked")
+@Description(value={"The victim of a damage event, e.g. when a player attacks a zombie this expression represents the zombie."})
+@Example(value="on damage:\n\tvictim is a creeper\n\tdamage the attacked by 1 heart\n")
+@Since(value={"1.3, 2.6.1 (projectile hit event)"})
+@Events(value={"damage", "death", "projectile hit", "attempt attack"})
+public class ExprAttacked
+extends SimpleExpression<Entity>
+implements EventRestrictedSyntax {
+    private static final boolean SUPPORT_PROJECTILE_HIT = Skript.methodExists(ProjectileHitEvent.class, "getHitEntity", new Class[0]);
+    private EntityData<?> type;
+
+    @Override
+    public boolean init(Expression<?>[] vars, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parser) {
+        String type;
+        String string = type = parser.regexes.size() == 0 ? null : parser.regexes.get(0).group();
+        if (type == null) {
+            this.type = EntityData.fromClass(Entity.class);
+        } else {
+            EntityData<?> t = EntityData.parse(type);
+            if (t == null) {
+                Skript.error("'" + type + "' is not an entity type", ErrorQuality.NOT_AN_EXPRESSION);
+                return false;
+            }
+            this.type = t;
+        }
+        return true;
+    }
+
+    @Override
+    public Class<? extends Event>[] supportedEvents() {
+        return CollectionUtils.array(EntityDamageEvent.class, EntityDeathEvent.class, VehicleDamageEvent.class, VehicleDestroyEvent.class, ProjectileHitEvent.class, PrePlayerAttackEntityEvent.class);
+    }
+
+    @Nullable
+    protected Entity[] get(Event event) {
+        Entity entity;
+        Entity[] one = (Entity[])Array.newInstance(this.type.getType(), 1);
+        if (event instanceof EntityEvent) {
+            EntityEvent entityEvent = (EntityEvent)event;
+            if (SUPPORT_PROJECTILE_HIT && event instanceof ProjectileHitEvent) {
+                ProjectileHitEvent projectileHitEvent = (ProjectileHitEvent)event;
+                entity = projectileHitEvent.getHitEntity();
+            } else {
+                entity = entityEvent.getEntity();
+            }
+        } else if (event instanceof VehicleEvent) {
+            VehicleEvent vehicleEvent = (VehicleEvent)event;
+            entity = vehicleEvent.getVehicle();
+        } else if (event instanceof PrePlayerAttackEntityEvent) {
+            PrePlayerAttackEntityEvent preAttackEvent = (PrePlayerAttackEntityEvent)event;
+            entity = preAttackEvent.getAttacked();
+        } else {
+            return null;
+        }
+        if (this.type.isInstance(entity)) {
+            one[0] = entity;
+            return one;
+        }
+        return null;
+    }
+
+    @Override
+    public boolean isSingle() {
+        return true;
+    }
+
+    @Override
+    public Class<? extends Entity> getReturnType() {
+        return this.type.getType();
+    }
+
+    @Override
+    public String toString(@Nullable Event e, boolean debug) {
+        if (e == null) {
+            return "the attacked " + String.valueOf(this.type);
+        }
+        return Classes.getDebugMessage(this.getSingle(e));
+    }
+
+    static {
+        Skript.registerExpression(ExprAttacked.class, Entity.class, ExpressionType.SIMPLE, "[the] (attacked|damaged|victim) [<(.+)>]");
+    }
+}
+

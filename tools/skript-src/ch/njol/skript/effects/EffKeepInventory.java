@@ -1,0 +1,81 @@
+/*
+ * Decompiled with CFR 0.152.
+ * 
+ * Could not load the following classes:
+ *  org.bukkit.event.Event
+ *  org.bukkit.event.entity.EntityDeathEvent
+ *  org.bukkit.event.entity.PlayerDeathEvent
+ *  org.jetbrains.annotations.Nullable
+ */
+package ch.njol.skript.effects;
+
+import ch.njol.skript.Skript;
+import ch.njol.skript.doc.Description;
+import ch.njol.skript.doc.Events;
+import ch.njol.skript.doc.Example;
+import ch.njol.skript.doc.Name;
+import ch.njol.skript.doc.Since;
+import ch.njol.skript.lang.Effect;
+import ch.njol.skript.lang.EventRestrictedSyntax;
+import ch.njol.skript.lang.Expression;
+import ch.njol.skript.lang.SkriptParser;
+import ch.njol.util.Kleenean;
+import ch.njol.util.coll.CollectionUtils;
+import org.bukkit.event.Event;
+import org.bukkit.event.entity.EntityDeathEvent;
+import org.bukkit.event.entity.PlayerDeathEvent;
+import org.jetbrains.annotations.Nullable;
+
+@Name(value="Keep Inventory / Experience")
+@Description(value={"Keeps the inventory or/and experiences of the dead player in a death event."})
+@Example(value="on death of a player:\n\tif the victim is an op:\n\t\tkeep the inventory and experiences\n")
+@Since(value={"2.4"})
+@Events(value={"death"})
+public class EffKeepInventory
+extends Effect
+implements EventRestrictedSyntax {
+    private boolean keepItems;
+    private boolean keepExp;
+
+    @Override
+    public boolean init(Expression<?>[] exprs, int matchedPattern, Kleenean isDelayed, SkriptParser.ParseResult parseResult) {
+        this.keepItems = matchedPattern == 0 || parseResult.mark == 1;
+        boolean bl = this.keepExp = matchedPattern == 1 || parseResult.mark == 1;
+        if (isDelayed.isTrue()) {
+            Skript.error("Can't keep the inventory/experience anymore after the event has already passed");
+            return false;
+        }
+        return true;
+    }
+
+    @Override
+    public Class<? extends Event>[] supportedEvents() {
+        return CollectionUtils.array(EntityDeathEvent.class);
+    }
+
+    @Override
+    protected void execute(Event event) {
+        if (event instanceof PlayerDeathEvent) {
+            PlayerDeathEvent deathEvent = (PlayerDeathEvent)event;
+            if (this.keepItems) {
+                deathEvent.setKeepInventory(true);
+            }
+            if (this.keepExp) {
+                deathEvent.setKeepLevel(true);
+            }
+        }
+    }
+
+    @Override
+    public String toString(@Nullable Event event, boolean debug) {
+        if (this.keepItems && !this.keepExp) {
+            return "keep the inventory";
+        }
+        return "keep the experience" + (this.keepItems ? " and inventory" : "");
+    }
+
+    static {
+        Skript.registerEffect(EffKeepInventory.class, "keep [the] (inventory|items) [(1:and [e]xp[erience][s] [point[s]])]", "keep [the] [e]xp[erience][s] [point[s]] [(1:and (inventory|items))]");
+    }
+}
+

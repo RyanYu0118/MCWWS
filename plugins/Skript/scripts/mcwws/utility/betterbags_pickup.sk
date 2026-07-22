@@ -1,0 +1,52 @@
+# BetterBags：仅当玩家物品栏里已有背包时，才自动拾取 items.yml 中的可售物品
+# 修复 should-give-bag-on-join: false 仍因捡泥土而弹出头颅背包的问题
+
+import:
+    org.bukkit.Material
+    org.bukkit.NamespacedKey
+    org.bukkit.persistence.PersistentDataType
+    org.bukkit.event.player.PlayerAttemptPickupItemEvent
+    cat.necko.bags.Plugin as BetterBagsPlugin
+    cat.necko.bags.config.bags.BagsData
+
+function mcwwsPlayerHasBetterBag(p: player) :: boolean:
+    set {_key} to new NamespacedKey("betterbags", "item")
+    loop all items in {_p}'s inventory:
+        set {_it} to loop-item
+        if {_it} is not set:
+            continue
+        if {_it} is air:
+            continue
+        set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
+        if {_tag} is "bag":
+            return true
+    return false
+
+function mcwwsIsBetterBagsSellable(type: object) :: boolean:
+    set {_plugin} to BetterBagsPlugin.getInstance()
+    if {_plugin} is not set:
+        return false
+    return {_plugin}.getItemsData().isSellable({_type})
+
+on PlayerAttemptPickupItemEvent:
+    set {_plugin} to BetterBagsPlugin.getInstance()
+    if {_plugin} is not set:
+        stop
+    set {_p} to event.getPlayer()
+    if mcwwsPlayerHasBetterBag({_p}) is false:
+        stop
+    set {_itemEnt} to event.getItem()
+    set {_item} to {_itemEnt}.getItemStack()
+    if mcwwsIsBetterBagsSellable({_item}.getType()) is false:
+        stop
+    set {_key} to new NamespacedKey("betterbags", "item")
+    if {_item}.getPersistentDataContainer().has({_key}, PersistentDataType.STRING):
+        {_item}.setAmount(0)
+        {_itemEnt}.setItemStack({_item})
+        stop
+    set {_pd} to {_plugin}.getPlayerData({_p}.getUniqueId())
+    set {_returned} to {_pd}.addItem({_item})
+    {_item}.setAmount({_returned})
+    {_itemEnt}.setItemStack({_item})
+    BagsData.updatePlayerBag({_p})
+    {_pd}.save()

@@ -368,6 +368,7 @@ items:
       - ''
       - '&e点击打开扩展背包'
     left_click_commands:
+      - '[console] bags give %player_name%'
       - '[player] bags open<delay=2>'
       - '[close]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
