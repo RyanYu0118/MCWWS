@@ -28,6 +28,31 @@ function mcwwsIsBetterBagsSellable(type: object) :: boolean:
         return false
     return {_plugin}.getItemsData().isSellable({_type})
 
+function mcwwsRemoveBetterBagSkull(p: player):
+    set {_key} to new NamespacedKey("betterbags", "item")
+    set {_inv} to {_p}.getInventory()
+    set {_removed} to false
+    loop 36 times:
+        set {_slot} to loop-number - 1
+        set {_it} to {_inv}.getItem({_slot})
+        if {_it} is not set:
+            continue
+        if {_it} is air:
+            continue
+        set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
+        if {_tag} is "bag":
+            {_inv}.setItem({_slot}, null)
+            set {_removed} to true
+    if {_removed} is true:
+        send "§6[背包] §f已收回背包头颅。" to {_p}
+    else:
+        send "§6[背包] §7物品栏里没有背包头颅。" to {_p}
+
+command /mcwws-bags-reclaim:
+    description: 收回 BetterBags 背包头颅（物品栏）
+    trigger:
+        mcwwsRemoveBetterBagSkull(player)
+
 on PlayerAttemptPickupItemEvent:
     set {_plugin} to BetterBagsPlugin.getInstance()
     if {_plugin} is not set:

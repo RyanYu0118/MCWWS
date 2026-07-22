@@ -366,10 +366,20 @@ items:
       - '&f背包容量：按当前等级决定'
       - '&f槽位数量：按当前等级决定'
       - ''
-      - '&e点击打开扩展背包'
+      - '&e左键 &7打开背包系统'
+      - '&eShift+左键 &7领取背包头颅'
+      - '&eShift+右键 &7收回背包头颅'
     left_click_commands:
+      - '[player] bags open'
+      - '[close]'
+      - '[sound] BLOCK_NOTE_BLOCK_HAT'
+    shift_left_click_commands:
       - '[console] bags give %player_name%'
-      - '[player] bags open<delay=2>'
+      - '[message] &6[背包] &f已发放背包头颅。'
+      - '[close]'
+      - '[sound] BLOCK_NOTE_BLOCK_HAT'
+    shift_right_click_commands:
+      - '[player] mcwws-bags-reclaim'
       - '[close]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'back_to_death':
