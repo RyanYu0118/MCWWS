@@ -1,0 +1,15 @@
+# 为 default 组开放 //sel extend（及全部 //sel 选区模式切换）
+# FAWE 权限节点：worldedit.analysis.sel
+
+function mcwwsGrantWorldEditSelPerm():
+    if plugin "LuckPerms" is enabled:
+        execute console command "lp group default permission set worldedit.analysis.sel true"
+        log "[MCWWS] 已为 default 组授予 worldedit.analysis.sel（//sel extend 等）"
+
+on server start:
+    wait 5 seconds
+    mcwwsGrantWorldEditSelPerm()
+
+on script load:
+    wait 2 seconds
+    mcwwsGrantWorldEditSelPerm()

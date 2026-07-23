@@ -1,10 +1,12 @@
 package work.mcwws.worldedit;
 
 import com.sk89q.worldedit.WorldEdit;
-import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.extension.input.InputParseException;
+import com.sk89q.worldedit.function.mask.ExistingBlockMask;
+import com.sk89q.worldedit.function.mask.Mask;
 import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.extension.input.ParserContext;
+import com.fastasyncworldedit.core.util.MaskTraverser;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
@@ -51,7 +53,13 @@ public final class FeeEstimate {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
-        Pattern fromPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(fromInput, context);
+        Mask fromMask;
+        if (fromInput == null || fromInput.isBlank()) {
+            fromMask = new ExistingBlockMask(world);
+        } else {
+            fromMask = WorldEdit.getInstance().getMaskFactory().parseFromInput(fromInput, context);
+            new MaskTraverser(fromMask).setNewExtent(world);
+        }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
         ResultBuilder builder = new ResultBuilder(prices);
         for (BlockVector3 pos : region) {
@@ -60,7 +68,7 @@ public final class FeeEstimate {
                 continue;
             }
             BaseBlock existing = world.getBlock(pos).toBaseBlock();
-            if (!fromPattern.applyBlock(pos).equals(existing)) {
+            if (!fromMask.test(pos)) {
                 continue;
             }
             BaseBlock target = toPattern.applyBlock(pos);

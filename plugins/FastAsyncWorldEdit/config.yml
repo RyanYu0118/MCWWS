@@ -8,7 +8,7 @@ platform: "Bukkit"
 # Set true to enable WorldEdit restrictions per region (e.g. PlotSquared or WorldGuard).
 # To be allowed to WorldEdit in a region, users need the appropriate
 # fawe.<plugin>  permission. See the Permissions page for supported region plugins.
-region-restrictions: true
+region-restrictions: false
 # FAWE will cancel non admin edits when memory consumption exceeds this %
 #  - Bypass with `/wea` or `//fast` or `fawe.bypass`
 #  - Disable with 100 or -1.
@@ -372,7 +372,7 @@ limits:
     confirm-large: true
     # If undo and redo commands should be restricted to allowed regions
     #  - Prevents scenarios where players can delete/reset a region, and then continue to undo/redo on it
-    restrict-history-to-regions: true
+    restrict-history-to-regions: false
     # List of nbt tags to strip from blocks, e.g. Items
     strip-nbt: []
     # If the disallowed blocks listed in worldedit-config.yml should be disallowed in all edits,

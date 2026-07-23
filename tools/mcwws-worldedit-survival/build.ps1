@@ -3,7 +3,7 @@ $Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Src = Join-Path $PSScriptRoot "src/main/java"
 $Res = Join-Path $PSScriptRoot "src/main/resources"
 $Out = Join-Path $PSScriptRoot "build/classes"
-$JarOut = Join-Path $Root "plugins/MCWWSWorldEditSurvival.jar"
+$JarOut = Join-Path $Root "plugins/MCWWS_WorldEditSurvival.jar"
 
 $PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar"
 $Fawe = Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.2.jar"
