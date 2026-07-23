@@ -15,6 +15,7 @@ const CATEGORY_LABELS = {
 
 const MAX_ENTRIES = 5000;
 const MAX_PER_PLAYER_LIST = 200;
+const FLIGHT_MERGE_WINDOW_MS = 2000;
 
 function normalizeUuid(uuid) {
     return String(uuid || '').trim().toLowerCase();
@@ -87,16 +88,53 @@ function createPlayerLedgerService(opts) {
         fs.writeFileSync(ledgerPath, yaml.dump(store, { lineWidth: 120, noRefs: true }), 'utf8');
     }
 
+    function flightAnchorMs(row) {
+        return Date.parse(row.updatedAt || row.createdAt || '') || 0;
+    }
+
+    function findMergeableFlightEntry(store, uuid, createdMs) {
+        let candidate = null;
+        let anchorMs = 0;
+        Object.values(store.entries).forEach((row) => {
+            if (!row || normalizeUuid(row.uuid) !== uuid) {
+                return;
+            }
+            if (row.category !== 'flight' || row.direction !== 'debit') {
+                return;
+            }
+            const rowAnchor = flightAnchorMs(row);
+            if (rowAnchor > anchorMs) {
+                anchorMs = rowAnchor;
+                candidate = row;
+            }
+        });
+        if (!candidate || createdMs - anchorMs >= FLIGHT_MERGE_WINDOW_MS) {
+            return null;
+        }
+        return candidate;
+    }
+
+    function mergeFlightEntry(existing, entry, createdAt, createdMs) {
+        const mergedAmount = roundMoney(existing.amount + entry.amount);
+        existing.amount = mergedAmount;
+        existing.updatedAt = createdAt;
+        existing.playerId = safeText(entry.playerId || existing.playerId || '', 32);
+        existing.description = safeText(
+            entry.description || existing.description || CATEGORY_LABELS.flight,
+            160
+        );
+        if (entry.balanceAfter != null && Number.isFinite(Number(entry.balanceAfter))) {
+            existing.balanceAfter = roundMoney(entry.balanceAfter);
+        }
+        return existing;
+    }
+
     function appendEntry(entry) {
         const uuid = normalizeUuid(entry.uuid);
         if (!uuid) {
             return null;
         }
         const store = loadStore();
-        const refKey = safeText(entry.refId || '', 80);
-        if (refKey && hasRef(store, refKey)) {
-            return null;
-        }
         const direction = entry.direction === 'credit' ? 'credit' : 'debit';
         const category = String(entry.category || 'other').trim() || 'other';
         const amount = roundMoney(entry.amount);
@@ -105,8 +143,22 @@ function createPlayerLedgerService(opts) {
         }
         const createdAt = entry.createdAt || new Date().toISOString();
         const createdMs = Date.parse(createdAt) || Date.now();
+
+        if (category === 'flight' && direction === 'debit') {
+            const mergeTarget = findMergeableFlightEntry(store, uuid, createdMs);
+            if (mergeTarget) {
+                mergeFlightEntry(mergeTarget, entry, createdAt, createdMs);
+                saveStore(store);
+                return mergeTarget;
+            }
+        }
+
+        const refKey = safeText(entry.refId || '', 80);
+        if (refKey && hasRef(store, refKey)) {
+            return null;
+        }
         const dedupWindowMs = 4000;
-        const isNearDuplicate = Object.values(store.entries).some((row) => {
+        const isNearDuplicate = category !== 'flight' && Object.values(store.entries).some((row) => {
             if (!row || normalizeUuid(row.uuid) !== uuid) {
                 return false;
             }
@@ -351,7 +403,7 @@ function createPlayerLedgerService(opts) {
             balanceAfterFormatted: row.balanceAfter != null ? formatBalance(row.balanceAfter) : null,
             description: row.description || '',
             refId: row.refId || '',
-            createdAt: row.createdAt,
+            createdAt: row.updatedAt || row.createdAt,
             isFlight: row.category === 'flight'
         };
     }
@@ -378,8 +430,8 @@ function createPlayerLedgerService(opts) {
         }
 
         rows.sort((a, b) => {
-            const ta = Date.parse(a.createdAt || '') || 0;
-            const tb = Date.parse(b.createdAt || '') || 0;
+            const ta = Date.parse(a.updatedAt || a.createdAt || '') || 0;
+            const tb = Date.parse(b.updatedAt || b.createdAt || '') || 0;
             return tb - ta;
         });
 
