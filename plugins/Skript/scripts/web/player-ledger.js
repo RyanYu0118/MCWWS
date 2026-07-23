@@ -114,9 +114,13 @@ function createPlayerLedgerService(opts) {
         return candidate;
     }
 
-    function mergeFlightEntry(existing, entry, createdAt, createdMs) {
-        const mergedAmount = roundMoney(existing.amount + entry.amount);
-        existing.amount = mergedAmount;
+    function mergeFlightEntry(existing, amount, entry, createdAt) {
+        const base = roundMoney(existing.amount);
+        const add = roundMoney(amount);
+        if (!Number.isFinite(base) || !Number.isFinite(add) || add <= 0) {
+            return existing;
+        }
+        existing.amount = roundMoney(base + add);
         existing.updatedAt = createdAt;
         existing.playerId = safeText(entry.playerId || existing.playerId || '', 32);
         existing.description = safeText(
@@ -147,7 +151,7 @@ function createPlayerLedgerService(opts) {
         if (category === 'flight' && direction === 'debit') {
             const mergeTarget = findMergeableFlightEntry(store, uuid, createdMs);
             if (mergeTarget) {
-                mergeFlightEntry(mergeTarget, entry, createdAt, createdMs);
+                mergeFlightEntry(mergeTarget, amount, entry, createdAt);
                 saveStore(store);
                 return mergeTarget;
             }
@@ -389,7 +393,13 @@ function createPlayerLedgerService(opts) {
     function formatEntry(row) {
         const direction = row.direction === 'credit' ? 'credit' : 'debit';
         const amount = roundMoney(row.amount);
+        if (!Number.isFinite(amount) || amount <= 0) {
+            return null;
+        }
         const signedAmount = direction === 'credit' ? amount : -amount;
+        const absFormatted = formatBalance(Math.abs(signedAmount));
+        const amountFormatted = absFormatted != null ? absFormatted : String(Math.abs(signedAmount));
+        const signedAmountFormatted = `${signedAmount >= 0 ? '+' : '-'}${amountFormatted}`;
         return {
             id: row.id,
             direction,
@@ -397,10 +407,12 @@ function createPlayerLedgerService(opts) {
             categoryLabel: CATEGORY_LABELS[row.category] || row.category,
             amount,
             signedAmount,
-            amountFormatted: formatBalance(amount),
-            signedAmountFormatted: `${signedAmount >= 0 ? '+' : '-'}${formatBalance(Math.abs(signedAmount))}`,
+            amountFormatted,
+            signedAmountFormatted,
             balanceAfter: row.balanceAfter ?? null,
-            balanceAfterFormatted: row.balanceAfter != null ? formatBalance(row.balanceAfter) : null,
+            balanceAfterFormatted: row.balanceAfter != null && Number.isFinite(Number(row.balanceAfter))
+                ? formatBalance(row.balanceAfter)
+                : null,
             description: row.description || '',
             refId: row.refId || '',
             createdAt: row.updatedAt || row.createdAt,
@@ -436,7 +448,7 @@ function createPlayerLedgerService(opts) {
         });
 
         const totalMatching = rows.length;
-        const slice = rows.slice(offset, offset + limit).map(formatEntry);
+        const slice = rows.slice(offset, offset + limit).map(formatEntry).filter(Boolean);
 
         const summary = summarize(rows);
         return {
@@ -464,6 +476,9 @@ function createPlayerLedgerService(opts) {
         const summary = emptySummary();
         rows.forEach((row) => {
             const amount = roundMoney(row.amount);
+            if (!Number.isFinite(amount) || amount <= 0) {
+                return;
+            }
             if (row.direction === 'credit') {
                 summary.creditTotal = roundMoney(summary.creditTotal + amount);
                 summary.netTotal = roundMoney(summary.netTotal + amount);

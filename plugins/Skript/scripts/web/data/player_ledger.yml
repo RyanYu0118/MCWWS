@@ -1,4 +1,4 @@
-next_id: 895
+next_id: 913
 entries:
   '1':
     id: 1
@@ -8980,8 +8980,192 @@ entries:
     playerId: Ryan_yu__
     direction: debit
     category: flight
-    amount: .nan
+    amount: 4
     description: 飞行消耗
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/24 02:12
     createdAt: '2026-07-24T02:12:02'
-    updatedAt: '2026-07-24T02:12:31'
+    updatedAt: '2026-07-24T02:14:25'
+  '895':
+    id: 895
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 64.22
+    description: 出售 milk_bucket x1
+    refId: us-e6d23eee-74c7-44fa-bac3-7c6c06a73de6
+    createdAt: '2026-07-23T18:05:05.000Z'
+  '896':
+    id: 896
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 64.87
+    description: 购买 milk_bucket x1
+    refId: us-f6c82c47-b2d2-49d6-8cea-42f4a4d2d530
+    createdAt: '2026-07-23T18:05:13.000Z'
+  '897':
+    id: 897
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 64.22
+    description: 出售 milk_bucket x1
+    refId: us-37fcebfa-61b2-434f-b6c2-bcb557fcbd2e
+    createdAt: '2026-07-23T18:05:16.000Z'
+  '898':
+    id: 898
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 256.13
+    description: 出售 diamond x1
+    refId: us-dbe5849c-06ba-40b7-a56e-d905aa1b9cc7
+    createdAt: '2026-07-23T18:05:50.000Z'
+  '899':
+    id: 899
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 256.13
+    description: 出售 diamond x1
+    refId: us-d6722ce3-271b-4aa4-b2ba-493127367636
+    createdAt: '2026-07-23T18:06:06.000Z'
+  '900':
+    id: 900
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.79
+    description: 出售 gold_ingot x1
+    refId: us-e908b29b-5264-4d81-9c42-3add3701e790
+    createdAt: '2026-07-23T18:06:15.000Z'
+  '901':
+    id: 901
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.79
+    description: 出售 gold_ingot x1
+    refId: us-738af425-3241-46ca-b098-1354d8095a30
+    createdAt: '2026-07-23T18:06:20.000Z'
+  '902':
+    id: 902
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.79
+    description: 出售 gold_ingot x1
+    refId: us-df9b163c-74a7-4ba9-8246-5048c42946c1
+    createdAt: '2026-07-23T18:06:25.000Z'
+  '903':
+    id: 903
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 0.99
+    description: 购买 cobbled_deepslate x1
+    refId: us-454b991c-5f00-45eb-ac46-cac37315b7dc
+    createdAt: '2026-07-23T18:07:04.000Z'
+  '904':
+    id: 904
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.98
+    description: 出售 cobbled_deepslate x1
+    refId: us-f22ab1c2-1d34-4f7e-9005-a73802c4a7b2
+    createdAt: '2026-07-23T18:07:24.000Z'
+  '905':
+    id: 905
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 256.69
+    description: 出售 diamond x1
+    refId: us-dfd777ab-2e57-4db8-bbfb-902f9aed70c7
+    createdAt: '2026-07-23T18:05:50.000Z'
+  '906':
+    id: 906
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.91
+    description: 出售 gold_ingot x1
+    refId: us-ea319dc3-e857-45ab-8f33-53cb303f00e9
+    createdAt: '2026-07-23T18:06:16.000Z'
+  '907':
+    id: 907
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.91
+    description: 出售 gold_ingot x1
+    refId: us-cbf3c822-1646-4064-a6d9-367374eb9e94
+    createdAt: '2026-07-23T18:06:21.000Z'
+  '908':
+    id: 908
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 56.91
+    description: 出售 gold_ingot x1
+    refId: us-3fb3e85c-5528-4de0-bdb6-26ce63540849
+    createdAt: '2026-07-23T18:06:26.000Z'
+  '909':
+    id: 909
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 528
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/24 02:17
+    createdAt: '2026-07-24T02:17:33'
+    updatedAt: '2026-07-24T02:19:44'
+  '910':
+    id: 910
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 46
+    description: '创世神建造: replace'
+    refId: we-203b6d4d-86a8-42c5-ae40-fcb45fa4f350
+    createdAt: '2026-07-24T02:18:47'
+    balanceAfter: 166030287.63
+  '911':
+    id: 911
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 1200
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1200.00-API-1784830800
+    createdAt: '2026-07-24T02:20:00'
+    balanceAfter: 166028859.63
+  '912':
+    id: 912
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 2400
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-2400.00-API-1784830832
+    createdAt: '2026-07-24T02:20:32'
+    balanceAfter: 166026459.63

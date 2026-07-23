@@ -217,6 +217,8 @@
     const ECONOMY_CACHE_MS = 8000;
     /** 登录后自动轮询零钱（与游戏内 eco 扣款/入账对齐，约 1 秒内可见） */
     const ECONOMY_POLL_MS = 500;
+    /** 零钱明细弹窗打开时每秒刷新明细与余额 */
+    const LEDGER_POLL_MS = 1000;
     const EMPTY_VALUE = '-';
 
     /** minecraftAE 未编码字符回退为 ASCII，避免显示乱码 */
@@ -235,6 +237,7 @@
     let lastRenderedBalanceText = '';
     let ledgerModalBound = false;
     let ledgerFetchPromise = null;
+    let ledgerPollTimer = null;
     let ledgerFilter = 'exclude_flight';
 
     function ensureLedgerModal() {
@@ -322,15 +325,18 @@
         return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
     }
 
-    function renderLedgerSummary(summary, summaryAll) {
+    function renderLedgerSummary(summary, summaryAll, economyData) {
         const el = document.getElementById('mcwwsLedgerSummary');
-        if (!el || !summary) {
+        if (!el) {
             return;
         }
-        const flight = summaryAll?.flightDebitTotal ?? summary.flightDebitTotal ?? 0;
-        const credit = summary.creditTotal ?? 0;
-        const debit = summary.debitTotal ?? 0;
+        const balanceText = economyData?.balanceFormatted
+            || (economyData?.balance != null ? String(economyData.balance) : EMPTY_VALUE);
+        const flight = summaryAll?.flightDebitTotal ?? summary?.flightDebitTotal ?? 0;
+        const credit = summary?.creditTotal ?? 0;
+        const debit = summary?.debitTotal ?? 0;
         el.innerHTML = `
+            <div class="mcwws-ledger-stat is-balance"><span class="label">当前余额</span><span class="value is-balance">${sanitizeMcFontText(balanceText)}</span></div>
             <div class="mcwws-ledger-stat"><span class="label">本页收入</span><span class="value is-credit">+${sanitizeMcFontText(String(credit))}</span></div>
             <div class="mcwws-ledger-stat"><span class="label">本页支出</span><span class="value is-debit">-${sanitizeMcFontText(String(debit))}</span></div>
             <div class="mcwws-ledger-stat"><span class="label">飞行累计</span><span class="value is-flight">${sanitizeMcFontText(String(flight))}</span></div>
@@ -383,21 +389,45 @@
         return ledgerFetchPromise;
     }
 
-    async function refreshLedgerModal(force) {
+    async function refreshLedgerModal(force, silent) {
         bindLedgerModalEvents();
         const body = document.getElementById('mcwwsLedgerBody');
-        if (body) {
+        if (!silent && body) {
             body.innerHTML = '<tr><td colspan="5" class="mcwws-ledger-empty">加载中…</td></tr>';
         }
-        const data = await fetchPlayerLedger(force);
+        const [data, economyData] = await Promise.all([
+            fetchPlayerLedger(force),
+            fetchPlayerEconomy(true)
+        ]);
         if (!data) {
-            if (body) {
+            if (!silent && body) {
                 body.innerHTML = '<tr><td colspan="5" class="mcwws-ledger-empty">加载失败，请稍后重试</td></tr>';
+            }
+            if (economyData) {
+                renderLedgerSummary(null, null, economyData);
             }
             return;
         }
-        renderLedgerSummary(data.summary, data.summaryAll);
+        renderLedgerSummary(data.summary, data.summaryAll, economyData);
         renderLedgerRows(data.entries);
+    }
+
+    function stopLedgerPolling() {
+        if (ledgerPollTimer) {
+            window.clearInterval(ledgerPollTimer);
+            ledgerPollTimer = null;
+        }
+    }
+
+    function startLedgerPolling() {
+        stopLedgerPolling();
+        ledgerPollTimer = window.setInterval(() => {
+            const modal = document.getElementById('mcwwsLedgerModal');
+            if (!modal || modal.hidden || !authToken || document.hidden) {
+                return;
+            }
+            void refreshLedgerModal(true, true);
+        }, LEDGER_POLL_MS);
     }
 
     function openLedgerModal() {
@@ -409,10 +439,12 @@
         const modal = ensureLedgerModal();
         modal.hidden = false;
         document.body.classList.add('mcwws-ledger-open');
-        void refreshLedgerModal(true);
+        void refreshLedgerModal(true, false);
+        startLedgerPolling();
     }
 
     function closeLedgerModal() {
+        stopLedgerPolling();
         const modal = document.getElementById('mcwwsLedgerModal');
         if (!modal) {
             return;

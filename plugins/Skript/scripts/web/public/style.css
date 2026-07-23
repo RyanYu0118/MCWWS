@@ -609,6 +609,15 @@ body.mcwws-ledger-open {
     color: #fbbf24;
 }
 
+.mcwws-ledger-stat.is-balance {
+    min-width: 8rem;
+}
+
+.mcwws-ledger-stat .value.is-balance {
+    color: var(--primary-light);
+    font-size: 1rem;
+}
+
 .mcwws-ledger-filters {
     display: flex;
     gap: 0.5rem;
