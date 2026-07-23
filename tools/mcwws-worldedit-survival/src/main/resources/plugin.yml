@@ -3,7 +3,7 @@ main: work.mcwws.worldedit.McwwsWeSurvivalPlugin
 version: 1.0.0
 api-version: '1.21'
 depend: [FastAsyncWorldEdit, Vault]
-softdepend: [Slimefun, Essentials]
+softdepend: [Slimefun, Essentials, MCWWS_EconomyLedger]
 
 commands:
   mcwws-we-reload:

@@ -1,0 +1,17 @@
+name: MCWWS_EconomyLedger
+main: work.mcwws.economyledger.McwwsEconomyLedgerPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [Vault]
+softdepend: [Essentials, EssentialsX]
+description: MCWWS 零钱明细经济层兜底 - 监听 Essentials 余额变动并写入 ledger 队列
+
+commands:
+  mcwws-ledger-reload:
+    description: 重载 MCWWS 零钱明细经济层配置
+    permission: mcwws.ledger.admin
+    usage: /mcwws-ledger-reload
+
+permissions:
+  mcwws.ledger.admin:
+    default: op

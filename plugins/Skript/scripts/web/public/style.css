@@ -491,6 +491,196 @@ body {
     transition: width 0.25s ease;
 }
 
+.mcwws-auth-ledger-btn {
+    display: block;
+    width: 100%;
+    margin-top: 0.65rem;
+    padding: 0.45rem 0.65rem;
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    background: var(--bg-tertiary);
+    color: var(--primary-light);
+    font-size: 0.82rem;
+    cursor: pointer;
+    transition: var(--transition-normal);
+}
+
+.mcwws-auth-ledger-btn:hover {
+    border-color: var(--primary);
+    background: rgba(255, 255, 255, 0.06);
+}
+
+body.mcwws-ledger-open {
+    overflow: hidden;
+}
+
+.mcwws-ledger-modal[hidden] {
+    display: none !important;
+}
+
+.mcwws-ledger-modal {
+    position: fixed;
+    inset: 0;
+    z-index: 12000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.mcwws-ledger-backdrop {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.55);
+    backdrop-filter: blur(4px);
+}
+
+.mcwws-ledger-panel {
+    position: relative;
+    width: min(720px, 100%);
+    max-height: min(80vh, 640px);
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-lg);
+    overflow: hidden;
+}
+
+.mcwws-ledger-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 1.15rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.mcwws-ledger-header h2 {
+    margin: 0;
+    font-size: 1.05rem;
+}
+
+.mcwws-ledger-close {
+    border: none;
+    background: transparent;
+    color: var(--text-secondary);
+    font-size: 1.5rem;
+    line-height: 1;
+    cursor: pointer;
+    padding: 0.15rem 0.35rem;
+}
+
+.mcwws-ledger-summary {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem 1rem;
+    padding: 0.85rem 1.15rem;
+    border-bottom: 1px solid var(--border);
+    background: rgba(255, 255, 255, 0.02);
+}
+
+.mcwws-ledger-stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    min-width: 6.5rem;
+}
+
+.mcwws-ledger-stat .label {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.mcwws-ledger-stat .value {
+    font-size: 0.92rem;
+    font-weight: 600;
+}
+
+.mcwws-ledger-stat .value.is-credit {
+    color: #4ade80;
+}
+
+.mcwws-ledger-stat .value.is-debit {
+    color: #f87171;
+}
+
+.mcwws-ledger-stat .value.is-flight {
+    color: #fbbf24;
+}
+
+.mcwws-ledger-filters {
+    display: flex;
+    gap: 0.5rem;
+    padding: 0.65rem 1.15rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.mcwws-ledger-filter {
+    border: 1px solid var(--border);
+    background: var(--bg-tertiary);
+    color: var(--text-secondary);
+    border-radius: 999px;
+    padding: 0.3rem 0.75rem;
+    font-size: 0.78rem;
+    cursor: pointer;
+}
+
+.mcwws-ledger-filter.is-active {
+    border-color: var(--primary);
+    color: var(--primary-light);
+    background: rgba(255, 255, 255, 0.08);
+}
+
+.mcwws-ledger-table-wrap {
+    overflow: auto;
+    flex: 1;
+    min-height: 0;
+}
+
+.mcwws-ledger-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+}
+
+.mcwws-ledger-table th,
+.mcwws-ledger-table td {
+    padding: 0.55rem 0.75rem;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+    vertical-align: top;
+}
+
+.mcwws-ledger-table th {
+    position: sticky;
+    top: 0;
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    font-weight: 600;
+    z-index: 1;
+}
+
+.mcwws-ledger-table tbody tr:hover {
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.mcwws-ledger-amount.is-credit {
+    color: #4ade80;
+    font-weight: 600;
+}
+
+.mcwws-ledger-amount.is-debit {
+    color: #f87171;
+    font-weight: 600;
+}
+
+.mcwws-ledger-empty {
+    text-align: center;
+    color: var(--text-secondary);
+    padding: 1.25rem !important;
+}
+
 .services-map-auth-widget {
     margin-left: auto;
 }

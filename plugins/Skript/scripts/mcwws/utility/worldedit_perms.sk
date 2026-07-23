@@ -6,7 +6,7 @@ function mcwwsGrantWorldEditSelPerm():
         execute console command "lp group default permission set worldedit.analysis.sel true"
         log "[MCWWS] 已为 default 组授予 worldedit.analysis.sel（//sel extend 等）"
 
-on server start:
+on Skript start:
     wait 5 seconds
     mcwwsGrantWorldEditSelPerm()
 

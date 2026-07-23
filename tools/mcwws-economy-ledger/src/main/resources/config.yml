@@ -1,0 +1,28 @@
+# 写入 Node player-ledger 消费的队列文件（与 Skript mcwwsAppendLedgerQueueLine 相同）
+ledger-queue-path: plugins/Skript/scripts/web/data/ledger_queue.txt
+
+# 同一 refId 或 uuid+方向+金额 在此窗口内不重复写入（毫秒）
+dedup-window-ms: 4000
+
+# 飞行消耗已由 Skript FlyWithFood 事件单独记录，此处跳过 Essentials 侧相同金额的 API 扣款
+flight:
+  skip-via-economy-event: true
+  amounts:
+    - 4.0
+
+# Essentials UserBalanceUpdateEvent.Cause 到明细分类的映射
+cause-categories:
+  COMMAND_ECO: other
+  COMMAND_PAY: other
+  COMMAND_SELL: shop_sell
+  API: other
+  SPECIAL: other
+  UNKNOWN: other
+
+cause-descriptions:
+  COMMAND_ECO: 管理员经济命令
+  COMMAND_PAY: 玩家转账
+  COMMAND_SELL: 出售物品
+  API: 经济 API 扣款
+  SPECIAL: 经济变动
+  UNKNOWN: 其他经济变动

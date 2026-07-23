@@ -1,0 +1,65 @@
+# 玩家零钱明细：游戏内事件写入 ledger_queue.txt，由 Node player-ledger 汇总
+
+import:
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
+    java.nio.file.StandardOpenOption
+    me.xpyex.plugin.flywithfood.bukkit.event.EnergyCostEvent
+
+options:
+    ledger queue: plugins/Skript/scripts/web/data/ledger_queue.txt
+
+function mcwwsLedgerSanitize(text: text) :: text:
+    set {_t} to {_text}
+    replace all "|" with "/" in {_t}
+    replace all nl with " " in {_t}
+    return {_t}
+
+function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text, category: text, amount: number, description: text, refId: text):
+    set {_uuid} to mcwwsLedgerSanitize({_uuid})
+    set {_pid} to mcwwsLedgerSanitize({_playerId})
+    set {_dir} to mcwwsLedgerSanitize({_direction})
+    set {_cat} to mcwwsLedgerSanitize({_category})
+    set {_desc} to mcwwsLedgerSanitize({_description})
+    set {_ref} to mcwwsLedgerSanitize({_refId})
+    set {_amt} to mcwwsFormatMoney({_amount})
+    set {_time} to now formatted as "yyyy-MM-dd'T'HH:mm:ss"
+    set {_line} to "%{_uuid}%|%{_pid}%|%{_dir}%|%{_cat}%|%{_amt}%||%{_desc}%|%{_ref}%|%{_time}%"
+    set {_file} to new File("{@ledger queue}")
+    if {_file}.getParentFile().exists() is false:
+        {_file}.getParentFile().mkdirs()
+    set {_bytes} to (concat {_line}, nl).getBytes(StandardCharsets.UTF_8)
+    Files.write({_file}.toPath(), {_bytes}, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+
+function mcwwsLedgerPriceForMaterial(material: text, buyOrSell: text) :: number:
+    set {_id} to "%{_material}%"
+    replace all "-" with "_" in {_id}
+    set {_id} to {_id} in lower case
+    load yaml "plugins/Skript/scripts/web/mcwws/economy/web_prices.yml" as "ledger_prices"
+    if {_buyOrSell} is "SELL":
+        set {_price} to yaml value "%{_id}%.sell" from "ledger_prices"
+    else:
+        set {_price} to yaml value "%{_id}%.buy" from "ledger_prices"
+    unload yaml "ledger_prices"
+    if {_price} is not set:
+        return 0
+    return {_price} parsed as number
+
+on load:
+    send "§a[MCWWS] 玩家零钱明细队列已启用（含飞行消耗）。" to console
+
+on EnergyCostEvent:
+    set {_p} to event.getPlayer()
+    if {_p} is not set:
+        stop
+    set {_cost} to event.getCost()
+    if {_cost} is not set:
+        stop
+    set {_amount} to {_cost}.doubleValue()
+    if {_amount} <= 0:
+        stop
+    set {_name} to name of {_p}
+    replace "," with "|" in {_name}
+    set {_ref} to "flight-%uuid of {_p}%-%now%"
+    mcwwsAppendLedgerQueueLine("%uuid of {_p}%", {_name}, "debit", "flight", {_amount}, "飞行消耗", {_ref})

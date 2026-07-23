@@ -69,6 +69,7 @@ const os = require('os');
 const path = require('path');
 const crypto = require('crypto');
 const { createAnalyticsService } = require('./analytics');
+const { createPlayerLedgerService } = require('./player-ledger');
 const nbt = require('prismarine-nbt');
 
 const app = express();
@@ -206,6 +207,9 @@ const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
 const PASTE_QUEUE_PATH = path.join(DB_DIR, 'paste_queue.txt');
 const ONLINE_PLAYERS_PATH = path.join(DB_DIR, 'online_players.txt');
+const PLAYER_LEDGER_PATH = path.join(DB_DIR, 'player_ledger.yml');
+const LEDGER_QUEUE_PATH = path.join(DB_DIR, 'ledger_queue.txt');
+const PENDING_PASTE_ORDERS_PATH = path.join(DB_DIR, 'pending_paste_orders.yml');
 const LEGACY_TRANSACTIONS_CSV = path.join(__dirname, '..', '..', '..', 'DynamicShop', 'transactions', 'transactions.csv');
 const ITEMS_DB_PATH = path.join(__dirname, '..', 'mcwws', 'economy', 'database', 'items.yml');
 const OPS_PATH = path.join(__dirname, '..', '..', '..', '..', 'ops.json');
@@ -265,6 +269,16 @@ const analytics = createAnalyticsService({
     priceHistoryCsvPath: PRICE_HISTORY_CSV,
     itemsDbPath: ITEMS_DB_PATH,
     ultimateShopShopsDir: ULTIMATE_SHOP_SHOPS_DIR
+});
+
+const playerLedger = createPlayerLedgerService({
+    ledgerPath: PLAYER_LEDGER_PATH,
+    queuePath: LEDGER_QUEUE_PATH,
+    transactionsYamlPath: TRANSACTIONS_YAML,
+    pendingOrdersPath: PENDING_ORDERS_PATH,
+    pendingPasteOrdersPath: PENDING_PASTE_ORDERS_PATH,
+    formatBalance: formatEssentialsBalance,
+    loadPriceTables
 });
 
 if (!fs.existsSync(USER_DB_FILE)) {
@@ -2266,6 +2280,39 @@ app.get('/api/player-economy', async (req, res) => {
     }
 });
 
+app.get('/api/player-ledger', (req, res) => {
+    try {
+        const user = authenticate(req);
+        if (!user) {
+            return res.status(401).json({ error: '需要登录。' });
+        }
+        const playerId = String(user.playerId || '').trim();
+        if (!playerId) {
+            return res.status(400).json({ error: '账号未绑定游戏玩家 ID。' });
+        }
+        const uuid = resolvePlayerUuid(playerId);
+        if (!uuid) {
+            return res.status(404).json({ error: '未找到该玩家在服务器的存档。' });
+        }
+        const filterRaw = String(req.query.filter || 'exclude_flight').trim().toLowerCase();
+        const filter = ['all', 'flight', 'exclude_flight'].includes(filterRaw) ? filterRaw : 'exclude_flight';
+        const limit = Math.min(Number(req.query.limit) || 30, 100);
+        const offset = Math.max(Number(req.query.offset) || 0, 0);
+        const result = playerLedger.listForUuid(uuid, { limit, offset, filter });
+        const summaryAll = playerLedger.listForUuid(uuid, { limit: 1, offset: 0, filter: 'all' }).summary;
+        res.json({
+            playerId,
+            uuid,
+            ...result,
+            summaryAll,
+            updatedAt: new Date().toISOString()
+        });
+    } catch (error) {
+        console.error('读取零钱明细失败:', error);
+        res.status(500).json({ error: '读取零钱明细失败。' });
+    }
+});
+
 let usercacheByName = null;
 let usercacheLoadedAt = 0;
 
@@ -3273,6 +3320,15 @@ app.post('/api/build/checkout', async (req, res) => {
         buildSchematicService.markQuoteConsumed(quote.numericId, pasteOrder.numericId);
 
         if (total > 0) {
+            playerLedger.logCheckout({
+                uuid,
+                playerId,
+                category: 'web_build',
+                amount: total,
+                balanceAfter,
+                description: `投影粘贴：${quote.displayName || quote.contentHash || quoteId}`,
+                refId: `paste-order-${pasteOrder.numericId}`
+            });
             enqueueEssentialsDeduction({
                 uuid,
                 playerId,
@@ -3725,6 +3781,18 @@ app.post('/api/shop/checkout', (req, res) => {
         store.next_id = numericId + 1;
         savePendingOrdersStore(store);
 
+        const linePreview = resolvedLines.slice(0, 3).map((line) => `${line.itemId}×${line.quantity}`).join('、');
+        const lineSuffix = resolvedLines.length > 3 ? ` 等${resolvedLines.length}项` : '';
+        playerLedger.logCheckout({
+            uuid,
+            playerId,
+            category: 'web_shop',
+            amount: total,
+            balanceAfter,
+            description: `网页商城：${linePreview}${lineSuffix}`,
+            refId: `web-order-${numericId}`
+        });
+
         enqueueEssentialsDeduction({
             uuid,
             playerId,
@@ -3854,6 +3922,7 @@ function localIpv4Addresses() {
 
 function logServerStart(protocol) {
     analytics.reload();
+    playerLedger.processQueue();
     purgeBlueMapShopMarkers();
     const mappingCount = syncUltimateShopMappingsFile();
     if (mappingCount > 0) {

@@ -127,7 +127,7 @@ public final class WeSurvivalListener {
             return;
         }
 
-        if (total > 0D && !EconomyService.withdraw(player, total)) {
+        if (total > 0D && !LedgerBridge.withdraw(player, total, command)) {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
             return;
