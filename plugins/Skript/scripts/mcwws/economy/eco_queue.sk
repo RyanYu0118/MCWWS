@@ -51,10 +51,8 @@ function mcwwsEnsureEconomyDeductionsYaml():
                 send "§c[MCWWS] economy_deductions.yml 已损坏，已重建。" to console
                 set {_needsInit} to true
     if {_needsInit} is true:
-        load yaml {_path} as "econq_init"
-        set yaml value "next_id" from "econq_init" to 1
-        save yaml "econq_init"
-        unload yaml "econq_init"
+        {_file}.getParentFile().mkdirs()
+        Files.write({_file}.toPath(), "next_id: 1%nl%pending: {}%nl%".getBytes(StandardCharsets.UTF_8))
 
 function mcwwsMarkEcoDeductionDoneForOrder(oid: text):
     set {_key} to "%{_oid}%"

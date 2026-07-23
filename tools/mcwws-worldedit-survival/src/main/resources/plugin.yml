@@ -1,0 +1,19 @@
+name: MCWWSWorldEditSurvival
+main: work.mcwws.worldedit.McwwsWeSurvivalPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [FastAsyncWorldEdit, Vault]
+softdepend: [Slimefun, Essentials]
+
+commands:
+  mcwws-we-reload:
+    description: 重载创世神生存建造扣费配置
+    permission: mcwws.we.survival.admin
+    usage: /mcwws-we-reload
+
+permissions:
+  mcwws.we.survival.admin:
+    default: op
+  mcwws.we.survival.bypass:
+    description: 跳过创世神生存建造扣费与保护扫描
+    default: op

@@ -1,0 +1,22 @@
+enabled: true
+bypass-permission: mcwws.we.survival.bypass
+prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+prices-reload-seconds: 60
+max-scan-blocks: 500000
+charge-commands:
+  - set
+  - replace
+  - replacenear
+  - fill
+  - walls
+  - overlay
+  - repl
+messages:
+  prefix: "§6[创世神] §f"
+  insufficient-balance: "余额不足，需要 §e{total}§f（拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
+  charged: "已扣除 §e{total}§f（拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  no-selection: "请先选择区域。"
+  scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
+  unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
+  protected-present: "选区内含 Slimefun 机器或无法破坏的方块，这些方块将被保留。"
+  not-survival: "仅生存/冒险模式可使用付费创世神建造。"
