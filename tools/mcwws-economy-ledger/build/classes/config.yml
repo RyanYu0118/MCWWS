@@ -4,6 +4,8 @@ ledger-queue-path: plugins/Skript/scripts/web/data/ledger_queue.txt
 # 同一 refId 或 uuid+方向+金额 在此窗口内不重复写入（毫秒）
 dedup-window-ms: 4000
 
+# 仅对 refId 完全相同的重复写入去重；非飞行扣款不做金额/时间近重复合并
+
 # 飞行消耗已由 Skript FlyWithFood 事件单独记录，此处跳过 Essentials 侧相同金额的 API 扣款
 flight:
   skip-via-economy-event: true

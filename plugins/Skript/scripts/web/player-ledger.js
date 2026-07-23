@@ -161,20 +161,6 @@ function createPlayerLedgerService(opts) {
         if (refKey && hasRef(store, refKey)) {
             return null;
         }
-        const dedupWindowMs = 4000;
-        const isNearDuplicate = category !== 'flight' && Object.values(store.entries).some((row) => {
-            if (!row || normalizeUuid(row.uuid) !== uuid) {
-                return false;
-            }
-            if (row.direction !== direction || roundMoney(row.amount) !== amount) {
-                return false;
-            }
-            const rowMs = Date.parse(row.createdAt || '') || 0;
-            return Math.abs(createdMs - rowMs) <= dedupWindowMs;
-        });
-        if (isNearDuplicate) {
-            return null;
-        }
         const id = Number(store.next_id) || 1;
         const row = {
             id,

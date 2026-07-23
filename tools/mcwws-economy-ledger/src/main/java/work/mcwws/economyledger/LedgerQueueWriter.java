@@ -89,7 +89,13 @@ final class LedgerQueueWriter {
     }
 
     static String defaultRefId(String prefix, String uuid, double amount, String cause) {
-        long bucket = System.currentTimeMillis() / 1000L;
-        return String.format(Locale.ROOT, "%s-%s-%.2f-%s-%d", prefix, uuid, amount, cause, bucket);
+        return String.format(
+                Locale.ROOT,
+                "%s-%s-%d-%d",
+                prefix,
+                uuid,
+                System.currentTimeMillis(),
+                System.nanoTime()
+        );
     }
 }

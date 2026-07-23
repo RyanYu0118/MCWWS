@@ -43,13 +43,14 @@ on ItemFinishTransactionEvent:
     set {_name} to name of {_p}
     replace "," with "|" in {_name}
     set {_time} to now formatted as "yyyy-MM-dd HH:mm:ss"
-    set {_row} to "%random uuid%,%uuid of {_p}%,%{_name}%,%{_type}%,%{_shop}%,%{_product}%,%{_amount}%,%{_time}%"
+    set {_txId} to random uuid
+    set {_row} to "%{_txId}%,%uuid of {_p}%,%{_name}%,%{_type}%,%{_shop}%,%{_product}%,%{_amount}%,%{_time}%"
     mcwwsAppendTransactionLog({_row})
     set {_unit} to mcwwsLedgerPriceForMaterial({_product}, {_type})
     if {_unit} > 0:
         set {_total} to {_unit} * {_amount}
         set {_desc} to "商店%{_type}% %{_product}% x%{_amount}%"
-        set {_ref} to "us-live-%uuid of {_p}%-%now%"
+        set {_ref} to "us-%{_txId}%"
         if {_type} is "SELL":
             mcwwsAppendLedgerQueueLine("%uuid of {_p}%", {_name}, "credit", "shop_sell", {_total}, {_desc}, {_ref})
         else:

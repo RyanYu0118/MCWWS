@@ -10,7 +10,6 @@ import org.bukkit.plugin.PluginManager;
 import java.lang.reflect.Method;
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Locale;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.logging.Level;
@@ -118,16 +117,6 @@ final class EssentialsBalanceListener implements Listener {
                 .orElseGet(() -> LedgerQueueWriter.defaultRefId("ess", uuid.toString(), amount, cause));
 
         if (dedupCache.shouldSkip("ref:" + refId)) {
-            return;
-        }
-        String compositeKey = String.format(
-                Locale.ROOT,
-                "txn:%s:%s:%.2f",
-                uuid,
-                direction,
-                amount
-        );
-        if (dedupCache.shouldSkip(compositeKey)) {
             return;
         }
 
