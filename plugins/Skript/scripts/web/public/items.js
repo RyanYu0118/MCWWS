@@ -563,12 +563,12 @@ function bindItemModalQtyControls(modalBody, itemId) {
         e.preventDefault();
         e.stopPropagation();
         const action = btn.getAttribute('data-modal-qty-action');
-        if (action === 'inc') changeCardItemQuantity(itemId, 1);
+        if (action === 'inc') changeCardItemQuantity(itemId, 1, btn);
         else if (action === 'dec') changeCardItemQuantity(itemId, -1);
     });
 }
 
-function changeCardItemQuantity(itemId, delta) {
+function changeCardItemQuantity(itemId, delta, sourceEl) {
     const item = allItems.find((entry) => entry.id === itemId);
     if (!item) return;
     if (delta > 0) {
@@ -578,6 +578,11 @@ function changeCardItemQuantity(itemId, delta) {
             return;
         }
         addToCart(item, offer, delta);
+        window.MCWWS_CartFlyAnim?.play?.({
+            sourceEl,
+            itemId: item.id,
+            itemName: item.name
+        });
         syncItemsStateToUrl();
         return;
     }
@@ -2301,7 +2306,7 @@ function setupEventListeners() {
                 const itemId = qtyBtn.getAttribute('data-item-id');
                 const action = qtyBtn.getAttribute('data-card-qty-action');
                 if (itemId && action === 'inc') {
-                    changeCardItemQuantity(itemId, 1);
+                    changeCardItemQuantity(itemId, 1, qtyBtn);
                 } else if (itemId && action === 'dec') {
                     changeCardItemQuantity(itemId, -1);
                 }
