@@ -13,6 +13,7 @@ import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 public final class WeSurvivalListener {
@@ -63,43 +64,25 @@ public final class WeSurvivalListener {
         }
 
         LocalSession session = WorldEdit.getInstance().getSessionManager().get(actor);
-        World world = session.getSelectionWorld();
-        if (world == null && event.getSession() != null) {
-            world = event.getSession().getWorld();
-        }
-        if (world == null) {
-            actor.printError(plugin.msg("no-selection"));
-            event.setCancelled(true);
-            return;
-        }
-
-        Region region;
-        try {
-            region = session.getSelection(world);
-        } catch (Exception ex) {
-            actor.printError(plugin.msg("no-selection"));
-            event.setCancelled(true);
-            return;
-        }
-        if (region == null) {
-            actor.printError(plugin.msg("no-selection"));
-            event.setCancelled(true);
-            return;
-        }
-
+        String[] args = FeeEstimate.splitArgs(raw);
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
-        long volume = FeeEstimate.regionVolume(region);
-        if (volume > maxScan) {
-            actor.printError(plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
-            event.setCancelled(true);
-            return;
-        }
 
         FeeEstimate.Result estimate;
         try {
-            estimate = estimateCommand(command, FeeEstimate.splitArgs(raw), region, world, actor);
+            if ("replacenear".equals(command)) {
+                estimate = estimateReplaceNear(args, session, event, actor, player, maxScan);
+            } else {
+                estimate = estimateSelectionCommand(command, args, session, event, actor, maxScan);
+            }
         } catch (InputParseException ex) {
-            actor.printError("无法解析方块参数: " + ex.getMessage());
+            String key = ex.getMessage();
+            if ("no-selection".equals(key)) {
+                actor.printError(plugin.msg("no-selection"));
+            } else if ("scan-too-large".equals(key)) {
+                actor.printError(plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
+            } else {
+                actor.printError("无法解析方块参数: " + key);
+            }
             event.setCancelled(true);
             return;
         } catch (UnsupportedOperationException ex) {
@@ -118,6 +101,7 @@ public final class WeSurvivalListener {
             actor.printError(plugin.msg(
                     "insufficient-balance",
                     "total", EconomyService.format(total),
+                    "blocks", String.valueOf(estimate.affectedBlocks()),
                     "demolition", EconomyService.format(estimate.demolition()),
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor()),
@@ -125,6 +109,10 @@ public final class WeSurvivalListener {
             ));
             event.setCancelled(true);
             return;
+        }
+
+        if (estimate.affectedBlocks() > 0L) {
+            MarketBridge.enqueue(estimate);
         }
 
         if (total > 0D && !LedgerBridge.withdraw(player, total, command)) {
@@ -137,11 +125,71 @@ public final class WeSurvivalListener {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
                     "charged",
                     "total", EconomyService.format(total),
+                    "blocks", String.valueOf(estimate.affectedBlocks()),
                     "demolition", EconomyService.format(estimate.demolition()),
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor())
             ));
         }
+    }
+
+    private FeeEstimate.Result estimateReplaceNear(String[] args, LocalSession session, CommandEvent event, Actor actor, Player player, long maxScan) throws InputParseException {
+        if (args.length < 3) {
+            throw new InputParseException("replacenear 参数不足");
+        }
+        int radius;
+        try {
+            radius = Integer.parseInt(args[0]);
+        } catch (NumberFormatException ex) {
+            throw new InputParseException("无效半径: " + args[0]);
+        }
+        if (radius < 0) {
+            throw new InputParseException("半径不能为负数");
+        }
+        long volume = FeeEstimate.replaceNearScanVolume(radius);
+        if (volume > maxScan) {
+            throw new InputParseException("scan-too-large");
+        }
+        World world = session.getSelectionWorld();
+        if (world == null && event.getSession() != null) {
+            world = event.getSession().getWorld();
+        }
+        if (world == null) {
+            world = com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(player.getWorld());
+        }
+        if (world == null) {
+            throw new InputParseException("无法确定世界");
+        }
+        Location loc = player.getLocation();
+        BlockVector3 center = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+        PriceCatalog prices = plugin.getPriceCatalog();
+        return FeeEstimate.forReplaceNear(prices, world, center, radius, args[1], args[2], actor);
+    }
+
+    private FeeEstimate.Result estimateSelectionCommand(String command, String[] args, LocalSession session, CommandEvent event, Actor actor, long maxScan) throws InputParseException {
+        World world = session.getSelectionWorld();
+        if (world == null && event.getSession() != null) {
+            world = event.getSession().getWorld();
+        }
+        if (world == null) {
+            throw new InputParseException("no-selection");
+        }
+
+        Region region;
+        try {
+            region = session.getSelection(world);
+        } catch (Exception ex) {
+            throw new InputParseException("no-selection");
+        }
+        if (region == null) {
+            throw new InputParseException("no-selection");
+        }
+
+        long volume = FeeEstimate.regionVolume(region);
+        if (volume > maxScan) {
+            throw new InputParseException("scan-too-large");
+        }
+        return estimateCommand(command, args, region, world, actor);
     }
 
     private FeeEstimate.Result estimateCommand(String command, String[] args, Region region, World world, Actor actor) throws InputParseException {
@@ -158,12 +206,6 @@ public final class WeSurvivalListener {
                     throw new InputParseException("replace 需要两个方块参数");
                 }
                 yield FeeEstimate.forReplace(prices, region, world, args[0], args[1], actor);
-            }
-            case "replacenear" -> {
-                if (args.length < 3) {
-                    throw new InputParseException("replacenear 参数不足");
-                }
-                yield FeeEstimate.forReplace(prices, region, world, args[1], args[2], actor);
             }
             default -> throw new UnsupportedOperationException(command);
         };

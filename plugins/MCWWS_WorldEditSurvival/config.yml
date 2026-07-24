@@ -2,6 +2,9 @@ enabled: true
 bypass-permission: mcwws.we.survival.bypass
 prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
 prices-reload-seconds: 60
+# 创世神变更写入动态市场虚拟库存（拆除旧方块=供给/库存↑，放置新方块=需求/库存↓）
+record-market-stock: true
+market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
 max-scan-blocks: 500000
 charge-commands:
   - set
@@ -13,8 +16,8 @@ charge-commands:
   - repl
 messages:
   prefix: "§6[创世神] §f"
-  insufficient-balance: "余额不足，需要 §e{total}§f（拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
-  charged: "已扣除 §e{total}§f（拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
+  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
   unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"

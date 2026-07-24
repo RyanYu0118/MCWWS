@@ -1,0 +1,57 @@
+# 创世神生存建造 → 动态市场虚拟库存（由 MCWWS_WorldEditSurvival 写入队列）
+
+import:
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
+
+options:
+    we market queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
+
+function mcwwsProcessWorldEditMarketQueue() :: number:
+    set {_count} to 0
+    set {_file} to new File("{@we market queue}")
+    if {_file}.exists() is false:
+        return 0
+    set {_size} to {_file}.length()
+    if {_size} <= 0:
+        return 0
+    set {_bytes} to Files.readAllBytes({_file}.toPath())
+    set {_text} to new String({_bytes}, StandardCharsets.UTF_8)
+    Files.delete({_file}.toPath())
+    set {_lines::*} to {_text} split at nl
+    loop {_lines::*}:
+        set {_line} to loop-value
+        if {_line} is "":
+            continue
+        set {_parts::*} to {_line} split at "|"
+        if size of {_parts::*} < 3:
+            continue
+        set {_item} to {_parts::1}
+        set {_amount} to {_parts::2} parsed as number
+        set {_side} to {_parts::3} in lower case
+        if {_amount} is not set:
+            continue
+        if {_amount} <= 0:
+            continue
+        if {_side} is "buy" or {_side} is "1" or {_side} is "true":
+            mcwwsRecordMarketTrade({_item}, {_amount}, true)
+            add 1 to {_count}
+        else if {_side} is "sell" or {_side} is "0" or {_side} is "false":
+            mcwwsRecordMarketTrade({_item}, {_amount}, false)
+            add 1 to {_count}
+    return {_count}
+
+on load:
+    send "§a[MCWWS] 创世神市场库存队列已启用。" to console
+    wait 2 seconds
+    mcwwsProcessWorldEditMarketQueue()
+
+every 1 second:
+    mcwwsProcessWorldEditMarketQueue()
+
+command /mcwws-we-market-run-queue:
+    permission: op
+    trigger:
+        set {_n} to mcwwsProcessWorldEditMarketQueue()
+        send "§a[MCWWS] 已处理创世神市场队列 %{_n}% 条。" to player

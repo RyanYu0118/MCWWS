@@ -14,11 +14,21 @@ import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
+import java.util.HashMap;
 import java.util.Locale;
+import java.util.Map;
 
 public final class FeeEstimate {
 
-    public record Result(double demolition, double material, double labor, long affectedBlocks, long protectedBlocks) {
+    public record Result(
+            double demolition,
+            double material,
+            double labor,
+            long affectedBlocks,
+            long protectedBlocks,
+            Map<String, Long> removedCounts,
+            Map<String, Long> placedCounts
+    ) {
         public double total() {
             return demolition + material + labor;
         }
@@ -28,7 +38,7 @@ public final class FeeEstimate {
     }
 
     public static Result empty() {
-        return new Result(0D, 0D, 0D, 0L, 0L);
+        return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of());
     }
 
     public static Result forSet(PriceCatalog prices, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
@@ -36,6 +46,7 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         Pattern pattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(patternInput, context);
+        RegionChunkLoader.ensureLoaded(world, region);
         ResultBuilder builder = new ResultBuilder(prices);
         for (BlockVector3 pos : region) {
             if (BlockProtection.isProtectedWorldBlock(world, pos)) {
@@ -61,20 +72,69 @@ public final class FeeEstimate {
             new MaskTraverser(fromMask).setNewExtent(world);
         }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
+        RegionChunkLoader.ensureLoaded(world, region);
         ResultBuilder builder = new ResultBuilder(prices);
         for (BlockVector3 pos : region) {
             if (BlockProtection.isProtectedWorldBlock(world, pos)) {
                 builder.protectedBlocks++;
                 continue;
             }
-            BaseBlock existing = world.getBlock(pos).toBaseBlock();
             if (!fromMask.test(pos)) {
                 continue;
             }
+            BaseBlock existing = world.getBlock(pos).toBaseBlock();
             BaseBlock target = toPattern.applyBlock(pos);
-            builder.addChange(existing, target);
+            builder.addReplaceChange(existing, target);
         }
         return builder.build();
+    }
+
+    /**
+     * 与 //replacenear 一致：以玩家脚下方块为中心、半径为 size 的立方体（非选区）。
+     */
+    public static Result forReplaceNear(PriceCatalog prices, World world, BlockVector3 center, int radius, String fromInput, String toInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
+        if (radius < 0) {
+            throw new InputParseException("半径不能为负数");
+        }
+        ParserContext context = new ParserContext();
+        context.setActor(actor);
+        context.setWorld(world);
+        Mask fromMask;
+        if (fromInput == null || fromInput.isBlank()) {
+            fromMask = new ExistingBlockMask(world);
+        } else {
+            fromMask = WorldEdit.getInstance().getMaskFactory().parseFromInput(fromInput, context);
+            new MaskTraverser(fromMask).setNewExtent(world);
+        }
+        Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
+        RegionChunkLoader.ensureLoaded(world, center, radius);
+        ResultBuilder builder = new ResultBuilder(prices);
+        for (int dx = -radius; dx <= radius; dx++) {
+            for (int dy = -radius; dy <= radius; dy++) {
+                for (int dz = -radius; dz <= radius; dz++) {
+                    BlockVector3 pos = center.add(dx, dy, dz);
+                    if (BlockProtection.isProtectedWorldBlock(world, pos)) {
+                        builder.protectedBlocks++;
+                        continue;
+                    }
+                    if (!fromMask.test(pos)) {
+                        continue;
+                    }
+                    BaseBlock existing = world.getBlock(pos).toBaseBlock();
+                    BaseBlock target = toPattern.applyBlock(pos);
+                    builder.addReplaceChange(existing, target);
+                }
+            }
+        }
+        return builder.build();
+    }
+
+    public static long replaceNearScanVolume(int radius) {
+        if (radius < 0) {
+            return 0L;
+        }
+        long edge = 2L * radius + 1L;
+        return edge * edge * edge;
     }
 
     public static Result forUniformPattern(PriceCatalog prices, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
@@ -102,6 +162,8 @@ public final class FeeEstimate {
         private double labor;
         private long affectedBlocks;
         private long protectedBlocks;
+        private final Map<String, Long> removedCounts = new HashMap<>();
+        private final Map<String, Long> placedCounts = new HashMap<>();
 
         private ResultBuilder(PriceCatalog prices) {
             this.prices = prices;
@@ -114,15 +176,29 @@ public final class FeeEstimate {
             if (existing.equals(target)) {
                 return;
             }
+            accumulate(existing, target);
+        }
+
+        /** //replace：凡匹配 from 的格子均计费，与 FAWE 替换格数对齐 */
+        private void addReplaceChange(BaseBlock existing, BaseBlock target) {
+            if (existing == null || target == null) {
+                return;
+            }
+            accumulate(existing, target);
+        }
+
+        private void accumulate(BaseBlock existing, BaseBlock target) {
             String oldId = itemIdFromBaseBlock(existing);
             String newId = itemIdFromBaseBlock(target);
             if (!"air".equals(oldId)) {
                 demolition += prices.getBuyPrice(oldId);
+                removedCounts.merge(oldId, 1L, Long::sum);
             }
             if (!"air".equals(newId)) {
                 double unit = prices.getBuyPrice(newId);
                 material += unit;
                 labor += unit;
+                placedCounts.merge(newId, 1L, Long::sum);
             }
             affectedBlocks++;
         }
@@ -131,7 +207,15 @@ public final class FeeEstimate {
             demolition = round(demolition);
             material = round(material);
             labor = round(labor);
-            return new Result(demolition, material, labor, affectedBlocks, protectedBlocks);
+            return new Result(
+                    demolition,
+                    material,
+                    labor,
+                    affectedBlocks,
+                    protectedBlocks,
+                    Map.copyOf(removedCounts),
+                    Map.copyOf(placedCounts)
+            );
         }
     }
 
