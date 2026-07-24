@@ -661,6 +661,12 @@ body.mcwws-ledger-open {
     vertical-align: top;
 }
 
+.mcwws-ledger-table td:first-child,
+.mcwws-ledger-table th:first-child {
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
+}
+
 .mcwws-ledger-table th {
     position: sticky;
     top: 0;

@@ -5,6 +5,7 @@ import:
     java.nio.file.Files
     java.nio.charset.StandardCharsets
     java.nio.file.StandardOpenOption
+    java.time.Instant
     me.xpyex.plugin.flywithfood.bukkit.event.EnergyCostEvent
 
 options:
@@ -16,6 +17,9 @@ function mcwwsLedgerSanitize(text: text) :: text:
     replace all nl with " " in {_t}
     return {_t}
 
+function mcwwsLedgerNowIso() :: text:
+    return Instant.now().toString()
+
 function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text, category: text, amount: number, description: text, refId: text):
     set {_uuid} to mcwwsLedgerSanitize({_uuid})
     set {_pid} to mcwwsLedgerSanitize({_playerId})
@@ -24,7 +28,7 @@ function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text,
     set {_desc} to mcwwsLedgerSanitize({_description})
     set {_ref} to mcwwsLedgerSanitize({_refId})
     set {_amt} to mcwwsFormatMoney({_amount})
-    set {_time} to now formatted as "yyyy-MM-dd'T'HH:mm:ss"
+    set {_time} to mcwwsLedgerNowIso()
     set {_line} to "%{_uuid}%|%{_pid}%|%{_dir}%|%{_cat}%|%{_amt}%||%{_desc}%|%{_ref}%|%{_time}%"
     set {_file} to new File("{@ledger queue}")
     if {_file}.getParentFile().exists() is false:

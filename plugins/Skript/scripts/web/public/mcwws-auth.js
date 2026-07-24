@@ -319,10 +319,20 @@
         }
         const d = new Date(iso);
         if (Number.isNaN(d.getTime())) {
-            return String(iso).replace('T', ' ').slice(0, 19);
+            const raw = String(iso).trim().replace('T', ' ');
+            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) {
+                return `${raw}.000`;
+            }
+            const dot = raw.indexOf('.');
+            if (dot > 0) {
+                const base = raw.slice(0, dot);
+                const frac = raw.slice(dot + 1).replace(/\D/g, '').padEnd(3, '0').slice(0, 3);
+                return `${base}.${frac}`;
+            }
+            return raw.slice(0, 23);
         }
-        const pad = (n) => String(n).padStart(2, '0');
-        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+        const pad = (n, width = 2) => String(n).padStart(width, '0');
+        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
     }
 
     function renderLedgerSummary(summary, summaryAll, economyData) {

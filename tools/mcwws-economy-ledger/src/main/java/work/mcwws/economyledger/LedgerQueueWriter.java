@@ -1,17 +1,14 @@
 package work.mcwws.economyledger;
 
 import java.io.IOException;
+import java.time.Instant;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 final class LedgerQueueWriter {
-
-    private static final DateTimeFormatter TIME = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss");
 
     private final Path queuePath;
     private final Object lock = new Object();
@@ -44,7 +41,7 @@ final class LedgerQueueWriter {
                         balanceAfter == null ? "" : formatMoney(balanceAfter),
                         sanitize(description),
                         sanitize(refId),
-                        LocalDateTime.now().format(TIME)
+                        Instant.now().toString()
                 ) + System.lineSeparator();
                 Files.writeString(
                         queuePath,
