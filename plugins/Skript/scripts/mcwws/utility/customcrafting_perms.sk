@@ -1,0 +1,17 @@
+# 为 default 组开放 CustomCrafting 配方书分类总览
+# 权限节点：customcrafting.inv.recipe_book.category_overview
+# （该节点较新，未声明 default 时按 op，普通玩家会缺权）
+
+function mcwwsGrantCustomCraftingRecipeBookPerm():
+    if plugin "LuckPerms" is enabled:
+        execute console command "lp group default permission set customcrafting.inv.recipe_book.category_overview true"
+        execute console command "lp group default permission set customcrafting.inv.recipe_book.* true"
+        log "[MCWWS] 已为 default 组授予 customcrafting.inv.recipe_book 相关权限"
+
+on Skript start:
+    wait 5 seconds
+    mcwwsGrantCustomCraftingRecipeBookPerm()
+
+on script load:
+    wait 2 seconds
+    mcwwsGrantCustomCraftingRecipeBookPerm()

@@ -97,7 +97,8 @@ cooking:
   match_vanilla_recipes: true
 recipe_book:
   # If the recipe book item should be reset on each server start. This means the config is replaced with a new version.
-  reset: true
+  # Keep false: recipe changed to BOOK+PAPER to avoid clashing with Slimefun PORTABLE_CRAFTER (BOOK+CRAFTING_TABLE).
+  reset: false
   # If closed and opened again, it'll open up the recipe and menu the player last left on.
   keep_last_open: true
   # The title of the single recipe menu

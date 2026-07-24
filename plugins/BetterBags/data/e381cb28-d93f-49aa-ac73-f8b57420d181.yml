@@ -16,72 +16,121 @@ items:
     minecraft:damage: '45'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:jungle_planks
-  count: 11
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:white_stained_glass
-  count: 4
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:white_tulip
-  count: 7
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:ice
-  count: 5
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:rooted_dirt
-  count: 2
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:jungle_log
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:orange_stained_glass
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:heart_of_the_sea
-  count: 2
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:sugar_cane
-  count: 5
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:magenta_concrete
-  count: 1
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:dandelion
-  count: 2
-  schema_version: 1
-- DataVersion: 4671
-  id: minecraft:leather_chestplate
-  count: 1
+  id: minecraft:firework_rocket
+  count: 8
   schema_version: 1
 - DataVersion: 4671
   id: minecraft:apple
   count: 3
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:magenta_wool
-  count: 1
+  id: minecraft:glowstone_dust
+  count: 50
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"铜粉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200098.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"COPPER_DUST"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:leather
-  count: 1
+  id: minecraft:gold_nugget
+  count: 4
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"red",italic:1b,obfuscated:0b,strikethrough:0b,text:"等级:
+      III",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"魔法结晶
+      ",underlined:0b},{color:"gray",italic:0b,text:"- "},{color:"yellow",italic:0b,text:"III"}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200032.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"MAGIC_LUMP_3"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:magenta_stained_glass
-  count: 1
+  id: minecraft:sugar
+  count: 7
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,italic:0b,obfuscated:0b,strikethrough:0b,text:"小麦粉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200114.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"WHEAT_FLOUR"}}'
   schema_version: 1
 - DataVersion: 4671
-  id: minecraft:obsidian
+  id: minecraft:gold_nugget
+  count: 6
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"red",italic:1b,obfuscated:0b,strikethrough:0b,text:"等级:
+      II",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"末影结晶
+      ",underlined:0b},{color:"gray",italic:0b,text:"- "},{color:"yellow",italic:0b,text:"II"}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200034.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ENDER_LUMP_2"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:shulker_shell
+  count: 20
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:gunpowder
+  count: 28
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"铁粉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"IRON_DUST"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:elytra
   count: 1
+  components:
+    minecraft:unbreakable: '{}'
+    minecraft:damage: '309'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '146'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:blaze_powder
+  count: 1
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"银",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,italic:0b,obfuscated:0b,strikethrough:0b,text:"魔法精华",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201050.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SILVER_ESSENCE"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:white_banner
+  count: 1
+  components:
+    minecraft:banner_patterns: '[{color:"cyan",pattern:"minecraft:rhombus"},{color:"light_gray",pattern:"minecraft:stripe_bottom"},{color:"gray",pattern:"minecraft:stripe_center"},{color:"light_gray",pattern:"minecraft:border"},{color:"black",pattern:"minecraft:stripe_middle"},{color:"light_gray",pattern:"minecraft:half_horizontal"},{color:"light_gray",pattern:"minecraft:circle"},{color:"black",pattern:"minecraft:border"}]'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
+    minecraft:rarity: '"uncommon"'
+    minecraft:item_name: '{translate:"block.minecraft.ominous_banner"}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1015916662,-463063467,-1197367117,767056656],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIwOWQzZDBkOGRhYTQ2MjhiOWIzZTEwYTIzNWUyMjA4OWQ3NmJmZmUxNTZkZGM1ODUyZTVmZGMxMmEzZDEyYyJ9fX0="}]}'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"比盐辣一点。",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"产品",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#CCD123",italic:0b,obfuscated:0b,strikethrough:0b,text:"黑胡椒",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2300096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PEPPER"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:brown_mushroom
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203097.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_BUTTON_MUSHROOM"}}'
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:bone
+  count: 5
+  schema_version: 1
+- DataVersion: 4671
+  id: minecraft:copper_chestplate
+  count: 1
+  components:
+    minecraft:damage: '152'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
