@@ -1,4 +1,4 @@
-next_id: 65
+next_id: 66
 quotes:
   '1':
     id: 6467f176-2e7e-4371-ae59-b35d84a0c507
@@ -34516,3 +34516,74 @@ quotes:
     expiresAt: '2026-07-14T17:08:59.501Z'
     consumedAt: '2026-07-13T17:09:00.566Z'
     pasteOrderId: 52
+  '65':
+    id: a054ef80-fe40-4368-947a-3e579aba753c
+    numericId: 65
+    contentHash: ef16188d69ef3e49e1d28d110a6c9f3673113c61ccd306f9bb8779ea580d9e1f
+    contentHashVersion: mcwws:content-v1
+    listName: 本投影合集为纯免费分享，如您为付费购买，例如闲鱼平台，请退款并举报，合集原作者b站[天才_派大星-]部分素材取自网络
+    materials:
+      - label: oak_leaves
+        itemId: oak_leaves
+        count: 6
+      - label: potted_dead_bush
+        itemId: potted_dead_bush
+        count: 5
+      - label: decorated_pot
+        itemId: decorated_pot
+        count: 1
+    quoteLines:
+      - label: oak_leaves
+        itemId: oak_leaves
+        materialCount: 6
+        displayName: 橡树树叶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: flowers__p3
+        slot: K
+        shopTitle: 花卉商店 (3/5)
+        unitBuyPrice: 1
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 6
+        checkoutLineTotal: 6
+        billing: shop
+      - label: potted_dead_bush
+        itemId: potted_dead_bush
+        materialCount: 5
+        displayName: 枯萎的灌木盆栽
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: decorated_pot
+        itemId: decorated_pot
+        materialCount: 1
+        displayName: 饰纹陶罐
+        catalogBuyPrice: 17.6
+        status: ok
+        statusLabel: 可购买
+        shopId: archaeology
+        slot: I
+        shopTitle: 考古商店 (1/2)
+        unitBuyPrice: 17.6
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 17.6
+        checkoutLineTotal: 17.6
+        billing: shop
+    materialTotal: 23.6
+    buildServiceFee: 23.6
+    purchasableTotal: 47.2
+    freeUnlistedTotal: 0
+    playerUuid: ''
+    playerId: ''
+    username: ''
+    status: consumed
+    createdAt: '2026-07-24T07:38:15.160Z'
+    expiresAt: '2026-07-25T07:38:15.160Z'
+    consumedAt: '2026-07-24T07:38:38.651Z'
+    pasteOrderId: 53

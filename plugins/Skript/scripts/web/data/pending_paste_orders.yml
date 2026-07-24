@@ -1,4 +1,4 @@
-next_id: 53
+next_id: 54
 
 orders:
     '1':
@@ -2096,3 +2096,51 @@ orders:
         webPasteProcessedAt: '2026-07-14 01:09:14'
         webPasteProcessingAt: '2026-07-14 01:09:03'
         pasteStartedAt: '2026-07-14 01:09:03'
+    '53':
+        id: bd0ca8dc-fc5f-4151-ae48-fa47800fb376
+        numericId: 53
+        pasteToken: ''
+        contentHash: ef16188d69ef3e49e1d28d110a6c9f3673113c61ccd306f9bb8779ea580d9e1f
+        contentHashVersion: mcwws:content-v1
+        quoteId: 65
+        playerUuid: e381cb28-d93f-49aa-ac73-f8b57420d181
+        playerId: Song_zi
+        username: Song Yi
+        total: 47.2
+        status: completed
+        anchor:
+            world: world
+            x: -278
+            y: 66
+            z: 503
+            yaw: 0
+            pitch: 0
+        anchorSetAt: '2026-07-24T07:38:38.624Z'
+        rotation: NONE
+        mirror: NONE
+        pasteReplaceBehavior: NONE
+        schemFileName: mcwws_ef16188d69ef3e49
+        schemOriginOffset:
+            x: 0
+            y: 0
+            z: 0
+        schemSize:
+            width: 3
+            height: 4
+            length: 3
+        transformBaked: false
+        pasteAnchorAdjust:
+            x: 0
+            y: 0
+            z: 0
+        schematicPath: C:\mc\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\ef16188d69ef3e49e1d28d110a6c9f3673113c61ccd306f9bb8779ea580d9e1f.litematic
+        createdAt: '2026-07-24T07:38:38.624Z'
+        pasteTokenExpiresAt: '2026-07-24T07:53:38.624Z'
+        pastedAt: '2026-07-24 15:39:06'
+        failureReason: ''
+        webPasteQueue: done
+        webPasteQueuedAt: '2026-07-24T07:38:53.456Z'
+        webPasteQueueError: ''
+        webPasteProcessedAt: '2026-07-24 15:39:06'
+        webPasteProcessingAt: '2026-07-24 15:38:53'
+        pasteStartedAt: '2026-07-24 15:38:53'
