@@ -50,8 +50,9 @@ alwaysApply: true
 推荐命令：
 
 1. 先 `git add` 本会话核心路径（明确可控）
-2. 再 `git add -u` 纳入其余已跟踪文件的修改；或对用户确认后 `git add -A` 纳入全部已跟踪变更
-3. **不要** `git add` 未跟踪的敏感文件（`.env`、密钥、凭证）；若出现应先警告用户
+2. 再 **`git add -A`**（仓库根目录）纳入**全部**已跟踪变更与**未跟踪**的运行时/构建产物（Slimefun 备份与 error-reports、`tools/**/build/` 等）；**不要**仅用 `git add -u`（会漏掉 `??` 未跟踪文件）
+3. 提交前 **`git status`** 应无剩余改动；若仍有 `??` 且非敏感文件，继续 `git add` 直至干净
+4. **不要** `git add` 未跟踪的敏感文件（`.env`、密钥、凭证）；若出现应先警告用户
 
 **禁止**仅凭 `git status` 统计或文件修改时间**代替**对核心改动的意图理解来撰写标题与正文主干。
 
@@ -67,7 +68,7 @@ alwaysApply: true
 ## 推荐流程
 
 1. `git status` / `git diff -- <核心路径>` 核对开发改动
-2. `git add` 核心路径，再 `git add -u`（或经确认的更广范围）纳入噪声文件
+2. `git add` 核心路径，再 `git add -A` 纳入噪声与未跟踪文件；`git status` 确认工作区干净
 3. 用 HEREDOC 写入双语 commit message（噪声放末尾一条）
 4. `git commit` 后 `git status` 验证
 5. 用户选「提交并推送」或回复 `y` 时再 `git push`
