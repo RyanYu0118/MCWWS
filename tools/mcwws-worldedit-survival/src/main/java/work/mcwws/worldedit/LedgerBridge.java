@@ -40,6 +40,32 @@ final class LedgerBridge {
         return EconomyService.withdraw(player, amount);
     }
 
+    static boolean deposit(Player player, double amount, String description, String refId) {
+        if (player == null || amount <= 0D) {
+            return true;
+        }
+        if (isLedgerAvailable()) {
+            boolean[] ok = {false};
+            Runnable action = () -> ok[0] = EconomyService.deposit(player, amount);
+            try {
+                Class<?> contextClass = Class.forName("work.mcwws.economyledger.LedgerContext");
+                java.lang.reflect.Method runWith = contextClass.getMethod(
+                        "runWith",
+                        Player.class,
+                        String.class,
+                        String.class,
+                        String.class,
+                        Runnable.class
+                );
+                runWith.invoke(null, player, "worldedit_undo", description, refId, action);
+                return ok[0];
+            } catch (ReflectiveOperationException ex) {
+                McwwsWeSurvivalPlugin.getInstance().getLogger().fine("LedgerContext 入账调用失败，退回普通退款。");
+            }
+        }
+        return EconomyService.deposit(player, amount);
+    }
+
     private static boolean isLedgerAvailable() {
         if (available != null) {
             return available;

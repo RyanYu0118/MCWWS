@@ -43,21 +43,21 @@ final class MarketBridge {
         appendLines(plugin, lines);
     }
 
-    /** //undo 时冲销上一笔创世神操作对应的市场变动，与方块还原对齐 */
-    static void reverseLastBatch(Player player) {
+    /** //undo 时冲销上一笔创世神操作对应的市场变动；若存在记录则返回 true */
+    static boolean reverseLastBatch(Player player) {
         if (player == null) {
-            return;
+            return false;
         }
         McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
         if (plugin == null || !plugin.getPluginConfig().getBoolean("record-market-stock", true)) {
-            return;
+            return false;
         }
         if (!plugin.getPluginConfig().getBoolean("reverse-market-on-undo", true)) {
-            return;
+            return false;
         }
         List<String> lines = lastBatchByPlayer.remove(player.getUniqueId());
         if (lines == null || lines.isEmpty()) {
-            return;
+            return false;
         }
         List<String> reversed = new ArrayList<>(lines.size());
         for (String line : lines) {
@@ -71,7 +71,9 @@ final class MarketBridge {
         }
         if (!reversed.isEmpty()) {
             appendLines(plugin, reversed);
+            return true;
         }
+        return false;
     }
 
     private static void collectLines(List<String> lines, Map<String, Long> counts, String side) {

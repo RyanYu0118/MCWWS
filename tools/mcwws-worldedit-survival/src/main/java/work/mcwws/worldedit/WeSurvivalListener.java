@@ -60,7 +60,7 @@ public final class WeSurvivalListener {
         String raw = event.getArguments();
         String command = FeeEstimate.rootCommand(raw);
         if ("undo".equals(command) || "u".equals(command)) {
-            MarketBridge.reverseLastBatch(player);
+            UndoRefundService.handleUndo(player);
             return;
         }
         if (!plugin.getChargeCommands().contains(command)) {
@@ -133,6 +133,10 @@ public final class WeSurvivalListener {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
             return;
+        }
+
+        if (total > 0D) {
+            WeChargeMemory.record(player, total, command);
         }
 
         if (total > 0D) {
