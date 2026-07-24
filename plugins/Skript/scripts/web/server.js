@@ -73,7 +73,7 @@ const { createPlayerLedgerService } = require('./player-ledger');
 const nbt = require('prismarine-nbt');
 
 const app = express();
-const PORT = 8002;
+const PORT = Number(process.env.PORT || process.env.MCWWS_WEB_PORT) || 8002;
 const HOST = process.env.HOST || '0.0.0.0';
 const materialListParser = require('./public/material-list-parser');
 const buildSchematicService = require('./build-schematic-service');
@@ -3935,16 +3935,20 @@ function logServerStart(protocol) {
     console.log(`📊 仪表板交易记录: ${TRANSACTIONS_YAML}`);
 }
 
+let httpServer = null;
+let shuttingDown = false;
+
 if (HTTPS_ENABLED && fs.existsSync(HTTPS_KEY_PATH) && fs.existsSync(HTTPS_CERT_PATH)) {
-    https.createServer({
+    httpServer = https.createServer({
         key: fs.readFileSync(HTTPS_KEY_PATH),
         cert: fs.readFileSync(HTTPS_CERT_PATH)
-    }, app).listen(PORT, HOST, () => {
+    }, app);
+    httpServer.listen(PORT, HOST, () => {
         logServerStart('https');
         loadPendingOrdersStore();
     });
 } else {
-    app.listen(PORT, HOST, () => {
+    httpServer = app.listen(PORT, HOST, () => {
         logServerStart('http');
         loadPendingOrdersStore();
         if (!HTTPS_ENABLED) {
@@ -3954,3 +3958,27 @@ if (HTTPS_ENABLED && fs.existsSync(HTTPS_KEY_PATH) && fs.existsSync(HTTPS_CERT_P
         }
     });
 }
+
+function shutdownWebServer(signal) {
+    if (shuttingDown) {
+        return;
+    }
+    shuttingDown = true;
+    console.log(`ℹ️ 收到 ${signal}，正在关闭 MCWWS 网页服务…`);
+    if (!httpServer) {
+        process.exit(0);
+        return;
+    }
+    httpServer.close((err) => {
+        if (err) {
+            console.error('关闭 HTTP 服务失败:', err.message);
+            process.exit(1);
+            return;
+        }
+        process.exit(0);
+    });
+    setTimeout(() => process.exit(0), 5000).unref();
+}
+
+process.on('SIGTERM', () => shutdownWebServer('SIGTERM'));
+process.on('SIGINT', () => shutdownWebServer('SIGINT'));
