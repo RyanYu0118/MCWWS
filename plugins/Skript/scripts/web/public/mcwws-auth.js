@@ -94,7 +94,7 @@
                         <div class="mcwws-auth-popover-progress" data-economy="progressBar" hidden>
                             <div class="mcwws-auth-popover-progress-fill"></div>
                         </div>
-                        <button type="button" class="mcwws-auth-ledger-btn" data-action="ledger">零钱明细</button>
+                        <a href="/ledger.html" target="_blank" rel="noopener noreferrer" class="mcwws-auth-ledger-btn" data-action="ledger">零钱明细</a>
                     </div>
                     ${isMap ? '<div id="mapAuthThemeSlot" class="mcwws-auth-popover-theme-row"></div><a href="home.html" class="mcwws-auth-popover-services-link">🏠 更多服务</a>' : ''}
                     <button type="button" id="${actionId}" class="mcwws-auth-popover-action">登录 / 注册</button>
@@ -144,7 +144,7 @@
             <div class="mcwws-auth-popover-progress" data-economy="progressBar" hidden>
                 <div class="mcwws-auth-popover-progress-fill"></div>
             </div>
-            <button type="button" class="mcwws-auth-ledger-btn" data-action="ledger">零钱明细</button>
+            <a href="/ledger.html" target="_blank" rel="noopener noreferrer" class="mcwws-auth-ledger-btn" data-action="ledger">零钱明细</a>
         `;
         body.insertBefore(economy, action);
         return economy;
@@ -217,8 +217,7 @@
     const ECONOMY_CACHE_MS = 8000;
     /** 登录后自动轮询零钱（与游戏内 eco 扣款/入账对齐，约 1 秒内可见） */
     const ECONOMY_POLL_MS = 500;
-    /** 零钱明细弹窗打开时每秒刷新明细与余额 */
-    const LEDGER_POLL_MS = 1000;
+    const LEDGER_PAGE_URL = '/ledger.html';
     const EMPTY_VALUE = '-';
 
     /** minecraftAE 未编码字符回退为 ASCII，避免显示乱码 */
@@ -235,232 +234,12 @@
     let economyFetchPromise = null;
     let economyPollTimer = null;
     let lastRenderedBalanceText = '';
-    let ledgerModalBound = false;
-    let ledgerFetchPromise = null;
-    let ledgerPollTimer = null;
-    let ledgerFilter = 'exclude_flight';
-
-    function ensureLedgerModal() {
-        let modal = document.getElementById('mcwwsLedgerModal');
-        if (modal) {
-            return modal;
-        }
-        modal = document.createElement('div');
-        modal.id = 'mcwwsLedgerModal';
-        modal.className = 'mcwws-ledger-modal';
-        modal.hidden = true;
-        modal.innerHTML = `
-            <div class="mcwws-ledger-backdrop" data-ledger-close="1"></div>
-            <div class="mcwws-ledger-panel" role="dialog" aria-labelledby="mcwwsLedgerTitle" aria-modal="true">
-                <header class="mcwws-ledger-header">
-                    <h2 id="mcwwsLedgerTitle">零钱明细</h2>
-                    <button type="button" class="mcwws-ledger-close" data-ledger-close="1" aria-label="关闭">×</button>
-                </header>
-                <div class="mcwws-ledger-summary" id="mcwwsLedgerSummary"></div>
-                <div class="mcwws-ledger-filters" id="mcwwsLedgerFilters">
-                    <button type="button" class="mcwws-ledger-filter is-active" data-filter="exclude_flight">不含飞行</button>
-                    <button type="button" class="mcwws-ledger-filter" data-filter="all">全部</button>
-                    <button type="button" class="mcwws-ledger-filter" data-filter="flight">仅飞行</button>
-                </div>
-                <div class="mcwws-ledger-table-wrap">
-                    <table class="mcwws-ledger-table">
-                        <thead>
-                            <tr>
-                                <th>时间</th>
-                                <th>类型</th>
-                                <th>说明</th>
-                                <th>金额</th>
-                                <th>余额</th>
-                            </tr>
-                        </thead>
-                        <tbody id="mcwwsLedgerBody">
-                            <tr><td colspan="5" class="mcwws-ledger-empty">加载中…</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        `;
-        document.body.appendChild(modal);
-        return modal;
-    }
-
-    function bindLedgerModalEvents() {
-        if (ledgerModalBound) {
-            return;
-        }
-        ledgerModalBound = true;
-        const modal = ensureLedgerModal();
-        modal.addEventListener('click', (e) => {
-            if (e.target.closest('[data-ledger-close]')) {
-                closeLedgerModal();
-            }
-        });
-        modal.querySelector('#mcwwsLedgerFilters')?.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-filter]');
-            if (!btn) {
-                return;
-            }
-            ledgerFilter = btn.dataset.filter || 'exclude_flight';
-            modal.querySelectorAll('.mcwws-ledger-filter').forEach((el) => {
-                el.classList.toggle('is-active', el === btn);
-            });
-            void refreshLedgerModal(true);
-        });
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape') {
-                closeLedgerModal();
-            }
-        });
-    }
-
-    function formatLedgerTime(iso) {
-        if (!iso) {
-            return '-';
-        }
-        const d = new Date(iso);
-        if (Number.isNaN(d.getTime())) {
-            const raw = String(iso).trim().replace('T', ' ');
-            if (/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/.test(raw)) {
-                return `${raw}.000`;
-            }
-            const dot = raw.indexOf('.');
-            if (dot > 0) {
-                const base = raw.slice(0, dot);
-                const frac = raw.slice(dot + 1).replace(/\D/g, '').padEnd(3, '0').slice(0, 3);
-                return `${base}.${frac}`;
-            }
-            return raw.slice(0, 23);
-        }
-        const pad = (n, width = 2) => String(n).padStart(width, '0');
-        return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}.${pad(d.getMilliseconds(), 3)}`;
-    }
-
-    function renderLedgerSummary(summary, summaryAll, economyData) {
-        const el = document.getElementById('mcwwsLedgerSummary');
-        if (!el) {
-            return;
-        }
-        const balanceText = economyData?.balanceFormatted
-            || (economyData?.balance != null ? String(economyData.balance) : EMPTY_VALUE);
-        const flight = summaryAll?.flightDebitTotal ?? summary?.flightDebitTotal ?? 0;
-        const credit = summary?.creditTotal ?? 0;
-        const debit = summary?.debitTotal ?? 0;
-        el.innerHTML = `
-            <div class="mcwws-ledger-stat is-balance"><span class="label">当前余额</span><span class="value is-balance">${sanitizeMcFontText(balanceText)}</span></div>
-            <div class="mcwws-ledger-stat"><span class="label">本页收入</span><span class="value is-credit">+${sanitizeMcFontText(String(credit))}</span></div>
-            <div class="mcwws-ledger-stat"><span class="label">本页支出</span><span class="value is-debit">-${sanitizeMcFontText(String(debit))}</span></div>
-            <div class="mcwws-ledger-stat"><span class="label">飞行累计</span><span class="value is-flight">${sanitizeMcFontText(String(flight))}</span></div>
-        `;
-    }
-
-    function renderLedgerRows(entries) {
-        const body = document.getElementById('mcwwsLedgerBody');
-        if (!body) {
-            return;
-        }
-        if (!entries || !entries.length) {
-            body.innerHTML = '<tr><td colspan="5" class="mcwws-ledger-empty">暂无明细记录</td></tr>';
-            return;
-        }
-        body.innerHTML = entries.map((row) => {
-            const signClass = row.direction === 'credit' ? 'is-credit' : 'is-debit';
-            const amountText = sanitizeMcFontText(row.signedAmountFormatted || row.amountFormatted || String(row.amount));
-            const balanceText = sanitizeMcFontText(row.balanceAfterFormatted || (row.balanceAfter != null ? String(row.balanceAfter) : '-'));
-            const desc = sanitizeMcFontText(row.description || row.categoryLabel || '');
-            const cat = sanitizeMcFontText(row.categoryLabel || row.category || '');
-            return `<tr>
-                <td>${formatLedgerTime(row.createdAt)}</td>
-                <td>${cat}</td>
-                <td>${desc}</td>
-                <td class="mcwws-ledger-amount ${signClass}">${amountText}</td>
-                <td>${balanceText}</td>
-            </tr>`;
-        }).join('');
-    }
-
-    async function fetchPlayerLedger(force) {
-        if (!authToken) {
-            return null;
-        }
-        if (!force && ledgerFetchPromise) {
-            return ledgerFetchPromise;
-        }
-        ledgerFetchPromise = fetch(`/api/player-ledger?limit=40&filter=${encodeURIComponent(ledgerFilter)}`, {
-            headers: authHeaders(),
-            cache: 'no-store'
-        }).then(async (response) => {
-            if (!response.ok) {
-                throw new Error('ledger fetch failed');
-            }
-            return response.json();
-        }).catch(() => null).finally(() => {
-            ledgerFetchPromise = null;
-        });
-        return ledgerFetchPromise;
-    }
-
-    async function refreshLedgerModal(force, silent) {
-        bindLedgerModalEvents();
-        const body = document.getElementById('mcwwsLedgerBody');
-        if (!silent && body) {
-            body.innerHTML = '<tr><td colspan="5" class="mcwws-ledger-empty">加载中…</td></tr>';
-        }
-        const [data, economyData] = await Promise.all([
-            fetchPlayerLedger(force),
-            fetchPlayerEconomy(true)
-        ]);
-        if (!data) {
-            if (!silent && body) {
-                body.innerHTML = '<tr><td colspan="5" class="mcwws-ledger-empty">加载失败，请稍后重试</td></tr>';
-            }
-            if (economyData) {
-                renderLedgerSummary(null, null, economyData);
-            }
-            return;
-        }
-        renderLedgerSummary(data.summary, data.summaryAll, economyData);
-        renderLedgerRows(data.entries);
-    }
-
-    function stopLedgerPolling() {
-        if (ledgerPollTimer) {
-            window.clearInterval(ledgerPollTimer);
-            ledgerPollTimer = null;
-        }
-    }
-
-    function startLedgerPolling() {
-        stopLedgerPolling();
-        ledgerPollTimer = window.setInterval(() => {
-            const modal = document.getElementById('mcwwsLedgerModal');
-            if (!modal || modal.hidden || !authToken || document.hidden) {
-                return;
-            }
-            void refreshLedgerModal(true, true);
-        }, LEDGER_POLL_MS);
-    }
-
-    function openLedgerModal() {
+    function openLedgerPage() {
         if (!currentUser) {
             openAuthModal();
             return;
         }
-        bindLedgerModalEvents();
-        const modal = ensureLedgerModal();
-        modal.hidden = false;
-        document.body.classList.add('mcwws-ledger-open');
-        void refreshLedgerModal(true, false);
-        startLedgerPolling();
-    }
-
-    function closeLedgerModal() {
-        stopLedgerPolling();
-        const modal = document.getElementById('mcwwsLedgerModal');
-        if (!modal) {
-            return;
-        }
-        modal.hidden = true;
-        document.body.classList.remove('mcwws-ledger-open');
+        window.open(LEDGER_PAGE_URL, '_blank', 'noopener,noreferrer');
     }
 
     function bindLedgerButtons(widget) {
@@ -469,13 +248,15 @@
         }
         widget.dataset.ledgerBound = '1';
         widget.addEventListener('click', (e) => {
-            const btn = e.target.closest('[data-action="ledger"]');
-            if (!btn) {
+            const link = e.target.closest('[data-action="ledger"]');
+            if (!link) {
                 return;
             }
-            e.preventDefault();
-            e.stopPropagation();
-            openLedgerModal();
+            if (!currentUser) {
+                e.preventDefault();
+                e.stopPropagation();
+                openAuthModal();
+            }
         });
     }
 
@@ -1019,9 +800,9 @@
             const refs = ensureAuthWidgetDom();
             return refreshEconomyForPopover(refs, Boolean(force));
         },
-        openLedgerModal,
-        closeLedgerModal,
-        refreshLedger: refreshLedgerModal,
+        openLedgerPage,
+        ledgerPageUrl: LEDGER_PAGE_URL,
+        fetchEconomy: fetchPlayerEconomy,
         startEconomyPolling,
         stopEconomyPolling,
         onChange(fn) {
@@ -1042,7 +823,7 @@
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', () => {
-            if (document.getElementById('authModal')) {
+            if (document.getElementById('authModal') || document.getElementById('mcwwsLedgerPage')) {
                 bindDom();
             }
         }, { once: true });

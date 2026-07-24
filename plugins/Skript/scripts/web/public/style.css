@@ -503,6 +503,9 @@ body {
     font-size: 0.82rem;
     cursor: pointer;
     transition: var(--transition-normal);
+    text-align: center;
+    text-decoration: none;
+    box-sizing: border-box;
 }
 
 .mcwws-auth-ledger-btn:hover {
@@ -670,10 +673,23 @@ body.mcwws-ledger-open {
 .mcwws-ledger-table th {
     position: sticky;
     top: 0;
-    background: var(--bg-secondary);
-    color: var(--text-secondary);
+    z-index: 2;
+    color: var(--text-primary);
     font-weight: 600;
-    z-index: 1;
+    background: rgba(20, 20, 20, 0.55);
+    backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    -webkit-backdrop-filter: blur(var(--glass-blur)) saturate(1.2);
+    border-bottom: 1px solid var(--glass-border);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, 0.08),
+        0 6px 20px rgba(0, 0, 0, 0.35);
+    isolation: isolate;
+}
+
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+    .mcwws-ledger-table th {
+        background: var(--glass-bg);
+    }
 }
 
 .mcwws-ledger-table tbody tr:hover {
@@ -694,6 +710,70 @@ body.mcwws-ledger-open {
     text-align: center;
     color: var(--text-secondary);
     padding: 1.25rem !important;
+}
+
+/* 零钱明细独立页 */
+.mcwws-ledger-page {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.mcwws-ledger-page-main {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    width: min(920px, 100%);
+    padding-top: 1.25rem;
+    padding-bottom: 2rem;
+    min-height: 0;
+}
+
+.mcwws-ledger-page-head {
+    margin-bottom: 1rem;
+}
+
+.mcwws-ledger-page-head h1 {
+    margin: 0 0 0.35rem;
+    font-size: 1.35rem;
+}
+
+.mcwws-ledger-page-sub {
+    margin: 0;
+    color: var(--text-secondary);
+    font-size: 0.88rem;
+}
+
+.mcwws-ledger-page-gate {
+    padding: 1.5rem 1.25rem;
+    text-align: center;
+    margin-bottom: 1rem;
+}
+
+.mcwws-ledger-page-gate p {
+    margin: 0 0 1rem;
+    color: var(--text-secondary);
+}
+
+.mcwws-ledger-page-card {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: min(72vh, 680px);
+    background: var(--bg-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+    box-shadow: var(--shadow-md);
+}
+
+.mcwws-ledger-page-card .mcwws-ledger-table-wrap {
+    flex: 1;
+    min-height: 12rem;
+}
+
+.mcwws-ledger-page-card[hidden] {
+    display: none !important;
 }
 
 .services-map-auth-widget {
