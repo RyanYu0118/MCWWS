@@ -5,6 +5,10 @@ prices-reload-seconds: 60
 # 创世神变更写入动态市场虚拟库存（拆除旧方块=供给/库存↑，放置新方块=需求/库存↓）
 record-market-stock: true
 market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
+# //undo 时冲销上一笔建造对应的市场库存变动（与 FAWE 还原方块同步）
+reverse-market-on-undo: true
+# 每次扣费预估前重读 web_prices.yml（含动态市价）
+reload-prices-before-estimate: true
 max-scan-blocks: 500000
 charge-commands:
   - set
@@ -20,6 +24,7 @@ messages:
   charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
+  estimate-no-blocks: "未检测到会变更的方块（若刚 //undo 请等待 1～2 秒再 //replace）。"
   unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
   protected-present: "选区内含 Slimefun 机器或无法破坏的方块，这些方块将被保留。"
   not-survival: "仅生存/冒险模式可使用付费创世神建造。"

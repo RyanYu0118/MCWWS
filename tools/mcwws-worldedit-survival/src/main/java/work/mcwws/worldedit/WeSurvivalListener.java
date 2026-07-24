@@ -59,8 +59,16 @@ public final class WeSurvivalListener {
 
         String raw = event.getArguments();
         String command = FeeEstimate.rootCommand(raw);
+        if ("undo".equals(command) || "u".equals(command)) {
+            MarketBridge.reverseLastBatch(player);
+            return;
+        }
         if (!plugin.getChargeCommands().contains(command)) {
             return;
+        }
+
+        if (plugin.getPluginConfig().getBoolean("reload-prices-before-estimate", true)) {
+            plugin.getPriceCatalog().reload();
         }
 
         LocalSession session = WorldEdit.getInstance().getSessionManager().get(actor);
@@ -95,6 +103,12 @@ public final class WeSurvivalListener {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("protected-present"));
         }
 
+        if (requiresBlockChanges(command) && estimate.affectedBlocks() <= 0L) {
+            actor.printError(plugin.msg("prefix") + plugin.msg("estimate-no-blocks"));
+            event.setCancelled(true);
+            return;
+        }
+
         double balance = EconomyService.getBalance(player);
         double total = estimate.total();
         if (total > balance + 1e-6) {
@@ -112,7 +126,7 @@ public final class WeSurvivalListener {
         }
 
         if (estimate.affectedBlocks() > 0L) {
-            MarketBridge.enqueue(estimate);
+            MarketBridge.enqueue(player, estimate);
         }
 
         if (total > 0D && !LedgerBridge.withdraw(player, total, command)) {
@@ -130,7 +144,23 @@ public final class WeSurvivalListener {
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor())
             ));
+        } else if (estimate.affectedBlocks() > 0L) {
+            McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
+                    "charged",
+                    "total", "0",
+                    "blocks", String.valueOf(estimate.affectedBlocks()),
+                    "demolition", "0",
+                    "material", "0",
+                    "labor", "0"
+            ));
         }
+    }
+
+    private static boolean requiresBlockChanges(String command) {
+        return switch (command) {
+            case "set", "replace", "replacenear", "fill", "walls", "overlay", "repl" -> true;
+            default -> false;
+        };
     }
 
     private FeeEstimate.Result estimateReplaceNear(String[] args, LocalSession session, CommandEvent event, Actor actor, Player player, long maxScan) throws InputParseException {
