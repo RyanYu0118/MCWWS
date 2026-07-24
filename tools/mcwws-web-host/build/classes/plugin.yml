@@ -1,0 +1,19 @@
+name: MCWWS_WebHost
+main: work.mcwws.webhost.McwwsWebHostPlugin
+version: 1.0.0
+api-version: '1.21'
+description: 随 Paper 服启动/停止 MCWWS Node 网页服务，支持热重载
+
+commands:
+  mcwws-web-reload:
+    description: 重启 MCWWS 网页 Node 进程（不重启 Minecraft）
+    permission: mcwws.web.admin
+    usage: /mcwws-web-reload
+  mcwws-web-status:
+    description: 查看 MCWWS 网页服务状态
+    permission: mcwws.web.admin
+    usage: /mcwws-web-status
+
+permissions:
+  mcwws.web.admin:
+    default: op

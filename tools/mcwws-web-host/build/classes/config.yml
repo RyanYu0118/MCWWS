@@ -1,0 +1,28 @@
+# 是否随插件启用自动启动 Node 网页服务
+enabled: true
+
+# 相对服务器根目录（含 paper.jar 的目录）
+web-directory: plugins/Skript/scripts/web
+entry-script: server.js
+
+# Windows 若 Paper 找不到 PATH 中的 node，可填绝对路径，例如:
+# node-binary: 'D:/Program Files/nodejs/node.exe'
+node-binary: node
+
+port: 8002
+host: 0.0.0.0
+
+# true = Node --watch，修改 web 目录下 .js 后自动重启 Node（开发用）
+watch-mode: false
+
+# 额外传给 node 的参数，例如 --max-old-space-size=512
+extra-node-args: []
+
+# Paper 启动后延迟多少 tick 再拉起 Node（等待 Skript 等）
+startup-delay-ticks: 60
+
+# 将 Node 标准输出转发到 Minecraft 控制台
+log-to-console: true
+
+# 停止时先 SIGTERM，超过此毫秒后强杀
+shutdown-grace-ms: 8000
