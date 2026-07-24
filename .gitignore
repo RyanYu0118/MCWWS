@@ -6,6 +6,13 @@ plugins/.paper-remapped/
 **/cache.mv.db
 **/Backup/*.zip
 
+# Essentials 写入 userdata 时的原子保存临时文件
+plugins/Essentials/userdata/.[!.]*.yml.tmp
+
+# SQLite 运行时 sidecar（勿提交；主 .db 仍可按需跟踪）
+**/*.db-shm
+**/*.db-wal
+
 # --- world saves (keep locally, too large for GitHub) ---
 world/
 world_nether/
