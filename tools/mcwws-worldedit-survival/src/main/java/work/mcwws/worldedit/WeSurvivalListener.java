@@ -60,7 +60,12 @@ public final class WeSurvivalListener {
         String raw = event.getArguments();
         String command = FeeEstimate.rootCommand(raw);
         if ("undo".equals(command) || "u".equals(command)) {
+            WeEditAuthorization.grantHistory(player);
             UndoRefundService.handleUndo(player);
+            return;
+        }
+        if ("redo".equals(command) || "re".equals(command)) {
+            WeEditAuthorization.grantHistory(player);
             return;
         }
         if (!plugin.getChargeCommands().contains(command)) {
@@ -137,6 +142,10 @@ public final class WeSurvivalListener {
 
         if (total > 0D) {
             WeChargeMemory.record(player, total, command);
+        }
+
+        if (estimate.affectedBlocks() > 0L) {
+            WeEditAuthorization.grantPaid(player, estimate.affectedBlocks());
         }
 
         if (total > 0D) {
@@ -260,9 +269,6 @@ public final class WeSurvivalListener {
         if (!plugin.getPluginConfig().getBoolean("enabled", true)) {
             return;
         }
-        if (event.getStage() != EditSession.Stage.BEFORE_CHANGE) {
-            return;
-        }
         Actor actor = event.getActor();
         if (!(actor instanceof BukkitPlayer bukkitPlayer)) {
             return;
@@ -271,7 +277,14 @@ public final class WeSurvivalListener {
         if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
             return;
         }
+        if (event.getStage() == EditSession.Stage.BEFORE_HISTORY) {
+            WeEditAuthorization.clear(player);
+            return;
+        }
+        if (event.getStage() != EditSession.Stage.BEFORE_CHANGE) {
+            return;
+        }
         Extent current = event.getExtent();
-        event.setExtent(new ProtectedFeeExtent(current, event.getWorld()));
+        event.setExtent(new ProtectedFeeExtent(current, event.getWorld(), player));
     }
 }
