@@ -14,7 +14,7 @@ wiki/
 │   ├── commands.md
 │   ├── economy.md
 │   ├── map-teleport.md
-│   ├── world/              # 服务器世界
+│   ├── server-world/       # 服务器世界（勿用 world/，会被 .gitignore 忽略）
 │   └── community/          # 项目与日记
 └── developer/              # 开发者 / 运维向
     ├── index.md
