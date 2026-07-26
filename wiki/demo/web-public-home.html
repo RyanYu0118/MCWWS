@@ -5,6 +5,29 @@
   Regenerate: python tools/mcwws-halo-preview/embed-web-home.py
 -->
 <div class="html-edited mcwws-web-public-home-root">
+<script>
+/* Halo: mark page + hide TOC + widen board (when post CSS cannot use :has) */
+
+(function () {
+  var root = document.querySelector('.mcwws-web-public-home-root');
+  if (!root) return;
+  document.documentElement.classList.add('mcwws-web-public-home-page');
+  ['toc', 'toc-body'].forEach(function (id) {
+    var el = document.getElementById(id);
+    if (el) el.style.setProperty('display', 'none', 'important');
+  });
+  ['#board-ctn', '#board', '.markdown-body'].forEach(function (sel) {
+    var el = document.querySelector(sel);
+    if (!el) return;
+    el.style.setProperty('max-width', 'none', 'important');
+    el.style.setProperty('width', '100%', 'important');
+  });
+  document.querySelectorAll('.col-lg-4, .col-xl-3, #toc').forEach(function (el) {
+    el.style.setProperty('display', 'none', 'important');
+  });
+})();
+
+</script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -5730,6 +5753,168 @@ html.mcwws-page-exit .mcwws-theme-switcher--float {
     transform: none !important;
     opacity: 1 !important;
     transition: none !important;
+}
+
+</style>
+<style>
+
+/* === MCWWS Halo full-width + hide TOC (Fluid / common Halo) === */
+html.mcwws-web-public-home-page,
+html:has(.mcwws-web-public-home-root) {
+  overflow-x: clip;
+}
+
+html.mcwws-web-public-home-page body,
+html:has(.mcwws-web-public-home-root) body {
+  overflow-x: clip;
+}
+
+html.mcwws-web-public-home-page .mcwws-web-public-home-root,
+html:has(.mcwws-web-public-home-root) .mcwws-web-public-home-root {
+  width: 100vw;
+  max-width: 100vw;
+  margin-inline: calc(50% - 50vw);
+  padding-inline: 0;
+  box-sizing: border-box;
+  position: relative;
+  left: 0;
+  z-index: 1;
+}
+
+html.mcwws-web-public-home-page #board-ctn,
+html.mcwws-web-public-home-page #board,
+html.mcwws-web-public-home-page .container,
+html.mcwws-web-public-home-page .container-fluid,
+html:has(.mcwws-web-public-home-root) #board-ctn,
+html:has(.mcwws-web-public-home-root) #board,
+html:has(.mcwws-web-public-home-root) .container,
+html:has(.mcwws-web-public-home-root) .container-fluid {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+html.mcwws-web-public-home-page #board,
+html:has(.mcwws-web-public-home-root) #board {
+  border-radius: 0 !important;
+  margin-top: 0 !important;
+  box-shadow: none !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+html.mcwws-web-public-home-page .row,
+html:has(.mcwws-web-public-home-root) .row {
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+html.mcwws-web-public-home-page .col-lg-8,
+html.mcwws-web-public-home-page .col-lg-9,
+html.mcwws-web-public-home-page .col-xl-8,
+html.mcwws-web-public-home-page .col-xl-9,
+html.mcwws-web-public-home-page .nopadding-x-md,
+html:has(.mcwws-web-public-home-root) .col-lg-8,
+html:has(.mcwws-web-public-home-root) .col-lg-9,
+html:has(.mcwws-web-public-home-root) .col-xl-8,
+html:has(.mcwws-web-public-home-root) .col-xl-9,
+html:has(.mcwws-web-public-home-root) .nopadding-x-md {
+  flex: 0 0 100% !important;
+  max-width: 100% !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+}
+
+html.mcwws-web-public-home-page #toc,
+html.mcwws-web-public-home-page #toc-body,
+html.mcwws-web-public-home-page .toc,
+html.mcwws-web-public-home-page .toc-header,
+html.mcwws-web-public-home-page .toc-body,
+html.mcwws-web-public-home-page .tocbot,
+html.mcwws-web-public-home-page .col-lg-4:has(#toc),
+html.mcwws-web-public-home-page .col-xl-3:has(#toc),
+html:has(.mcwws-web-public-home-root) #toc,
+html:has(.mcwws-web-public-home-root) #toc-body,
+html:has(.mcwws-web-public-home-root) .toc,
+html:has(.mcwws-web-public-home-root) .toc-header,
+html:has(.mcwws-web-public-home-root) .toc-body,
+html:has(.mcwws-web-public-home-root) .tocbot,
+html:has(.mcwws-web-public-home-root) .col-lg-4:has(#toc),
+html:has(.mcwws-web-public-home-root) .col-xl-3:has(#toc) {
+  display: none !important;
+  visibility: hidden !important;
+  width: 0 !important;
+  max-width: 0 !important;
+  height: 0 !important;
+  overflow: hidden !important;
+  pointer-events: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+html.mcwws-web-public-home-page .markdown-body,
+html.mcwws-web-public-home-page .post-content,
+html.mcwws-web-public-home-page .post-page,
+html.mcwws-web-public-home-page .post-page__main,
+html.mcwws-web-public-home-page .post-page__content,
+html.mcwws-web-public-home-page .n-post-content,
+html.mcwws-web-public-home-page article.post,
+html.mcwws-web-public-home-page .halo-post-content,
+html.mcwws-web-public-home-page .single-content,
+html:has(.mcwws-web-public-home-root) .markdown-body,
+html:has(.mcwws-web-public-home-root) .post-content,
+html:has(.mcwws-web-public-home-root) .post-page,
+html:has(.mcwws-web-public-home-root) .post-page__main,
+html:has(.mcwws-web-public-home-root) .post-page__content,
+html:has(.mcwws-web-public-home-root) .n-post-content,
+html:has(.mcwws-web-public-home-root) article.post,
+html:has(.mcwws-web-public-home-root) .halo-post-content,
+html:has(.mcwws-web-public-home-root) .single-content {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+html.mcwws-web-public-home-page .html-edited.mcwws-web-public-home-root,
+html:has(.mcwws-web-public-home-root) .html-edited.mcwws-web-public-home-root {
+  max-width: none !important;
+  width: 100% !important;
+  padding-left: 0 !important;
+  padding-right: 0 !important;
+  margin-left: 0 !important;
+  margin-right: 0 !important;
+}
+
+.mcwws-web-public-home-root .services-hub-page {
+  width: 100%;
+  min-height: 100vh;
+  box-sizing: border-box;
+}
+
+.mcwws-web-public-home-root .services-hub-main.container {
+  max-width: none !important;
+  width: 100% !important;
+  margin-inline: 0;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
+  box-sizing: border-box;
+}
+
+.mcwws-web-public-home-root .services-module-grid {
+  grid-template-columns: repeat(auto-fit, minmax(min(100%, 280px), 1fr));
+}
+
+.mcwws-web-public-home-root .services-hub-hero,
+.mcwws-web-public-home-root .services-hub-footer {
+  width: 100%;
+  box-sizing: border-box;
+  padding-inline: clamp(1rem, 4vw, 2.5rem);
 }
 
 </style>
