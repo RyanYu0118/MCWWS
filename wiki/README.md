@@ -9,6 +9,7 @@
 | 改内容 | 编辑 `wiki/**/*.md`、共享组件 `wiki/_halo/*` |
 | 本地看效果 | `wiki/预览Halo页.ps1`（默认 `home.md`）→ `wiki/_preview/*.html` |
 | 贴到 Halo | `wiki/发布到Halo.ps1` → `wiki/_publish/*.halo-paste.md`（已展开 CSS/JS） |
+| **整篇 JSON 导入** | `wiki/导出Halo文章JSON.ps1` → `wiki/demo/*.halo-import.json`（与 `demo/流浪世界服务器Wiki.json` 同结构） |
 | 线上附件 | 图片需在 Halo 上传为 `/upload/...`；Git 内可用 `demo/upload/` 预览，发布时加 `-RewriteUpload` |
 
 导入 RYAN STUDIO 时，建议按目录上传；各文件头部的 `slug` 与路径一致，便于在站内还原层级。
