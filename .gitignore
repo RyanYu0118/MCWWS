@@ -35,3 +35,9 @@ crash-reports/
 
 *.jar
 bluemap.zip
+
+# Wiki 本地预览 / Halo 粘贴稿（由脚本生成）
+wiki/_preview/
+wiki/_publish/
+wiki/**/_preview/
+**/__pycache__/

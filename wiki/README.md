@@ -1,5 +1,16 @@
 # 流浪世界 Wiki（仓库内 Markdown）
 
+## 唯一真相源：Git
+
+**以本仓库 `wiki/` 为准**编辑、评审与版本历史；Halo / RYAN STUDIO 是**发布目标**（渲染 + 附件 `/upload/`），不要在后台改完再反向覆盖 Git（除非刻意做一次性导出备份到 `demo/`）。
+
+| 步骤 | 命令 / 位置 |
+|------|-------------|
+| 改内容 | 编辑 `wiki/**/*.md`、共享组件 `wiki/_halo/*` |
+| 本地看效果 | `wiki/预览Halo页.ps1`（默认 `home.md`）→ `wiki/_preview/*.html` |
+| 贴到 Halo | `wiki/发布到Halo.ps1` → `wiki/_publish/*.halo-paste.md`（已展开 CSS/JS） |
+| 线上附件 | 图片需在 Halo 上传为 `/upload/...`；Git 内可用 `demo/upload/` 预览，发布时加 `-RewriteUpload` |
+
 导入 RYAN STUDIO 时，建议按目录上传；各文件头部的 `slug` 与路径一致，便于在站内还原层级。
 
 ## 目录结构
@@ -45,7 +56,7 @@ RYAN STUDIO / 站内编辑器支持**特殊块**：在 Markdown 中插入 UUID �
 
 - **用途**：首页横幅、专题落地页、复杂交互组件。
 - **注意**：脚本与样式仅在 Wiki 平台开启「原始 HTML」或对应块类型时生效；本仓库 Markdown 在 GitHub 预览里**不会**执行这些块。
-- 维护：复杂页面可先在 `demo/` 留导出备份；**站内首页与 player/developer 索引** 使用 `{{MCWWS_HALO_CSS}}` / `{{MCWWS_HALO_JS}}` + `wiki/_halo/` 共享样式（见 `home.md`）
+- 维护：`demo/` 仅作 **Halo 历史导出备份**；**站内首页与 player/developer 索引** 在 Git 中用 `{{MCWWS_HALO_CSS}}` / `{{MCWWS_HALO_JS}}` + `wiki/_halo/`（见 `home.md`），发布用 `发布到Halo.ps1`
 
 ## 为什么在 Cursor 里「读」不出 Halo 效果？
 
@@ -68,18 +79,15 @@ Halo / RYAN STUDIO 的 **Markdown·HTML 混合块**（见 [Halo Markdown/HTML �
 ### 在 Cursor 里怎么弄（推荐）
 
 1. **日常文档**（规则、经济、命令）：只改 `wiki/player/`、`wiki/developer/` 等**标准 Markdown**（带 `slug` 头），在 Cursor 里预览、diff、给 AI 看都正常。
-2. **复杂首页 / 专题**（如 `demo/流浪世界服务器Wiki.md`）：
-   - **编辑**：在 **Halo / RYAN STUDIO 后台** 用 HTML / Markdown 块改，保存后 **导出或复制** 到 `wiki/demo/` 作备份；或在本机用 **HTML 语法高亮** 看代码（见下）。
-   - **本地预览**：在浏览器打开 **已发布的 Wiki 页面**，或 Halo 后台的预览；不要指望 Cursor 的 Markdown 预览等于站内效果。
-3. **可选**：仓库已配置 `wiki/demo/**` 在 Cursor 中按 **HTML** 高亮（见 `.vscode/settings.json` 的 `files.associations`），便于改 CSS/标签；**提交前**若需贴回 Halo，仍按平台要求导出（围栏与 UUID 以站内为准）。
-4. **双文件**（可选）：`foo.md` 给 Git/AI，`foo.halo-export.md` 存 Halo 原样导出，避免互相覆盖。
+2. **复杂首页 / 专题**：在 Git 改 `home.md` 等 + `wiki/_halo/`；运行 `预览Halo页.ps1` / `发布到Halo.ps1`；`demo/` 只存旧版 Halo 导出对照。
+3. **可选**：`wiki/demo/**` 可按 **HTML** 高亮便于读导出；**不要**在 demo 与 home 两套并行改同一页。
 
-**要看最终网页**：以 Halo / RYAN STUDIO 线上或后台预览为准；Cursor 负责改**标准 MD** 和**当代码库看** Halo 导出即可。
+**要看最终网页**：本地用 `_preview` HTML；线上以 Halo 发布后为准（发布前内容以 Git diff 为准）。
 
 ### 在 Cursor 里本地预览（近似站内）
 
-1. 终端或 **Ctrl+Shift+P → Tasks: Run Task →「Halo: 编译 demo 预览 HTML」**（亦可在 `wiki/demo/` 运行 `预览Halo页.ps1`）。
-2. 生成 `wiki/demo/_preview/<文件名>.html`（已 gitignore）。
+1. 在 `wiki/` 运行 `.\预览Halo页.ps1`（默认 `home.md`）或 `.\预览Halo页.ps1 -File demo\流浪世界服务器Wiki.md`。
+2. 生成 `wiki/_preview/` 或 `wiki/demo/_preview/<文件名>.html`（已 gitignore）。
 3. **Ctrl+Shift+P → Simple Browser: Show**，粘贴任务输出里的 `file:///.../_preview/....html` 地址（需联网加载 marked.js CDN）。
 4. 改完 `.md` 后**重新运行编译**再刷新 Simple Browser。
 

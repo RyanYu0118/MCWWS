@@ -8,6 +8,13 @@ tags: [Wiki]
 
 # Wiki 贡献与待完善条目
 
+## Git 为准（发布到 Halo）
+
+1. 改 `wiki/` 源文件（混合页用 `{{MCWWS_*}}` 引用 `wiki/_halo/`）。
+2. `wiki/预览Halo页.ps1` → 浏览器打开 `_preview/*.html`。
+3. `wiki/发布到Halo.ps1`（可选 `-RewriteUpload`）→ 将 `_publish/*.halo-paste.md` 按块粘贴到 Halo 中 **slug 与 frontmatter 一致** 的文章。
+4. 勿在 Halo 后台改完后覆盖 Git；若线上 drift，导出到 `wiki/demo/` 作对照再合并回 Git。
+
 ## Halo 交互页（与 demo 同系）
 
 - 共享样式与脚本：`wiki/_halo/mcwws-wiki.css`、`wiki/_halo/mcwws-wiki.js`

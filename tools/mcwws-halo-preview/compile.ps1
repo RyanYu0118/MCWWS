@@ -18,7 +18,7 @@ if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 $demoDir = Split-Path -Parent $InFull
 $base = [System.IO.Path]::GetFileNameWithoutExtension($InFull)
-$HtmlPath = Join-Path $demoDir "_preview" ($base + ".html")
+$HtmlPath = Join-Path (Join-Path $demoDir "_preview") ($base + ".html")
 Write-Host ""
 Write-Host "Generated: $HtmlPath"
 Write-Host "Cursor: Ctrl+Shift+P -> Simple Browser: Show"
