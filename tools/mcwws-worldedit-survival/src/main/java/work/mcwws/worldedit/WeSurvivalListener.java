@@ -84,6 +84,8 @@ public final class WeSurvivalListener {
         try {
             if ("replacenear".equals(command)) {
                 estimate = estimateReplaceNear(args, session, event, actor, player, maxScan);
+            } else if ("stack".equals(command)) {
+                estimate = estimateStack(raw, session, event, actor, player, maxScan);
             } else {
                 estimate = estimateSelectionCommand(command, args, session, event, actor, maxScan);
             }
@@ -171,9 +173,35 @@ public final class WeSurvivalListener {
 
     private static boolean requiresBlockChanges(String command) {
         return switch (command) {
-            case "set", "replace", "replacenear", "fill", "walls", "overlay", "repl" -> true;
+            case "set", "replace", "replacenear", "fill", "walls", "overlay", "repl", "stack" -> true;
             default -> false;
         };
+    }
+
+    private FeeEstimate.Result estimateStack(String raw, LocalSession session, CommandEvent event, Actor actor, Player player, long maxScan) throws InputParseException {
+        World world = session.getSelectionWorld();
+        if (world == null && event.getSession() != null) {
+            world = event.getSession().getWorld();
+        }
+        if (world == null) {
+            throw new InputParseException("no-selection");
+        }
+
+        Region region;
+        try {
+            region = session.getSelection(world);
+        } catch (Exception ex) {
+            throw new InputParseException("no-selection");
+        }
+        if (region == null) {
+            throw new InputParseException("no-selection");
+        }
+
+        StackCommandArgs stackArgs = StackCommandArgs.parse(raw, player);
+        if (stackArgs.scanVolume(region) > maxScan) {
+            throw new InputParseException("scan-too-large");
+        }
+        return FeeEstimate.forStack(plugin.getPriceCatalog(), region, world, stackArgs);
     }
 
     private FeeEstimate.Result estimateReplaceNear(String[] args, LocalSession session, CommandEvent event, Actor actor, Player player, long maxScan) throws InputParseException {

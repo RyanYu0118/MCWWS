@@ -15,6 +15,7 @@ undo-refund:
   fee-rate: 0.05
 charge-commands:
   - set
+  - stack
   - replace
   - replacenear
   - fill

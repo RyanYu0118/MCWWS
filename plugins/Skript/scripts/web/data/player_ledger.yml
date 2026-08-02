@@ -1,4 +1,4 @@
-next_id: 1087
+next_id: 1123
 entries:
   '1':
     id: 1
@@ -11044,3 +11044,399 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/25 00:38
     createdAt: '2026-07-24T16:38:08.506138800Z'
     updatedAt: '2026-07-24T16:40:16.506059Z'
+  '1087':
+    id: 1087
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 32
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/25 00:45
+    createdAt: '2026-07-24T16:45:57.268912800Z'
+    updatedAt: '2026-07-24T16:46:04.262496Z'
+  '1088':
+    id: 1088
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4254
+    description: '创世神建造: replace'
+    refId: we-03d24ad7-1cdb-4798-9daa-f4cb670bb0d7
+    createdAt: '2026-07-24T16:46:40.887348Z'
+    balanceAfter: 165906151.02
+  '1089':
+    id: 1089
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4041.3
+    description: '创世神撤销退款: replace (原扣 4254 手续费 212.7)'
+    refId: we-undo-5c4cb00e-a508-4d03-9a2f-c35216fc1a8e
+    createdAt: '2026-07-24T16:46:45.009472Z'
+    balanceAfter: 165910192.32
+  '1090':
+    id: 1090
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 8.91
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472409838-3978272632700
+    createdAt: '2026-07-31T04:33:29.839436400Z'
+    balanceAfter: 165910201.23
+  '1091':
+    id: 1091
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 3.96
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472409997-3978431756100
+    createdAt: '2026-07-31T04:33:29.998637500Z'
+    balanceAfter: 165910205.19
+  '1092':
+    id: 1092
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 2.97
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410216-3978649949400
+    createdAt: '2026-07-31T04:33:30.216294800Z'
+    balanceAfter: 165910208.16
+  '1093':
+    id: 1093
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 163.43
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410304-3978738629100
+    createdAt: '2026-07-31T04:33:30.305361600Z'
+    balanceAfter: 165910371.59
+  '1094':
+    id: 1094
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 1.98
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410435-3978868576300
+    createdAt: '2026-07-31T04:33:30.435037800Z'
+    balanceAfter: 165910373.57
+  '1095':
+    id: 1095
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 103.95
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410594-3979027775700
+    createdAt: '2026-07-31T04:33:30.594371500Z'
+    balanceAfter: 165910477.52
+  '1096':
+    id: 1096
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 207.69
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410709-3979142828200
+    createdAt: '2026-07-31T04:33:30.709382400Z'
+    balanceAfter: 165910685.21
+  '1097':
+    id: 1097
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 38.61
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410820-3979254388500
+    createdAt: '2026-07-31T04:33:30.821226900Z'
+    balanceAfter: 165910723.82
+  '1098':
+    id: 1098
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 25.74
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472410943-3979377178900
+    createdAt: '2026-07-31T04:33:30.943728900Z'
+    balanceAfter: 165910749.56
+  '1099':
+    id: 1099
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 21.78
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472411034-3979468517200
+    createdAt: '2026-07-31T04:33:31.034702600Z'
+    balanceAfter: 165910771.34
+  '1100':
+    id: 1100
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 1200
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472436692-4005126426600
+    createdAt: '2026-07-31T04:33:56.693343600Z'
+    balanceAfter: 165909571.34
+  '1101':
+    id: 1101
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 24
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:35
+    createdAt: '2026-07-31T04:35:12.052638800Z'
+    updatedAt: '2026-07-31T04:35:17.052729400Z'
+  '1102':
+    id: 1102
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 0.99
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472521903-4090337838400
+    createdAt: '2026-07-31T04:35:21.904536500Z'
+    balanceAfter: 165909548.33
+  '1103':
+    id: 1103
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 420
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:36
+    createdAt: '2026-07-31T04:36:00.039081500Z'
+    updatedAt: '2026-07-31T04:37:44.048439700Z'
+  '1104':
+    id: 1104
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 124
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:38
+    createdAt: '2026-07-31T04:38:43.046123800Z'
+    updatedAt: '2026-07-31T04:39:13.051474300Z'
+  '1105':
+    id: 1105
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 354.96
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472747793-4316226754800
+    createdAt: '2026-07-31T04:39:07.793230900Z'
+    balanceAfter: 165909267.29
+  '1106':
+    id: 1106
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 543.86
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472747893-4316327173800
+    createdAt: '2026-07-31T04:39:07.893478900Z'
+    balanceAfter: 165909811.15
+  '1107':
+    id: 1107
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 1.96
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785472771572-4340006740400
+    createdAt: '2026-07-31T04:39:31.573637200Z'
+    balanceAfter: 165909789.11
+  '1108':
+    id: 1108
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 16
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:43
+    createdAt: '2026-07-31T04:43:00.043151900Z'
+    updatedAt: '2026-07-31T04:43:03.037762500Z'
+  '1109':
+    id: 1109
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 2.97
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473027027-4595461529300
+    createdAt: '2026-07-31T04:43:47.027584Z'
+    balanceAfter: 165909708.08
+  '1110':
+    id: 1110
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 2.97
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473027123-4595556705600
+    createdAt: '2026-07-31T04:43:47.123153100Z'
+    balanceAfter: 165909711.05
+  '1111':
+    id: 1111
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 0.99
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473027269-4595703271700
+    createdAt: '2026-07-31T04:43:47.269316600Z'
+    balanceAfter: 165909712.04
+  '1112':
+    id: 1112
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 79.2
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473114217-4682652149300
+    createdAt: '2026-07-31T04:45:14.218941800Z'
+    balanceAfter: 165909791.24
+  '1113':
+    id: 1113
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 58.8
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473114361-4682796108900
+    createdAt: '2026-07-31T04:45:14.362881800Z'
+    balanceAfter: 165909850.04
+  '1114':
+    id: 1114
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 9.9
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473114439-4682872511500
+    createdAt: '2026-07-31T04:45:14.439012300Z'
+    balanceAfter: 165909859.94
+  '1115':
+    id: 1115
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 14.85
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473114514-4682949002100
+    createdAt: '2026-07-31T04:45:14.515852300Z'
+    balanceAfter: 165909874.79
+  '1116':
+    id: 1116
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 21.78
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785473114596-4683030122100
+    createdAt: '2026-07-31T04:45:14.596270Z'
+    balanceAfter: 165909896.57
+  '1117':
+    id: 1117
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 48
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:45
+    createdAt: '2026-07-31T04:45:42.044053600Z'
+    updatedAt: '2026-07-31T04:45:53.038005200Z'
+  '1118':
+    id: 1118
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 24
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:46
+    createdAt: '2026-07-31T04:46:01.050635800Z'
+    updatedAt: '2026-07-31T04:46:06.047226800Z'
+  '1119':
+    id: 1119
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 104
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/7/31 12:47
+    createdAt: '2026-07-31T04:47:00.044299400Z'
+    updatedAt: '2026-07-31T04:47:25.050359900Z'
+  '1120':
+    id: 1120
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 11.88
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785490791468-22360300092700
+    createdAt: '2026-07-31T09:39:51.469357300Z'
+    balanceAfter: 165909564.45
+  '1121':
+    id: 1121
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 4.95
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785490791543-22360375112400
+    createdAt: '2026-07-31T09:39:51.543791300Z'
+    balanceAfter: 165909569.4
+  '1122':
+    id: 1122
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 5.94
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785490791628-22360460420200
+    createdAt: '2026-07-31T09:39:51.628371600Z'
+    balanceAfter: 165909575.34

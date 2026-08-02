@@ -1,15 +1,16 @@
-# 为 default 组开放 //sel extend（及全部 //sel 选区模式切换）
-# FAWE 权限节点：worldedit.analysis.sel
+# 为 default 组开放生存创世神常用权限（选区切换、//stack 等）
+# FAWE 权限节点见 FastAsyncWorldEdit plugin.yml / fawe.permpack.basic
 
-function mcwwsGrantWorldEditSelPerm():
+function mcwwsGrantWorldEditSurvivalPerms():
     if plugin "LuckPerms" is enabled:
         execute console command "lp group default permission set worldedit.analysis.sel true"
-        log "[MCWWS] 已为 default 组授予 worldedit.analysis.sel（//sel extend 等）"
+        execute console command "lp group default permission set worldedit.region.stack true"
+        log "[MCWWS] 已为 default 组授予 worldedit.analysis.sel 与 worldedit.region.stack"
 
 on Skript start:
     wait 5 seconds
-    mcwwsGrantWorldEditSelPerm()
+    mcwwsGrantWorldEditSurvivalPerms()
 
 on script load:
     wait 2 seconds
-    mcwwsGrantWorldEditSelPerm()
+    mcwwsGrantWorldEditSurvivalPerms()

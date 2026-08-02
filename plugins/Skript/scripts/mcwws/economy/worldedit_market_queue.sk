@@ -8,6 +8,24 @@ import:
 options:
     we market queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
 
+function mcwwsWorldEditQueueIsBuy(side: text) :: boolean:
+    if {_side} is "buy":
+        return true
+    if {_side} is "1":
+        return true
+    if {_side} is "true":
+        return true
+    return false
+
+function mcwwsWorldEditQueueIsSell(side: text) :: boolean:
+    if {_side} is "sell":
+        return true
+    if {_side} is "0":
+        return true
+    if {_side} is "false":
+        return true
+    return false
+
 function mcwwsProcessWorldEditMarketQueue() :: number:
     set {_count} to 0
     set {_file} to new File("{@we market queue}")
@@ -34,10 +52,10 @@ function mcwwsProcessWorldEditMarketQueue() :: number:
             continue
         if {_amount} <= 0:
             continue
-        if {_side} is "buy" or {_side} is "1" or {_side} is "true":
+        if mcwwsWorldEditQueueIsBuy({_side}) is true:
             mcwwsRecordMarketTrade({_item}, {_amount}, true)
             add 1 to {_count}
-        else if {_side} is "sell" or {_side} is "0" or {_side} is "false":
+        else if mcwwsWorldEditQueueIsSell({_side}) is true:
             mcwwsRecordMarketTrade({_item}, {_amount}, false)
             add 1 to {_count}
     return {_count}

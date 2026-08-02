@@ -141,6 +141,32 @@ public final class FeeEstimate {
         return forSet(prices, region, world, patternInput, actor);
     }
 
+    /**
+     * //stack：按选区内容复制 count 次，计费规则与 //set 相同（拆除目标格 + 材料 + 劳务）。
+     */
+    public static Result forStack(PriceCatalog prices, Region region, World world, StackCommandArgs stackArgs) {
+        BlockVector3 blockOffset = stackArgs.blockOffset(region);
+        RegionChunkLoader.ensureLoadedForStack(world, region, blockOffset, stackArgs.count);
+        ResultBuilder builder = new ResultBuilder(prices);
+        for (int repetition = 1; repetition <= stackArgs.count; repetition++) {
+            BlockVector3 translation = blockOffset.multiply(repetition);
+            for (BlockVector3 pos : region) {
+                BaseBlock source = world.getBlock(pos).toBaseBlock();
+                if (stackArgs.ignoreAir && source.getBlockType() == BlockTypes.AIR) {
+                    continue;
+                }
+                BlockVector3 dest = pos.add(translation);
+                if (BlockProtection.isProtectedWorldBlock(world, dest)) {
+                    builder.protectedBlocks++;
+                    continue;
+                }
+                BaseBlock existing = world.getBlock(dest).toBaseBlock();
+                builder.addChange(existing, source);
+            }
+        }
+        return builder.build();
+    }
+
     public static String itemIdFromBaseBlock(BaseBlock block) {
         if (block == null || block.getBlockType() == BlockTypes.AIR) {
             return "air";
