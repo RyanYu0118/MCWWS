@@ -29,6 +29,13 @@ mysql:
     use-SSL: true
     verifyCertificate: true
     allowPubKeyRetrieval: false
+  pool:
+    maximum-pool-size: 10
+    minimum-idle: 2
+    connection-timeout: 30000
+    cache-prep-stmts: true
+    prep-stmt-cache-size: 250
+    prep-stmt-cache-sql-limit: 2048
 
 # # Sounds will play to the player when parts of their player is restored.
 sounds:
@@ -61,3 +68,4 @@ bStats: true
 # Debug mode - Prints extra information to the console.
 debug: false
 allow-other-plugins-edit-death-inventory: false
+save-empty-inventories: true

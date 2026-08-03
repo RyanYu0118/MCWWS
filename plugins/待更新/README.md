@@ -2,6 +2,10 @@
 
 本目录用于存放**已检测到新版本**、从 Modrinth/Hangar/GitHub/GeyserMC 下载的 jar，**不会自动替换** `plugins/` 里的旧文件。
 
+**Paper 优先：** 扫描脚本会优先选择 Modrinth 上带 `paper` loader 的构件（如 `bluemap-*-paper.jar`、`CommandAPI-*-Paper.jar`、`FastAsyncWorldEdit-Paper-*`）。部分插件官方仅发布 Bukkit/Spigot 文件名（如 LuckPerms-Bukkit、worldguard-bukkit、Geyser-Spigot、floodgate-spigot），但 loaders 含 `paper`，在 Paper 上可直接使用。
+
+**文件名：** 保存时使用 Modrinth/Hangar 返回的真实文件名；若 CDN URL 含 `%20`、`%2B` 等编码，会自动解码为正常空格/`+`（如 `DracFun v2.0.10.jar`），不会保留百分号。
+
 ## 本次扫描结果（2026-08-02，已补全）
 
 - 扫描：**138** 个 jar
@@ -14,7 +18,7 @@
 |------|-------------|------|
 | LuckPerms | 5.4.158 → 5.5.53 | Modrinth |
 | WorldGuard | 7.0.13 → 7.0.17 | Modrinth |
-| FastAsyncWorldEdit | 2.15.2 → 2.15.3 | Modrinth |
+| FastAsyncWorldEdit | 2.15.2 → 2.15.3 | Modrinth（`FastAsyncWorldEdit-Paper-*`） |
 | PlaceholderAPI | 2.11.7 → 2.12.3 | Modrinth |
 | BKCommonLib | 1.21.11-v1 → 2.0.1 | Modrinth |
 | Train_Carts | 1.21.11-v2 → 2.0.0-1720 | Modrinth |
@@ -42,6 +46,7 @@ ajLeaderboards、BlueMap、CommandAPI（**12.0.0 大版本**）、CommandTimer�
 
 ### 仍需手动处理
 
+- **ItemCommand** — [myunco 论坛](https://myunco.net/thread-8-1-1.html) 手动更新（当前建议 1.3.3），勿装误匹配的 FoBlackmarket
 - **Citizens**（2.0.41-SNAPSHOT）— SpigotMC 构建站，无稳定 Modrinth 源
 - 全部 **Slimefun 附属**（Build xxx git）
 - **Residence**、**DeluxeMenus**、**ProtocolLib**、**CMILib** 等 Spigot/自建源
@@ -57,6 +62,9 @@ python tools/mcwws-plugin-updates/check_and_download.py --download
 
 # 补下 GeoIP / floodgate 等无 Modrinth 源的插件
 python tools/mcwws-plugin-updates/download_supplement.py
+
+# 清理已 superseded 的 Spigot/Bukkit 构件，补下遗漏的 Paper jar
+python tools/mcwws-plugin-updates/prefer_paper_cleanup.py
 ```
 
 可在 `tools/mcwws-plugin-updates/plugin-sources.json` 里追加 Modrinth/Hangar 源。

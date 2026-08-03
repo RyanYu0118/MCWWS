@@ -44,6 +44,7 @@ def main() -> int:
     if isinstance(downloads, dict) and isinstance(downloads.get("spigot"), dict):
         fname = downloads["spigot"].get("name") or fname
     spigot_url = f"https://download.geysermc.org/v2/projects/floodgate/versions/{version}/builds/{build}/downloads/spigot"
+    # GeyserMC 仅发布 floodgate-spigot 构件，Paper 服务端同样使用该 jar。
     if spigot_url:
         dest = OUT / f"floodgate-spigot-{version}-b{build}.jar"
         if not (dest.exists() and dest.stat().st_size > 1000):

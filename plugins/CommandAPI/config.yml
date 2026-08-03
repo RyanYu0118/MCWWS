@@ -35,12 +35,6 @@ fallback-to-latest-nms: true
 # is set to "true" and /minecraft:reload is run.
 skip-initial-datapack-reload: false
 
-# Hook into Paper's ServerResourcesReloadedEvent (default: false)
-# If "true", the CommandAPI will hook into Paper's ServerResourcesReloadedEvent to detect when
-# /minecraft:reload is run. This allows the CommandAPI to automatically call its custom datapack-reloading
-# function which allows CommandAPI commands to be used in datapacks.
-hook-paper-reload: true
-
 # Turn on the CommandAPI's plugin messaging functionality (default: false)
 # If "false", the CommandAPI will not listen to incoming plugin messages
 # and attempts to send plugin messages will fail. Enabling networking by

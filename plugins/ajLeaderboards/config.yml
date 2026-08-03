@@ -20,6 +20,10 @@
 #                                                                                                           #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
+# COMMENT WARNING: This config is auto-updated when necessary, which will keep your options but will overwrite comments.
+#  Old configs are always backed up with a different file name, so you can recover them if you want,
+#   but I'd recommend not adding custom comments to the config.
+#  Note that the default config is always available at https://wiki.ajg0702.us/ajQueue/configs/main
 
 
 # How often should we refresh the stats of online players?
@@ -55,6 +59,16 @@ register-lp-contexts: false
 # If you leave off the type at the end, it will do all timed types for that board:
 # Example: - "statistic_time_played"
 only-register-lpc-for: []
+
+# IN AJLB PLACEHOLDERS, should we parse PlaceholderAPI placeholders?
+# This ONLY applies to `%ajlb_...` placeholders
+# It is disabled by default because it adds an extra step to every placeholder request,
+#  which can cause lag if a LOT of placeholders are requested at once.
+# It'd probably be fine for most servers though.
+# If you enable this, you can use PlaceholderAPI placeholders
+#  in `%ajlb_...` placeholders by using `{}` instead of `%%` around the placeholder.
+#  Default: false
+parse-placeholders-in-placeholders: false
 
 # Boards listed here will be sorted in reverse order
 # e.g. instead of showing the highest on top, boards listed here will show the lowest on top
@@ -130,11 +144,42 @@ update-stats: true
 #  Default: []
 only-update: []
 
+# Which boards should we periodically update offline players for?
+# This will update stats for players who are not currently online on the specified boards.
+# Useful if you have stats that are tracked elsewhere and need to be reflected on leaderboards.
+# Leave empty to disable offline updates.
+# Reminder: Not all placeholders support offline players. Only enable for boards that work offline.
+#  Default: []
+offline-update-boards: []
+
+# How often (in hours) should we update offline players?
+# Only applies if offline-update-boards is not empty.
+# Requires a server restart to apply
+#  Default: 6
+offline-update-interval-hours: 6
+
+# Should we run an offline player update when the plugin starts?
+# Only applies if offline-update-boards is not empty.
+#  Default: false
+offline-update-run-on-startup: false
+
 # If a player's score is 0 (and it wasn't 0 before) then ajLeaderboards will skip updating the player at first
 # This is to fix plugins that return 0 while they're still loading stats
 # If the player's score is still 0 the next time they're updated, then the 0 is shown.
 #  Default: true
 require-zero-validation: true
+
+# Which boards should we always show a decimal, even if its zero?
+# For example, if you want a KDR leaderboard to include a decimal even if the player's KDR is a whole number, add the board name here.
+# If you want to make sure more than one decimal place is always displayed, you can also specify that by adding % and then a number after the board name.
+# For example, if you want to always display a minimum of 1 decimal place for the board called "kdr_ratio" then you would add "kdr_ratio" to the list below.
+#   And if you want to make sure that the board called "vault_eco_balance" always shows 2 decimal places, you would add "vault_eco_balance%2" below.
+show-zero-decimal: []
+
+# How many decimal places should we round to when displaying numbers on the leaderboard?
+# ajLeaderboards can store up to 5 decimal places, but for looks it will round to 2 by default.
+#  Default: 2
+round-decimal-places: 2
 
 # In boards listed here, anyone with a score of `0` will not be added to the leaderboard.
 dont-add-zero: []
@@ -146,8 +191,15 @@ fetch-prefix-suffix-from-vault: true
 
 # Should we include seconds in the time format?
 # This only effects things that display the value directly from ajLeaderboards
+# For example, with true:  1d 3h 21m 2s
+#              with false: 1d 3h 21m
 #  Default: true
 time-format-display-seconds: true
+
+# Similar to the above option, but with weeks instead.
+# For example, with true:  2w 3d 20h 4m 8s
+#              with false:   17d 20h 4m 8s
+time-format-display-weeks: true
 
 # Allows setting custom bytebin location and webviewer link
 # You should only need to change these if you don't want /ajlb viewer to send the data to my servers
@@ -184,8 +236,13 @@ check-cache-on-update: true
 # ajLeaderboards will always fetch from the database more when the db responds quickly, and less when it is slower.
 # Enabling this will make it so ajLeaderboards will fetch from the database more often.
 # Most servers will not need to enable this.
-# With this disabled, AJLB will set the minimum refresh time to 20 seconds.
-#  With it enabled, the minimum refresh time is half a second (but the minimum is usually actually 1 second)
+# With this disabled, AJLB will set the minimum refresh time to 20 seconds,
+#  but note that the cached values (that are displayed between database fetches) are updated when a player's stat/score
+#  is updated with stat-refresh, so in the majority of setups you don't need to disable this.
+# The only time you should enable this option is if you have multiple servers
+#  with leaderboards and stats synced to an external database,
+#  and want players that are on other servers stats to update quickly.
+# With it enabled, the minimum refresh time is half a second (but the minimum is usually actually 1 second)
 #  Default: false
 more-fetching: true
 
@@ -236,7 +293,7 @@ fetching-thread-pool-keep-alive: 500
 
 
 # Don't touch this
-config-version: 35
+config-version: 41
 
 # ----- THESE OPTIONS HAVE MOVED -----
 # to messages.yml. They will be removed from here in the future.

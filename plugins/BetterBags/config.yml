@@ -1,7 +1,7 @@
 # 背包是否自动拾取玩家捡起的所有物品？
-# 注意：BetterBags 原版在自动拾取时会强制发放头颅背包（即使 should-give-bag-on-join 为 false）
-# 已由 mcwws/utility/betterbags_pickup.sk 接管：仅当玩家已有背包时才自动拾取
-auto-picking: false # 布尔值(true/false)
+# 必须保持 false：原版 auto-picking 在拾取可售物后会 updatePlayerBag()，无头颅时会自动发放。
+# 自动入包由 Skript mcwws/utility/betterbags_pickup.sk 接管（仅 /bags give 授权后可持有头颅）。
+auto-picking: false # 布尔值(true/false) — 改后请 /bags reload 或重启
 
 # 若开启自动拾取，背包是否仅拾取items.yml中配置的物品？
 pickup-only-sellable: true # 布尔值(true/false)

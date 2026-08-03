@@ -7,27 +7,32 @@ method: h2
 
 
 # You only need to touch these settings if you are using mysql
-ip: 127.0.0.1:3306
+ip: "127.0.0.1:3306"
 username: mc
 password: password
 database: mc
 
 # Currently only used with mysql
-characterEncoding: "utf8"
+characterEncoding: utf8
 
 # Note that if you change this after already saving data in the db, ajleaderboards will not be able to see it.
 # In this case, you should either stick with the default or go through and rename the tables to use the new prefix
 table_prefix: ajlb_
 
 # These settings are for mysql only
-# If you dont know what these are for, I reccomend leaving them as default
+# If you don't know what these are for, I recommend leaving them as default
 minConnections: 1
 maxConnections: 20
 
 allowPublicKeyRetrieval: false
 useSSL: false
 
+# The default (1,800,000ms which is 30 minutes) is fine most of the time,
+#  but if your database has an unusually low wait_timeout (or similar settings), you might need to change this.
+# This should be set at least 30 seconds less than any database or infrastructure-imposed connection time limit.
+maxLifetime: 1800000
+
 
 
 # Dont touch me
-config-version: 5
+config-version: 6

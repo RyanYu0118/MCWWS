@@ -14,12 +14,14 @@ GriefPrevention:
       world_the_end: Disabled
     PreventGlobalMonsterEggs: true
     PreventTheft: true
+    HoppersRequireBuildTrust: false
     ProtectCreatures: true
     PreventButtonsSwitches: true
     LockWoodenDoors: false
     LockTrapDoors: false
     LockFenceGates: true
     EnderPearlsRequireAccessTrust: true
+    RefundDeniedEnderPearls: true
     RaidTriggersRequireBuildTrust: true
     ProtectHorses: true
     ProtectDonkeys: true
@@ -161,10 +163,6 @@ GriefPrevention:
   RabbitsEatCrops: true
   HardModeZombiesBreakDoors: false
   MobProjectilesChangeBlocks: false
-  Database:
-    URL: ''
-    UserName: ''
-    Password: ''
   UseBanCommand: false
   BanCommandPattern: ban %name% %reason%
   Advanced:

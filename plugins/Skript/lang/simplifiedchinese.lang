@@ -1,7 +1,7 @@
 # Default Simplified Chinese language file
 
 # Which version of Skript this language file was written for
-version: 2.15.2
+version: 2.16.1
 
 # What null (nothing) should show up as in a string/text
 none: <none>
@@ -17,8 +17,8 @@ skript:
 	no errors: 所有脚本都已加载，没有错误。
 	scripts loaded: 已加载%s个脚本，总共包含%s个结构。 (耗时%s）
 	finished loading: 已完成加载。
-
-# -- Skript command --
+	
+	# -- Skript command --
 skript command:
 	usage: 用法：
 	help:
@@ -46,7 +46,7 @@ skript command:
 		info: 打印一个带有Skript的别名和文档链接的信息
 		gen-docs: 使用插件文件夹中的docs/templates生成文档
 		test: 用于运行内部的Skript测试
-
+		
 	invalid script: 无法在scripts文件夹中找到脚本<grey>“<gold>%s<grey>”<red>！
 	invalid folder: 无法在scripts文件夹中找到文件夹<grey>“<gold>%s<grey>”<red>！
 	reload:
@@ -60,7 +60,7 @@ skript command:
 		error details: <light red>    %s<reset>\n
 		other details: <white>    %s<reset>\n
 		line details: <gold>    行：<gray>%s<reset>\n <reset>
-
+		
 		config, aliases and scripts: 配置、其它配置和所有脚本
 		scripts: 所有脚本
 		main config: 主配置
@@ -117,8 +117,8 @@ skript command:
 		server: 服务器版本：<aqua>%s
 		addons: 已安装的Skript插件：<aqua>%s
 		dependencies: 已安装的依赖：<aqua>%s
-
-# -- Updater --
+		
+		# -- Updater --
 updater:
 	not started: Skript还没有检查最新版本。使用<gold>/skript update check<reset>来检查。
 	checking: 正在检查最新版的Skript…
@@ -135,8 +135,8 @@ updater:
 	internal error: 在检查Skript的最新版本时发生了一个内部错误。请查看服务器日志以了解详情。
 	custom version: 你目前正在运行一个自定义的Skript版本。不会自动安装更新。
 	nightly build: 你目前正在运行Skript的测试版。不会自动安装更新。
-
-# -- Commands --
+	
+	# -- Commands --
 commands:
 	no permission message: 你没有必要的权限来使用这个命令
 	cooldown message: 你使用此命令的频率过高，请稍后再试。
@@ -148,13 +148,13 @@ commands:
 	internal error: 在试图执行此命令时发生了一个内部错误。
 	no player starts with: 没有名字以“%s”开头的玩家在线
 	multiple players start with: 有多个名字以“%s”开头的玩家在线
-
-# -- Hooks --
+	
+	# -- Hooks --
 hooks:
 	hooked: 成功与%s连接
 	error: 无法连接到%1$s。这可能是因为Skript不支持已安装的%1$s版本。
-
-# -- Aliases --
+	
+	# -- Aliases --
 aliases:
 	# Errors and warnings
 	empty string: ''不是一个物品类型
@@ -172,19 +172,19 @@ aliases:
 	unexpected section: 这里不允许有字符串
 	invalid variation section: 一个部分应该是变量，但%s不是有效的变量名
 	outside section: alias必须放在字符串内
-
+	
 	# Other messages
 	loaded x aliases from: 加载了%s个英语alias（来自%s）
 	loaded x aliases: 总共加载了%s个英语alias
-
-# -- Time --
+	
+	# -- Time --
 time:
 	errors:
 		24 hours: 一天只有24小时
 		12 hours: 12小时制下不允许使用超过12小时
 		60 minutes: 一个小时只有60分钟
-
-# -- IO Exceptions --
+		
+		# -- IO Exceptions --
 io exceptions:
 	unknownhostexception: 无法连接到%s
 	accessdeniedexception: 拒绝访问%s

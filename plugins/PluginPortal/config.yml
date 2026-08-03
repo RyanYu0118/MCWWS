@@ -4,3 +4,14 @@ install-directory: plugins
 # Plugins will be moved over to the plugins directory when the server is updated
 # See: https://bukkit.fandom.com/wiki/Installing_Plugins#Updating_Plugins
 update-directory: plugins/update
+EnabledFeatures:
+  INSTALL: true
+  UPDATE: true
+  DELETE: true
+  LIST: true
+  RECOGNISE: true
+  IMPORT: true
+  EXPORT: true
+  AUTOMATICALLY_UPDATE_PPP: true
+PluginPortalUpdates:
+  ServerId: 97a25767-b751-483e-8d1b-1b91896a6584

@@ -36,15 +36,15 @@ DEFAULT_SOURCES: dict[str, dict] = {
     "geyser-spigot": {"platform": "modrinth", "slug": "geyser"},
     "floodgate": {"platform": "modrinth", "slug": "floodgate"},
     "skript": {"platform": "modrinth", "slug": "skript"},
-    "skript-placeholders": {"platform": "modrinth", "slug": "skript-placeholders"},
+    "skript-placeholders": {"platform": "modrinth", "slug": "skript-placeholders-fork"},
     "skript-reflect": {"platform": "modrinth", "slug": "skript-reflect"},
     "skript-yaml": {"platform": "modrinth", "slug": "skript-yaml"},
     "protocolib": {"platform": "modrinth", "slug": "protocollib"},
     "citizens": {"platform": "hangar", "author": "Citizens", "slug": "Citizens"},
     "denizen": {"platform": "modrinth", "slug": "denizen"},
     "bluemap": {"platform": "modrinth", "slug": "bluemap"},
-    "train_carts": {"platform": "hangar", "author": "TrainCarts", "slug": "TrainCarts"},
-    "bkcommonlib": {"platform": "hangar", "author": "TrainCarts", "slug": "BKCommonLib"},
+    "train_carts": {"platform": "modrinth", "slug": "traincarts"},
+    "bkcommonlib": {"platform": "modrinth", "slug": "bkcommonlib"},
     "smoothcoasters": {"platform": "hangar", "author": "TrainCarts", "slug": "SmoothCoasters"},
     "tccoasters": {"platform": "hangar", "author": "TrainCarts", "slug": "TCCoasters"},
     "gsit": {"platform": "modrinth", "slug": "gsit"},
@@ -53,7 +53,7 @@ DEFAULT_SOURCES: dict[str, dict] = {
     "decentholograms": {"platform": "modrinth", "slug": "decentholograms"},
     "ultimateshop": {"platform": "modrinth", "slug": "ultimateshop"},
     "ultimatetimber": {"platform": "modrinth", "slug": "ultimatetimber"},
-    "veinminer": {"platform": "modrinth", "slug": "veinminer-bukkit"},
+    "veinminer": {"platform": "modrinth", "slug": "veinminer"},
     "itemedit": {"platform": "modrinth", "slug": "itemedit"},
     "chestsort": {"platform": "modrinth", "slug": "chestsort"},
     "griefprevention": {"platform": "modrinth", "slug": "griefprevention"},
@@ -169,25 +169,88 @@ def is_newer(current: str, latest: str) -> bool | None:
     return l > c
 
 
-def modrinth_latest(slug: str) -> tuple[str, str] | None:
+def _file_loader_score(filename: str, ver_loaders: list[str]) -> int:
+    """Higher = better match for Paper server."""
+    name = filename.lower()
+    if "paper" in name and "spigot" not in name:
+        return 100
+    if "paper-plugin" in name:
+        return 95
+    if "folia" in name:
+        return 80
+    if "purpur" in name:
+        return 70
+    if "bukkit" in name:
+        return 40
+    if "spigot" in name:
+        return 30
+    loaders = {x.lower() for x in (ver_loaders or [])}
+    if "paper" in loaders:
+        return 60
+    if loaders & {"folia", "purpur"}:
+        return 55
+    if "bukkit" in loaders:
+        return 45
+    if "spigot" in loaders:
+        return 35
+    return 50
+
+
+def pick_modrinth_file(ver: dict) -> dict | None:
+    files = ver.get("files") or []
+    if not files:
+        return None
+    loaders = ver.get("loaders") or []
+    primary = [f for f in files if f.get("primary")]
+    pool = primary or files
+    return max(pool, key=lambda f: _file_loader_score(f.get("filename", ""), loaders))
+
+
+def modrinth_latest(slug: str) -> tuple[str, str, str, str] | None:
     enc = urllib.parse.quote(slug)
-    data = http_json(
-        f"https://api.modrinth.com/v2/project/{enc}/version"
-        f"?loaders=[%22paper%22,%22bukkit%22,%22spigot%22]"
-        f"&game_versions=[%221.21.11%22,%221.21.10%22,%221.21%22]"
-    )
+    loader_sets = [
+        ["paper"],
+        ["paper", "folia", "purpur"],
+        ["paper", "bukkit", "spigot"],
+    ]
+    data: list | None = None
+    for loaders in loader_sets:
+        lv = urllib.parse.quote(json.dumps(loaders))
+        data = http_json(
+            f"https://api.modrinth.com/v2/project/{enc}/version"
+            f"?loaders={lv}"
+            f"&game_versions=[%221.21.11%22,%221.21.10%22,%221.21%22]"
+        )
+        if isinstance(data, list) and data:
+            break
     if not isinstance(data, list) or not data:
         data = http_json(f"https://api.modrinth.com/v2/project/{enc}/version")
     if not isinstance(data, list) or not data:
         return None
-    ver = data[0]
-    files = ver.get("files") or []
-    if not files:
+    best_ver = None
+    best_file = None
+    best_score = -1
+    for ver in data[:5]:
+        picked = pick_modrinth_file(ver)
+        if not picked:
+            continue
+        score = _file_loader_score(picked.get("filename", ""), ver.get("loaders") or [])
+        if score > best_score:
+            best_score = score
+            best_ver = ver
+            best_file = picked
+    if not best_ver or not best_file:
         return None
-    return ver.get("version_number", ""), files[0].get("url", "")
+    fname = best_file.get("filename", "")
+    note = ""
+    if "spigot" in fname.lower() and "paper" not in fname.lower():
+        note = "仅 Spigot 命名，Paper 可用"
+    elif "bukkit" in fname.lower() and "paper" not in fname.lower():
+        note = "仅 Bukkit 命名，Paper 可用"
+    return best_ver.get("version_number", ""), best_file.get("url", ""), note, fname
 
 
-def hangar_latest(author: str, slug: str) -> tuple[str, str] | None:
+def hangar_latest(author: str, slug: str) -> tuple[str, str, str] | None:
     a, s = urllib.parse.quote(author), urllib.parse.quote(slug)
     # /latestrelease is deprecated/unreliable; use versions list instead.
     data = http_json(
@@ -210,10 +273,12 @@ def hangar_latest(author: str, slug: str) -> tuple[str, str] | None:
             continue
         downloads = detail.get("downloads") or {}
         url = None
+        jar_name = ""
         for key in ("PAPER", "PAPER_PLUGIN"):
             entry = downloads.get(key)
             if isinstance(entry, dict):
                 url = entry.get("downloadUrl") or entry.get("externalUrl")
+                jar_name = (entry.get("fileInfo") or {}).get("name") or jar_name
             elif isinstance(entry, str) and entry.endswith(".jar"):
                 url = entry
             if url:
@@ -222,6 +287,7 @@ def hangar_latest(author: str, slug: str) -> tuple[str, str] | None:
             for entry in downloads.values():
                 if isinstance(entry, dict):
                     url = entry.get("downloadUrl") or entry.get("externalUrl")
+                    jar_name = jar_name or (entry.get("fileInfo") or {}).get("name", "")
                 elif isinstance(entry, str) and entry.endswith(".jar"):
                     url = entry
                 if url:
@@ -229,12 +295,16 @@ def hangar_latest(author: str, slug: str) -> tuple[str, str] | None:
         if url:
             if url.startswith("/"):
                 url = "https://hangar.papermc.io" + url
-            return ver_name, url
+            if not jar_name:
+                jar_name = pick_filename(url, f"{slug}.jar", ver_name)
+            return ver_name, url, jar_name
     return None
 
 
-def pick_filename(url: str, jar: str, latest: str) -> str:
-    base = Path(urllib.parse.urlparse(url).path).name
+def pick_filename(url: str, jar: str, latest: str, preferred: str = "") -> str:
+    if preferred and preferred.endswith(".jar"):
+        return preferred
+    base = urllib.parse.unquote(Path(urllib.parse.urlparse(url).path).name)
     if base.endswith(".jar"):
         return base
     stem = Path(jar).stem.split("-")[0]
@@ -262,17 +332,27 @@ def check_plugin(info: PluginInfo, sources: dict[str, dict]) -> UpdateHit:
 
     platform = src["platform"]
     latest = url = project = ""
+    note = ""
+    preferred_fname = ""
     if platform == "modrinth":
         slug = src["slug"]
         got = modrinth_latest(slug)
         project = slug
         if got:
-            latest, url = got
+            latest, url, loader_note, preferred_fname = got
+            if loader_note and not note:
+                note = loader_note
     elif platform == "hangar":
         got = hangar_latest(src["author"], src["slug"])
         project = f"{src['author']}/{src['slug']}"
         if got:
-            latest, url = got
+            latest, url, preferred_fname = got
+    elif platform == "manual":
+        project = src.get("url", "manual")
+        manual_note = src.get("note") or "需手动下载"
+        if src.get("url"):
+            manual_note = f"{manual_note} | {src['url']}"
+        return UpdateHit(info.jar, info.name, info.version, "", "manual", project, "", "", "manual", manual_note)
 
     if not latest or not url:
         return UpdateHit(info.jar, info.name, info.version, "", platform, project, "", "", "error", "API 未返回版本")
@@ -285,10 +365,10 @@ def check_plugin(info: PluginInfo, sources: dict[str, dict]) -> UpdateHit:
     else:
         status = "review"
         note = "版本号非纯数字，请人工确认"
-        return UpdateHit(info.jar, info.name, info.version, latest, platform, project, url, pick_filename(url, info.jar, latest), status, note)
+        return UpdateHit(info.jar, info.name, info.version, latest, platform, project, url, pick_filename(url, info.jar, latest, preferred_fname), status, note)
 
-    fname = pick_filename(url, info.jar, latest)
-    return UpdateHit(info.jar, info.name, info.version, latest, platform, project, url, fname, status, "")
+    fname = pick_filename(url, info.jar, latest, preferred_fname)
+    return UpdateHit(info.jar, info.name, info.version, latest, platform, project, url, fname, status, note)
 
 
 def main() -> int:
@@ -319,7 +399,7 @@ def main() -> int:
     same = [h for h in results if h.status == "same"]
 
     lines = [
-        "MCWWS 插件更新报告（仅已配置 Modrinth/Hangar 源）",
+        "MCWWS 插件更新报告（优先 Paper 构建）",
         f"扫描: {len(infos)} 个 jar",
         f"可自动更新: {len(updates)}",
         f"已是最新: {len(same)}",
@@ -335,11 +415,16 @@ def main() -> int:
     for h in review:
         lines.append(f"{h.name} | {h.current} -> {h.latest} | {h.note}")
 
+    lines.extend(["", "=== 手动更新源（论坛/作者站，见 plugin-sources.json）==="])
+    manual_known = [h for h in results if h.status == "manual" and h.platform == "manual"]
+    manual_other = [h for h in manual if h not in manual_known]
+    for h in manual_known:
+        lines.append(f"{h.name} | {h.current} | {h.note}")
     lines.extend(["", "=== 未配置源（需 Spigot/Slimefun 构建站/手动）==="])
-    for h in manual[:50]:
+    for h in manual_other[:50]:
         lines.append(f"{h.name} | {h.current} | {h.jar}")
-    if len(manual) > 50:
-        lines.append(f"... 另有 {len(manual)-50} 个")
+    if len(manual_other) > 50:
+        lines.append(f"... 另有 {len(manual_other)-50} 个")
 
     SUMMARY.write_text("\n".join(lines) + "\n", encoding="utf-8")
     REPORT.write_text(json.dumps([asdict(h) for h in results], ensure_ascii=False, indent=2), encoding="utf-8")
