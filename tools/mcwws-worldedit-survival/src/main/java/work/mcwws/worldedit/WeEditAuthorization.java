@@ -24,8 +24,10 @@ final class WeEditAuthorization {
     }
 
     private static final Map<UUID, Pass> active = new ConcurrentHashMap<>();
+    private static final Map<UUID, Long> deniedUntil = new ConcurrentHashMap<>();
     private static final long PAID_TTL_MS = 120_000L;
     private static final long HISTORY_TTL_MS = 60_000L;
+    private static final long DENY_MS = 8_000L;
 
     private WeEditAuthorization() {
     }
@@ -34,6 +36,7 @@ final class WeEditAuthorization {
         if (player == null || blockBudget <= 0L) {
             return;
         }
+        deniedUntil.remove(player.getUniqueId());
         active.put(player.getUniqueId(), new Pass(Kind.PAID, blockBudget, System.currentTimeMillis() + PAID_TTL_MS));
     }
 
@@ -41,6 +44,7 @@ final class WeEditAuthorization {
         if (player == null) {
             return;
         }
+        deniedUntil.remove(player.getUniqueId());
         active.put(player.getUniqueId(), new Pass(Kind.HISTORY, Long.MAX_VALUE, System.currentTimeMillis() + HISTORY_TTL_MS));
     }
 
@@ -50,6 +54,15 @@ final class WeEditAuthorization {
         }
     }
 
+    /** 命令因预估失败/余额不足等被取消：撤销写块授权并短暂禁止未扣费写入。 */
+    static void revokeUnpaid(Player player) {
+        if (player == null) {
+            return;
+        }
+        active.remove(player.getUniqueId());
+        deniedUntil.put(player.getUniqueId(), System.currentTimeMillis() + DENY_MS);
+    }
+
     static boolean tryConsumeBlock(Player player) {
         if (player == null) {
             return false;
@@ -57,6 +70,13 @@ final class WeEditAuthorization {
         McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
         if (plugin != null && !plugin.getPluginConfig().getBoolean("edit-authorization.enabled", true)) {
             return true;
+        }
+        Long deny = deniedUntil.get(player.getUniqueId());
+        if (deny != null) {
+            if (System.currentTimeMillis() < deny) {
+                return false;
+            }
+            deniedUntil.remove(player.getUniqueId());
         }
         Pass pass = active.get(player.getUniqueId());
         if (pass == null || pass.expired()) {

@@ -72,6 +72,8 @@ public final class WeSurvivalListener {
             return;
         }
 
+        WeEditAuthorization.clear(player);
+
         if (plugin.getPluginConfig().getBoolean("reload-prices-before-estimate", true)) {
             plugin.getPriceCatalog().reload();
         }
@@ -99,10 +101,12 @@ public final class WeSurvivalListener {
                 actor.printError("无法解析方块参数: " + key);
             }
             event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
             return;
         } catch (UnsupportedOperationException ex) {
             actor.printError(plugin.msg("unsupported-command"));
             event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
             return;
         }
 
@@ -113,6 +117,7 @@ public final class WeSurvivalListener {
         if (requiresBlockChanges(command) && estimate.affectedBlocks() <= 0L) {
             actor.printError(plugin.msg("prefix") + plugin.msg("estimate-no-blocks"));
             event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
             return;
         }
 
@@ -129,6 +134,7 @@ public final class WeSurvivalListener {
                     "balance", EconomyService.format(balance)
             ));
             event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
             return;
         }
 
@@ -139,6 +145,7 @@ public final class WeSurvivalListener {
         if (total > 0D && !LedgerBridge.withdraw(player, total, command)) {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
             return;
         }
 
@@ -303,10 +310,6 @@ public final class WeSurvivalListener {
         }
         Player player = bukkitPlayer.getPlayer();
         if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
-            return;
-        }
-        if (event.getStage() == EditSession.Stage.BEFORE_HISTORY) {
-            WeEditAuthorization.clear(player);
             return;
         }
         if (event.getStage() != EditSession.Stage.BEFORE_CHANGE) {

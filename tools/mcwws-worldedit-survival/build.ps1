@@ -6,7 +6,8 @@ $Out = Join-Path $PSScriptRoot "build/classes"
 $JarOut = Join-Path $Root "plugins/MCWWS_WorldEditSurvival.jar"
 
 $PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar"
-$Fawe = Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.2.jar"
+$FaweCandidates = Get-ChildItem (Join-Path $Root "plugins") -Filter "FastAsyncWorldEdit-Paper-*.jar" | Sort-Object Name -Descending
+$Fawe = if ($FaweCandidates) { $FaweCandidates[0].FullName } else { Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.2.jar" }
 $Vault = Join-Path $Root "plugins/Vault.jar"
 $Slimefun = Get-ChildItem (Join-Path $Root "plugins") -Filter "Slimefun-*.jar" | Select-Object -First 1 -ExpandProperty FullName
 $Libs = @(

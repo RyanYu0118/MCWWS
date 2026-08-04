@@ -31,7 +31,7 @@ messages:
   charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
-  estimate-no-blocks: "未检测到会变更的方块，命令已取消（若刚 //undo 请等待 1～2 秒再 //replace）。"
+  estimate-no-blocks: "未检测到会变更的方块，命令已取消（扩大选区后请等上一笔 FAWE 完成 1～2 秒再试）。"
   undo-refunded: "已退还建造费用 §e{gross}§f，手续费 §c{fee}§f（§7{percent}%§f），实际到账 §a{net}§f；市场库存已同步还原。"
   undo-market-only: "已还原上一笔建造的市场库存变动。"
   undo-refund-failed: "撤销退款失败，请联系管理员。"
