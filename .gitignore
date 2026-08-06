@@ -42,3 +42,9 @@ wiki/
 tools/mcwws-halo-preview/
 
 **/__pycache__/
+**/node_modules/
+
+# Paper / plugin local caches & update staging
+.paper/
+plugins/FakePlayerPlugin/performance-report/
+plugins/FakePlayerPlugin/backup/
