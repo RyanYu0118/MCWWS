@@ -50,13 +50,16 @@ useTimes:
       lastBuyTime: '2026-07-04 01:01:16'
       lastSellTime: '2026-07-04 01:01:17'
     B:
-      sellUseTimes: 24
-      lastSellTime: '2026-07-31 12:39:07'
+      sellUseTimes: 30
+      lastSellTime: '2026-08-05 12:53:53'
     A:
       buyUseTimes: 2
       sellUseTimes: 2
       lastBuyTime: '2026-07-04 01:02:09'
       lastSellTime: '2026-07-04 01:02:10'
+    E:
+      sellUseTimes: 1
+      lastSellTime: '2026-08-06 20:24:19'
   minerals:
     B:
       sellUseTimes: 61
@@ -81,11 +84,11 @@ useTimes:
       lastSellTime: '2026-05-31 15:05:44'
   drops__p2:
     N:
-      sellUseTimes: 36
-      lastSellTime: '2026-08-03 23:09:43'
+      sellUseTimes: 44
+      lastSellTime: '2026-08-06 20:24:20'
     I:
-      sellUseTimes: 54
-      lastSellTime: '2026-08-03 23:09:43'
+      sellUseTimes: 70
+      lastSellTime: '2026-08-06 20:24:20'
     M:
       sellUseTimes: 5
       lastSellTime: '2026-08-03 22:58:21'
@@ -136,8 +139,8 @@ useTimes:
       sellUseTimes: 1
       lastSellTime: '2026-08-03 22:57:21'
     A:
-      sellUseTimes: 61
-      lastSellTime: '2026-08-03 23:09:43'
+      sellUseTimes: 66
+      lastSellTime: '2026-08-05 12:54:09'
   blocks:
     P:
       buyUseTimes: 21
@@ -192,9 +195,9 @@ useTimes:
       lastSellTime: '2026-07-04 01:01:09'
     G:
       buyUseTimes: 29
-      sellUseTimes: 37
+      sellUseTimes: 39
       lastBuyTime: '2026-07-04 01:08:36'
-      lastSellTime: '2026-07-31 12:39:07'
+      lastSellTime: '2026-08-05 12:53:54'
     H:
       buyUseTimes: 1
       sellUseTimes: 1
@@ -208,6 +211,16 @@ useTimes:
     U:
       buyUseTimes: 1
       lastBuyTime: '2026-06-23 22:40:20'
+  farming__p2:
+    Q:
+      sellUseTimes: 2
+      lastSellTime: '2026-08-06 20:24:20'
+    N:
+      sellUseTimes: 2
+      lastSellTime: '2026-08-06 20:24:20'
+    C:
+      sellUseTimes: 2
+      lastSellTime: '2026-08-05 12:54:09'
   utility__p5:
     K:
       sellUseTimes: 1
@@ -223,9 +236,9 @@ useTimes:
       lastSellTime: '2026-08-03 23:09:43'
     E:
       buyUseTimes: 1
-      sellUseTimes: 23
+      sellUseTimes: 29
       lastBuyTime: '2026-05-18 00:53:27'
-      lastSellTime: '2026-08-03 23:09:43'
+      lastSellTime: '2026-08-06 20:24:20'
   redstone:
     J:
       buyUseTimes: 3
@@ -236,10 +249,6 @@ useTimes:
     T:
       sellUseTimes: 3
       lastSellTime: '2026-07-31 12:33:30'
-  farming__p2:
-    C:
-      sellUseTimes: 1
-      lastSellTime: '2026-08-03 23:09:43'
   wools:
     O:
       sellUseTimes: 1
@@ -291,6 +300,10 @@ useTimes:
     A:
       sellUseTimes: 15
       lastSellTime: '2026-08-03 22:58:21'
+  wools__p6:
+    N:
+      sellUseTimes: 2
+      lastSellTime: '2026-08-06 20:24:19'
   farming:
     A:
       buyUseTimes: 4

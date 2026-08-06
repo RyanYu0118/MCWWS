@@ -46,9 +46,11 @@ maxVelocity: 5.0
 
 # The multiplier used to slow down minecarts
 # Normal is the default, slow is when the minecart is meant to slow down.
+# NoFuel is when the minecart has no fuel, and is meant to slow down faster than normal.
 slowDownMultiplier:
   normal: 0.997
   slow: 0.96
+  noFuel: 0.98
 
 # The maximum allowed enter radius for enter signs
 maxEnterDistance: 50.0

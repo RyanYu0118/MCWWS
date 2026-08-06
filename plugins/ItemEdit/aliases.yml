@@ -300,6 +300,11 @@ attribute:
   camera_distance: camera_distance
   waypoint_transmit_range: waypoint_transmit_range
   waypoint_receive_range: waypoint_receive_range
+  bounciness: bounciness
+  friction_modifier: friction_modifier
+  below_name_distance: below_name_distance
+  air_drag_modifier: air_drag_modifier
+  name_tag_distance: name_tag_distance
 operation:
   add_number: add_number
   add_scalar: add_scalar
@@ -2239,6 +2244,136 @@ sound:
   entity_zombie_nautilus_ambient_land: entity_zombie_nautilus_ambient_land
   entity_zombie_nautilus_dash_ready: entity_zombie_nautilus_dash_ready
   entity_parched_ambient: entity_parched_ambient
+  entity_sulfur_cube_squish: entity_sulfur_cube_squish
+  block_sulfur_spike_fall: block_sulfur_spike_fall
+  block_potent_sulfur_hit: block_potent_sulfur_hit
+  entity_baby_wolf_growl: entity_baby_wolf_growl
+  entity_sulfur_cube_fast_sliding_push: entity_sulfur_cube_fast_sliding_push
+  entity_baby_chicken_ambient: entity_baby_chicken_ambient
+  entity_sulfur_cube_bouncy_push: entity_sulfur_cube_bouncy_push
+  entity_sulfur_cube_slow_bouncy_push: entity_sulfur_cube_slow_bouncy_push
+  entity_sulfur_cube_high_resistance_hit: entity_sulfur_cube_high_resistance_hit
+  entity_baby_cat_purreow: entity_baby_cat_purreow
+  entity_sulfur_cube_fast_flat_hit: entity_sulfur_cube_fast_flat_hit
+  entity_sulfur_cube_eject: entity_sulfur_cube_eject
+  item_golden_dandelion_unuse: item_golden_dandelion_unuse
+  entity_pig_big_death: entity_pig_big_death
+  block_note_block_trumpet_exposed: block_note_block_trumpet_exposed
+  entity_small_sulfur_cube_death: entity_small_sulfur_cube_death
+  entity_baby_cat_stray_ambient: entity_baby_cat_stray_ambient
+  entity_pig_mini_hurt: entity_pig_mini_hurt
+  entity_pig_mini_death: entity_pig_mini_death
+  entity_chicken_picky_ambient: entity_chicken_picky_ambient
+  entity_baby_chicken_step: entity_baby_chicken_step
+  entity_sulfur_cube_regular_push: entity_sulfur_cube_regular_push
+  entity_sulfur_cube_explosive_hit: entity_sulfur_cube_explosive_hit
+  entity_sulfur_cube_light_push: entity_sulfur_cube_light_push
+  entity_cat_royal_ambient: entity_cat_royal_ambient
+  entity_baby_wolf_whine: entity_baby_wolf_whine
+  block_sulfur_spike_step: block_sulfur_spike_step
+  entity_pig_mini_ambient: entity_pig_mini_ambient
+  entity_chicken_picky_death: entity_chicken_picky_death
+  entity_sulfur_cube_hurt: entity_sulfur_cube_hurt
+  block_sulfur_break: block_sulfur_break
+  entity_sulfur_cube_regular_hit: entity_sulfur_cube_regular_hit
+  entity_baby_pig_hurt: entity_baby_pig_hurt
+  block_potent_sulfur_geyser_eruption_active: block_potent_sulfur_geyser_eruption_active
+  block_potent_sulfur_geyser_continuous_eruption_active: block_potent_sulfur_geyser_continuous_eruption_active
+  entity_cow_moody_step: entity_cow_moody_step
+  entity_sulfur_cube_slow_sliding_push: entity_sulfur_cube_slow_sliding_push
+  item_bucket_empty_sulfur_cube: item_bucket_empty_sulfur_cube
+  block_cinnabar_fall: block_cinnabar_fall
+  item_golden_dandelion_use: item_golden_dandelion_use
+  block_note_block_trumpet: block_note_block_trumpet
+  block_cinnabar_step: block_cinnabar_step
+  entity_cow_moody_ambient: entity_cow_moody_ambient
+  entity_sulfur_cube_bouncy_hit: entity_sulfur_cube_bouncy_hit
+  entity_sulfur_cube_sticky_push: entity_sulfur_cube_sticky_push
+  entity_sulfur_cube_fast_sliding_hit: entity_sulfur_cube_fast_sliding_hit
+  entity_small_sulfur_cube_jump: entity_small_sulfur_cube_jump
+  block_sulfur_spike_place: block_sulfur_spike_place
+  entity_sulfur_cube_hot_push: entity_sulfur_cube_hot_push
+  entity_baby_horse_hurt: entity_baby_horse_hurt
+  block_sulfur_fall: block_sulfur_fall
+  entity_baby_wolf_hurt: entity_baby_wolf_hurt
+  entity_cat_royal_stray_ambient: entity_cat_royal_stray_ambient
+  entity_baby_horse_death: entity_baby_horse_death
+  music_overworld_sulfur_caves: music_overworld_sulfur_caves
+  block_sulfur_spike_break: block_sulfur_spike_break
+  block_sulfur_step: block_sulfur_step
+  entity_pig_big_eat: entity_pig_big_eat
+  block_sulfur_place: block_sulfur_place
+  entity_sulfur_cube_light_hit: entity_sulfur_cube_light_hit
+  block_cinnabar_hit: block_cinnabar_hit
+  entity_sulfur_cube_hot_hit: entity_sulfur_cube_hot_hit
+  entity_sulfur_cube_sticky_hit: entity_sulfur_cube_sticky_hit
+  item_bucket_fill_sulfur_cube: item_bucket_fill_sulfur_cube
+  entity_cat_royal_beg_for_food: entity_cat_royal_beg_for_food
+  block_sulfur_hit: block_sulfur_hit
+  entity_cow_moody_death: entity_cow_moody_death
+  entity_baby_pig_eat: entity_baby_pig_eat
+  entity_baby_horse_step: entity_baby_horse_step
+  entity_baby_chicken_hurt: entity_baby_chicken_hurt
+  entity_baby_cat_hiss: entity_baby_cat_hiss
+  entity_baby_chicken_death: entity_baby_chicken_death
+  entity_baby_cat_purr: entity_baby_cat_purr
+  entity_cat_royal_hiss: entity_cat_royal_hiss
+  block_potent_sulfur_break: block_potent_sulfur_break
+  entity_baby_horse_ambient: entity_baby_horse_ambient
+  block_note_block_trumpet_weathered: block_note_block_trumpet_weathered
+  entity_baby_cat_beg_for_food: entity_baby_cat_beg_for_food
+  entity_baby_horse_eat: entity_baby_horse_eat
+  entity_baby_wolf_ambient: entity_baby_wolf_ambient
+  entity_cow_moody_hurt: entity_cow_moody_hurt
+  block_potent_sulfur_place: block_potent_sulfur_place
+  entity_baby_cat_death: entity_baby_cat_death
+  block_note_block_trumpet_oxidized: block_note_block_trumpet_oxidized
+  music_disc_bounce: music_disc_bounce
+  block_sulfur_spike_hit: block_sulfur_spike_hit
+  entity_cat_royal_purr: entity_cat_royal_purr
+  block_potent_sulfur_geyser_continuous_eruption: block_potent_sulfur_geyser_continuous_eruption
+  entity_baby_pig_ambient: entity_baby_pig_ambient
+  entity_baby_wolf_step: entity_baby_wolf_step
+  entity_baby_horse_breathe: entity_baby_horse_breathe
+  entity_baby_pig_step: entity_baby_pig_step
+  entity_sulfur_cube_slow_bouncy_hit: entity_sulfur_cube_slow_bouncy_hit
+  block_cinnabar_break: block_cinnabar_break
+  entity_sulfur_cube_jump: entity_sulfur_cube_jump
+  entity_sulfur_cube_slow_sliding_hit: entity_sulfur_cube_slow_sliding_hit
+  entity_sulfur_cube_bounce: entity_sulfur_cube_bounce
+  entity_baby_horse_land: entity_baby_horse_land
+  entity_baby_pig_death: entity_baby_pig_death
+  entity_small_sulfur_cube_eat: entity_small_sulfur_cube_eat
+  block_potent_sulfur_geyser_eruption: block_potent_sulfur_geyser_eruption
+  entity_chicken_picky_hurt: entity_chicken_picky_hurt
+  block_cinnabar_place: block_cinnabar_place
+  entity_baby_wolf_death: entity_baby_wolf_death
+  entity_cat_royal_purreow: entity_cat_royal_purreow
+  entity_pig_big_ambient: entity_pig_big_ambient
+  entity_cat_royal_eat: entity_cat_royal_eat
+  entity_sulfur_cube_high_resistance_push: entity_sulfur_cube_high_resistance_push
+  entity_baby_cat_ambient: entity_baby_cat_ambient
+  entity_baby_cat_eat: entity_baby_cat_eat
+  entity_small_sulfur_cube_squish: entity_small_sulfur_cube_squish
+  entity_pig_big_hurt: entity_pig_big_hurt
+  entity_cat_royal_hurt: entity_cat_royal_hurt
+  entity_sulfur_cube_explosive_push: entity_sulfur_cube_explosive_push
+  block_sulfur_spike_land: block_sulfur_spike_land
+  entity_pig_eat: entity_pig_eat
+  entity_baby_wolf_pant: entity_baby_wolf_pant
+  block_potent_sulfur_step: block_potent_sulfur_step
+  entity_sulfur_cube_slow_flat_hit: entity_sulfur_cube_slow_flat_hit
+  entity_sulfur_cube_fast_flat_push: entity_sulfur_cube_fast_flat_push
+  entity_baby_cat_hurt: entity_baby_cat_hurt
+  entity_sulfur_cube_death: entity_sulfur_cube_death
+  entity_small_sulfur_cube_hurt: entity_small_sulfur_cube_hurt
+  entity_sulfur_cube_absorb: entity_sulfur_cube_absorb
+  entity_sulfur_cube_slow_flat_push: entity_sulfur_cube_slow_flat_push
+  block_potent_sulfur_fall: block_potent_sulfur_fall
+  entity_cat_royal_death: entity_cat_royal_death
+  block_potent_sulfur_noxious_gas: block_potent_sulfur_noxious_gas
+  entity_baby_horse_angry: entity_baby_horse_angry
+  entity_pig_mini_eat: entity_pig_mini_eat
 animations:
   drink: drink
   eat: eat
@@ -2409,6 +2544,7 @@ entitytype:
   zombie_villager: zombie_villager
   zombified_piglin: zombified_piglin
   unknown: unknown
+  sulfur_cube: sulfur_cube
 entitygroups:
   aquatic: aquatic
   nautilus_hostiles: nautilus_hostiles
@@ -2465,3 +2601,5 @@ entitygroups:
   nullscape:not_teleportable: not_teleportable
   can_equip_harness: can_equip_harness
   candidate_for_iron_golem_gift: candidate_for_iron_golem_gift
+  not_affected_by_geysers: not_affected_by_geysers
+  cannot_be_age_locked: cannot_be_age_locked

@@ -312,7 +312,7 @@ public final class WeSurvivalListener {
         if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
             return;
         }
-        if (event.getStage() != EditSession.Stage.BEFORE_CHANGE) {
+        if (event.getStage() != EditSession.Stage.BEFORE_HISTORY) {
             return;
         }
         Extent current = event.getExtent();

@@ -1,0 +1,76 @@
+==============================================================================
+                     FakePlayerPlugin Performance Report
+==============================================================================
+
+Generated: 2026-08-06 18:10:54
+Duration: Last 15 minute(s)
+Performance Score: 80/100 (Good)
+
+--------------------------------------------------------------
+SERVER
+--------------------------------------------------------------
+
+TPS
+  Current: 11.84
+
+MSPT
+  Mean: N/A ms
+  P95:  N/A ms
+
+Memory
+  Used: 1889 MB / 5216 MB committed
+
+CPU
+  Process: N/A%
+  System:  N/A%
+
+GC
+  Avg time:     2.50 ms
+  Avg frequency: -1 ms
+
+Entities
+  Players:  0
+  Bots:     0
+  Total:    177
+
+--------------------------------------------------------------
+FPP BREAKDOWN
+--------------------------------------------------------------
+
+No self-profiler samples collected yet.
+Enable with performance.self-profiler.enabled: true in config.yml.
+
+--------------------------------------------------------------
+TOP METHODS
+--------------------------------------------------------------
+
+Method-level profiling is disabled or no method samples collected.
+Enable with performance.self-profiler.method-level: true in config.yml.
+
+--------------------------------------------------------------
+EVENTS
+--------------------------------------------------------------
+
+No event counters recorded.
+
+--------------------------------------------------------------
+WARNINGS
+--------------------------------------------------------------
+
+[WARNING] TPS is low: 11.84
+
+--------------------------------------------------------------
+SUMMARY
+--------------------------------------------------------------
+
+FPP Version: 2.0.3
+Server: Paper 26.2-98-714512e (MC: 26.2)
+Java: 25.0.2
+OS: Windows 11 10.0
+Profiler: builtin
+Health score: 80/100 (Good)
+
+==============================================================================
+                                End of Report
+==============================================================================
+

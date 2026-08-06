@@ -1,4 +1,4 @@
-next_id: 1367
+next_id: 1382
 entries:
   '1':
     id: 1
@@ -14121,3 +14121,168 @@ entries:
     refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785769783847-46075076309900
     createdAt: '2026-08-03T15:09:43.847253900Z'
     balanceAfter: 165630604.59
+  '1367':
+    id: 1367
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 444
+    description: '创世神建造: set'
+    refId: we-b115aa9f-b3d2-4def-be66-de12ecea3bd7
+    createdAt: '2026-08-04T11:54:42.363362200Z'
+    balanceAfter: 165630136.59
+  '1368':
+    id: 1368
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 32
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/4 19:54
+    createdAt: '2026-08-04T11:54:59.247019300Z'
+    updatedAt: '2026-08-04T11:55:06.240468700Z'
+  '1369':
+    id: 1369
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 26096
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/4 19:55
+    createdAt: '2026-08-04T11:55:14.245664400Z'
+    updatedAt: '2026-08-04T13:43:57.251346400Z'
+  '1370':
+    id: 1370
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 408
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/5 02:05
+    createdAt: '2026-08-04T18:05:26.462756300Z'
+    updatedAt: '2026-08-04T18:07:07.455984100Z'
+  '1371':
+    id: 1371
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 68
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/5 02:07
+    createdAt: '2026-08-04T18:07:09.458150100Z'
+    updatedAt: '2026-08-04T18:07:25.454548200Z'
+  '1372':
+    id: 1372
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 12
+    description: '创世神建造: set'
+    refId: we-afac50b8-5cd8-4589-b403-d633ff275c00
+    createdAt: '2026-08-04T18:07:39.035705300Z'
+    balanceAfter: 165603520.59
+  '1373':
+    id: 1373
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 11.4
+    description: '创世神撤销退款: set (原扣 12 手续费 0.6)'
+    refId: we-undo-96da5dbd-04ec-4da2-89c1-0f74b0fa45e6
+    createdAt: '2026-08-04T18:08:57.437644Z'
+    balanceAfter: 165603531.99
+  '1374':
+    id: 1374
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 354.96
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905633954-5842380754900
+    createdAt: '2026-08-05T04:53:53.955350500Z'
+    balanceAfter: 165603886.95
+  '1375':
+    id: 1375
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 543.86
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905634109-5842536218100
+    createdAt: '2026-08-05T04:53:54.110714400Z'
+    balanceAfter: 165604430.81
+  '1376':
+    id: 1376
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 8.91
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905634317-5842743401600
+    createdAt: '2026-08-05T04:53:54.317512400Z'
+    balanceAfter: 165604439.72
+  '1377':
+    id: 1377
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 13.85
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905649305-5857731379700
+    createdAt: '2026-08-05T04:54:09.305475500Z'
+    balanceAfter: 165604453.57
+  '1378':
+    id: 1378
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 1.98
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905649392-5857818786100
+    createdAt: '2026-08-05T04:54:09.392642400Z'
+    balanceAfter: 165604455.55
+  '1379':
+    id: 1379
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 19.8
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905649543-5857969906700
+    createdAt: '2026-08-05T04:54:09.544771300Z'
+    balanceAfter: 165604475.35
+  '1380':
+    id: 1380
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 1.98
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1785905649701-5858128001500
+    createdAt: '2026-08-05T04:54:09.701800200Z'
+    balanceAfter: 165604477.33
+  '1381':
+    id: 1381
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 12
+    description: '创世神建造: set'
+    refId: we-620a954e-f9ae-4b3d-8b47-e3ed4e5eeeca
+    createdAt: '2026-08-05T04:55:57.050965200Z'
+    balanceAfter: 165604465.33

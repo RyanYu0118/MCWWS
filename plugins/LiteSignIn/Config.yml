@@ -293,4 +293,8 @@ Permissions:
   Disabled-Worlds-Bypass:
     Default: false
     Permission: signin.bypass
+  Reward-Message:
+    Default: false
+    Permission: signin.rewardmessage
 Disabled-Worlds: []
+Reward-Message: true

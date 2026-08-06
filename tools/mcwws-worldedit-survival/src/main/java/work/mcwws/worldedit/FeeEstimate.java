@@ -1,6 +1,7 @@
 package work.mcwws.worldedit;
 
 import com.sk89q.worldedit.WorldEdit;
+import com.sk89q.worldedit.WorldEditException;
 import com.sk89q.worldedit.extension.input.InputParseException;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.function.mask.ExistingBlockMask;
@@ -49,14 +50,13 @@ public final class FeeEstimate {
         Pattern pattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(patternInput, context);
         RegionChunkLoader.ensureLoaded(world, region);
         ResultBuilder builder = new ResultBuilder(prices);
+        Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
-            if (BlockProtection.isProtectedWorldBlock(world, pos)) {
-                builder.protectedBlocks++;
-                continue;
+            try {
+                pattern.apply(counter, pos, pos);
+            } catch (WorldEditException ex) {
+                throw new InputParseException(ex.getMessage());
             }
-            BaseBlock existing = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
-            BaseBlock target = pattern.applyBlock(pos);
-            builder.addChange(existing, target);
         }
         return builder.build();
     }
@@ -76,17 +76,16 @@ public final class FeeEstimate {
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
         RegionChunkLoader.ensureLoaded(world, region);
         ResultBuilder builder = new ResultBuilder(prices);
+        Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
-            if (BlockProtection.isProtectedWorldBlock(world, pos)) {
-                builder.protectedBlocks++;
-                continue;
-            }
             if (!fromMask.test(pos)) {
                 continue;
             }
-            BaseBlock existing = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
-            BaseBlock target = toPattern.applyBlock(pos);
-            builder.addReplaceChange(existing, target);
+            try {
+                toPattern.apply(counter, pos, pos);
+            } catch (WorldEditException ex) {
+                throw new InputParseException(ex.getMessage());
+            }
         }
         return builder.build();
     }
@@ -112,20 +111,19 @@ public final class FeeEstimate {
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
         RegionChunkLoader.ensureLoaded(world, center, radius);
         ResultBuilder builder = new ResultBuilder(prices);
+        Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -radius; dy <= radius; dy++) {
                 for (int dz = -radius; dz <= radius; dz++) {
                     BlockVector3 pos = center.add(dx, dy, dz);
-                    if (BlockProtection.isProtectedWorldBlock(world, pos)) {
-                        builder.protectedBlocks++;
-                        continue;
-                    }
                     if (!fromMask.test(pos)) {
                         continue;
                     }
-                    BaseBlock existing = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
-                    BaseBlock target = toPattern.applyBlock(pos);
-                    builder.addReplaceChange(existing, target);
+                    try {
+                        toPattern.apply(counter, pos, pos);
+                    } catch (WorldEditException ex) {
+                        throw new InputParseException(ex.getMessage());
+                    }
                 }
             }
         }
@@ -151,6 +149,7 @@ public final class FeeEstimate {
         BlockVector3 blockOffset = stackArgs.blockOffset(region);
         RegionChunkLoader.ensureLoadedForStack(world, region, blockOffset, stackArgs.count);
         ResultBuilder builder = new ResultBuilder(prices);
+        Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int repetition = 1; repetition <= stackArgs.count; repetition++) {
             BlockVector3 translation = blockOffset.multiply(repetition);
             for (BlockVector3 pos : region) {
@@ -159,12 +158,7 @@ public final class FeeEstimate {
                     continue;
                 }
                 BlockVector3 dest = pos.add(translation);
-                if (BlockProtection.isProtectedWorldBlock(world, dest)) {
-                    builder.protectedBlocks++;
-                    continue;
-                }
-                BaseBlock existing = BukkitSnapshotExtent.readBlock(world, dest).toBaseBlock();
-                builder.addChange(existing, source);
+                counter.setBlock(dest, source);
             }
         }
         return builder.build();
@@ -184,21 +178,21 @@ public final class FeeEstimate {
         return itemIdFromBaseBlock(state.toBaseBlock());
     }
 
-    private static final class ResultBuilder {
+    static final class ResultBuilder {
         private final PriceCatalog prices;
         private double demolition;
         private double material;
         private double labor;
         private long affectedBlocks;
-        private long protectedBlocks;
+        long protectedBlocks;
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
 
-        private ResultBuilder(PriceCatalog prices) {
+        ResultBuilder(PriceCatalog prices) {
             this.prices = prices;
         }
 
-        private void addChange(BaseBlock existing, BaseBlock target) {
+        void addChange(BaseBlock existing, BaseBlock target) {
             if (existing == null || target == null) {
                 return;
             }
@@ -209,7 +203,7 @@ public final class FeeEstimate {
         }
 
         /** //replace：匹配 from 且目标与现有不同才计费（与 FAWE 实际改块对齐） */
-        private void addReplaceChange(BaseBlock existing, BaseBlock target) {
+        void addReplaceChange(BaseBlock existing, BaseBlock target) {
             if (existing == null || target == null || existing.equals(target)) {
                 return;
             }
@@ -232,7 +226,7 @@ public final class FeeEstimate {
             affectedBlocks++;
         }
 
-        private Result build() {
+        Result build() {
             demolition = round(demolition);
             material = round(material);
             labor = round(labor);

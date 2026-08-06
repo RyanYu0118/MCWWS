@@ -39,6 +39,7 @@ npc:
         yaw: 109.62
         pitch: -1.3161
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       waypoints:
         linear: {
           }
@@ -46,7 +47,7 @@ npc:
       scoreboardtrait:
         tags:
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,sittrait,location
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,sittrait,leashedtrait,location,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -123,6 +124,7 @@ npc:
         yaw: -107.1493
         pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       skinlayers: {
         }
       equipment:
@@ -143,7 +145,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,hologramtrait,gravity,location,text
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,hologramtrait,gravity,leashedtrait,location,text,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -196,6 +198,7 @@ npc:
         yaw: 62.3486
         pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       gravity: {
         }
       commandtrait:
@@ -240,7 +243,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,gravity,location,text
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,shop,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,gravity,leashedtrait,location,text,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -257,6 +260,7 @@ npc:
         yaw: -26.7171
         pitch: 7.6075
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       type: PLAYER
       owner:
         uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -304,7 +308,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,gravity,location,text
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,gravity,leashedtrait,location,text,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -336,6 +340,7 @@ npc:
         yaw: 70.4671
         pitch: 90.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       hologramtrait:
         direction: BOTTOM_UP
       skintrait: {
@@ -396,7 +401,7 @@ npc:
       scoreboardtrait:
         tags:
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skintrait,mounttrait,lookclose,equipment,anchors,type,inventory,horsemodifiers,beetrait,hologramtrait,foxtrait,gravity,location,text,armorstandtrait,age
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skintrait,mounttrait,lookclose,equipment,anchors,type,inventory,horsemodifiers,beetrait,hologramtrait,foxtrait,gravity,leashedtrait,location,text,armorstandtrait,age,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -435,6 +440,7 @@ npc:
         yaw: -2.2678
         pitch: 0.6059
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: BROWN
       commandtrait:
@@ -456,7 +462,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -495,6 +501,7 @@ npc:
         yaw: -2.1899
         pitch: 0.6059
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: GREEN
       commandtrait:
@@ -515,7 +522,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -554,6 +561,7 @@ npc:
         yaw: -2.1186
         pitch: 0.606
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: BLUE
       commandtrait:
@@ -564,20 +572,20 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '11': in.eid_8
-          '12': in.eid_9
-          '0': in.eid_0
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_3
-          '4': in.eid_4
-          '5': in.checked
-          '6': in.eid_5
-          '7': in.eid_10
-          '8': in.eid_7
-          '9': in.eid_13
-          '10': CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_7
+        - in.eid_13
+        - CITIZENS_NPC
+        - in.eid_8
+        - in.eid_9
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -616,6 +624,7 @@ npc:
         yaw: -2.0454
         pitch: 0.606
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: CYAN
       commandtrait:
@@ -626,20 +635,20 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '11': in.eid_8
-          '12': in.eid_9
-          '0': in.eid_0
-          '1': in.eid_1
-          '2': in.eid_3
-          '3': in.eid_4
-          '4': in.checked
-          '5': in.eid_5
-          '6': in.eid_10
-          '7': in.eid_6
-          '8': in.eid_7
-          '9': in.eid_13
-          '10': CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_3
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_6
+        - in.eid_7
+        - in.eid_13
+        - CITIZENS_NPC
+        - in.eid_8
+        - in.eid_9
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -678,6 +687,7 @@ npc:
         yaw: 71.7348
         pitch: -1.9674
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: MAGENTA
       commandtrait:
@@ -688,19 +698,19 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '0': in.eid_1
-          '11': CITIZENS_NPC
-          '1': in.eid_2
-          '2': in.eid_3
-          '3': in.checked
-          '4': in.eid_5
-          '5': in.eid_10
-          '6': in.eid_6
-          '7': in.eid_7
-          '8': in.eid_8
-          '9': in.eid_9
-          '10': in.eid_13
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_6
+        - in.eid_7
+        - in.eid_8
+        - in.eid_9
+        - in.eid_13
+        - CITIZENS_NPC
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -739,6 +749,7 @@ npc:
         yaw: 69.1728
         pitch: -1.7924
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: PURPLE
       commandtrait:
@@ -760,7 +771,7 @@ npc:
         - in.eid_9
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -799,6 +810,7 @@ npc:
         yaw: -135.796
         pitch: 18.5616
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: LIGHT_GRAY
       commandtrait:
@@ -809,19 +821,19 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '0': in.eid_0
-          '11': CITIZENS_NPC
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_3
-          '4': in.eid_4
-          '5': in.checked
-          '6': in.eid_5
-          '7': in.eid_10
-          '8': in.eid_7
-          '9': in.eid_8
-          '10': in.eid_13
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_7
+        - in.eid_8
+        - in.eid_13
+        - CITIZENS_NPC
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -860,6 +872,7 @@ npc:
         yaw: -176.1299
         pitch: 15.022
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: GRAY
       commandtrait:
@@ -881,7 +894,7 @@ npc:
         - in.eid_9
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -920,6 +933,7 @@ npc:
         yaw: -135.0296
         pitch: -1.8722
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: BLACK
       commandtrait:
@@ -940,7 +954,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -979,6 +993,7 @@ npc:
         yaw: -125.2874
         pitch: -10.5048
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: RED
       commandtrait:
@@ -989,19 +1004,19 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '0': in.eid_0
-          '11': CITIZENS_NPC
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_3
-          '4': in.eid_4
-          '5': in.checked
-          '6': in.eid_5
-          '7': in.eid_10
-          '8': in.eid_7
-          '9': in.eid_8
-          '10': in.eid_13
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_7
+        - in.eid_8
+        - in.eid_13
+        - CITIZENS_NPC
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1040,6 +1055,7 @@ npc:
         yaw: 61.9026
         pitch: -23.1439
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: LIGHT_BLUE
       commandtrait:
@@ -1050,19 +1066,19 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '0': in.eid_1
-          '11': CITIZENS_NPC
-          '1': in.eid_2
-          '2': in.eid_3
-          '3': in.checked
-          '4': in.eid_5
-          '5': in.eid_10
-          '6': in.eid_6
-          '7': in.eid_7
-          '8': in.eid_8
-          '9': in.eid_9
-          '10': in.eid_13
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_6
+        - in.eid_7
+        - in.eid_8
+        - in.eid_9
+        - in.eid_13
+        - CITIZENS_NPC
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,targetable,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1101,6 +1117,7 @@ npc:
         yaw: 58.3395
         pitch: -21.2047
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: LIME
       commandtrait:
@@ -1111,19 +1128,19 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '0': in.eid_1
-          '11': CITIZENS_NPC
-          '1': in.eid_2
-          '2': in.eid_3
-          '3': in.checked
-          '4': in.eid_5
-          '5': in.eid_10
-          '6': in.eid_6
-          '7': in.eid_7
-          '8': in.eid_8
-          '9': in.eid_9
-          '10': in.eid_13
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_6
+        - in.eid_7
+        - in.eid_8
+        - in.eid_9
+        - in.eid_13
+        - CITIZENS_NPC
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1162,6 +1179,7 @@ npc:
         yaw: -2.265
         pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: PINK
       commandtrait:
@@ -1172,20 +1190,20 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '11': in.eid_8
-          '12': in.eid_9
-          '0': in.eid_0
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_3
-          '4': in.eid_4
-          '5': in.checked
-          '6': in.eid_5
-          '7': in.eid_10
-          '8': in.eid_7
-          '9': in.eid_13
-          '10': CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_2
+        - in.eid_3
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_7
+        - in.eid_13
+        - CITIZENS_NPC
+        - in.eid_8
+        - in.eid_9
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1224,6 +1242,7 @@ npc:
         yaw: -2.1915
         pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: YELLOW
       commandtrait:
@@ -1244,7 +1263,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1283,6 +1302,7 @@ npc:
         yaw: -2.0437
         pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait: {
         }
       commandtrait:
@@ -1304,7 +1324,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1343,6 +1363,7 @@ npc:
         yaw: -2.1171
         pitch: 0.5313
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait:
         color: ORANGE
       commandtrait:
@@ -1353,20 +1374,20 @@ npc:
           player: true
       scoreboardtrait:
         tags:
-          '11': in.eid_8
-          '12': in.eid_9
-          '0': in.eid_0
-          '1': in.eid_1
-          '2': in.eid_2
-          '3': in.eid_4
-          '4': in.checked
-          '5': in.eid_5
-          '6': in.eid_10
-          '7': in.eid_6
-          '8': in.eid_7
-          '9': in.eid_13
-          '10': CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,location,age,sheeptrait
+        - in.eid_0
+        - in.eid_1
+        - in.eid_2
+        - in.eid_4
+        - in.checked
+        - in.eid_5
+        - in.eid_10
+        - in.eid_6
+        - in.eid_7
+        - in.eid_13
+        - CITIZENS_NPC
+        - in.eid_8
+        - in.eid_9
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,mounttrait,lookclose,type,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1403,6 +1424,7 @@ npc:
         - renderer:
             seeThrough: false
             interpolationDelay: 0
+            bgcolor: 0
             shadowed: true
             interpolationDuration: 0
             billboard: CENTER
@@ -1414,13 +1436,14 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 90.00018
-        x: -428.7592
+        bodyYaw: 270.27155
+        x: -428.6682
         y: 95.0
-        z: -496.5
-        yaw: 90.0002
+        z: -496.5815
+        yaw: 215.0002
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       sheeptrait: {
         }
       mounttrait:
@@ -1429,6 +1452,7 @@ npc:
         linear:
           points:
           - location:
+              world: world
               worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
               x: -412.0
               y: 95.0
@@ -1436,6 +1460,7 @@ npc:
               pitch: 0.0
               yaw: 0.0
           - location:
+              world: world
               worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
               x: -446.0
               y: 95.0
@@ -1482,7 +1507,7 @@ npc:
         - in.eid_8
         - in.eid_13
         - CITIZENS_NPC
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,location,age,sheeptrait,chunktickettrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skintrait,mounttrait,lookclose,equipment,type,inventory,waypoints,targetable,sittrait,hologramtrait,woolcolor,gravity,leashedtrait,location,age,sheeptrait,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1499,6 +1524,7 @@ npc:
         yaw: -37.6499
         pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       owner:
         uuid: d006ba70-4ddc-4b37-b13c-76f190815116
       lookclose:
@@ -1553,7 +1579,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,targetable,gravity,location
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,commandtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,targetable,gravity,leashedtrait,location,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1590,6 +1616,7 @@ npc:
         yaw: -64.3857
         pitch: -6.5613
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       gravity: {
         }
       scoreboardtrait:
@@ -1598,7 +1625,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,mounttrait,skintrait,lookclose,equipment,type,inventory,attributetrait,gravity,location
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,mounttrait,skintrait,lookclose,equipment,type,inventory,attributetrait,gravity,leashedtrait,location,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
@@ -1634,6 +1661,7 @@ npc:
         yaw: 13.1153
         pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
+        world: world
       gravity: {
         }
       scoreboardtrait:
@@ -1642,7 +1670,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,hologramtrait,gravity,location
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,skintrait,mounttrait,lookclose,equipment,type,inventory,attributetrait,hologramtrait,gravity,leashedtrait,location,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
