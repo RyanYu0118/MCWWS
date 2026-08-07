@@ -5,21 +5,26 @@ $Res = Join-Path $PSScriptRoot "src/main/resources"
 $Out = Join-Path $PSScriptRoot "build/classes"
 $JarOut = Join-Path $Root "plugins/MCWWS_WorldEditSurvival.jar"
 
-$PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/1.21.11-R0.1-SNAPSHOT/paper-api-1.21.11-R0.1-SNAPSHOT.jar"
+$PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/26.2.build.103-stable/paper-api-26.2.build.103-stable.jar"
+if (-not (Test-Path $PaperApi)) {
+    $PaperApiCandidates = Get-ChildItem (Join-Path $Root "libraries/io/papermc/paper/paper-api") -Recurse -Filter "paper-api-*.jar" | Sort-Object Name -Descending
+    if ($PaperApiCandidates) { $PaperApi = $PaperApiCandidates[0].FullName }
+}
 $FaweCandidates = Get-ChildItem (Join-Path $Root "plugins") -Filter "FastAsyncWorldEdit-Paper-*.jar" | Sort-Object Name -Descending
-$Fawe = if ($FaweCandidates) { $FaweCandidates[0].FullName } else { Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.2.jar" }
+$Fawe = if ($FaweCandidates) { $FaweCandidates[0].FullName } else { Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.3.jar" }
 $Vault = Join-Path $Root "plugins/Vault.jar"
 $Slimefun = Get-ChildItem (Join-Path $Root "plugins") -Filter "Slimefun-*.jar" | Select-Object -First 1 -ExpandProperty FullName
 $Libs = @(
-    (Join-Path $Root "libraries/com/google/guava/guava/33.3.1-jre/guava-33.3.1-jre.jar"),
-    (Join-Path $Root "libraries/com/google/guava/failureaccess/1.0.2/failureaccess-1.0.2.jar"),
-    (Join-Path $Root "libraries/net/kyori/adventure-api/4.26.1/adventure-api-4.26.1.jar"),
-    (Join-Path $Root "libraries/net/kyori/adventure-key/4.26.1/adventure-key-4.26.1.jar"),
-    (Join-Path $Root "libraries/net/kyori/adventure-text-serializer-legacy/4.26.1/adventure-text-serializer-legacy-4.26.1.jar"),
+    (Join-Path $Root "libraries/com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar"),
+    (Join-Path $Root "libraries/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar"),
+    (Join-Path $Root "libraries/net/kyori/adventure-api/5.2.0/adventure-api-5.2.0.jar"),
+    (Join-Path $Root "libraries/net/kyori/adventure-key/5.2.0/adventure-key-5.2.0.jar"),
+    (Join-Path $Root "libraries/net/kyori/adventure-text-serializer-legacy/5.2.0/adventure-text-serializer-legacy-5.2.0.jar"),
     (Join-Path $Root "libraries/net/kyori/examination-api/1.3.0/examination-api-1.3.0.jar"),
     (Join-Path $Root "libraries/net/kyori/examination-string/1.3.0/examination-string-1.3.0.jar"),
+    (Join-Path $Root "libraries/net/kyori/option/1.1.0/option-1.1.0.jar"),
     (Join-Path $Root "libraries/net/md-5/bungeecord-chat/1.21-R0.2-deprecated+build.21/bungeecord-chat-1.21-R0.2-deprecated+build.21.jar"),
-    (Join-Path $Root "libraries/org/jetbrains/annotations/24.1.0/annotations-24.1.0.jar")
+    (Join-Path $Root "libraries/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar")
 )
 
 $Cp = (@($PaperApi, $Fawe, $Vault, $Slimefun) + $Libs) -join ';'

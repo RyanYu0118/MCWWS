@@ -1,0 +1,45 @@
+enabled: true
+bypass-permission: mcwws.we.survival.bypass
+prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+prices-reload-seconds: 60
+# 创世神变更写入动态市场虚拟库存（拆除旧方块=供给/库存↑，放置新方块=需求/库存↓）
+record-market-stock: true
+market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
+# //undo 时冲销上一笔建造对应的市场库存变动（与 FAWE 还原方块同步）
+reverse-market-on-undo: true
+# 每次扣费预估前重读 web_prices.yml（含动态市价）
+reload-prices-before-estimate: true
+# 劳务费：按拆除/放置格数计价，与方块市价无关
+# 放置单价 place-unit；拆除单价 = place-unit × demolish-multiplier（也可直接写 demolish-unit）
+labor:
+  place-unit: 0.5
+  demolish-multiplier: 2.0
+max-scan-blocks: 500000
+edit-authorization:
+  enabled: true
+# //undo：还原市场库存 + 退还上一笔建造扣款（扣 gross×fee-rate 手续费）
+undo-refund:
+  enabled: true
+  fee-rate: 0.05
+charge-commands:
+  - set
+  - stack
+  - replace
+  - replacenear
+  - fill
+  - walls
+  - overlay
+  - repl
+messages:
+  prefix: "§6[创世神] §f"
+  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
+  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  no-selection: "请先选择区域。"
+  scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
+  estimate-no-blocks: "未检测到会变更的方块，命令已取消（扩大选区后请等上一笔 FAWE 完成 1～2 秒再试）。"
+  undo-refunded: "已退还建造费用 §e{gross}§f，手续费 §c{fee}§f（§7{percent}%§f），实际到账 §a{net}§f；市场库存已同步还原。"
+  undo-market-only: "已还原上一笔建造的市场库存变动。"
+  undo-refund-failed: "撤销退款失败，请联系管理员。"
+  unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
+  protected-present: "选区内含 Slimefun 机器或无法破坏的方块，这些方块将被保留。"
+  not-survival: "仅生存/冒险模式可使用付费创世神建造。"

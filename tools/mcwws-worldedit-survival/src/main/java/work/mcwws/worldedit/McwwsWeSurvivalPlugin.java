@@ -78,6 +78,18 @@ public final class McwwsWeSurvivalPlugin extends JavaPlugin {
         return priceCatalog;
     }
 
+    /** 劳务费：放置单价 + 拆除单价（默认拆除=放置×2，放置 0.5） */
+    public FeeEstimate.LaborRates laborRates() {
+        double place = config.getDouble("labor.place-unit", 0.5D);
+        double demolish;
+        if (config.contains("labor.demolish-unit")) {
+            demolish = config.getDouble("labor.demolish-unit");
+        } else {
+            demolish = place * config.getDouble("labor.demolish-multiplier", 2.0D);
+        }
+        return new FeeEstimate.LaborRates(place, demolish);
+    }
+
     public Set<String> getChargeCommands() {
         return chargeCommands;
     }

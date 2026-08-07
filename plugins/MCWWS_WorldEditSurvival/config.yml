@@ -7,6 +7,11 @@ record-market-stock: true
 market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
 reverse-market-on-undo: true
 reload-prices-before-estimate: true
+# 劳务费：按拆除/放置格数计价，与方块市价无关
+# 放置 0.5 / 格，拆除 = 放置 × 2（即 1.0 / 格）
+labor:
+  place-unit: 0.5
+  demolish-multiplier: 2.0
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true

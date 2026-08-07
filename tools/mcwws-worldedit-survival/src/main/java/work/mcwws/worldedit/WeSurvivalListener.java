@@ -208,7 +208,7 @@ public final class WeSurvivalListener {
         if (stackArgs.scanVolume(region) > maxScan) {
             throw new InputParseException("scan-too-large");
         }
-        return FeeEstimate.forStack(plugin.getPriceCatalog(), region, world, stackArgs);
+        return FeeEstimate.forStack(plugin.getPriceCatalog(), plugin.laborRates(), region, world, stackArgs);
     }
 
     private FeeEstimate.Result estimateReplaceNear(String[] args, LocalSession session, CommandEvent event, Actor actor, Player player, long maxScan) throws InputParseException {
@@ -241,7 +241,7 @@ public final class WeSurvivalListener {
         Location loc = player.getLocation();
         BlockVector3 center = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
         PriceCatalog prices = plugin.getPriceCatalog();
-        return FeeEstimate.forReplaceNear(prices, world, center, radius, args[1], args[2], actor);
+        return FeeEstimate.forReplaceNear(prices, plugin.laborRates(), world, center, radius, args[1], args[2], actor);
     }
 
     private FeeEstimate.Result estimateSelectionCommand(String command, String[] args, LocalSession session, CommandEvent event, Actor actor, long maxScan) throws InputParseException {
@@ -272,18 +272,19 @@ public final class WeSurvivalListener {
 
     private FeeEstimate.Result estimateCommand(String command, String[] args, Region region, World world, Actor actor) throws InputParseException {
         PriceCatalog prices = plugin.getPriceCatalog();
+        FeeEstimate.LaborRates laborRates = plugin.laborRates();
         return switch (command) {
             case "set", "fill", "walls", "overlay", "repl" -> {
                 if (args.length < 1) {
                     throw new InputParseException("缺少方块参数");
                 }
-                yield FeeEstimate.forSet(prices, region, world, joinArgs(args, 0), actor);
+                yield FeeEstimate.forSet(prices, laborRates, region, world, joinArgs(args, 0), actor);
             }
             case "replace" -> {
                 if (args.length < 2) {
                     throw new InputParseException("replace 需要两个方块参数");
                 }
-                yield FeeEstimate.forReplace(prices, region, world, args[0], args[1], actor);
+                yield FeeEstimate.forReplace(prices, laborRates, region, world, args[0], args[1], actor);
             }
             default -> throw new UnsupportedOperationException(command);
         };

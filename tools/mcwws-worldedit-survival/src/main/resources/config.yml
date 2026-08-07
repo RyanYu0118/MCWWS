@@ -9,6 +9,11 @@ market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
 reverse-market-on-undo: true
 # 每次扣费预估前重读 web_prices.yml（含动态市价）
 reload-prices-before-estimate: true
+# 劳务费：按拆除/放置格数计价，与方块市价无关
+# 放置单价 place-unit；拆除单价 = place-unit × demolish-multiplier（也可直接写 demolish-unit）
+labor:
+  place-unit: 0.5
+  demolish-multiplier: 2.0
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true

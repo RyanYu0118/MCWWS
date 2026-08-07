@@ -1,5 +1,44 @@
 last-known-name: Ryan_yu__
 level: 3
-items: []
+items:
+- DataVersion: 4903
+  id: minecraft:golden_boots
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:feather_falling":3,"minecraft:protection":2}'
+    minecraft:damage: '78'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:golden_chestplate
+  count: 1
+  components:
+    minecraft:damage: '16'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:golden_helmet
+  count: 1
+  components:
+    minecraft:damage: '71'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:copper_boots
+  count: 1
+  components:
+    minecraft:damage: '1'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:copper_leggings
+  count: 1
+  components:
+    minecraft:damage: '131'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:snowball
+  count: 2
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,italic:0b,obfuscated:0b,strikethrough:0b,text:"浓奶油",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200199.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HEAVY_CREAM"}}'
+  schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

@@ -1,4 +1,4 @@
-next_id: 66
+next_id: 67
 quotes:
   '1':
     id: 6467f176-2e7e-4371-ae59-b35d84a0c507
@@ -34587,3 +34587,379 @@ quotes:
     expiresAt: '2026-07-25T07:38:15.160Z'
     consumedAt: '2026-07-24T07:38:38.651Z'
     pasteOrderId: 53
+  '66':
+    id: 5db60d12-9760-47aa-a86f-35950ce30aa7
+    numericId: 66
+    contentHash: d597360796d0d8f4babaa47379c373a78a2070c9cfc3694179a1f3db4635c88d
+    contentHashVersion: mcwws:content-v1
+    listName: 本投影合集为纯免费分享，如您为付费购买，例如闲鱼平台，请退款并举报，合集原作者b站[天才_派大星-]部分素材取自网络
+    materials:
+      - label: cobblestone_stairs
+        itemId: cobblestone_stairs
+        count: 42
+      - label: cobblestone_slab
+        itemId: cobblestone_slab
+        count: 12
+      - label: quartz_slab
+        itemId: quartz_slab
+        count: 12
+      - label: quartz_stairs
+        itemId: quartz_stairs
+        count: 10
+      - label: stone_slab
+        itemId: stone_slab
+        count: 9
+      - label: stone_button
+        itemId: stone_button
+        count: 8
+      - label: black_wool
+        itemId: black_wool
+        count: 6
+      - label: nether_brick_fence
+        itemId: nether_brick_fence
+        count: 6
+      - label: white_carpet
+        itemId: white_carpet
+        count: 6
+      - label: end_rod
+        itemId: end_rod
+        count: 4
+      - label: skeleton_wall_skull
+        itemId: skeleton_wall_skull
+        count: 4
+      - label: gray_stained_glass
+        itemId: gray_stained_glass
+        count: 3
+      - label: gray_stained_glass_pane
+        itemId: gray_stained_glass_pane
+        count: 3
+      - label: black_wall_banner
+        itemId: black_wall_banner
+        count: 2
+      - label: glass
+        itemId: glass
+        count: 2
+      - label: lever
+        itemId: lever
+        count: 2
+      - label: nether_brick_stairs
+        itemId: nether_brick_stairs
+        count: 2
+      - label: dark_oak_fence_gate
+        itemId: dark_oak_fence_gate
+        count: 1
+      - label: light_gray_wall_banner
+        itemId: light_gray_wall_banner
+        count: 1
+      - label: wither_skeleton_wall_skull
+        itemId: wither_skeleton_wall_skull
+        count: 1
+    quoteLines:
+      - label: cobblestone_stairs
+        itemId: cobblestone_stairs
+        materialCount: 42
+        displayName: 圆石楼梯
+        catalogBuyPrice: 1.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: T
+        shopTitle: 方块扩展商店 (1/5)
+        unitBuyPrice: 1.5
+        purchaseQuantity: 42
+        productAmount: 1
+        lineTotal: 63
+        checkoutLineTotal: 63
+        billing: shop
+      - label: cobblestone_slab
+        itemId: cobblestone_slab
+        materialCount: 12
+        displayName: 圆石台阶
+        catalogBuyPrice: 0.5
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2
+        slot: S
+        shopTitle: 方块扩展商店 (1/5)
+        unitBuyPrice: 0.5
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 6
+        checkoutLineTotal: 6
+        billing: shop
+      - label: quartz_slab
+        itemId: quartz_slab
+        materialCount: 12
+        displayName: 石英台阶
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: nether__p2
+        slot: O
+        shopTitle: 下界商店 (2/3)
+        unitBuyPrice: 6
+        purchaseQuantity: 12
+        productAmount: 1
+        lineTotal: 72
+        checkoutLineTotal: 72
+        billing: shop
+      - label: quartz_stairs
+        itemId: quartz_stairs
+        materialCount: 10
+        displayName: 石英楼梯
+        catalogBuyPrice: 18
+        status: ok
+        statusLabel: 可购买
+        shopId: nether__p2
+        slot: P
+        shopTitle: 下界商店 (2/3)
+        unitBuyPrice: 18
+        purchaseQuantity: 10
+        productAmount: 1
+        lineTotal: 180
+        checkoutLineTotal: 180
+        billing: shop
+      - label: stone_slab
+        itemId: stone_slab
+        materialCount: 9
+        displayName: 石头台阶
+        catalogBuyPrice: 1
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks2__p5
+        slot: C
+        shopTitle: 方块扩展商店 (5/5)
+        unitBuyPrice: 1
+        purchaseQuantity: 9
+        productAmount: 1
+        lineTotal: 9
+        checkoutLineTotal: 9
+        billing: shop
+      - label: stone_button
+        itemId: stone_button
+        materialCount: 8
+        displayName: 石头按钮
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone__p5
+        slot: F
+        shopTitle: 红石商店 (5/6)
+        unitBuyPrice: 2
+        purchaseQuantity: 8
+        productAmount: 1
+        lineTotal: 16
+        checkoutLineTotal: 16
+        billing: shop
+      - label: black_wool
+        itemId: black_wool
+        materialCount: 6
+        displayName: 黑色羊毛
+        catalogBuyPrice: 9
+        status: ok
+        statusLabel: 可购买
+        shopId: wools
+        slot: H
+        shopTitle: 羊毛商店 (1/7)
+        unitBuyPrice: 9
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 54
+        checkoutLineTotal: 54
+        billing: shop
+      - label: nether_brick_fence
+        itemId: nether_brick_fence
+        materialCount: 6
+        displayName: 下界砖栅栏
+        catalogBuyPrice: 3
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks__p2
+        slot: E
+        shopTitle: 方块商店 (2/3)
+        unitBuyPrice: 3
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 18
+        checkoutLineTotal: 18
+        billing: shop
+      - label: white_carpet
+        itemId: white_carpet
+        materialCount: 6
+        displayName: 白色地毯
+        catalogBuyPrice: 2.7
+        status: ok
+        statusLabel: 可购买
+        shopId: wools__p6
+        slot: K
+        shopTitle: 羊毛商店 (6/7)
+        unitBuyPrice: 2.7
+        purchaseQuantity: 6
+        productAmount: 1
+        lineTotal: 16.2
+        checkoutLineTotal: 16.2
+        billing: shop
+      - label: end_rod
+        itemId: end_rod
+        materialCount: 4
+        displayName: 末地烛
+        catalogBuyPrice: 9.01
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone__p2
+        slot: O
+        shopTitle: 红石商店 (2/6)
+        unitBuyPrice: 9.01
+        purchaseQuantity: 4
+        productAmount: 1
+        lineTotal: 36.04
+        checkoutLineTotal: 36.04
+        billing: shop
+      - label: skeleton_wall_skull
+        itemId: skeleton_wall_skull
+        materialCount: 4
+        displayName: 墙上的骷髅头颅
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: gray_stained_glass
+        itemId: gray_stained_glass
+        materialCount: 3
+        displayName: 灰色染色玻璃
+        catalogBuyPrice: 2.5
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: K
+        shopTitle: 玻璃商店 (1/2)
+        unitBuyPrice: 2.5
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 7.5
+        checkoutLineTotal: 7.5
+        billing: shop
+      - label: gray_stained_glass_pane
+        itemId: gray_stained_glass_pane
+        materialCount: 3
+        displayName: 灰色染色玻璃板
+        catalogBuyPrice: 1.2
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: L
+        shopTitle: 玻璃商店 (1/2)
+        unitBuyPrice: 1.2
+        purchaseQuantity: 3
+        productAmount: 1
+        lineTotal: 3.6
+        checkoutLineTotal: 3.6
+        billing: shop
+      - label: black_wall_banner
+        itemId: black_wall_banner
+        materialCount: 2
+        displayName: black_wall_banner
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: glass
+        itemId: glass
+        materialCount: 2
+        displayName: 玻璃
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: glass
+        slot: I
+        shopTitle: 玻璃商店 (1/2)
+        unitBuyPrice: 2
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 4
+        checkoutLineTotal: 4
+        billing: shop
+      - label: lever
+        itemId: lever
+        materialCount: 2
+        displayName: 拉杆
+        catalogBuyPrice: 2
+        status: ok
+        statusLabel: 可购买
+        shopId: redstone__p3
+        slot: J
+        shopTitle: 红石商店 (3/6)
+        unitBuyPrice: 2
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 4
+        checkoutLineTotal: 4
+        billing: shop
+      - label: nether_brick_stairs
+        itemId: nether_brick_stairs
+        materialCount: 2
+        displayName: 下界砖楼梯
+        catalogBuyPrice: 6
+        status: ok
+        statusLabel: 可购买
+        shopId: blocks__p2
+        slot: G
+        shopTitle: 方块商店 (2/3)
+        unitBuyPrice: 6
+        purchaseQuantity: 2
+        productAmount: 1
+        lineTotal: 12
+        checkoutLineTotal: 12
+        billing: shop
+      - label: dark_oak_fence_gate
+        itemId: dark_oak_fence_gate
+        materialCount: 1
+        displayName: 深色橡木栅栏门
+        catalogBuyPrice: 8
+        status: ok
+        statusLabel: 可购买
+        shopId: utility__p3
+        slot: P
+        shopTitle: 杂项商店 (3/8)
+        unitBuyPrice: 8
+        purchaseQuantity: 1
+        productAmount: 1
+        lineTotal: 8
+        checkoutLineTotal: 8
+        billing: shop
+      - label: light_gray_wall_banner
+        itemId: light_gray_wall_banner
+        materialCount: 1
+        displayName: light_gray_wall_banner
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+      - label: wither_skeleton_wall_skull
+        itemId: wither_skeleton_wall_skull
+        materialCount: 1
+        displayName: 墙上的凋灵骷髅头颅
+        catalogBuyPrice: null
+        status: not_listed
+        statusLabel: 未上架（免费）
+        estimatedLineTotal: null
+        checkoutLineTotal: 0
+        billing: free
+    materialTotal: 509.34
+    buildServiceFee: 509.34
+    purchasableTotal: 1018.68
+    freeUnlistedTotal: 0
+    playerUuid: ''
+    playerId: ''
+    username: ''
+    status: consumed
+    createdAt: '2026-08-07T07:04:46.669Z'
+    expiresAt: '2026-08-08T07:04:46.669Z'
+    consumedAt: '2026-08-07T07:06:16.965Z'
+    pasteOrderId: 54

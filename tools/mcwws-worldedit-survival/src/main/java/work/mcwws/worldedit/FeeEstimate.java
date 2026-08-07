@@ -22,6 +22,16 @@ import java.util.Map;
 
 public final class FeeEstimate {
 
+    /**
+     * 劳务费按格数计价，与材料市价无关。
+     * 默认：放置 0.5 / 格，拆除 = 放置 × 2。
+     */
+    public record LaborRates(double placeUnit, double demolishUnit) {
+        public static LaborRates defaults() {
+            return new LaborRates(0.5D, 1.0D);
+        }
+    }
+
     public record Result(
             double demolition,
             double material,
@@ -43,13 +53,13 @@ public final class FeeEstimate {
         return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of());
     }
 
-    public static Result forSet(PriceCatalog prices, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
+    public static Result forSet(PriceCatalog prices, LaborRates laborRates, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
         Pattern pattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(patternInput, context);
         RegionChunkLoader.ensureLoaded(world, region);
-        ResultBuilder builder = new ResultBuilder(prices);
+        ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
             try {
@@ -61,7 +71,7 @@ public final class FeeEstimate {
         return builder.build();
     }
 
-    public static Result forReplace(PriceCatalog prices, Region region, World world, String fromInput, String toInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
+    public static Result forReplace(PriceCatalog prices, LaborRates laborRates, Region region, World world, String fromInput, String toInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
@@ -75,7 +85,7 @@ public final class FeeEstimate {
         }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
         RegionChunkLoader.ensureLoaded(world, region);
-        ResultBuilder builder = new ResultBuilder(prices);
+        ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
             if (!fromMask.test(pos)) {
@@ -93,7 +103,7 @@ public final class FeeEstimate {
     /**
      * 与 //replacenear 一致：以玩家脚下方块为中心、半径为 size 的立方体（非选区）。
      */
-    public static Result forReplaceNear(PriceCatalog prices, World world, BlockVector3 center, int radius, String fromInput, String toInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
+    public static Result forReplaceNear(PriceCatalog prices, LaborRates laborRates, World world, BlockVector3 center, int radius, String fromInput, String toInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
         if (radius < 0) {
             throw new InputParseException("半径不能为负数");
         }
@@ -110,7 +120,7 @@ public final class FeeEstimate {
         }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
         RegionChunkLoader.ensureLoaded(world, center, radius);
-        ResultBuilder builder = new ResultBuilder(prices);
+        ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int dx = -radius; dx <= radius; dx++) {
             for (int dy = -radius; dy <= radius; dy++) {
@@ -138,17 +148,17 @@ public final class FeeEstimate {
         return edge * edge * edge;
     }
 
-    public static Result forUniformPattern(PriceCatalog prices, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
-        return forSet(prices, region, world, patternInput, actor);
+    public static Result forUniformPattern(PriceCatalog prices, LaborRates laborRates, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
+        return forSet(prices, laborRates, region, world, patternInput, actor);
     }
 
     /**
      * //stack：按选区内容复制 count 次，计费规则与 //set 相同（拆除目标格 + 材料 + 劳务）。
      */
-    public static Result forStack(PriceCatalog prices, Region region, World world, StackCommandArgs stackArgs) {
+    public static Result forStack(PriceCatalog prices, LaborRates laborRates, Region region, World world, StackCommandArgs stackArgs) {
         BlockVector3 blockOffset = stackArgs.blockOffset(region);
         RegionChunkLoader.ensureLoadedForStack(world, region, blockOffset, stackArgs.count);
-        ResultBuilder builder = new ResultBuilder(prices);
+        ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int repetition = 1; repetition <= stackArgs.count; repetition++) {
             BlockVector3 translation = blockOffset.multiply(repetition);
@@ -180,6 +190,7 @@ public final class FeeEstimate {
 
     static final class ResultBuilder {
         private final PriceCatalog prices;
+        private final LaborRates laborRates;
         private double demolition;
         private double material;
         private double labor;
@@ -188,8 +199,9 @@ public final class FeeEstimate {
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
 
-        ResultBuilder(PriceCatalog prices) {
+        ResultBuilder(PriceCatalog prices, LaborRates laborRates) {
             this.prices = prices;
+            this.laborRates = laborRates != null ? laborRates : LaborRates.defaults();
         }
 
         void addChange(BaseBlock existing, BaseBlock target) {
@@ -214,14 +226,15 @@ public final class FeeEstimate {
             String oldId = itemIdFromBaseBlock(existing);
             String newId = itemIdFromBaseBlock(target);
             if (!"air".equals(oldId)) {
+                // 拆除材料项仍按市价；劳务按拆除格数计费（与市价无关）
                 demolition += prices.getBuyPrice(oldId);
                 removedCounts.merge(oldId, 1L, Long::sum);
+                labor += laborRates.demolishUnit();
             }
             if (!"air".equals(newId)) {
-                double unit = prices.getBuyPrice(newId);
-                material += unit;
-                labor += unit;
+                material += prices.getBuyPrice(newId);
                 placedCounts.merge(newId, 1L, Long::sum);
+                labor += laborRates.placeUnit();
             }
             affectedBlocks++;
         }

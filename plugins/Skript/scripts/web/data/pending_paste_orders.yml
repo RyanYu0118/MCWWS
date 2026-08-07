@@ -1,4 +1,4 @@
-next_id: 54
+next_id: 55
 
 orders:
     '1':
@@ -1961,7 +1961,7 @@ orders:
     '50':
         id: 2f128d99-4f7a-4257-aaec-b5c7f5a348fb
         numericId: 50
-        pasteToken: d9665275fa5910f505f555cdfd9f23b7
+        pasteToken: ''
         contentHash: e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67
         contentHashVersion: mcwws:content-v1
         quoteId: 61
@@ -1969,7 +1969,7 @@ orders:
         playerId: Ryan_yu__
         username: Ryan Yu
         total: 11366.38
-        status: ready
+        status: completed
         anchor:
             world: world
             x: -610
@@ -1998,8 +1998,14 @@ orders:
         schematicPath: D:\Minecraft\服务器\1.21.11\plugins\Skript\scripts\web\data\build_schematics\e353234a24b78a6789ed630f6d7c70754b23a486be6fed23901d4327f473fe67.litematic
         createdAt: '2026-07-13T17:06:09.187Z'
         pasteTokenExpiresAt: '2026-07-13T17:21:09.187Z'
-        pastedAt: ''
+        pastedAt: '2026-08-07 15:04:03'
         failureReason: ''
+        webPasteQueue: done
+        webPasteQueuedAt: '2026-08-07T07:03:50.521Z'
+        webPasteQueueError: ''
+        webPasteProcessedAt: '2026-08-07 15:04:03'
+        webPasteProcessingAt: '2026-08-07 15:03:52'
+        pasteStartedAt: '2026-08-07 15:03:52'
     '51':
         id: 1a1914e9-0eb7-4552-ae82-77333b5552d6
         numericId: 51
@@ -2144,3 +2150,51 @@ orders:
         webPasteProcessedAt: '2026-07-24 15:39:06'
         webPasteProcessingAt: '2026-07-24 15:38:53'
         pasteStartedAt: '2026-07-24 15:38:53'
+    '54':
+        id: ec2e3646-c888-4b58-b446-fce1244b080e
+        numericId: 54
+        pasteToken: ''
+        contentHash: d597360796d0d8f4babaa47379c373a78a2070c9cfc3694179a1f3db4635c88d
+        contentHashVersion: mcwws:content-v1
+        quoteId: 66
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        total: 1018.68
+        status: completed
+        anchor:
+            world: world
+            x: -556
+            y: 66
+            z: 998
+            yaw: 0
+            pitch: 0
+        anchorSetAt: '2026-08-07T07:06:16.908Z'
+        rotation: NONE
+        mirror: NONE
+        pasteReplaceBehavior: ALL
+        schemFileName: mcwws_d597360796d0d8f4
+        schemOriginOffset:
+            x: 0
+            y: 0
+            z: 0
+        schemSize:
+            width: 12
+            height: 5
+            length: 5
+        transformBaked: false
+        pasteAnchorAdjust:
+            x: 0
+            y: 0
+            z: 0
+        schematicPath: D:\Minecraft\服务器\26.2\plugins\Skript\scripts\web\data\build_schematics\d597360796d0d8f4babaa47379c373a78a2070c9cfc3694179a1f3db4635c88d.litematic
+        createdAt: '2026-08-07T07:06:16.908Z'
+        pasteTokenExpiresAt: '2026-08-07T07:21:16.908Z'
+        pastedAt: '2026-08-07 15:06:37'
+        failureReason: ''
+        webPasteQueue: done
+        webPasteQueuedAt: '2026-08-07T07:06:24.623Z'
+        webPasteQueueError: ''
+        webPasteProcessedAt: '2026-08-07 15:06:37'
+        webPasteProcessingAt: '2026-08-07 15:06:26'
+        pasteStartedAt: '2026-08-07 15:06:26'
