@@ -519,9 +519,25 @@ function getPreferredOfferForItem(item) {
     return offers[0];
 }
 
+function limitCartQtyInputLive(input) {
+    if (!input) return;
+    const digits = String(input.value).replace(/\D/g, '');
+    if (digits === '') {
+        input.value = '';
+        return;
+    }
+    let num = parseInt(digits, 10);
+    if (!Number.isFinite(num)) {
+        input.value = '';
+        return;
+    }
+    if (num > MAX_CART_QTY) num = MAX_CART_QTY;
+    input.value = String(num);
+}
+
 function renderCartQtyInput(value, extraAttrs = '') {
     const v = Math.max(0, Math.min(MAX_CART_QTY, Math.floor(Number(value) || 0)));
-    return `<input type="number" class="cart-qty-input cart-qty-value" value="${v}" min="0" max="${MAX_CART_QTY}" inputmode="numeric" aria-label="数量" ${extraAttrs}>`;
+    return `<input type="text" class="cart-qty-input cart-qty-value" value="${v}" inputmode="numeric" pattern="[0-9]*" autocomplete="off" aria-label="数量" ${extraAttrs}>`;
 }
 
 function syncVisibleCardQuantities() {
@@ -574,6 +590,7 @@ function bindItemModalQtyControls(modalBody, itemId) {
     });
     const input = modalBody.querySelector('[data-modal-qty-input]');
     if (input) {
+        input.addEventListener('input', () => limitCartQtyInputLive(input));
         input.addEventListener('change', () => setCardItemQuantity(itemId, input.value));
         input.addEventListener('keydown', (e) => {
             if (e.key === 'Enter') {
@@ -2403,6 +2420,10 @@ function setupEventListeners() {
             const itemId = input.getAttribute('data-item-id');
             if (itemId) setCardItemQuantity(itemId, input.value);
         });
+        itemsGrid.addEventListener('input', (e) => {
+            const input = e.target.closest('[data-card-qty-input]');
+            if (input) limitCartQtyInputLive(input);
+        });
         itemsGrid.addEventListener('keydown', (e) => {
             if (e.key !== 'Enter') return;
             const input = e.target.closest('[data-card-qty-input]');
@@ -2455,6 +2476,10 @@ function setupEventListeners() {
             if (!input) return;
             const key = input.getAttribute('data-cart-key');
             if (key) setCartLineQuantity(key, input.value);
+        });
+        cartDrawerBody.addEventListener('input', (e) => {
+            const input = e.target.closest('[data-cart-qty-input]');
+            if (input) limitCartQtyInputLive(input);
         });
         cartDrawerBody.addEventListener('keydown', (e) => {
             if (e.key !== 'Enter') return;
