@@ -1,0 +1,26 @@
+name: MCWWS_AxiomSurvival
+main: work.mcwws.axiomsurvival.McwwsAxiomSurvivalPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [Vault, AxiomPaper]
+softdepend: [Slimefun, MCWWS_EconomyLedger, GriefPrevention]
+
+commands:
+  mcwws-axiom-reload:
+    description: 重载 Axiom 生存建造扣费配置
+    permission: mcwws.axiom.survival.admin
+    usage: /mcwws-axiom-reload
+  axiomcheck:
+    description: 诊断 Axiom 生存建造权限与余额
+    permission: mcwws.axiom.survival.use
+    usage: /axiomcheck
+
+permissions:
+  mcwws.axiom.survival.admin:
+    default: op
+  mcwws.axiom.survival.use:
+    description: 生存模式下使用 Axiom 建造（按格扣费）
+    default: true
+  mcwws.axiom.survival.bypass:
+    description: 跳过 Axiom 生存建造扣费
+    default: op
