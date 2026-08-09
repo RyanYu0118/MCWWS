@@ -2034,6 +2034,7 @@ body.mcwws-ledger-open {
     min-width: 72px;
     width: 72px;
     font-size: 0.95rem;
+    border-radius: 0 !important;
 }
 
 .item-modal-link-btn {
@@ -3106,9 +3107,17 @@ body.mcwws-ledger-open {
     min-width: 42px;
 }
 
-.item-card-qty .cart-qty-input {
+.item-card-qty .cart-qty-input,
+.item-modal-qty .cart-qty-input,
+.cart-qty .cart-qty-input,
+input.cart-qty-input {
     min-width: 72px;
     width: 72px;
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
 }
 
 .cart-offer-add-btn {

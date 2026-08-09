@@ -326,9 +326,9 @@ body::after {
 }
 
 .hero-search,
-input[type="text"],
+input[type="text"]:not(.cart-qty-input),
 input[type="password"],
-input[type="number"],
+input[type="number"]:not(.cart-qty-input),
 select,
 textarea {
     background: var(--surface-input) !important;
@@ -339,15 +339,17 @@ textarea {
 }
 
 .hero-search:focus,
-input:focus,
+input:focus:not(.cart-qty-input),
 select:focus,
 textarea:focus {
     border-color: var(--input-focus-border) !important;
     box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
 
-/* 购物车数量输入框：覆盖上方全局 input 圆角/边框，保持直角 */
-.cart-qty-input {
+/* 购物车数量输入框：直角、无全局 input 边框/圆角 */
+input.cart-qty-input,
+input.cart-qty-input[type="text"],
+.cart-qty .cart-qty-input {
     border-radius: 0 !important;
     border: none !important;
     background: transparent !important;
@@ -355,7 +357,8 @@ textarea:focus {
     box-shadow: none !important;
 }
 
-.cart-qty-input:focus {
+input.cart-qty-input:focus,
+.cart-qty .cart-qty-input:focus {
     border: none !important;
     box-shadow: none !important;
     outline: none;
