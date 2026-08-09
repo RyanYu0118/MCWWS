@@ -346,6 +346,21 @@ textarea:focus {
     box-shadow: 0 0 0 3px var(--input-focus-ring);
 }
 
+/* 购物车数量输入框：覆盖上方全局 input 圆角/边框，保持直角 */
+.cart-qty-input {
+    border-radius: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    backdrop-filter: none !important;
+    box-shadow: none !important;
+}
+
+.cart-qty-input:focus {
+    border: none !important;
+    box-shadow: none !important;
+    outline: none;
+}
+
 .services-hub-page {
     background: transparent;
 }
