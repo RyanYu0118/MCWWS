@@ -57,7 +57,7 @@ const STATIC_ITEM_SCOPES = new Set(['all', 'in_shop', 'custom']);
 const ITEM_SCOPE_VALUES = new Set(['all', 'in_shop', 'custom']);
 let shopCategoryList = [];
 const CART_STORAGE_KEY = 'mcwws_shop_cart';
-const MAX_CART_QTY = 9999;
+const MAX_CART_QTY = 10000;
 let shopCart = [];
 let cartDrawerOpen = false;
 

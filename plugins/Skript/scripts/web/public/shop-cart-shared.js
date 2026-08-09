@@ -3,7 +3,7 @@
  */
 (function () {
     const CART_STORAGE_KEY = 'mcwws_shop_cart';
-    const MAX_CART_QTY = 9999;
+    const MAX_CART_QTY = 10000;
     const MC_FONT_SEP = ' / ';
 
     let allItems = [];

@@ -1607,7 +1607,7 @@ function resolveCheckoutLine(rawLine, priceData, catalog) {
     if (!itemId || !shopId || !slot) {
         return { error: '订单行缺少 itemId、shopId 或 slot。' };
     }
-    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 9999) {
+    if (!Number.isFinite(quantity) || quantity < 1 || quantity > 10000) {
         return { error: `无效数量：${rawLine && rawLine.itemId}` };
     }
     const offer = findUltimateShopOffer(catalog, itemId, shopId, slot);
