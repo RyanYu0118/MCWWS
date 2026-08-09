@@ -1,0 +1,25 @@
+enabled: true
+bypass-permission: mcwws.axiom.survival.bypass
+prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+prices-reload-seconds: 60
+reload-prices-before-charge: true
+record-market-stock: true
+market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
+labor:
+  place-unit: 0.5
+  demolish-multiplier: 2.0
+max-scan-blocks: 500000
+# 余额低于此值时拒绝 Axiom 握手（0 = 不检查）
+min-balance-to-enable: 0
+# 生存模式下禁止 Axiom 客户端切到创造（保留飞行/快速建造能力）
+block-axiom-creative-switch: true
+messages:
+  prefix: "§6[Axiom] §f"
+  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
+  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  scan-too-large: "变更过大（>{max} 格），请缩小选区或分批建造。"
+  not-survival: "仅生存/冒险模式可使用付费 Axiom 建造。"
+  handshake-denied: "无法启用 Axiom：{reason}"
+  creative-blocked: "生存模式下不能通过 Axiom 切换到创造模式。"
+  axiom-inactive: "§7未检测到 Axiom 联机会话，请确认已安装 Axiom 客户端且服务器已加载 AxiomPaper。"
+  axiom-ready: "§aAxiom 生存建造已就绪：按格扣材料费与劳务费（与创世神一致）。"

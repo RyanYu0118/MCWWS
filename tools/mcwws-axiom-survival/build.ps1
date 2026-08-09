@@ -4,6 +4,7 @@ $Src = Join-Path $PSScriptRoot "src/main/java"
 $Res = Join-Path $PSScriptRoot "src/main/resources"
 $Out = Join-Path $PSScriptRoot "build/classes"
 $JarOut = Join-Path $Root "plugins/MCWWS_AxiomSurvival.jar"
+$JarOutNew = Join-Path $Root "plugins/MCWWS_AxiomSurvival.jar.new"
 
 $PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/26.2.build.103-stable/paper-api-26.2.build.103-stable.jar"
 if (-not (Test-Path $PaperApi)) {
@@ -56,6 +57,17 @@ javac -encoding UTF-8 -cp $Cp -d $Out $JavaFiles
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
-if (Test-Path $JarOut) { Remove-Item $JarOut -Force }
-& $JarExe cf $JarOut -C $Out .
-Write-Host "Built $JarOut"
+if (Test-Path $JarOutNew) { Remove-Item $JarOutNew -Force }
+& $JarExe cf $JarOutNew -C $Out .
+if (Test-Path $JarOut) {
+    try {
+        Remove-Item $JarOut -Force
+        Move-Item $JarOutNew $JarOut
+        Write-Host "Built $JarOut"
+    } catch {
+        Write-Host "Built $JarOutNew (原 jar 被占用，停服后替换 plugins/MCWWS_AxiomSurvival.jar)"
+    }
+} else {
+    Move-Item $JarOutNew $JarOut
+    Write-Host "Built $JarOut"
+}

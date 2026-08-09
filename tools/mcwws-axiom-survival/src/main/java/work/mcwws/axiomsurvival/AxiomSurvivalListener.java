@@ -62,13 +62,17 @@ public final class AxiomSurvivalListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
+        if (player == null || BlockProtection.shouldBypass(player)) {
             return;
         }
-        if (event.getGameMode() == GameMode.CREATIVE) {
-            event.setCancelled(true);
-            McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("creative-blocked"));
+        if (event.getGameMode() != GameMode.CREATIVE) {
+            return;
         }
+        if (!player.hasPermission("mcwws.axiom.survival.use")) {
+            return;
+        }
+        event.setCancelled(true);
+        McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("creative-blocked"));
     }
 
     @EventHandler
