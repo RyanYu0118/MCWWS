@@ -3,6 +3,7 @@
  */
 (function () {
     const CART_STORAGE_KEY = 'mcwws_shop_cart';
+    const MAX_CART_QTY = 9999;
     const MC_FONT_SEP = ' / ';
 
     let allItems = [];
@@ -17,6 +18,11 @@
             .replace(/</g, '&lt;')
             .replace(/>/g, '&gt;')
             .replace(/"/g, '&quot;');
+    }
+
+    function renderCartQtyInput(value, extraAttrs = '') {
+        const v = Math.max(0, Math.min(MAX_CART_QTY, Math.floor(Number(value) || 0)));
+        return `<input type="number" class="cart-qty-input cart-qty-value" value="${v}" min="0" max="${MAX_CART_QTY}" inputmode="numeric" aria-label="数量" ${extraAttrs}>`;
     }
 
     function showToast(message, success = true) {
@@ -184,7 +190,7 @@
                         <div class="cart-line-price">￥${entry.unitBuyPrice.toFixed(2)} x ${entry.quantity} = ￥${subtotal.toFixed(2)}</div>
                         <div class="cart-qty">
                             <button type="button" class="cart-qty-btn" data-cart-action="dec" data-cart-key="${safeKey}" aria-label="减少">-</button>
-                            <span class="cart-qty-value">${entry.quantity}</span>
+                            ${renderCartQtyInput(entry.quantity, `data-cart-qty-input data-cart-key="${safeKey}"`)}
                             <button type="button" class="cart-qty-btn" data-cart-action="inc" data-cart-key="${safeKey}" aria-label="增加">+</button>
                         </div>
                     </div>
@@ -252,7 +258,7 @@
         const shopName = offer.shopTitleResolved || offer.shopTitle || offer.shopId;
         const existing = shopCart.find((e) => e.key === key);
         if (existing) {
-            existing.quantity += qty;
+            existing.quantity = Math.min(MAX_CART_QTY, existing.quantity + qty);
             existing.unitBuyPrice = unitBuyPrice;
         } else {
             shopCart.push({
@@ -278,7 +284,9 @@
     function setCartLineQuantity(key, quantity) {
         const entry = shopCart.find((e) => e.key === key);
         if (!entry) return;
-        const qty = Math.floor(Number(quantity) || 0);
+        let qty = Math.floor(Number(quantity) || 0);
+        if (!Number.isFinite(qty)) qty = 0;
+        qty = Math.max(0, Math.min(MAX_CART_QTY, qty));
         if (qty <= 0) {
             shopCart = shopCart.filter((e) => e.key !== key);
         } else {
@@ -439,6 +447,24 @@
                     setCartLineQuantity(key, entry.quantity - 1);
                 } else if (action === 'remove') {
                     removeCartLine(key);
+                }
+            });
+            cartDrawerBody.addEventListener('change', (e) => {
+                const input = e.target.closest('[data-cart-qty-input]');
+                if (!input) return;
+                const key = input.getAttribute('data-cart-key');
+                if (key) setCartLineQuantity(key, input.value);
+            });
+            cartDrawerBody.addEventListener('keydown', (e) => {
+                if (e.key !== 'Enter') return;
+                const input = e.target.closest('[data-cart-qty-input]');
+                if (!input) return;
+                e.preventDefault();
+                input.blur();
+            });
+            cartDrawerBody.addEventListener('click', (e) => {
+                if (e.target.closest('[data-cart-qty-input]')) {
+                    e.stopPropagation();
                 }
             });
         }

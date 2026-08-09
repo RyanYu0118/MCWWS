@@ -57,6 +57,7 @@ const STATIC_ITEM_SCOPES = new Set(['all', 'in_shop', 'custom']);
 const ITEM_SCOPE_VALUES = new Set(['all', 'in_shop', 'custom']);
 let shopCategoryList = [];
 const CART_STORAGE_KEY = 'mcwws_shop_cart';
+const MAX_CART_QTY = 9999;
 let shopCart = [];
 let cartDrawerOpen = false;
 
@@ -518,15 +519,20 @@ function getPreferredOfferForItem(item) {
     return offers[0];
 }
 
+function renderCartQtyInput(value, extraAttrs = '') {
+    const v = Math.max(0, Math.min(MAX_CART_QTY, Math.floor(Number(value) || 0)));
+    return `<input type="number" class="cart-qty-input cart-qty-value" value="${v}" min="0" max="${MAX_CART_QTY}" inputmode="numeric" aria-label="数量" ${extraAttrs}>`;
+}
+
 function syncVisibleCardQuantities() {
     const grid = document.getElementById('itemsGrid');
     if (!grid) return;
     grid.querySelectorAll('[data-item-card-id]').forEach((card) => {
         const itemId = card.getAttribute('data-item-card-id');
         const qty = getCartTotalQuantityForItem(itemId);
-        const qtyEl = card.querySelector('[data-card-qty-value]');
+        const qtyEl = card.querySelector('[data-card-qty-input]');
         const decBtn = card.querySelector('[data-card-qty-action="dec"]');
-        if (qtyEl) qtyEl.textContent = String(qty);
+        if (qtyEl && qtyEl !== document.activeElement) qtyEl.value = String(qty);
         if (decBtn) decBtn.disabled = qty <= 0;
     });
     const modal = document.getElementById('itemModal');
@@ -538,9 +544,9 @@ function syncItemModalQuantity(itemId) {
     const modal = document.getElementById('itemModal');
     if (!modal || modal.dataset.itemId !== itemId || !modal.classList.contains('active')) return;
     const qty = getCartTotalQuantityForItem(itemId);
-    const qtyEl = modal.querySelector('[data-modal-qty-value]');
+    const qtyEl = modal.querySelector('[data-modal-qty-input]');
     const decBtn = modal.querySelector('[data-modal-qty-action="dec"]');
-    if (qtyEl) qtyEl.textContent = String(qty);
+    if (qtyEl && qtyEl !== document.activeElement) qtyEl.value = String(qty);
     if (decBtn) decBtn.disabled = qty <= 0;
 }
 
@@ -550,7 +556,7 @@ function renderItemModalQtyHtml(itemId) {
     return `
         <div class="cart-qty item-modal-qty" data-item-modal-qty>
             <button type="button" class="cart-qty-btn item-modal-qty-btn" data-modal-qty-action="dec" data-item-id="${safeId}" ${qty <= 0 ? 'disabled' : ''} aria-label="减少">-</button>
-            <span class="cart-qty-value item-modal-qty-value" data-modal-qty-value>${qty}</span>
+            ${renderCartQtyInput(qty, `data-modal-qty-input data-item-id="${safeId}"`)}
             <button type="button" class="cart-qty-btn item-modal-qty-btn" data-modal-qty-action="inc" data-item-id="${safeId}" aria-label="增加">+</button>
         </div>
     `;
@@ -566,6 +572,61 @@ function bindItemModalQtyControls(modalBody, itemId) {
         if (action === 'inc') changeCardItemQuantity(itemId, 1, btn);
         else if (action === 'dec') changeCardItemQuantity(itemId, -1);
     });
+    const input = modalBody.querySelector('[data-modal-qty-input]');
+    if (input) {
+        input.addEventListener('change', () => setCardItemQuantity(itemId, input.value));
+        input.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                input.blur();
+            }
+        });
+        input.addEventListener('click', (e) => e.stopPropagation());
+    }
+}
+
+function setCardItemQuantity(itemId, rawQty) {
+    let qty = Math.floor(Number(rawQty));
+    if (!Number.isFinite(qty)) qty = 0;
+    qty = Math.max(0, Math.min(MAX_CART_QTY, qty));
+
+    const item = allItems.find((entry) => entry.id === itemId);
+    if (!item) return;
+
+    shopCart = shopCart.filter((e) => e.itemId !== itemId);
+
+    if (qty > 0) {
+        const offer = getPreferredOfferForItem(item);
+        if (!offer) {
+            showToast('该物品未上架，无法加入购物车。', false);
+            saveShopCart();
+            updateCartBadge();
+            syncVisibleCardQuantities();
+            renderCartDrawer();
+            syncItemsStateToUrl();
+            return;
+        }
+        const key = cartEntryKey(item.id, offer);
+        const unitBuyPrice = resolveOfferUnitPrice(offer, item, 'buy');
+        const shopName = offer.shopTitleResolved || offer.shopTitle || offer.shopId;
+        shopCart.push({
+            key,
+            itemId: item.id,
+            itemName: item.name,
+            shopId: offer.shopId,
+            shopTitle: String(shopName),
+            slot: String(offer.slot),
+            quantity: qty,
+            unitBuyPrice,
+            location: offer.location || null
+        });
+    }
+
+    saveShopCart();
+    updateCartBadge();
+    syncVisibleCardQuantities();
+    if (cartDrawerOpen) renderCartDrawer();
+    syncItemsStateToUrl();
 }
 
 function changeCardItemQuantity(itemId, delta, sourceEl) {
@@ -742,7 +803,7 @@ function addToCart(item, offer, quantity = 1) {
     const shopName = offer.shopTitleResolved || offer.shopTitle || offer.shopId;
     const existing = shopCart.find((e) => e.key === key);
     if (existing) {
-        existing.quantity += qty;
+        existing.quantity = Math.min(MAX_CART_QTY, existing.quantity + qty);
         existing.unitBuyPrice = unitBuyPrice;
     } else {
         shopCart.push({
@@ -768,7 +829,9 @@ function addToCart(item, offer, quantity = 1) {
 function setCartLineQuantity(key, quantity) {
     const entry = shopCart.find((e) => e.key === key);
     if (!entry) return;
-    const qty = Math.floor(Number(quantity) || 0);
+    let qty = Math.floor(Number(quantity) || 0);
+    if (!Number.isFinite(qty)) qty = 0;
+    qty = Math.max(0, Math.min(MAX_CART_QTY, qty));
     if (qty <= 0) {
         shopCart = shopCart.filter((e) => e.key !== key);
     } else {
@@ -823,7 +886,7 @@ function renderCartDrawer() {
                     <div class="cart-line-price">￥${entry.unitBuyPrice.toFixed(2)} x ${entry.quantity} = ￥${subtotal.toFixed(2)}</div>
                     <div class="cart-qty">
                         <button type="button" class="cart-qty-btn" data-cart-action="dec" data-cart-key="${safeKey}" aria-label="减少">-</button>
-                        <span class="cart-qty-value">${entry.quantity}</span>
+                        ${renderCartQtyInput(entry.quantity, `data-cart-qty-input data-cart-key="${safeKey}"`)}
                         <button type="button" class="cart-qty-btn" data-cart-action="inc" data-cart-key="${safeKey}" aria-label="增加">+</button>
                     </div>
                 </div>
@@ -2312,6 +2375,10 @@ function setupEventListeners() {
                 }
                 return;
             }
+            if (e.target.closest('[data-card-qty-input]')) {
+                e.stopPropagation();
+                return;
+            }
             const btn = e.target.closest('.cart-btn, .trade-btn');
             if (!btn) {
                 if (e.target.closest('[data-no-card-open]')) {
@@ -2329,6 +2396,19 @@ function setupEventListeners() {
             if (itemId) {
                 handleAddToCartClick(itemId);
             }
+        });
+        itemsGrid.addEventListener('change', (e) => {
+            const input = e.target.closest('[data-card-qty-input]');
+            if (!input) return;
+            const itemId = input.getAttribute('data-item-id');
+            if (itemId) setCardItemQuantity(itemId, input.value);
+        });
+        itemsGrid.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const input = e.target.closest('[data-card-qty-input]');
+            if (!input) return;
+            e.preventDefault();
+            input.blur();
         });
     }
 
@@ -2369,6 +2449,19 @@ function setupEventListeners() {
             if (action === 'dec') {
                 setCartLineQuantity(key, entry.quantity - 1);
             }
+        });
+        cartDrawerBody.addEventListener('change', (e) => {
+            const input = e.target.closest('[data-cart-qty-input]');
+            if (!input) return;
+            const key = input.getAttribute('data-cart-key');
+            if (key) setCartLineQuantity(key, input.value);
+        });
+        cartDrawerBody.addEventListener('keydown', (e) => {
+            if (e.key !== 'Enter') return;
+            const input = e.target.closest('[data-cart-qty-input]');
+            if (!input) return;
+            e.preventDefault();
+            input.blur();
         });
     }
 
@@ -2500,7 +2593,7 @@ function renderCards() {
                     ${canAdd ? `
                     <div class="cart-qty item-card-qty" data-no-card-open="1">
                         <button type="button" class="cart-qty-btn item-card-qty-btn" data-card-qty-action="dec" data-item-id="${String(item.id).replace(/"/g, '&quot;')}" ${cartQty <= 0 ? 'disabled' : ''}>-</button>
-                        <span class="cart-qty-value item-card-qty-value" data-card-qty-value>${cartQty}</span>
+                        ${renderCartQtyInput(cartQty, `data-card-qty-input data-item-id="${String(item.id).replace(/"/g, '&quot;')}"`)}
                         <button type="button" class="cart-qty-btn item-card-qty-btn" data-card-qty-action="inc" data-item-id="${String(item.id).replace(/"/g, '&quot;')}">+</button>
                     </div>` : `
                     <button type="button" class="${cartBtnClass}" data-item-id="${String(item.id).replace(/"/g, '&quot;')}" disabled>暂无上架</button>`}

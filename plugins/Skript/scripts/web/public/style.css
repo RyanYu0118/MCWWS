@@ -2030,6 +2030,11 @@ body.mcwws-ledger-open {
     font-size: 0.95rem;
 }
 
+.item-modal-qty .cart-qty-input {
+    min-width: 44px;
+    font-size: 0.95rem;
+}
+
 .item-modal-link-btn {
     display: inline-flex;
     align-items: center;
@@ -3100,6 +3105,10 @@ body.mcwws-ledger-open {
     min-width: 42px;
 }
 
+.item-card-qty .cart-qty-input {
+    min-width: 42px;
+}
+
 .cart-offer-add-btn {
     border: none;
     cursor: pointer;
@@ -3358,6 +3367,32 @@ body.mcwws-ledger-open {
     font-size: 0.88rem;
     font-weight: 600;
     color: var(--text-primary);
+}
+
+.cart-qty-input {
+    width: 48px;
+    height: 28px;
+    padding: 0 4px;
+    border: none;
+    background: transparent;
+    color: var(--text-primary);
+    text-align: center;
+    font-size: 0.88rem;
+    font-weight: 600;
+    font-family: inherit;
+    -moz-appearance: textfield;
+    appearance: textfield;
+}
+
+.cart-qty-input::-webkit-outer-spin-button,
+.cart-qty-input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.cart-qty-input:focus {
+    outline: none;
+    background: rgba(255, 255, 255, 0.08);
 }
 
 .cart-drawer-footer {
