@@ -15,6 +15,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
     private static McwwsAxiomSurvivalPlugin instance;
     private PriceCatalog priceCatalog;
     private ChargeService chargeService;
+    private EditorRestoreService editorRestoreService;
     private AxiomPaperHook axiomHook;
     private FileConfiguration config;
 
@@ -35,8 +36,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         priceCatalog = new PriceCatalog(this);
         priceCatalog.reload();
         chargeService = new ChargeService(this);
-        axiomHook = new AxiomPaperHook(this, chargeService);
-        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, axiomHook), this);
+        editorRestoreService = new EditorRestoreService(this);
+        axiomHook = new AxiomPaperHook(this, chargeService, editorRestoreService);
+        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService), this);
         getCommand("mcwws-axiom-reload").setExecutor((sender, command, label, args) -> {
             reloadLocalConfig();
             priceCatalog.reload();
@@ -49,6 +51,18 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
                 return true;
             }
             chargeService.sendDiagnostic(player);
+            return true;
+        });
+        getCommand("axiomrestore").setExecutor((sender, command, label, args) -> {
+            if (!(sender instanceof Player player)) {
+                sendMessage(sender, "请在游戏内使用。");
+                return true;
+            }
+            if (!player.hasPermission("mcwws.axiom.survival.use")) {
+                sendMessage(sender, msg("prefix") + "§c缺少权限。");
+                return true;
+            }
+            editorRestoreService.restoreNow(player);
             return true;
         });
         getServer().getScheduler().runTaskLater(this, () -> {

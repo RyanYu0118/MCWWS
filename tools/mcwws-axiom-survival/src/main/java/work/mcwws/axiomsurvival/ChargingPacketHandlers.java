@@ -74,13 +74,7 @@ final class ChargingPacketHandlers {
     }
 
     private static void invokeDelegate(PacketHandler delegate, Player player, Object buf) {
-        try {
-            Class<?> bufClass = Class.forName("net.minecraft.network.FriendlyByteBuf");
-            Method onReceive = PacketHandler.class.getMethod("onReceive", Player.class, bufClass);
-            onReceive.invoke(delegate, player, buf);
-        } catch (ReflectiveOperationException ex) {
-            McwwsAxiomSurvivalPlugin.getInstance().getLogger().log(Level.SEVERE, "Axiom 包转发失败", ex);
-        }
+        PacketDelegate.invoke(delegate, player, buf);
     }
 
     private static boolean evaluateInline(

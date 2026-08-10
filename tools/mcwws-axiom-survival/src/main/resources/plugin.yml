@@ -14,6 +14,10 @@ commands:
     description: 诊断 Axiom 生存建造权限与余额
     permission: mcwws.axiom.survival.use
     usage: /axiomcheck
+  axiomrestore:
+    description: 强制从 Axiom Editor 恢复到进入前的生存位置
+    permission: mcwws.axiom.survival.use
+    usage: /axiomrestore
 
 permissions:
   mcwws.axiom.survival.admin:
