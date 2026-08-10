@@ -10,6 +10,7 @@ import com.sk89q.worldedit.function.pattern.Pattern;
 import com.sk89q.worldedit.extension.input.ParserContext;
 import com.fastasyncworldedit.core.util.MaskTraverser;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.CuboidRegion;
 import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
@@ -59,6 +60,7 @@ public final class FeeEstimate {
         context.setWorld(world);
         Pattern pattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(patternInput, context);
         FaweRegionSync.flushBeforeEstimate(world, region);
+        EstimateContext.setRegion(region);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
@@ -73,6 +75,7 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         FaweRegionSync.flushBeforeEstimate(world, region);
+        EstimateContext.setRegion(region);
         Pattern fromPattern = null;
         Extent snapshot;
         Mask fromMask;
@@ -109,6 +112,10 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         FaweRegionSync.flushBeforeEstimate(world, center, radius);
+        EstimateContext.setRegion(new CuboidRegion(
+                center.add(-radius, -radius, -radius),
+                center.add(radius, radius, radius)
+        ));
         Pattern fromPattern = null;
         Extent snapshot;
         Mask fromMask;
@@ -157,6 +164,7 @@ public final class FeeEstimate {
     public static Result forStack(PriceCatalog prices, LaborRates laborRates, Region region, World world, StackCommandArgs stackArgs) {
         BlockVector3 blockOffset = stackArgs.blockOffset(region);
         FaweRegionSync.flushBeforeEstimate(world, region);
+        EstimateContext.setRegion(region);
         RegionChunkLoader.ensureLoadedForStack(world, region, blockOffset, stackArgs.count);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);

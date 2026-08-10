@@ -12,8 +12,8 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 记录上一笔已扣费改块的选区与放置物，用于连续 //set 时 Bukkit/FAWE 读块滞后、
- * 误判「已是目标方块」而 0 格变更的场景。
+ * 记录上一笔已扣费改块的选区与放置物，仅用于<strong>同一选区</strong>连续 //set 时
+ * Bukkit/FAWE 读块滞后、误判「已是目标方块」而 0 格变更的场景。
  */
 final class WeRecentEditMemory {
 
@@ -30,10 +30,14 @@ final class WeRecentEditMemory {
             return System.currentTimeMillis() - timeMs <= TTL_MS;
         }
 
-        boolean contains(BlockVector3 pos) {
-            return pos.x() >= minX && pos.x() <= maxX
-                    && pos.y() >= minY && pos.y() <= maxY
-                    && pos.z() >= minZ && pos.z() <= maxZ;
+        boolean sameSelection(World world, Region region) {
+            if (world == null || region == null || !world.getName().equals(worldName)) {
+                return false;
+            }
+            BlockVector3 min = region.getMinimumPoint();
+            BlockVector3 max = region.getMaximumPoint();
+            return minX == min.x() && minY == min.y() && minZ == min.z()
+                    && maxX == max.x() && maxY == max.y() && maxZ == max.z();
         }
 
         BlockState dominantPlacedState() {
@@ -48,6 +52,20 @@ final class WeRecentEditMemory {
     private static final ConcurrentHashMap<UUID, Snapshot> LAST = new ConcurrentHashMap<>();
 
     private WeRecentEditMemory() {
+    }
+
+    static void clear(Player player) {
+        if (player != null) {
+            LAST.remove(player.getUniqueId());
+        }
+    }
+
+    static boolean matchesSelection(Player player, World world, Region region) {
+        if (player == null || world == null || region == null) {
+            return false;
+        }
+        Snapshot snap = LAST.get(player.getUniqueId());
+        return snap != null && snap.recent() && snap.sameSelection(world, region);
     }
 
     static void record(Player player, World world, Region region, Map<String, Long> placedCounts) {
@@ -76,12 +94,12 @@ final class WeRecentEditMemory {
         store(player, world.getName(), min, max, dominant);
     }
 
-    static BlockState resolveStaleTargetRead(Player player, World world, BlockVector3 pos, BlockState bukkitState) {
-        if (player == null || world == null || pos == null || bukkitState == null) {
+    static BlockState resolveStaleTargetRead(Player player, World world, Region region, BlockState bukkitState) {
+        if (player == null || world == null || region == null || bukkitState == null) {
             return null;
         }
         Snapshot snap = LAST.get(player.getUniqueId());
-        if (snap == null || !snap.recent() || !world.getName().equals(snap.worldName()) || !snap.contains(pos)) {
+        if (snap == null || !snap.recent() || !snap.sameSelection(world, region)) {
             return null;
         }
         BlockState placed = snap.dominantPlacedState();

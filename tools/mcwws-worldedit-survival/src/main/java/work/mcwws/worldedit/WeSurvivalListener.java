@@ -68,6 +68,10 @@ public final class WeSurvivalListener {
             WeEditAuthorization.grantHistory(player);
             return;
         }
+        if (isSelectionChangeCommand(command)) {
+            WeRecentEditMemory.clear(player);
+            return;
+        }
         if (!plugin.getChargeCommands().contains(command)) {
             return;
         }
@@ -185,6 +189,13 @@ public final class WeSurvivalListener {
     private static boolean requiresBlockChanges(String command) {
         return switch (command) {
             case "set", "replace", "replacenear", "fill", "walls", "overlay", "repl", "stack" -> true;
+            default -> false;
+        };
+    }
+
+    private static boolean isSelectionChangeCommand(String command) {
+        return switch (command) {
+            case "pos1", "pos2", "hpos1", "hpos2", "desel", "deselect", "sel" -> true;
             default -> false;
         };
     }

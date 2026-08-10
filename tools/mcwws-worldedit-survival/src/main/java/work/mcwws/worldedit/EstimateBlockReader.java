@@ -3,13 +3,14 @@ package work.mcwws.worldedit;
 import com.sk89q.worldedit.WorldEdit;
 import com.sk89q.worldedit.EditSession;
 import com.sk89q.worldedit.math.BlockVector3;
+import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BaseBlock;
 import com.sk89q.worldedit.world.block.BlockState;
 import org.bukkit.entity.Player;
 
 /**
- * 预扫描读方块：Bukkit + FAWE 队列 + 上一笔扣费选区记忆 + EditSession 回退。
+ * 预扫描读方块：Bukkit + FAWE 队列 + 同选区上一笔扣费记忆 + EditSession 回退。
  */
 final class EstimateBlockReader {
 
@@ -23,24 +24,31 @@ final class EstimateBlockReader {
         if (target == null) {
             return bukkit;
         }
+        Player player = EstimateContext.player();
+        Region region = EstimateContext.region();
+        boolean sameSelection = WeRecentEditMemory.matchesSelection(player, world, region);
         BaseBlock bukkitBase = bukkit.toBaseBlock();
+
         if (bukkitBase.equals(target)) {
-            Player player = EstimateContext.player();
-            BlockState recent = WeRecentEditMemory.resolveStaleTargetRead(player, world, pos, bukkit);
-            if (recent != null && !recent.toBaseBlock().equals(target)) {
-                return recent;
+            if (sameSelection) {
+                BlockState recent = WeRecentEditMemory.resolveStaleTargetRead(player, world, region, bukkit);
+                if (recent != null && !recent.toBaseBlock().equals(target)) {
+                    return recent;
+                }
             }
             BlockState session = readEditSession(world, pos);
             if (session != null && !session.toBaseBlock().equals(target)) {
                 return session;
             }
         }
+
         BlockState fawe = readFaweQueue(world, pos);
         if (fawe == null || fawe.equals(bukkit)) {
             return bukkit;
         }
         BaseBlock faweBase = fawe.toBaseBlock();
-        if (bukkitBase.equals(target) && !faweBase.equals(target)) {
+
+        if (sameSelection && bukkitBase.equals(target) && !faweBase.equals(target)) {
             return fawe;
         }
         if (faweBase.equals(target) && !bukkitBase.equals(target)) {
@@ -60,8 +68,15 @@ final class EstimateBlockReader {
         }
         BaseBlock bukkitBase = bukkit.toBaseBlock();
         BaseBlock faweBase = fawe.toBaseBlock();
-        if (faweBase.equals(fromHint) && !bukkitBase.equals(fromHint)) {
+        Player player = EstimateContext.player();
+        Region region = EstimateContext.region();
+        boolean sameSelection = WeRecentEditMemory.matchesSelection(player, world, region);
+
+        if (sameSelection && faweBase.equals(fromHint) && !bukkitBase.equals(fromHint)) {
             return fawe;
+        }
+        if (faweBase.equals(fromHint) && !bukkitBase.equals(fromHint)) {
+            return bukkit;
         }
         if (bukkitBase.equals(fromHint) && !faweBase.equals(fromHint)) {
             return bukkit;
