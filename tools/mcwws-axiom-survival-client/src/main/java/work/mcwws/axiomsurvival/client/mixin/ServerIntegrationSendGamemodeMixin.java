@@ -1,6 +1,7 @@
 package work.mcwws.axiomsurvival.client.mixin;
 
 import com.moulberry.axiom.integration.ServerIntegration;
+import net.minecraft.world.level.GameType;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -11,7 +12,7 @@ import work.mcwws.axiomsurvival.client.SurvivalEditorController;
 public class ServerIntegrationSendGamemodeMixin {
 
     @Inject(method = "sendChangeGameModeImmediately", at = @At("HEAD"), cancellable = true, remap = false)
-    private static void mcwws$sendChangeGameModeImmediately(CallbackInfo ci) {
+    private static void mcwws$sendChangeGameModeImmediately(GameType gameType, CallbackInfo ci) {
         if (SurvivalEditorController.shouldSuppressGamemodeSync()) {
             ci.cancel();
         }

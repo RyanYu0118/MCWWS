@@ -58,7 +58,7 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         Pattern pattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(patternInput, context);
-        RegionChunkLoader.ensureLoaded(world, region);
+        FaweRegionSync.flushBeforeEstimate(world, region);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
@@ -75,6 +75,7 @@ public final class FeeEstimate {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
+        FaweRegionSync.flushBeforeEstimate(world, region);
         Extent snapshot = BukkitSnapshotExtent.forEstimate(world);
         Mask fromMask;
         if (fromInput == null || fromInput.isBlank()) {
@@ -84,7 +85,6 @@ public final class FeeEstimate {
             new MaskTraverser(fromMask).setNewExtent(snapshot);
         }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
-        RegionChunkLoader.ensureLoaded(world, region);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
@@ -110,6 +110,7 @@ public final class FeeEstimate {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
+        FaweRegionSync.flushBeforeEstimate(world, center, radius);
         Extent snapshot = BukkitSnapshotExtent.forEstimate(world);
         Mask fromMask;
         if (fromInput == null || fromInput.isBlank()) {
@@ -119,7 +120,6 @@ public final class FeeEstimate {
             new MaskTraverser(fromMask).setNewExtent(snapshot);
         }
         Pattern toPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(toInput, context);
-        RegionChunkLoader.ensureLoaded(world, center, radius);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int dx = -radius; dx <= radius; dx++) {
@@ -157,6 +157,7 @@ public final class FeeEstimate {
      */
     public static Result forStack(PriceCatalog prices, LaborRates laborRates, Region region, World world, StackCommandArgs stackArgs) {
         BlockVector3 blockOffset = stackArgs.blockOffset(region);
+        FaweRegionSync.flushBeforeEstimate(world, region);
         RegionChunkLoader.ensureLoadedForStack(world, region, blockOffset, stackArgs.count);
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);

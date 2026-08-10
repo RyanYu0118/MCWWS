@@ -1,0 +1,19 @@
+# Minecraft 服务器启停
+
+## 启动
+
+**不要**使用 `start.bat`。在仓库根目录直接启动最新的 `paper-26.2-*.jar`：
+
+```text
+java -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar paper-26.2-111.jar nogui
+```
+
+- 工作目录：仓库根目录（含 `plugins/`、`world/` 的目录）
+- jar 文件名以目录内实际最新的 `paper-26.2-*.jar` 为准（当前常见为 `paper-26.2-111.jar`）
+- 后台启动时用 `Start-Process` 或等价方式，**不要**依赖 `start.bat`
+
+## 停服
+
+- 优先向 Paper 进程控制台发送 `stop`（或 AttachConsole + CTRL+C 优雅停服）
+- 停服前先询问用户（进程占用约定）
+- 替换插件 jar 前必须停服

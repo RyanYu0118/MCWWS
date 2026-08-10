@@ -3,7 +3,8 @@ package work.mcwws.axiomsurvival.client;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PayloadTypeRegistry;
-import net.minecraft.network.FriendlyByteBuf;
+import net.minecraft.network.RegistryFriendlyByteBuf;
+import net.minecraft.network.codec.StreamCodec;
 import net.minecraft.network.protocol.common.custom.CustomPacketPayload;
 import net.minecraft.resources.Identifier;
 
@@ -24,8 +25,8 @@ final class SurvivalEditorNetworking {
             return;
         }
         registered = true;
-        PayloadTypeRegistry.playS2C().register(HelloPayload.TYPE, HelloPayload.CODEC);
-        PayloadTypeRegistry.playC2S().register(EditorStatePayload.TYPE, EditorStatePayload.CODEC);
+        PayloadTypeRegistry.clientboundPlay().register(HelloPayload.TYPE, HelloPayload.CODEC);
+        PayloadTypeRegistry.serverboundPlay().register(EditorStatePayload.TYPE, EditorStatePayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(HelloPayload.TYPE, (payload, context) ->
                 context.client().execute(SurvivalEditorController::markSupportedFromHello)
         );
@@ -53,13 +54,13 @@ final class SurvivalEditorNetworking {
         static final CustomPacketPayload.Type<HelloPayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
 
-        static final net.minecraft.network.codec.StreamCodec<FriendlyByteBuf, HelloPayload> CODEC =
-                net.minecraft.network.codec.StreamCodec.of(
-                        (payload, buf) -> { },
+        static final StreamCodec<RegistryFriendlyByteBuf, HelloPayload> CODEC =
+                StreamCodec.of(
+                        (buf, payload) -> { },
                         buf -> decodeHello(buf)
                 );
 
-        private static HelloPayload decodeHello(FriendlyByteBuf buf) {
+        private static HelloPayload decodeHello(RegistryFriendlyByteBuf buf) {
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
             String text = new String(bytes, StandardCharsets.UTF_8);
@@ -80,9 +81,9 @@ final class SurvivalEditorNetworking {
         static final CustomPacketPayload.Type<EditorStatePayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
 
-        static final net.minecraft.network.codec.StreamCodec<FriendlyByteBuf, EditorStatePayload> CODEC =
-                net.minecraft.network.codec.StreamCodec.of(
-                        (payload, buf) -> buf.writeByte(payload.op),
+        static final StreamCodec<RegistryFriendlyByteBuf, EditorStatePayload> CODEC =
+                StreamCodec.of(
+                        (buf, payload) -> buf.writeByte(payload.op()),
                         buf -> new EditorStatePayload(buf.readByte())
                 );
 

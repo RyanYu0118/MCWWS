@@ -8,8 +8,8 @@ import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockState;
 
 /**
- * 预扫描用：从 Bukkit 世界读取当前已落盘方块，避免 FAWE 队列/缓存导致
- * 「上一笔刚改完、扩大选区后误判 0 格变更」从而取消扣费但 FAWE 仍执行。
+ * 预扫描用：从 Bukkit 世界按格读取方块（配合 {@link FaweRegionSync} 先 flush 队列）。
+ * 按格读 Bukkit 可避免 FAWE 区块缓存在「扩大选区」时把未改格误判成已改格。
  */
 final class BukkitSnapshotExtent extends AbstractDelegateExtent {
 

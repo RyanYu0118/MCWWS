@@ -11,7 +11,7 @@ import work.mcwws.axiomsurvival.client.SurvivalEditorController;
 public class EditorUIDisableMixin {
 
     @Inject(method = "disable", at = @At("HEAD"), remap = false)
-    private void mcwws$disable(CallbackInfo ci) {
+    private static void mcwws$disable(CallbackInfo ci) {
         if (SurvivalEditorController.isLocalEditorActive()) {
             SurvivalEditorController.onEditorExit();
         }

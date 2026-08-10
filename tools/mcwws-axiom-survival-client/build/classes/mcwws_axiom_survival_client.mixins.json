@@ -1,0 +1,16 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "package": "work.mcwws.axiomsurvival.client.mixin",
+  "compatibilityLevel": "JAVA_21",
+  "mixins": [],
+  "client": [
+    "AxiomClientSpectatorPermissionMixin",
+    "ServerIntegrationChangeGameModeMixin",
+    "ServerIntegrationSendGamemodeMixin",
+    "EditorUIDisableMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
