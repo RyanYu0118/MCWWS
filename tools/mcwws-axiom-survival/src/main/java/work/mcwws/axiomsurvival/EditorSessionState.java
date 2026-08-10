@@ -11,7 +11,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 final class EditorSessionState {
 
-    private record Snapshot(GameMode gameMode, Location location) {
+    private record Snapshot(GameMode gameMode, Location location, boolean allowFlight, boolean flying) {
     }
 
     private static final Map<UUID, Snapshot> SNAPSHOTS = new ConcurrentHashMap<>();
@@ -37,7 +37,7 @@ final class EditorSessionState {
             return;
         }
         UUID id = player.getUniqueId();
-        SNAPSHOTS.put(id, new Snapshot(mode, location.clone()));
+        SNAPSHOTS.put(id, new Snapshot(mode, location.clone(), player.getAllowFlight(), player.isFlying()));
         ENTERED_AT_TICK.put(id, Bukkit.getCurrentTick());
         LAST_AXIOM_TELEPORT_TICK.remove(id);
         McwwsAxiomSurvivalPlugin.getInstance().getLogger().info(
@@ -126,7 +126,9 @@ final class EditorSessionState {
         if (player.getGameMode() != target) {
             player.setGameMode(target);
         }
-        player.setFlying(false);
-        player.setAllowFlight(false);
+        FlyWithFoodBridge.restoreFlyState(player, snapshot.allowFlight(), snapshot.flying());
+        if (snapshot.allowFlight() && snapshot.flying()) {
+            player.setFallDistance(0f);
+        }
     }
 }

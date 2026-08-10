@@ -56,8 +56,9 @@ final class SurvivalEditorService {
         if (removed == null && !EditorSessionState.has(player)) {
             return;
         }
+        boolean hadSnapshot = EditorSessionState.has(player);
         editorRestoreService.restoreNow(player);
-        if (plugin.getPluginConfig().getBoolean("disable-fly-on-editor-exit", true)) {
+        if (!hadSnapshot && plugin.getPluginConfig().getBoolean("disable-fly-on-editor-exit", true)) {
             FlyWithFoodBridge.disableFly(player);
         }
         plugin.getLogger().info("生存 Editor 退出: " + player.getName());

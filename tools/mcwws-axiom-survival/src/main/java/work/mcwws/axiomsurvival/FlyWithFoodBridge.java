@@ -59,4 +59,27 @@ final class FlyWithFoodBridge {
         player.setFlying(false);
         player.setAllowFlight(false);
     }
+
+    static void restoreFlyState(Player player, boolean allowFlight, boolean flying) {
+        if (player == null) {
+            return;
+        }
+        if (available()) {
+            try {
+                Class<?> fwfUserClass = Class.forName("me.xpyex.plugin.flywithfood.common.implementation.FWFUser");
+                Object user = fwfUserClass.getMethod("of", String.class).invoke(null, player.getName());
+                if (user != null) {
+                    if (allowFlight && flying && (boolean) fwfUserClass.getMethod("canFly").invoke(user)) {
+                        fwfUserClass.getMethod("enableFly").invoke(user);
+                    } else {
+                        fwfUserClass.getMethod("disableFly").invoke(user);
+                    }
+                    return;
+                }
+            } catch (Throwable ignored) {
+            }
+        }
+        player.setAllowFlight(allowFlight);
+        player.setFlying(allowFlight && flying);
+    }
 }
