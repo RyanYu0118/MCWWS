@@ -116,6 +116,13 @@ final class EditorPacketHandlers {
         if (survivalEditorService.isClientEditorSession(player)) {
             return BeforeResult.SKIP;
         }
+        if (survivalEditorService.enabled()
+                && (requested == GameMode.CREATIVE || requested == GameMode.SPECTATOR)) {
+            if (requested == GameMode.SPECTATOR) {
+                restoreService.onEnterSpectator(player);
+            }
+            return BeforeResult.SKIP;
+        }
         if (requested == GameMode.SPECTATOR) {
             restoreService.onEnterSpectator(player);
             return BeforeResult.PROCEED;

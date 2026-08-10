@@ -17,7 +17,8 @@ public class AxiomClientSpectatorPermissionMixin {
             CallbackInfoReturnable<Boolean> cir
     ) {
         if (SurvivalEditorController.isServerSupported()
-                && permission == AxiomPermission.PLAYER_GAMEMODE_SPECTATOR) {
+                && (permission == AxiomPermission.PLAYER_GAMEMODE_SPECTATOR
+                || permission == AxiomPermission.PLAYER_GAMEMODE_CREATIVE)) {
             cir.setReturnValue(true);
         }
     }

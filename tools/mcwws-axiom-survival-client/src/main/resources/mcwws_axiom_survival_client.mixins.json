@@ -6,9 +6,10 @@
   "mixins": [],
   "client": [
     "AxiomClientSpectatorPermissionMixin",
+    "MultiPlayerGameModeHudMixin",
     "ServerIntegrationChangeGameModeMixin",
     "ServerIntegrationSendGamemodeMixin",
-    "EditorUIDisableMixin"
+    "HudHasExperienceMixin"
   ],
   "injectors": {
     "defaultRequire": 1

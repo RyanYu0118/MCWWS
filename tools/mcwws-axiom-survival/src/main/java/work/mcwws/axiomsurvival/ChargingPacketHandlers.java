@@ -56,11 +56,7 @@ final class ChargingPacketHandlers {
             return;
         }
         try {
-            if (delegate.handleAsync()) {
-                if (!evaluateOnMainThread(plugin, chargeService, estimator, player, friendlyByteBuf, channel)) {
-                    return;
-                }
-            } else if (!evaluateInline(chargeService, estimator, player, friendlyByteBuf, channel)) {
+            if (!evaluateOnMainThread(plugin, chargeService, estimator, player, friendlyByteBuf, channel)) {
                 return;
             }
         } catch (ReflectiveOperationException ex) {
@@ -75,19 +71,6 @@ final class ChargingPacketHandlers {
 
     private static void invokeDelegate(PacketHandler delegate, Player player, Object buf) {
         PacketDelegate.invoke(delegate, player, buf);
-    }
-
-    private static boolean evaluateInline(
-            ChargeService chargeService,
-            PacketFeeEstimator estimator,
-            Player player,
-            Object buf,
-            String channel
-    ) throws ReflectiveOperationException {
-        int mark = PacketBufs.readerIndex(buf);
-        FeeAccumulator.Result estimate = estimate(estimator, player, buf, channel);
-        PacketBufs.readerIndex(buf, mark);
-        return chargeService.evaluate(player, channel, estimate).allowed();
     }
 
     private static boolean evaluateOnMainThread(

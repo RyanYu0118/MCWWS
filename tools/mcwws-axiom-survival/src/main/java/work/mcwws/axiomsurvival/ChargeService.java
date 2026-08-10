@@ -34,7 +34,15 @@ public final class ChargeService {
         if (BlockProtection.isSurvivalLike(player)) {
             return true;
         }
-        return player.getGameMode() == GameMode.SPECTATOR && AxiomPaperHook.isAxiomSessionActive(player);
+        SurvivalEditorService editorService = plugin.getSurvivalEditorService();
+        if (editorService != null && editorService.isClientEditorSession(player)) {
+            return true;
+        }
+        if (!AxiomPaperHook.isAxiomSessionActive(player)) {
+            return false;
+        }
+        GameMode mode = player.getGameMode();
+        return mode == GameMode.SPECTATOR || mode == GameMode.CREATIVE;
     }
 
     public ChargeDecision evaluate(Player player, String label, FeeAccumulator.Result estimate) {
