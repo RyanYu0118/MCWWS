@@ -8,6 +8,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerGameModeChangeEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class AxiomSurvivalListener implements Listener {
@@ -98,6 +99,25 @@ public final class AxiomSurvivalListener implements Listener {
         }
         if (EditorSessionState.isInRestoreGrace(event.getPlayer())) {
             event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
+    public void onBukkitGamemode(PlayerGameModeChangeEvent event) {
+        if (!plugin.getPluginConfig().getBoolean("enabled", true) || !editorRestoreService.enabled()) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (player == null || !player.hasPermission("mcwws.axiom.survival.use") || BlockProtection.shouldBypass(player)) {
+            return;
+        }
+        GameMode to = event.getNewGameMode();
+        if (to == GameMode.SPECTATOR && BlockProtection.isSurvivalLike(player)) {
+            editorRestoreService.onEnterSpectator(player);
+            return;
+        }
+        if (EditorSessionState.has(player) && to != GameMode.SPECTATOR) {
+            editorRestoreService.scheduleRestore(player, 1L);
         }
     }
 

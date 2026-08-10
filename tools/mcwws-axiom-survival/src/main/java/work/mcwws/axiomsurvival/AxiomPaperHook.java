@@ -6,6 +6,7 @@ import com.moulberry.axiom.packet.WrapperPacketListener;
 import com.moulberry.axiom.packet.impl.SetBlockBufferPacketListener;
 import com.moulberry.axiom.packet.impl.SetBlockPacketListener;
 import com.moulberry.axiom.packet.impl.SetGamemodePacketListener;
+import com.moulberry.axiom.packet.impl.SetNoPhysicalTriggerPacketListener;
 import com.moulberry.axiom.packet.impl.TeleportPacketListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
@@ -56,6 +57,10 @@ public final class AxiomPaperHook {
             replaceChannel(axiomPaper, "teleport", axiom -> {
                 PacketHandler original = new TeleportPacketListener(axiom);
                 return EditorPacketHandlers.wrapTeleport(plugin, editorRestoreService, original);
+            });
+            replaceChannel(axiomPaper, "set_no_physical_trigger", axiom -> {
+                PacketHandler original = new SetNoPhysicalTriggerPacketListener(axiom);
+                return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorRestoreService, original);
             });
             installed = true;
             plugin.getLogger().info("已挂钩 AxiomPaper set_block/set_buffer 扣费与 Editor 恢复。");

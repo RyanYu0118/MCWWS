@@ -32,6 +32,10 @@ final class EditorSessionState {
             return;
         }
         SNAPSHOTS.put(player.getUniqueId(), new Snapshot(mode, location.clone(), System.currentTimeMillis()));
+        McwwsAxiomSurvivalPlugin.getInstance().getLogger().info(
+                "Editor 快照: " + player.getName() + " @ "
+                        + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ()
+        );
     }
 
     static boolean has(Player player) {

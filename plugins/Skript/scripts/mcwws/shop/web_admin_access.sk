@@ -3,8 +3,6 @@
 
 function mcwwsInitWebAdminAccess():
     load yaml "plugins/Skript/scripts/web/data/admin_access.yml" as "mcwws_admin_access"
-    if yaml value "players" from "mcwws_admin_access" is not set:
-        set yaml value "players" from "mcwws_admin_access" to ""
     save yaml "mcwws_admin_access"
     unload yaml "mcwws_admin_access"
 
@@ -21,15 +19,29 @@ function mcwwsWriteWebAdminAccess(p: player):
 
     set yaml value "players.%{_name}%.name" from "mcwws_admin_access" to {_name}
     set yaml value "players.%{_name}%.uuid" from "mcwws_admin_access" to {_uuid}
-    set yaml value "players.%{_name}%.op" from "mcwws_admin_access" to {_is_op}
-    set yaml value "players.%{_name}%.ultimateshopEditor" from "mcwws_admin_access" to {_has_editor}
-    set yaml value "players.%{_name}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to {_has_editor}
+    if {_is_op} is true:
+        set yaml value "players.%{_name}%.op" from "mcwws_admin_access" to true
+    else:
+        set yaml value "players.%{_name}%.op" from "mcwws_admin_access" to false
+    if {_has_editor} is true:
+        set yaml value "players.%{_name}%.ultimateshopEditor" from "mcwws_admin_access" to true
+        set yaml value "players.%{_name}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to true
+    else:
+        set yaml value "players.%{_name}%.ultimateshopEditor" from "mcwws_admin_access" to false
+        set yaml value "players.%{_name}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to false
 
     set yaml value "players.%{_uuid}%.name" from "mcwws_admin_access" to {_name}
     set yaml value "players.%{_uuid}%.uuid" from "mcwws_admin_access" to {_uuid}
-    set yaml value "players.%{_uuid}%.op" from "mcwws_admin_access" to {_is_op}
-    set yaml value "players.%{_uuid}%.ultimateshopEditor" from "mcwws_admin_access" to {_has_editor}
-    set yaml value "players.%{_uuid}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to {_has_editor}
+    if {_is_op} is true:
+        set yaml value "players.%{_uuid}%.op" from "mcwws_admin_access" to true
+    else:
+        set yaml value "players.%{_uuid}%.op" from "mcwws_admin_access" to false
+    if {_has_editor} is true:
+        set yaml value "players.%{_uuid}%.ultimateshopEditor" from "mcwws_admin_access" to true
+        set yaml value "players.%{_uuid}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to true
+    else:
+        set yaml value "players.%{_uuid}%.ultimateshopEditor" from "mcwws_admin_access" to false
+        set yaml value "players.%{_uuid}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to false
 
     save yaml "mcwws_admin_access"
     unload yaml "mcwws_admin_access"

@@ -26,6 +26,14 @@ final class EditorPacketHandlers {
         return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeTeleport);
     }
 
+    static PacketHandler wrapNoPhysicalTrigger(
+            McwwsAxiomSurvivalPlugin plugin,
+            EditorRestoreService restoreService,
+            PacketHandler delegate
+    ) {
+        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeNoPhysicalTrigger);
+    }
+
     @FunctionalInterface
     private interface BeforeAction {
         BeforeResult apply(McwwsAxiomSurvivalPlugin plugin, EditorRestoreService restoreService, Player player, Object buf)
@@ -118,7 +126,32 @@ final class EditorPacketHandlers {
         return BeforeResult.PROCEED;
     }
 
+    private static BeforeResult beforeNoPhysicalTrigger(
+            McwwsAxiomSurvivalPlugin plugin,
+            EditorRestoreService restoreService,
+            Player player,
+            Object buf
+    ) throws ReflectiveOperationException {
+        if (!restoreService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
+            return BeforeResult.PROCEED;
+        }
+        if (EditorSessionState.isInRestoreGrace(player)) {
+            return BeforeResult.SKIP;
+        }
+        int mark = PacketBufs.readerIndex(buf);
+        boolean enabled = readBoolean(buf);
+        PacketBufs.readerIndex(buf, mark);
+        if (!enabled && EditorSessionState.has(player)) {
+            return BeforeResult.RESTORE_NOW;
+        }
+        return BeforeResult.PROCEED;
+    }
+
     private static int readByte(Object buf) throws ReflectiveOperationException {
         return (byte) buf.getClass().getMethod("readByte").invoke(buf);
+    }
+
+    private static boolean readBoolean(Object buf) throws ReflectiveOperationException {
+        return (boolean) buf.getClass().getMethod("readBoolean").invoke(buf);
     }
 }
