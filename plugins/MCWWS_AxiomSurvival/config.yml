@@ -2,6 +2,7 @@ enabled: true
 bypass-permission: mcwws.axiom.survival.bypass
 prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
 prices-reload-seconds: 60
+reload-prices-before-estimate: true
 reload-prices-before-charge: true
 record-market-stock: true
 market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
@@ -10,7 +11,7 @@ labor:
   demolish-multiplier: 2.0
 max-scan-blocks: 500000
 min-balance-to-enable: 0
-block-axiom-creative-switch: true
+block-axiom-creative-switch: false
 survival-editor-mode: true
 enable-flywithfood-on-editor: true
 disable-fly-on-editor-exit: true

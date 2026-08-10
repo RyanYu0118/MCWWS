@@ -37,7 +37,7 @@ public final class BlockProtection {
         if (type.isAir()) {
             return false;
         }
-        if (isUnbreakable(type)) {
+        if (isUnbreakable(type, block)) {
             return true;
         }
         try {
@@ -53,11 +53,14 @@ public final class BlockProtection {
         return location != null && isProtectedBlock(location.getBlock());
     }
 
-    private static boolean isUnbreakable(Material type) {
-        return type == Material.BEDROCK || type == Material.BARRIER || type == Material.END_PORTAL_FRAME
+    private static boolean isUnbreakable(Material type, Block block) {
+        if (type == Material.BEDROCK || type == Material.BARRIER || type == Material.END_PORTAL_FRAME
                 || type == Material.END_PORTAL || type == Material.NETHER_PORTAL || type == Material.REINFORCED_DEEPSLATE
                 || type == Material.COMMAND_BLOCK || type == Material.CHAIN_COMMAND_BLOCK
                 || type == Material.REPEATING_COMMAND_BLOCK || type == Material.STRUCTURE_BLOCK
-                || type == Material.JIGSAW || type == Material.LIGHT;
+                || type == Material.JIGSAW || type == Material.LIGHT) {
+            return true;
+        }
+        return type.getHardness() < 0F;
     }
 }

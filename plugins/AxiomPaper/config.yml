@@ -12,7 +12,7 @@ max-chunk-load-distance: 256
 allow-teleport-between-worlds: true
 
 # Whether to allow clients to save/load/share blueprints through the server
-blueprint-sharing: false
+blueprint-sharing: true
 
 # Allow large chunk & entity data requests, not recommended for public servers
 allow-large-chunk-data-request: false
@@ -58,7 +58,7 @@ disable-entity-sanitization: false
 send-markers: false
 
 # True to enable Annotations on this server
-allow-annotations: false
+allow-annotations: true
 
 # Disallowed blocks
 # e.g. ["minecraft:wheat", "minecraft:oak_stairs[waterlogged=true]"]

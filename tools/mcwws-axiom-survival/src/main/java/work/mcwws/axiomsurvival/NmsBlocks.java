@@ -39,7 +39,7 @@ final class NmsBlocks {
         return (int) blockPos.getClass().getMethod("getZ").invoke(blockPos);
     }
 
-    private static BlockData toBlockData(Object nmsBlockState) throws ReflectiveOperationException {
+    static BlockData toBlockData(Object nmsBlockState) throws ReflectiveOperationException {
         if (craftBlockDataFromNms == null) {
             Class<?> clazz = Class.forName("org.bukkit.craftbukkit.block.data.CraftBlockData");
             craftBlockDataFromNms = clazz.getMethod("fromBlockData", Class.forName("net.minecraft.world.level.block.state.BlockState"));

@@ -1,8 +1,8 @@
 package work.mcwws.axiomsurvival;
 
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
@@ -99,7 +99,8 @@ final class PacketFeeEstimator {
                             builder.addProtected();
                             continue;
                         }
-                        builder.addChange(block.getType(), NmsBlocks.toMaterial(newState));
+                        BlockData target = NmsBlocks.toBlockData(newState);
+                        builder.addChange(block.getBlockData(), target);
                     }
                 }
             }
@@ -115,12 +116,14 @@ final class PacketFeeEstimator {
             builder.addProtected();
             return;
         }
-        Material newMat = NmsBlocks.toMaterial(newState);
-        builder.addChange(block.getType(), newMat);
+        BlockData target = NmsBlocks.toBlockData(newState);
+        builder.addChange(block.getBlockData(), target);
     }
 
     private FeeAccumulator.Builder newBuilder() {
-        if (plugin.getPluginConfig().getBoolean("reload-prices-before-charge", true)) {
+        if (plugin.reloadPricesBeforeEstimate()) {
+            plugin.getPriceCatalog().reload();
+        } else {
             plugin.getPriceCatalog().reloadIfStale();
         }
         return new FeeAccumulator.Builder(plugin.getPriceCatalog(), plugin.laborRates());

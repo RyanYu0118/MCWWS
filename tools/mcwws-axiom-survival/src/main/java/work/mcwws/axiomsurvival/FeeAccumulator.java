@@ -1,6 +1,7 @@
 package work.mcwws.axiomsurvival;
 
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -48,12 +49,19 @@ public final class FeeAccumulator {
             protectedBlocks++;
         }
 
-        public void addChange(Material oldMat, Material newMat) {
-            String oldId = materialId(oldMat);
-            String newId = materialId(newMat);
-            if (oldId.equals(newId)) {
+        public void addChange(BlockData existing, BlockData target) {
+            if (existing == null || target == null) {
                 return;
             }
+            if (existing.matches(target)) {
+                return;
+            }
+            accumulate(existing, target);
+        }
+
+        private void accumulate(BlockData existing, BlockData target) {
+            String oldId = itemIdFromBlockData(existing);
+            String newId = itemIdFromBlockData(target);
             if (!"air".equals(oldId)) {
                 demolition += prices.getBuyPrice(oldId);
                 removedCounts.merge(oldId, 1L, Long::sum);
@@ -79,8 +87,12 @@ public final class FeeAccumulator {
             );
         }
 
-        private static String materialId(Material material) {
-            if (material == null || material.isAir()) {
+        private static String itemIdFromBlockData(BlockData blockData) {
+            if (blockData == null) {
+                return "air";
+            }
+            Material material = blockData.getMaterial();
+            if (material.isAir()) {
                 return "air";
             }
             return PriceCatalog.normalize(material.name().toLowerCase());
@@ -89,6 +101,17 @@ public final class FeeAccumulator {
         private static double round(double value) {
             return Math.round(value * 100D) / 100D;
         }
+    }
+
+    static String itemIdFromBlockData(BlockData blockData) {
+        if (blockData == null) {
+            return "air";
+        }
+        Material material = blockData.getMaterial();
+        if (material.isAir()) {
+            return "air";
+        }
+        return PriceCatalog.normalize(material.name().toLowerCase());
     }
 
     private FeeAccumulator() {

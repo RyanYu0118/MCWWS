@@ -1,52 +1,14 @@
-# 生存模式 Axiom 建造：开放 Editor/快速建造权限，禁止客户端切创造
-# 扣费由 MCWWS_AxiomSurvival 插件在 set_block / set_buffer 包应用前处理
+# 生存模式 Axiom 建造：开放全部 axiom.* 权限，按格扣费由 MCWWS_AxiomSurvival 处理
 
 function mcwwsGrantAxiomSurvivalPerms():
     if plugin "LuckPerms" is not enabled:
         stop
     set {_g} to "default"
-    # 基础
-    execute console command "lp group %{_g}% permission set axiom.use true"
-    execute console command "lp group %{_g}% permission set axiom.editor.use true"
-    execute console command "lp group %{_g}% permission set axiom.editor.views true"
-    # 改块
-    execute console command "lp group %{_g}% permission set axiom.build.place true"
-    execute console command "lp group %{_g}% permission set axiom.build.section true"
-    execute console command "lp group %{_g}% permission set axiom.chunk.request true"
-    execute console command "lp group %{_g}% permission set axiom.chunk.request_block_entity true"
-    # 创造式体验（仍按格扣费）
-    execute console command "lp group %{_g}% permission set axiom.capability.fast_place true"
-    execute console command "lp group %{_g}% permission set axiom.capability.infinite_reach true"
-    execute console command "lp group %{_g}% permission set axiom.capability.no_clip true"
-    execute console command "lp group %{_g}% permission set axiom.capability.phantom true"
-    execute console command "lp group %{_g}% permission set axiom.capability.replace_mode true"
-    execute console command "lp group %{_g}% permission set axiom.capability.no_updates true"
-    execute console command "lp group %{_g}% permission set axiom.player.speed true"
-    execute console command "lp group %{_g}% permission set axiom.player.teleport true"
-    execute console command "lp group %{_g}% permission set axiom.player.set_no_physical_trigger true"
-    execute console command "lp group %{_g}% permission set axiom.player.bypass_movement_restrictions true"
-    execute console command "lp group %{_g}% permission set axiom.player.hotbar true"
-    # 常用工具
-    execute console command "lp group %{_g}% permission set axiom.tool.box_select true"
-    execute console command "lp group %{_g}% permission set axiom.tool.magic_select true"
-    execute console command "lp group %{_g}% permission set axiom.tool.freehand_select true"
-    execute console command "lp group %{_g}% permission set axiom.builder_tool.clone true"
-    execute console command "lp group %{_g}% permission set axiom.builder_tool.stack true"
-    execute console command "lp group %{_g}% permission set axiom.builder_tool.move true"
-    execute console command "lp group %{_g}% permission set axiom.builder_tool.smear true"
-    execute console command "lp group %{_g}% permission set axiom.builder_tool.erase true"
-    execute console command "lp group %{_g}% permission set axiom.tool.painter true"
-    execute console command "lp group %{_g}% permission set axiom.tool.shape true"
-    execute console command "lp group %{_g}% permission set axiom.tool.floodfill true"
-    # 生存扣费插件
+    execute console command "lp group %{_g}% permission set axiom.* true"
+    execute console command "lp group %{_g}% permission unset axiom.player.gamemode.creative"
+    execute console command "lp group %{_g}% permission unset axiom.player.gamemode.spectator"
     execute console command "lp group %{_g}% permission set mcwws.axiom.survival.use true"
-    # 禁止切创造（保留生存/冒险）
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.creative false"
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.survival true"
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.adventure true"
-    # 生存 Editor 由 MCWWS_AxiomSurvivalClient 客户端模组本地假旁观，服务端无需真旁观
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.spectator false"
-    log "[MCWWS] 已为 default 组配置 Axiom 生存建造权限（需 MCWWS_AxiomSurvivalClient，禁止创造）"
+    log "[MCWWS] 已为 default 组开放 axiom.* 全部权限（生存扣费仍由 MCWWS_AxiomSurvival 处理）"
 
 on Skript start:
     wait 6 seconds

@@ -121,6 +121,13 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         return new FeeAccumulator.LaborRates(place, demolish);
     }
 
+    public boolean reloadPricesBeforeEstimate() {
+        return config.getBoolean(
+                "reload-prices-before-estimate",
+                config.getBoolean("reload-prices-before-charge", true)
+        );
+    }
+
     public String msg(String key) {
         return color(config.getString("messages." + key, key));
     }
