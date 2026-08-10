@@ -39,6 +39,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         editorRestoreService = new EditorRestoreService(this);
         axiomHook = new AxiomPaperHook(this, chargeService, editorRestoreService);
         getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService), this);
+        getServer().getPluginManager().registerEvents(new EditorVanillaMoveListener(editorRestoreService), this);
         getCommand("mcwws-axiom-reload").setExecutor((sender, command, label, args) -> {
             reloadLocalConfig();
             priceCatalog.reload();
@@ -71,12 +72,6 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
                 getServer().getScheduler().runTaskLater(this, () -> axiomHook.install(), 100L);
             }
         }, 20L);
-        getServer().getScheduler().runTaskTimer(
-                this,
-                new EditorIdleWatchdog(this, editorRestoreService),
-                40L,
-                10L
-        );
         getLogger().info("MCWWS_AxiomSurvival 已启用。");
     }
 

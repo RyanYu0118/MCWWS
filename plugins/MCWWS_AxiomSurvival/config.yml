@@ -14,7 +14,6 @@ min-balance-to-enable: 0
 # 生存模式下禁止 Axiom 客户端切到创造（保留飞行/快速建造能力）
 block-axiom-creative-switch: true
 restore-editor-on-exit: true
-editor-idle-restore-ms: 1500
 messages:
   prefix: "§6[Axiom] §f"
   insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"

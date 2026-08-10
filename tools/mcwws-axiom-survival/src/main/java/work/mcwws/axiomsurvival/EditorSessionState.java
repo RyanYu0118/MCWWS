@@ -1,5 +1,6 @@
 package work.mcwws.axiomsurvival;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
@@ -15,14 +16,16 @@ final class EditorSessionState {
 
     private static final Map<UUID, Snapshot> SNAPSHOTS = new ConcurrentHashMap<>();
     private static final Map<UUID, Long> RESTORE_GRACE_UNTIL_MS = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> LAST_AXIOM_ACTIVITY_MS = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> LAST_EDITOR_TELEPORT_MS = new ConcurrentHashMap<>();
+    private static final Map<UUID, Integer> LAST_AXIOM_TELEPORT_TICK = new ConcurrentHashMap<>();
+
+    /** Axiom 相机 teleport 与 vanilla 移动包之间的最小间隔（tick） */
+    private static final int VANILLA_MOVE_BUFFER_TICKS = 2;
 
     private EditorSessionState() {
     }
 
     static void capture(Player player) {
-        if (player == null) {
+        if (player == null || has(player)) {
             return;
         }
         GameMode mode = player.getGameMode();
@@ -35,7 +38,6 @@ final class EditorSessionState {
         }
         long now = System.currentTimeMillis();
         SNAPSHOTS.put(player.getUniqueId(), new Snapshot(mode, location.clone(), now));
-        touchActivity(player, now);
         McwwsAxiomSurvivalPlugin.getInstance().getLogger().info(
                 "Editor 快照: " + player.getName() + " @ "
                         + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ()
@@ -50,54 +52,25 @@ final class EditorSessionState {
         if (player != null) {
             SNAPSHOTS.remove(player.getUniqueId());
             RESTORE_GRACE_UNTIL_MS.remove(player.getUniqueId());
-            LAST_AXIOM_ACTIVITY_MS.remove(player.getUniqueId());
-            LAST_EDITOR_TELEPORT_MS.remove(player.getUniqueId());
+            LAST_AXIOM_TELEPORT_TICK.remove(player.getUniqueId());
         }
     }
 
-    static void touchActivity(Player player) {
+    static void touchAxiomTeleport(Player player) {
         if (player != null) {
-            touchActivity(player, System.currentTimeMillis());
+            LAST_AXIOM_TELEPORT_TICK.put(player.getUniqueId(), Bukkit.getCurrentTick());
         }
     }
 
-    static void touchActivity(Player player, long timestampMs) {
-        if (player != null) {
-            LAST_AXIOM_ACTIVITY_MS.put(player.getUniqueId(), timestampMs);
-        }
-    }
-
-    static long lastAxiomActivityMs(Player player) {
-        if (player == null) {
-            return 0L;
-        }
-        return LAST_AXIOM_ACTIVITY_MS.getOrDefault(player.getUniqueId(), 0L);
-    }
-
-    static void touchEditorTeleport(Player player) {
-        if (player == null) {
-            return;
-        }
-        long now = System.currentTimeMillis();
-        touchActivity(player, now);
-        LAST_EDITOR_TELEPORT_MS.put(player.getUniqueId(), now);
-    }
-
-    static boolean shouldIdleRestore(Player player, long idleMs) {
-        if (player == null || idleMs <= 0L) {
+    static boolean shouldRestoreOnVanillaMove(Player player) {
+        if (player == null || !has(player)) {
             return false;
         }
-        Snapshot snapshot = SNAPSHOTS.get(player.getUniqueId());
-        if (snapshot == null) {
-            return false;
+        Integer lastTeleportTick = LAST_AXIOM_TELEPORT_TICK.get(player.getUniqueId());
+        if (lastTeleportTick == null) {
+            return true;
         }
-        long now = System.currentTimeMillis();
-        Long lastTeleport = LAST_EDITOR_TELEPORT_MS.get(player.getUniqueId());
-        if (lastTeleport != null && lastTeleport > snapshot.capturedAtMs()) {
-            return now - lastTeleport >= idleMs;
-        }
-        long minimumMs = Math.max(idleMs, 3000L);
-        return now - snapshot.capturedAtMs() >= minimumMs;
+        return Bukkit.getCurrentTick() - lastTeleportTick >= VANILLA_MOVE_BUFFER_TICKS;
     }
 
     static void beginRestoreGrace(Player player, long millis) {

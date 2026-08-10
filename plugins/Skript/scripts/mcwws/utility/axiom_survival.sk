@@ -23,6 +23,7 @@ function mcwwsGrantAxiomSurvivalPerms():
     execute console command "lp group %{_g}% permission set axiom.capability.no_updates true"
     execute console command "lp group %{_g}% permission set axiom.player.speed true"
     execute console command "lp group %{_g}% permission set axiom.player.teleport true"
+    execute console command "lp group %{_g}% permission set axiom.player.set_no_physical_trigger true"
     execute console command "lp group %{_g}% permission set axiom.player.bypass_movement_restrictions true"
     execute console command "lp group %{_g}% permission set axiom.player.hotbar true"
     # 常用工具

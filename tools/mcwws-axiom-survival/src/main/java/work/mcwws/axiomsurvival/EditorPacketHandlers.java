@@ -63,7 +63,6 @@ final class EditorPacketHandlers {
                     case RESTORE_NOW -> restoreService.restoreNow(player);
                     case SKIP -> { }
                     case PROCEED -> {
-                        EditorSessionState.touchActivity(player);
                         PacketDelegate.invoke(delegate, player, buf);
                     }
                 }
@@ -125,7 +124,7 @@ final class EditorPacketHandlers {
             return BeforeResult.SKIP;
         }
         if (EditorSessionState.has(player) && player.getGameMode() == GameMode.SPECTATOR) {
-            EditorSessionState.touchEditorTeleport(player);
+            EditorSessionState.touchAxiomTeleport(player);
         }
         return BeforeResult.PROCEED;
     }
