@@ -15,7 +15,7 @@ commands:
     permission: mcwws.axiom.survival.use
     usage: /axiomcheck
   axiomrestore:
-    description: 强制重置 Axiom Editor 为生存并关闭飞行
+    description: 强制从 Axiom Editor 恢复到进入前的生存位置
     permission: mcwws.axiom.survival.use
     usage: /axiomrestore
 

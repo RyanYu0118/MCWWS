@@ -9,13 +9,12 @@ labor:
   place-unit: 0.5
   demolish-multiplier: 2.0
 max-scan-blocks: 500000
-# 余额低于此值时拒绝 Axiom 握手（0 = 不检查）
 min-balance-to-enable: 0
-# 生存模式下禁止 Axiom 客户端切到创造（保留飞行/快速建造能力）
 block-axiom-creative-switch: true
-# Editor 始终维持生存/冒险，不切旁观；进入时尝试开启 FlyWithFood 飞行（不穿墙）
-keep-survival-gamemode: true
-enable-flywithfood-on-editor: true
+# Editor 需旁观；退出时恢复进入前位置与模式
+restore-editor-on-exit: true
+# 进入 Editor 后此 tick 内忽略 vanilla 移动退出检测（防 Shift 进入误触发，20tick≈1秒）
+editor-enter-grace-ticks: 60
 messages:
   prefix: "§6[Axiom] §f"
   insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
@@ -26,4 +25,4 @@ messages:
   creative-blocked: "生存模式下不能通过 Axiom 切换到创造模式。"
   axiom-inactive: "§7未检测到 Axiom 联机会话，请确认已安装 Axiom 客户端且服务器已加载 AxiomPaper。"
   axiom-ready: "§aAxiom 生存建造已就绪：按格扣材料费与劳务费（与创世神一致）。"
-  editor-survival-reset: "§a已重置为生存模式并关闭飞行。"
+  editor-restored: "§a已恢复到进入 Editor 前的位置与生存模式。"

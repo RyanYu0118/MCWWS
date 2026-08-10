@@ -37,13 +37,7 @@ $Libs = @(
     (Join-Path $Root "libraries/io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.jar")
 )
 
-$FlyWithFood = Join-Path $Root "plugins/FlyWithFood-2.0.7-all.jar"
-if (-not (Test-Path $FlyWithFood)) {
-    $FlyWithFoodCandidates = Get-ChildItem (Join-Path $Root "plugins") -Filter "FlyWithFood*.jar" | Sort-Object Name -Descending
-    if ($FlyWithFoodCandidates) { $FlyWithFood = $FlyWithFoodCandidates[0].FullName }
-}
-
-$CpParts = @($PaperApi, $Axiom, $Vault, $Slimefun, $FlyWithFood) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$CpParts = @($PaperApi, $Axiom, $Vault, $Slimefun) + $Libs | Where-Object { $_ -and (Test-Path $_) }
 $Cp = ($CpParts | Select-Object -Unique) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 if (-not (Test-Path $Axiom)) { throw "Missing AxiomPaper jar: $Axiom" }

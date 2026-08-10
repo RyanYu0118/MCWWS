@@ -11,8 +11,8 @@ final class EditorPacketHandlers {
 
     private enum BeforeResult {
         PROCEED,
-        SKIP,
-        SKIP_EDITOR_ENTER
+        RESTORE_NOW,
+        SKIP
     }
 
     private EditorPacketHandlers() {
@@ -20,25 +20,33 @@ final class EditorPacketHandlers {
 
     static PacketHandler wrapGamemode(
             McwwsAxiomSurvivalPlugin plugin,
-            EditorSurvivalService editorSurvivalService,
+            EditorRestoreService restoreService,
             PacketHandler delegate
     ) {
-        return wrap(plugin, editorSurvivalService, delegate, EditorPacketHandlers::beforeGamemode);
+        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeGamemode);
+    }
+
+    static PacketHandler wrapTeleport(
+            McwwsAxiomSurvivalPlugin plugin,
+            EditorRestoreService restoreService,
+            PacketHandler delegate
+    ) {
+        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeTeleport);
     }
 
     static PacketHandler wrapNoPhysicalTrigger(
             McwwsAxiomSurvivalPlugin plugin,
-            EditorSurvivalService editorSurvivalService,
+            EditorRestoreService restoreService,
             PacketHandler delegate
     ) {
-        return wrap(plugin, editorSurvivalService, delegate, EditorPacketHandlers::beforeNoPhysicalTrigger);
+        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeNoPhysicalTrigger);
     }
 
     @FunctionalInterface
     private interface BeforeAction {
         BeforeResult apply(
                 McwwsAxiomSurvivalPlugin plugin,
-                EditorSurvivalService editorSurvivalService,
+                EditorRestoreService restoreService,
                 Player player,
                 Object buf
         ) throws ReflectiveOperationException;
@@ -46,7 +54,7 @@ final class EditorPacketHandlers {
 
     private static PacketHandler wrap(
             McwwsAxiomSurvivalPlugin plugin,
-            EditorSurvivalService editorSurvivalService,
+            EditorRestoreService restoreService,
             PacketHandler delegate,
             BeforeAction before
     ) {
@@ -59,16 +67,14 @@ final class EditorPacketHandlers {
                 Object buf = args[1];
                 BeforeResult result = BeforeResult.PROCEED;
                 try {
-                    result = before.apply(plugin, editorSurvivalService, player, buf);
+                    result = before.apply(plugin, restoreService, player, buf);
                 } catch (ReflectiveOperationException ex) {
                     plugin.getLogger().fine("Editor 包预处理失败: " + ex.getMessage());
                 }
                 switch (result) {
-                    case SKIP, SKIP_EDITOR_ENTER -> { }
+                    case RESTORE_NOW -> restoreService.restoreNow(player);
+                    case SKIP -> { }
                     case PROCEED -> PacketDelegate.invoke(delegate, player, buf);
-                }
-                if (result == BeforeResult.SKIP_EDITOR_ENTER) {
-                    editorSurvivalService.onEditorEnter(player);
                 }
                 return null;
             }
@@ -83,11 +89,11 @@ final class EditorPacketHandlers {
 
     private static BeforeResult beforeGamemode(
             McwwsAxiomSurvivalPlugin plugin,
-            EditorSurvivalService editorSurvivalService,
+            EditorRestoreService restoreService,
             Player player,
             Object buf
     ) throws ReflectiveOperationException {
-        if (!player.hasPermission("mcwws.axiom.survival.use") || BlockProtection.shouldBypass(player)) {
+        if (!restoreService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
             return BeforeResult.PROCEED;
         }
         int mark = PacketBufs.readerIndex(buf);
@@ -98,8 +104,15 @@ final class EditorPacketHandlers {
         if (requested == null) {
             return BeforeResult.PROCEED;
         }
-        if (requested == GameMode.SPECTATOR && editorSurvivalService.enabled()) {
-            return BeforeResult.SKIP_EDITOR_ENTER;
+        if (EditorSessionState.isInRestoreGrace(player)) {
+            return BeforeResult.SKIP;
+        }
+        if (requested == GameMode.SPECTATOR) {
+            restoreService.onEnterSpectator(player);
+            return BeforeResult.PROCEED;
+        }
+        if (EditorSessionState.has(player)) {
+            return BeforeResult.RESTORE_NOW;
         }
         if (requested == GameMode.CREATIVE
                 && plugin.getPluginConfig().getBoolean("block-axiom-creative-switch", true)) {
@@ -108,20 +121,41 @@ final class EditorPacketHandlers {
         return BeforeResult.PROCEED;
     }
 
+    private static BeforeResult beforeTeleport(
+            McwwsAxiomSurvivalPlugin plugin,
+            EditorRestoreService restoreService,
+            Player player,
+            Object buf
+    ) {
+        if (!restoreService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
+            return BeforeResult.PROCEED;
+        }
+        if (EditorSessionState.isInRestoreGrace(player)) {
+            return BeforeResult.SKIP;
+        }
+        if (EditorSessionState.has(player) && player.getGameMode() == GameMode.SPECTATOR) {
+            EditorSessionState.touchAxiomTeleport(player);
+        }
+        return BeforeResult.PROCEED;
+    }
+
     private static BeforeResult beforeNoPhysicalTrigger(
             McwwsAxiomSurvivalPlugin plugin,
-            EditorSurvivalService editorSurvivalService,
+            EditorRestoreService restoreService,
             Player player,
             Object buf
     ) throws ReflectiveOperationException {
-        if (!editorSurvivalService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
+        if (!restoreService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
             return BeforeResult.PROCEED;
+        }
+        if (EditorSessionState.isInRestoreGrace(player)) {
+            return BeforeResult.SKIP;
         }
         int mark = PacketBufs.readerIndex(buf);
         boolean enabled = readBoolean(buf);
         PacketBufs.readerIndex(buf, mark);
-        if (enabled) {
-            return BeforeResult.SKIP;
+        if (!enabled && EditorSessionState.has(player)) {
+            return BeforeResult.RESTORE_NOW;
         }
         return BeforeResult.PROCEED;
     }

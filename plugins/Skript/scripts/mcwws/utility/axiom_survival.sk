@@ -17,7 +17,7 @@ function mcwwsGrantAxiomSurvivalPerms():
     # 创造式体验（仍按格扣费）
     execute console command "lp group %{_g}% permission set axiom.capability.fast_place true"
     execute console command "lp group %{_g}% permission set axiom.capability.infinite_reach true"
-    execute console command "lp group %{_g}% permission set axiom.capability.no_clip false"
+    execute console command "lp group %{_g}% permission set axiom.capability.no_clip true"
     execute console command "lp group %{_g}% permission set axiom.capability.phantom true"
     execute console command "lp group %{_g}% permission set axiom.capability.replace_mode true"
     execute console command "lp group %{_g}% permission set axiom.capability.no_updates true"
@@ -44,8 +44,8 @@ function mcwwsGrantAxiomSurvivalPerms():
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.creative false"
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.survival true"
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.adventure true"
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.spectator false"
-    log "[MCWWS] 已为 default 组配置 Axiom 生存建造权限（Editor 保持生存 + FlyWithFood 飞行，禁止创造/旁观/穿墙）"
+    execute console command "lp group %{_g}% permission set axiom.player.gamemode.spectator true"
+    log "[MCWWS] 已为 default 组配置 Axiom 生存建造权限（允许 Editor 旁观，禁止创造）"
 
 on Skript start:
     wait 6 seconds

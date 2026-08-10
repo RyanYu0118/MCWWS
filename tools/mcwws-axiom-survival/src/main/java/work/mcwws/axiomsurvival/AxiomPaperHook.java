@@ -7,6 +7,7 @@ import com.moulberry.axiom.packet.impl.SetBlockBufferPacketListener;
 import com.moulberry.axiom.packet.impl.SetBlockPacketListener;
 import com.moulberry.axiom.packet.impl.SetGamemodePacketListener;
 import com.moulberry.axiom.packet.impl.SetNoPhysicalTriggerPacketListener;
+import com.moulberry.axiom.packet.impl.TeleportPacketListener;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
@@ -17,18 +18,18 @@ public final class AxiomPaperHook {
 
     private final McwwsAxiomSurvivalPlugin plugin;
     private final ChargeService chargeService;
-    private final EditorSurvivalService editorSurvivalService;
+    private final EditorRestoreService editorRestoreService;
     private final PacketFeeEstimator estimator;
     private boolean installed;
 
     public AxiomPaperHook(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService chargeService,
-            EditorSurvivalService editorSurvivalService
+            EditorRestoreService editorRestoreService
     ) {
         this.plugin = plugin;
         this.chargeService = chargeService;
-        this.editorSurvivalService = editorSurvivalService;
+        this.editorRestoreService = editorRestoreService;
         this.estimator = new PacketFeeEstimator(plugin);
     }
 
@@ -51,14 +52,18 @@ public final class AxiomPaperHook {
             });
             replaceChannel(axiomPaper, "set_gamemode", axiom -> {
                 PacketHandler original = new SetGamemodePacketListener(axiom);
-                return EditorPacketHandlers.wrapGamemode(plugin, editorSurvivalService, original);
+                return EditorPacketHandlers.wrapGamemode(plugin, editorRestoreService, original);
+            });
+            replaceChannel(axiomPaper, "teleport", axiom -> {
+                PacketHandler original = new TeleportPacketListener(axiom);
+                return EditorPacketHandlers.wrapTeleport(plugin, editorRestoreService, original);
             });
             replaceChannel(axiomPaper, "set_no_physical_trigger", axiom -> {
                 PacketHandler original = new SetNoPhysicalTriggerPacketListener(axiom);
-                return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorSurvivalService, original);
+                return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorRestoreService, original);
             });
             installed = true;
-            plugin.getLogger().info("已挂钩 AxiomPaper set_block/set_buffer 扣费与 Editor 生存模式。");
+            plugin.getLogger().info("已挂钩 AxiomPaper set_block/set_buffer 扣费与 Editor 恢复。");
             return true;
         } catch (ReflectiveOperationException ex) {
             plugin.getLogger().log(Level.WARNING, "AxiomPaper 钩子安装失败", ex);

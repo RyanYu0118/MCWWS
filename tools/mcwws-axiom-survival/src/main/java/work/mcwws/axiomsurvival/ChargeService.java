@@ -1,5 +1,6 @@
 package work.mcwws.axiomsurvival;
 
+import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 public final class ChargeService {
@@ -33,7 +34,7 @@ public final class ChargeService {
         if (BlockProtection.isSurvivalLike(player)) {
             return true;
         }
-        return false;
+        return player.getGameMode() == GameMode.SPECTATOR && AxiomPaperHook.isAxiomSessionActive(player);
     }
 
     public ChargeDecision evaluate(Player player, String label, FeeAccumulator.Result estimate) {
@@ -94,7 +95,9 @@ public final class ChargeService {
 
     public void sendDiagnostic(Player player) {
         String prefix = plugin.msg("prefix");
-        if (!BlockProtection.isSurvivalLike(player)) {
+        boolean survivalLike = BlockProtection.isSurvivalLike(player);
+        boolean editorSpectator = player.getGameMode() == GameMode.SPECTATOR && AxiomPaperHook.isAxiomSessionActive(player);
+        if (!survivalLike && !editorSpectator) {
             McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg("not-survival"));
             return;
         }
