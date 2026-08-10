@@ -1,10 +1,11 @@
 package work.mcwws.axiomsurvival;
 
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
 final class EditorRestoreService {
+
+    private static final long RESTORE_GRACE_MS = 3000L;
 
     private final McwwsAxiomSurvivalPlugin plugin;
 
@@ -23,60 +24,22 @@ final class EditorRestoreService {
         EditorSessionState.capture(player);
     }
 
-    void onExitAttempt(Player player, GameMode requested) {
-        if (!enabled() || player == null || !EditorSessionState.has(player)) {
-            return;
-        }
-        if (requested == GameMode.CREATIVE) {
-            scheduleRestore(player, 1L);
-            return;
-        }
-        if (requested == GameMode.SURVIVAL || requested == GameMode.ADVENTURE) {
-            scheduleRestore(player, 2L);
-        }
-    }
-
-    void onAxiomTeleport(Player player) {
-        if (!enabled() || player == null || !EditorSessionState.has(player)) {
-            return;
-        }
-        if (player.getGameMode() != GameMode.SPECTATOR) {
-            return;
-        }
-        scheduleRestore(player, 2L);
-    }
-
-    void onGamemodeChanged(Player player, GameMode newMode) {
-        if (!enabled() || player == null || !EditorSessionState.has(player)) {
-            return;
-        }
-        if (newMode == GameMode.SURVIVAL || newMode == GameMode.ADVENTURE) {
-            scheduleRestore(player, 1L);
-        }
-    }
-
     void restoreNow(Player player) {
-        if (player == null || !player.isOnline()) {
+        if (!enabled() || player == null || !player.isOnline()) {
             return;
         }
-        EditorSessionState.restoreAndClear(player);
-        McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("editor-restored"));
-    }
-
-    void scheduleRestore(Player player, long delayTicks) {
-        if (player == null) {
+        boolean hadSnapshot = EditorSessionState.has(player);
+        if (hadSnapshot) {
+            EditorSessionState.restoreAndClear(player);
+            EditorSessionState.beginRestoreGrace(player, RESTORE_GRACE_MS);
+            McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("editor-restored"));
             return;
         }
-        UUIDHolder id = new UUIDHolder(player.getUniqueId());
-        Bukkit.getScheduler().runTaskLater(plugin, () -> {
-            Player online = Bukkit.getPlayer(id.uuid());
-            if (online == null || !online.isOnline() || !EditorSessionState.has(online)) {
-                return;
-            }
-            EditorSessionState.restoreAndClear(online);
-        }, delayTicks);
-    }
-
-    private record UUIDHolder(java.util.UUID uuid) {
+        if (player.getGameMode() == GameMode.SPECTATOR) {
+            player.setGameMode(GameMode.SURVIVAL);
+            player.setFlying(false);
+            player.setAllowFlight(false);
+            McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("editor-restored"));
+        }
     }
 }
