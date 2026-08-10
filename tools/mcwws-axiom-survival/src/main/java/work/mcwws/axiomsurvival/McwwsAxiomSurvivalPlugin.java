@@ -15,7 +15,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
     private static McwwsAxiomSurvivalPlugin instance;
     private PriceCatalog priceCatalog;
     private ChargeService chargeService;
-    private EditorRestoreService editorRestoreService;
+    private EditorSurvivalService editorSurvivalService;
     private AxiomPaperHook axiomHook;
     private FileConfiguration config;
 
@@ -36,10 +36,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         priceCatalog = new PriceCatalog(this);
         priceCatalog.reload();
         chargeService = new ChargeService(this);
-        editorRestoreService = new EditorRestoreService(this);
-        axiomHook = new AxiomPaperHook(this, chargeService, editorRestoreService);
-        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService), this);
-        getServer().getPluginManager().registerEvents(new EditorVanillaMoveListener(editorRestoreService), this);
+        editorSurvivalService = new EditorSurvivalService(this);
+        axiomHook = new AxiomPaperHook(this, chargeService, editorSurvivalService);
+        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorSurvivalService), this);
         getCommand("mcwws-axiom-reload").setExecutor((sender, command, label, args) -> {
             reloadLocalConfig();
             priceCatalog.reload();
@@ -63,7 +62,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
                 sendMessage(sender, msg("prefix") + "§c缺少权限。");
                 return true;
             }
-            editorRestoreService.restoreNow(player);
+            editorSurvivalService.forceSurvival(player);
             return true;
         });
         getServer().getScheduler().runTaskLater(this, () -> {

@@ -2,7 +2,6 @@ package work.mcwws.axiomsurvival;
 
 import com.moulberry.axiom.event.AxiomGameModeChangeEvent;
 import com.moulberry.axiom.event.AxiomHandshakeEvent;
-import com.moulberry.axiom.event.AxiomTeleportEvent;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -14,15 +13,15 @@ import org.bukkit.event.player.PlayerQuitEvent;
 public final class AxiomSurvivalListener implements Listener {
 
     private final McwwsAxiomSurvivalPlugin plugin;
-    private final EditorRestoreService editorRestoreService;
+    private final EditorSurvivalService editorSurvivalService;
 
     public AxiomSurvivalListener(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService ignoredCharge,
-            EditorRestoreService editorRestoreService
+            EditorSurvivalService editorSurvivalService
     ) {
         this.plugin = plugin;
-        this.editorRestoreService = editorRestoreService;
+        this.editorSurvivalService = editorSurvivalService;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -64,7 +63,7 @@ public final class AxiomSurvivalListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onAxiomGameMode(AxiomGameModeChangeEvent event) {
-        if (!plugin.getPluginConfig().getBoolean("enabled", true) || !editorRestoreService.enabled()) {
+        if (!plugin.getPluginConfig().getBoolean("enabled", true)) {
             return;
         }
         Player player = event.getPlayer();
@@ -72,17 +71,9 @@ public final class AxiomSurvivalListener implements Listener {
             return;
         }
         GameMode requested = event.getGameMode();
-        if (requested == GameMode.SPECTATOR) {
-            editorRestoreService.onEnterSpectator(player);
-            return;
-        }
-        if (EditorSessionState.isInRestoreGrace(player)) {
+        if (requested == GameMode.SPECTATOR && editorSurvivalService.enabled()) {
             event.setCancelled(true);
-            return;
-        }
-        if (EditorSessionState.has(player)) {
-            event.setCancelled(true);
-            editorRestoreService.restoreNow(player);
+            editorSurvivalService.onEditorEnter(player);
             return;
         }
         if (requested == GameMode.CREATIVE
@@ -93,37 +84,23 @@ public final class AxiomSurvivalListener implements Listener {
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
-    public void onAxiomTeleport(AxiomTeleportEvent event) {
-        if (!editorRestoreService.enabled()) {
-            return;
-        }
-        if (EditorSessionState.isInRestoreGrace(event.getPlayer())) {
-            event.setCancelled(true);
-        }
-    }
-
-    @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onBukkitGamemode(PlayerGameModeChangeEvent event) {
-        if (!plugin.getPluginConfig().getBoolean("enabled", true) || !editorRestoreService.enabled()) {
+        if (!plugin.getPluginConfig().getBoolean("enabled", true) || !editorSurvivalService.enabled()) {
             return;
         }
         Player player = event.getPlayer();
         if (player == null || !player.hasPermission("mcwws.axiom.survival.use") || BlockProtection.shouldBypass(player)) {
             return;
         }
-        GameMode to = event.getNewGameMode();
-        if (to == GameMode.SPECTATOR && BlockProtection.isSurvivalLike(player)) {
-            editorRestoreService.onEnterSpectator(player);
-            return;
-        }
-        if (EditorSessionState.has(player) && to != GameMode.SPECTATOR) {
-            editorRestoreService.scheduleRestore(player, 1L);
+        if (event.getNewGameMode() == GameMode.SPECTATOR && BlockProtection.isSurvivalLike(player)) {
+            event.setCancelled(true);
+            editorSurvivalService.onEditorEnter(player);
         }
     }
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        EditorSessionState.clear(event.getPlayer());
+        // no session state to clear
     }
 
     private static String stripColor(String input) {
