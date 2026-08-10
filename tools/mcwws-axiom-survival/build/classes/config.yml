@@ -15,6 +15,8 @@ min-balance-to-enable: 0
 block-axiom-creative-switch: true
 # 退出 Editor 时若客户端尝试切创造，则强制恢复进入前的生存位置与模式
 restore-editor-on-exit: true
+# Right Shift 关闭 Editor 时客户端常不发切模式包；超过此毫秒无 Axiom 相机/模式包则自动恢复（0=禁用）
+editor-idle-restore-ms: 1500
 messages:
   prefix: "§6[Axiom] §f"
   insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"

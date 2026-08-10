@@ -4,7 +4,6 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -72,19 +71,12 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
                 getServer().getScheduler().runTaskLater(this, () -> axiomHook.install(), 100L);
             }
         }, 20L);
-        getServer().getScheduler().runTaskTimer(this, () -> {
-            if (!editorRestoreService.enabled()) {
-                return;
-            }
-            for (Player player : getServer().getOnlinePlayers()) {
-                if (!EditorSessionState.has(player)) {
-                    continue;
-                }
-                if (player.getGameMode() != GameMode.SPECTATOR) {
-                    editorRestoreService.restoreNow(player);
-                }
-            }
-        }, 40L, 10L);
+        getServer().getScheduler().runTaskTimer(
+                this,
+                new EditorIdleWatchdog(this, editorRestoreService),
+                40L,
+                10L
+        );
         getLogger().info("MCWWS_AxiomSurvival 已启用。");
     }
 
