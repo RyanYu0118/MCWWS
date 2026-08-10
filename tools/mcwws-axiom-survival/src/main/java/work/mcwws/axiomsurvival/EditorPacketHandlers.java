@@ -21,25 +21,28 @@ final class EditorPacketHandlers {
     static PacketHandler wrapGamemode(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             PacketHandler delegate
     ) {
-        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeGamemode);
+        return wrap(plugin, restoreService, survivalEditorService, delegate, EditorPacketHandlers::beforeGamemode);
     }
 
     static PacketHandler wrapTeleport(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             PacketHandler delegate
     ) {
-        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeTeleport);
+        return wrap(plugin, restoreService, survivalEditorService, delegate, EditorPacketHandlers::beforeTeleport);
     }
 
     static PacketHandler wrapNoPhysicalTrigger(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             PacketHandler delegate
     ) {
-        return wrap(plugin, restoreService, delegate, EditorPacketHandlers::beforeNoPhysicalTrigger);
+        return wrap(plugin, restoreService, survivalEditorService, delegate, EditorPacketHandlers::beforeNoPhysicalTrigger);
     }
 
     @FunctionalInterface
@@ -47,6 +50,7 @@ final class EditorPacketHandlers {
         BeforeResult apply(
                 McwwsAxiomSurvivalPlugin plugin,
                 EditorRestoreService restoreService,
+                SurvivalEditorService survivalEditorService,
                 Player player,
                 Object buf
         ) throws ReflectiveOperationException;
@@ -55,6 +59,7 @@ final class EditorPacketHandlers {
     private static PacketHandler wrap(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             PacketHandler delegate,
             BeforeAction before
     ) {
@@ -67,7 +72,7 @@ final class EditorPacketHandlers {
                 Object buf = args[1];
                 BeforeResult result = BeforeResult.PROCEED;
                 try {
-                    result = before.apply(plugin, restoreService, player, buf);
+                    result = before.apply(plugin, restoreService, survivalEditorService, player, buf);
                 } catch (ReflectiveOperationException ex) {
                     plugin.getLogger().fine("Editor 包预处理失败: " + ex.getMessage());
                 }
@@ -90,6 +95,7 @@ final class EditorPacketHandlers {
     private static BeforeResult beforeGamemode(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             Player player,
             Object buf
     ) throws ReflectiveOperationException {
@@ -105,6 +111,9 @@ final class EditorPacketHandlers {
             return BeforeResult.PROCEED;
         }
         if (EditorSessionState.isInRestoreGrace(player)) {
+            return BeforeResult.SKIP;
+        }
+        if (survivalEditorService.isClientEditorSession(player)) {
             return BeforeResult.SKIP;
         }
         if (requested == GameMode.SPECTATOR) {
@@ -124,6 +133,7 @@ final class EditorPacketHandlers {
     private static BeforeResult beforeTeleport(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             Player player,
             Object buf
     ) {
@@ -132,6 +142,10 @@ final class EditorPacketHandlers {
         }
         if (EditorSessionState.isInRestoreGrace(player)) {
             return BeforeResult.SKIP;
+        }
+        if (survivalEditorService.isClientEditorSession(player)) {
+            EditorSessionState.touchAxiomTeleport(player);
+            return BeforeResult.PROCEED;
         }
         if (EditorSessionState.has(player) && player.getGameMode() == GameMode.SPECTATOR) {
             EditorSessionState.touchAxiomTeleport(player);
@@ -142,6 +156,7 @@ final class EditorPacketHandlers {
     private static BeforeResult beforeNoPhysicalTrigger(
             McwwsAxiomSurvivalPlugin plugin,
             EditorRestoreService restoreService,
+            SurvivalEditorService survivalEditorService,
             Player player,
             Object buf
     ) throws ReflectiveOperationException {
@@ -154,6 +169,9 @@ final class EditorPacketHandlers {
         int mark = PacketBufs.readerIndex(buf);
         boolean enabled = readBoolean(buf);
         PacketBufs.readerIndex(buf, mark);
+        if (survivalEditorService.isClientEditorSession(player)) {
+            return BeforeResult.PROCEED;
+        }
         if (!enabled && EditorSessionState.has(player)) {
             return BeforeResult.RESTORE_NOW;
         }

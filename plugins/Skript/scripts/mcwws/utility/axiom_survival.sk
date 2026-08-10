@@ -44,8 +44,9 @@ function mcwwsGrantAxiomSurvivalPerms():
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.creative false"
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.survival true"
     execute console command "lp group %{_g}% permission set axiom.player.gamemode.adventure true"
-    execute console command "lp group %{_g}% permission set axiom.player.gamemode.spectator true"
-    log "[MCWWS] 已为 default 组配置 Axiom 生存建造权限（允许 Editor 旁观，禁止创造）"
+    # 生存 Editor 由 MCWWS_AxiomSurvivalClient 客户端模组本地假旁观，服务端无需真旁观
+    execute console command "lp group %{_g}% permission set axiom.player.gamemode.spectator false"
+    log "[MCWWS] 已为 default 组配置 Axiom 生存建造权限（需 MCWWS_AxiomSurvivalClient，禁止创造）"
 
 on Skript start:
     wait 6 seconds

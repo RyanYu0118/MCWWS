@@ -19,17 +19,20 @@ public final class AxiomPaperHook {
     private final McwwsAxiomSurvivalPlugin plugin;
     private final ChargeService chargeService;
     private final EditorRestoreService editorRestoreService;
+    private final SurvivalEditorService survivalEditorService;
     private final PacketFeeEstimator estimator;
     private boolean installed;
 
     public AxiomPaperHook(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService chargeService,
-            EditorRestoreService editorRestoreService
+            EditorRestoreService editorRestoreService,
+            SurvivalEditorService survivalEditorService
     ) {
         this.plugin = plugin;
         this.chargeService = chargeService;
         this.editorRestoreService = editorRestoreService;
+        this.survivalEditorService = survivalEditorService;
         this.estimator = new PacketFeeEstimator(plugin);
     }
 
@@ -52,18 +55,18 @@ public final class AxiomPaperHook {
             });
             replaceChannel(axiomPaper, "set_gamemode", axiom -> {
                 PacketHandler original = new SetGamemodePacketListener(axiom);
-                return EditorPacketHandlers.wrapGamemode(plugin, editorRestoreService, original);
+                return EditorPacketHandlers.wrapGamemode(plugin, editorRestoreService, survivalEditorService, original);
             });
             replaceChannel(axiomPaper, "teleport", axiom -> {
                 PacketHandler original = new TeleportPacketListener(axiom);
-                return EditorPacketHandlers.wrapTeleport(plugin, editorRestoreService, original);
+                return EditorPacketHandlers.wrapTeleport(plugin, editorRestoreService, survivalEditorService, original);
             });
             replaceChannel(axiomPaper, "set_no_physical_trigger", axiom -> {
                 PacketHandler original = new SetNoPhysicalTriggerPacketListener(axiom);
-                return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorRestoreService, original);
+                return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorRestoreService, survivalEditorService, original);
             });
             installed = true;
-            plugin.getLogger().info("已挂钩 AxiomPaper set_block/set_buffer 扣费与 Editor 恢复。");
+            plugin.getLogger().info("已挂钩 AxiomPaper set_block/set_buffer 扣费与 Editor 恢复（含生存 Editor 通道）。");
             return true;
         } catch (ReflectiveOperationException ex) {
             plugin.getLogger().log(Level.WARNING, "AxiomPaper 钩子安装失败", ex);

@@ -16,6 +16,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
     private PriceCatalog priceCatalog;
     private ChargeService chargeService;
     private EditorRestoreService editorRestoreService;
+    private SurvivalEditorService survivalEditorService;
     private AxiomPaperHook axiomHook;
     private FileConfiguration config;
 
@@ -37,9 +38,17 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         priceCatalog.reload();
         chargeService = new ChargeService(this);
         editorRestoreService = new EditorRestoreService(this);
-        axiomHook = new AxiomPaperHook(this, chargeService, editorRestoreService);
-        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService), this);
-        getServer().getPluginManager().registerEvents(new EditorVanillaMoveListener(editorRestoreService), this);
+        survivalEditorService = new SurvivalEditorService(this, editorRestoreService);
+        axiomHook = new AxiomPaperHook(this, chargeService, editorRestoreService, survivalEditorService);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, SurvivalEditorChannel.CHANNEL);
+        getServer().getMessenger().registerIncomingPluginChannel(
+                this,
+                SurvivalEditorChannel.CHANNEL,
+                new SurvivalEditorChannel(survivalEditorService)
+        );
+        getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService, survivalEditorService), this);
+        getServer().getPluginManager().registerEvents(new EditorVanillaMoveListener(editorRestoreService, survivalEditorService), this);
+        getServer().getPluginManager().registerEvents(new SurvivalEditorJoinListener(this, survivalEditorService), this);
         getCommand("mcwws-axiom-reload").setExecutor((sender, command, label, args) -> {
             reloadLocalConfig();
             priceCatalog.reload();
@@ -95,6 +104,10 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
 
     public ChargeService getChargeService() {
         return chargeService;
+    }
+
+    public SurvivalEditorService getSurvivalEditorService() {
+        return survivalEditorService;
     }
 
     public FeeAccumulator.LaborRates laborRates() {

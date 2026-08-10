@@ -9,20 +9,22 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerGameModeChangeEvent;
-import org.bukkit.event.player.PlayerQuitEvent;
 
 public final class AxiomSurvivalListener implements Listener {
 
     private final McwwsAxiomSurvivalPlugin plugin;
     private final EditorRestoreService editorRestoreService;
+    private final SurvivalEditorService survivalEditorService;
 
     public AxiomSurvivalListener(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService ignoredCharge,
-            EditorRestoreService editorRestoreService
+            EditorRestoreService editorRestoreService,
+            SurvivalEditorService survivalEditorService
     ) {
         this.plugin = plugin;
         this.editorRestoreService = editorRestoreService;
+        this.survivalEditorService = survivalEditorService;
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -60,6 +62,7 @@ public final class AxiomSurvivalListener implements Listener {
             return;
         }
         McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("axiom-ready"));
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> SurvivalEditorChannel.sendHello(player), 5L);
     }
 
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
@@ -69,6 +72,10 @@ public final class AxiomSurvivalListener implements Listener {
         }
         Player player = event.getPlayer();
         if (player == null || BlockProtection.shouldBypass(player) || !player.hasPermission("mcwws.axiom.survival.use")) {
+            return;
+        }
+        if (survivalEditorService.isClientEditorSession(player)) {
+            event.setCancelled(true);
             return;
         }
         GameMode requested = event.getGameMode();
@@ -111,6 +118,12 @@ public final class AxiomSurvivalListener implements Listener {
         if (player == null || !player.hasPermission("mcwws.axiom.survival.use") || BlockProtection.shouldBypass(player)) {
             return;
         }
+        if (survivalEditorService.isClientEditorSession(player)) {
+            if (event.getNewGameMode() != GameMode.SURVIVAL && event.getNewGameMode() != GameMode.ADVENTURE) {
+                event.setCancelled(true);
+            }
+            return;
+        }
         GameMode to = event.getNewGameMode();
         if (to == GameMode.SPECTATOR && BlockProtection.isSurvivalLike(player)) {
             editorRestoreService.onEnterSpectator(player);
@@ -119,11 +132,6 @@ public final class AxiomSurvivalListener implements Listener {
         if (EditorSessionState.has(player) && to != GameMode.SPECTATOR) {
             editorRestoreService.scheduleRestore(player, 1L);
         }
-    }
-
-    @EventHandler
-    public void onQuit(PlayerQuitEvent event) {
-        EditorSessionState.clear(event.getPlayer());
     }
 
     private static String stripColor(String input) {
