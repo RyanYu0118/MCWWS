@@ -9,8 +9,8 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 
 /**
- * 预扫描用：与 FAWE //set / //replace 相同路径（Pattern.apply → setBlock），
- * 但不写世界，只统计会变更的格子并累加费用。
+ * 预扫描用：与 FAWE //set / //replace 对齐，但不写世界，只统计会变更的格子。
+ * 必须走 {@link #setBlock} 计数，不能依赖 {@code Pattern.apply}（其会按 Bukkit 视图短路跳过 setBlock）。
  */
 final class EstimateCountExtent extends AbstractDelegateExtent {
 
@@ -38,12 +38,15 @@ final class EstimateCountExtent extends AbstractDelegateExtent {
             builder.protectedBlocks++;
             return false;
         }
-        BlockState existing = getBlock(location);
-        if (existing == null || block == null) {
+        if (block == null) {
+            return false;
+        }
+        BaseBlock after = block.toBaseBlock();
+        BlockState existing = EstimateBlockReader.readForTarget(world, location, after);
+        if (existing == null) {
             return false;
         }
         BaseBlock before = existing.toBaseBlock();
-        BaseBlock after = block.toBaseBlock();
         if (before.equals(after)) {
             return false;
         }

@@ -83,6 +83,7 @@ public final class WeSurvivalListener {
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
 
         FeeEstimate.Result estimate;
+        EstimateContext.setPlayer(player);
         try {
             if ("replacenear".equals(command)) {
                 estimate = estimateReplaceNear(args, session, event, actor, player, maxScan);
@@ -108,6 +109,8 @@ public final class WeSurvivalListener {
             event.setCancelled(true);
             WeEditAuthorization.revokeUnpaid(player);
             return;
+        } finally {
+            EstimateContext.clear();
         }
 
         if (estimate.protectedBlocks() > 0) {
@@ -155,6 +158,7 @@ public final class WeSurvivalListener {
 
         if (estimate.affectedBlocks() > 0L) {
             WeEditAuthorization.grantPaid(player, estimate.affectedBlocks());
+            recordRecentEdit(player, session, event, command, args, estimate);
         }
 
         if (total > 0D) {
@@ -299,6 +303,47 @@ public final class WeSurvivalListener {
             sb.append(args[i]);
         }
         return sb.toString();
+    }
+
+    private void recordRecentEdit(Player player, LocalSession session, CommandEvent event, String command, String[] args, FeeEstimate.Result estimate) {
+        if (player == null || session == null || estimate == null || estimate.placedCounts().isEmpty()) {
+            return;
+        }
+        try {
+            if ("replacenear".equals(command)) {
+                if (args.length < 1) {
+                    return;
+                }
+                int radius = Integer.parseInt(args[0]);
+                World world = session.getSelectionWorld();
+                if (world == null && event.getSession() != null) {
+                    world = event.getSession().getWorld();
+                }
+                if (world == null) {
+                    world = com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(player.getWorld());
+                }
+                if (world == null) {
+                    return;
+                }
+                Location loc = player.getLocation();
+                BlockVector3 center = BlockVector3.at(loc.getBlockX(), loc.getBlockY(), loc.getBlockZ());
+                WeRecentEditMemory.recordBox(player, world, center, radius, estimate.placedCounts());
+                return;
+            }
+            World world = session.getSelectionWorld();
+            if (world == null && event.getSession() != null) {
+                world = event.getSession().getWorld();
+            }
+            if (world == null) {
+                return;
+            }
+            Region region = session.getSelection(world);
+            if (region == null) {
+                return;
+            }
+            WeRecentEditMemory.record(player, world, region, estimate.placedCounts());
+        } catch (Exception ignored) {
+        }
     }
 
     private void handleEditSession(EditSessionEvent event) {

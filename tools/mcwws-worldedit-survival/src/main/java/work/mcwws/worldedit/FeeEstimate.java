@@ -62,11 +62,8 @@ public final class FeeEstimate {
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (BlockVector3 pos : region) {
-            try {
-                pattern.apply(counter, pos, pos);
-            } catch (WorldEditException ex) {
-                throw new InputParseException(ex.getMessage());
-            }
+            BaseBlock target = pattern.applyBlock(pos);
+            counter.setBlock(pos, target);
         }
         return builder.build();
     }
@@ -76,11 +73,15 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         FaweRegionSync.flushBeforeEstimate(world, region);
-        Extent snapshot = BukkitSnapshotExtent.forEstimate(world);
+        Pattern fromPattern = null;
+        Extent snapshot;
         Mask fromMask;
         if (fromInput == null || fromInput.isBlank()) {
+            snapshot = BukkitSnapshotExtent.forEstimate(world);
             fromMask = new ExistingBlockMask(snapshot);
         } else {
+            fromPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(fromInput, context);
+            snapshot = EstimateFromSnapshotExtent.forReplaceFrom(world, fromPattern);
             fromMask = WorldEdit.getInstance().getMaskFactory().parseFromInput(fromInput, context);
             new MaskTraverser(fromMask).setNewExtent(snapshot);
         }
@@ -91,11 +92,8 @@ public final class FeeEstimate {
             if (!fromMask.test(pos)) {
                 continue;
             }
-            try {
-                toPattern.apply(counter, pos, pos);
-            } catch (WorldEditException ex) {
-                throw new InputParseException(ex.getMessage());
-            }
+            BaseBlock target = toPattern.applyBlock(pos);
+            counter.setBlock(pos, target);
         }
         return builder.build();
     }
@@ -111,11 +109,15 @@ public final class FeeEstimate {
         context.setActor(actor);
         context.setWorld(world);
         FaweRegionSync.flushBeforeEstimate(world, center, radius);
-        Extent snapshot = BukkitSnapshotExtent.forEstimate(world);
+        Pattern fromPattern = null;
+        Extent snapshot;
         Mask fromMask;
         if (fromInput == null || fromInput.isBlank()) {
+            snapshot = BukkitSnapshotExtent.forEstimate(world);
             fromMask = new ExistingBlockMask(snapshot);
         } else {
+            fromPattern = WorldEdit.getInstance().getPatternFactory().parseFromInput(fromInput, context);
+            snapshot = EstimateFromSnapshotExtent.forReplaceFrom(world, fromPattern);
             fromMask = WorldEdit.getInstance().getMaskFactory().parseFromInput(fromInput, context);
             new MaskTraverser(fromMask).setNewExtent(snapshot);
         }
@@ -129,11 +131,8 @@ public final class FeeEstimate {
                     if (!fromMask.test(pos)) {
                         continue;
                     }
-                    try {
-                        toPattern.apply(counter, pos, pos);
-                    } catch (WorldEditException ex) {
-                        throw new InputParseException(ex.getMessage());
-                    }
+                    BaseBlock target = toPattern.applyBlock(pos);
+                    counter.setBlock(pos, target);
                 }
             }
         }
