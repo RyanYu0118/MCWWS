@@ -52,11 +52,16 @@ public final class SurvivalEditorController {
         return localEditorActive && !EditorUI.isEnabled();
     }
 
-    /** 打开 Editor 菜单（切旁观）前记录建造位置 */
-    public static void captureMenuOpenPose() {
-        if (!localEditorActive) {
-            return;
-        }
+    /**
+     * 服务端始终是生存，本地创造的 {@code instabuild} 秒破路径不会被服务端认可，
+     * 因此会话内手动挖掘必须走生存进度逻辑。
+     */
+    public static boolean shouldMineLikeSurvival() {
+        return serverSupported && localEditorActive;
+    }
+
+    /** 打开 Editor 菜单（切旁观）前记录建造位置，并请求服务端快照 */
+    public static void onMenuOpening() {
         Minecraft mc = Minecraft.getInstance();
         if (mc.player == null) {
             return;
@@ -68,11 +73,12 @@ public final class SurvivalEditorController {
         menuYaw = player.getYRot();
         menuPitch = player.getXRot();
         hasMenuPose = true;
+        SurvivalEditorNetworking.sendMenuState(true);
     }
 
     /**
-     * 关菜单后：强制旁观→创造、相机回玩家、恢复开菜单前坐标。
-     * {@code setLocalMode}  alone 不会复位旁观相机，且服务端生存包会覆盖本地创造。
+     * 关菜单后：相机回玩家、恢复开菜单前坐标。客户端传送会被服务端移动校验拉回，
+     * 因此同时请求服务端权威传送。
      */
     public static void finalizeMenuClose() {
         if (!localEditorActive || EditorUI.isEnabled()) {
@@ -83,16 +89,15 @@ public final class SurvivalEditorController {
             return;
         }
         var player = mc.player;
+        SurvivalEditorNetworking.sendMenuState(false);
         mc.gameMode.setLocalMode(GameType.CREATIVE);
         mc.setCameraEntity(player);
-        player.removeVehicle();
         if (hasMenuPose) {
             player.teleportTo(menuPosX, menuPosY, menuPosZ);
             player.setYRot(menuYaw);
             player.setXRot(menuPitch);
             hasMenuPose = false;
         }
-        mc.gameMode.adjustPlayer(player);
         onEnterBuildMode();
         McwwsAxiomSurvivalClientMod.LOGGER.debug("Editor 菜单已关闭：已恢复建造模式与位置");
     }

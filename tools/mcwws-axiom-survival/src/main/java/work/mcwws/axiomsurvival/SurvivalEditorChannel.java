@@ -11,6 +11,8 @@ import java.nio.charset.StandardCharsets;
  *   <li>服务端 → 客户端 {@code hello}：宣告支持生存 Editor</li>
  *   <li>客户端 → 服务端 {@code 1}：进入 Editor</li>
  *   <li>客户端 → 服务端 {@code 0}：退出 Editor</li>
+ *   <li>客户端 → 服务端 {@code 2}：打开 Editor 菜单（快照位置）</li>
+ *   <li>客户端 → 服务端 {@code 3}：关闭 Editor 菜单（传送回快照）</li>
  * </ul>
  */
 public final class SurvivalEditorChannel implements PluginMessageListener {
@@ -18,6 +20,8 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
     static final String CHANNEL = "mcwws:axiom_survival";
     private static final byte OP_ENTER = 1;
     private static final byte OP_EXIT = 0;
+    private static final byte OP_MENU_OPEN = 2;
+    private static final byte OP_MENU_CLOSE = 3;
 
     private final SurvivalEditorService survivalEditorService;
 
@@ -49,12 +53,12 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
             return;
         }
         byte op = message[0];
-        if (op == OP_ENTER) {
-            survivalEditorService.onClientEditorEnter(player);
-            return;
-        }
-        if (op == OP_EXIT) {
-            survivalEditorService.onClientEditorExit(player);
+        switch (op) {
+            case OP_ENTER -> survivalEditorService.onClientEditorEnter(player);
+            case OP_EXIT -> survivalEditorService.onClientEditorExit(player);
+            case OP_MENU_OPEN -> survivalEditorService.onClientMenuOpen(player);
+            case OP_MENU_CLOSE -> survivalEditorService.onClientMenuClose(player);
+            default -> { }
         }
     }
 }

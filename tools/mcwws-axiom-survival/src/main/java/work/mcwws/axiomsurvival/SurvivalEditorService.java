@@ -1,6 +1,7 @@
 package work.mcwws.axiomsurvival;
 
 import org.bukkit.GameMode;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
@@ -16,6 +17,7 @@ final class SurvivalEditorService {
     private final McwwsAxiomSurvivalPlugin plugin;
     private final EditorRestoreService editorRestoreService;
     private final Map<UUID, Long> clientEditorSessions = new ConcurrentHashMap<>();
+    private final Map<UUID, Location> menuSnapshots = new ConcurrentHashMap<>();
 
     SurvivalEditorService(McwwsAxiomSurvivalPlugin plugin, EditorRestoreService editorRestoreService) {
         this.plugin = plugin;
@@ -48,10 +50,36 @@ final class SurvivalEditorService {
         plugin.getLogger().info("生存 Editor 进入: " + player.getName());
     }
 
+    /** 客户端打开 Editor 菜单：记录建造位置，供关菜单时传送回来 */
+    void onClientMenuOpen(Player player) {
+        if (!enabled() || player == null) {
+            return;
+        }
+        Location location = player.getLocation();
+        if (location.getWorld() == null) {
+            return;
+        }
+        menuSnapshots.put(player.getUniqueId(), location.clone());
+    }
+
+    /** 客户端关闭 Editor 菜单：由服务端权威传送回开菜单前的位置 */
+    void onClientMenuClose(Player player) {
+        if (player == null) {
+            return;
+        }
+        Location location = menuSnapshots.remove(player.getUniqueId());
+        if (location == null || !player.isOnline() || location.getWorld() == null) {
+            return;
+        }
+        player.teleport(location);
+        player.setFallDistance(0f);
+    }
+
     void onClientEditorExit(Player player) {
         if (player == null) {
             return;
         }
+        menuSnapshots.remove(player.getUniqueId());
         Long removed = clientEditorSessions.remove(player.getUniqueId());
         if (removed == null && !EditorSessionState.has(player)) {
             return;
@@ -67,6 +95,7 @@ final class SurvivalEditorService {
     void clear(Player player) {
         if (player != null) {
             clientEditorSessions.remove(player.getUniqueId());
+            menuSnapshots.remove(player.getUniqueId());
         }
     }
 }

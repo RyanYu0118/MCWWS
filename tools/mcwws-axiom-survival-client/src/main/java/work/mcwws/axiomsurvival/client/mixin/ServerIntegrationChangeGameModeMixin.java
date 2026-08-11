@@ -20,11 +20,14 @@ public class ServerIntegrationChangeGameModeMixin {
         if (!SurvivalEditorController.isServerSupported()) {
             return;
         }
-        if (gameType == GameType.SPECTATOR && SurvivalEditorController.isLocalEditorActive()) {
-            SurvivalEditorController.captureMenuOpenPose();
-        } else if ((gameType == GameType.SPECTATOR || gameType == GameType.CREATIVE)
-                && !SurvivalEditorController.isLocalEditorActive()) {
+        if (gameType != GameType.SPECTATOR && gameType != GameType.CREATIVE) {
+            return;
+        }
+        if (!SurvivalEditorController.isLocalEditorActive()) {
             SurvivalEditorController.captureStoredModeBeforeEnter();
+        }
+        if (gameType == GameType.SPECTATOR) {
+            SurvivalEditorController.onMenuOpening();
         }
     }
 

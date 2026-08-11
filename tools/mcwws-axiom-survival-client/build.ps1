@@ -6,7 +6,17 @@ $Src = Join-Path $Root "src/main/java"
 $Out = Join-Path $Root "build/classes"
 $Res = Join-Path $Root "src/main/resources"
 $JarOut = Join-Path $Root "build/MCWWS_AxiomSurvivalClient.jar"
-$McRoot = "D:\Minecraft\游戏主体\.minecraft"
+
+# 游戏目录含中文，脚本内不写字面量：PowerShell 5.1 按 ANSI 读取会破坏路径
+$McRoot = $env:MCWWS_MC_ROOT
+if ([string]::IsNullOrWhiteSpace($McRoot)) {
+    $McRoot = Get-ChildItem "D:\Minecraft" -Directory |
+        ForEach-Object { Join-Path $_.FullName ".minecraft" } |
+        Where-Object { Test-Path (Join-Path $_ "mods") } |
+        Sort-Object { $log = Join-Path $_ "logs\latest.log"; if (Test-Path $log) { (Get-Item $log).LastWriteTime } else { [DateTime]::MinValue } } -Descending |
+        Select-Object -First 1
+}
+if ([string]::IsNullOrWhiteSpace($McRoot)) { throw "Cannot locate .minecraft game directory" }
 $Deploy = Join-Path $McRoot "mods/MCWWS_AxiomSurvivalClient.jar"
 $FastUtil = Join-Path $McRoot "libraries/it/unimi/dsi/fastutil/8.5.18/fastutil-8.5.18.jar"
 
@@ -35,5 +45,5 @@ Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
 if (Test-Path $JarOut) { Remove-Item $JarOut -Force }
 & $Jar cf $JarOut -C $Out .
 Write-Host "Built $JarOut"
-cmd /c "copy /Y `"$JarOut`" `"$Deploy`" >nul"
+Copy-Item -LiteralPath $JarOut -Destination $Deploy -Force
 Write-Host "Deployed $Deploy"

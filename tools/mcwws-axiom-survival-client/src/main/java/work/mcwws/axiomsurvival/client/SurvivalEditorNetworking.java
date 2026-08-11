@@ -15,6 +15,8 @@ final class SurvivalEditorNetworking {
     static final Identifier CHANNEL = Identifier.fromNamespaceAndPath("mcwws", "axiom_survival");
     private static final byte OP_ENTER = 1;
     private static final byte OP_EXIT = 0;
+    private static final byte OP_MENU_OPEN = 2;
+    private static final byte OP_MENU_CLOSE = 3;
     private static boolean registered;
 
     private SurvivalEditorNetworking() {
@@ -47,6 +49,15 @@ final class SurvivalEditorNetworking {
             return;
         }
         ClientPlayNetworking.send(new EditorStatePayload(enter ? OP_ENTER : OP_EXIT));
+    }
+
+    /** 请求服务端在开菜单时快照位置、关菜单时传送回该位置 */
+    static void sendMenuState(boolean open) {
+        if (!SurvivalEditorController.isServerSupported()
+                || !ClientPlayNetworking.canSend(EditorStatePayload.TYPE)) {
+            return;
+        }
+        ClientPlayNetworking.send(new EditorStatePayload(open ? OP_MENU_OPEN : OP_MENU_CLOSE));
     }
 
     private record HelloPayload() implements CustomPacketPayload {
