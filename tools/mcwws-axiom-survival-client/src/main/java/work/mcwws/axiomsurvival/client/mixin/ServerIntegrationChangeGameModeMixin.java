@@ -20,7 +20,9 @@ public class ServerIntegrationChangeGameModeMixin {
         if (!SurvivalEditorController.isServerSupported()) {
             return;
         }
-        if ((gameType == GameType.SPECTATOR || gameType == GameType.CREATIVE)
+        if (gameType == GameType.SPECTATOR && SurvivalEditorController.isLocalEditorActive()) {
+            SurvivalEditorController.captureMenuOpenPose();
+        } else if ((gameType == GameType.SPECTATOR || gameType == GameType.CREATIVE)
                 && !SurvivalEditorController.isLocalEditorActive()) {
             SurvivalEditorController.captureStoredModeBeforeEnter();
         }
