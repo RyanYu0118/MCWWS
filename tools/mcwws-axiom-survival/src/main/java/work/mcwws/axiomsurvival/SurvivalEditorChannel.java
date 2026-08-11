@@ -52,6 +52,7 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
         if (!player.hasPermission("mcwws.axiom.survival.use")) {
             return;
         }
+        survivalEditorService.noteClientPresent(player);
         byte op = message[0];
         boolean flag = message.length > 1 && message[1] != 0;
         switch (op) {

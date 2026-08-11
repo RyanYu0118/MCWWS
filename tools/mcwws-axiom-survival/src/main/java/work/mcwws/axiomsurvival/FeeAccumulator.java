@@ -1,9 +1,13 @@
 package work.mcwws.axiomsurvival;
 
 import org.bukkit.Material;
+import org.bukkit.block.Block;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public final class FeeAccumulator {
@@ -18,20 +22,22 @@ public final class FeeAccumulator {
             long affectedBlocks,
             long protectedBlocks,
             Map<String, Long> removedCounts,
-            Map<String, Long> placedCounts
+            Map<String, Long> placedCounts,
+            List<BlockState> protectedStates
     ) {
         public double total() {
             return demolition + material + labor;
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of());
+            return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of(), List.of());
         }
     }
 
     public static final class Builder {
         private final PriceCatalog prices;
         private final LaborRates laborRates;
+        private final int protectedCaptureCap;
         private double demolition;
         private double material;
         private double labor;
@@ -39,14 +45,20 @@ public final class FeeAccumulator {
         long protectedBlocks;
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
+        private final List<BlockState> protectedStates = new ArrayList<>();
 
-        public Builder(PriceCatalog prices, LaborRates laborRates) {
+        public Builder(PriceCatalog prices, LaborRates laborRates, int protectedCaptureCap) {
             this.prices = prices;
             this.laborRates = laborRates;
+            this.protectedCaptureCap = Math.max(protectedCaptureCap, 0);
         }
 
-        public void addProtected() {
+        /** 受保护方块不计费；同时留下原状快照，Axiom 写入后由 ProtectedBlockGuard 还原 */
+        public void addProtected(Block block) {
             protectedBlocks++;
+            if (block != null && protectedStates.size() < protectedCaptureCap) {
+                protectedStates.add(block.getState());
+            }
         }
 
         public void addChange(BlockData existing, BlockData target) {
@@ -83,7 +95,8 @@ public final class FeeAccumulator {
                     affectedBlocks,
                     protectedBlocks,
                     Map.copyOf(removedCounts),
-                    Map.copyOf(placedCounts)
+                    Map.copyOf(placedCounts),
+                    List.copyOf(protectedStates)
             );
         }
 
@@ -101,6 +114,10 @@ public final class FeeAccumulator {
         private static double round(double value) {
             return Math.round(value * 100D) / 100D;
         }
+    }
+
+    public static double round(double value) {
+        return Math.round(value * 100D) / 100D;
     }
 
     static String itemIdFromBlockData(BlockData blockData) {

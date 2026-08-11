@@ -5,14 +5,22 @@ import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import java.lang.reflect.InvocationHandler;
-import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
+/**
+ * 把 AxiomPaper 的包处理器包一层：先在主线程解析并决定是否收费/放行，
+ * 只有放行时才把原包交给 Axiom 真正执行。
+ */
 final class ChargingPacketHandlers {
+
+    /** 主线程内的放行判定；{@code clonedBuf} 是可随意读取的副本 */
+    interface PacketGate {
+        ChargeService.ChargeDecision decide(Player player, Object clonedBuf) throws ReflectiveOperationException;
+    }
 
     private ChargingPacketHandlers() {
     }
@@ -20,17 +28,16 @@ final class ChargingPacketHandlers {
     static PacketHandler wrap(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService chargeService,
-            PacketFeeEstimator estimator,
             PacketHandler delegate,
-            String channel
+            String channel,
+            PacketGate gate
     ) {
         InvocationHandler handler = (proxy, method, args) -> {
             if ("handleAsync".equals(method.getName())) {
                 return delegate.handleAsync();
             }
             if ("onReceive".equals(method.getName()) && args != null && args.length == 2) {
-                onReceive(plugin, chargeService, estimator, delegate, channel,
-                        (Player) args[0], args[1]);
+                onReceive(plugin, chargeService, delegate, channel, gate, (Player) args[0], args[1]);
                 return null;
             }
             return method.invoke(delegate, args);
@@ -45,9 +52,9 @@ final class ChargingPacketHandlers {
     private static void onReceive(
             McwwsAxiomSurvivalPlugin plugin,
             ChargeService chargeService,
-            PacketFeeEstimator estimator,
             PacketHandler delegate,
             String channel,
+            PacketGate gate,
             Player player,
             Object friendlyByteBuf
     ) {
@@ -56,7 +63,7 @@ final class ChargingPacketHandlers {
             return;
         }
         try {
-            if (!evaluateOnMainThread(plugin, chargeService, estimator, player, friendlyByteBuf, channel)) {
+            if (!decideOnMainThread(plugin, gate, player, friendlyByteBuf, channel)) {
                 return;
             }
         } catch (ReflectiveOperationException ex) {
@@ -73,10 +80,9 @@ final class ChargingPacketHandlers {
         PacketDelegate.invoke(delegate, player, buf);
     }
 
-    private static boolean evaluateOnMainThread(
+    private static boolean decideOnMainThread(
             McwwsAxiomSurvivalPlugin plugin,
-            ChargeService chargeService,
-            PacketFeeEstimator estimator,
+            PacketGate gate,
             Player player,
             Object buf,
             String channel
@@ -91,8 +97,7 @@ final class ChargingPacketHandlers {
         Bukkit.getScheduler().runTask(plugin, () -> {
             try {
                 Object clone = PacketBufs.fromBytes(player, snapshot);
-                FeeAccumulator.Result estimate = estimate(estimator, player, clone, channel);
-                decision.set(chargeService.evaluate(player, channel, estimate));
+                decision.set(gate.decide(player, clone));
             } catch (ReflectiveOperationException ex) {
                 plugin.getLogger().log(Level.WARNING, "Axiom 异步扣费预估失败: " + ex.getMessage(), ex);
                 decision.set(ChargeService.ChargeDecision.deny("estimate-failed"));
@@ -105,18 +110,5 @@ final class ChargingPacketHandlers {
             return false;
         }
         return decision.get().allowed();
-    }
-
-    private static FeeAccumulator.Result estimate(
-            PacketFeeEstimator estimator,
-            Player player,
-            Object buf,
-            String channel
-    ) throws ReflectiveOperationException {
-        return switch (channel) {
-            case "set_block" -> estimator.estimateSetBlockPacket(player, buf);
-            case "set_buffer" -> estimator.estimateSetBufferPacket(player, buf);
-            default -> FeeAccumulator.Result.empty();
-        };
     }
 }

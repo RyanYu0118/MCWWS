@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -18,6 +19,7 @@ final class SurvivalEditorService {
     private final EditorRestoreService editorRestoreService;
     private final Map<UUID, Long> clientEditorSessions = new ConcurrentHashMap<>();
     private final Map<UUID, MenuSnapshot> menuSnapshots = new ConcurrentHashMap<>();
+    private final Set<UUID> announced = ConcurrentHashMap.newKeySet();
 
     /** 开菜单前的建造位置与飞行状态；飞行权限由服务端自己记录，客户端本地创造会污染 abilities */
     private record MenuSnapshot(Location location, boolean allowFlight, boolean flying) {
@@ -34,6 +36,15 @@ final class SurvivalEditorService {
 
     boolean isClientEditorSession(Player player) {
         return player != null && clientEditorSessions.containsKey(player.getUniqueId());
+    }
+
+    /** 收到客户端模组的首条消息即证明生存 Editor 可用，本次登录只提示一次 */
+    void noteClientPresent(Player player) {
+        if (!enabled() || player == null || !announced.add(player.getUniqueId())) {
+            return;
+        }
+        McwwsAxiomSurvivalPlugin.sendMessage(player,
+                plugin.msg("prefix") + plugin.msg("survival-editor-ready"));
     }
 
     void onClientEditorEnter(Player player) {
@@ -148,6 +159,7 @@ final class SurvivalEditorService {
         if (player != null) {
             clientEditorSessions.remove(player.getUniqueId());
             menuSnapshots.remove(player.getUniqueId());
+            announced.remove(player.getUniqueId());
         }
     }
 }

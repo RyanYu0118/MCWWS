@@ -3,6 +3,8 @@ package work.mcwws.axiomsurvival;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 
+import java.util.List;
+
 public final class ChargeService {
 
     public record ChargeDecision(boolean allowed, String reasonKey) {
@@ -55,23 +57,39 @@ public final class ChargeService {
 
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
         if (estimate.affectedBlocks() > maxScan) {
-            notify(player, plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
+            deny(player, "scan-too-large", plugin.msg("prefix")
+                    + plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
             return ChargeDecision.deny("scan-too-large");
         }
 
         if (estimate.protectedBlocks() > 0L) {
-            McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix")
-                    + "§c略过 §e" + estimate.protectedBlocks() + " §c个受保护方块（Slimefun/不可破坏），其余照常计费。");
+            long cap = plugin.getPluginConfig().getLong("protection.max-restore-blocks", 4096L);
+            if (ProtectedBlockGuard.enabled() && estimate.protectedBlocks() > cap) {
+                deny(player, "protected-too-many", plugin.msg("prefix") + plugin.msg(
+                        "protected-too-many", "count", String.valueOf(estimate.protectedBlocks())));
+                return ChargeDecision.deny("protected-too-many");
+            }
+            plugin.getChargeNotifier().addProtectedSkipped(player, estimate.protectedBlocks());
         }
 
         if (estimate.affectedBlocks() <= 0L) {
-            return ChargeDecision.allow();
+            return allowAndGuard(estimate);
+        }
+
+        ChargeHistory.Entry reversed = plugin.getChargeHistory().takeReverseMatch(player, estimate);
+        if (reversed != null) {
+            double net = UndoRefundService.refund(player, reversed);
+            if (net > 0D) {
+                plugin.getUsageLimits().refund(player, net);
+                plugin.getChargeNotifier().addRefund(player, reversed.gross(), net);
+            }
+            return allowAndGuard(estimate);
         }
 
         double total = estimate.total();
         double balance = EconomyService.getBalance(player);
         if (total > balance + 1e-6) {
-            notify(player, plugin.msg(
+            deny(player, "insufficient-balance", plugin.msg("prefix") + plugin.msg(
                     "insufficient-balance",
                     "total", EconomyService.format(total),
                     "blocks", String.valueOf(estimate.affectedBlocks()),
@@ -83,22 +101,103 @@ public final class ChargeService {
             return ChargeDecision.deny("insufficient-balance");
         }
 
-        MarketBridge.enqueue(player, estimate);
+        UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, total, estimate.affectedBlocks());
+        if (!verdict.allowed()) {
+            deny(player, verdict.messageKey(),
+                    plugin.msg("prefix") + plugin.msg(verdict.messageKey(), verdict.placeholders()));
+            return ChargeDecision.deny(verdict.messageKey());
+        }
 
         if (total > 0D && !LedgerBridge.withdraw(player, total, label)) {
-            notify(player, plugin.msg("prefix") + "扣款失败，请联系管理员。");
+            deny(player, "withdraw-failed", plugin.msg("prefix") + "扣款失败，请联系管理员。");
             return ChargeDecision.deny("withdraw-failed");
         }
 
-        notify(player, plugin.msg(
-                "charged",
-                "total", EconomyService.format(total),
-                "blocks", String.valueOf(estimate.affectedBlocks()),
-                "demolition", EconomyService.format(estimate.demolition()),
-                "material", EconomyService.format(estimate.material()),
-                "labor", EconomyService.format(estimate.labor())
-        ));
+        List<String> marketLines = MarketBridge.enqueue(player, estimate);
+        plugin.getUsageLimits().commit(player, total, estimate.affectedBlocks());
+        plugin.getChargeHistory().record(player, estimate, total, label, marketLines);
+        plugin.getChargeNotifier().addBlockCharge(player, estimate, total);
+        return allowAndGuard(estimate);
+    }
+
+    /** 实体生成/删除/调整：无材料成本，只按只数收劳务费 */
+    public ChargeDecision evaluateEntities(Player player, String label, String kind, long count) {
+        if (!shouldCharge(player) || count <= 0L) {
+            return ChargeDecision.allow();
+        }
+        if (!plugin.getPluginConfig().getBoolean("entity.charge-labor", true)) {
+            return ChargeDecision.allow();
+        }
+        double fee = FeeAccumulator.round(count * plugin.entityUnit(label));
+        ChargeDecision decision = chargeFlat(player, label, fee);
+        if (decision.allowed() && fee > 0D) {
+            plugin.getChargeNotifier().addEntityCharge(player, kind, count, fee);
+        }
+        return decision;
+    }
+
+    /** 生物群系画笔：不消耗材料，只按格收劳务费 */
+    public ChargeDecision evaluateBiome(Player player, String label, long cells) {
+        if (!shouldCharge(player) || cells <= 0L) {
+            return ChargeDecision.allow();
+        }
+        if (!plugin.getPluginConfig().getBoolean("biome.charge-labor", true)) {
+            return ChargeDecision.allow();
+        }
+        double fee = FeeAccumulator.round(cells * plugin.getPluginConfig().getDouble("biome.cell-unit", 0.5D));
+        ChargeDecision decision = chargeFlat(player, label, fee);
+        if (decision.allowed() && fee > 0D) {
+            plugin.getChargeNotifier().addBiomeCharge(player, cells, fee);
+        }
+        return decision;
+    }
+
+    /** 世界时间 / 世界属性：生存下直接禁止，不做计价 */
+    public ChargeDecision evaluateWorldControl(Player player, String configKey, String messageKey) {
+        if (!shouldCharge(player)) {
+            return ChargeDecision.allow();
+        }
+        if (!plugin.getPluginConfig().getBoolean(configKey, true)) {
+            return ChargeDecision.allow();
+        }
+        deny(player, messageKey, plugin.msg("prefix") + plugin.msg(messageKey));
+        return ChargeDecision.deny(messageKey);
+    }
+
+    private ChargeDecision chargeFlat(Player player, String label, double fee) {
+        if (fee <= 0D) {
+            return ChargeDecision.allow();
+        }
+        double balance = EconomyService.getBalance(player);
+        if (fee > balance + 1e-6) {
+            deny(player, "insufficient-balance-simple", plugin.msg("prefix") + plugin.msg(
+                    "insufficient-balance-simple",
+                    "total", EconomyService.format(fee),
+                    "balance", EconomyService.format(balance)
+            ));
+            return ChargeDecision.deny("insufficient-balance");
+        }
+        UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, fee, 0L);
+        if (!verdict.allowed()) {
+            deny(player, verdict.messageKey(),
+                    plugin.msg("prefix") + plugin.msg(verdict.messageKey(), verdict.placeholders()));
+            return ChargeDecision.deny(verdict.messageKey());
+        }
+        if (!LedgerBridge.withdraw(player, fee, label)) {
+            deny(player, "withdraw-failed", plugin.msg("prefix") + "扣款失败，请联系管理员。");
+            return ChargeDecision.deny("withdraw-failed");
+        }
+        plugin.getUsageLimits().commit(player, fee, 0L);
         return ChargeDecision.allow();
+    }
+
+    private ChargeDecision allowAndGuard(FeeAccumulator.Result estimate) {
+        ProtectedBlockGuard.scheduleRestore(estimate.protectedStates());
+        return ChargeDecision.allow();
+    }
+
+    private void deny(Player player, String key, String message) {
+        plugin.getChargeNotifier().deny(player, key, message);
     }
 
     public void sendDiagnostic(Player player) {
@@ -115,6 +214,16 @@ public final class ChargeService {
         }
         double balance = EconomyService.getBalance(player);
         McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7余额 §e" + EconomyService.format(balance));
+        FeeAccumulator.LaborRates labor = plugin.laborRates();
+        McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7劳务费 §f放置 §e"
+                + EconomyService.format(labor.placeUnit()) + "§7/格§f，拆除 §e"
+                + EconomyService.format(labor.demolishUnit()) + "§7/格");
+        double dailyMax = plugin.getPluginConfig().getDouble("limits.daily-max-charge", 0D);
+        if (dailyMax > 0D) {
+            McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7今日已用 §e"
+                    + EconomyService.format(plugin.getUsageLimits().spentToday(player))
+                    + " §7/ 上限 §e" + EconomyService.format(dailyMax));
+        }
         if (AxiomPaperHook.isAxiomSessionActive(player)) {
             McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg("axiom-ready"));
         } else {
@@ -123,17 +232,5 @@ public final class ChargeService {
         if (BlockProtection.shouldBypass(player)) {
             McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§e已启用扣费 bypass。");
         }
-    }
-
-    private static void notify(Player player, String message) {
-        McwwsAxiomSurvivalPlugin.sendMessage(player, pluginPrefix(message));
-    }
-
-    private static String pluginPrefix(String message) {
-        if (message.startsWith("§")) {
-            return message;
-        }
-        McwwsAxiomSurvivalPlugin plugin = McwwsAxiomSurvivalPlugin.getInstance();
-        return plugin == null ? message : plugin.msg("prefix") + message;
     }
 }

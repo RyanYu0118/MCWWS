@@ -31,5 +31,8 @@ final class SurvivalEditorJoinListener implements Listener {
     public void onQuit(PlayerQuitEvent event) {
         survivalEditorService.clear(event.getPlayer());
         EditorSessionState.clear(event.getPlayer());
+        plugin.getChargeNotifier().clear(event.getPlayer());
+        plugin.getChargeHistory().clear(event.getPlayer());
+        plugin.getUsageLimits().clear(event.getPlayer());
     }
 }

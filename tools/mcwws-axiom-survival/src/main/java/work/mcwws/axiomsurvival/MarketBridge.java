@@ -12,26 +12,62 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+/**
+ * Axiom 方块变更 → Skript 动态市场队列（虚拟库存 / 物价）。
+ * 行格式：materialId|amount|side|source （sell=旧方块进入市场；buy=新方块从市场取出）
+ */
 final class MarketBridge {
+
+    private static final String SOURCE = "axiom";
 
     private MarketBridge() {
     }
 
-    static void enqueue(Player player, FeeAccumulator.Result estimate) {
+    /** 写入市场队列，返回实际写入的行，供撤销时冲销 */
+    static List<String> enqueue(Player player, FeeAccumulator.Result estimate) {
         if (player == null || estimate == null || estimate.affectedBlocks() <= 0L) {
-            return;
+            return List.of();
         }
         McwwsAxiomSurvivalPlugin plugin = McwwsAxiomSurvivalPlugin.getInstance();
         if (plugin == null || !plugin.getPluginConfig().getBoolean("record-market-stock", true)) {
-            return;
+            return List.of();
         }
         List<String> lines = new ArrayList<>();
         collectLines(lines, estimate.removedCounts(), "sell");
         collectLines(lines, estimate.placedCounts(), "buy");
         if (lines.isEmpty()) {
-            return;
+            return List.of();
         }
         appendLines(plugin, lines);
+        return List.copyOf(lines);
+    }
+
+    /** 撤销时冲销此前写入的市场变动；有内容冲销则返回 true */
+    static boolean reverse(List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return false;
+        }
+        McwwsAxiomSurvivalPlugin plugin = McwwsAxiomSurvivalPlugin.getInstance();
+        if (plugin == null || !plugin.getPluginConfig().getBoolean("record-market-stock", true)) {
+            return false;
+        }
+        if (!plugin.getPluginConfig().getBoolean("reverse-market-on-undo", true)) {
+            return false;
+        }
+        List<String> reversed = new ArrayList<>(lines.size());
+        for (String line : lines) {
+            String[] parts = line.split("\\|");
+            if (parts.length < 3) {
+                continue;
+            }
+            String opposite = "buy".equals(parts[2].trim().toLowerCase()) ? "sell" : "buy";
+            reversed.add(parts[0] + "|" + parts[1] + "|" + opposite + "|" + SOURCE);
+        }
+        if (reversed.isEmpty()) {
+            return false;
+        }
+        appendLines(plugin, reversed);
+        return true;
     }
 
     private static void collectLines(List<String> lines, Map<String, Long> counts, String side) {
@@ -41,7 +77,7 @@ final class MarketBridge {
             if (id == null || id.isBlank() || "air".equals(id) || amount <= 0L) {
                 continue;
             }
-            lines.add(sanitize(id) + "|" + amount + "|" + side);
+            lines.add(sanitize(id) + "|" + amount + "|" + side + "|" + SOURCE);
         }
     }
 

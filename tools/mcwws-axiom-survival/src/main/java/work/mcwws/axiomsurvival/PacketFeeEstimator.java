@@ -41,31 +41,97 @@ final class PacketFeeEstimator {
         return builder.build();
     }
 
-    FeeAccumulator.Result estimateSetBufferPacket(Player player, Object friendlyByteBuf) {
+    /** set_buffer 首字节 type：0=方块缓冲，1=生物群系缓冲 */
+    record BufferEstimate(int type, FeeAccumulator.Result blocks, long biomeCells) {
+    }
+
+    BufferEstimate estimateSetBufferPacket(Player player, Object friendlyByteBuf) {
         FeeAccumulator.Builder builder = newBuilder();
         World world = player.getWorld();
         int mark;
         try {
             mark = readerIndex(friendlyByteBuf);
         } catch (ReflectiveOperationException ex) {
-            return builder.build();
+            return new BufferEstimate(0, builder.build(), 0L);
         }
+        int type = 0;
+        long biomeCells = 0L;
         try {
             readResourceKey(friendlyByteBuf);
             readUuid(friendlyByteBuf);
-            int type = readByte(friendlyByteBuf);
-            if (type != 0) {
-                return builder.build();
+            type = readByte(friendlyByteBuf);
+            if (type == 0) {
+                Object registry = getBlockRegistry(player);
+                Object buffer = loadBlockBuffer(friendlyByteBuf, registry, player);
+                scanBlockBuffer(builder, world, buffer);
+            } else if (type == 1) {
+                biomeCells = countBiomeCells(friendlyByteBuf);
             }
-            Object registry = getBlockRegistry(player);
-            Object buffer = loadBlockBuffer(friendlyByteBuf, registry, player);
-            scanBlockBuffer(builder, world, buffer);
         } catch (ReflectiveOperationException ex) {
             plugin.getLogger().fine("set_buffer 预估失败: " + ex.getMessage());
         } finally {
             setReaderIndex(friendlyByteBuf, mark);
         }
-        return builder.build();
+        return new BufferEstimate(type, builder.build(), biomeCells);
+    }
+
+    /** 实体类包（spawn/delete/manipulate）都以 readCollection 的 VarInt 数量开头 */
+    long countCollection(Object friendlyByteBuf) {
+        int mark;
+        try {
+            mark = readerIndex(friendlyByteBuf);
+        } catch (ReflectiveOperationException ex) {
+            return 0L;
+        }
+        try {
+            int count = (int) friendlyByteBuf.getClass().getMethod("readVarInt").invoke(friendlyByteBuf);
+            return Math.max(count, 0);
+        } catch (ReflectiveOperationException ex) {
+            plugin.getLogger().fine("实体包数量解析失败: " + ex.getMessage());
+            return 0L;
+        } finally {
+            setReaderIndex(friendlyByteBuf, mark);
+        }
+    }
+
+    /** 统计生物群系缓冲里实际被涂改的格数（forEachEntry 会跳过默认值） */
+    private long countBiomeCells(Object buf) throws ReflectiveOperationException {
+        Class<?> biomeBufferClass = Class.forName("com.moulberry.axiom.buffer.BiomeBuffer");
+        Object buffer = null;
+        for (Method method : biomeBufferClass.getMethods()) {
+            if ("load".equals(method.getName()) && method.getParameterCount() == 1) {
+                buffer = method.invoke(null, buf);
+                break;
+            }
+        }
+        if (buffer == null) {
+            return 0L;
+        }
+        Class<?> consumerClass = Class.forName("com.moulberry.axiom.buffer.PositionConsumer");
+        long[] count = {0L};
+        Object counter = java.lang.reflect.Proxy.newProxyInstance(
+                consumerClass.getClassLoader(),
+                new Class<?>[]{consumerClass},
+                (proxy, method, args) -> {
+                    String name = method.getName();
+                    if ("accept".equals(name)) {
+                        count[0]++;
+                        return null;
+                    }
+                    if ("hashCode".equals(name)) {
+                        return System.identityHashCode(proxy);
+                    }
+                    if ("equals".equals(name)) {
+                        return proxy == args[0];
+                    }
+                    if ("toString".equals(name)) {
+                        return "BiomeCellCounter";
+                    }
+                    return null;
+                }
+        );
+        biomeBufferClass.getMethod("forEachEntry", consumerClass).invoke(buffer, counter);
+        return count[0];
     }
 
     private void scanBlockBuffer(FeeAccumulator.Builder builder, World world, Object blockBuffer) throws ReflectiveOperationException {
@@ -96,7 +162,7 @@ final class PacketFeeEstimator {
                         }
                         Block block = world.getBlockAt(baseX + x, baseY + y, baseZ + z);
                         if (BlockProtection.isProtectedBlock(block)) {
-                            builder.addProtected();
+                            builder.addProtected(block);
                             continue;
                         }
                         BlockData target = NmsBlocks.toBlockData(newState);
@@ -113,7 +179,7 @@ final class PacketFeeEstimator {
         int z = NmsBlocks.blockPosZ(blockPos);
         Block block = world.getBlockAt(x, y, z);
         if (BlockProtection.isProtectedBlock(block)) {
-            builder.addProtected();
+            builder.addProtected(block);
             return;
         }
         BlockData target = NmsBlocks.toBlockData(newState);
@@ -126,7 +192,12 @@ final class PacketFeeEstimator {
         } else {
             plugin.getPriceCatalog().reloadIfStale();
         }
-        return new FeeAccumulator.Builder(plugin.getPriceCatalog(), plugin.laborRates());
+        int protectedCap = plugin.getPluginConfig().getInt("protection.max-restore-blocks", 4096);
+        return new FeeAccumulator.Builder(
+                plugin.getPriceCatalog(),
+                plugin.laborRates(),
+                ProtectedBlockGuard.enabled() ? protectedCap : 0
+        );
     }
 
     private Object getBlockRegistry(Player player) throws ReflectiveOperationException {

@@ -15,6 +15,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
     private static McwwsAxiomSurvivalPlugin instance;
     private PriceCatalog priceCatalog;
     private ChargeService chargeService;
+    private ChargeNotifier chargeNotifier;
+    private ChargeHistory chargeHistory;
+    private UsageLimits usageLimits;
     private EditorRestoreService editorRestoreService;
     private SurvivalEditorService survivalEditorService;
     private AxiomPaperHook axiomHook;
@@ -36,6 +39,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         }
         priceCatalog = new PriceCatalog(this);
         priceCatalog.reload();
+        chargeNotifier = new ChargeNotifier(this);
+        chargeHistory = new ChargeHistory(this);
+        usageLimits = new UsageLimits(this);
         chargeService = new ChargeService(this);
         editorRestoreService = new EditorRestoreService(this);
         survivalEditorService = new SurvivalEditorService(this, editorRestoreService);
@@ -75,6 +81,7 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
             editorRestoreService.restoreNow(player);
             return true;
         });
+        getServer().getScheduler().runTaskTimer(this, () -> usageLimits.save(), 1200L, 1200L);
         getServer().getScheduler().runTaskLater(this, () -> {
             if (!axiomHook.install()) {
                 getLogger().warning("AxiomPaper 钩子安装失败，将在 5 秒后重试。");
@@ -86,6 +93,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        if (usageLimits != null) {
+            usageLimits.save();
+        }
         axiomHook = null;
     }
 
@@ -106,6 +116,18 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         return chargeService;
     }
 
+    ChargeNotifier getChargeNotifier() {
+        return chargeNotifier;
+    }
+
+    ChargeHistory getChargeHistory() {
+        return chargeHistory;
+    }
+
+    UsageLimits getUsageLimits() {
+        return usageLimits;
+    }
+
     public SurvivalEditorService getSurvivalEditorService() {
         return survivalEditorService;
     }
@@ -122,10 +144,17 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
     }
 
     public boolean reloadPricesBeforeEstimate() {
-        return config.getBoolean(
-                "reload-prices-before-estimate",
-                config.getBoolean("reload-prices-before-charge", true)
-        );
+        return config.getBoolean("reload-prices-before-estimate", true);
+    }
+
+    /** 实体操作劳务单价：无材料成本，只按只数计费 */
+    public double entityUnit(String channel) {
+        return switch (channel) {
+            case "spawn_entity" -> config.getDouble("entity.spawn-unit", 20D);
+            case "delete_entity" -> config.getDouble("entity.delete-unit", 5D);
+            case "manipulate_entity" -> config.getDouble("entity.manipulate-unit", 2D);
+            default -> 0D;
+        };
     }
 
     public String msg(String key) {
