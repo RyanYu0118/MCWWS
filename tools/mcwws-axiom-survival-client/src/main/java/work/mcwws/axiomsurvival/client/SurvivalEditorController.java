@@ -21,6 +21,7 @@ public final class SurvivalEditorController {
     private static float menuYaw;
     private static float menuPitch;
     private static boolean menuFlying;
+    private static boolean menuMayfly;
 
     private SurvivalEditorController() {
     }
@@ -88,13 +89,18 @@ public final class SurvivalEditorController {
         menuYaw = player.getYRot();
         menuPitch = player.getXRot();
         menuFlying = player.getAbilities().flying;
+        menuMayfly = player.getAbilities().mayfly;
         hasMenuPose = true;
-        SurvivalEditorNetworking.sendMenuState(true);
+        McwwsAxiomSurvivalClientMod.LOGGER.debug(
+                "开菜单快照: flying={} mayfly={}", menuFlying, menuMayfly
+        );
+        SurvivalEditorNetworking.sendMenuState(true, menuFlying);
     }
 
     /**
      * 关菜单后：相机回玩家、恢复开菜单前坐标与飞行状态。客户端传送会被服务端移动校验拉回，
      * 因此同时请求服务端权威传送；旁观会强制 {@code flying}，切回创造时 vanilla 不会复位。
+     * 飞行状态只本地先行改一次做即时反馈，权威值由服务端 abilities 包下发。
      */
     public static void finalizeMenuClose() {
         if (!localEditorActive || EditorUI.isEnabled()) {
@@ -105,7 +111,7 @@ public final class SurvivalEditorController {
             return;
         }
         var player = mc.player;
-        SurvivalEditorNetworking.sendMenuState(false);
+        SurvivalEditorNetworking.sendMenuState(false, menuFlying);
         mc.gameMode.setLocalMode(GameType.CREATIVE);
         mc.setCameraEntity(player);
         if (hasMenuPose) {
@@ -113,14 +119,14 @@ public final class SurvivalEditorController {
             player.setYRot(menuYaw);
             player.setXRot(menuPitch);
             player.resetFallDistance();
-            if (player.getAbilities().flying != menuFlying) {
-                player.getAbilities().flying = menuFlying;
-                player.onUpdateAbilities();
-            }
+            player.getAbilities().flying = menuFlying;
+            player.getAbilities().mayfly = menuMayfly;
             hasMenuPose = false;
         }
         onEnterBuildMode();
-        McwwsAxiomSurvivalClientMod.LOGGER.debug("Editor 菜单已关闭：已恢复建造模式、位置与飞行状态");
+        McwwsAxiomSurvivalClientMod.LOGGER.debug(
+                "关菜单: 已恢复建造模式、位置与飞行状态 flying={} mayfly={}", menuFlying, menuMayfly
+        );
     }
 
     /** 关闭 Editor 菜单、回到建造时刷新经验条显示优先级 */

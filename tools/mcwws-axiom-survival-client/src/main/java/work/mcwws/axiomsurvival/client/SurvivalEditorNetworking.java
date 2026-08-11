@@ -48,16 +48,22 @@ final class SurvivalEditorNetworking {
             McwwsAxiomSurvivalClientMod.LOGGER.warn("无法发送 Editor 状态：通道未就绪");
             return;
         }
-        ClientPlayNetworking.send(new EditorStatePayload(enter ? OP_ENTER : OP_EXIT));
+        ClientPlayNetworking.send(new EditorStatePayload(enter ? OP_ENTER : OP_EXIT, (byte) 0));
     }
 
-    /** 请求服务端在开菜单时快照位置、关菜单时传送回该位置 */
-    static void sendMenuState(boolean open) {
+    /**
+     * 请求服务端在开菜单时快照位置、关菜单时传送回该位置；关菜单时附带开菜单前的飞行状态，
+     * 由服务端下发权威 abilities 包还原。
+     */
+    static void sendMenuState(boolean open, boolean flying) {
         if (!SurvivalEditorController.isServerSupported()
                 || !ClientPlayNetworking.canSend(EditorStatePayload.TYPE)) {
             return;
         }
-        ClientPlayNetworking.send(new EditorStatePayload(open ? OP_MENU_OPEN : OP_MENU_CLOSE));
+        ClientPlayNetworking.send(new EditorStatePayload(
+                open ? OP_MENU_OPEN : OP_MENU_CLOSE,
+                (byte) (flying ? 1 : 0)
+        ));
     }
 
     private record HelloPayload() implements CustomPacketPayload {
@@ -87,15 +93,18 @@ final class SurvivalEditorNetworking {
         }
     }
 
-    private record EditorStatePayload(byte op) implements CustomPacketPayload {
+    private record EditorStatePayload(byte op, byte flag) implements CustomPacketPayload {
 
         static final CustomPacketPayload.Type<EditorStatePayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
 
         static final StreamCodec<RegistryFriendlyByteBuf, EditorStatePayload> CODEC =
                 StreamCodec.of(
-                        (buf, payload) -> buf.writeByte(payload.op()),
-                        buf -> new EditorStatePayload(buf.readByte())
+                        (buf, payload) -> {
+                            buf.writeByte(payload.op());
+                            buf.writeByte(payload.flag());
+                        },
+                        buf -> new EditorStatePayload(buf.readByte(), buf.readByte())
                 );
 
         @Override

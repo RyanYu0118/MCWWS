@@ -17,7 +17,11 @@ final class SurvivalEditorService {
     private final McwwsAxiomSurvivalPlugin plugin;
     private final EditorRestoreService editorRestoreService;
     private final Map<UUID, Long> clientEditorSessions = new ConcurrentHashMap<>();
-    private final Map<UUID, Location> menuSnapshots = new ConcurrentHashMap<>();
+    private final Map<UUID, MenuSnapshot> menuSnapshots = new ConcurrentHashMap<>();
+
+    /** 开菜单前的建造位置与飞行状态；飞行权限由服务端自己记录，客户端本地创造会污染 abilities */
+    private record MenuSnapshot(Location location, boolean allowFlight, boolean flying) {
+    }
 
     SurvivalEditorService(McwwsAxiomSurvivalPlugin plugin, EditorRestoreService editorRestoreService) {
         this.plugin = plugin;
@@ -50,7 +54,10 @@ final class SurvivalEditorService {
         plugin.getLogger().info("生存 Editor 进入: " + player.getName());
     }
 
-    /** 客户端打开 Editor 菜单：记录建造位置，供关菜单时传送回来 */
+    /**
+     * 客户端打开 Editor 菜单：记录建造位置供关菜单传送回来；客户端本地旁观会强制飞行，
+     * 服务端同步置为飞行，否则服务端会在菜单期间累积摔落距离。
+     */
     void onClientMenuOpen(Player player) {
         if (!enabled() || player == null) {
             return;
@@ -59,20 +66,65 @@ final class SurvivalEditorService {
         if (location.getWorld() == null) {
             return;
         }
-        menuSnapshots.put(player.getUniqueId(), location.clone());
+        menuSnapshots.put(player.getUniqueId(), new MenuSnapshot(
+                location.clone(), player.getAllowFlight(), player.isFlying()
+        ));
+        plugin.getLogger().fine(String.format(
+                "菜单打开快照: %s allowFlight=%s isFlying=%s",
+                player.getName(), player.getAllowFlight(), player.isFlying()
+        ));
+        holdFlightDuringMenu(player);
     }
 
-    /** 客户端关闭 Editor 菜单：由服务端权威传送回开菜单前的位置 */
-    void onClientMenuClose(Player player) {
+    /**
+     * 客户端关闭 Editor 菜单：由服务端权威传送回开菜单前的位置，并按客户端快照下发飞行状态。
+     * 客户端单方面改 {@code abilities.flying} 会被 {@code PlayerToggleFlightEvent} 的处理插件顶回去，
+     * 必须由服务端 {@code setFlying} 下发权威 abilities 包，两端才一致（否则会出现在飞却吃摔落伤害）。
+     */
+    void onClientMenuClose(Player player, boolean flying) {
         if (player == null) {
             return;
         }
-        Location location = menuSnapshots.remove(player.getUniqueId());
-        if (location == null || !player.isOnline() || location.getWorld() == null) {
+        MenuSnapshot snapshot = menuSnapshots.remove(player.getUniqueId());
+        plugin.getLogger().fine(String.format(
+                "菜单关闭: %s 客户端上报 flying=%s，快照 allowFlight=%s flying=%s",
+                player.getName(), flying,
+                snapshot == null ? "无" : snapshot.allowFlight(),
+                snapshot == null ? "无" : snapshot.flying()
+        ));
+        if (snapshot == null || !player.isOnline() || snapshot.location().getWorld() == null) {
             return;
         }
-        player.teleport(location);
+        player.teleport(snapshot.location());
         player.setFallDistance(0f);
+        restoreFlight(player, snapshot);
+        // FlyWithFood 等插件可能在同 tick 内改回飞行状态，下一 tick 再重申一次
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                restoreFlight(player, snapshot);
+                player.setFallDistance(0f);
+                plugin.getLogger().fine(String.format(
+                        "菜单关闭后一 tick: %s allowFlight=%s isFlying=%s",
+                        player.getName(), player.getAllowFlight(), player.isFlying()
+                ));
+            }
+        }, 1L);
+    }
+
+    /** 菜单期间客户端本地旁观强制飞行，服务端同步跟上，否则会凭空累积摔落距离 */
+    private void holdFlightDuringMenu(Player player) {
+        player.setAllowFlight(true);
+        player.setFlying(true);
+    }
+
+    /**
+     * 先同步 FlyWithFood 内部状态，再无条件调用 setAllowFlight/setFlying，
+     * 确保权威 abilities 包一定重新下发，客户端只能跟随。
+     */
+    private void restoreFlight(Player player, MenuSnapshot snapshot) {
+        FlyWithFoodBridge.restoreFlyState(player, snapshot.allowFlight(), snapshot.flying());
+        player.setAllowFlight(snapshot.allowFlight());
+        player.setFlying(snapshot.allowFlight() && snapshot.flying());
     }
 
     void onClientEditorExit(Player player) {
