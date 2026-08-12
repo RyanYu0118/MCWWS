@@ -108,6 +108,11 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         return config;
     }
 
+    /** 排查扣费链路时打开，会把每个编辑包的判定与预估结果写进控制台 */
+    public boolean isDebug() {
+        return config.getBoolean("debug", false);
+    }
+
     public PriceCatalog getPriceCatalog() {
         return priceCatalog;
     }

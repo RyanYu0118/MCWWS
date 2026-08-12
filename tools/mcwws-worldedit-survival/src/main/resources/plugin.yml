@@ -15,5 +15,5 @@ permissions:
   mcwws.we.survival.admin:
     default: op
   mcwws.we.survival.bypass:
-    description: 跳过创世神生存建造扣费与保护扫描
-    default: op
+    description: 跳过创世神生存建造扣费与保护扫描（默认不给任何人，含 OP，需要时用权限插件显式授予）
+    default: false

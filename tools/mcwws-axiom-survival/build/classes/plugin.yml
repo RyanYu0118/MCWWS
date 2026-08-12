@@ -26,5 +26,5 @@ permissions:
     description: 生存模式下使用 Axiom 建造（按格扣费）
     default: true
   mcwws.axiom.survival.bypass:
-    description: 跳过 Axiom 生存建造扣费
-    default: op
+    description: 跳过 Axiom 生存建造扣费（默认不给任何人，含 OP，需要时用权限插件显式授予）
+    default: false

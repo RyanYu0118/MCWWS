@@ -59,8 +59,19 @@ final class ChargingPacketHandlers {
             Object friendlyByteBuf
     ) {
         if (!chargeService.shouldCharge(player)) {
+            if (plugin.isDebug()) {
+                plugin.getLogger().info("[debug] " + channel + " 免费放行: player=" + player.getName()
+                        + ", 模式=" + player.getGameMode()
+                        + ", bypass=" + BlockProtection.shouldBypass(player)
+                        + ", use权限=" + player.hasPermission("mcwws.axiom.survival.use")
+                        + ", Axiom会话=" + AxiomPaperHook.isAxiomSessionActive(player));
+            }
             invokeDelegate(delegate, player, friendlyByteBuf);
             return;
+        }
+        if (plugin.isDebug()) {
+            plugin.getLogger().info("[debug] " + channel + " 进入扣费判定: player=" + player.getName()
+                    + ", 主线程=" + Bukkit.isPrimaryThread());
         }
         try {
             if (!decide(plugin, gate, player, friendlyByteBuf, channel)) {

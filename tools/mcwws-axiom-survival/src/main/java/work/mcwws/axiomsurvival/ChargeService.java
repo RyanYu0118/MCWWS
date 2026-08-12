@@ -54,6 +54,14 @@ public final class ChargeService {
         if (estimate == null) {
             return ChargeDecision.allow();
         }
+        if (plugin.isDebug()) {
+            plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
+                    + ", 受保护=" + estimate.protectedBlocks()
+                    + ", 拆除=" + estimate.demolition()
+                    + ", 材料=" + estimate.material()
+                    + ", 劳务=" + estimate.labor()
+                    + ", 合计=" + estimate.total());
+        }
 
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
         if (estimate.affectedBlocks() > maxScan) {

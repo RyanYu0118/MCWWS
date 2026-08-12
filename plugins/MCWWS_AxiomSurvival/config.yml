@@ -1,4 +1,6 @@
 enabled: true
+# 排查扣费链路期间打开，问题定位后改回 false
+debug: true
 bypass-permission: mcwws.axiom.survival.bypass
 prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
 prices-reload-seconds: 60
