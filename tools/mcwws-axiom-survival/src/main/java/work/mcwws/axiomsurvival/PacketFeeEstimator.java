@@ -7,10 +7,14 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 
 final class PacketFeeEstimator {
 
     private final McwwsAxiomSurvivalPlugin plugin;
+    private final Set<String> loggedFailures = ConcurrentHashMap.newKeySet();
 
     PacketFeeEstimator(McwwsAxiomSurvivalPlugin plugin) {
         this.plugin = plugin;
@@ -34,7 +38,7 @@ final class PacketFeeEstimator {
                 }
             }
         } catch (ReflectiveOperationException ex) {
-            plugin.getLogger().fine("set_block 预估失败: " + ex.getMessage());
+            logEstimateFailure("set_block", ex);
         } finally {
             setReaderIndex(friendlyByteBuf, mark);
         }
@@ -68,7 +72,7 @@ final class PacketFeeEstimator {
                 biomeCells = countBiomeCells(friendlyByteBuf);
             }
         } catch (ReflectiveOperationException ex) {
-            plugin.getLogger().fine("set_buffer 预估失败: " + ex.getMessage());
+            logEstimateFailure("set_buffer", ex);
         } finally {
             setReaderIndex(friendlyByteBuf, mark);
         }
@@ -87,7 +91,7 @@ final class PacketFeeEstimator {
             int count = (int) friendlyByteBuf.getClass().getMethod("readVarInt").invoke(friendlyByteBuf);
             return Math.max(count, 0);
         } catch (ReflectiveOperationException ex) {
-            plugin.getLogger().fine("实体包数量解析失败: " + ex.getMessage());
+            logEstimateFailure("entity_count", ex);
             return 0L;
         } finally {
             setReaderIndex(friendlyByteBuf, mark);
@@ -184,6 +188,19 @@ final class PacketFeeEstimator {
         }
         BlockData target = NmsBlocks.toBlockData(newState);
         builder.addChange(block.getBlockData(), target);
+    }
+
+    /**
+     * 预估失败意味着这一包按 0 格放行、也就是免费建造，必须让管理员看见；
+     * 但同一次编辑会拆成很多包，所以每个通道只在第一次抬到 WARNING。
+     */
+    private void logEstimateFailure(String channel, ReflectiveOperationException ex) {
+        if (loggedFailures.add(channel)) {
+            plugin.getLogger().log(Level.WARNING,
+                    channel + " 扣费预估失败，这类改块将不计费，请检查 AxiomPaper 版本兼容性", ex);
+        } else {
+            plugin.getLogger().fine(channel + " 预估失败: " + ex.getMessage());
+        }
     }
 
     private FeeAccumulator.Builder newBuilder() {

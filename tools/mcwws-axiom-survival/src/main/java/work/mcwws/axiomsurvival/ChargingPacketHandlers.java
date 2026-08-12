@@ -63,7 +63,7 @@ final class ChargingPacketHandlers {
             return;
         }
         try {
-            if (!decideOnMainThread(plugin, gate, player, friendlyByteBuf, channel)) {
+            if (!decide(plugin, gate, player, friendlyByteBuf, channel)) {
                 return;
             }
         } catch (ReflectiveOperationException ex) {
@@ -72,6 +72,9 @@ final class ChargingPacketHandlers {
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
             return;
+        } catch (Throwable ex) {
+            // Axiom 在处理器抛异常时会直接踢人，这里兜住任何意外，宁可放过一次编辑
+            plugin.getLogger().log(Level.WARNING, "Axiom 扣费判定异常 (" + channel + ")，本次放行", ex);
         }
         invokeDelegate(delegate, player, friendlyByteBuf);
     }
@@ -80,7 +83,11 @@ final class ChargingPacketHandlers {
         PacketDelegate.invoke(delegate, player, buf);
     }
 
-    private static boolean decideOnMainThread(
+    /**
+     * 经济判定必须在主线程做。小载荷通道由 Bukkit 在主线程投递，此时直接判定；
+     * 大载荷通道跑在 Netty 线程，才需要调度到主线程并等结果。
+     */
+    private static boolean decide(
             McwwsAxiomSurvivalPlugin plugin,
             PacketGate gate,
             Player player,
@@ -91,6 +98,12 @@ final class ChargingPacketHandlers {
         byte[] snapshot = PacketBufs.copyReadable(buf);
         PacketBufs.readerIndex(buf, mark);
 
+        if (Bukkit.isPrimaryThread()) {
+            boolean allowed = gate.decide(player, PacketBufs.fromBytes(player, snapshot)).allowed();
+            PacketBufs.readerIndex(buf, mark);
+            return allowed;
+        }
+
         AtomicReference<ChargeService.ChargeDecision> decision =
                 new AtomicReference<>(ChargeService.ChargeDecision.deny("timeout"));
         CountDownLatch latch = new CountDownLatch(1);
@@ -98,7 +111,7 @@ final class ChargingPacketHandlers {
             try {
                 Object clone = PacketBufs.fromBytes(player, snapshot);
                 decision.set(gate.decide(player, clone));
-            } catch (ReflectiveOperationException ex) {
+            } catch (ReflectiveOperationException | RuntimeException ex) {
                 plugin.getLogger().log(Level.WARNING, "Axiom 异步扣费预估失败: " + ex.getMessage(), ex);
                 decision.set(ChargeService.ChargeDecision.deny("estimate-failed"));
             } finally {
