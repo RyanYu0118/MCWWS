@@ -16,9 +16,15 @@ labor:
   demolish-multiplier: 2.0
 
 # 拆除回收：拆下来的方块按市场卖价 × rate 折现给玩家，同时按 sell 侧写进市场库存队列。
-# 一次指令的净额 = 材料 + 劳务 − 回收，净额为负时直接把差额打给玩家。
+# rate 1.0 = 完全按市场卖价卖出，和玩家自己挂市场一致；一次指令的净额 = 材料 + 劳务 − 回收，
+# 净额为负时直接把差额打给玩家。
 salvage:
-  rate: 0.8
+  rate: 1.0
+
+# 搬运对冲：同一条指令里「这里拆掉、那里放下」的同种方块判定为搬运，只收劳务费，
+# 既不扣材料费也不给回收款，也不写市场库存队列（不在市场上转一圈）。
+move-netting:
+  enabled: true
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true
@@ -40,6 +46,7 @@ messages:
   insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f），当前 §c{balance}§f。"
   charged: "已扣除 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f）。"
   salvaged: "拆除回收 §a+{total}§f（§7{blocks} 格§f：回收 §a{salvage}§f − 材料 §e{material}§f − 劳务 §e{labor}§f），已卖给市场。"
+  move-note: "§7其中 §e{moved} §7格判定为搬运，只收劳务费，未在市场买卖。"
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
   estimate-no-blocks: "未检测到会变更的方块，命令已取消。"

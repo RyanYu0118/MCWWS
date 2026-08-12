@@ -22,6 +22,7 @@ final class ChargeNotifier {
         double labor;
         double total;
         long blocks;
+        long movedBlocks;
         long protectedBlocks;
         double refundGross;
         double refundNet;
@@ -50,6 +51,7 @@ final class ChargeNotifier {
             state.labor += estimate.labor();
             state.total += total;
             state.blocks += estimate.affectedBlocks();
+            state.movedBlocks += estimate.movedBlocks();
         }
         schedule(player);
     }
@@ -160,6 +162,12 @@ final class ChargeNotifier {
                         "material", EconomyService.format(FeeAccumulator.round(state.material)),
                         "labor", EconomyService.format(FeeAccumulator.round(state.labor))
                 ));
+                if (state.movedBlocks > 0L) {
+                    McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
+                            "move-note",
+                            "moved", String.valueOf(state.movedBlocks)
+                    ));
+                }
             }
             for (Map.Entry<String, long[]> entry : state.entityCounts.entrySet()) {
                 double fee = state.entityFees.getOrDefault(entry.getKey(), new double[1])[0];

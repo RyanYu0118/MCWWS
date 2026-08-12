@@ -57,6 +57,7 @@ public final class ChargeService {
         if (plugin.isDebug()) {
             plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
                     + ", 受保护=" + estimate.protectedBlocks()
+                    + ", 搬运=" + estimate.movedBlocks()
                     + ", 回收=" + estimate.salvage()
                     + ", 材料=" + estimate.material()
                     + ", 劳务=" + estimate.labor()

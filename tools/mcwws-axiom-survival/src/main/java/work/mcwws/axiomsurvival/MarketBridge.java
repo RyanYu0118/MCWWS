@@ -33,8 +33,9 @@ final class MarketBridge {
             return List.of();
         }
         List<String> lines = new ArrayList<>();
-        collectLines(lines, estimate.removedCounts(), "sell");
-        collectLines(lines, estimate.placedCounts(), "buy");
+        // 用净量：被判定为搬运的方块没有真正进出市场，不该在库存与压力上留痕
+        collectLines(lines, estimate.netRemovedCounts(), "sell");
+        collectLines(lines, estimate.netPlacedCounts(), "buy");
         if (lines.isEmpty()) {
             return List.of();
         }

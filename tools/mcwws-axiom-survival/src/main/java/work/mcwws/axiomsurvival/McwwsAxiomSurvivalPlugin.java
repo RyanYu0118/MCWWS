@@ -153,6 +153,11 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         return Math.min(Math.max(config.getDouble("salvage.rate", 0.8D), 0D), 1D);
     }
 
+    /** 是否把同一次编辑里拆放相同方块的部分判定为搬运，只收劳务费且不走市场 */
+    public boolean netMoves() {
+        return config.getBoolean("move-netting.enabled", true);
+    }
+
     public boolean reloadPricesBeforeEstimate() {
         return config.getBoolean("reload-prices-before-estimate", true);
     }

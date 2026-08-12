@@ -33,14 +33,24 @@ public final class FeeEstimate {
         }
     }
 
+    /**
+     * @param removedCounts    原始拆除计数，不做搬运对冲
+     * @param placedCounts     原始放置计数，同上
+     * @param netRemovedCounts 对冲搬运后真正流入市场的量
+     * @param netPlacedCounts  对冲搬运后真正从市场取出的量
+     * @param movedBlocks      被判定为搬运（原地拆、别处放同种方块）的格数，只收劳务费
+     */
     public record Result(
             double salvage,
             double material,
             double labor,
             long affectedBlocks,
             long protectedBlocks,
+            long movedBlocks,
             Map<String, Long> removedCounts,
-            Map<String, Long> placedCounts
+            Map<String, Long> placedCounts,
+            Map<String, Long> netRemovedCounts,
+            Map<String, Long> netPlacedCounts
     ) {
         /**
          * 材料 + 人工 − 回收。拆下来的方块按卖价折现给玩家，所以净额可以为负，
@@ -55,7 +65,7 @@ public final class FeeEstimate {
     }
 
     public static Result empty() {
-        return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of());
+        return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of());
     }
 
     public static Result forSet(PriceCatalog prices, LaborRates laborRates, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
@@ -204,6 +214,7 @@ public final class FeeEstimate {
         private final PriceCatalog prices;
         private final LaborRates laborRates;
         private final double salvageRate;
+        private final boolean netMoves;
         private double salvage;
         private double material;
         private double labor;
@@ -217,6 +228,7 @@ public final class FeeEstimate {
             this.laborRates = laborRates != null ? laborRates : LaborRates.defaults();
             McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
             this.salvageRate = plugin == null ? 0.8D : plugin.salvageRate();
+            this.netMoves = plugin == null || plugin.netMoves();
         }
 
         void addChange(BaseBlock existing, BaseBlock target) {
@@ -256,8 +268,30 @@ public final class FeeEstimate {
         }
 
         Result build() {
-            salvage = round(salvage);
-            material = round(material);
+            Map<String, Long> netRemoved = new HashMap<>(removedCounts);
+            Map<String, Long> netPlaced = new HashMap<>(placedCounts);
+            double netMaterial = material;
+            double netSalvage = salvage;
+            long moved = 0L;
+            if (netMoves) {
+                for (Map.Entry<String, Long> entry : removedCounts.entrySet()) {
+                    String id = entry.getKey();
+                    long placedSame = placedCounts.getOrDefault(id, 0L);
+                    if (placedSame <= 0L) {
+                        continue;
+                    }
+                    // 同种方块「这里拆掉、那里放下」就是搬运：材料没消耗、市场也没进出，只该收劳务费
+                    long count = Math.min(entry.getValue(), placedSame);
+                    moved += count;
+                    netMaterial -= prices.getBuyPrice(id) * count;
+                    netSalvage -= prices.getSellPrice(id) * salvageRate * count;
+                    subtract(netRemoved, id, count);
+                    subtract(netPlaced, id, count);
+                }
+            }
+            // 物价表可能在预估途中重载，减出来的极小负值直接抹平
+            salvage = Math.max(round(netSalvage), 0D);
+            material = Math.max(round(netMaterial), 0D);
             labor = round(labor);
             return new Result(
                     salvage,
@@ -265,9 +299,25 @@ public final class FeeEstimate {
                     labor,
                     affectedBlocks,
                     protectedBlocks,
+                    moved,
                     Map.copyOf(removedCounts),
-                    Map.copyOf(placedCounts)
+                    Map.copyOf(placedCounts),
+                    Map.copyOf(netRemoved),
+                    Map.copyOf(netPlaced)
             );
+        }
+
+        private static void subtract(Map<String, Long> counts, String id, long amount) {
+            Long current = counts.get(id);
+            if (current == null) {
+                return;
+            }
+            long left = current - amount;
+            if (left > 0L) {
+                counts.put(id, left);
+            } else {
+                counts.remove(id);
+            }
         }
     }
 

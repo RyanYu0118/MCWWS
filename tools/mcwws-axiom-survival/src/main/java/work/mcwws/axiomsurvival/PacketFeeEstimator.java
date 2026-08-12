@@ -220,6 +220,7 @@ final class PacketFeeEstimator {
                 plugin.getPriceCatalog(),
                 plugin.laborRates(),
                 plugin.salvageRate(),
+                plugin.netMoves(),
                 ProtectedBlockGuard.enabled() ? protectedCap : 0
         );
     }

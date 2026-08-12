@@ -195,6 +195,13 @@ public final class WeSurvivalListener {
                     "labor", EconomyService.format(estimate.labor())
             ));
         }
+
+        if (estimate.movedBlocks() > 0L) {
+            McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
+                    "move-note",
+                    "moved", String.valueOf(estimate.movedBlocks())
+            ));
+        }
     }
 
     private static boolean requiresBlockChanges(String command) {

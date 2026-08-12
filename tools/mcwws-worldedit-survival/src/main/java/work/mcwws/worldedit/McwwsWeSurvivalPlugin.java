@@ -95,6 +95,11 @@ public final class McwwsWeSurvivalPlugin extends JavaPlugin {
         return Math.min(Math.max(config.getDouble("salvage.rate", 0.8D), 0D), 1D);
     }
 
+    /** 是否把同一条指令里拆放相同方块的部分判定为搬运，只收劳务费且不走市场 */
+    public boolean netMoves() {
+        return config.getBoolean("move-netting.enabled", true);
+    }
+
     public Set<String> getChargeCommands() {
         return chargeCommands;
     }

@@ -15,14 +15,24 @@ public final class FeeAccumulator {
     public record LaborRates(double placeUnit, double demolishUnit) {
     }
 
+    /**
+     * @param removedCounts    原始拆除计数，撤销配对靠它，不做搬运对冲
+     * @param placedCounts     原始放置计数，同上
+     * @param netRemovedCounts 对冲搬运后真正流入市场的量
+     * @param netPlacedCounts  对冲搬运后真正从市场取出的量
+     * @param movedBlocks      被判定为搬运（原地拆、别处放同种方块）的格数，只收劳务费
+     */
     public record Result(
             double salvage,
             double material,
             double labor,
             long affectedBlocks,
             long protectedBlocks,
+            long movedBlocks,
             Map<String, Long> removedCounts,
             Map<String, Long> placedCounts,
+            Map<String, Long> netRemovedCounts,
+            Map<String, Long> netPlacedCounts,
             List<BlockState> protectedStates
     ) {
         /**
@@ -34,7 +44,7 @@ public final class FeeAccumulator {
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, Map.of(), Map.of(), List.of());
+            return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of());
         }
     }
 
@@ -42,6 +52,7 @@ public final class FeeAccumulator {
         private final PriceCatalog prices;
         private final LaborRates laborRates;
         private final double salvageRate;
+        private final boolean netMoves;
         private final int protectedCaptureCap;
         private double salvage;
         private double material;
@@ -52,10 +63,17 @@ public final class FeeAccumulator {
         private final Map<String, Long> placedCounts = new HashMap<>();
         private final List<BlockState> protectedStates = new ArrayList<>();
 
-        public Builder(PriceCatalog prices, LaborRates laborRates, double salvageRate, int protectedCaptureCap) {
+        public Builder(
+                PriceCatalog prices,
+                LaborRates laborRates,
+                double salvageRate,
+                boolean netMoves,
+                int protectedCaptureCap
+        ) {
             this.prices = prices;
             this.laborRates = laborRates;
             this.salvageRate = Math.min(Math.max(salvageRate, 0D), 1D);
+            this.netMoves = netMoves;
             this.protectedCaptureCap = Math.max(protectedCaptureCap, 0);
         }
 
@@ -95,16 +113,54 @@ public final class FeeAccumulator {
         }
 
         public Result build() {
+            Map<String, Long> netRemoved = new HashMap<>(removedCounts);
+            Map<String, Long> netPlaced = new HashMap<>(placedCounts);
+            double netMaterial = material;
+            double netSalvage = salvage;
+            long moved = 0L;
+            if (netMoves) {
+                for (Map.Entry<String, Long> entry : removedCounts.entrySet()) {
+                    String id = entry.getKey();
+                    long placedSame = placedCounts.getOrDefault(id, 0L);
+                    if (placedSame <= 0L) {
+                        continue;
+                    }
+                    // 同种方块「这里拆掉、那里放下」就是搬运：材料没消耗、市场也没进出，只该收劳务费
+                    long count = Math.min(entry.getValue(), placedSame);
+                    moved += count;
+                    netMaterial -= prices.getBuyPrice(id) * count;
+                    netSalvage -= prices.getSellPrice(id) * salvageRate * count;
+                    subtract(netRemoved, id, count);
+                    subtract(netPlaced, id, count);
+                }
+            }
             return new Result(
-                    round(salvage),
-                    round(material),
+                    // 物价表可能在预估途中重载，减出来的极小负值直接抹平
+                    Math.max(round(netSalvage), 0D),
+                    Math.max(round(netMaterial), 0D),
                     round(labor),
                     affectedBlocks,
                     protectedBlocks,
+                    moved,
                     Map.copyOf(removedCounts),
                     Map.copyOf(placedCounts),
+                    Map.copyOf(netRemoved),
+                    Map.copyOf(netPlaced),
                     List.copyOf(protectedStates)
             );
+        }
+
+        private static void subtract(Map<String, Long> counts, String id, long amount) {
+            Long current = counts.get(id);
+            if (current == null) {
+                return;
+            }
+            long left = current - amount;
+            if (left > 0L) {
+                counts.put(id, left);
+            } else {
+                counts.remove(id);
+            }
         }
 
         private static String itemIdFromBlockData(BlockData blockData) {
