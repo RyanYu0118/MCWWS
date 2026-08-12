@@ -10,6 +10,30 @@ flight:
   amounts:
     - 4.0
 
+# 屏幕提示：装了 MCWWS_AxiomSurvivalClient 的玩家显示在左下角浮层，其余玩家回退到 action bar。
+# 同分类同方向的连续变动在 merge-window-ms 内累加成一条（飞行每秒扣费、Axiom 逐包扣费），
+# 单笔变动照常单独显示，与网页零钱明细一致。
+notify:
+  enabled: true
+  actionbar-fallback: true
+  merge-window-ms: 2000
+  format: "{color}{sign}{amount} &7· &f{label} &7· 余 &e{balance}"
+  credit-color: "&a"
+  debit-color: "&c"
+  # 飞行扣费在账本里由 Skript 记录，这里单独给它分类名以便合并与显示
+  flight-category: flight
+  flight-description: 飞行消耗
+  # 分类 → 屏幕显示名；没列出的分类退回账本说明的前半段
+  labels:
+    flight: 飞行消耗
+    axiom: Axiom 建造
+    axiom_undo: Axiom 撤销退款
+    worldedit: 创世神建造
+    worldedit_undo: 创世神撤销退款
+    shop_sell: 出售物品
+    shop_buy: 购买物品
+    other: 经济变动
+
 # Essentials UserBalanceUpdateEvent.Cause 到明细分类的映射
 cause-categories:
   COMMAND_ECO: other

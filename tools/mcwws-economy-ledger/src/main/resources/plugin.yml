@@ -1,10 +1,10 @@
 name: MCWWS_EconomyLedger
 main: work.mcwws.economyledger.McwwsEconomyLedgerPlugin
-version: 1.0.0
+version: 1.1.0
 api-version: '1.21'
 depend: [Vault]
 softdepend: [Essentials, EssentialsX]
-description: MCWWS 零钱明细经济层兜底 - 监听 Essentials 余额变动并写入 ledger 队列
+description: MCWWS 零钱明细经济层兜底 - 监听 Essentials 余额变动，写入 ledger 队列并推送屏幕提示
 
 commands:
   mcwws-ledger-reload:

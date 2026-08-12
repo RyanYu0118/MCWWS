@@ -99,10 +99,6 @@ final class EssentialsBalanceListener implements Listener {
         String direction = LedgerQueueWriter.directionForDelta(delta);
         double amount = LedgerQueueWriter.absAmount(delta);
 
-        if (shouldSkipFlight(direction, amount, cause)) {
-            return;
-        }
-
         UUID uuid = player.getUniqueId();
         Optional<LedgerContext.Entry> context = LedgerContext.peek(uuid);
 
@@ -115,6 +111,23 @@ final class EssentialsBalanceListener implements Listener {
         String refId = context.map(LedgerContext.Entry::refId)
                 .filter(value -> !value.isBlank())
                 .orElseGet(() -> LedgerQueueWriter.defaultRefId("ess", uuid.toString(), amount, cause));
+
+        boolean flightLike = shouldSkipFlight(direction, amount, cause);
+        // 屏幕提示要覆盖全部余额变动，包括飞行这种账本里另有来源、以及 refId 相同会被去重的变动
+        BalanceNotifier notifier = plugin.getBalanceNotifier();
+        if (notifier != null) {
+            notifier.notifyChange(
+                    player,
+                    delta,
+                    newValue,
+                    flightLike ? plugin.getFlightCategory() : category,
+                    flightLike ? plugin.getFlightDescription() : description
+            );
+        }
+
+        if (flightLike) {
+            return;
+        }
 
         if (dedupCache.shouldSkip("ref:" + refId)) {
             return;

@@ -20,12 +20,22 @@ public final class McwwsEconomyLedgerPlugin extends JavaPlugin {
     private LedgerQueueWriter queueWriter;
     private DedupCache dedupCache;
     private EssentialsBalanceListener balanceListener;
+    private BalanceNotifier balanceNotifier;
 
     private Map<String, String> causeCategories = Map.of();
     private Map<String, String> causeDescriptions = Map.of();
+    private Map<String, String> notifyLabels = Map.of();
     private List<Double> flightAmounts = List.of(4.0D);
     private boolean flightSkipEnabled = true;
     private long dedupWindowMs = 4000L;
+    private boolean notifyEnabled = true;
+    private boolean notifyActionBarFallback = true;
+    private long notifyMergeWindowMs = 2000L;
+    private String notifyFormat = "{color}{sign}{amount} §7· §f{label} §7· 余 §e{balance}";
+    private String notifyCreditColor = "§a";
+    private String notifyDebitColor = "§c";
+    private String flightCategory = "flight";
+    private String flightDescription = "飞行消耗";
 
     public static McwwsEconomyLedgerPlugin getInstance() {
         return instance;
@@ -42,6 +52,10 @@ public final class McwwsEconomyLedgerPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+
+        balanceNotifier = new BalanceNotifier(this);
+        getServer().getMessenger().registerOutgoingPluginChannel(this, BalanceHudChannel.CHANNEL);
+        getServer().getPluginManager().registerEvents(new BalanceNotifierQuitListener(balanceNotifier), this);
 
         balanceListener = new EssentialsBalanceListener(this, queueWriter, dedupCache);
         balanceListener.register();
@@ -83,6 +97,16 @@ public final class McwwsEconomyLedgerPlugin extends JavaPlugin {
 
         causeCategories = loadStringMap(config, "cause-categories");
         causeDescriptions = loadStringMap(config, "cause-descriptions");
+
+        notifyEnabled = config.getBoolean("notify.enabled", true);
+        notifyActionBarFallback = config.getBoolean("notify.actionbar-fallback", true);
+        notifyMergeWindowMs = Math.max(config.getLong("notify.merge-window-ms", 2000L), 0L);
+        notifyFormat = config.getString("notify.format", notifyFormat);
+        notifyCreditColor = config.getString("notify.credit-color", "§a");
+        notifyDebitColor = config.getString("notify.debit-color", "§c");
+        flightCategory = config.getString("notify.flight-category", "flight");
+        flightDescription = config.getString("notify.flight-description", "飞行消耗");
+        notifyLabels = loadStringMap(config, "notify.labels");
     }
 
     private Map<String, String> loadStringMap(FileConfiguration config, String path) {
@@ -117,6 +141,47 @@ public final class McwwsEconomyLedgerPlugin extends JavaPlugin {
             return base + "（支出）";
         }
         return base;
+    }
+
+    public BalanceNotifier getBalanceNotifier() {
+        return balanceNotifier;
+    }
+
+    public boolean isNotifyEnabled() {
+        return notifyEnabled;
+    }
+
+    public boolean isNotifyActionBarFallback() {
+        return notifyActionBarFallback;
+    }
+
+    public long getNotifyMergeWindowMs() {
+        return notifyMergeWindowMs;
+    }
+
+    public String getNotifyFormat() {
+        return notifyFormat;
+    }
+
+    public String getNotifyCreditColor() {
+        return notifyCreditColor;
+    }
+
+    public String getNotifyDebitColor() {
+        return notifyDebitColor;
+    }
+
+    /** 分类的屏幕显示名；未配置返回 null，由调用方退回账本说明 */
+    public String getNotifyLabel(String category) {
+        return category == null ? null : notifyLabels.get(category.toUpperCase(Locale.ROOT));
+    }
+
+    public String getFlightCategory() {
+        return flightCategory;
+    }
+
+    public String getFlightDescription() {
+        return flightDescription;
     }
 
     public boolean isFlightSkipEnabled() {

@@ -12,6 +12,7 @@ public final class McwwsAxiomSurvivalClientMod implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         SurvivalEditorNetworking.register();
+        BalanceHudNetworking.register();
         LOGGER.info("MCWWS Axiom Survival Client 已加载，等待服务端 hello…");
     }
 }
