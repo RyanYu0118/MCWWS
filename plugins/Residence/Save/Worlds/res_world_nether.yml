@@ -4,19 +4,6 @@ Messages:
     EnterMessage: Welcome %player to %residence, owned by %owner.
 Flags:
   1:
-    container: true
-    ignite: true
-    move: true
-    trade: true
-    shear: true
-    mobkilling: true
-    build: true
-    use: true
-    destroy: true
-    vehicledestroy: true
-    leash: true
-    animalkilling: true
-  2:
     container: false
     ignite: false
     shear: false
@@ -34,7 +21,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  3:
+  2:
     container: true
     ignite: false
     shear: false
@@ -58,7 +45,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 2
+      PlayerFlags: {}
+      AreaFlags: 1
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719066804907
@@ -69,7 +57,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 3
+      PlayerFlags: {}
+      AreaFlags: 2
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719124482702
@@ -80,7 +69,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 3
+      PlayerFlags: {}
+      AreaFlags: 2
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719067264428
@@ -91,7 +81,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 3
+      PlayerFlags: {}
+      AreaFlags: 2
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719066510607

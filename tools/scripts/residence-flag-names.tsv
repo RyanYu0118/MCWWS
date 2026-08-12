@@ -1,0 +1,126 @@
+# Residence flag 中文名对照表
+# 列：flag<TAB>译名<TAB>描述覆盖（可留空）
+# 译名会写入 Chinese.yml 的 CommandHelp.flags.SubCommands.<flag>.Translated
+# Residence 的 Flags.getFlag() 同时匹配英文原名与译名，存档里的键仍是英文，所以改这里不影响命令与数据
+anvil	铁砧
+admin	权限管理
+animalkilling	击杀动物
+animals	动物生成
+backup	备份还原
+bank	领地银行
+bed	使用床
+beacon	信标
+brew	酿造台
+build	建造
+burn	方块燃烧
+button	按钮
+cake	食用蛋糕
+canimals	刷怪蛋生成动物
+chorustp	紫颂果传送
+chat	领地频道
+cmonsters	刷怪蛋生成怪物
+commandblock	命令方块
+command	执行命令
+container	容器
+coords	显示坐标
+craft	合成总控
+creeper	苦力怕爆炸
+dragongrief	末影龙破坏
+day	恒为白天
+dye	羊毛染色
+damage	实体受伤
+decay	树叶消失
+destroy	破坏方块
+dryup	耕地失水
+diode	红石中继器
+door	门与活板门
+egg	末影龙蛋
+enchant	附魔台
+explode	爆炸
+enderpearl	末影珍珠传送
+fallinprotection	落入保护
+falldamage	摔落伤害
+feed	自动进食
+fireball	火球
+firespread	火焰蔓延
+flowinprotection	液体流入保护
+flow	液体流动
+flowerpot	花盆
+grow	作物生长
+glow	发光效果
+hotfloor	岩浆块烫伤
+hidden	列表隐藏
+hook	钓竿钩取
+healing	自动治疗
+iceform	结冰生成
+icemelt	冰雪融化
+ignite	点火
+jump2	跳跃提升2
+jump3	跳跃提升3
+keepinv	死亡保留物品
+keepexp	死亡保留经验
+lavaflow	岩浆流动
+leash	拴绳
+lever	拉杆
+mobexpdrop	生物掉落经验
+mobitemdrop	生物掉落物品
+mobkilling	击杀生物
+monsters	怪物生成
+move	领地内移动
+nanimals	自然生成动物
+nmonsters	自然生成怪物
+night	恒为夜晚
+nofly	禁止飞行
+fly	飞行状态
+nomobs	生物进入
+note	音符盒
+nodurability	物品不损耐久
+overridepvp	强制PVP
+pressure	压力板
+piston	活塞推动
+pistonprotection	活塞保护
+place	放置方块
+pvp	玩家对战
+rain	恒为下雨
+respawn	自动重生
+riding	骑乘
+shoot	射击
+sun	恒为晴天
+shop	商店领地
+snowtrail	雪傀儡雪迹
+spread	方块扩散
+snowball	雪球击退
+sanimals	刷怪笼生成动物
+shear	剪羊毛
+smonsters	刷怪笼生成怪物
+subzone	创建子区域
+table	工作台
+tnt	TNT爆炸
+tp	传送进入
+trade	村民交易
+trample	踩坏耕地
+use	交互使用
+vehicledestroy	破坏载具
+witherspawn	凋灵生成
+witherdamage	凋灵伤害
+witherdestruction	凋灵破坏
+waterflow	水流动
+wspeed1	行走速度1
+wspeed2	行走速度2
+anchor	重生锚	允许或禁止使用重生锚
+anvilbreak	铁砧损坏	允许或禁止领地内铁砧被使用损坏
+safezone	清除负面效果	设置为 true 时自动清除领地内玩家的负面效果
+honey	收取蜂蜜	允许或禁止玩家收取蜂蜜
+honeycomb	收取蜂巢	允许或禁止玩家收取蜂巢
+brush	考古刷	允许或禁止使用刷子刷方块
+copper	铜块处理	允许或禁止改变铜块状态
+elytra	鞘翅飞行	允许或禁止在领地内使用鞘翅
+friendlyfire	友方伤害	允许或禁止友方伤害
+harvest	收割作物	允许或禁止收割作物
+itemdrop	丢出物品	允许或禁止丢出物品
+itempickup	拾取物品	允许或禁止拾取物品
+nametag	命名牌	允许或禁止使用命名牌
+title	进出提示	显示或隐藏领地的进出提示
+phantomspawn	幻翼生成	允许或禁止幻翼生成
+goathorn	山羊角	允许或禁止使用山羊角
+skulk	幽匿蔓延	阻止幽匿催发体蔓延

@@ -43,19 +43,6 @@ Flags:
     tp: true
     creeper: false
   3:
-    container: true
-    ignite: true
-    move: true
-    trade: true
-    shear: true
-    mobkilling: true
-    build: true
-    use: true
-    destroy: true
-    vehicledestroy: true
-    leash: true
-    animalkilling: true
-  4:
     container: false
     ignite: false
     shear: false
@@ -73,7 +60,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  5:
+  4:
     container: false
     ignite: false
     shear: false
@@ -92,7 +79,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  6:
+  5:
     container: false
     ignite: false
     shear: false
@@ -110,7 +97,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  7:
+  6:
     container: false
     ignite: false
     shear: false
@@ -129,7 +116,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  8:
+  7:
     container: true
     ignite: false
     door: true
@@ -157,7 +144,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  9:
+  8:
     container: false
     bed: true
     ignite: true
@@ -203,7 +190,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  10:
+  9:
     container: false
     ignite: false
     shear: false
@@ -222,7 +209,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  11:
+  10:
     container: true
     ignite: false
     door: true
@@ -244,7 +231,7 @@ Flags:
     tp: true
     creeper: false
     wspeed2: true
-  12:
+  11:
     container: false
     ignite: false
     shear: false
@@ -264,7 +251,7 @@ Flags:
     tp: true
     creeper: false
     wspeed2: true
-  13:
+  12:
     container: true
     ignite: false
     waterflow: true
@@ -291,7 +278,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  14:
+  13:
     container: true
     ignite: false
     door: true
@@ -315,7 +302,7 @@ Flags:
     creeper: false
     table: true
     wspeed2: true
-  15:
+  14:
     container: true
     bed: true
     ignite: false
@@ -382,7 +369,7 @@ Flags:
     leash: false
     tp: true
     smonsters: false
-  16:
+  15:
     container: false
     ignite: false
     shear: false
@@ -400,6 +387,19 @@ Flags:
     tp: true
     creeper: false
     wspeed2: true
+  16:
+    container: true
+    ignite: true
+    move: true
+    trade: true
+    shear: true
+    mobkilling: true
+    build: true
+    use: true
+    destroy: true
+    vehicledestroy: true
+    leash: true
+    animalkilling: true
   17:
     container: false
     ignite: false
@@ -606,7 +606,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719134144744
@@ -617,7 +618,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 5
+      PlayerFlags: {}
+      AreaFlags: 4
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1660707355288
@@ -630,7 +632,7 @@ Residences:
     Permissions:
       PlayerFlags:
         4f6bcced-a7be-4b4a-bd23-bcd54f3e4956: 1
-      AreaFlags: 6
+      AreaFlags: 5
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1604721826724
@@ -640,7 +642,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719135035486
@@ -651,7 +654,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 7
+      PlayerFlags: {}
+      AreaFlags: 6
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1718877282066
@@ -662,7 +666,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719066936510
@@ -673,7 +678,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 8
+      PlayerFlags: {}
+      AreaFlags: 7
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1663601147532
@@ -684,7 +690,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 7
+      PlayerFlags: {}
+      AreaFlags: 6
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1721121306594
@@ -694,7 +701,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719066636908
@@ -705,7 +713,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719124359328
@@ -716,7 +725,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 9
+      PlayerFlags: {}
+      AreaFlags: 8
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1666001074818
@@ -726,7 +736,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 10
+      PlayerFlags: {}
+      AreaFlags: 9
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1692276677082
@@ -737,7 +748,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719067176003
@@ -748,7 +760,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 11
+      PlayerFlags: {}
+      AreaFlags: 10
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1662034471911
@@ -759,7 +772,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719133280504
@@ -772,7 +786,7 @@ Residences:
     Permissions:
       PlayerFlags:
         4f6bcced-a7be-4b4a-bd23-bcd54f3e4956: 1
-      AreaFlags: 12
+      AreaFlags: 11
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1605274721805
@@ -784,7 +798,8 @@ Residences:
     BlockSellPrice: 0.3
     StoredMoney: 2.0
     Permissions:
-      AreaFlags: 13
+      PlayerFlags: {}
+      AreaFlags: 12
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1700121225258
@@ -794,7 +809,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719132766625
@@ -805,7 +821,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 14
+      PlayerFlags: {}
+      AreaFlags: 13
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719065338382
@@ -816,7 +833,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 15
+      PlayerFlags: {}
+      AreaFlags: 14
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1604718617319
@@ -827,7 +845,8 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 16
+      PlayerFlags: {}
+      AreaFlags: 15
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1662206902483
@@ -844,14 +863,16 @@ Residences:
           '1':
             Messages: 2
             Permissions:
-              AreaFlags: 4
+              PlayerFlags: {}
+              AreaFlags: 3
               OwnerUUID: 00000000-0000-0000-0000-000000000000
               OwnerLastKnownName: MCWWS
             CreatedOn: 1720344695816
             Areas:
               '1': -193:79:-953:-191:82:-950
         Permissions:
-          AreaFlags: 4
+          PlayerFlags: {}
+          AreaFlags: 3
           OwnerUUID: 00000000-0000-0000-0000-000000000000
           OwnerLastKnownName: MCWWS
         CreatedOn: 1720344562874
@@ -859,7 +880,7 @@ Residences:
           hole: -193:79:-953:-191:82:-950
     Permissions:
       PlayerFlags:
-        e381cb28-d93f-49aa-ac73-f8b57420d181: 3
+        e381cb28-d93f-49aa-ac73-f8b57420d181: 16
       AreaFlags: 17
       OwnerUUID: e381cb28-d93f-49aa-ac73-f8b57420d181
       OwnerLastKnownName: Song_zi
@@ -871,7 +892,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719147955457
@@ -882,7 +904,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719133950702
@@ -893,6 +916,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 2
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -905,6 +929,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 18
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -916,7 +941,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719133490301
@@ -927,6 +953,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 19
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -939,7 +966,7 @@ Residences:
     BlockSellPrice: 0.3
     Permissions:
       PlayerFlags:
-        b83aeecb-f207-4261-b851-246548694b44: 3
+        b83aeecb-f207-4261-b851-246548694b44: 16
       AreaFlags: 20
       OwnerUUID: b83aeecb-f207-4261-b851-246548694b44
       OwnerLastKnownName: Polaris0v0
@@ -951,6 +978,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 21
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -962,7 +990,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719063938164
@@ -973,7 +1002,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.3
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719124065209
@@ -984,7 +1014,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719134233834
@@ -995,6 +1026,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 22
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -1019,6 +1051,7 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 23
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -1030,7 +1063,8 @@ Residences:
     Messages: 2
     BlockSellPrice: 0.25
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1719133676217
@@ -1041,6 +1075,7 @@ Residences:
     Messages: 4
     BlockSellPrice: 0.3
     Permissions:
+      PlayerFlags: {}
       AreaFlags: 24
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
@@ -1054,6 +1089,7 @@ Residences:
       lobby:
         Messages: 2
         Permissions:
+          PlayerFlags: {}
           AreaFlags: 25
           OwnerUUID: 00000000-0000-0000-0000-000000000000
           OwnerLastKnownName: MCWWS
@@ -1061,7 +1097,8 @@ Residences:
         Areas:
           lobby: -1886:-63:2563:-1563:62:2888
     Permissions:
-      AreaFlags: 4
+      PlayerFlags: {}
+      AreaFlags: 3
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1733837228680

@@ -4,19 +4,6 @@ Messages:
     EnterMessage: Welcome %player to %residence, owned by %owner.
 Flags:
   1:
-    container: true
-    ignite: true
-    move: true
-    trade: true
-    shear: true
-    mobkilling: true
-    build: true
-    use: true
-    destroy: true
-    vehicledestroy: true
-    leash: true
-    animalkilling: true
-  2:
     container: false
     ignite: false
     shear: false
@@ -34,7 +21,7 @@ Flags:
     pistonprotection: true
     tp: true
     creeper: false
-  3:
+  2:
     container: true
     ignite: false
     shear: false
@@ -58,11 +45,10 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      PlayerFlags:
-        d006ba70-4ddc-4b37-b13c-76f190815116: 1
-      AreaFlags: 2
-      OwnerUUID: d006ba70-4ddc-4b37-b13c-76f190815116
-      OwnerLastKnownName: Ryan_yu__
+      PlayerFlags: {}
+      AreaFlags: 1
+      OwnerUUID: 00000000-0000-0000-0000-000000000000
+      OwnerLastKnownName: MCWWS
     CreatedOn: 1719066804907
     Areas:
       main: -32:127:-288:18:139:-238
@@ -71,11 +57,10 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      PlayerFlags:
-        d006ba70-4ddc-4b37-b13c-76f190815116: 1
-      AreaFlags: 3
-      OwnerUUID: d006ba70-4ddc-4b37-b13c-76f190815116
-      OwnerLastKnownName: Ryan_yu__
+      PlayerFlags: {}
+      AreaFlags: 2
+      OwnerUUID: 00000000-0000-0000-0000-000000000000
+      OwnerLastKnownName: MCWWS
     CreatedOn: 1719124482702
     Areas:
       main: -52:127:197:-25:180:205
@@ -84,11 +69,10 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      PlayerFlags:
-        d006ba70-4ddc-4b37-b13c-76f190815116: 1
-      AreaFlags: 3
-      OwnerUUID: d006ba70-4ddc-4b37-b13c-76f190815116
-      OwnerLastKnownName: Ryan_yu__
+      PlayerFlags: {}
+      AreaFlags: 2
+      OwnerUUID: 00000000-0000-0000-0000-000000000000
+      OwnerLastKnownName: MCWWS
     CreatedOn: 1719067264428
     Areas:
       main: -52:127:-20:-45:138:-13
@@ -97,11 +81,10 @@ Residences:
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
-      PlayerFlags:
-        d006ba70-4ddc-4b37-b13c-76f190815116: 1
-      AreaFlags: 3
-      OwnerUUID: d006ba70-4ddc-4b37-b13c-76f190815116
-      OwnerLastKnownName: Ryan_yu__
+      PlayerFlags: {}
+      AreaFlags: 2
+      OwnerUUID: 00000000-0000-0000-0000-000000000000
+      OwnerLastKnownName: MCWWS
     CreatedOn: 1719066510607
     Areas:
       main: 327:15:83:394:65:131
