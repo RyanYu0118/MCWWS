@@ -42,7 +42,19 @@ final class NmsBlocks {
     static BlockData toBlockData(Object nmsBlockState) throws ReflectiveOperationException {
         if (craftBlockDataFromNms == null) {
             Class<?> clazz = Class.forName("org.bukkit.craftbukkit.block.data.CraftBlockData");
-            craftBlockDataFromNms = clazz.getMethod("fromBlockData", Class.forName("net.minecraft.world.level.block.state.BlockState"));
+            Class<?> stateClass = Class.forName("net.minecraft.world.level.block.state.BlockState");
+            // Paper 26.2 的工厂方法叫 createData，老版本用过 fromData / fromBlockData
+            for (String candidate : new String[]{"createData", "fromData", "fromBlockData"}) {
+                try {
+                    craftBlockDataFromNms = clazz.getMethod(candidate, stateClass);
+                    break;
+                } catch (NoSuchMethodException ignored) {
+                    // 继续试下一个候选名
+                }
+            }
+            if (craftBlockDataFromNms == null) {
+                throw new NoSuchMethodException("CraftBlockData 未提供 BlockState -> BlockData 的工厂方法");
+            }
         }
         return (BlockData) craftBlockDataFromNms.invoke(null, nmsBlockState);
     }

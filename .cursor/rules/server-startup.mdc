@@ -1,19 +1,31 @@
+---
+description: Minecraft 服务器启停方式（禁止 start.bat，直接用 java -jar 并开可见窗口）
+alwaysApply: true
+---
+
 # Minecraft 服务器启停
 
 ## 启动
 
-**不要**使用 `start.bat`。在仓库根目录直接启动最新的 `paper-26.2-*.jar`：
+**禁止**使用 `start.bat`。用 `cmd /c start.bat` 之类的方式启动时，进程会挂在 Agent 的管道 shell 里，用户在前台**看不到控制台窗口**，也没法自己在里面敲命令。
+
+用户要的是 Paper **自带的图形窗口**（带日志面板、玩家列表、TPS 曲线和命令输入框），不是命令提示符。所以必须满足两点：**用 `javaw` 启动**（不产生控制台窗口），且**不加 `nogui` 参数**（加了就没有图形界面）。
 
 ```text
-java -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar paper-26.2-111.jar nogui
+javaw -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar paper-26.2-112.jar
 ```
 
 - 工作目录：仓库根目录（含 `plugins/`、`world/` 的目录）
-- jar 文件名以目录内实际最新的 `paper-26.2-*.jar` 为准（当前常见为 `paper-26.2-111.jar`）
-- 后台启动时用 `Start-Process` 或等价方式，**不要**依赖 `start.bat`
+- jar 文件名以目录内实际最新的 `paper-26.2-*.jar` 为准（当前为 `paper-26.2-112.jar`）
+- 由 Agent 代为启动时用 `Start-Process` 拉起，不要把服务器塞进 Agent 的管道 shell
+- 启动成功的判据：`javaw` 进程的 `MainWindowTitle` 为 `Minecraft server`，且 `logs/latest.log` 出现 `Done (…)!`
+- `javaw` 没有 stdout，日志全部落在 `logs/latest.log`，Agent 一律读该文件
+- 需要在国内加速依赖下载时，环境变量 `PAPER_DEFAULT_CENTRAL_REPOSITORY` 与上面的 `-D` 参数等价，二选一即可
 
 ## 停服
 
-- 优先向 Paper 进程控制台发送 `stop`（或 AttachConsole + CTRL+C 优雅停服）
-- 停服前先询问用户（进程占用约定）
-- 替换插件 jar 前必须停服
+- 用户可直接在图形窗口底部的命令输入框敲 `stop`，或关闭窗口（同样走优雅关服）
+- Agent 停服统一走 `tools/scripts/stop-process.ps1`（见 `process-termination.mdc`），它会先弹 10 秒倒计时确认框，再对图形窗口发 `CloseMainWindow()` 优雅关服；**不要**用 `Stop-Process` 强杀
+- 判据：`logs/latest.log` 出现各世界的 `All chunks are saved`，且进程消失
+- `javaw` 启动的实例没有控制台，Agent 无法直接输入 `stop` 或其他控制台命令，需要执行控制台命令时请用户在图形窗口里敲
+- 替换插件 jar 前必须停服；jar 被占用时构建脚本会退回输出 `*.jar.new`，停服后再替换

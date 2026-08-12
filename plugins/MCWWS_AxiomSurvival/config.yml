@@ -1,6 +1,6 @@
 enabled: true
-# 排查扣费链路期间打开，问题定位后改回 false
-debug: true
+# 排查扣费链路时打开，会把每个编辑包的判定与预估明细写进控制台
+debug: false
 bypass-permission: mcwws.axiom.survival.bypass
 prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
 prices-reload-seconds: 60

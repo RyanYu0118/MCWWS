@@ -1,0 +1,44 @@
+---
+description: Agent 关闭本机进程的授权与确认流程（10 秒倒计时对话框）
+alwaysApply: true
+---
+
+# 关闭进程的规矩
+
+Agent **可以自行关闭进程**，不必每次先在聊天里征求同意，但**必须**先弹出确认对话框，给用户 10 秒反悔时间。
+
+## 唯一入口
+
+统一走 `tools/scripts/stop-process.ps1`，不要直接 `Stop-Process`：
+
+```text
+powershell -STA -NoProfile -ExecutionPolicy Bypass -File tools\scripts\stop-process.ps1 -ProcessId <PID> -Label "<进程说明>"
+```
+
+对话框内容固定为「N 秒后自动关闭进程：<说明>（PID xxx）」，两个按钮：
+
+- **立即关闭进程** — 跳过剩余倒计时，马上执行
+- **稍后执行** — 放弃本次关闭，脚本以退出码 1 返回
+
+倒计时归零等同于点「立即关闭进程」。
+
+## 退出码
+
+| 码 | 含义 | Agent 后续动作 |
+|---|---|---|
+| 0 | 进程已退出 | 继续后续步骤（换 jar、重启等） |
+| 1 | 用户选择稍后执行 | 停下，告知用户并等待指示 |
+| 2 | 超时仍未退出 | 停下报告，不要自行强杀 |
+
+## 关闭方式
+
+脚本按优雅程度依次尝试，Agent 不要绕过：
+
+1. 有主窗口 → `CloseMainWindow()`；Minecraft 图形窗口据此走完整关服保存
+2. 无主窗口但有控制台 → `AttachConsole` + Ctrl+C，触发 JVM shutdown hook
+3. 仅当显式传 `-Force` 才 `Stop-Process -Force`；默认**不强杀**
+
+## 注意
+
+- 关 Minecraft 服务器后要确认 `logs/latest.log` 出现各世界的 `All chunks are saved`
+- 不要误关用户的游戏客户端或启动器（HMCL）；先用 `Get-CimInstance Win32_Process` 核对命令行再定 PID

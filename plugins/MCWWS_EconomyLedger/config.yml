@@ -14,7 +14,8 @@ flight:
 # 同分类同方向的连续变动在 merge-window-ms 内累加成一条（飞行每秒扣费、Axiom 逐包扣费），
 # 单笔变动照常单独显示，与网页零钱明细一致。
 notify:
-  enabled: true
+  # 左下角浮层与 action bar 提示已按需关闭，扣费说明只走聊天框
+  enabled: false
   actionbar-fallback: true
   merge-window-ms: 2000
   format: "{color}{sign}{amount} &7· &f{label} &7· 余 &e{balance}"
