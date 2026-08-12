@@ -1,4 +1,4 @@
-<#
+﻿<#
 .SYNOPSIS
 关闭指定进程前，先弹出 10 秒倒计时确认框。
 
@@ -10,6 +10,8 @@ Agent 需要关闭任何进程时统一走这里。倒计时结束或用户点�
   1. 有主窗口 -> CloseMainWindow()，Minecraft 图形窗口据此走正常关服保存
   2. 无主窗口但有控制台 -> AttachConsole + Ctrl+C，触发 JVM shutdown hook
   3. 以上都失败且显式指定 -Force -> Stop-Process -Force
+
+注意：本文件必须以 UTF-8 with BOM 保存，否则 Windows PowerShell 5.1 会按 ANSI 解析中文导致语法错误。
 
 .EXAMPLE
 powershell -STA -NoProfile -ExecutionPolicy Bypass -File tools\scripts\stop-process.ps1 -ProcessId 45432 -Label "Minecraft 服务器"
@@ -44,17 +46,15 @@ $form.FormBorderStyle = "FixedDialog"
 $form.MaximizeBox = $false
 $form.MinimizeBox = $false
 
-$label = New-Object System.Windows.Forms.Label
-$label.Location = New-Object System.Drawing.Point(20, 25)
-$label.Size = New-Object System.Drawing.Size(380, 60)
-$label.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 10)
-$form.Controls.Add($label)
+# 变量名不能叫 $label：PowerShell 变量不区分大小写，会和 [string]$Label 参数撞车
+$countdownText = New-Object System.Windows.Forms.Label
+$countdownText.Location = New-Object System.Drawing.Point(20, 25)
+$countdownText.Size = New-Object System.Drawing.Size(380, 60)
+$countdownText.Font = New-Object System.Drawing.Font("Microsoft YaHei UI", 10)
+$form.Controls.Add($countdownText)
 
-$remaining = $TimeoutSeconds
-$render = {
-    $label.Text = "$remaining 秒后自动关闭进程：$Label（PID $ProcessId）"
-}
-& $render
+$script:remaining = $TimeoutSeconds
+$countdownText.Text = "$script:remaining 秒后自动关闭进程：$Label（PID $ProcessId）"
 
 $okButton = New-Object System.Windows.Forms.Button
 $okButton.Location = New-Object System.Drawing.Point(90, 100)
@@ -83,7 +83,7 @@ $timer.Add_Tick({
         $form.DialogResult = [System.Windows.Forms.DialogResult]::OK
         $form.Close()
     } else {
-        & $render
+        $countdownText.Text = "$script:remaining 秒后自动关闭进程：$Label（PID $ProcessId）"
     }
 })
 $timer.Start()

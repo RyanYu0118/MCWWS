@@ -16,7 +16,7 @@ public final class FeeAccumulator {
     }
 
     public record Result(
-            double demolition,
+            double salvage,
             double material,
             double labor,
             long affectedBlocks,
@@ -25,8 +25,12 @@ public final class FeeAccumulator {
             Map<String, Long> placedCounts,
             List<BlockState> protectedStates
     ) {
+        /**
+         * 材料 + 人工 − 回收。拆下来的方块按卖价折现给玩家，所以净额可以为负，
+         * 负数代表这笔编辑倒赚，由 ChargeService 走存款。
+         */
         public double total() {
-            return demolition + material + labor;
+            return material + labor - salvage;
         }
 
         public static Result empty() {
@@ -37,8 +41,9 @@ public final class FeeAccumulator {
     public static final class Builder {
         private final PriceCatalog prices;
         private final LaborRates laborRates;
+        private final double salvageRate;
         private final int protectedCaptureCap;
-        private double demolition;
+        private double salvage;
         private double material;
         private double labor;
         private long affectedBlocks;
@@ -47,9 +52,10 @@ public final class FeeAccumulator {
         private final Map<String, Long> placedCounts = new HashMap<>();
         private final List<BlockState> protectedStates = new ArrayList<>();
 
-        public Builder(PriceCatalog prices, LaborRates laborRates, int protectedCaptureCap) {
+        public Builder(PriceCatalog prices, LaborRates laborRates, double salvageRate, int protectedCaptureCap) {
             this.prices = prices;
             this.laborRates = laborRates;
+            this.salvageRate = Math.min(Math.max(salvageRate, 0D), 1D);
             this.protectedCaptureCap = Math.max(protectedCaptureCap, 0);
         }
 
@@ -75,7 +81,8 @@ public final class FeeAccumulator {
             String oldId = itemIdFromBlockData(existing);
             String newId = itemIdFromBlockData(target);
             if (!"air".equals(oldId)) {
-                demolition += prices.getBuyPrice(oldId);
+                // 拆下来的方块进市场（MarketBridge 记 sell 侧库存），这里按卖价折现给玩家
+                salvage += prices.getSellPrice(oldId) * salvageRate;
                 removedCounts.merge(oldId, 1L, Long::sum);
                 labor += laborRates.demolishUnit();
             }
@@ -89,7 +96,7 @@ public final class FeeAccumulator {
 
         public Result build() {
             return new Result(
-                    round(demolition),
+                    round(salvage),
                     round(material),
                     round(labor),
                     affectedBlocks,

@@ -219,6 +219,7 @@ final class PacketFeeEstimator {
         return new FeeAccumulator.Builder(
                 plugin.getPriceCatalog(),
                 plugin.laborRates(),
+                plugin.salvageRate(),
                 ProtectedBlockGuard.enabled() ? protectedCap : 0
         );
     }

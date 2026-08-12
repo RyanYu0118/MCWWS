@@ -34,7 +34,7 @@ public final class FeeEstimate {
     }
 
     public record Result(
-            double demolition,
+            double salvage,
             double material,
             double labor,
             long affectedBlocks,
@@ -42,8 +42,12 @@ public final class FeeEstimate {
             Map<String, Long> removedCounts,
             Map<String, Long> placedCounts
     ) {
+        /**
+         * 材料 + 人工 − 回收。拆下来的方块按卖价折现给玩家，所以净额可以为负，
+         * 负数代表这条指令倒赚，由监听器走存款。
+         */
         public double total() {
-            return demolition + material + labor;
+            return material + labor - salvage;
         }
     }
 
@@ -199,7 +203,8 @@ public final class FeeEstimate {
     static final class ResultBuilder {
         private final PriceCatalog prices;
         private final LaborRates laborRates;
-        private double demolition;
+        private final double salvageRate;
+        private double salvage;
         private double material;
         private double labor;
         private long affectedBlocks;
@@ -210,6 +215,8 @@ public final class FeeEstimate {
         ResultBuilder(PriceCatalog prices, LaborRates laborRates) {
             this.prices = prices;
             this.laborRates = laborRates != null ? laborRates : LaborRates.defaults();
+            McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
+            this.salvageRate = plugin == null ? 0.8D : plugin.salvageRate();
         }
 
         void addChange(BaseBlock existing, BaseBlock target) {
@@ -234,8 +241,9 @@ public final class FeeEstimate {
             String oldId = itemIdFromBaseBlock(existing);
             String newId = itemIdFromBaseBlock(target);
             if (!"air".equals(oldId)) {
-                // 拆除材料项仍按市价；劳务按拆除格数计费（与市价无关）
-                demolition += prices.getBuyPrice(oldId);
+                // 拆下来的方块进市场（MarketBridge 记 sell 侧库存），这里按卖价折现给玩家；
+                // 劳务仍按拆除格数计费（与市价无关）
+                salvage += prices.getSellPrice(oldId) * salvageRate;
                 removedCounts.merge(oldId, 1L, Long::sum);
                 labor += laborRates.demolishUnit();
             }
@@ -248,11 +256,11 @@ public final class FeeEstimate {
         }
 
         Result build() {
-            demolition = round(demolition);
+            salvage = round(salvage);
             material = round(material);
             labor = round(labor);
             return new Result(
-                    demolition,
+                    salvage,
                     material,
                     labor,
                     affectedBlocks,

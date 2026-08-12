@@ -130,12 +130,15 @@ public final class WeSurvivalListener {
 
         double balance = EconomyService.getBalance(player);
         double total = estimate.total();
-        if (total > balance + 1e-6) {
+        // 拆除折现可能盖过材料与人工，此时这条指令是净收入，只有净支出才校验余额
+        double charge = total > 0D ? FeeEstimate.round(total) : 0D;
+        double payout = total < 0D ? FeeEstimate.round(-total) : 0D;
+        if (charge > balance + 1e-6) {
             actor.printError(plugin.msg(
                     "insufficient-balance",
-                    "total", EconomyService.format(total),
+                    "total", EconomyService.format(charge),
                     "blocks", String.valueOf(estimate.affectedBlocks()),
-                    "demolition", EconomyService.format(estimate.demolition()),
+                    "salvage", EconomyService.format(estimate.salvage()),
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor()),
                     "balance", EconomyService.format(balance)
@@ -149,15 +152,23 @@ public final class WeSurvivalListener {
             MarketBridge.enqueue(player, estimate);
         }
 
-        if (total > 0D && !LedgerBridge.withdraw(player, total, command)) {
+        if (charge > 0D && !LedgerBridge.withdraw(player, charge, command)) {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
             WeEditAuthorization.revokeUnpaid(player);
             return;
         }
+        if (payout > 0D && !LedgerBridge.deposit(player, payout, "worldedit_salvage",
+                "创世神拆除回收: " + command, "we-salvage-" + java.util.UUID.randomUUID())) {
+            actor.printError(plugin.msg("prefix") + "回收款入账失败，请联系管理员。");
+            event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
+            return;
+        }
 
-        if (total > 0D) {
-            WeChargeMemory.record(player, total, command);
+        // 记带符号净额：撤销时正数退款、负数把回收款收回
+        if (charge > 0D || payout > 0D) {
+            WeChargeMemory.record(player, charge > 0D ? charge : -payout, command);
         }
 
         if (estimate.affectedBlocks() > 0L) {
@@ -165,23 +176,23 @@ public final class WeSurvivalListener {
             recordRecentEdit(player, session, event, command, args, estimate);
         }
 
-        if (total > 0D) {
+        if (payout > 0D) {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
-                    "charged",
-                    "total", EconomyService.format(total),
+                    "salvaged",
+                    "total", EconomyService.format(payout),
                     "blocks", String.valueOf(estimate.affectedBlocks()),
-                    "demolition", EconomyService.format(estimate.demolition()),
+                    "salvage", EconomyService.format(estimate.salvage()),
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor())
             ));
         } else if (estimate.affectedBlocks() > 0L) {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
                     "charged",
-                    "total", "0",
+                    "total", EconomyService.format(charge),
                     "blocks", String.valueOf(estimate.affectedBlocks()),
-                    "demolition", "0",
-                    "material", "0",
-                    "labor", "0"
+                    "salvage", EconomyService.format(estimate.salvage()),
+                    "material", EconomyService.format(estimate.material()),
+                    "labor", EconomyService.format(estimate.labor())
             ));
         }
     }

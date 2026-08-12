@@ -57,7 +57,7 @@ public final class ChargeService {
         if (plugin.isDebug()) {
             plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
                     + ", 受保护=" + estimate.protectedBlocks()
-                    + ", 拆除=" + estimate.demolition()
+                    + ", 回收=" + estimate.salvage()
                     + ", 材料=" + estimate.material()
                     + ", 劳务=" + estimate.labor()
                     + ", 合计=" + estimate.total());
@@ -86,22 +86,27 @@ public final class ChargeService {
 
         ChargeHistory.Entry reversed = plugin.getChargeHistory().takeReverseMatch(player, estimate);
         if (reversed != null) {
-            double net = UndoRefundService.refund(player, reversed);
-            if (net > 0D) {
-                plugin.getUsageLimits().refund(player, net);
-                plugin.getChargeNotifier().addRefund(player, reversed.gross(), net);
+            double settled = UndoRefundService.settle(player, reversed);
+            if (settled > 0D) {
+                plugin.getUsageLimits().refund(player, settled);
+                plugin.getChargeNotifier().addRefund(player, reversed.gross(), settled);
+            } else if (settled < 0D) {
+                plugin.getChargeNotifier().addUndoClawback(player, -reversed.gross(), -settled);
             }
             return allowAndGuard(estimate);
         }
 
         double total = estimate.total();
+        // 拆除折现可能盖过材料与人工，此时这笔编辑是净收入，只有净支出才校验余额与限额
+        double charge = total > 0D ? FeeAccumulator.round(total) : 0D;
+        double payout = total < 0D ? FeeAccumulator.round(-total) : 0D;
         double balance = EconomyService.getBalance(player);
-        if (total > balance + 1e-6) {
+        if (charge > balance + 1e-6) {
             deny(player, "insufficient-balance", plugin.msg("prefix") + plugin.msg(
                     "insufficient-balance",
-                    "total", EconomyService.format(total),
+                    "total", EconomyService.format(charge),
                     "blocks", String.valueOf(estimate.affectedBlocks()),
-                    "demolition", EconomyService.format(estimate.demolition()),
+                    "salvage", EconomyService.format(estimate.salvage()),
                     "material", EconomyService.format(estimate.material()),
                     "labor", EconomyService.format(estimate.labor()),
                     "balance", EconomyService.format(balance)
@@ -109,20 +114,25 @@ public final class ChargeService {
             return ChargeDecision.deny("insufficient-balance");
         }
 
-        UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, total, estimate.affectedBlocks());
+        // 金额传净支出，格数照传：净收入的编辑仍要受每日格数上限约束
+        UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, charge, estimate.affectedBlocks());
         if (!verdict.allowed()) {
             deny(player, verdict.messageKey(),
                     plugin.msg("prefix") + plugin.msg(verdict.messageKey(), verdict.placeholders()));
             return ChargeDecision.deny(verdict.messageKey());
         }
 
-        if (total > 0D && !LedgerBridge.withdraw(player, total, label)) {
+        if (charge > 0D && !LedgerBridge.withdraw(player, charge, label)) {
             deny(player, "withdraw-failed", plugin.msg("prefix") + "扣款失败，请联系管理员。");
             return ChargeDecision.deny("withdraw-failed");
         }
+        if (payout > 0D && !depositSalvage(player, payout, label)) {
+            deny(player, "salvage-failed", plugin.msg("prefix") + "回收款入账失败，请联系管理员。");
+            return ChargeDecision.deny("salvage-failed");
+        }
 
         List<String> marketLines = MarketBridge.enqueue(player, estimate);
-        plugin.getUsageLimits().commit(player, total, estimate.affectedBlocks());
+        plugin.getUsageLimits().commit(player, charge, estimate.affectedBlocks());
         plugin.getChargeHistory().record(player, estimate, total, label, marketLines);
         plugin.getChargeNotifier().addBlockCharge(player, estimate, total);
         return allowAndGuard(estimate);
@@ -199,6 +209,16 @@ public final class ChargeService {
         return ChargeDecision.allow();
     }
 
+    private boolean depositSalvage(Player player, double amount, String label) {
+        return LedgerBridge.deposit(
+                player,
+                amount,
+                "axiom_salvage",
+                "Axiom 拆除回收: " + label,
+                "axiom-salvage-" + java.util.UUID.randomUUID()
+        );
+    }
+
     private ChargeDecision allowAndGuard(FeeAccumulator.Result estimate) {
         ProtectedBlockGuard.scheduleRestore(estimate.protectedStates());
         return ChargeDecision.allow();
@@ -226,6 +246,8 @@ public final class ChargeService {
         McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7劳务费 §f放置 §e"
                 + EconomyService.format(labor.placeUnit()) + "§7/格§f，拆除 §e"
                 + EconomyService.format(labor.demolishUnit()) + "§7/格");
+        McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7拆除回收 §f按市场卖价 §e"
+                + Math.round(plugin.salvageRate() * 100D) + "%§7 折现，同时增加市场库存");
         double dailyMax = plugin.getPluginConfig().getDouble("limits.daily-max-charge", 0D);
         if (dailyMax > 0D) {
             McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + "§7今日已用 §e"

@@ -25,7 +25,7 @@ final class UndoRefundService {
         }
 
         WeChargeMemory.LastCharge charge = WeChargeMemory.take(player);
-        if (charge == null || charge.grossAmount() <= 0D) {
+        if (charge == null || Math.abs(charge.grossAmount()) < 0.01D) {
             if (marketReversed) {
                 McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("undo-market-only"));
             }
@@ -40,24 +40,45 @@ final class UndoRefundService {
         if (feeRate > 1D) {
             feeRate = 1D;
         }
-        double fee = FeeEstimate.round(gross * feeRate);
+        double fee = FeeEstimate.round(Math.abs(gross) * feeRate);
+        int percent = (int) Math.round(feeRate * 100D);
+        String refId = "we-undo-" + UUID.randomUUID();
+
+        if (gross < 0D) {
+            // 原指令是净收入（拆除折现盖过材料人工），撤销要把回收款连手续费一起收回
+            double owed = FeeEstimate.round(-gross + fee);
+            String desc = "创世神撤销收回回收款: " + charge.command()
+                    + " (原收 " + EconomyService.format(-gross)
+                    + " 手续费 " + EconomyService.format(fee) + ")";
+            if (!LedgerBridge.withdraw(player, owed, "worldedit_undo", desc, refId)) {
+                McwwsWeSurvivalPlugin.sendMessage(player,
+                        plugin.msg("prefix") + plugin.msg("undo-clawback-failed"));
+                return;
+            }
+            McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
+                    "undo-clawback",
+                    "gross", EconomyService.format(-gross),
+                    "fee", EconomyService.format(fee),
+                    "net", EconomyService.format(owed)
+            ));
+            return;
+        }
+
         double net = FeeEstimate.round(gross - fee);
         if (net <= 0D) {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("undo-refund-failed"));
             return;
         }
 
-        String refId = "we-undo-" + UUID.randomUUID();
         String desc = "创世神撤销退款: " + charge.command()
                 + " (原扣 " + EconomyService.format(gross)
                 + " 手续费 " + EconomyService.format(fee) + ")";
-        if (!LedgerBridge.deposit(player, net, desc, refId)) {
+        if (!LedgerBridge.deposit(player, net, "worldedit_undo", desc, refId)) {
             WeChargeMemory.record(player, gross, charge.command());
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("undo-refund-failed"));
             return;
         }
 
-        int percent = (int) Math.round(feeRate * 100D);
         McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
                 "undo-refunded",
                 "gross", EconomyService.format(gross),

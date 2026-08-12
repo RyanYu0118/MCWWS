@@ -17,7 +17,7 @@ import java.util.concurrent.ConcurrentHashMap;
 final class ChargeNotifier {
 
     private static final class Pending {
-        double demolition;
+        double salvage;
         double material;
         double labor;
         double total;
@@ -25,6 +25,8 @@ final class ChargeNotifier {
         long protectedBlocks;
         double refundGross;
         double refundNet;
+        double clawbackGross;
+        double clawbackNet;
         double biomeFee;
         long biomeCells;
         final Map<String, long[]> entityCounts = new LinkedHashMap<>();
@@ -43,7 +45,7 @@ final class ChargeNotifier {
     void addBlockCharge(Player player, FeeAccumulator.Result estimate, double total) {
         Pending state = state(player);
         synchronized (state) {
-            state.demolition += estimate.demolition();
+            state.salvage += estimate.salvage();
             state.material += estimate.material();
             state.labor += estimate.labor();
             state.total += total;
@@ -75,6 +77,16 @@ final class ChargeNotifier {
         synchronized (state) {
             state.refundGross += gross;
             state.refundNet += net;
+        }
+        schedule(player);
+    }
+
+    /** 撤销的是一笔净收入编辑，回收款连手续费被收回 */
+    void addUndoClawback(Player player, double gross, double net) {
+        Pending state = state(player);
+        synchronized (state) {
+            state.clawbackGross += gross;
+            state.clawbackNet += net;
         }
         schedule(player);
     }
@@ -139,11 +151,12 @@ final class ChargeNotifier {
         String prefix = plugin.msg("prefix");
         synchronized (state) {
             if (state.blocks > 0L) {
+                double total = FeeAccumulator.round(state.total);
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
-                        "charged",
-                        "total", EconomyService.format(FeeAccumulator.round(state.total)),
+                        total < 0D ? "salvaged" : "charged",
+                        "total", EconomyService.format(Math.abs(total)),
                         "blocks", String.valueOf(state.blocks),
-                        "demolition", EconomyService.format(FeeAccumulator.round(state.demolition)),
+                        "salvage", EconomyService.format(FeeAccumulator.round(state.salvage)),
                         "material", EconomyService.format(FeeAccumulator.round(state.material)),
                         "labor", EconomyService.format(FeeAccumulator.round(state.labor))
                 ));
@@ -174,6 +187,16 @@ final class ChargeNotifier {
                         "gross", EconomyService.format(gross),
                         "fee", EconomyService.format(fee),
                         "percent", String.valueOf(percent),
+                        "net", EconomyService.format(net)
+                ));
+            }
+            if (state.clawbackNet > 0D) {
+                double gross = FeeAccumulator.round(state.clawbackGross);
+                double net = FeeAccumulator.round(state.clawbackNet);
+                McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
+                        "undo-clawback",
+                        "gross", EconomyService.format(gross),
+                        "fee", EconomyService.format(FeeAccumulator.round(net - gross)),
                         "net", EconomyService.format(net)
                 ));
             }

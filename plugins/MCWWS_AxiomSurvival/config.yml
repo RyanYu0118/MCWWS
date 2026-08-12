@@ -10,6 +10,11 @@ market-trade-queue: plugins/Skript/scripts/web/data/market_trade_queue.txt
 labor:
   place-unit: 0.5
   demolish-multiplier: 2.0
+
+# 拆除回收：拆下来的方块按市场卖价 × rate 折现给玩家，同时按 sell 侧写进市场库存队列。
+# 一次编辑的净额 = 材料 + 劳务 − 回收，净额为负时直接把差额打给玩家。
+salvage:
+  rate: 0.8
 max-scan-blocks: 500000
 min-balance-to-enable: 0
 block-axiom-creative-switch: true
@@ -64,18 +69,23 @@ message-throttle-seconds: 3
 survival-editor-mode: true
 enable-flywithfood-on-editor: true
 disable-fly-on-editor-exit: true
+# 打开 Editor 菜单期间服务端切旁观（客户端本地本来就是旁观），关菜单时按快照切回；
+# 关掉则沿用旧行为：保持生存并强制飞行以规避摔落
+spectator-during-menu: true
 # 无客户端模组时的兜底：Editor 需旁观；退出时恢复进入前位置与模式
 restore-editor-on-exit: true
 # 进入 Editor 后此 tick 内忽略 vanilla 移动退出检测（防 Shift 进入误触发，20tick≈1秒）
 editor-enter-grace-ticks: 60
 messages:
   prefix: "§6[Axiom] §f"
-  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
+  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f），当前 §c{balance}§f。"
   insufficient-balance-simple: "余额不足，需要 §e{total}§f，当前 §c{balance}§f。"
-  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f）。"
+  salvaged: "拆除回收 §a+{total}§f（§7{blocks} 格§f：回收 §a{salvage}§f − 材料 §e{material}§f − 劳务 §e{labor}§f），已卖给市场。"
   charged-entity: "{kind} §7{count} 个§f，已扣除 §e{total}§f（劳务费）。"
   charged-biome: "生物群系 §7{count} 格§f，已扣除 §e{total}§f（劳务费）。"
   undo-refunded: "已退还 §e{net}§f（原扣 §7{gross}§f，手续费 §c{fee}§f / {percent}%），市场库存已同步还原。"
+  undo-clawback: "已收回拆除回收款 §c{net}§f（原收 §7{gross}§f，手续费 §c{fee}§f），市场库存已同步还原。"
   undo-refund-failed: "撤销退款失败，请联系管理员。"
   protected-skipped: "§c已保留 §e{count} §c个受保护方块（Slimefun/不可破坏），这些方块不计费。"
   protected-too-many: "受保护方块过多（§e{count} §f个），本次编辑已取消，请缩小范围。"
@@ -89,6 +99,6 @@ messages:
   handshake-denied: "无法启用 Axiom：{reason}"
   creative-blocked: "生存模式下不能通过 Axiom 切换到创造模式。"
   axiom-inactive: "§7未检测到 Axiom 联机会话，请确认已安装 Axiom 客户端且服务器已加载 AxiomPaper。"
-  axiom-ready: "§aAxiom 生存建造已就绪：按格扣材料费与劳务费（与创世神一致）。"
+  axiom-ready: "§aAxiom 生存建造已就绪：放置扣材料费与劳务费，拆除按市场卖价折现回收（与创世神一致）。"
   survival-editor-ready: "§a已启用生存 Editor（MCWWS_AxiomSurvivalClient 客户端模组已连接）。"
   editor-restored: "§a已恢复到进入 Editor 前的位置与生存模式。"

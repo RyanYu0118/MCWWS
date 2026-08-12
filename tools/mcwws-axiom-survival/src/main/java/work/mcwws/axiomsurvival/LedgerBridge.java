@@ -12,29 +12,32 @@ final class LedgerBridge {
     }
 
     static boolean withdraw(Player player, double amount, String label) {
+        return withdraw(player, amount, "axiom", "Axiom 建造: " + label,
+                "axiom-" + java.util.UUID.randomUUID());
+    }
+
+    static boolean withdraw(Player player, double amount, String category, String description, String refId) {
         if (player == null || amount <= 0D) {
             return true;
         }
         if (isLedgerAvailable()) {
-            String refId = "axiom-" + java.util.UUID.randomUUID();
-            String description = "Axiom 建造: " + label;
             boolean[] ok = {false};
             Runnable action = () -> ok[0] = EconomyService.withdraw(player, amount);
-            if (runWithLedger(player, "axiom", description, refId, action)) {
+            if (runWithLedger(player, category, description, refId, action)) {
                 return ok[0];
             }
         }
         return EconomyService.withdraw(player, amount);
     }
 
-    static boolean deposit(Player player, double amount, String description, String refId) {
+    static boolean deposit(Player player, double amount, String category, String description, String refId) {
         if (player == null || amount <= 0D) {
             return true;
         }
         if (isLedgerAvailable()) {
             boolean[] ok = {false};
             Runnable action = () -> ok[0] = EconomyService.deposit(player, amount);
-            if (runWithLedger(player, "axiom_undo", description, refId, action)) {
+            if (runWithLedger(player, category, description, refId, action)) {
                 return ok[0];
             }
         }

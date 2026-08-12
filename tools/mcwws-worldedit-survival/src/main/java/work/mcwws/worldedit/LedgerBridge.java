@@ -13,57 +13,62 @@ final class LedgerBridge {
     }
 
     static boolean withdraw(Player player, double amount, String command) {
+        return withdraw(player, amount, "worldedit", "创世神建造: " + command, "we-" + UUID.randomUUID());
+    }
+
+    static boolean withdraw(Player player, double amount, String category, String description, String refId) {
         if (player == null || amount <= 0D) {
             return true;
         }
         if (isLedgerAvailable()) {
-            String refId = "we-" + UUID.randomUUID();
-            String description = "创世神建造: " + command;
             boolean[] ok = {false};
             Runnable action = () -> ok[0] = EconomyService.withdraw(player, amount);
-            try {
-                Class<?> contextClass = Class.forName("work.mcwws.economyledger.LedgerContext");
-                Method runWith = contextClass.getMethod(
-                        "runWith",
-                        Player.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        Runnable.class
-                );
-                runWith.invoke(null, player, "worldedit", description, refId, action);
+            if (runWithLedger(player, category, description, refId, action, "扣款")) {
                 return ok[0];
-            } catch (ReflectiveOperationException ex) {
-                McwwsWeSurvivalPlugin.getInstance().getLogger().fine("LedgerContext 调用失败，退回普通扣款。");
             }
         }
         return EconomyService.withdraw(player, amount);
     }
 
-    static boolean deposit(Player player, double amount, String description, String refId) {
+    static boolean deposit(Player player, double amount, String category, String description, String refId) {
         if (player == null || amount <= 0D) {
             return true;
         }
         if (isLedgerAvailable()) {
             boolean[] ok = {false};
             Runnable action = () -> ok[0] = EconomyService.deposit(player, amount);
-            try {
-                Class<?> contextClass = Class.forName("work.mcwws.economyledger.LedgerContext");
-                java.lang.reflect.Method runWith = contextClass.getMethod(
-                        "runWith",
-                        Player.class,
-                        String.class,
-                        String.class,
-                        String.class,
-                        Runnable.class
-                );
-                runWith.invoke(null, player, "worldedit_undo", description, refId, action);
+            if (runWithLedger(player, category, description, refId, action, "入账")) {
                 return ok[0];
-            } catch (ReflectiveOperationException ex) {
-                McwwsWeSurvivalPlugin.getInstance().getLogger().fine("LedgerContext 入账调用失败，退回普通退款。");
             }
         }
         return EconomyService.deposit(player, amount);
+    }
+
+    private static boolean runWithLedger(
+            Player player,
+            String category,
+            String description,
+            String refId,
+            Runnable action,
+            String what
+    ) {
+        try {
+            Class<?> contextClass = Class.forName("work.mcwws.economyledger.LedgerContext");
+            Method runWith = contextClass.getMethod(
+                    "runWith",
+                    Player.class,
+                    String.class,
+                    String.class,
+                    String.class,
+                    Runnable.class
+            );
+            runWith.invoke(null, player, category, description, refId, action);
+            return true;
+        } catch (ReflectiveOperationException ex) {
+            McwwsWeSurvivalPlugin.getInstance().getLogger()
+                    .fine("LedgerContext " + what + "调用失败，退回普通经济操作。");
+            return false;
+        }
     }
 
     private static boolean isLedgerAvailable() {

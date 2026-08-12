@@ -36,8 +36,9 @@ final class ChargeHistory {
         this.plugin = plugin;
     }
 
+    /** gross 为带符号净额：正数是本次实扣，负数是拆除回收后的净到账 */
     void record(Player player, FeeAccumulator.Result estimate, double gross, String label, List<String> marketLines) {
-        if (player == null || estimate == null || gross <= 0D || !enabled()) {
+        if (player == null || estimate == null || estimate.affectedBlocks() <= 0L || !enabled()) {
             return;
         }
         Deque<Entry> queue = history.computeIfAbsent(player.getUniqueId(), key -> new ArrayDeque<>());

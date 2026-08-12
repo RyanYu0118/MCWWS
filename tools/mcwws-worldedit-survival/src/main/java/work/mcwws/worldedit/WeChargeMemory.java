@@ -16,8 +16,9 @@ final class WeChargeMemory {
     private WeChargeMemory() {
     }
 
+    /** grossAmount 为带符号净额：正数是实扣，负数是拆除回收后的净到账 */
     static void record(Player player, double grossAmount, String command) {
-        if (player == null || grossAmount <= 0D) {
+        if (player == null || Math.abs(grossAmount) < 0.01D) {
             return;
         }
         String cmd = command == null ? "worldedit" : command;

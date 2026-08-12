@@ -42,3 +42,8 @@ powershell -STA -NoProfile -ExecutionPolicy Bypass -File tools\scripts\stop-proc
 
 - 关 Minecraft 服务器后要确认 `logs/latest.log` 出现各世界的 `All chunks are saved`
 - 不要误关用户的游戏客户端或启动器（HMCL）；先用 `Get-CimInstance Win32_Process` 核对命令行再定 PID
+- **同命令行会有两个 `javaw` 进程**：`Common Files\Oracle\Java\javapath\javaw.exe` 只是转发壳（无窗口、内存 ~10MB），真正的服务器是带 `MainWindowTitle = Minecraft server`、内存数 GB 的那个。挑 PID 时按窗口标题选，选错壳会白等 180 秒超时：
+
+```text
+Get-Process javaw | Where-Object { $_.MainWindowTitle -eq 'Minecraft server' }
+```

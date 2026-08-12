@@ -14,6 +14,11 @@ reload-prices-before-estimate: true
 labor:
   place-unit: 0.5
   demolish-multiplier: 2.0
+
+# 拆除回收：拆下来的方块按市场卖价 × rate 折现给玩家，同时按 sell 侧写进市场库存队列。
+# 一次指令的净额 = 材料 + 劳务 − 回收，净额为负时直接把差额打给玩家。
+salvage:
+  rate: 0.8
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true
@@ -32,13 +37,16 @@ charge-commands:
   - repl
 messages:
   prefix: "§6[创世神] §f"
-  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f），当前 §c{balance}§f。"
-  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：拆除 §e{demolition}§f + 材料 §e{material}§f + 劳务 §e{labor}§f）。"
+  insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f），当前 §c{balance}§f。"
+  charged: "已扣除 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f）。"
+  salvaged: "拆除回收 §a+{total}§f（§7{blocks} 格§f：回收 §a{salvage}§f − 材料 §e{material}§f − 劳务 §e{labor}§f），已卖给市场。"
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
   estimate-no-blocks: "未检测到会变更的方块，命令已取消。"
   undo-refunded: "已退还建造费用 §e{gross}§f，手续费 §c{fee}§f（§7{percent}%§f），实际到账 §a{net}§f；市场库存已同步还原。"
   undo-market-only: "已还原上一笔建造的市场库存变动。"
+  undo-clawback: "已收回拆除回收款 §c{net}§f（原收 §7{gross}§f，手续费 §c{fee}§f）；市场库存已同步还原。"
+  undo-clawback-failed: "§c余额不足，未能收回上一笔拆除回收款，请联系管理员。"
   undo-refund-failed: "撤销退款失败，请联系管理员。"
   unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
   protected-present: "选区内含 Slimefun 机器或无法破坏的方块，这些方块将被保留。"

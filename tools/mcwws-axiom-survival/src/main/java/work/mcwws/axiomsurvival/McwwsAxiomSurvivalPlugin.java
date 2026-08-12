@@ -148,6 +148,11 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         return new FeeAccumulator.LaborRates(place, demolish);
     }
 
+    /** 拆除折现比例：卖价 × 该系数，1.0 等于完全按市场卖价回收 */
+    public double salvageRate() {
+        return Math.min(Math.max(config.getDouble("salvage.rate", 0.8D), 0D), 1D);
+    }
+
     public boolean reloadPricesBeforeEstimate() {
         return config.getBoolean("reload-prices-before-estimate", true);
     }

@@ -74,7 +74,8 @@ public final class AxiomSurvivalListener implements Listener {
         if (player == null || BlockProtection.shouldBypass(player) || !player.hasPermission("mcwws.axiom.survival.use")) {
             return;
         }
-        if (survivalEditorService.isClientEditorSession(player)) {
+        // 菜单打开到「进入 Editor」上报之间还没有会话，这段时间的模式同样由服务端掌控
+        if (survivalEditorService.isClientEditorSession(player) || survivalEditorService.isMenuOpen(player)) {
             event.setCancelled(true);
             return;
         }
@@ -119,7 +120,12 @@ public final class AxiomSurvivalListener implements Listener {
             return;
         }
         if (survivalEditorService.isClientEditorSession(player)) {
-            if (event.getNewGameMode() != GameMode.SURVIVAL && event.getNewGameMode() != GameMode.ADVENTURE) {
+            GameMode next = event.getNewGameMode();
+            // 菜单期间的旁观是服务端自己发起的，不能拦
+            if (next == GameMode.SPECTATOR && survivalEditorService.isMenuOpen(player)) {
+                return;
+            }
+            if (next != GameMode.SURVIVAL && next != GameMode.ADVENTURE) {
                 event.setCancelled(true);
             }
             return;
@@ -129,7 +135,9 @@ public final class AxiomSurvivalListener implements Listener {
             editorRestoreService.onEnterSpectator(player);
             return;
         }
-        if (EditorSessionState.has(player) && to != GameMode.SPECTATOR) {
+        // 菜单期间的模式切换是服务端自己发起的，别当成退出 Editor
+        if (EditorSessionState.has(player) && to != GameMode.SPECTATOR
+                && !survivalEditorService.isMenuOpen(player)) {
             editorRestoreService.scheduleRestore(player, 1L);
         }
     }

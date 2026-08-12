@@ -17,6 +17,8 @@ final class SurvivalEditorJoinListener implements Listener {
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
+        // 掉线遗留的旁观/位置要先修，哪怕生存 Editor 已被关掉
+        survivalEditorService.onJoin(event.getPlayer());
         if (!plugin.getPluginConfig().getBoolean("survival-editor-mode", true)) {
             return;
         }
