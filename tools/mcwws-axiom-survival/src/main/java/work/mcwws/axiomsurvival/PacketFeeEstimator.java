@@ -150,7 +150,13 @@ final class PacketFeeEstimator {
         Method bufferGet = blockBuffer.getClass().getMethod("get", int.class, int.class, int.class);
 
         for (Object sectionEntry : sections) {
-            long sectionKey = (long) sectionEntry.getClass().getMethod("getLongKey").invoke(sectionEntry);
+            // fastutil 的 entry 实现是私有内部类，反射 getLongKey 会被 IllegalAccessException 挡下，
+            // 只能走公共接口 Map.Entry 取键
+            if (!(sectionEntry instanceof Map.Entry<?, ?> entry)
+                    || !(entry.getKey() instanceof Number packed)) {
+                continue;
+            }
+            long sectionKey = packed.longValue();
             int cx = (int) getX.invoke(null, sectionKey);
             int cy = (int) getY.invoke(null, sectionKey);
             int cz = (int) getZ.invoke(null, sectionKey);
