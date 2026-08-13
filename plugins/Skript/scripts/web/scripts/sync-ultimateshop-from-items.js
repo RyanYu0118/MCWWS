@@ -117,9 +117,12 @@ function buildProductEntry(itemId) {
     };
 }
 
-/** example-shop-menu 每页商品槽位（与 layout 中 A-U 一一对应） */
-const LAYOUT_PRODUCT_SLOTS = 'ABCDEFGHIJKLMNOPQRSTU'.split('');
+/** 第一行功能键占用 f/s/4/3/5/0/x；后五行 5×9 商品槽避开这些字符 */
+const LAYOUT_PRODUCT_SLOTS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdeghijklmnopqrtu'.split('');
 const SLOTS_PER_PAGE = LAYOUT_PRODUCT_SLOTS.length;
+const SHOP_FUNCTION_ROW = 'fs043500x';
+const PREV_PAGE_BTN = '4';
+const NEXT_PAGE_BTN = '5';
 
 function slotId(index) {
     const i = Number(index);
@@ -137,16 +140,43 @@ function chunkArray(list, size) {
     return chunks;
 }
 
-/** 54 格 GUI 底行：上一页=47(返回左2格)，返回=49，下一页=51(返回右2格) */
-/** 使用 4/5 作为翻页 ID，避免与商品槽位 A-U 及菜单按钮冲突 */
-const PREV_PAGE_BTN = '4';
-const NEXT_PAGE_BTN = '5';
+function buildProductLayoutRows(itemCount) {
+    const rows = [];
+    let i = 0;
+    for (let r = 0; r < 5; r++) {
+        let row = '';
+        for (let c = 0; c < 9; c++) {
+            row += i < itemCount ? LAYOUT_PRODUCT_SLOTS[i] : '0';
+            i += 1;
+        }
+        rows.push(row);
+    }
+    return rows;
+}
 
-function buildPaginationLayoutRow({ hasPrev, hasNext }) {
-    const row = ['a', '0', '0', '0', '3', '0', '0', '0', 'b'];
-    if (hasPrev) row[2] = PREV_PAGE_BTN;
-    if (hasNext) row[6] = NEXT_PAGE_BTN;
-    return row.join('');
+function slimefunPageButton(kind, enabled, targetShopId) {
+    const isPrev = kind === 'prev';
+    const displayItem = enabled
+        ? {
+            material: 'LIME_STAINED_GLASS_PANE',
+            name: isPrev ? '{lang:previous-page-button}' : '{lang:next-page-button}',
+            'custom-model-data': isPrev ? 2200007 : 2200009
+        }
+        : {
+            material: 'BLACK_STAINED_GLASS_PANE',
+            name: isPrev ? '{lang:previous-page-button}' : '{lang:next-page-button}',
+            'custom-model-data': isPrev ? 2200008 : 2200010
+        };
+    const button = { 'display-item': displayItem };
+    if (enabled && targetShopId) {
+        button.actions = {
+            1: {
+                type: 'shop_menu',
+                shop: targetShopId
+            }
+        };
+    }
+    return button;
 }
 
 function buildShopDoc(shopId, itemIds, options = {}) {
@@ -177,52 +207,15 @@ function buildShopDoc(shopId, itemIds, options = {}) {
         items
     };
 
-    if (totalPages > 1) {
-        const hasPrev = pageIndex > 0 && !!prevShopId;
-        const hasNext = !!nextShopId;
-        const menuButtons = {};
-        if (hasPrev) {
-            menuButtons[PREV_PAGE_BTN] = {
-                'display-item': {
-                    material: 'ARROW',
-                    name: '{lang:previous-page-button}'
-                },
-                actions: {
-                    1: {
-                        type: 'shop_menu',
-                        shop: prevShopId
-                    }
-                }
-            };
+    const hasPrev = pageIndex > 0 && !!prevShopId;
+    const hasNext = !!nextShopId;
+    doc.settings['menu-settings'] = {
+        layout: [SHOP_FUNCTION_ROW, ...buildProductLayoutRows(itemIds.length)],
+        buttons: {
+            [PREV_PAGE_BTN]: slimefunPageButton('prev', hasPrev, prevShopId),
+            [NEXT_PAGE_BTN]: slimefunPageButton('next', hasNext, nextShopId)
         }
-        if (hasNext) {
-            menuButtons[NEXT_PAGE_BTN] = {
-                'display-item': {
-                    material: 'ARROW',
-                    name: '{lang:next-page-button}'
-                },
-                actions: {
-                    1: {
-                        type: 'shop_menu',
-                        shop: nextShopId
-                    }
-                }
-            };
-        }
-        // layout 必须写在 menu-settings 内才会覆盖 menus/example-shop-menu.yml，
-        // 否则底行仍用 a0003000b，47/51 格会被黑色玻璃板 (0) 占满。
-        doc.settings['menu-settings'] = {
-            layout: [
-                '0f00s00x0',
-                '000000000',
-                '1ABCDEFG2',
-                '1HIJKLMN2',
-                '1OPQRSTU2',
-                buildPaginationLayoutRow({ hasPrev, hasNext })
-            ],
-            buttons: menuButtons
-        };
-    }
+    };
 
     return doc;
 }

@@ -29,6 +29,7 @@ edit-mode-item:
 empty-item:
   display-item:
     material: GRAY_STAINED_GLASS_PANE
+    custom-model-data: 2200002
     name: '{lang:favourite-empty-name}'
     lore:
       - '{lang:favourite-empty-line-1}'
@@ -52,12 +53,16 @@ editing-result-lore:
 buttons:
   0:
     display-item:
-      material: BLACK_STAINED_GLASS_PANE
+      material: GRAY_STAINED_GLASS_PANE
       name: ' '
+      custom-model-data: 2200002
+      hide-tool-tip: true
   B:
     display-item:
-      material: ARROW
+      material: ENCHANTED_BOOK
       name: '{lang:back-button}'
+      custom-model-data: 2200003
+      glow: false
     actions:
       1:
         type: open_menu

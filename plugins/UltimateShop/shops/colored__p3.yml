@@ -1,31 +1,33 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:colored-shop-name} (3/10)'
+  shop-name: '{lang:colored-shop-name} (3/5)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
-      - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: colored__p2
       '5':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
+          custom-model-data: 2200009
         actions:
           '1':
             type: shop_menu
@@ -36,18 +38,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_TERRACOTTA
+        material: GREEN_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_terracotta%'
+        amount: '%mcwws.price_buy_green_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_terracotta%'
+        amount: '%mcwws.price_sell_green_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +57,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_TERRACOTTA
+        material: CYAN_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_terracotta%'
+        amount: '%mcwws.price_buy_cyan_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_terracotta%'
+        amount: '%mcwws.price_sell_cyan_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +76,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_BLUE_TERRACOTTA
+        material: LIGHT_BLUE_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_terracotta%'
+        amount: '%mcwws.price_buy_light_blue_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_terracotta%'
+        amount: '%mcwws.price_sell_light_blue_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +95,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_TERRACOTTA
+        material: BLUE_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_terracotta%'
+        amount: '%mcwws.price_buy_blue_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_terracotta%'
+        amount: '%mcwws.price_sell_blue_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +114,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PURPLE_TERRACOTTA
+        material: PURPLE_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_terracotta%'
+        amount: '%mcwws.price_buy_purple_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_terracotta%'
+        amount: '%mcwws.price_sell_purple_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +133,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAGENTA_TERRACOTTA
+        material: MAGENTA_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_magenta_terracotta%'
+        amount: '%mcwws.price_buy_magenta_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_magenta_terracotta%'
+        amount: '%mcwws.price_sell_magenta_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +152,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PINK_TERRACOTTA
+        material: PINK_GLAZED_TERRACOTTA
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_terracotta%'
+        amount: '%mcwws.price_buy_pink_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_terracotta%'
+        amount: '%mcwws.price_sell_pink_glazed_terracotta%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +171,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WHITE_CONCRETE
+        material: GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_concrete%'
+        amount: '%mcwws.price_buy_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_concrete%'
+        amount: '%mcwws.price_sell_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +190,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_GRAY_CONCRETE
+        material: TINTED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_concrete%'
+        amount: '%mcwws.price_buy_tinted_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_concrete%'
+        amount: '%mcwws.price_sell_tinted_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +209,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRAY_CONCRETE
+        material: WHITE_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_gray_concrete%'
+        amount: '%mcwws.price_buy_white_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_gray_concrete%'
+        amount: '%mcwws.price_sell_white_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +228,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_CONCRETE
+        material: LIGHT_GRAY_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_concrete%'
+        amount: '%mcwws.price_buy_light_gray_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_concrete%'
+        amount: '%mcwws.price_sell_light_gray_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +247,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_CONCRETE
+        material: GRAY_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_concrete%'
+        amount: '%mcwws.price_buy_gray_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_concrete%'
+        amount: '%mcwws.price_sell_gray_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +266,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RED_CONCRETE
+        material: BLACK_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_concrete%'
+        amount: '%mcwws.price_buy_black_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_concrete%'
+        amount: '%mcwws.price_sell_black_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +285,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ORANGE_CONCRETE
+        material: BROWN_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_concrete%'
+        amount: '%mcwws.price_buy_brown_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_concrete%'
+        amount: '%mcwws.price_sell_brown_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +304,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: YELLOW_CONCRETE
+        material: RED_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_yellow_concrete%'
+        amount: '%mcwws.price_buy_red_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_yellow_concrete%'
+        amount: '%mcwws.price_sell_red_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +323,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIME_CONCRETE
+        material: ORANGE_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lime_concrete%'
+        amount: '%mcwws.price_buy_orange_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lime_concrete%'
+        amount: '%mcwws.price_sell_orange_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +342,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_CONCRETE
+        material: YELLOW_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_concrete%'
+        amount: '%mcwws.price_buy_yellow_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_concrete%'
+        amount: '%mcwws.price_sell_yellow_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +361,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_CONCRETE
+        material: LIME_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_concrete%'
+        amount: '%mcwws.price_buy_lime_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_concrete%'
+        amount: '%mcwws.price_sell_lime_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +380,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_BLUE_CONCRETE
+        material: GREEN_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_concrete%'
+        amount: '%mcwws.price_buy_green_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_concrete%'
+        amount: '%mcwws.price_sell_green_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +399,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_CONCRETE
+        material: CYAN_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_concrete%'
+        amount: '%mcwws.price_buy_cyan_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_concrete%'
+        amount: '%mcwws.price_sell_cyan_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +418,473 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PURPLE_CONCRETE
+        material: LIGHT_BLUE_STAINED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_concrete%'
+        amount: '%mcwws.price_buy_light_blue_stained_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_concrete%'
+        amount: '%mcwws.price_sell_light_blue_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  V:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BLUE_STAINED_GLASS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_blue_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_blue_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  W:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PURPLE_STAINED_GLASS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_purple_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_purple_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  X:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MAGENTA_STAINED_GLASS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_magenta_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_magenta_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'Y':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PINK_STAINED_GLASS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pink_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pink_stained_glass%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Z:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  a:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WHITE_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_white_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_white_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  b:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: LIGHT_GRAY_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_light_gray_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_light_gray_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  c:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GRAY_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_gray_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_gray_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  d:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BLACK_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_black_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_black_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  e:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BROWN_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_brown_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_brown_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  g:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  h:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ORANGE_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_orange_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_orange_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: YELLOW_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_yellow_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_yellow_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  j:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: LIME_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_lime_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_lime_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  k:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GREEN_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_green_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_green_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  l:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CYAN_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cyan_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cyan_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  m:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: LIGHT_BLUE_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_light_blue_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_light_blue_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'n':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BLUE_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_blue_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_blue_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  o:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PURPLE_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_purple_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_purple_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  p:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MAGENTA_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_magenta_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_magenta_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  q:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PINK_STAINED_GLASS_PANE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_pink_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_pink_stained_glass_pane%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  r:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SHULKER_BOX
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_shulker_box%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_shulker_box%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  t:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WHITE_SHULKER_BOX
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_white_shulker_box%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_white_shulker_box%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  u:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: LIGHT_GRAY_SHULKER_BOX
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_light_gray_shulker_box%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_light_gray_shulker_box%'
         placeholder: '{amount}$'
         start-apply: 0

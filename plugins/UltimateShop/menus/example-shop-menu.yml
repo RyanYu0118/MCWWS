@@ -7,42 +7,40 @@ open-actions:
     sound: item.book.page_turn
 
 layout:
-  - '0f00s00x0'
-  - '000000000'
-  - '1ABCDEFG2'
-  - '1HIJKLMN2'
-  - '1OPQRSTU2'
-  - 'a0003000b'
+  - 'fs043500x'
+  - 'ABCDEFGHI'
+  - 'JKLMNOPQR'
+  - 'STUVWXYZa'
+  - 'bcdeghijk'
+  - 'lmnopqrtu'
 
 buttons:
   0:
     display-item:
+      material: GRAY_STAINED_GLASS_PANE
+      name: ' '
+      custom-model-data: 2200002
+      hide-tool-tip: true
+  4:
+    display-item:
       material: BLACK_STAINED_GLASS_PANE
-      name: ' '
-  1:
-    display-item:
-      material: GRAY_STAINED_GLASS_PANE
-      name: ' '
-  a:
-    display-item:
-      material: GRAY_STAINED_GLASS_PANE
-      name: ' '
-  2:
-    display-item:
-      material: LIGHT_BLUE_STAINED_GLASS_PANE
-      name: ' '
-  b:
-    display-item:
-      material: LIGHT_BLUE_STAINED_GLASS_PANE
-      name: ' '
+      name: '{lang:previous-page-button}'
+      custom-model-data: 2200008
   3:
     display-item:
-      material: ARROW
+      material: ENCHANTED_BOOK
       name: '{lang:back-button}'
+      custom-model-data: 2200003
+      glow: false
     actions:
       1:
         type: open_menu
         menu: main
+  5:
+    display-item:
+      material: BLACK_STAINED_GLASS_PANE
+      name: '{lang:next-page-button}'
+      custom-model-data: 2200010
   f:
     display-item:
       material: NAME_TAG
@@ -56,11 +54,12 @@ buttons:
         menu: favourite
   s:
     display-item:
-      material: HOPPER
+      material: NAME_TAG
       name: '{lang:search-menu-button-name}'
       lore:
         - '{lang:search-menu-button-line-1}'
         - '{lang:search-menu-button-line-2}'
+      custom-model-data: 2200005
     actions:
       1:
         type: open_menu

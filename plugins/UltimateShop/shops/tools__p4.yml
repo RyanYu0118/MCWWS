@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:tools-shop-name} (4/7)'
+  shop-name: '{lang:tools-shop-name} (4/4)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGHI
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - '000000000'
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: tools__p3
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: tools__p5
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_BUNDLE
+        material: MUSIC_DISC_CREATOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_bundle%'
+        amount: '%mcwws.price_buy_music_disc_creator%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_bundle%'
+        amount: '%mcwws.price_sell_music_disc_creator%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COMPASS
+        material: MUSIC_DISC_PRECIPICE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_compass%'
+        amount: '%mcwws.price_buy_music_disc_precipice%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_compass%'
+        amount: '%mcwws.price_sell_music_disc_precipice%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RECOVERY_COMPASS
+        material: MUSIC_DISC_OTHERSIDE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_recovery_compass%'
+        amount: '%mcwws.price_buy_music_disc_otherside%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_recovery_compass%'
+        amount: '%mcwws.price_sell_music_disc_otherside%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CLOCK
+        material: MUSIC_DISC_RELIC
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_clock%'
+        amount: '%mcwws.price_buy_music_disc_relic%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_clock%'
+        amount: '%mcwws.price_sell_music_disc_relic%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SPYGLASS
+        material: MUSIC_DISC_5
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_spyglass%'
+        amount: '%mcwws.price_buy_music_disc_5%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_spyglass%'
+        amount: '%mcwws.price_sell_music_disc_5%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAP
+        material: MUSIC_DISC_PIGSTEP
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_map%'
+        amount: '%mcwws.price_buy_music_disc_pigstep%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_map%'
+        amount: '%mcwws.price_sell_music_disc_pigstep%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WRITABLE_BOOK
+        material: MUSIC_DISC_TEARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_writable_book%'
+        amount: '%mcwws.price_buy_music_disc_tears%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_writable_book%'
+        amount: '%mcwws.price_sell_music_disc_tears%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +167,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WIND_CHARGE
+        material: MUSIC_DISC_LAVA_CHICKEN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wind_charge%'
+        amount: '%mcwws.price_buy_music_disc_lava_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wind_charge%'
+        amount: '%mcwws.price_sell_music_disc_lava_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,245 +186,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENDER_PEARL
+        material: FIREWORK_ROCKET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ender_pearl%'
+        amount: '%mcwws.price_buy_firework_rocket%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ender_pearl%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  J:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ENDER_EYE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_ender_eye%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_ender_eye%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  K:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ELYTRA
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_elytra%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_elytra%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  L:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SADDLE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_saddle%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_saddle%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  M:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WHITE_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  'N':
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ORANGE_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  O:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: MAGENTA_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_magenta_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_magenta_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  P:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: LIGHT_BLUE_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  Q:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: YELLOW_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_yellow_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_yellow_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  R:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: LIME_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_lime_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_lime_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  S:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: PINK_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: GRAY_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_gray_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_gray_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: LIGHT_GRAY_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_harness%'
+        amount: '%mcwws.price_sell_firework_rocket%'
         placeholder: '{amount}$'
         start-apply: 0

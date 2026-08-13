@@ -1,31 +1,33 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:building-shop-name} (9/21)'
+  shop-name: '{lang:building-shop-name} (9/10)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
-      - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: building__p8
       '5':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
+          custom-model-data: 2200009
         actions:
           '1':
             type: shop_menu
@@ -36,18 +38,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_COBBLESTONE_SLAB
+        material: WEATHERED_CUT_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_cobblestone_slab%'
+        amount: '%mcwws.price_buy_weathered_cut_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_cobblestone_slab%'
+        amount: '%mcwws.price_sell_weathered_cut_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +57,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_COBBLESTONE_WALL
+        material: OXIDIZED_CUT_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_cobblestone_wall%'
+        amount: '%mcwws.price_buy_oxidized_cut_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_cobblestone_wall%'
+        amount: '%mcwws.price_sell_oxidized_cut_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +76,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SMOOTH_STONE
+        material: CUT_COPPER_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_smooth_stone%'
+        amount: '%mcwws.price_buy_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_smooth_stone%'
+        amount: '%mcwws.price_sell_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +95,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SMOOTH_STONE_SLAB
+        material: EXPOSED_CUT_COPPER_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_smooth_stone_slab%'
+        amount: '%mcwws.price_buy_exposed_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_smooth_stone_slab%'
+        amount: '%mcwws.price_sell_exposed_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +114,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_BRICKS
+        material: WEATHERED_CUT_COPPER_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_bricks%'
+        amount: '%mcwws.price_buy_weathered_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_bricks%'
+        amount: '%mcwws.price_sell_weathered_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +133,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CRACKED_STONE_BRICKS
+        material: OXIDIZED_CUT_COPPER_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cracked_stone_bricks%'
+        amount: '%mcwws.price_buy_oxidized_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cracked_stone_bricks%'
+        amount: '%mcwws.price_sell_oxidized_cut_copper_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +152,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_BRICK_STAIRS
+        material: CUT_COPPER_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_brick_stairs%'
+        amount: '%mcwws.price_buy_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_brick_stairs%'
+        amount: '%mcwws.price_sell_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +171,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_BRICK_SLAB
+        material: EXPOSED_CUT_COPPER_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_brick_slab%'
+        amount: '%mcwws.price_buy_exposed_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_brick_slab%'
+        amount: '%mcwws.price_sell_exposed_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +190,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_BRICK_WALL
+        material: WEATHERED_CUT_COPPER_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_brick_wall%'
+        amount: '%mcwws.price_buy_weathered_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_brick_wall%'
+        amount: '%mcwws.price_sell_weathered_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +209,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHISELED_STONE_BRICKS
+        material: OXIDIZED_CUT_COPPER_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chiseled_stone_bricks%'
+        amount: '%mcwws.price_buy_oxidized_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chiseled_stone_bricks%'
+        amount: '%mcwws.price_sell_oxidized_cut_copper_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +228,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_STONE_BRICKS
+        material: COPPER_BARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_stone_bricks%'
+        amount: '%mcwws.price_buy_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_stone_bricks%'
+        amount: '%mcwws.price_sell_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +247,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_STONE_BRICK_STAIRS
+        material: EXPOSED_COPPER_BARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_stone_brick_stairs%'
+        amount: '%mcwws.price_buy_exposed_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_stone_brick_stairs%'
+        amount: '%mcwws.price_sell_exposed_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +266,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_STONE_BRICK_SLAB
+        material: WEATHERED_COPPER_BARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_stone_brick_slab%'
+        amount: '%mcwws.price_buy_weathered_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_stone_brick_slab%'
+        amount: '%mcwws.price_sell_weathered_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +285,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOSSY_STONE_BRICK_WALL
+        material: OXIDIZED_COPPER_BARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mossy_stone_brick_wall%'
+        amount: '%mcwws.price_buy_oxidized_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mossy_stone_brick_wall%'
+        amount: '%mcwws.price_sell_oxidized_copper_bars%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +304,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRANITE
+        material: COPPER_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_granite%'
+        amount: '%mcwws.price_buy_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_granite%'
+        amount: '%mcwws.price_sell_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +323,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRANITE_STAIRS
+        material: EXPOSED_COPPER_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_granite_stairs%'
+        amount: '%mcwws.price_buy_exposed_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_granite_stairs%'
+        amount: '%mcwws.price_sell_exposed_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +342,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRANITE_SLAB
+        material: WEATHERED_COPPER_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_granite_slab%'
+        amount: '%mcwws.price_buy_weathered_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_granite_slab%'
+        amount: '%mcwws.price_sell_weathered_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +361,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRANITE_WALL
+        material: OXIDIZED_COPPER_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_granite_wall%'
+        amount: '%mcwws.price_buy_oxidized_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_granite_wall%'
+        amount: '%mcwws.price_sell_oxidized_copper_door%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +380,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: POLISHED_GRANITE
+        material: COPPER_TRAPDOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_polished_granite%'
+        amount: '%mcwws.price_buy_copper_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_polished_granite%'
+        amount: '%mcwws.price_sell_copper_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +399,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: POLISHED_GRANITE_STAIRS
+        material: EXPOSED_COPPER_TRAPDOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_polished_granite_stairs%'
+        amount: '%mcwws.price_buy_exposed_copper_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_polished_granite_stairs%'
+        amount: '%mcwws.price_sell_exposed_copper_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +418,473 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: POLISHED_GRANITE_SLAB
+        material: WEATHERED_COPPER_TRAPDOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_polished_granite_slab%'
+        amount: '%mcwws.price_buy_weathered_copper_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_polished_granite_slab%'
+        amount: '%mcwws.price_sell_weathered_copper_trapdoor%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  V:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OXIDIZED_COPPER_TRAPDOOR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oxidized_copper_trapdoor%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oxidized_copper_trapdoor%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  W:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COPPER_BULB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  X:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: EXPOSED_COPPER_BULB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_exposed_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_exposed_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'Y':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WEATHERED_COPPER_BULB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_weathered_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_weathered_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Z:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OXIDIZED_COPPER_BULB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oxidized_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oxidized_copper_bulb%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  a:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: COPPER_CHAIN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  b:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: EXPOSED_COPPER_CHAIN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_exposed_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_exposed_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  c:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WEATHERED_COPPER_CHAIN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_weathered_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_weathered_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  d:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OXIDIZED_COPPER_CHAIN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oxidized_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oxidized_copper_chain%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  e:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_COPPER_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_copper_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_copper_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  g:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_EXPOSED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_exposed_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_exposed_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  h:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_WEATHERED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_weathered_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_weathered_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_OXIDIZED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_oxidized_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_oxidized_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  j:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_CHISELED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  k:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_EXPOSED_CHISELED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_exposed_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_exposed_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  l:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_WEATHERED_CHISELED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_weathered_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_weathered_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  m:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_OXIDIZED_CHISELED_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_oxidized_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_oxidized_chiseled_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'n':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_COPPER_GRATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  o:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_EXPOSED_COPPER_GRATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_exposed_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_exposed_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  p:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_WEATHERED_COPPER_GRATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_weathered_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_weathered_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  q:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_OXIDIZED_COPPER_GRATE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_oxidized_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_oxidized_copper_grate%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  r:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_CUT_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_cut_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_cut_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  t:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_EXPOSED_CUT_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_exposed_cut_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_exposed_cut_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  u:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WAXED_WEATHERED_CUT_COPPER
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_waxed_weathered_cut_copper%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_waxed_weathered_cut_copper%'
         placeholder: '{amount}$'
         start-apply: 0

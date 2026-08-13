@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:combat-shop-name} (2/4)'
+  shop-name: '{lang:combat-shop-name} (2/2)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeg0000
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: combat
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: combat__p3
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TRIDENT
+        material: DIAMOND_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_trident%'
+        amount: '%mcwws.price_buy_diamond_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_trident%'
+        amount: '%mcwws.price_sell_diamond_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MACE
+        material: DIAMOND_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mace%'
+        amount: '%mcwws.price_buy_diamond_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mace%'
+        amount: '%mcwws.price_sell_diamond_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SHIELD
+        material: DIAMOND_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_shield%'
+        amount: '%mcwws.price_buy_diamond_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_shield%'
+        amount: '%mcwws.price_sell_diamond_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_HELMET
+        material: NETHERITE_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_helmet%'
+        amount: '%mcwws.price_buy_netherite_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_helmet%'
+        amount: '%mcwws.price_sell_netherite_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_CHESTPLATE
+        material: NETHERITE_CHESTPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_chestplate%'
+        amount: '%mcwws.price_buy_netherite_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_chestplate%'
+        amount: '%mcwws.price_sell_netherite_chestplate%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_LEGGINGS
+        material: NETHERITE_LEGGINGS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_leggings%'
+        amount: '%mcwws.price_buy_netherite_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_leggings%'
+        amount: '%mcwws.price_sell_netherite_leggings%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_BOOTS
+        material: NETHERITE_BOOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_boots%'
+        amount: '%mcwws.price_buy_netherite_boots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_boots%'
+        amount: '%mcwws.price_sell_netherite_boots%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +167,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_HELMET
+        material: TURTLE_HELMET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_helmet%'
+        amount: '%mcwws.price_buy_turtle_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_helmet%'
+        amount: '%mcwws.price_sell_turtle_helmet%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +186,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_CHESTPLATE
+        material: LEATHER_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_chestplate%'
+        amount: '%mcwws.price_buy_leather_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_chestplate%'
+        amount: '%mcwws.price_sell_leather_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +205,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_LEGGINGS
+        material: COPPER_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_leggings%'
+        amount: '%mcwws.price_buy_copper_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_leggings%'
+        amount: '%mcwws.price_sell_copper_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +224,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_BOOTS
+        material: IRON_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_boots%'
+        amount: '%mcwws.price_buy_iron_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_boots%'
+        amount: '%mcwws.price_sell_iron_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +243,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHAINMAIL_HELMET
+        material: GOLDEN_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chainmail_helmet%'
+        amount: '%mcwws.price_buy_golden_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chainmail_helmet%'
+        amount: '%mcwws.price_sell_golden_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +262,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHAINMAIL_CHESTPLATE
+        material: DIAMOND_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chainmail_chestplate%'
+        amount: '%mcwws.price_buy_diamond_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chainmail_chestplate%'
+        amount: '%mcwws.price_sell_diamond_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +281,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHAINMAIL_LEGGINGS
+        material: NETHERITE_HORSE_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chainmail_leggings%'
+        amount: '%mcwws.price_buy_netherite_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chainmail_leggings%'
+        amount: '%mcwws.price_sell_netherite_horse_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +300,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHAINMAIL_BOOTS
+        material: WOLF_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chainmail_boots%'
+        amount: '%mcwws.price_buy_wolf_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chainmail_boots%'
+        amount: '%mcwws.price_sell_wolf_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +319,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_HELMET
+        material: COPPER_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_helmet%'
+        amount: '%mcwws.price_buy_copper_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_helmet%'
+        amount: '%mcwws.price_sell_copper_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +338,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_CHESTPLATE
+        material: IRON_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_chestplate%'
+        amount: '%mcwws.price_buy_iron_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_chestplate%'
+        amount: '%mcwws.price_sell_iron_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +357,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_LEGGINGS
+        material: GOLDEN_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_leggings%'
+        amount: '%mcwws.price_buy_golden_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_leggings%'
+        amount: '%mcwws.price_sell_golden_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +376,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_BOOTS
+        material: DIAMOND_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_boots%'
+        amount: '%mcwws.price_buy_diamond_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_boots%'
+        amount: '%mcwws.price_sell_diamond_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +395,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_HELMET
+        material: NETHERITE_NAUTILUS_ARMOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_helmet%'
+        amount: '%mcwws.price_buy_netherite_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_helmet%'
+        amount: '%mcwws.price_sell_netherite_nautilus_armor%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +414,226 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_CHESTPLATE
+        material: TOTEM_OF_UNDYING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_chestplate%'
+        amount: '%mcwws.price_buy_totem_of_undying%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_chestplate%'
+        amount: '%mcwws.price_sell_totem_of_undying%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  V:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TNT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tnt%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tnt%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  W:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: END_CRYSTAL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_end_crystal%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_end_crystal%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  X:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SNOWBALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_snowball%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_snowball%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'Y':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: EGG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Z:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BROWN_EGG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_brown_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_brown_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  a:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BLUE_EGG
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_blue_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_blue_egg%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  b:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: WIND_CHARGE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_wind_charge%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_wind_charge%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  c:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BOW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  d:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CROSSBOW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_crossbow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_crossbow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  e:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ARROW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_arrow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_arrow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  g:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SPECTRAL_ARROW
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_spectral_arrow%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_spectral_arrow%'
         placeholder: '{amount}$'
         start-apply: 0

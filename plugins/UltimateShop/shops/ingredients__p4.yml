@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:ingredients-shop-name} (4/8)'
+  shop-name: '{lang:ingredients-shop-name} (4/4)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: ingredients__p3
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: ingredients__p5
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_GRAY_DYE
+        material: WAYFINDER_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_dye%'
+        amount: '%mcwws.price_buy_wayfinder_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_dye%'
+        amount: '%mcwws.price_sell_wayfinder_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_DYE
+        material: RAISER_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_dye%'
+        amount: '%mcwws.price_buy_raiser_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_dye%'
+        amount: '%mcwws.price_sell_raiser_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PURPLE_DYE
+        material: SHAPER_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_dye%'
+        amount: '%mcwws.price_buy_shaper_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_dye%'
+        amount: '%mcwws.price_sell_shaper_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_DYE
+        material: HOST_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_dye%'
+        amount: '%mcwws.price_buy_host_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_dye%'
+        amount: '%mcwws.price_sell_host_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_DYE
+        material: WARD_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_dye%'
+        amount: '%mcwws.price_buy_ward_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_dye%'
+        amount: '%mcwws.price_sell_ward_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_DYE
+        material: SILENCE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_dye%'
+        amount: '%mcwws.price_buy_silence_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_dye%'
+        amount: '%mcwws.price_sell_silence_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RED_DYE
+        material: TIDE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_dye%'
+        amount: '%mcwws.price_buy_tide_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_dye%'
+        amount: '%mcwws.price_sell_tide_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +167,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_DYE
+        material: SNOUT_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_dye%'
+        amount: '%mcwws.price_buy_snout_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_dye%'
+        amount: '%mcwws.price_sell_snout_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +186,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BOWL
+        material: RIB_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bowl%'
+        amount: '%mcwws.price_buy_rib_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bowl%'
+        amount: '%mcwws.price_sell_rib_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +205,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRICK
+        material: EYE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brick%'
+        amount: '%mcwws.price_buy_eye_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brick%'
+        amount: '%mcwws.price_sell_eye_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +224,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NETHER_BRICK
+        material: SPIRE_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nether_brick%'
+        amount: '%mcwws.price_buy_spire_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nether_brick%'
+        amount: '%mcwws.price_sell_spire_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +243,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RESIN_BRICK
+        material: FLOW_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_resin_brick%'
+        amount: '%mcwws.price_buy_flow_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_resin_brick%'
+        amount: '%mcwws.price_sell_flow_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +262,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PAPER
+        material: BOLT_ARMOR_TRIM_SMITHING_TEMPLATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_paper%'
+        amount: '%mcwws.price_buy_bolt_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_paper%'
+        amount: '%mcwws.price_sell_bolt_armor_trim_smithing_template%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +281,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BOOK
+        material: EXPERIENCE_BOTTLE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_book%'
+        amount: '%mcwws.price_buy_experience_bottle%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_book%'
+        amount: '%mcwws.price_sell_experience_bottle%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +300,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FIREWORK_STAR
+        material: TRIAL_KEY
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_firework_star%'
+        amount: '%mcwws.price_buy_trial_key%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_firework_star%'
+        amount: '%mcwws.price_sell_trial_key%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +319,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLASS_BOTTLE
+        material: OMINOUS_TRIAL_KEY
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glass_bottle%'
+        amount: '%mcwws.price_buy_ominous_trial_key%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glass_bottle%'
+        amount: '%mcwws.price_sell_ominous_trial_key%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +338,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NETHER_WART
+        material: GOAT_HORN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nether_wart%'
+        amount: '%mcwws.price_buy_goat_horn%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nether_wart%'
+        amount: '%mcwws.price_sell_goat_horn%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,74 +357,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: REDSTONE
+        material: OMINOUS_BOTTLE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_redstone%'
+        amount: '%mcwws.price_buy_ominous_bottle%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_redstone%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  S:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: GLOWSTONE_DUST
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_glowstone_dust%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_glowstone_dust%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: GUNPOWDER
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_gunpowder%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_gunpowder%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: DRAGON_BREATH
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_dragon_breath%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_dragon_breath%'
+        amount: '%mcwws.price_sell_ominous_bottle%'
         placeholder: '{amount}$'
         start-apply: 0

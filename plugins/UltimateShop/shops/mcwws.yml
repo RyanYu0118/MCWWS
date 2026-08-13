@@ -5,6 +5,25 @@ settings:
   hide-message: false
   secret-shop-items: true
   allow-favourite: true
+  menu-settings:
+    layout:
+      - fs043500x
+      - A00000000
+      - '000000000'
+      - '000000000'
+      - '000000000'
+      - '000000000'
+    buttons:
+      '4':
+        display-item:
+          material: BLACK_STAINED_GLASS_PANE
+          name: '{lang:previous-page-button}'
+          custom-model-data: 2200008
+      '5':
+        display-item:
+          material: BLACK_STAINED_GLASS_PANE
+          name: '{lang:next-page-button}'
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL

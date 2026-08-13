@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:natural-shop-name} (6/12)'
+  shop-name: '{lang:natural-shop-name} (6/6)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGH0
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - '000000000'
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: natural__p5
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: natural__p7
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ACACIA_SAPLING
+        material: VERDANT_FROGLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_acacia_sapling%'
+        amount: '%mcwws.price_buy_verdant_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_acacia_sapling%'
+        amount: '%mcwws.price_sell_verdant_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_OAK_SAPLING
+        material: PEARLESCENT_FROGLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_oak_sapling%'
+        amount: '%mcwws.price_buy_pearlescent_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_oak_sapling%'
+        amount: '%mcwws.price_sell_pearlescent_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MANGROVE_PROPAGULE
+        material: SCULK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_propagule%'
+        amount: '%mcwws.price_buy_sculk%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_propagule%'
+        amount: '%mcwws.price_sell_sculk%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHERRY_SAPLING
+        material: SCULK_VEIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cherry_sapling%'
+        amount: '%mcwws.price_buy_sculk_vein%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cherry_sapling%'
+        amount: '%mcwws.price_sell_sculk_vein%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PALE_OAK_SAPLING
+        material: SCULK_CATALYST
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pale_oak_sapling%'
+        amount: '%mcwws.price_buy_sculk_catalyst%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pale_oak_sapling%'
+        amount: '%mcwws.price_sell_sculk_catalyst%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: AZALEA
+        material: SCULK_SHRIEKER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_azalea%'
+        amount: '%mcwws.price_buy_sculk_shrieker%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_azalea%'
+        amount: '%mcwws.price_sell_sculk_shrieker%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FLOWERING_AZALEA
+        material: SCULK_SENSOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_flowering_azalea%'
+        amount: '%mcwws.price_buy_sculk_sensor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_flowering_azalea%'
+        amount: '%mcwws.price_sell_sculk_sensor%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,264 +167,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_MUSHROOM
+        material: COBWEB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_mushroom%'
+        amount: '%mcwws.price_buy_cobweb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_mushroom%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  I:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: RED_MUSHROOM
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_mushroom%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_mushroom%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  J:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: CRIMSON_FUNGUS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_crimson_fungus%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_crimson_fungus%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  K:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WARPED_FUNGUS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_warped_fungus%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_warped_fungus%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  L:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SHORT_GRASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_short_grass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_short_grass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  M:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: FERN
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_fern%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_fern%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  'N':
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SHORT_DRY_GRASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_short_dry_grass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_short_dry_grass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  O:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BUSH
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_bush%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_bush%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  P:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: DEAD_BUSH
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bush%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bush%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  Q:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: DANDELION
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_dandelion%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_dandelion%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  R:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: POPPY
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_poppy%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_poppy%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  S:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BLUE_ORCHID
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_orchid%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_orchid%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ALLIUM
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_allium%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_allium%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: AZURE_BLUET
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_azure_bluet%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_azure_bluet%'
+        amount: '%mcwws.price_sell_cobweb%'
         placeholder: '{amount}$'
         start-apply: 0

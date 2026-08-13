@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:colored-shop-name} (5/10)'
+  shop-name: '{lang:colored-shop-name} (5/5)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: colored__p4
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: colored__p6
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLACK_GLAZED_TERRACOTTA
+        material: MAGENTA_CANDLE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_glazed_terracotta%'
+        amount: '%mcwws.price_buy_magenta_candle%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_glazed_terracotta%'
+        amount: '%mcwws.price_sell_magenta_candle%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_GLAZED_TERRACOTTA
+        material: PINK_CANDLE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_glazed_terracotta%'
+        amount: '%mcwws.price_buy_pink_candle%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_glazed_terracotta%'
+        amount: '%mcwws.price_sell_pink_candle%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RED_GLAZED_TERRACOTTA
+        material: WHITE_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_glazed_terracotta%'
+        amount: '%mcwws.price_buy_white_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_glazed_terracotta%'
+        amount: '%mcwws.price_sell_white_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ORANGE_GLAZED_TERRACOTTA
+        material: LIGHT_GRAY_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_glazed_terracotta%'
+        amount: '%mcwws.price_buy_light_gray_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_glazed_terracotta%'
+        amount: '%mcwws.price_sell_light_gray_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: YELLOW_GLAZED_TERRACOTTA
+        material: GRAY_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_yellow_glazed_terracotta%'
+        amount: '%mcwws.price_buy_gray_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_yellow_glazed_terracotta%'
+        amount: '%mcwws.price_sell_gray_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIME_GLAZED_TERRACOTTA
+        material: BLACK_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lime_glazed_terracotta%'
+        amount: '%mcwws.price_buy_black_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lime_glazed_terracotta%'
+        amount: '%mcwws.price_sell_black_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GREEN_GLAZED_TERRACOTTA
+        material: BROWN_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_green_glazed_terracotta%'
+        amount: '%mcwws.price_buy_brown_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_green_glazed_terracotta%'
+        amount: '%mcwws.price_sell_brown_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +167,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CYAN_GLAZED_TERRACOTTA
+        material: RED_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_glazed_terracotta%'
+        amount: '%mcwws.price_buy_red_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_glazed_terracotta%'
+        amount: '%mcwws.price_sell_red_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +186,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_BLUE_GLAZED_TERRACOTTA
+        material: ORANGE_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_blue_glazed_terracotta%'
+        amount: '%mcwws.price_buy_orange_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_blue_glazed_terracotta%'
+        amount: '%mcwws.price_sell_orange_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +205,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_GLAZED_TERRACOTTA
+        material: YELLOW_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_glazed_terracotta%'
+        amount: '%mcwws.price_buy_yellow_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_glazed_terracotta%'
+        amount: '%mcwws.price_sell_yellow_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +224,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PURPLE_GLAZED_TERRACOTTA
+        material: LIME_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_purple_glazed_terracotta%'
+        amount: '%mcwws.price_buy_lime_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_purple_glazed_terracotta%'
+        amount: '%mcwws.price_sell_lime_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +243,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MAGENTA_GLAZED_TERRACOTTA
+        material: GREEN_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_magenta_glazed_terracotta%'
+        amount: '%mcwws.price_buy_green_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_magenta_glazed_terracotta%'
+        amount: '%mcwws.price_sell_green_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +262,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PINK_GLAZED_TERRACOTTA
+        material: CYAN_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_glazed_terracotta%'
+        amount: '%mcwws.price_buy_cyan_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_glazed_terracotta%'
+        amount: '%mcwws.price_sell_cyan_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +281,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLASS
+        material: LIGHT_BLUE_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glass%'
+        amount: '%mcwws.price_buy_light_blue_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glass%'
+        amount: '%mcwws.price_sell_light_blue_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +300,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TINTED_GLASS
+        material: BLUE_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tinted_glass%'
+        amount: '%mcwws.price_buy_blue_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tinted_glass%'
+        amount: '%mcwws.price_sell_blue_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +319,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WHITE_STAINED_GLASS
+        material: PURPLE_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_stained_glass%'
+        amount: '%mcwws.price_buy_purple_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_stained_glass%'
+        amount: '%mcwws.price_sell_purple_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +338,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LIGHT_GRAY_STAINED_GLASS
+        material: MAGENTA_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_light_gray_stained_glass%'
+        amount: '%mcwws.price_buy_magenta_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_light_gray_stained_glass%'
+        amount: '%mcwws.price_sell_magenta_banner%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,74 +357,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRAY_STAINED_GLASS
+        material: PINK_BANNER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_gray_stained_glass%'
+        amount: '%mcwws.price_buy_pink_banner%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_gray_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  S:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BLACK_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_black_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_black_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BROWN_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: RED_STAINED_GLASS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_stained_glass%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_stained_glass%'
+        amount: '%mcwws.price_sell_pink_banner%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -1,53 +1,51 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:enchantments-shop-name} (3/6)'
+  shop-name: '{lang:enchantments-shop-name} (3/3)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
     layout:
-      - 0f00s00x0
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcde00000
       - '000000000'
-      - 1ABCDEFG2
-      - 1HIJKLMN2
-      - 1OPQRSTU2
-      - a0403050b
     buttons:
       '4':
         display-item:
-          material: ARROW
+          material: LIME_STAINED_GLASS_PANE
           name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
         actions:
           '1':
             type: shop_menu
             shop: enchantments__p2
       '5':
         display-item:
-          material: ARROW
+          material: BLACK_STAINED_GLASS_PANE
           name: '{lang:next-page-button}'
-        actions:
-          '1':
-            type: shop_menu
-            shop: enchantments__p4
+          custom-model-data: 2200010
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_FORTUNE_3
+        material: ENCHANTED_BOOK_RESPIRATION_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_fortune_3%'
+        amount: '%mcwws.price_buy_enchanted_book_respiration_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_fortune_3%'
+        amount: '%mcwws.price_sell_enchanted_book_respiration_2%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +53,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_FROST_WALKER_1
+        material: ENCHANTED_BOOK_RESPIRATION_3
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_frost_walker_1%'
+        amount: '%mcwws.price_buy_enchanted_book_respiration_3%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_frost_walker_1%'
+        amount: '%mcwws.price_sell_enchanted_book_respiration_3%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +72,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_FROST_WALKER_2
+        material: ENCHANTED_BOOK_RIPTIDE_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_frost_walker_2%'
+        amount: '%mcwws.price_buy_enchanted_book_riptide_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_frost_walker_2%'
+        amount: '%mcwws.price_sell_enchanted_book_riptide_1%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +91,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_IMPALING_1
+        material: ENCHANTED_BOOK_RIPTIDE_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_impaling_1%'
+        amount: '%mcwws.price_buy_enchanted_book_riptide_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_impaling_1%'
+        amount: '%mcwws.price_sell_enchanted_book_riptide_2%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +110,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_IMPALING_2
+        material: ENCHANTED_BOOK_RIPTIDE_3
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_impaling_2%'
+        amount: '%mcwws.price_buy_enchanted_book_riptide_3%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_impaling_2%'
+        amount: '%mcwws.price_sell_enchanted_book_riptide_3%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +129,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_IMPALING_3
+        material: ENCHANTED_BOOK_SHARPNESS_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_impaling_3%'
+        amount: '%mcwws.price_buy_enchanted_book_sharpness_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_impaling_3%'
+        amount: '%mcwws.price_sell_enchanted_book_sharpness_1%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +148,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_IMPALING_4
+        material: ENCHANTED_BOOK_SHARPNESS_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_impaling_4%'
+        amount: '%mcwws.price_buy_enchanted_book_sharpness_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_impaling_4%'
+        amount: '%mcwws.price_sell_enchanted_book_sharpness_2%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +167,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_IMPALING_5
+        material: ENCHANTED_BOOK_SHARPNESS_3
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_impaling_5%'
+        amount: '%mcwws.price_buy_enchanted_book_sharpness_3%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_impaling_5%'
+        amount: '%mcwws.price_sell_enchanted_book_sharpness_3%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +186,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_INFINITY_1
+        material: ENCHANTED_BOOK_SHARPNESS_4
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_infinity_1%'
+        amount: '%mcwws.price_buy_enchanted_book_sharpness_4%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_infinity_1%'
+        amount: '%mcwws.price_sell_enchanted_book_sharpness_4%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +205,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_KNOCKBACK_1
+        material: ENCHANTED_BOOK_SHARPNESS_5
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_knockback_1%'
+        amount: '%mcwws.price_buy_enchanted_book_sharpness_5%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_knockback_1%'
+        amount: '%mcwws.price_sell_enchanted_book_sharpness_5%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +224,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_KNOCKBACK_2
+        material: ENCHANTED_BOOK_SILK_TOUCH_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_knockback_2%'
+        amount: '%mcwws.price_buy_enchanted_book_silk_touch_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_knockback_2%'
+        amount: '%mcwws.price_sell_enchanted_book_silk_touch_1%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +243,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOOTING_1
+        material: ENCHANTED_BOOK_SMITE_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_looting_1%'
+        amount: '%mcwws.price_buy_enchanted_book_smite_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_looting_1%'
+        amount: '%mcwws.price_sell_enchanted_book_smite_1%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +262,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOOTING_2
+        material: ENCHANTED_BOOK_SMITE_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_looting_2%'
+        amount: '%mcwws.price_buy_enchanted_book_smite_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_looting_2%'
+        amount: '%mcwws.price_sell_enchanted_book_smite_2%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +281,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOOTING_3
+        material: ENCHANTED_BOOK_SMITE_3
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_looting_3%'
+        amount: '%mcwws.price_buy_enchanted_book_smite_3%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_looting_3%'
+        amount: '%mcwws.price_sell_enchanted_book_smite_3%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +300,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOYALTY_1
+        material: ENCHANTED_BOOK_SMITE_4
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_loyalty_1%'
+        amount: '%mcwws.price_buy_enchanted_book_smite_4%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_loyalty_1%'
+        amount: '%mcwws.price_sell_enchanted_book_smite_4%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +319,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOYALTY_2
+        material: ENCHANTED_BOOK_SMITE_5
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_loyalty_2%'
+        amount: '%mcwws.price_buy_enchanted_book_smite_5%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_loyalty_2%'
+        amount: '%mcwws.price_sell_enchanted_book_smite_5%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +338,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LOYALTY_3
+        material: ENCHANTED_BOOK_SOUL_SPEED_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_loyalty_3%'
+        amount: '%mcwws.price_buy_enchanted_book_soul_speed_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_loyalty_3%'
+        amount: '%mcwws.price_sell_enchanted_book_soul_speed_1%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +357,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LUCK_OF_THE_SEA_1
+        material: ENCHANTED_BOOK_SOUL_SPEED_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_luck_of_the_sea_1%'
+        amount: '%mcwws.price_buy_enchanted_book_soul_speed_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_luck_of_the_sea_1%'
+        amount: '%mcwws.price_sell_enchanted_book_soul_speed_2%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +376,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LUCK_OF_THE_SEA_2
+        material: ENCHANTED_BOOK_SOUL_SPEED_3
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_luck_of_the_sea_2%'
+        amount: '%mcwws.price_buy_enchanted_book_soul_speed_3%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_luck_of_the_sea_2%'
+        amount: '%mcwws.price_sell_enchanted_book_soul_speed_3%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +395,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LUCK_OF_THE_SEA_3
+        material: ENCHANTED_BOOK_SWEEPING_EDGE_1
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_luck_of_the_sea_3%'
+        amount: '%mcwws.price_buy_enchanted_book_sweeping_edge_1%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_luck_of_the_sea_3%'
+        amount: '%mcwws.price_sell_enchanted_book_sweeping_edge_1%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +414,207 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTED_BOOK_LURE_1
+        material: ENCHANTED_BOOK_SWEEPING_EDGE_2
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanted_book_lure_1%'
+        amount: '%mcwws.price_buy_enchanted_book_sweeping_edge_2%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanted_book_lure_1%'
+        amount: '%mcwws.price_sell_enchanted_book_sweeping_edge_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  V:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_SWEEPING_EDGE_3
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_sweeping_edge_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_sweeping_edge_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  W:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_SWIFT_SNEAK_1
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_swift_sneak_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_swift_sneak_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  X:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_SWIFT_SNEAK_2
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_swift_sneak_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_swift_sneak_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'Y':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_SWIFT_SNEAK_3
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_swift_sneak_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_swift_sneak_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Z:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_THORNS_1
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_thorns_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_thorns_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  a:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_THORNS_2
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_thorns_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_thorns_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  b:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_THORNS_3
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_thorns_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_thorns_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  c:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_UNBREAKING_1
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_unbreaking_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_unbreaking_1%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  d:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_UNBREAKING_2
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_unbreaking_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_unbreaking_2%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  e:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: ENCHANTED_BOOK_UNBREAKING_3
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_enchanted_book_unbreaking_3%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_enchanted_book_unbreaking_3%'
         placeholder: '{amount}$'
         start-apply: 0

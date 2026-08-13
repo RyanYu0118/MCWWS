@@ -22,15 +22,18 @@ layout:
 buttons:
   0:
     display-item:
-      material: BLACK_STAINED_GLASS_PANE
+      material: GRAY_STAINED_GLASS_PANE
       name: ' '
+      custom-model-data: 2200002
+      hide-tool-tip: true
   Y:
     display-item:
-      material: HOPPER
+      material: NAME_TAG
       name: '{lang:search-menu-button-name}'
       lore:
         - '{lang:search-menu-button-line-1}'
         - '{lang:search-menu-button-line-2}'
+      custom-model-data: 2200005
     actions:
       1:
         type: open_menu
