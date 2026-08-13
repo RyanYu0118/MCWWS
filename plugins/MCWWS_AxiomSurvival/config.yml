@@ -74,8 +74,10 @@ message-throttle-seconds: 3
 
 # 配合 MCWWS_AxiomSurvivalClient 模组：服务端与客户端均保持生存（保留 HUD）
 survival-editor-mode: true
-enable-flywithfood-on-editor: true
-disable-fly-on-editor-exit: true
+# 进入 Editor 不代玩家开飞行：Axiom 一开菜单就算进入会话，自动开会覆盖玩家自己的飞行选择
+enable-flywithfood-on-editor: false
+# 既然不代开，退出时也不代关，否则会掐掉玩家自己开的飞行；关菜单本来就按快照还原飞行状态
+disable-fly-on-editor-exit: false
 # 打开 Editor 菜单期间服务端切旁观（客户端本地本来就是旁观），关菜单时按快照切回；
 # 关掉则沿用旧行为：保持生存并强制飞行以规避摔落
 spectator-during-menu: true

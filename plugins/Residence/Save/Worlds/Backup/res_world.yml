@@ -255,10 +255,18 @@ Flags:
     container: true
     ignite: false
     waterflow: true
-    use: false
+    door: true
+    note: true
+    use: true
+    craft: true
+    jump3: true
+    decay: false
     sun: true
     animalkilling: false
+    hotfloor: false
+    button: true
     hook: false
+    falldamage: false
     explode: false
     cmonsters: false
     vehicledestroy: false
@@ -269,10 +277,15 @@ Flags:
     shear: false
     firespread: false
     destroy: false
+    anvilbreak: false
     monsters: false
     pvp: false
+    lever: true
     pressure: true
     build: false
+    chat: true
+    flowerpot: false
+    diode: true
     tnt: false
     leash: false
     pistonprotection: true
