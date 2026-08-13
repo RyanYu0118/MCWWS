@@ -1,0 +1,6 @@
+name: MCWWS_UltimateShopFix
+main: work.mcwws.ultimateshopfix.McwwsUltimateShopFixPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [UltimateShop]
+description: 修复 Paper 26.2 上 UltimateShop 搜索 GUI 因 ItemStack.craftDelegate 为空而无法显示结果、文字搜索崩溃的问题
