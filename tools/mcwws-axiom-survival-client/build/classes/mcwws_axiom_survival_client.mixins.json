@@ -15,7 +15,8 @@
     "ServerIntegrationChangeGameModeMixin",
     "ServerIntegrationSendGamemodeMixin",
     "HudHasExperienceMixin",
-    "InventoryScreenSurvivalMixin"
+    "InventoryScreenSurvivalMixin",
+    "PlayerCanEatMixin"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -61,11 +61,18 @@ public final class SurvivalEditorController {
     }
 
     /**
+     * 服务端始终是生存：挖掘进度、进食等不要走本地创造的 instabuild/无敌捷径。
+     */
+    public static boolean shouldActLikeSurvival() {
+        return serverSupported && localEditorActive;
+    }
+
+    /**
      * 服务端始终是生存，本地创造的 {@code instabuild} 秒破路径不会被服务端认可，
      * 因此会话内手动挖掘必须走生存进度逻辑。
      */
     public static boolean shouldMineLikeSurvival() {
-        return serverSupported && localEditorActive;
+        return shouldActLikeSurvival();
     }
 
     /**
