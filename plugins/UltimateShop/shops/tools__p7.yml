@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:redstone-shop-name} (2/2)'
+  shop-name: '{lang:tools-shop-name} (7/7)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -21,25 +21,25 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: redstone
+            shop: tools__p6
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MINECART
+        material: MUSIC_DISC_RELIC
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_minecart%'
+        amount: '%mcwws.price_buy_music_disc_relic%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_minecart%'
+        amount: '%mcwws.price_sell_music_disc_relic%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -47,18 +47,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HOPPER_MINECART
+        material: MUSIC_DISC_5
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_hopper_minecart%'
+        amount: '%mcwws.price_buy_music_disc_5%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_hopper_minecart%'
+        amount: '%mcwws.price_sell_music_disc_5%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -66,18 +66,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHEST_MINECART
+        material: MUSIC_DISC_PIGSTEP
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chest_minecart%'
+        amount: '%mcwws.price_buy_music_disc_pigstep%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chest_minecart%'
+        amount: '%mcwws.price_sell_music_disc_pigstep%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -85,18 +85,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FURNACE_MINECART
+        material: MUSIC_DISC_TEARS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_furnace_minecart%'
+        amount: '%mcwws.price_buy_music_disc_tears%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_furnace_minecart%'
+        amount: '%mcwws.price_sell_music_disc_tears%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -104,18 +104,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TNT_MINECART
+        material: MUSIC_DISC_LAVA_CHICKEN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tnt_minecart%'
+        amount: '%mcwws.price_buy_music_disc_lava_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tnt_minecart%'
+        amount: '%mcwws.price_sell_music_disc_lava_chicken%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -123,55 +123,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OAK_CHEST_BOAT
+        material: FIREWORK_ROCKET
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_oak_chest_boat%'
+        amount: '%mcwws.price_buy_firework_rocket%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_oak_chest_boat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  G:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BAMBOO_CHEST_RAFT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_bamboo_chest_raft%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_bamboo_chest_raft%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  H:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: TNT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_tnt%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_tnt%'
+        amount: '%mcwws.price_sell_firework_rocket%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -45,7 +45,7 @@
 | 撤销退 95%  | `//undo` / Axiom 撤销：退上一笔，扣 5% 手续费，市场库存一并还原 |
 | 零钱明细     | 网页账本记录建造、商店、飞行等；毫秒时间戳                      |
 | 网页商城     | 购物车可手输数量，单次最多 10000；下单后进游戏背包系统领取           |
-| 游戏内商店    | UltimateShop Premium：搜索、收藏；文字搜索要点漏斗再在聊天栏输入 |
+| 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；文字搜索要点漏斗再在聊天栏输入 |
 | 光源可拆可调   | 生存能敲掉 Light 方块并掉落；右键能调亮度                   |
 | 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游        |
 | 领地中文     | Residence 权限旗标与拒绝提示是中文                     |
@@ -311,7 +311,27 @@ Axiom 会把超大笔刷拆成多个包，所以：
 
 Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是 1、格子却是空的」。服务端插件 `MCWWS_UltimateShopFix` 已补上，不需要玩家操作。
 
-商店物价占位符走 `%mcwws.price_buy_…%` / `%mcwws.price_sell_…%`，与网页同步。
+商店分类与 **Java 26.2 原版创造物品栏**对齐（建筑 / 彩色 / 自然 / 功能 / 红石 / 工具与实用 / 战斗 / 食物 / 原材料）。同一物品只出现在它第一次出现的创造分页里，页内顺序也跟创造栏一样，例如橡木是：原木 → 木头 → 去皮原木 → 去皮木头 → 木板 → 楼梯 → 台阶 → 栅栏……再轮到云杉。
+
+额外保留的店：
+
+- **酿造**：原版创造里药水是带 NBT 的变体，本服按效果和等级单独标价
+- **附魔**：附魔书同样按等级拆开卖
+- **每日商店**、**MCWWS**（光源等服内特有物品）
+
+刷怪蛋和管理员方块（屏障、命令方块）不进商店。
+
+商店物价占位符走 `%mcwws.price_buy_…%` / `%mcwws.price_sell_…%`，与网页同步。管理员改完商店文件后，在游戏内重载：
+
+```text
+/shop reload
+```
+
+网页侧的分类列表随网页热重载更新：
+
+```text
+/mcwws-web-reload
+```
 
 ---
 
@@ -491,6 +511,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                        |
 | Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                 |
 | 商店搜索崩溃补丁         | `tools/mcwws-ultimateshop-fix/`                                                                      |
+| 商店创造栏分类           | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`       |
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |

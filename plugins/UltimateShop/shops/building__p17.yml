@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:tools-shop-name} (1/7)'
+  shop-name: '{lang:building-shop-name} (17/21)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -12,8 +12,16 @@ settings:
       - 1ABCDEFG2
       - 1HIJKLMN2
       - 1OPQRSTU2
-      - a0003050b
+      - a0403050b
     buttons:
+      '4':
+        display-item:
+          material: ARROW
+          name: '{lang:previous-page-button}'
+        actions:
+          '1':
+            type: shop_menu
+            shop: building__p16
       '5':
         display-item:
           material: ARROW
@@ -21,25 +29,25 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: tools__p2
+            shop: building__p18
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_SHOVEL
+        material: QUARTZ_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_shovel%'
+        amount: '%mcwws.price_buy_quartz_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_shovel%'
+        amount: '%mcwws.price_sell_quartz_block%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -47,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_PICKAXE
+        material: QUARTZ_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_pickaxe%'
+        amount: '%mcwws.price_buy_quartz_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_pickaxe%'
+        amount: '%mcwws.price_sell_quartz_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -66,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_AXE
+        material: QUARTZ_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_axe%'
+        amount: '%mcwws.price_buy_quartz_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_axe%'
+        amount: '%mcwws.price_sell_quartz_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -85,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_HOE
+        material: CHISELED_QUARTZ_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_hoe%'
+        amount: '%mcwws.price_buy_chiseled_quartz_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_hoe%'
+        amount: '%mcwws.price_sell_chiseled_quartz_block%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -104,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_SHOVEL
+        material: QUARTZ_BRICKS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_shovel%'
+        amount: '%mcwws.price_buy_quartz_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_shovel%'
+        amount: '%mcwws.price_sell_quartz_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -123,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_PICKAXE
+        material: QUARTZ_PILLAR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_pickaxe%'
+        amount: '%mcwws.price_buy_quartz_pillar%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_pickaxe%'
+        amount: '%mcwws.price_sell_quartz_pillar%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -142,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_AXE
+        material: SMOOTH_QUARTZ
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_axe%'
+        amount: '%mcwws.price_buy_smooth_quartz%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_axe%'
+        amount: '%mcwws.price_sell_smooth_quartz%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -161,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_HOE
+        material: SMOOTH_QUARTZ_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_hoe%'
+        amount: '%mcwws.price_buy_smooth_quartz_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_hoe%'
+        amount: '%mcwws.price_sell_smooth_quartz_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -180,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_SHOVEL
+        material: SMOOTH_QUARTZ_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_shovel%'
+        amount: '%mcwws.price_buy_smooth_quartz_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_shovel%'
+        amount: '%mcwws.price_sell_smooth_quartz_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -199,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_PICKAXE
+        material: AMETHYST_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_pickaxe%'
+        amount: '%mcwws.price_buy_amethyst_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_pickaxe%'
+        amount: '%mcwws.price_sell_amethyst_block%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -218,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_AXE
+        material: COPPER_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_axe%'
+        amount: '%mcwws.price_buy_copper_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_axe%'
+        amount: '%mcwws.price_sell_copper_block%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -237,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_HOE
+        material: EXPOSED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_hoe%'
+        amount: '%mcwws.price_buy_exposed_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_hoe%'
+        amount: '%mcwws.price_sell_exposed_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -256,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_SHOVEL
+        material: WEATHERED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_shovel%'
+        amount: '%mcwws.price_buy_weathered_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_shovel%'
+        amount: '%mcwws.price_sell_weathered_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -275,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_PICKAXE
+        material: OXIDIZED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_pickaxe%'
+        amount: '%mcwws.price_buy_oxidized_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_pickaxe%'
+        amount: '%mcwws.price_sell_oxidized_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -294,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_AXE
+        material: CHISELED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_axe%'
+        amount: '%mcwws.price_buy_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_axe%'
+        amount: '%mcwws.price_sell_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -313,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_HOE
+        material: EXPOSED_CHISELED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_hoe%'
+        amount: '%mcwws.price_buy_exposed_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_hoe%'
+        amount: '%mcwws.price_sell_exposed_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -332,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_SHOVEL
+        material: WEATHERED_CHISELED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_shovel%'
+        amount: '%mcwws.price_buy_weathered_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_shovel%'
+        amount: '%mcwws.price_sell_weathered_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -351,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_PICKAXE
+        material: OXIDIZED_CHISELED_COPPER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_pickaxe%'
+        amount: '%mcwws.price_buy_oxidized_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_pickaxe%'
+        amount: '%mcwws.price_sell_oxidized_chiseled_copper%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -370,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_AXE
+        material: COPPER_GRATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_axe%'
+        amount: '%mcwws.price_buy_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_axe%'
+        amount: '%mcwws.price_sell_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -389,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_HOE
+        material: EXPOSED_COPPER_GRATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_hoe%'
+        amount: '%mcwws.price_buy_exposed_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_hoe%'
+        amount: '%mcwws.price_sell_exposed_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -408,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DIAMOND_SHOVEL
+        material: WEATHERED_COPPER_GRATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_diamond_shovel%'
+        amount: '%mcwws.price_buy_weathered_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_diamond_shovel%'
+        amount: '%mcwws.price_sell_weathered_copper_grate%'
         placeholder: '{amount}$'
         start-apply: 0

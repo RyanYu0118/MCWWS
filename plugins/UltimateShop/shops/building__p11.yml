@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:tools-shop-name} (1/7)'
+  shop-name: '{lang:building-shop-name} (11/21)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -12,8 +12,16 @@ settings:
       - 1ABCDEFG2
       - 1HIJKLMN2
       - 1OPQRSTU2
-      - a0003050b
+      - a0403050b
     buttons:
+      '4':
+        display-item:
+          material: ARROW
+          name: '{lang:previous-page-button}'
+        actions:
+          '1':
+            type: shop_menu
+            shop: building__p10
       '5':
         display-item:
           material: ARROW
@@ -21,25 +29,25 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: tools__p2
+            shop: building__p12
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_SHOVEL
+        material: POLISHED_DEEPSLATE_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_shovel%'
+        amount: '%mcwws.price_buy_polished_deepslate_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_shovel%'
+        amount: '%mcwws.price_sell_polished_deepslate_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -47,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_PICKAXE
+        material: POLISHED_DEEPSLATE_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_pickaxe%'
+        amount: '%mcwws.price_buy_polished_deepslate_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_pickaxe%'
+        amount: '%mcwws.price_sell_polished_deepslate_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -66,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_AXE
+        material: POLISHED_DEEPSLATE_WALL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_axe%'
+        amount: '%mcwws.price_buy_polished_deepslate_wall%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_axe%'
+        amount: '%mcwws.price_sell_polished_deepslate_wall%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -85,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WOODEN_HOE
+        material: DEEPSLATE_BRICKS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wooden_hoe%'
+        amount: '%mcwws.price_buy_deepslate_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wooden_hoe%'
+        amount: '%mcwws.price_sell_deepslate_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -104,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_SHOVEL
+        material: CRACKED_DEEPSLATE_BRICKS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_shovel%'
+        amount: '%mcwws.price_buy_cracked_deepslate_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_shovel%'
+        amount: '%mcwws.price_sell_cracked_deepslate_bricks%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -123,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_PICKAXE
+        material: DEEPSLATE_BRICK_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_pickaxe%'
+        amount: '%mcwws.price_buy_deepslate_brick_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_pickaxe%'
+        amount: '%mcwws.price_sell_deepslate_brick_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -142,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_AXE
+        material: DEEPSLATE_BRICK_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_axe%'
+        amount: '%mcwws.price_buy_deepslate_brick_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_axe%'
+        amount: '%mcwws.price_sell_deepslate_brick_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -161,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONE_HOE
+        material: DEEPSLATE_BRICK_WALL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stone_hoe%'
+        amount: '%mcwws.price_buy_deepslate_brick_wall%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stone_hoe%'
+        amount: '%mcwws.price_sell_deepslate_brick_wall%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -180,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_SHOVEL
+        material: DEEPSLATE_TILES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_shovel%'
+        amount: '%mcwws.price_buy_deepslate_tiles%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_shovel%'
+        amount: '%mcwws.price_sell_deepslate_tiles%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -199,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_PICKAXE
+        material: CRACKED_DEEPSLATE_TILES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_pickaxe%'
+        amount: '%mcwws.price_buy_cracked_deepslate_tiles%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_pickaxe%'
+        amount: '%mcwws.price_sell_cracked_deepslate_tiles%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -218,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_AXE
+        material: DEEPSLATE_TILE_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_axe%'
+        amount: '%mcwws.price_buy_deepslate_tile_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_axe%'
+        amount: '%mcwws.price_sell_deepslate_tile_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -237,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_HOE
+        material: DEEPSLATE_TILE_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_hoe%'
+        amount: '%mcwws.price_buy_deepslate_tile_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_hoe%'
+        amount: '%mcwws.price_sell_deepslate_tile_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -256,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_SHOVEL
+        material: DEEPSLATE_TILE_WALL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_shovel%'
+        amount: '%mcwws.price_buy_deepslate_tile_wall%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_shovel%'
+        amount: '%mcwws.price_sell_deepslate_tile_wall%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -275,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_PICKAXE
+        material: TUFF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_pickaxe%'
+        amount: '%mcwws.price_buy_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_pickaxe%'
+        amount: '%mcwws.price_sell_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -294,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_AXE
+        material: TUFF_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_axe%'
+        amount: '%mcwws.price_buy_tuff_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_axe%'
+        amount: '%mcwws.price_sell_tuff_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -313,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: IRON_HOE
+        material: TUFF_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_iron_hoe%'
+        amount: '%mcwws.price_buy_tuff_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_iron_hoe%'
+        amount: '%mcwws.price_sell_tuff_slab%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -332,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_SHOVEL
+        material: TUFF_WALL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_shovel%'
+        amount: '%mcwws.price_buy_tuff_wall%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_shovel%'
+        amount: '%mcwws.price_sell_tuff_wall%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -351,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_PICKAXE
+        material: CHISELED_TUFF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_pickaxe%'
+        amount: '%mcwws.price_buy_chiseled_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_pickaxe%'
+        amount: '%mcwws.price_sell_chiseled_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -370,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_AXE
+        material: POLISHED_TUFF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_axe%'
+        amount: '%mcwws.price_buy_polished_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_axe%'
+        amount: '%mcwws.price_sell_polished_tuff%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -389,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GOLDEN_HOE
+        material: POLISHED_TUFF_STAIRS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_golden_hoe%'
+        amount: '%mcwws.price_buy_polished_tuff_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_golden_hoe%'
+        amount: '%mcwws.price_sell_polished_tuff_stairs%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -408,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DIAMOND_SHOVEL
+        material: POLISHED_TUFF_SLAB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_diamond_shovel%'
+        amount: '%mcwws.price_buy_polished_tuff_slab%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_diamond_shovel%'
+        amount: '%mcwws.price_sell_polished_tuff_slab%'
         placeholder: '{amount}$'
         start-apply: 0

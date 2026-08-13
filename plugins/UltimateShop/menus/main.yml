@@ -13,10 +13,10 @@ open-actions:
 
 layout:
   - '00Y0S0X00'
-  - '0RTUVW123'
-  - '0ABCDEFG0'
-  - '0HIJKLMN0'
-  - '0OPQ45000'
+  - '0ABCDE000'
+  - '0FGHI0000'
+  - '0JKLM0000'
+  - '000000000'
   - '0000Z0000'
 
 buttons:
@@ -58,128 +58,51 @@ buttons:
         type: sell_all_menu
   A:
     display-item:
-      material: WHEAT
-      name: '{lang:farming-name}'
+      material: BRICKS
+      name: '{lang:building-name}'
       lore:
-        - '{lang:farming-lore-1}'
-        - '{lang:farming-lore-2}'
+        - '{lang:building-lore-1}'
+        - '{lang:building-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: farming
+        shop: building
   B:
     display-item:
-      material: BONE
-      name: '{lang:drops-name}'
+      material: CYAN_WOOL
+      name: '{lang:colored-name}'
       lore:
-        - '{lang:drops-lore-1}'
-        - '{lang:drops-lore-2}'
+        - '{lang:colored-lore-1}'
+        - '{lang:colored-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: drops
+        shop: colored
   C:
     display-item:
-      material: WHITE_CONCRETE
-      name: '{lang:concretes-name}'
+      material: GRASS_BLOCK
+      name: '{lang:natural-name}'
       lore:
-        - '{lang:concretes-lore-1}'
-        - '{lang:concretes-lore-2}'
+        - '{lang:natural-lore-1}'
+        - '{lang:natural-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: concretes
+        shop: natural
   D:
     display-item:
-      material: SUNFLOWER
-      name: '{lang:flowers-name}'
+      material: OAK_SIGN
+      name: '{lang:functional-name}'
       lore:
-        - '{lang:flowers-lore-1}'
-        - '{lang:flowers-lore-2}'
+        - '{lang:functional-lore-1}'
+        - '{lang:functional-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: flowers
+        shop: functional
   E:
     display-item:
-      material: OAK_LOG
-      name: '{lang:logs-name}'
-      lore:
-        - '{lang:logs-lore-1}'
-        - '{lang:logs-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: logs
-  F:
-    display-item:
-      material: DIAMOND
-      name: '{lang:minerals-name}'
-      lore:
-        - '{lang:minerals-lore-1}'
-        - '{lang:minerals-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: minerals
-  G:
-    display-item:
-      material: BRICKS
-      name: '{lang:blocks-name}'
-      lore:
-        - '{lang:blocks-lore-1}'
-        - '{lang:blocks-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: blocks
-  H:
-    display-item:
-      material: TERRACOTTA
-      name: '{lang:terracotta-name}'
-      lore:
-        - '{lang:terracotta-lore-1}'
-        - '{lang:terracotta-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: terracottas
-  I:
-    display-item:
-      material: GLASS
-      name: '{lang:glass-name}'
-      lore:
-        - '{lang:glass-lore-1}'
-        - '{lang:glass-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: glass
-  J:
-    display-item:
-      material: WHITE_WOOL
-      name: '{lang:wool-name}'
-      lore:
-        - '{lang:wool-lore-1}'
-        - '{lang:wool-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: wools
-  K:
-    display-item:
-      material: EXPERIENCE_BOTTLE
-      name: '{lang:special-items-name}'
-      lore:
-        - '{lang:special-items-lore-1}'
-        - '{lang:special-items-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: special
-  L:
-    display-item:
-      material: COMPARATOR
+      material: REDSTONE
       name: '{lang:redstone-name}'
       lore:
         - '{lang:redstone-lore-1}'
@@ -188,84 +111,51 @@ buttons:
       1:
         type: shop_menu
         shop: redstone
-  M:
+  F:
     display-item:
-      material: COD
-      name: '{lang:fish-name}'
+      material: DIAMOND_PICKAXE
+      name: '{lang:tools-name}'
       lore:
-        - '{lang:fish-lore-1}'
-        - '{lang:fish-lore-2}'
+        - '{lang:tools-lore-1}'
+        - '{lang:tools-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: fish
-  N:
+        shop: tools
+  G:
     display-item:
-      material: MINECART
-      name: '{lang:transports-name}'
+      material: NETHERITE_SWORD
+      name: '{lang:combat-name}'
       lore:
-        - '{lang:transports-lore-1}'
-        - '{lang:transports-lore-2}'
+        - '{lang:combat-lore-1}'
+        - '{lang:combat-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: transport
-  O:
+        shop: combat
+  H:
     display-item:
-      material: MUD_BRICKS
-      name: '{lang:blocks2-name}'
+      material: GOLDEN_APPLE
+      name: '{lang:food-name}'
       lore:
-        - '{lang:blocks2-lore-1}'
-        - '{lang:blocks2-lore-2}'
+        - '{lang:food-lore-1}'
+        - '{lang:food-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: blocks2
-  P:
+        shop: food
+  I:
     display-item:
-      material: CLOCK
-      name: '{lang:daily-name}'
+      material: IRON_INGOT
+      name: '{lang:ingredients-name}'
       lore:
-        - '{lang:daily-lore-1}'
-        - '{lang:daily-lore-2}'
+        - '{lang:ingredients-lore-1}'
+        - '{lang:ingredients-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: daily
-  Q:
-    display-item:
-      material: LIGHT
-      name: '{lang:mcwws-name}'
-      lore:
-        - '{lang:mcwws-lore-1}'
-        - '{lang:mcwws-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: mcwws
-  R:
-    display-item:
-      material: BRUSH
-      name: '{lang:archaeology-name}'
-      lore:
-        - '{lang:archaeology-lore-1}'
-        - '{lang:archaeology-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: archaeology
-  T:
-    display-item:
-      material: DIAMOND_CHESTPLATE
-      name: '{lang:armor-name}'
-      lore:
-        - '{lang:armor-lore-1}'
-        - '{lang:armor-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: armor
-  U:
+        shop: ingredients
+  J:
     display-item:
       material: BREWING_STAND
       name: '{lang:brewing-name}'
@@ -276,40 +166,7 @@ buttons:
       1:
         type: shop_menu
         shop: brewing
-  V:
-    display-item:
-      material: IRON_PICKAXE
-      name: '{lang:tools-name}'
-      lore:
-        - '{lang:tools-lore-1}'
-        - '{lang:tools-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: tools
-  W:
-    display-item:
-      material: DIAMOND_SWORD
-      name: '{lang:weapons-name}'
-      lore:
-        - '{lang:weapons-lore-1}'
-        - '{lang:weapons-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: weapons
-  '1':
-    display-item:
-      material: CHEST
-      name: '{lang:utility-name}'
-      lore:
-        - '{lang:utility-lore-1}'
-        - '{lang:utility-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: utility
-  '2':
+  K:
     display-item:
       material: ENCHANTED_BOOK
       name: '{lang:enchantments-name}'
@@ -320,39 +177,28 @@ buttons:
       1:
         type: shop_menu
         shop: enchantments
-  '3':
+  L:
     display-item:
-      material: END_STONE
-      name: '{lang:end-name}'
+      material: CLOCK
+      name: '{lang:daily-name}'
       lore:
-        - '{lang:end-lore-1}'
-        - '{lang:end-lore-2}'
+        - '{lang:daily-lore-1}'
+        - '{lang:daily-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: end
-  '4':
+        shop: daily
+  M:
     display-item:
-      material: NETHERRACK
-      name: '{lang:nether-name}'
+      material: LIGHT
+      name: '{lang:mcwws-name}'
       lore:
-        - '{lang:nether-lore-1}'
-        - '{lang:nether-lore-2}'
+        - '{lang:mcwws-lore-1}'
+        - '{lang:mcwws-lore-2}'
     actions:
       1:
         type: shop_menu
-        shop: nether
-  '5':
-    display-item:
-      material: MUSIC_DISC_CAT
-      name: '{lang:discs-name}'
-      lore:
-        - '{lang:discs-lore-1}'
-        - '{lang:discs-lore-2}'
-    actions:
-      1:
-        type: shop_menu
-        shop: discs
+        shop: mcwws
   Z:
     display-item:
       material: BARRIER
