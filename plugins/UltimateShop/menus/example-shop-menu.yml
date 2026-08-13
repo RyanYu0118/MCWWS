@@ -7,7 +7,7 @@ open-actions:
     sound: item.book.page_turn
 
 layout:
-  - '0f00s00x0'
+  - '0000000x0'
   - '000000000'
   - '1ABCDEFG2'
   - '1HIJKLMN2'
@@ -43,28 +43,6 @@ buttons:
       1:
         type: open_menu
         menu: main
-  f:
-    display-item:
-      material: NAME_TAG
-      name: '{lang:favourite-menu-button-name} &c(PREMIUM)'
-      lore:
-        - '{lang:favourite-menu-button-line-1}'
-        - '{lang:favourite-menu-button-line-2}'
-    actions:
-      1:
-        type: open_menu
-        menu: favourite
-  s:
-    display-item:
-      material: HOPPER
-      name: '{lang:search-menu-button-name} &c(PREMIUM)'
-      lore:
-        - '{lang:search-menu-button-line-1}'
-        - '{lang:search-menu-button-line-2}'
-    actions:
-      1:
-        type: open_menu
-        menu: search
   x:
     display-item:
       material: BARRIER
