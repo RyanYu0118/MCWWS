@@ -21,7 +21,7 @@ final class PacketFeeEstimator {
     }
 
     FeeAccumulator.Result estimateSetBlockPacket(Player player, Object friendlyByteBuf) {
-        FeeAccumulator.Builder builder = newBuilder();
+        FeeAccumulator.Builder builder = newBuilder(player);
         World world = player.getWorld();
         int mark;
         try {
@@ -46,20 +46,21 @@ final class PacketFeeEstimator {
     }
 
     /** set_buffer 首字节 type：0=方块缓冲，1=生物群系缓冲 */
-    record BufferEstimate(int type, FeeAccumulator.Result blocks, long biomeCells) {
+    record BufferEstimate(int type, FeeAccumulator.Result blocks, long biomeCells, double biomeMinDistance) {
     }
 
     BufferEstimate estimateSetBufferPacket(Player player, Object friendlyByteBuf) {
-        FeeAccumulator.Builder builder = newBuilder();
+        FeeAccumulator.Builder builder = newBuilder(player);
         World world = player.getWorld();
         int mark;
         try {
             mark = readerIndex(friendlyByteBuf);
         } catch (ReflectiveOperationException ex) {
-            return new BufferEstimate(0, builder.build(), 0L);
+            return new BufferEstimate(0, builder.build(), 0L, FeeAccumulator.UNKNOWN_DISTANCE);
         }
         int type = 0;
         long biomeCells = 0L;
+        double biomeMinDistance = FeeAccumulator.UNKNOWN_DISTANCE;
         try {
             readResourceKey(friendlyByteBuf);
             readUuid(friendlyByteBuf);
@@ -69,14 +70,16 @@ final class PacketFeeEstimator {
                 Object buffer = loadBlockBuffer(friendlyByteBuf, registry, player);
                 scanBlockBuffer(builder, world, buffer);
             } else if (type == 1) {
-                biomeCells = countBiomeCells(friendlyByteBuf);
+                BiomeScan scan = countBiomeCells(player, friendlyByteBuf);
+                biomeCells = scan.cells();
+                biomeMinDistance = scan.minDistance();
             }
         } catch (ReflectiveOperationException ex) {
             logEstimateFailure("set_buffer", ex);
         } finally {
             setReaderIndex(friendlyByteBuf, mark);
         }
-        return new BufferEstimate(type, builder.build(), biomeCells);
+        return new BufferEstimate(type, builder.build(), biomeCells, biomeMinDistance);
     }
 
     /** 实体类包（spawn/delete/manipulate）都以 readCollection 的 VarInt 数量开头 */
@@ -98,8 +101,56 @@ final class PacketFeeEstimator {
         }
     }
 
-    /** 统计生物群系缓冲里实际被涂改的格数（forEachEntry 会跳过默认值） */
-    private long countBiomeCells(Object buf) throws ReflectiveOperationException {
+    /**
+     * 删除/调整实体包是 UUID 列表，按世界上已有实体的坐标算离玩家最近距离。
+     * 生成包没有现成实体，采不到就返回未知。
+     */
+    double minDistanceFromEntityUuids(Player player, Object friendlyByteBuf) {
+        int mark;
+        try {
+            mark = readerIndex(friendlyByteBuf);
+        } catch (ReflectiveOperationException ex) {
+            return FeeAccumulator.UNKNOWN_DISTANCE;
+        }
+        double nearest = FeeAccumulator.UNKNOWN_DISTANCE;
+        try {
+            int count = (int) friendlyByteBuf.getClass().getMethod("readVarInt").invoke(friendlyByteBuf);
+            java.lang.reflect.Method readUuid = friendlyByteBuf.getClass().getMethod("readUUID");
+            double ox = player.getLocation().getX();
+            double oy = player.getLocation().getY();
+            double oz = player.getLocation().getZ();
+            World world = player.getWorld();
+            for (int i = 0; i < count; i++) {
+                Object uuid = readUuid.invoke(friendlyByteBuf);
+                if (!(uuid instanceof java.util.UUID id)) {
+                    break;
+                }
+                org.bukkit.entity.Entity entity = world.getEntity(id);
+                if (entity == null) {
+                    continue;
+                }
+                var location = entity.getLocation();
+                double dx = location.getX() - ox;
+                double dy = location.getY() - oy;
+                double dz = location.getZ() - oz;
+                double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                if (distance < nearest) {
+                    nearest = distance;
+                }
+            }
+        } catch (ReflectiveOperationException | RuntimeException ex) {
+            return FeeAccumulator.UNKNOWN_DISTANCE;
+        } finally {
+            setReaderIndex(friendlyByteBuf, mark);
+        }
+        return nearest;
+    }
+
+    private record BiomeScan(long cells, double minDistance) {
+    }
+
+    /** 统计生物群系缓冲里实际被涂改的格数（forEachEntry 会跳过默认值），并记下离玩家最近的一格 */
+    private BiomeScan countBiomeCells(Player player, Object buf) throws ReflectiveOperationException {
         Class<?> biomeBufferClass = Class.forName("com.moulberry.axiom.buffer.BiomeBuffer");
         Object buffer = null;
         for (Method method : biomeBufferClass.getMethods()) {
@@ -109,10 +160,14 @@ final class PacketFeeEstimator {
             }
         }
         if (buffer == null) {
-            return 0L;
+            return new BiomeScan(0L, FeeAccumulator.UNKNOWN_DISTANCE);
         }
         Class<?> consumerClass = Class.forName("com.moulberry.axiom.buffer.PositionConsumer");
         long[] count = {0L};
+        double[] nearest = {FeeAccumulator.UNKNOWN_DISTANCE};
+        double ox = player.getLocation().getX();
+        double oy = player.getLocation().getY();
+        double oz = player.getLocation().getZ();
         Object counter = java.lang.reflect.Proxy.newProxyInstance(
                 consumerClass.getClassLoader(),
                 new Class<?>[]{consumerClass},
@@ -120,6 +175,18 @@ final class PacketFeeEstimator {
                     String name = method.getName();
                     if ("accept".equals(name)) {
                         count[0]++;
+                        if (args != null && args.length >= 3
+                                && args[0] instanceof Integer x
+                                && args[1] instanceof Integer y
+                                && args[2] instanceof Integer z) {
+                            double dx = (x + 0.5D) - ox;
+                            double dy = (y + 0.5D) - oy;
+                            double dz = (z + 0.5D) - oz;
+                            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+                            if (distance < nearest[0]) {
+                                nearest[0] = distance;
+                            }
+                        }
                         return null;
                     }
                     if ("hashCode".equals(name)) {
@@ -135,7 +202,7 @@ final class PacketFeeEstimator {
                 }
         );
         biomeBufferClass.getMethod("forEachEntry", consumerClass).invoke(buffer, counter);
-        return count[0];
+        return new BiomeScan(count[0], nearest[0]);
     }
 
     private void scanBlockBuffer(FeeAccumulator.Builder builder, World world, Object blockBuffer) throws ReflectiveOperationException {
@@ -176,7 +243,7 @@ final class PacketFeeEstimator {
                             continue;
                         }
                         BlockData target = NmsBlocks.toBlockData(newState);
-                        builder.addChange(block.getBlockData(), target);
+                        builder.addChange(block, target);
                     }
                 }
             }
@@ -193,7 +260,7 @@ final class PacketFeeEstimator {
             return;
         }
         BlockData target = NmsBlocks.toBlockData(newState);
-        builder.addChange(block.getBlockData(), target);
+        builder.addChange(block, target);
     }
 
     /**
@@ -209,7 +276,7 @@ final class PacketFeeEstimator {
         }
     }
 
-    private FeeAccumulator.Builder newBuilder() {
+    private FeeAccumulator.Builder newBuilder(Player player) {
         if (plugin.reloadPricesBeforeEstimate()) {
             plugin.getPriceCatalog().reload();
         } else {
@@ -222,7 +289,7 @@ final class PacketFeeEstimator {
                 plugin.salvageRate(),
                 plugin.netMoves(),
                 ProtectedBlockGuard.enabled() ? protectedCap : 0
-        );
+        ).origin(player);
     }
 
     private Object getBlockRegistry(Player player) throws ReflectiveOperationException {

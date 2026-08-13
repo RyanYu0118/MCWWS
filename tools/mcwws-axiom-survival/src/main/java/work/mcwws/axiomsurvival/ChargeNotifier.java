@@ -30,6 +30,12 @@ final class ChargeNotifier {
         double clawbackNet;
         double biomeFee;
         long biomeCells;
+        double blockNear = FeeAccumulator.UNKNOWN_DISTANCE;
+        double entityNear = FeeAccumulator.UNKNOWN_DISTANCE;
+        double biomeNear = FeeAccumulator.UNKNOWN_DISTANCE;
+        double refundNear = FeeAccumulator.UNKNOWN_DISTANCE;
+        double clawbackNear = FeeAccumulator.UNKNOWN_DISTANCE;
+        double protectedNear = FeeAccumulator.UNKNOWN_DISTANCE;
         final Map<String, long[]> entityCounts = new LinkedHashMap<>();
         final Map<String, double[]> entityFees = new LinkedHashMap<>();
         boolean flushScheduled;
@@ -52,51 +58,57 @@ final class ChargeNotifier {
             state.total += total;
             state.blocks += estimate.affectedBlocks();
             state.movedBlocks += estimate.movedBlocks();
+            state.blockNear = FeeAccumulator.minDistance(state.blockNear, estimate.minDistance());
         }
         schedule(player);
     }
 
-    void addEntityCharge(Player player, String kind, long count, double fee) {
+    void addEntityCharge(Player player, String kind, long count, double fee, double minDistance) {
         Pending state = state(player);
         synchronized (state) {
             state.entityCounts.computeIfAbsent(kind, key -> new long[1])[0] += count;
             state.entityFees.computeIfAbsent(kind, key -> new double[1])[0] += fee;
+            state.entityNear = FeeAccumulator.minDistance(state.entityNear, minDistance);
         }
         schedule(player);
     }
 
-    void addBiomeCharge(Player player, long cells, double fee) {
+    void addBiomeCharge(Player player, long cells, double fee, double minDistance) {
         Pending state = state(player);
         synchronized (state) {
             state.biomeCells += cells;
             state.biomeFee += fee;
+            state.biomeNear = FeeAccumulator.minDistance(state.biomeNear, minDistance);
         }
         schedule(player);
     }
 
-    void addRefund(Player player, double gross, double net) {
+    void addRefund(Player player, double gross, double net, double minDistance) {
         Pending state = state(player);
         synchronized (state) {
             state.refundGross += gross;
             state.refundNet += net;
+            state.refundNear = FeeAccumulator.minDistance(state.refundNear, minDistance);
         }
         schedule(player);
     }
 
     /** 撤销的是一笔净收入编辑，回收款连手续费被收回 */
-    void addUndoClawback(Player player, double gross, double net) {
+    void addUndoClawback(Player player, double gross, double net, double minDistance) {
         Pending state = state(player);
         synchronized (state) {
             state.clawbackGross += gross;
             state.clawbackNet += net;
+            state.clawbackNear = FeeAccumulator.minDistance(state.clawbackNear, minDistance);
         }
         schedule(player);
     }
 
-    void addProtectedSkipped(Player player, long count) {
+    void addProtectedSkipped(Player player, long count, double minDistance) {
         Pending state = state(player);
         synchronized (state) {
             state.protectedBlocks += count;
+            state.protectedNear = FeeAccumulator.minDistance(state.protectedNear, minDistance);
         }
         schedule(player);
     }
@@ -156,16 +168,19 @@ final class ChargeNotifier {
                 double total = FeeAccumulator.round(state.total);
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         total < 0D ? "salvaged" : "charged",
-                        "total", EconomyService.format(Math.abs(total)),
-                        "blocks", String.valueOf(state.blocks),
-                        "salvage", EconomyService.format(FeeAccumulator.round(state.salvage)),
-                        "material", EconomyService.format(FeeAccumulator.round(state.material)),
-                        "labor", EconomyService.format(FeeAccumulator.round(state.labor))
+                        FeeAccumulator.withNear(
+                                state.blockNear,
+                                "total", EconomyService.format(Math.abs(total)),
+                                "blocks", String.valueOf(state.blocks),
+                                "salvage", EconomyService.format(FeeAccumulator.round(state.salvage)),
+                                "material", EconomyService.format(FeeAccumulator.round(state.material)),
+                                "labor", EconomyService.format(FeeAccumulator.round(state.labor))
+                        )
                 ));
                 if (state.movedBlocks > 0L) {
                     McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                             "move-note",
-                            "moved", String.valueOf(state.movedBlocks)
+                            FeeAccumulator.withNear(state.blockNear, "moved", String.valueOf(state.movedBlocks))
                     ));
                 }
             }
@@ -173,16 +188,22 @@ final class ChargeNotifier {
                 double fee = state.entityFees.getOrDefault(entry.getKey(), new double[1])[0];
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         "charged-entity",
-                        "kind", entry.getKey(),
-                        "count", String.valueOf(entry.getValue()[0]),
-                        "total", EconomyService.format(FeeAccumulator.round(fee))
+                        FeeAccumulator.withNear(
+                                state.entityNear,
+                                "kind", entry.getKey(),
+                                "count", String.valueOf(entry.getValue()[0]),
+                                "total", EconomyService.format(FeeAccumulator.round(fee))
+                        )
                 ));
             }
             if (state.biomeCells > 0L) {
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         "charged-biome",
-                        "count", String.valueOf(state.biomeCells),
-                        "total", EconomyService.format(FeeAccumulator.round(state.biomeFee))
+                        FeeAccumulator.withNear(
+                                state.biomeNear,
+                                "count", String.valueOf(state.biomeCells),
+                                "total", EconomyService.format(FeeAccumulator.round(state.biomeFee))
+                        )
                 ));
             }
             if (state.refundNet > 0D) {
@@ -192,10 +213,13 @@ final class ChargeNotifier {
                 int percent = gross <= 0D ? 0 : (int) Math.round(fee / gross * 100D);
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         "undo-refunded",
-                        "gross", EconomyService.format(gross),
-                        "fee", EconomyService.format(fee),
-                        "percent", String.valueOf(percent),
-                        "net", EconomyService.format(net)
+                        FeeAccumulator.withNear(
+                                state.refundNear,
+                                "gross", EconomyService.format(gross),
+                                "fee", EconomyService.format(fee),
+                                "percent", String.valueOf(percent),
+                                "net", EconomyService.format(net)
+                        )
                 ));
             }
             if (state.clawbackNet > 0D) {
@@ -203,15 +227,21 @@ final class ChargeNotifier {
                 double net = FeeAccumulator.round(state.clawbackNet);
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         "undo-clawback",
-                        "gross", EconomyService.format(gross),
-                        "fee", EconomyService.format(FeeAccumulator.round(net - gross)),
-                        "net", EconomyService.format(net)
+                        FeeAccumulator.withNear(
+                                state.clawbackNear,
+                                "gross", EconomyService.format(gross),
+                                "fee", EconomyService.format(FeeAccumulator.round(net - gross)),
+                                "net", EconomyService.format(net)
+                        )
                 ));
             }
             if (state.protectedBlocks > 0L) {
                 McwwsAxiomSurvivalPlugin.sendMessage(player, prefix + plugin.msg(
                         "protected-skipped",
-                        "count", String.valueOf(state.protectedBlocks)
+                        FeeAccumulator.withNear(
+                                state.protectedNear,
+                                "count", String.valueOf(state.protectedBlocks)
+                        )
                 ));
             }
         }

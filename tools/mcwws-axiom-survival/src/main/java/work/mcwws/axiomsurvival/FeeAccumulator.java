@@ -1,13 +1,17 @@
 package work.mcwws.axiomsurvival;
 
+import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.Player;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 public final class FeeAccumulator {
@@ -21,6 +25,7 @@ public final class FeeAccumulator {
      * @param netRemovedCounts 对冲搬运后真正流入市场的量
      * @param netPlacedCounts  对冲搬运后真正从市场取出的量
      * @param movedBlocks      被判定为搬运（原地拆、别处放同种方块）的格数，只收劳务费
+     * @param minDistance      本次处理的方块（含受保护）离玩家的最小距离；未知时为 {@link #UNKNOWN_DISTANCE}
      */
     public record Result(
             double salvage,
@@ -33,7 +38,8 @@ public final class FeeAccumulator {
             Map<String, Long> placedCounts,
             Map<String, Long> netRemovedCounts,
             Map<String, Long> netPlacedCounts,
-            List<BlockState> protectedStates
+            List<BlockState> protectedStates,
+            double minDistance
     ) {
         /**
          * 材料 + 人工 − 回收。拆下来的方块按卖价折现给玩家，所以净额可以为负，
@@ -44,9 +50,12 @@ public final class FeeAccumulator {
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of());
+            return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE);
         }
     }
+
+    /** 没有采到任何坐标时用这个，提示里显示为 — */
+    public static final double UNKNOWN_DISTANCE = Double.POSITIVE_INFINITY;
 
     public static final class Builder {
         private final PriceCatalog prices;
@@ -62,6 +71,11 @@ public final class FeeAccumulator {
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
         private final List<BlockState> protectedStates = new ArrayList<>();
+        private boolean hasOrigin;
+        private double originX;
+        private double originY;
+        private double originZ;
+        private double minDistance = UNKNOWN_DISTANCE;
 
         public Builder(
                 PriceCatalog prices,
@@ -77,12 +91,56 @@ public final class FeeAccumulator {
             this.protectedCaptureCap = Math.max(protectedCaptureCap, 0);
         }
 
+        public Builder origin(Player player) {
+            if (player == null) {
+                return this;
+            }
+            Location location = player.getLocation();
+            this.originX = location.getX();
+            this.originY = location.getY();
+            this.originZ = location.getZ();
+            this.hasOrigin = true;
+            return this;
+        }
+
+        void offerBlock(int x, int y, int z) {
+            offerPoint(x + 0.5D, y + 0.5D, z + 0.5D);
+        }
+
+        void offerPoint(double x, double y, double z) {
+            if (!hasOrigin) {
+                return;
+            }
+            double dx = x - originX;
+            double dy = y - originY;
+            double dz = z - originZ;
+            double distance = Math.sqrt(dx * dx + dy * dy + dz * dz);
+            if (distance < minDistance) {
+                minDistance = distance;
+            }
+        }
+
         /** 受保护方块不计费；同时留下原状快照，Axiom 写入后由 ProtectedBlockGuard 还原 */
         public void addProtected(Block block) {
             protectedBlocks++;
-            if (block != null && protectedStates.size() < protectedCaptureCap) {
-                protectedStates.add(block.getState());
+            if (block != null) {
+                offerBlock(block.getX(), block.getY(), block.getZ());
+                if (protectedStates.size() < protectedCaptureCap) {
+                    protectedStates.add(block.getState());
+                }
             }
+        }
+
+        public void addChange(Block block, BlockData target) {
+            if (block == null || target == null) {
+                return;
+            }
+            BlockData existing = block.getBlockData();
+            if (existing.matches(target)) {
+                return;
+            }
+            offerBlock(block.getX(), block.getY(), block.getZ());
+            accumulate(existing, target);
         }
 
         public void addChange(BlockData existing, BlockData target) {
@@ -146,7 +204,8 @@ public final class FeeAccumulator {
                     Map.copyOf(placedCounts),
                     Map.copyOf(netRemoved),
                     Map.copyOf(netPlaced),
-                    List.copyOf(protectedStates)
+                    List.copyOf(protectedStates),
+                    minDistance
             );
         }
 
@@ -181,6 +240,36 @@ public final class FeeAccumulator {
 
     public static double round(double value) {
         return Math.round(value * 100D) / 100D;
+    }
+
+    public static boolean hasDistance(double distance) {
+        return Double.isFinite(distance) && distance >= 0D;
+    }
+
+    public static double minDistance(double left, double right) {
+        if (!hasDistance(left)) {
+            return right;
+        }
+        if (!hasDistance(right)) {
+            return left;
+        }
+        return Math.min(left, right);
+    }
+
+    public static String formatDistance(double distance) {
+        if (!hasDistance(distance)) {
+            return "—";
+        }
+        return String.format(Locale.ROOT, "%.1f", distance);
+    }
+
+    /** 在已有占位符后面追加 {near}，供扣费/拒绝提示使用 */
+    public static String[] withNear(double minDistance, String... replacements) {
+        String[] source = replacements == null ? new String[0] : replacements;
+        String[] out = Arrays.copyOf(source, source.length + 2);
+        out[source.length] = "near";
+        out[source.length + 1] = formatDistance(minDistance);
+        return out;
     }
 
     static String itemIdFromBlockData(BlockData blockData) {

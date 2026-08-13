@@ -66,7 +66,8 @@ public final class AxiomPaperHook {
                         PacketFeeEstimator.BufferEstimate estimate =
                                 estimator.estimateSetBufferPacket(player, buf);
                         if (estimate.type() == 1) {
-                            return chargeService.evaluateBiome(player, "set_buffer_biome", estimate.biomeCells());
+                            return chargeService.evaluateBiome(
+                                    player, "set_buffer_biome", estimate.biomeCells(), estimate.biomeMinDistance());
                         }
                         return chargeService.evaluate(player, "set_buffer", estimate.blocks());
                     }
@@ -75,17 +76,20 @@ public final class AxiomPaperHook {
             hookCharging(axiomPaper, largeHandlers, paths, "spawn_entity", false,
                     SpawnEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
-                            player, "spawn_entity", "生成实体", estimator.countCollection(buf))
+                            player, "spawn_entity", "生成实体", estimator.countCollection(buf),
+                            FeeAccumulator.UNKNOWN_DISTANCE)
             );
             hookCharging(axiomPaper, largeHandlers, paths, "delete_entity", false,
                     DeleteEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
-                            player, "delete_entity", "删除实体", estimator.countCollection(buf))
+                            player, "delete_entity", "删除实体", estimator.countCollection(buf),
+                            estimator.minDistanceFromEntityUuids(player, buf))
             );
             hookCharging(axiomPaper, largeHandlers, paths, "manipulate_entity", false,
                     ManipulateEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
-                            player, "manipulate_entity", "调整实体", estimator.countCollection(buf))
+                            player, "manipulate_entity", "调整实体", estimator.countCollection(buf),
+                            estimator.minDistanceFromEntityUuids(player, buf))
             );
             hookCharging(axiomPaper, largeHandlers, paths, "set_world_time", false,
                     SetTimePacketListener::new,

@@ -58,6 +58,7 @@ public final class ChargeService {
             plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
                     + ", 受保护=" + estimate.protectedBlocks()
                     + ", 搬运=" + estimate.movedBlocks()
+                    + ", 最近=" + FeeAccumulator.formatDistance(estimate.minDistance())
                     + ", 回收=" + estimate.salvage()
                     + ", 材料=" + estimate.material()
                     + ", 劳务=" + estimate.labor()
@@ -67,7 +68,8 @@ public final class ChargeService {
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
         if (estimate.affectedBlocks() > maxScan) {
             deny(player, "scan-too-large", plugin.msg("prefix")
-                    + plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
+                    + plugin.msg("scan-too-large", FeeAccumulator.withNear(
+                            estimate.minDistance(), "max", String.valueOf(maxScan))));
             return ChargeDecision.deny("scan-too-large");
         }
 
@@ -75,10 +77,11 @@ public final class ChargeService {
             long cap = plugin.getPluginConfig().getLong("protection.max-restore-blocks", 4096L);
             if (ProtectedBlockGuard.enabled() && estimate.protectedBlocks() > cap) {
                 deny(player, "protected-too-many", plugin.msg("prefix") + plugin.msg(
-                        "protected-too-many", "count", String.valueOf(estimate.protectedBlocks())));
+                        "protected-too-many", FeeAccumulator.withNear(
+                                estimate.minDistance(), "count", String.valueOf(estimate.protectedBlocks()))));
                 return ChargeDecision.deny("protected-too-many");
             }
-            plugin.getChargeNotifier().addProtectedSkipped(player, estimate.protectedBlocks());
+            plugin.getChargeNotifier().addProtectedSkipped(player, estimate.protectedBlocks(), estimate.minDistance());
         }
 
         if (estimate.affectedBlocks() <= 0L) {
@@ -90,9 +93,9 @@ public final class ChargeService {
             double settled = UndoRefundService.settle(player, reversed);
             if (settled > 0D) {
                 plugin.getUsageLimits().refund(player, settled);
-                plugin.getChargeNotifier().addRefund(player, reversed.gross(), settled);
+                plugin.getChargeNotifier().addRefund(player, reversed.gross(), settled, estimate.minDistance());
             } else if (settled < 0D) {
-                plugin.getChargeNotifier().addUndoClawback(player, -reversed.gross(), -settled);
+                plugin.getChargeNotifier().addUndoClawback(player, -reversed.gross(), -settled, estimate.minDistance());
             }
             return allowAndGuard(estimate);
         }
@@ -105,12 +108,15 @@ public final class ChargeService {
         if (charge > balance + 1e-6) {
             deny(player, "insufficient-balance", plugin.msg("prefix") + plugin.msg(
                     "insufficient-balance",
-                    "total", EconomyService.format(charge),
-                    "blocks", String.valueOf(estimate.affectedBlocks()),
-                    "salvage", EconomyService.format(estimate.salvage()),
-                    "material", EconomyService.format(estimate.material()),
-                    "labor", EconomyService.format(estimate.labor()),
-                    "balance", EconomyService.format(balance)
+                    FeeAccumulator.withNear(
+                            estimate.minDistance(),
+                            "total", EconomyService.format(charge),
+                            "blocks", String.valueOf(estimate.affectedBlocks()),
+                            "salvage", EconomyService.format(estimate.salvage()),
+                            "material", EconomyService.format(estimate.material()),
+                            "labor", EconomyService.format(estimate.labor()),
+                            "balance", EconomyService.format(balance)
+                    )
             ));
             return ChargeDecision.deny("insufficient-balance");
         }
@@ -119,16 +125,22 @@ public final class ChargeService {
         UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, charge, estimate.affectedBlocks());
         if (!verdict.allowed()) {
             deny(player, verdict.messageKey(),
-                    plugin.msg("prefix") + plugin.msg(verdict.messageKey(), verdict.placeholders()));
+                    plugin.msg("prefix") + plugin.msg(
+                            verdict.messageKey(),
+                            FeeAccumulator.withNear(estimate.minDistance(), verdict.placeholders())));
             return ChargeDecision.deny(verdict.messageKey());
         }
 
         if (charge > 0D && !LedgerBridge.withdraw(player, charge, label)) {
-            deny(player, "withdraw-failed", plugin.msg("prefix") + "扣款失败，请联系管理员。");
+            deny(player, "withdraw-failed", plugin.msg("prefix")
+                    + "扣款失败，请联系管理员。"
+                    + nearSuffix(estimate.minDistance()));
             return ChargeDecision.deny("withdraw-failed");
         }
         if (payout > 0D && !depositSalvage(player, payout, label)) {
-            deny(player, "salvage-failed", plugin.msg("prefix") + "回收款入账失败，请联系管理员。");
+            deny(player, "salvage-failed", plugin.msg("prefix")
+                    + "回收款入账失败，请联系管理员。"
+                    + nearSuffix(estimate.minDistance()));
             return ChargeDecision.deny("salvage-failed");
         }
 
@@ -140,7 +152,7 @@ public final class ChargeService {
     }
 
     /** 实体生成/删除/调整：无材料成本，只按只数收劳务费 */
-    public ChargeDecision evaluateEntities(Player player, String label, String kind, long count) {
+    public ChargeDecision evaluateEntities(Player player, String label, String kind, long count, double minDistance) {
         if (!shouldCharge(player) || count <= 0L) {
             return ChargeDecision.allow();
         }
@@ -148,15 +160,15 @@ public final class ChargeService {
             return ChargeDecision.allow();
         }
         double fee = FeeAccumulator.round(count * plugin.entityUnit(label));
-        ChargeDecision decision = chargeFlat(player, label, fee);
+        ChargeDecision decision = chargeFlat(player, label, fee, minDistance);
         if (decision.allowed() && fee > 0D) {
-            plugin.getChargeNotifier().addEntityCharge(player, kind, count, fee);
+            plugin.getChargeNotifier().addEntityCharge(player, kind, count, fee, minDistance);
         }
         return decision;
     }
 
     /** 生物群系画笔：不消耗材料，只按格收劳务费 */
-    public ChargeDecision evaluateBiome(Player player, String label, long cells) {
+    public ChargeDecision evaluateBiome(Player player, String label, long cells, double minDistance) {
         if (!shouldCharge(player) || cells <= 0L) {
             return ChargeDecision.allow();
         }
@@ -164,9 +176,9 @@ public final class ChargeService {
             return ChargeDecision.allow();
         }
         double fee = FeeAccumulator.round(cells * plugin.getPluginConfig().getDouble("biome.cell-unit", 0.5D));
-        ChargeDecision decision = chargeFlat(player, label, fee);
+        ChargeDecision decision = chargeFlat(player, label, fee, minDistance);
         if (decision.allowed() && fee > 0D) {
-            plugin.getChargeNotifier().addBiomeCharge(player, cells, fee);
+            plugin.getChargeNotifier().addBiomeCharge(player, cells, fee, minDistance);
         }
         return decision;
     }
@@ -183,7 +195,7 @@ public final class ChargeService {
         return ChargeDecision.deny(messageKey);
     }
 
-    private ChargeDecision chargeFlat(Player player, String label, double fee) {
+    private ChargeDecision chargeFlat(Player player, String label, double fee, double minDistance) {
         if (fee <= 0D) {
             return ChargeDecision.allow();
         }
@@ -191,19 +203,26 @@ public final class ChargeService {
         if (fee > balance + 1e-6) {
             deny(player, "insufficient-balance-simple", plugin.msg("prefix") + plugin.msg(
                     "insufficient-balance-simple",
-                    "total", EconomyService.format(fee),
-                    "balance", EconomyService.format(balance)
+                    FeeAccumulator.withNear(
+                            minDistance,
+                            "total", EconomyService.format(fee),
+                            "balance", EconomyService.format(balance)
+                    )
             ));
             return ChargeDecision.deny("insufficient-balance");
         }
         UsageLimits.Verdict verdict = plugin.getUsageLimits().check(player, fee, 0L);
         if (!verdict.allowed()) {
             deny(player, verdict.messageKey(),
-                    plugin.msg("prefix") + plugin.msg(verdict.messageKey(), verdict.placeholders()));
+                    plugin.msg("prefix") + plugin.msg(
+                            verdict.messageKey(),
+                            FeeAccumulator.withNear(minDistance, verdict.placeholders())));
             return ChargeDecision.deny(verdict.messageKey());
         }
         if (!LedgerBridge.withdraw(player, fee, label)) {
-            deny(player, "withdraw-failed", plugin.msg("prefix") + "扣款失败，请联系管理员。");
+            deny(player, "withdraw-failed", plugin.msg("prefix")
+                    + "扣款失败，请联系管理员。"
+                    + nearSuffix(minDistance));
             return ChargeDecision.deny("withdraw-failed");
         }
         plugin.getUsageLimits().commit(player, fee, 0L);
@@ -227,6 +246,10 @@ public final class ChargeService {
 
     private void deny(Player player, String key, String message) {
         plugin.getChargeNotifier().deny(player, key, message);
+    }
+
+    private static String nearSuffix(double minDistance) {
+        return " §7最近 §e" + FeeAccumulator.formatDistance(minDistance) + " 格§f。";
     }
 
     public void sendDiagnostic(Player player) {

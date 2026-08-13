@@ -178,6 +178,9 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
 
     public String msg(String key, String... replacements) {
         String raw = msg(key);
+        if (replacements == null) {
+            return raw;
+        }
         for (int i = 0; i + 1 < replacements.length; i += 2) {
             raw = raw.replace("{" + replacements[i] + "}", replacements[i + 1]);
         }
