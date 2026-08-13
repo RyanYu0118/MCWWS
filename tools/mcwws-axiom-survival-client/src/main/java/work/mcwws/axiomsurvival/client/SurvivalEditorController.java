@@ -22,10 +22,12 @@ public final class SurvivalEditorController {
     private static float menuPitch;
     private static boolean menuFlying;
 
-    /** 服务端下发的 abilities 是飞行权限的唯一权威来源；本地创造会污染 mayfly，需要这份原值压回去 */
+    /** 服务端下发的 abilities 是唯一权威；本地创造会污染 mayfly/instabuild，需要这份原值压回去 */
     private static volatile boolean hasServerAbilities;
     private static volatile boolean serverMayfly;
     private static volatile boolean serverFlying;
+    private static volatile boolean serverInstabuild;
+    private static volatile boolean serverInvulnerable;
 
     private SurvivalEditorController() {
     }
@@ -122,10 +124,11 @@ public final class SurvivalEditorController {
             player.resetFallDistance();
             hasMenuPose = false;
         }
-        clampFlightToServerState();
+        clampAbilitiesToServerState();
         onEnterBuildMode();
         McwwsAxiomSurvivalClientMod.LOGGER.debug(
-                "关菜单: 已恢复建造模式与位置，飞行按服务端 mayfly={} flying={}", serverMayfly, serverFlying
+                "关菜单: 已恢复建造模式与位置，abilities 按服务端 mayfly={} flying={} instabuild={}",
+                serverMayfly, serverFlying, serverInstabuild
         );
     }
 
@@ -147,28 +150,36 @@ public final class SurvivalEditorController {
         }
     }
 
-    /** 服务端每次下发 abilities 都记一份，这是玩家真实飞行权限的唯一依据 */
-    public static void noteServerAbilities(boolean mayfly, boolean flying) {
+    /** 服务端每次下发 abilities 都记一份，这是玩家真实能力的唯一依据 */
+    public static void noteServerAbilities(
+            boolean mayfly, boolean flying, boolean instabuild, boolean invulnerable
+    ) {
         serverMayfly = mayfly;
         serverFlying = flying;
+        serverInstabuild = instabuild;
+        serverInvulnerable = invulnerable;
         hasServerAbilities = true;
+        // 建造阶段若刚收到服务端包（例如 /fly），vanilla 已写入正确值；
+        // 但本地创造可能在同 tick 稍后再次污染，下一 tick 的 setLocalMode 兜底会再压一次
+        clampAbilitiesToServerState();
     }
 
     /**
-     * 本地模式切到创造后 vanilla 的 {@code GameType.updatePlayerAbilities} 会把 {@code mayfly} 置为 true，
-     * 等于凭空发飞行权限。建造阶段按服务端权威值压回去；菜单开着时本地是旁观、相机要靠飞行移动，不动。
+     * 本地模式切到创造后 vanilla 的 {@code GameType.updatePlayerAbilities} 会把
+     * {@code mayfly/instabuild/invulnerable} 全部置 true：凭空给飞行，E 键也会打开创造物品栏。
+     * 建造阶段按服务端权威值压回去；菜单开着时本地是旁观、相机要靠飞行移动，不动。
      */
-    public static void clampFlightToServerState() {
+    public static void clampAbilitiesToServerState() {
         if (!localEditorActive || EditorUI.isEnabled()) {
             return;
         }
         applyServerAbilities();
     }
 
-    /** {@code setLocalMode} 之后的兜底：创造即建造阶段，撤掉 vanilla 附带的飞行权限 */
+    /** {@code setLocalMode} 之后的兜底：创造即建造阶段，撤掉 vanilla 附带的创造能力 */
     public static void afterLocalModeChanged(GameType gameType) {
         if (gameType == GameType.CREATIVE) {
-            clampFlightToServerState();
+            clampAbilitiesToServerState();
         }
     }
 
@@ -183,6 +194,8 @@ public final class SurvivalEditorController {
         var abilities = mc.player.getAbilities();
         abilities.mayfly = serverMayfly;
         abilities.flying = serverMayfly && serverFlying;
+        abilities.instabuild = serverInstabuild;
+        abilities.invulnerable = serverInvulnerable;
     }
 
     /** 在 Axiom {@code changeGameMode} 执行前捕获真实生存模式 */
@@ -196,7 +209,10 @@ public final class SurvivalEditorController {
         }
         // 本局还没收到过 abilities 包时（理论上加入世界就会收到），用进 Editor 前的现值兜底
         if (!hasServerAbilities && mc.player != null) {
-            noteServerAbilities(mc.player.getAbilities().mayfly, mc.player.getAbilities().flying);
+            var abilities = mc.player.getAbilities();
+            noteServerAbilities(
+                    abilities.mayfly, abilities.flying, abilities.instabuild, abilities.invulnerable
+            );
         }
     }
 
@@ -216,6 +232,9 @@ public final class SurvivalEditorController {
             localEditorActive = true;
             SurvivalEditorNetworking.sendEditorState(true);
             McwwsAxiomSurvivalClientMod.LOGGER.info("生存 Editor 会话开始（本地 {}）", gameType.getName());
+        }
+        if (gameType == GameType.CREATIVE) {
+            clampAbilitiesToServerState();
         }
     }
 

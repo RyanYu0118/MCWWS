@@ -9,13 +9,15 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import work.mcwws.axiomsurvival.client.SurvivalEditorController;
 
 /**
- * 服务端下发的 abilities 是飞行权限的唯一权威来源，记一份供 Editor 建造阶段压回本地创造污染的 mayfly。
+ * 服务端下发的 abilities 是唯一权威来源，记一份供 Editor 建造阶段压回本地创造污染的 mayfly/instabuild。
  */
 @Mixin(ClientPacketListener.class)
 public class ClientPacketListenerAbilitiesMixin {
 
     @Inject(method = "handlePlayerAbilities", at = @At("TAIL"))
     private void mcwws$noteServerAbilities(ClientboundPlayerAbilitiesPacket packet, CallbackInfo ci) {
-        SurvivalEditorController.noteServerAbilities(packet.canFly(), packet.isFlying());
+        SurvivalEditorController.noteServerAbilities(
+                packet.canFly(), packet.isFlying(), packet.canInstabuild(), packet.isInvulnerable()
+        );
     }
 }
