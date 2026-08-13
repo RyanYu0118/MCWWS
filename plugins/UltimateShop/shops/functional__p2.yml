@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:functional-shop-name} (2/7)'
+  shop-name: '{lang:functional-shop-name} (2/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -36,18 +36,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GRINDSTONE
+        material: WAXED_WEATHERED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_grindstone%'
+        amount: '%mcwws.price_buy_waxed_weathered_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_grindstone%'
+        amount: '%mcwws.price_sell_waxed_weathered_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LOOM
+        material: WAXED_OXIDIZED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_loom%'
+        amount: '%mcwws.price_buy_waxed_oxidized_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_loom%'
+        amount: '%mcwws.price_sell_waxed_oxidized_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FURNACE
+        material: END_ROD
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_furnace%'
+        amount: '%mcwws.price_buy_end_rod%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_furnace%'
+        amount: '%mcwws.price_sell_end_rod%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SMOKER
+        material: SEA_LANTERN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_smoker%'
+        amount: '%mcwws.price_buy_sea_lantern%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_smoker%'
+        amount: '%mcwws.price_sell_sea_lantern%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLAST_FURNACE
+        material: REDSTONE_LAMP
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blast_furnace%'
+        amount: '%mcwws.price_buy_redstone_lamp%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blast_furnace%'
+        amount: '%mcwws.price_sell_redstone_lamp%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CAMPFIRE
+        material: COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_campfire%'
+        amount: '%mcwws.price_buy_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_campfire%'
+        amount: '%mcwws.price_sell_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SOUL_CAMPFIRE
+        material: EXPOSED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_soul_campfire%'
+        amount: '%mcwws.price_buy_exposed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_soul_campfire%'
+        amount: '%mcwws.price_sell_exposed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ANVIL
+        material: WEATHERED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_anvil%'
+        amount: '%mcwws.price_buy_weathered_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_anvil%'
+        amount: '%mcwws.price_sell_weathered_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHIPPED_ANVIL
+        material: OXIDIZED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chipped_anvil%'
+        amount: '%mcwws.price_buy_oxidized_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chipped_anvil%'
+        amount: '%mcwws.price_sell_oxidized_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DAMAGED_ANVIL
+        material: WAXED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_damaged_anvil%'
+        amount: '%mcwws.price_buy_waxed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_damaged_anvil%'
+        amount: '%mcwws.price_sell_waxed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COMPOSTER
+        material: WAXED_EXPOSED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_composter%'
+        amount: '%mcwws.price_buy_waxed_exposed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_composter%'
+        amount: '%mcwws.price_sell_waxed_exposed_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NOTE_BLOCK
+        material: WAXED_WEATHERED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_note_block%'
+        amount: '%mcwws.price_buy_waxed_weathered_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_note_block%'
+        amount: '%mcwws.price_sell_waxed_weathered_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: JUKEBOX
+        material: WAXED_OXIDIZED_COPPER_BULB
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_jukebox%'
+        amount: '%mcwws.price_buy_waxed_oxidized_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_jukebox%'
+        amount: '%mcwws.price_sell_waxed_oxidized_copper_bulb%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENCHANTING_TABLE
+        material: GLOWSTONE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_enchanting_table%'
+        amount: '%mcwws.price_buy_glowstone%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_enchanting_table%'
+        amount: '%mcwws.price_sell_glowstone%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: END_CRYSTAL
+        material: SHROOMLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_end_crystal%'
+        amount: '%mcwws.price_buy_shroomlight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_end_crystal%'
+        amount: '%mcwws.price_sell_shroomlight%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BREWING_STAND
+        material: OCHRE_FROGLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brewing_stand%'
+        amount: '%mcwws.price_buy_ochre_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brewing_stand%'
+        amount: '%mcwws.price_sell_ochre_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CAULDRON
+        material: VERDANT_FROGLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cauldron%'
+        amount: '%mcwws.price_buy_verdant_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cauldron%'
+        amount: '%mcwws.price_sell_verdant_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BELL
+        material: PEARLESCENT_FROGLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bell%'
+        amount: '%mcwws.price_buy_pearlescent_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bell%'
+        amount: '%mcwws.price_sell_pearlescent_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BEACON
+        material: CRYING_OBSIDIAN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_beacon%'
+        amount: '%mcwws.price_buy_crying_obsidian%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_beacon%'
+        amount: '%mcwws.price_sell_crying_obsidian%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CONDUIT
+        material: GLOW_LICHEN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_conduit%'
+        amount: '%mcwws.price_buy_glow_lichen%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_conduit%'
+        amount: '%mcwws.price_sell_glow_lichen%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LODESTONE
+        material: MAGMA_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lodestone%'
+        amount: '%mcwws.price_buy_magma_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lodestone%'
+        amount: '%mcwws.price_sell_magma_block%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -104,6 +104,44 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: SWEET_BERRIES
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sweet_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sweet_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  F:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: GLOW_BERRIES
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_glow_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_glow_berries%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  G:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: CHORUS_FRUIT
         amount: 1
     buy-prices:
@@ -118,7 +156,7 @@ items:
         amount: '%mcwws.price_sell_chorus_fruit%'
         placeholder: '{amount}$'
         start-apply: 0
-  F:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -137,7 +175,7 @@ items:
         amount: '%mcwws.price_sell_carrot%'
         placeholder: '{amount}$'
         start-apply: 0
-  G:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -156,7 +194,7 @@ items:
         amount: '%mcwws.price_sell_golden_carrot%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -175,7 +213,7 @@ items:
         amount: '%mcwws.price_sell_potato%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -194,7 +232,7 @@ items:
         amount: '%mcwws.price_sell_baked_potato%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -213,7 +251,7 @@ items:
         amount: '%mcwws.price_sell_poisonous_potato%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -232,7 +270,7 @@ items:
         amount: '%mcwws.price_sell_beetroot%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -251,7 +289,7 @@ items:
         amount: '%mcwws.price_sell_dried_kelp%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -270,7 +308,7 @@ items:
         amount: '%mcwws.price_sell_beef%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -289,7 +327,7 @@ items:
         amount: '%mcwws.price_sell_cooked_beef%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -308,7 +346,7 @@ items:
         amount: '%mcwws.price_sell_porkchop%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -327,7 +365,7 @@ items:
         amount: '%mcwws.price_sell_cooked_porkchop%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -346,7 +384,7 @@ items:
         amount: '%mcwws.price_sell_mutton%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -365,7 +403,7 @@ items:
         amount: '%mcwws.price_sell_cooked_mutton%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -382,43 +420,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_chicken%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: COOKED_CHICKEN
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_cooked_chicken%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_cooked_chicken%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: RABBIT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_rabbit%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_rabbit%'
         placeholder: '{amount}$'
         start-apply: 0

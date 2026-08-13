@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:natural-shop-name} (1/10)'
+  shop-name: '{lang:natural-shop-name} (1/12)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -218,6 +218,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  L:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: RED_SAND
         amount: 1
     buy-prices:
@@ -232,7 +251,26 @@ items:
         amount: '%mcwws.price_sell_red_sand%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  M:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -251,7 +289,7 @@ items:
         amount: '%mcwws.price_sell_ice%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -270,7 +308,7 @@ items:
         amount: '%mcwws.price_sell_packed_ice%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -289,7 +327,7 @@ items:
         amount: '%mcwws.price_sell_blue_ice%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -308,7 +346,7 @@ items:
         amount: '%mcwws.price_sell_snow_block%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -327,7 +365,7 @@ items:
         amount: '%mcwws.price_sell_snow%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -346,7 +384,7 @@ items:
         amount: '%mcwws.price_sell_moss_block%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -365,7 +403,7 @@ items:
         amount: '%mcwws.price_sell_moss_carpet%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -382,43 +420,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_pale_moss_block%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: PALE_MOSS_CARPET
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_pale_moss_carpet%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_pale_moss_carpet%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: PALE_HANGING_MOSS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_pale_hanging_moss%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_pale_hanging_moss%'
         placeholder: '{amount}$'
         start-apply: 0

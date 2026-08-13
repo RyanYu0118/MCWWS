@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:functional-shop-name} (1/7)'
+  shop-name: '{lang:functional-shop-name} (1/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -294,18 +294,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: END_ROD
+        material: IRON_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_end_rod%'
+        amount: '%mcwws.price_buy_iron_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_end_rod%'
+        amount: '%mcwws.price_sell_iron_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -313,18 +313,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: REDSTONE_LAMP
+        material: COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_redstone_lamp%'
+        amount: '%mcwws.price_buy_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_redstone_lamp%'
+        amount: '%mcwws.price_sell_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -332,18 +332,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CRAFTING_TABLE
+        material: EXPOSED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_crafting_table%'
+        amount: '%mcwws.price_buy_exposed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_crafting_table%'
+        amount: '%mcwws.price_sell_exposed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -351,18 +351,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: STONECUTTER
+        material: WEATHERED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_stonecutter%'
+        amount: '%mcwws.price_buy_weathered_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_stonecutter%'
+        amount: '%mcwws.price_sell_weathered_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -370,18 +370,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CARTOGRAPHY_TABLE
+        material: OXIDIZED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cartography_table%'
+        amount: '%mcwws.price_buy_oxidized_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cartography_table%'
+        amount: '%mcwws.price_sell_oxidized_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -389,18 +389,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FLETCHING_TABLE
+        material: WAXED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fletching_table%'
+        amount: '%mcwws.price_buy_waxed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fletching_table%'
+        amount: '%mcwws.price_sell_waxed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -408,17 +408,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SMITHING_TABLE
+        material: WAXED_EXPOSED_COPPER_CHAIN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_smithing_table%'
+        amount: '%mcwws.price_buy_waxed_exposed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_smithing_table%'
+        amount: '%mcwws.price_sell_waxed_exposed_copper_chain%'
         placeholder: '{amount}$'
         start-apply: 0

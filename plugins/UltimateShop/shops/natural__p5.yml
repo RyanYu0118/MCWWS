@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:natural-shop-name} (5/10)'
+  shop-name: '{lang:natural-shop-name} (5/12)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -36,18 +36,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: AZALEA
+        material: WARPED_STEM
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_azalea%'
+        amount: '%mcwws.price_buy_warped_stem%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_azalea%'
+        amount: '%mcwws.price_sell_warped_stem%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FLOWERING_AZALEA
+        material: OAK_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_flowering_azalea%'
+        amount: '%mcwws.price_buy_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_flowering_azalea%'
+        amount: '%mcwws.price_sell_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_MUSHROOM
+        material: SPRUCE_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_mushroom%'
+        amount: '%mcwws.price_buy_spruce_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_mushroom%'
+        amount: '%mcwws.price_sell_spruce_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RED_MUSHROOM
+        material: BIRCH_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_mushroom%'
+        amount: '%mcwws.price_buy_birch_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_mushroom%'
+        amount: '%mcwws.price_sell_birch_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CRIMSON_FUNGUS
+        material: JUNGLE_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_crimson_fungus%'
+        amount: '%mcwws.price_buy_jungle_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_crimson_fungus%'
+        amount: '%mcwws.price_sell_jungle_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WARPED_FUNGUS
+        material: ACACIA_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_warped_fungus%'
+        amount: '%mcwws.price_buy_acacia_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_warped_fungus%'
+        amount: '%mcwws.price_sell_acacia_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SHORT_GRASS
+        material: DARK_OAK_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_short_grass%'
+        amount: '%mcwws.price_buy_dark_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_short_grass%'
+        amount: '%mcwws.price_sell_dark_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FERN
+        material: MANGROVE_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fern%'
+        amount: '%mcwws.price_buy_mangrove_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fern%'
+        amount: '%mcwws.price_sell_mangrove_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SHORT_DRY_GRASS
+        material: CHERRY_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_short_dry_grass%'
+        amount: '%mcwws.price_buy_cherry_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_short_dry_grass%'
+        amount: '%mcwws.price_sell_cherry_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BUSH
+        material: PALE_OAK_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bush%'
+        amount: '%mcwws.price_buy_pale_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bush%'
+        amount: '%mcwws.price_sell_pale_oak_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BUSH
+        material: AZALEA_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bush%'
+        amount: '%mcwws.price_buy_azalea_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bush%'
+        amount: '%mcwws.price_sell_azalea_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DANDELION
+        material: FLOWERING_AZALEA_LEAVES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dandelion%'
+        amount: '%mcwws.price_buy_flowering_azalea_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dandelion%'
+        amount: '%mcwws.price_sell_flowering_azalea_leaves%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: POPPY
+        material: BROWN_MUSHROOM_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_poppy%'
+        amount: '%mcwws.price_buy_brown_mushroom_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_poppy%'
+        amount: '%mcwws.price_sell_brown_mushroom_block%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_ORCHID
+        material: RED_MUSHROOM_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_orchid%'
+        amount: '%mcwws.price_buy_red_mushroom_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_orchid%'
+        amount: '%mcwws.price_sell_red_mushroom_block%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ALLIUM
+        material: NETHER_WART_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_allium%'
+        amount: '%mcwws.price_buy_nether_wart_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_allium%'
+        amount: '%mcwws.price_sell_nether_wart_block%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: AZURE_BLUET
+        material: WARPED_WART_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_azure_bluet%'
+        amount: '%mcwws.price_buy_warped_wart_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_azure_bluet%'
+        amount: '%mcwws.price_sell_warped_wart_block%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RED_TULIP
+        material: SHROOMLIGHT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_red_tulip%'
+        amount: '%mcwws.price_buy_shroomlight%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_red_tulip%'
+        amount: '%mcwws.price_sell_shroomlight%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ORANGE_TULIP
+        material: OAK_SAPLING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_orange_tulip%'
+        amount: '%mcwws.price_buy_oak_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_orange_tulip%'
+        amount: '%mcwws.price_sell_oak_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WHITE_TULIP
+        material: SPRUCE_SAPLING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_white_tulip%'
+        amount: '%mcwws.price_buy_spruce_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_white_tulip%'
+        amount: '%mcwws.price_sell_spruce_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PINK_TULIP
+        material: BIRCH_SAPLING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pink_tulip%'
+        amount: '%mcwws.price_buy_birch_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pink_tulip%'
+        amount: '%mcwws.price_sell_birch_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OXEYE_DAISY
+        material: JUNGLE_SAPLING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_oxeye_daisy%'
+        amount: '%mcwws.price_buy_jungle_sapling%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_oxeye_daisy%'
+        amount: '%mcwws.price_sell_jungle_sapling%'
         placeholder: '{amount}$'
         start-apply: 0

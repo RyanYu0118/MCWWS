@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:natural-shop-name} (8/10)'
+  shop-name: '{lang:natural-shop-name} (8/12)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -36,18 +36,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PITCHER_POD
+        material: WARPED_ROOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pitcher_pod%'
+        amount: '%mcwws.price_buy_warped_roots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pitcher_pod%'
+        amount: '%mcwws.price_sell_warped_roots%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GLOW_BERRIES
+        material: NETHER_SPROUTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_glow_berries%'
+        amount: '%mcwws.price_buy_nether_sprouts%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_glow_berries%'
+        amount: '%mcwws.price_sell_nether_sprouts%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SWEET_BERRIES
+        material: WEEPING_VINES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sweet_berries%'
+        amount: '%mcwws.price_buy_weeping_vines%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sweet_berries%'
+        amount: '%mcwws.price_sell_weeping_vines%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NETHER_WART
+        material: TWISTING_VINES
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_nether_wart%'
+        amount: '%mcwws.price_buy_twisting_vines%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_nether_wart%'
+        amount: '%mcwws.price_sell_twisting_vines%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LILY_PAD
+        material: VINE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_lily_pad%'
+        amount: '%mcwws.price_buy_vine%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_lily_pad%'
+        amount: '%mcwws.price_sell_vine%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SEAGRASS
+        material: LARGE_FERN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_seagrass%'
+        amount: '%mcwws.price_buy_large_fern%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_seagrass%'
+        amount: '%mcwws.price_sell_large_fern%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SEA_PICKLE
+        material: TALL_DRY_GRASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sea_pickle%'
+        amount: '%mcwws.price_buy_tall_dry_grass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sea_pickle%'
+        amount: '%mcwws.price_sell_tall_dry_grass%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: KELP
+        material: SUNFLOWER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_kelp%'
+        amount: '%mcwws.price_buy_sunflower%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_kelp%'
+        amount: '%mcwws.price_sell_sunflower%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DRIED_KELP_BLOCK
+        material: LILAC
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dried_kelp_block%'
+        amount: '%mcwws.price_buy_lilac%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dried_kelp_block%'
+        amount: '%mcwws.price_sell_lilac%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TUBE_CORAL_BLOCK
+        material: ROSE_BUSH
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tube_coral_block%'
+        amount: '%mcwws.price_buy_rose_bush%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tube_coral_block%'
+        amount: '%mcwws.price_sell_rose_bush%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRAIN_CORAL_BLOCK
+        material: PEONY
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brain_coral_block%'
+        amount: '%mcwws.price_buy_peony%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brain_coral_block%'
+        amount: '%mcwws.price_sell_peony%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BUBBLE_CORAL_BLOCK
+        material: PITCHER_PLANT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bubble_coral_block%'
+        amount: '%mcwws.price_buy_pitcher_plant%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bubble_coral_block%'
+        amount: '%mcwws.price_sell_pitcher_plant%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FIRE_CORAL_BLOCK
+        material: BIG_DRIPLEAF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_fire_coral_block%'
+        amount: '%mcwws.price_buy_big_dripleaf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_fire_coral_block%'
+        amount: '%mcwws.price_sell_big_dripleaf%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HORN_CORAL_BLOCK
+        material: SMALL_DRIPLEAF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_horn_coral_block%'
+        amount: '%mcwws.price_buy_small_dripleaf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_horn_coral_block%'
+        amount: '%mcwws.price_sell_small_dripleaf%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_TUBE_CORAL_BLOCK
+        material: CHORUS_FLOWER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_tube_coral_block%'
+        amount: '%mcwws.price_buy_chorus_flower%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_tube_coral_block%'
+        amount: '%mcwws.price_sell_chorus_flower%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BRAIN_CORAL_BLOCK
+        material: GLOW_LICHEN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_brain_coral_block%'
+        amount: '%mcwws.price_buy_glow_lichen%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_brain_coral_block%'
+        amount: '%mcwws.price_sell_glow_lichen%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_BUBBLE_CORAL_BLOCK
+        material: HANGING_ROOTS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_bubble_coral_block%'
+        amount: '%mcwws.price_buy_hanging_roots%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_bubble_coral_block%'
+        amount: '%mcwws.price_sell_hanging_roots%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_FIRE_CORAL_BLOCK
+        material: TURTLE_EGG
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_fire_coral_block%'
+        amount: '%mcwws.price_buy_turtle_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_fire_coral_block%'
+        amount: '%mcwws.price_sell_turtle_egg%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DEAD_HORN_CORAL_BLOCK
+        material: SNIFFER_EGG
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dead_horn_coral_block%'
+        amount: '%mcwws.price_buy_sniffer_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dead_horn_coral_block%'
+        amount: '%mcwws.price_sell_sniffer_egg%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TUBE_CORAL
+        material: DRIED_GHAST
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tube_coral%'
+        amount: '%mcwws.price_buy_dried_ghast%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tube_coral%'
+        amount: '%mcwws.price_sell_dried_ghast%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BRAIN_CORAL
+        material: WHEAT_SEEDS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brain_coral%'
+        amount: '%mcwws.price_buy_wheat_seeds%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brain_coral%'
+        amount: '%mcwws.price_sell_wheat_seeds%'
         placeholder: '{amount}$'
         start-apply: 0

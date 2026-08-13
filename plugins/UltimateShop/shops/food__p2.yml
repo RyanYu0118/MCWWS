@@ -28,6 +28,44 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: COOKED_CHICKEN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cooked_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cooked_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RABBIT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_rabbit%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: COOKED_RABBIT
         amount: 1
     buy-prices:
@@ -42,7 +80,7 @@ items:
         amount: '%mcwws.price_sell_cooked_rabbit%'
         placeholder: '{amount}$'
         start-apply: 0
-  B:
+  D:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -61,7 +99,7 @@ items:
         amount: '%mcwws.price_sell_cod%'
         placeholder: '{amount}$'
         start-apply: 0
-  C:
+  E:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -80,7 +118,7 @@ items:
         amount: '%mcwws.price_sell_cooked_cod%'
         placeholder: '{amount}$'
         start-apply: 0
-  D:
+  F:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -99,7 +137,7 @@ items:
         amount: '%mcwws.price_sell_salmon%'
         placeholder: '{amount}$'
         start-apply: 0
-  E:
+  G:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -118,7 +156,7 @@ items:
         amount: '%mcwws.price_sell_cooked_salmon%'
         placeholder: '{amount}$'
         start-apply: 0
-  F:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -137,7 +175,7 @@ items:
         amount: '%mcwws.price_sell_tropical_fish%'
         placeholder: '{amount}$'
         start-apply: 0
-  G:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -156,7 +194,7 @@ items:
         amount: '%mcwws.price_sell_pufferfish%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -175,7 +213,7 @@ items:
         amount: '%mcwws.price_sell_bread%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -194,7 +232,7 @@ items:
         amount: '%mcwws.price_sell_cookie%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -213,7 +251,7 @@ items:
         amount: '%mcwws.price_sell_cake%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -232,7 +270,7 @@ items:
         amount: '%mcwws.price_sell_pumpkin_pie%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -251,7 +289,7 @@ items:
         amount: '%mcwws.price_sell_rotten_flesh%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -270,7 +308,7 @@ items:
         amount: '%mcwws.price_sell_spider_eye%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -289,7 +327,7 @@ items:
         amount: '%mcwws.price_sell_mushroom_stew%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -308,7 +346,7 @@ items:
         amount: '%mcwws.price_sell_beetroot_soup%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -327,7 +365,26 @@ items:
         amount: '%mcwws.price_sell_rabbit_stew%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  S:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MILK_BUCKET
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_milk_bucket%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_milk_bucket%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -346,7 +403,7 @@ items:
         amount: '%mcwws.price_sell_honey_bottle%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:

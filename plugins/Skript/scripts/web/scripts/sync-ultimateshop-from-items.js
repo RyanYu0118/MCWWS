@@ -295,28 +295,27 @@ function main() {
         categoryOf[id] = row.category;
     });
 
-    const assigned = new Set();
+    const inVanillaTabs = new Set();
     const shopBuckets = {};
     const ensureBucket = (shopId) => {
         if (!shopBuckets[shopId]) shopBuckets[shopId] = [];
         return shopBuckets[shopId];
     };
 
+    // 与创造栏一致：同一物品可出现在多个分页，价格相同。
     VANILLA_TAB_ORDER.forEach((tabId) => {
         const list = tabsDoc.tabs[tabId] || [];
         list.forEach((creativeId) => {
             const shopItemId = pricedShopId(creativeId, pricedSet);
-            if (!shopItemId || assigned.has(shopItemId)) return;
-            assigned.add(shopItemId);
+            if (!shopItemId) return;
+            inVanillaTabs.add(shopItemId);
             ensureBucket(tabId).push(shopItemId);
         });
     });
 
     [...pricedSet].sort((a, b) => a.localeCompare(b)).forEach((itemId) => {
-        if (assigned.has(itemId)) return;
-        const shopId = leftoverShopForItem(itemId, categoryOf[itemId]);
-        assigned.add(itemId);
-        ensureBucket(shopId).push(itemId);
+        if (inVanillaTabs.has(itemId)) return;
+        ensureBucket(leftoverShopForItem(itemId, categoryOf[itemId])).push(itemId);
     });
 
     deleteRetiredShops();
@@ -327,7 +326,7 @@ function main() {
         total += writeShopPages(shopId, shopBuckets[shopId]);
     });
 
-    console.log(`\n完成：共 ${total} 个物品已写入创造栏分类商店（已跳过 daily / example）。`);
+    console.log(`\n完成：${pricedSet.size} 个有价物品，商店上架 ${total} 条（创造栏多标签重复 ${total - pricedSet.size} 条；已跳过 daily / example）。`);
 }
 
 main();

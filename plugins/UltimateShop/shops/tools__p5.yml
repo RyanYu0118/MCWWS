@@ -36,6 +36,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: CYAN_HARNESS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cyan_harness%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cyan_harness%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: PURPLE_HARNESS
         amount: 1
     buy-prices:
@@ -50,7 +69,7 @@ items:
         amount: '%mcwws.price_sell_purple_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  B:
+  C:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -69,7 +88,7 @@ items:
         amount: '%mcwws.price_sell_blue_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  C:
+  D:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -88,7 +107,7 @@ items:
         amount: '%mcwws.price_sell_brown_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  D:
+  E:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -107,7 +126,7 @@ items:
         amount: '%mcwws.price_sell_green_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  E:
+  F:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -126,7 +145,7 @@ items:
         amount: '%mcwws.price_sell_red_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  F:
+  G:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -145,7 +164,7 @@ items:
         amount: '%mcwws.price_sell_black_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  G:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -164,7 +183,7 @@ items:
         amount: '%mcwws.price_sell_carrot_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -183,7 +202,7 @@ items:
         amount: '%mcwws.price_sell_warped_fungus_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -202,7 +221,26 @@ items:
         amount: '%mcwws.price_sell_oak_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  K:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OAK_CHEST_BOAT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_oak_chest_boat%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_oak_chest_boat%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -221,7 +259,7 @@ items:
         amount: '%mcwws.price_sell_spruce_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -240,7 +278,7 @@ items:
         amount: '%mcwws.price_sell_spruce_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -259,7 +297,7 @@ items:
         amount: '%mcwws.price_sell_birch_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -278,7 +316,7 @@ items:
         amount: '%mcwws.price_sell_birch_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -297,7 +335,7 @@ items:
         amount: '%mcwws.price_sell_jungle_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -316,7 +354,7 @@ items:
         amount: '%mcwws.price_sell_jungle_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -335,7 +373,7 @@ items:
         amount: '%mcwws.price_sell_acacia_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -354,7 +392,7 @@ items:
         amount: '%mcwws.price_sell_acacia_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -373,7 +411,7 @@ items:
         amount: '%mcwws.price_sell_dark_oak_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -390,43 +428,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_dark_oak_chest_boat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  T:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: MANGROVE_BOAT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_boat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_boat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: MANGROVE_CHEST_BOAT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_chest_boat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0

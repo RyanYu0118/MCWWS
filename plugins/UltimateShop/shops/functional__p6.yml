@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:functional-shop-name} (6/7)'
+  shop-name: '{lang:functional-shop-name} (6/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -36,18 +36,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_WEATHERED_COPPER_CHEST
+        material: SPRUCE_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_weathered_copper_chest%'
+        amount: '%mcwws.price_buy_spruce_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_weathered_copper_chest%'
+        amount: '%mcwws.price_sell_spruce_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_OXIDIZED_COPPER_CHEST
+        material: BIRCH_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_oxidized_copper_chest%'
+        amount: '%mcwws.price_buy_birch_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_oxidized_copper_chest%'
+        amount: '%mcwws.price_sell_birch_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BARREL
+        material: BIRCH_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_barrel%'
+        amount: '%mcwws.price_buy_birch_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_barrel%'
+        amount: '%mcwws.price_sell_birch_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENDER_CHEST
+        material: JUNGLE_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ender_chest%'
+        amount: '%mcwws.price_buy_jungle_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ender_chest%'
+        amount: '%mcwws.price_sell_jungle_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: RESPAWN_ANCHOR
+        material: JUNGLE_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_respawn_anchor%'
+        amount: '%mcwws.price_buy_jungle_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_respawn_anchor%'
+        amount: '%mcwws.price_sell_jungle_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SKELETON_SKULL
+        material: ACACIA_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_skeleton_skull%'
+        amount: '%mcwws.price_buy_acacia_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_skeleton_skull%'
+        amount: '%mcwws.price_sell_acacia_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WITHER_SKELETON_SKULL
+        material: ACACIA_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wither_skeleton_skull%'
+        amount: '%mcwws.price_buy_acacia_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wither_skeleton_skull%'
+        amount: '%mcwws.price_sell_acacia_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ZOMBIE_HEAD
+        material: DARK_OAK_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_zombie_head%'
+        amount: '%mcwws.price_buy_dark_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_zombie_head%'
+        amount: '%mcwws.price_sell_dark_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CREEPER_HEAD
+        material: DARK_OAK_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_creeper_head%'
+        amount: '%mcwws.price_buy_dark_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_creeper_head%'
+        amount: '%mcwws.price_sell_dark_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PIGLIN_HEAD
+        material: MANGROVE_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_piglin_head%'
+        amount: '%mcwws.price_buy_mangrove_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_piglin_head%'
+        amount: '%mcwws.price_sell_mangrove_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DRAGON_HEAD
+        material: MANGROVE_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dragon_head%'
+        amount: '%mcwws.price_buy_mangrove_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dragon_head%'
+        amount: '%mcwws.price_sell_mangrove_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DRAGON_EGG
+        material: CHERRY_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dragon_egg%'
+        amount: '%mcwws.price_buy_cherry_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dragon_egg%'
+        amount: '%mcwws.price_sell_cherry_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ENDER_EYE
+        material: CHERRY_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_ender_eye%'
+        amount: '%mcwws.price_buy_cherry_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_ender_eye%'
+        amount: '%mcwws.price_sell_cherry_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_GOLEM_STATUE
+        material: PALE_OAK_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_golem_statue%'
+        amount: '%mcwws.price_buy_pale_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_golem_statue%'
+        amount: '%mcwws.price_sell_pale_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: EXPOSED_COPPER_GOLEM_STATUE
+        material: PALE_OAK_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_exposed_copper_golem_statue%'
+        amount: '%mcwws.price_buy_pale_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_exposed_copper_golem_statue%'
+        amount: '%mcwws.price_sell_pale_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WEATHERED_COPPER_GOLEM_STATUE
+        material: BAMBOO_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_weathered_copper_golem_statue%'
+        amount: '%mcwws.price_buy_bamboo_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_weathered_copper_golem_statue%'
+        amount: '%mcwws.price_sell_bamboo_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OXIDIZED_COPPER_GOLEM_STATUE
+        material: BAMBOO_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_oxidized_copper_golem_statue%'
+        amount: '%mcwws.price_buy_bamboo_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_oxidized_copper_golem_statue%'
+        amount: '%mcwws.price_sell_bamboo_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_COPPER_GOLEM_STATUE
+        material: CRIMSON_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_copper_golem_statue%'
+        amount: '%mcwws.price_buy_crimson_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_copper_golem_statue%'
+        amount: '%mcwws.price_sell_crimson_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_EXPOSED_COPPER_GOLEM_STATUE
+        material: CRIMSON_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_exposed_copper_golem_statue%'
+        amount: '%mcwws.price_buy_crimson_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_exposed_copper_golem_statue%'
+        amount: '%mcwws.price_sell_crimson_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_WEATHERED_COPPER_GOLEM_STATUE
+        material: WARPED_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_weathered_copper_golem_statue%'
+        amount: '%mcwws.price_buy_warped_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_weathered_copper_golem_statue%'
+        amount: '%mcwws.price_sell_warped_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_OXIDIZED_COPPER_GOLEM_STATUE
+        material: WARPED_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_oxidized_copper_golem_statue%'
+        amount: '%mcwws.price_buy_warped_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_oxidized_copper_golem_statue%'
+        amount: '%mcwws.price_sell_warped_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0

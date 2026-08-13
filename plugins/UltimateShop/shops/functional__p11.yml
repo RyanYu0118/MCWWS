@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:combat-shop-name} (4/4)'
+  shop-name: '{lang:functional-shop-name} (11/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -21,25 +21,25 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: combat__p3
+            shop: functional__p10
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DIAMOND_NAUTILUS_ARMOR
+        material: DRAGON_EGG
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_diamond_nautilus_armor%'
+        amount: '%mcwws.price_buy_dragon_egg%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_diamond_nautilus_armor%'
+        amount: '%mcwws.price_sell_dragon_egg%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -47,18 +47,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: NETHERITE_NAUTILUS_ARMOR
+        material: ENDER_EYE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_netherite_nautilus_armor%'
+        amount: '%mcwws.price_buy_ender_eye%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_netherite_nautilus_armor%'
+        amount: '%mcwws.price_sell_ender_eye%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -66,18 +66,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TOTEM_OF_UNDYING
+        material: COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_totem_of_undying%'
+        amount: '%mcwws.price_buy_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_totem_of_undying%'
+        amount: '%mcwws.price_sell_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -85,18 +85,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TNT
+        material: EXPOSED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_tnt%'
+        amount: '%mcwws.price_buy_exposed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_tnt%'
+        amount: '%mcwws.price_sell_exposed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -104,18 +104,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: END_CRYSTAL
+        material: WEATHERED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_end_crystal%'
+        amount: '%mcwws.price_buy_weathered_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_end_crystal%'
+        amount: '%mcwws.price_sell_weathered_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -123,18 +123,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SNOWBALL
+        material: OXIDIZED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_snowball%'
+        amount: '%mcwws.price_buy_oxidized_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_snowball%'
+        amount: '%mcwws.price_sell_oxidized_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -142,18 +142,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: EGG
+        material: WAXED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_egg%'
+        amount: '%mcwws.price_buy_waxed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_egg%'
+        amount: '%mcwws.price_sell_waxed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -161,18 +161,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BROWN_EGG
+        material: WAXED_EXPOSED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brown_egg%'
+        amount: '%mcwws.price_buy_waxed_exposed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brown_egg%'
+        amount: '%mcwws.price_sell_waxed_exposed_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -180,18 +180,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLUE_EGG
+        material: WAXED_WEATHERED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blue_egg%'
+        amount: '%mcwws.price_buy_waxed_weathered_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blue_egg%'
+        amount: '%mcwws.price_sell_waxed_weathered_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -199,18 +199,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WIND_CHARGE
+        material: WAXED_OXIDIZED_COPPER_GOLEM_STATUE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_wind_charge%'
+        amount: '%mcwws.price_buy_waxed_oxidized_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_wind_charge%'
+        amount: '%mcwws.price_sell_waxed_oxidized_copper_golem_statue%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -218,74 +218,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BOW
+        material: CREAKING_HEART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bow%'
+        amount: '%mcwws.price_buy_creaking_heart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  L:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: CROSSBOW
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_crossbow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_crossbow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  M:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: ARROW
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_arrow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_arrow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  'N':
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SPECTRAL_ARROW
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_spectral_arrow%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_spectral_arrow%'
+        amount: '%mcwws.price_sell_creaking_heart%'
         placeholder: '{amount}$'
         start-apply: 0

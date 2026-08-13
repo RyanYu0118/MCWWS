@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:functional-shop-name} (5/7)'
+  shop-name: '{lang:functional-shop-name} (5/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -36,18 +36,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_OAK_SIGN
+        material: GLOW_ITEM_FRAME
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_oak_sign%'
+        amount: '%mcwws.price_buy_glow_item_frame%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_oak_sign%'
+        amount: '%mcwws.price_sell_glow_item_frame%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DARK_OAK_HANGING_SIGN
+        material: PAINTING
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_dark_oak_hanging_sign%'
+        amount: '%mcwws.price_buy_painting%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_dark_oak_hanging_sign%'
+        amount: '%mcwws.price_sell_painting%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MANGROVE_SIGN
+        material: BOOKSHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_sign%'
+        amount: '%mcwws.price_buy_bookshelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_sign%'
+        amount: '%mcwws.price_sell_bookshelf%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MANGROVE_HANGING_SIGN
+        material: CHISELED_BOOKSHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mangrove_hanging_sign%'
+        amount: '%mcwws.price_buy_chiseled_bookshelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mangrove_hanging_sign%'
+        amount: '%mcwws.price_sell_chiseled_bookshelf%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHERRY_SIGN
+        material: OAK_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cherry_sign%'
+        amount: '%mcwws.price_buy_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cherry_sign%'
+        amount: '%mcwws.price_sell_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHERRY_HANGING_SIGN
+        material: SPRUCE_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_cherry_hanging_sign%'
+        amount: '%mcwws.price_buy_spruce_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_cherry_hanging_sign%'
+        amount: '%mcwws.price_sell_spruce_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PALE_OAK_SIGN
+        material: BIRCH_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pale_oak_sign%'
+        amount: '%mcwws.price_buy_birch_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pale_oak_sign%'
+        amount: '%mcwws.price_sell_birch_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PALE_OAK_HANGING_SIGN
+        material: JUNGLE_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_pale_oak_hanging_sign%'
+        amount: '%mcwws.price_buy_jungle_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_pale_oak_hanging_sign%'
+        amount: '%mcwws.price_sell_jungle_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BAMBOO_SIGN
+        material: ACACIA_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bamboo_sign%'
+        amount: '%mcwws.price_buy_acacia_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bamboo_sign%'
+        amount: '%mcwws.price_sell_acacia_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BAMBOO_HANGING_SIGN
+        material: DARK_OAK_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_bamboo_hanging_sign%'
+        amount: '%mcwws.price_buy_dark_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_bamboo_hanging_sign%'
+        amount: '%mcwws.price_sell_dark_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CRIMSON_SIGN
+        material: MANGROVE_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_crimson_sign%'
+        amount: '%mcwws.price_buy_mangrove_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_crimson_sign%'
+        amount: '%mcwws.price_sell_mangrove_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CRIMSON_HANGING_SIGN
+        material: CHERRY_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_crimson_hanging_sign%'
+        amount: '%mcwws.price_buy_cherry_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_crimson_hanging_sign%'
+        amount: '%mcwws.price_sell_cherry_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WARPED_SIGN
+        material: PALE_OAK_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_warped_sign%'
+        amount: '%mcwws.price_buy_pale_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_warped_sign%'
+        amount: '%mcwws.price_sell_pale_oak_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WARPED_HANGING_SIGN
+        material: BAMBOO_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_warped_hanging_sign%'
+        amount: '%mcwws.price_buy_bamboo_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_warped_hanging_sign%'
+        amount: '%mcwws.price_sell_bamboo_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: CHEST
+        material: CRIMSON_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_chest%'
+        amount: '%mcwws.price_buy_crimson_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_chest%'
+        amount: '%mcwws.price_sell_crimson_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: COPPER_CHEST
+        material: WARPED_SHELF
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_copper_chest%'
+        amount: '%mcwws.price_buy_warped_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_copper_chest%'
+        amount: '%mcwws.price_sell_warped_shelf%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: EXPOSED_COPPER_CHEST
+        material: LECTERN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_exposed_copper_chest%'
+        amount: '%mcwws.price_buy_lectern%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_exposed_copper_chest%'
+        amount: '%mcwws.price_sell_lectern%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WEATHERED_COPPER_CHEST
+        material: TINTED_GLASS
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_weathered_copper_chest%'
+        amount: '%mcwws.price_buy_tinted_glass%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_weathered_copper_chest%'
+        amount: '%mcwws.price_sell_tinted_glass%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: OXIDIZED_COPPER_CHEST
+        material: OAK_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_oxidized_copper_chest%'
+        amount: '%mcwws.price_buy_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_oxidized_copper_chest%'
+        amount: '%mcwws.price_sell_oak_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_COPPER_CHEST
+        material: OAK_HANGING_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_copper_chest%'
+        amount: '%mcwws.price_buy_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_copper_chest%'
+        amount: '%mcwws.price_sell_oak_hanging_sign%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: WAXED_EXPOSED_COPPER_CHEST
+        material: SPRUCE_SIGN
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_waxed_exposed_copper_chest%'
+        amount: '%mcwws.price_buy_spruce_sign%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_waxed_exposed_copper_chest%'
+        amount: '%mcwws.price_sell_spruce_sign%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -294,18 +294,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: TRIDENT
+        material: WOODEN_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_trident%'
+        amount: '%mcwws.price_buy_wooden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_trident%'
+        amount: '%mcwws.price_sell_wooden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -313,18 +313,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MACE
+        material: STONE_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mace%'
+        amount: '%mcwws.price_buy_stone_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mace%'
+        amount: '%mcwws.price_sell_stone_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -332,18 +332,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SHIELD
+        material: COPPER_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_shield%'
+        amount: '%mcwws.price_buy_copper_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_shield%'
+        amount: '%mcwws.price_sell_copper_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -351,18 +351,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_HELMET
+        material: IRON_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_helmet%'
+        amount: '%mcwws.price_buy_iron_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_helmet%'
+        amount: '%mcwws.price_sell_iron_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -370,18 +370,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_CHESTPLATE
+        material: GOLDEN_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_chestplate%'
+        amount: '%mcwws.price_buy_golden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_chestplate%'
+        amount: '%mcwws.price_sell_golden_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -389,18 +389,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_LEGGINGS
+        material: DIAMOND_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_leggings%'
+        amount: '%mcwws.price_buy_diamond_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_leggings%'
+        amount: '%mcwws.price_sell_diamond_axe%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -408,17 +408,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: LEATHER_BOOTS
+        material: NETHERITE_AXE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_leather_boots%'
+        amount: '%mcwws.price_buy_netherite_axe%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_leather_boots%'
+        amount: '%mcwws.price_sell_netherite_axe%'
         placeholder: '{amount}$'
         start-apply: 0

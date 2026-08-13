@@ -1,970 +1,6 @@
 # UltimateShop 映射（由 server.js 根据 shops/*.yml 自动生成）
 # shop = 商店 ID（如 blocks、farming），item = 该商店 yml 中的槽位字母
 
-angler_pottery_sherd:
-  shop: archaeology
-  item: A
-  amount: 1
-archer_pottery_sherd:
-  shop: archaeology
-  item: B
-  amount: 1
-arms_up_pottery_sherd:
-  shop: archaeology
-  item: C
-  amount: 1
-blade_pottery_sherd:
-  shop: archaeology
-  item: D
-  amount: 1
-brewer_pottery_sherd:
-  shop: archaeology
-  item: E
-  amount: 1
-brush:
-  shop: archaeology
-  item: F
-  amount: 1
-burn_pottery_sherd:
-  shop: archaeology
-  item: G
-  amount: 1
-danger_pottery_sherd:
-  shop: archaeology
-  item: H
-  amount: 1
-decorated_pot:
-  shop: archaeology
-  item: I
-  amount: 1
-explorer_pottery_sherd:
-  shop: archaeology
-  item: J
-  amount: 1
-flow_pottery_sherd:
-  shop: archaeology
-  item: K
-  amount: 1
-friend_pottery_sherd:
-  shop: archaeology
-  item: L
-  amount: 1
-guster_pottery_sherd:
-  shop: archaeology
-  item: M
-  amount: 1
-heart_pottery_sherd:
-  shop: archaeology
-  item: 'N'
-  amount: 1
-heartbreak_pottery_sherd:
-  shop: archaeology
-  item: O
-  amount: 1
-howl_pottery_sherd:
-  shop: archaeology
-  item: P
-  amount: 1
-miner_pottery_sherd:
-  shop: archaeology
-  item: Q
-  amount: 1
-mourner_pottery_sherd:
-  shop: archaeology
-  item: R
-  amount: 1
-plenty_pottery_sherd:
-  shop: archaeology
-  item: S
-  amount: 1
-prize_pottery_sherd:
-  shop: archaeology
-  item: T
-  amount: 1
-scrape_pottery_sherd:
-  shop: archaeology
-  item: U
-  amount: 1
-sheaf_pottery_sherd:
-  shop: archaeology__p2
-  item: A
-  amount: 1
-shelter_pottery_sherd:
-  shop: archaeology__p2
-  item: B
-  amount: 1
-skull_pottery_sherd:
-  shop: archaeology__p2
-  item: C
-  amount: 1
-sniffer_egg:
-  shop: archaeology__p2
-  item: D
-  amount: 1
-snort_pottery_sherd:
-  shop: archaeology__p2
-  item: E
-  amount: 1
-armor_stand:
-  shop: armor
-  item: A
-  amount: 1
-bolt_armor_trim_smithing_template:
-  shop: armor
-  item: B
-  amount: 1
-chainmail_boots:
-  shop: armor
-  item: C
-  amount: 1
-chainmail_chestplate:
-  shop: armor
-  item: D
-  amount: 1
-chainmail_helmet:
-  shop: armor
-  item: E
-  amount: 1
-chainmail_leggings:
-  shop: armor
-  item: F
-  amount: 1
-coast_armor_trim_smithing_template:
-  shop: armor
-  item: G
-  amount: 1
-copper_boots:
-  shop: armor
-  item: H
-  amount: 1
-copper_chestplate:
-  shop: armor
-  item: I
-  amount: 1
-copper_helmet:
-  shop: armor
-  item: J
-  amount: 1
-copper_horse_armor:
-  shop: armor
-  item: K
-  amount: 1
-copper_leggings:
-  shop: armor
-  item: L
-  amount: 1
-copper_nautilus_armor:
-  shop: armor
-  item: M
-  amount: 1
-diamond_boots:
-  shop: armor
-  item: 'N'
-  amount: 1
-diamond_chestplate:
-  shop: armor
-  item: O
-  amount: 1
-diamond_helmet:
-  shop: armor
-  item: P
-  amount: 1
-diamond_horse_armor:
-  shop: armor
-  item: Q
-  amount: 1
-diamond_leggings:
-  shop: armor
-  item: R
-  amount: 1
-diamond_nautilus_armor:
-  shop: armor
-  item: S
-  amount: 1
-dune_armor_trim_smithing_template:
-  shop: armor
-  item: T
-  amount: 1
-eye_armor_trim_smithing_template:
-  shop: armor
-  item: U
-  amount: 1
-flow_armor_trim_smithing_template:
-  shop: armor__p2
-  item: A
-  amount: 1
-golden_boots:
-  shop: armor__p2
-  item: B
-  amount: 1
-golden_chestplate:
-  shop: armor__p2
-  item: C
-  amount: 1
-golden_helmet:
-  shop: armor__p2
-  item: D
-  amount: 1
-golden_horse_armor:
-  shop: armor__p2
-  item: E
-  amount: 1
-golden_leggings:
-  shop: armor__p2
-  item: F
-  amount: 1
-golden_nautilus_armor:
-  shop: armor__p2
-  item: G
-  amount: 1
-host_armor_trim_smithing_template:
-  shop: armor__p2
-  item: H
-  amount: 1
-iron_boots:
-  shop: armor__p2
-  item: I
-  amount: 1
-iron_chestplate:
-  shop: armor__p2
-  item: J
-  amount: 1
-iron_helmet:
-  shop: armor__p2
-  item: K
-  amount: 1
-iron_horse_armor:
-  shop: armor__p2
-  item: L
-  amount: 1
-iron_leggings:
-  shop: armor__p2
-  item: M
-  amount: 1
-iron_nautilus_armor:
-  shop: armor__p2
-  item: 'N'
-  amount: 1
-leather_boots:
-  shop: armor__p2
-  item: O
-  amount: 1
-leather_chestplate:
-  shop: armor__p2
-  item: P
-  amount: 1
-leather_helmet:
-  shop: armor__p2
-  item: Q
-  amount: 1
-leather_horse_armor:
-  shop: armor__p2
-  item: R
-  amount: 1
-leather_leggings:
-  shop: armor__p2
-  item: S
-  amount: 1
-netherite_boots:
-  shop: armor__p2
-  item: T
-  amount: 1
-netherite_chestplate:
-  shop: armor__p2
-  item: U
-  amount: 1
-netherite_helmet:
-  shop: armor__p3
-  item: A
-  amount: 1
-netherite_horse_armor:
-  shop: armor__p3
-  item: B
-  amount: 1
-netherite_leggings:
-  shop: armor__p3
-  item: C
-  amount: 1
-netherite_nautilus_armor:
-  shop: armor__p3
-  item: D
-  amount: 1
-raiser_armor_trim_smithing_template:
-  shop: armor__p3
-  item: E
-  amount: 1
-rib_armor_trim_smithing_template:
-  shop: armor__p3
-  item: F
-  amount: 1
-sentry_armor_trim_smithing_template:
-  shop: armor__p3
-  item: G
-  amount: 1
-shaper_armor_trim_smithing_template:
-  shop: armor__p3
-  item: H
-  amount: 1
-shield:
-  shop: armor__p3
-  item: I
-  amount: 1
-silence_armor_trim_smithing_template:
-  shop: armor__p3
-  item: J
-  amount: 1
-snout_armor_trim_smithing_template:
-  shop: armor__p3
-  item: K
-  amount: 1
-spire_armor_trim_smithing_template:
-  shop: armor__p3
-  item: L
-  amount: 1
-tide_armor_trim_smithing_template:
-  shop: armor__p3
-  item: M
-  amount: 1
-turtle_helmet:
-  shop: armor__p3
-  item: 'N'
-  amount: 1
-vex_armor_trim_smithing_template:
-  shop: armor__p3
-  item: O
-  amount: 1
-ward_armor_trim_smithing_template:
-  shop: armor__p3
-  item: P
-  amount: 1
-wayfinder_armor_trim_smithing_template:
-  shop: armor__p3
-  item: Q
-  amount: 1
-wild_armor_trim_smithing_template:
-  shop: armor__p3
-  item: R
-  amount: 1
-wolf_armor:
-  shop: armor__p3
-  item: S
-  amount: 1
-brick:
-  shop: blocks
-  item: A
-  amount: 1
-brick_slab:
-  shop: blocks
-  item: B
-  amount: 1
-brick_stairs:
-  shop: blocks
-  item: C
-  amount: 1
-brick_wall:
-  shop: blocks
-  item: D
-  amount: 1
-bricks:
-  shop: blocks
-  item: E
-  amount: 1
-chiseled_nether_bricks:
-  shop: blocks
-  item: F
-  amount: 1
-chiseled_red_sandstone:
-  shop: blocks
-  item: G
-  amount: 1
-chiseled_resin_bricks:
-  shop: blocks
-  item: H
-  amount: 1
-chiseled_sandstone:
-  shop: blocks
-  item: I
-  amount: 1
-coarse_dirt:
-  shop: blocks
-  item: J
-  amount: 1
-cracked_nether_bricks:
-  shop: blocks
-  item: K
-  amount: 1
-cut_red_sandstone:
-  shop: blocks
-  item: L
-  amount: 1
-cut_red_sandstone_slab:
-  shop: blocks
-  item: M
-  amount: 1
-cut_sandstone:
-  shop: blocks
-  item: 'N'
-  amount: 1
-cut_sandstone_slab:
-  shop: blocks
-  item: O
-  amount: 1
-dirt:
-  shop: blocks
-  item: P
-  amount: 1
-grass_block:
-  shop: blocks
-  item: Q
-  amount: 1
-gravel:
-  shop: blocks
-  item: R
-  amount: 1
-mud:
-  shop: blocks
-  item: S
-  amount: 1
-mud_brick_slab:
-  shop: blocks
-  item: T
-  amount: 1
-mud_brick_stairs:
-  shop: blocks
-  item: U
-  amount: 1
-andesite:
-  shop: blocks2
-  item: A
-  amount: 1
-andesite_slab:
-  shop: blocks2
-  item: B
-  amount: 1
-andesite_stairs:
-  shop: blocks2
-  item: C
-  amount: 1
-andesite_wall:
-  shop: blocks2
-  item: D
-  amount: 1
-blue_ice:
-  shop: blocks2
-  item: E
-  amount: 1
-calcite:
-  shop: blocks2
-  item: F
-  amount: 1
-calibrated_sculk_sensor:
-  shop: blocks2
-  item: G
-  amount: 1
-chiseled_deepslate:
-  shop: blocks2
-  item: H
-  amount: 1
-chiseled_stone_bricks:
-  shop: blocks2
-  item: I
-  amount: 1
-chiseled_tuff:
-  shop: blocks2
-  item: J
-  amount: 1
-chiseled_tuff_bricks:
-  shop: blocks2
-  item: K
-  amount: 1
-clay:
-  shop: blocks2
-  item: L
-  amount: 1
-clay_ball:
-  shop: blocks2
-  item: M
-  amount: 1
-cobbled_deepslate:
-  shop: blocks2
-  item: 'N'
-  amount: 1
-cobbled_deepslate_slab:
-  shop: blocks2
-  item: O
-  amount: 1
-cobbled_deepslate_stairs:
-  shop: blocks2
-  item: P
-  amount: 1
-cobbled_deepslate_wall:
-  shop: blocks2
-  item: Q
-  amount: 1
-cobblestone:
-  shop: blocks2
-  item: R
-  amount: 1
-cobblestone_slab:
-  shop: blocks2
-  item: S
-  amount: 1
-cobblestone_stairs:
-  shop: blocks2
-  item: T
-  amount: 1
-cobblestone_wall:
-  shop: blocks2
-  item: U
-  amount: 1
-cracked_deepslate_bricks:
-  shop: blocks2__p2
-  item: A
-  amount: 1
-cracked_deepslate_tiles:
-  shop: blocks2__p2
-  item: B
-  amount: 1
-cracked_stone_bricks:
-  shop: blocks2__p2
-  item: C
-  amount: 1
-deepslate:
-  shop: blocks2__p2
-  item: D
-  amount: 1
-deepslate_brick_slab:
-  shop: blocks2__p2
-  item: E
-  amount: 1
-deepslate_brick_stairs:
-  shop: blocks2__p2
-  item: F
-  amount: 1
-deepslate_brick_wall:
-  shop: blocks2__p2
-  item: G
-  amount: 1
-deepslate_bricks:
-  shop: blocks2__p2
-  item: H
-  amount: 1
-deepslate_tile_slab:
-  shop: blocks2__p2
-  item: I
-  amount: 1
-deepslate_tile_stairs:
-  shop: blocks2__p2
-  item: J
-  amount: 1
-deepslate_tile_wall:
-  shop: blocks2__p2
-  item: K
-  amount: 1
-deepslate_tiles:
-  shop: blocks2__p2
-  item: L
-  amount: 1
-diorite:
-  shop: blocks2__p2
-  item: M
-  amount: 1
-diorite_slab:
-  shop: blocks2__p2
-  item: 'N'
-  amount: 1
-diorite_stairs:
-  shop: blocks2__p2
-  item: O
-  amount: 1
-diorite_wall:
-  shop: blocks2__p2
-  item: P
-  amount: 1
-dripstone_block:
-  shop: blocks2__p2
-  item: Q
-  amount: 1
-echo_shard:
-  shop: blocks2__p2
-  item: R
-  amount: 1
-granite:
-  shop: blocks2__p2
-  item: S
-  amount: 1
-granite_slab:
-  shop: blocks2__p2
-  item: T
-  amount: 1
-granite_stairs:
-  shop: blocks2__p2
-  item: U
-  amount: 1
-granite_wall:
-  shop: blocks2__p3
-  item: A
-  amount: 1
-ice:
-  shop: blocks2__p3
-  item: B
-  amount: 1
-mossy_cobblestone:
-  shop: blocks2__p3
-  item: C
-  amount: 1
-mossy_cobblestone_slab:
-  shop: blocks2__p3
-  item: D
-  amount: 1
-mossy_cobblestone_stairs:
-  shop: blocks2__p3
-  item: E
-  amount: 1
-mossy_cobblestone_wall:
-  shop: blocks2__p3
-  item: F
-  amount: 1
-mossy_stone_brick_slab:
-  shop: blocks2__p3
-  item: G
-  amount: 1
-mossy_stone_brick_stairs:
-  shop: blocks2__p3
-  item: H
-  amount: 1
-mossy_stone_brick_wall:
-  shop: blocks2__p3
-  item: I
-  amount: 1
-mossy_stone_bricks:
-  shop: blocks2__p3
-  item: J
-  amount: 1
-packed_ice:
-  shop: blocks2__p3
-  item: K
-  amount: 1
-pointed_dripstone:
-  shop: blocks2__p3
-  item: L
-  amount: 1
-polished_andesite:
-  shop: blocks2__p3
-  item: M
-  amount: 1
-polished_andesite_slab:
-  shop: blocks2__p3
-  item: 'N'
-  amount: 1
-polished_andesite_stairs:
-  shop: blocks2__p3
-  item: O
-  amount: 1
-polished_deepslate:
-  shop: blocks2__p3
-  item: P
-  amount: 1
-polished_deepslate_slab:
-  shop: blocks2__p3
-  item: Q
-  amount: 1
-polished_deepslate_stairs:
-  shop: blocks2__p3
-  item: R
-  amount: 1
-polished_deepslate_wall:
-  shop: blocks2__p3
-  item: S
-  amount: 1
-polished_diorite:
-  shop: blocks2__p3
-  item: T
-  amount: 1
-polished_diorite_slab:
-  shop: blocks2__p3
-  item: U
-  amount: 1
-polished_diorite_stairs:
-  shop: blocks2__p4
-  item: A
-  amount: 1
-polished_granite:
-  shop: blocks2__p4
-  item: B
-  amount: 1
-polished_granite_slab:
-  shop: blocks2__p4
-  item: C
-  amount: 1
-polished_granite_stairs:
-  shop: blocks2__p4
-  item: D
-  amount: 1
-polished_tuff:
-  shop: blocks2__p4
-  item: E
-  amount: 1
-polished_tuff_slab:
-  shop: blocks2__p4
-  item: F
-  amount: 1
-polished_tuff_stairs:
-  shop: blocks2__p4
-  item: G
-  amount: 1
-polished_tuff_wall:
-  shop: blocks2__p4
-  item: H
-  amount: 1
-sculk:
-  shop: blocks2__p4
-  item: I
-  amount: 1
-sculk_catalyst:
-  shop: blocks2__p4
-  item: J
-  amount: 1
-sculk_sensor:
-  shop: blocks2__p4
-  item: K
-  amount: 1
-sculk_shrieker:
-  shop: blocks2__p4
-  item: L
-  amount: 1
-sculk_vein:
-  shop: blocks2__p4
-  item: M
-  amount: 1
-smooth_stone:
-  shop: blocks2__p4
-  item: 'N'
-  amount: 1
-smooth_stone_slab:
-  shop: blocks2__p4
-  item: O
-  amount: 1
-snow:
-  shop: blocks2__p4
-  item: P
-  amount: 1
-snow_block:
-  shop: blocks2__p4
-  item: Q
-  amount: 1
-snowball:
-  shop: blocks2__p4
-  item: R
-  amount: 1
-stone:
-  shop: blocks2__p4
-  item: S
-  amount: 1
-stone_brick_slab:
-  shop: blocks2__p4
-  item: T
-  amount: 1
-stone_brick_stairs:
-  shop: blocks2__p4
-  item: U
-  amount: 1
-stone_brick_wall:
-  shop: blocks2__p5
-  item: A
-  amount: 1
-stone_bricks:
-  shop: blocks2__p5
-  item: B
-  amount: 1
-stone_slab:
-  shop: blocks2__p5
-  item: C
-  amount: 1
-stone_stairs:
-  shop: blocks2__p5
-  item: D
-  amount: 1
-tuff:
-  shop: blocks2__p5
-  item: E
-  amount: 1
-tuff_brick_slab:
-  shop: blocks2__p5
-  item: F
-  amount: 1
-tuff_brick_stairs:
-  shop: blocks2__p5
-  item: G
-  amount: 1
-tuff_brick_wall:
-  shop: blocks2__p5
-  item: H
-  amount: 1
-tuff_bricks:
-  shop: blocks2__p5
-  item: I
-  amount: 1
-tuff_slab:
-  shop: blocks2__p5
-  item: J
-  amount: 1
-tuff_stairs:
-  shop: blocks2__p5
-  item: K
-  amount: 1
-tuff_wall:
-  shop: blocks2__p5
-  item: L
-  amount: 1
-mud_brick_wall:
-  shop: blocks__p2
-  item: A
-  amount: 1
-mud_bricks:
-  shop: blocks__p2
-  item: B
-  amount: 1
-mycelium:
-  shop: blocks__p2
-  item: C
-  amount: 1
-nether_brick:
-  shop: blocks__p2
-  item: D
-  amount: 1
-nether_brick_fence:
-  shop: blocks__p2
-  item: E
-  amount: 1
-nether_brick_slab:
-  shop: blocks__p2
-  item: F
-  amount: 1
-nether_brick_stairs:
-  shop: blocks__p2
-  item: G
-  amount: 1
-nether_brick_wall:
-  shop: blocks__p2
-  item: H
-  amount: 1
-nether_bricks:
-  shop: blocks__p2
-  item: I
-  amount: 1
-packed_mud:
-  shop: blocks__p2
-  item: J
-  amount: 1
-podzol:
-  shop: blocks__p2
-  item: K
-  amount: 1
-red_nether_brick_slab:
-  shop: blocks__p2
-  item: L
-  amount: 1
-red_nether_brick_stairs:
-  shop: blocks__p2
-  item: M
-  amount: 1
-red_nether_brick_wall:
-  shop: blocks__p2
-  item: 'N'
-  amount: 1
-red_nether_bricks:
-  shop: blocks__p2
-  item: O
-  amount: 1
-red_sand:
-  shop: blocks__p2
-  item: P
-  amount: 1
-red_sandstone:
-  shop: blocks__p2
-  item: Q
-  amount: 1
-red_sandstone_slab:
-  shop: blocks__p2
-  item: R
-  amount: 1
-red_sandstone_stairs:
-  shop: blocks__p2
-  item: S
-  amount: 1
-red_sandstone_wall:
-  shop: blocks__p2
-  item: T
-  amount: 1
-resin_brick:
-  shop: blocks__p2
-  item: U
-  amount: 1
-resin_brick_slab:
-  shop: blocks__p3
-  item: A
-  amount: 1
-resin_brick_stairs:
-  shop: blocks__p3
-  item: B
-  amount: 1
-resin_brick_wall:
-  shop: blocks__p3
-  item: C
-  amount: 1
-resin_bricks:
-  shop: blocks__p3
-  item: D
-  amount: 1
-rooted_dirt:
-  shop: blocks__p3
-  item: E
-  amount: 1
-sand:
-  shop: blocks__p3
-  item: F
-  amount: 1
-sandstone:
-  shop: blocks__p3
-  item: G
-  amount: 1
-sandstone_slab:
-  shop: blocks__p3
-  item: H
-  amount: 1
-sandstone_stairs:
-  shop: blocks__p3
-  item: I
-  amount: 1
-sandstone_wall:
-  shop: blocks__p3
-  item: J
-  amount: 1
-smooth_red_sandstone:
-  shop: blocks__p3
-  item: K
-  amount: 1
-smooth_red_sandstone_slab:
-  shop: blocks__p3
-  item: L
-  amount: 1
-smooth_red_sandstone_stairs:
-  shop: blocks__p3
-  item: M
-  amount: 1
-smooth_sandstone:
-  shop: blocks__p3
-  item: 'N'
-  amount: 1
-smooth_sandstone_slab:
-  shop: blocks__p3
-  item: O
-  amount: 1
-smooth_sandstone_stairs:
-  shop: blocks__p3
-  item: P
-  amount: 1
 arrow_of_fire_resistance_1:
   shop: brewing
   item: A
@@ -1653,413 +689,2833 @@ water_bottle:
   shop: brewing__p9
   item: D
   amount: 1
-black_concrete:
-  shop: concretes
+oak_log:
+  shop: building
   item: A
   amount: 1
-black_concrete_powder:
-  shop: concretes
+oak_wood:
+  shop: building
   item: B
   amount: 1
-blue_concrete:
-  shop: concretes
+stripped_oak_log:
+  shop: building
   item: C
   amount: 1
-blue_concrete_powder:
-  shop: concretes
+stripped_oak_wood:
+  shop: building
   item: D
   amount: 1
-brown_concrete:
-  shop: concretes
+oak_planks:
+  shop: building
   item: E
   amount: 1
-brown_concrete_powder:
-  shop: concretes
+oak_stairs:
+  shop: building
   item: F
   amount: 1
-cyan_concrete:
-  shop: concretes
+oak_slab:
+  shop: building
   item: G
   amount: 1
-cyan_concrete_powder:
-  shop: concretes
+oak_fence:
+  shop: building
   item: H
   amount: 1
-gray_concrete:
-  shop: concretes
+oak_fence_gate:
+  shop: building
   item: I
   amount: 1
-gray_concrete_powder:
-  shop: concretes
+oak_door:
+  shop: building
   item: J
   amount: 1
-green_concrete:
-  shop: concretes
+oak_trapdoor:
+  shop: building
   item: K
   amount: 1
-green_concrete_powder:
-  shop: concretes
+oak_pressure_plate:
+  shop: building
   item: L
   amount: 1
-light_blue_concrete:
-  shop: concretes
+oak_button:
+  shop: building
   item: M
   amount: 1
-light_blue_concrete_powder:
-  shop: concretes
+spruce_log:
+  shop: building
   item: 'N'
   amount: 1
-light_gray_concrete:
-  shop: concretes
+spruce_wood:
+  shop: building
   item: O
   amount: 1
-light_gray_concrete_powder:
-  shop: concretes
+stripped_spruce_log:
+  shop: building
   item: P
   amount: 1
-lime_concrete:
-  shop: concretes
+stripped_spruce_wood:
+  shop: building
   item: Q
   amount: 1
-lime_concrete_powder:
-  shop: concretes
+spruce_planks:
+  shop: building
   item: R
   amount: 1
-magenta_concrete:
-  shop: concretes
+spruce_stairs:
+  shop: building
   item: S
   amount: 1
-magenta_concrete_powder:
-  shop: concretes
+spruce_slab:
+  shop: building
   item: T
   amount: 1
-orange_concrete:
-  shop: concretes
+spruce_fence:
+  shop: building
   item: U
   amount: 1
-orange_concrete_powder:
-  shop: concretes__p2
+diorite:
+  shop: building__p10
   item: A
   amount: 1
-pink_concrete:
-  shop: concretes__p2
+diorite_stairs:
+  shop: building__p10
   item: B
   amount: 1
-pink_concrete_powder:
-  shop: concretes__p2
+diorite_slab:
+  shop: building__p10
   item: C
   amount: 1
-purple_concrete:
-  shop: concretes__p2
+diorite_wall:
+  shop: building__p10
   item: D
   amount: 1
-purple_concrete_powder:
-  shop: concretes__p2
+polished_diorite:
+  shop: building__p10
   item: E
   amount: 1
-red_concrete:
-  shop: concretes__p2
+polished_diorite_stairs:
+  shop: building__p10
   item: F
   amount: 1
-red_concrete_powder:
-  shop: concretes__p2
+polished_diorite_slab:
+  shop: building__p10
+  item: G
+  amount: 1
+andesite:
+  shop: building__p10
+  item: H
+  amount: 1
+andesite_stairs:
+  shop: building__p10
+  item: I
+  amount: 1
+andesite_slab:
+  shop: building__p10
+  item: J
+  amount: 1
+andesite_wall:
+  shop: building__p10
+  item: K
+  amount: 1
+polished_andesite:
+  shop: building__p10
+  item: L
+  amount: 1
+polished_andesite_stairs:
+  shop: building__p10
+  item: M
+  amount: 1
+polished_andesite_slab:
+  shop: building__p10
+  item: 'N'
+  amount: 1
+deepslate:
+  shop: building__p10
+  item: O
+  amount: 1
+cobbled_deepslate:
+  shop: building__p10
+  item: P
+  amount: 1
+cobbled_deepslate_stairs:
+  shop: building__p10
+  item: Q
+  amount: 1
+cobbled_deepslate_slab:
+  shop: building__p10
+  item: R
+  amount: 1
+cobbled_deepslate_wall:
+  shop: building__p10
+  item: S
+  amount: 1
+chiseled_deepslate:
+  shop: building__p10
+  item: T
+  amount: 1
+polished_deepslate:
+  shop: building__p10
+  item: U
+  amount: 1
+polished_deepslate_stairs:
+  shop: building__p11
+  item: A
+  amount: 1
+polished_deepslate_slab:
+  shop: building__p11
+  item: B
+  amount: 1
+polished_deepslate_wall:
+  shop: building__p11
+  item: C
+  amount: 1
+deepslate_bricks:
+  shop: building__p11
+  item: D
+  amount: 1
+cracked_deepslate_bricks:
+  shop: building__p11
+  item: E
+  amount: 1
+deepslate_brick_stairs:
+  shop: building__p11
+  item: F
+  amount: 1
+deepslate_brick_slab:
+  shop: building__p11
+  item: G
+  amount: 1
+deepslate_brick_wall:
+  shop: building__p11
+  item: H
+  amount: 1
+deepslate_tiles:
+  shop: building__p11
+  item: I
+  amount: 1
+cracked_deepslate_tiles:
+  shop: building__p11
+  item: J
+  amount: 1
+deepslate_tile_stairs:
+  shop: building__p11
+  item: K
+  amount: 1
+deepslate_tile_slab:
+  shop: building__p11
+  item: L
+  amount: 1
+deepslate_tile_wall:
+  shop: building__p11
+  item: M
+  amount: 1
+tuff:
+  shop: building__p11
+  item: 'N'
+  amount: 1
+tuff_stairs:
+  shop: building__p11
+  item: O
+  amount: 1
+tuff_slab:
+  shop: building__p11
+  item: P
+  amount: 1
+tuff_wall:
+  shop: building__p11
+  item: Q
+  amount: 1
+chiseled_tuff:
+  shop: building__p11
+  item: R
+  amount: 1
+polished_tuff:
+  shop: building__p11
+  item: S
+  amount: 1
+polished_tuff_stairs:
+  shop: building__p11
+  item: T
+  amount: 1
+polished_tuff_slab:
+  shop: building__p11
+  item: U
+  amount: 1
+polished_tuff_wall:
+  shop: building__p12
+  item: A
+  amount: 1
+tuff_bricks:
+  shop: building__p12
+  item: B
+  amount: 1
+tuff_brick_stairs:
+  shop: building__p12
+  item: C
+  amount: 1
+tuff_brick_slab:
+  shop: building__p12
+  item: D
+  amount: 1
+tuff_brick_wall:
+  shop: building__p12
+  item: E
+  amount: 1
+chiseled_tuff_bricks:
+  shop: building__p12
+  item: F
+  amount: 1
+bricks:
+  shop: building__p12
+  item: G
+  amount: 1
+brick_stairs:
+  shop: building__p12
+  item: H
+  amount: 1
+brick_slab:
+  shop: building__p12
+  item: I
+  amount: 1
+brick_wall:
+  shop: building__p12
+  item: J
+  amount: 1
+packed_mud:
+  shop: building__p12
+  item: K
+  amount: 1
+mud_bricks:
+  shop: building__p12
+  item: L
+  amount: 1
+mud_brick_stairs:
+  shop: building__p12
+  item: M
+  amount: 1
+mud_brick_slab:
+  shop: building__p12
+  item: 'N'
+  amount: 1
+mud_brick_wall:
+  shop: building__p12
+  item: O
+  amount: 1
+resin_bricks:
+  shop: building__p12
+  item: P
+  amount: 1
+resin_brick_stairs:
+  shop: building__p12
+  item: Q
+  amount: 1
+resin_brick_slab:
+  shop: building__p12
+  item: R
+  amount: 1
+resin_brick_wall:
+  shop: building__p12
+  item: S
+  amount: 1
+chiseled_resin_bricks:
+  shop: building__p12
+  item: T
+  amount: 1
+sandstone:
+  shop: building__p12
+  item: U
+  amount: 1
+sandstone_stairs:
+  shop: building__p13
+  item: A
+  amount: 1
+sandstone_slab:
+  shop: building__p13
+  item: B
+  amount: 1
+sandstone_wall:
+  shop: building__p13
+  item: C
+  amount: 1
+chiseled_sandstone:
+  shop: building__p13
+  item: D
+  amount: 1
+smooth_sandstone:
+  shop: building__p13
+  item: E
+  amount: 1
+smooth_sandstone_stairs:
+  shop: building__p13
+  item: F
+  amount: 1
+smooth_sandstone_slab:
+  shop: building__p13
+  item: G
+  amount: 1
+cut_sandstone:
+  shop: building__p13
+  item: H
+  amount: 1
+red_sandstone:
+  shop: building__p13
+  item: I
+  amount: 1
+red_sandstone_stairs:
+  shop: building__p13
+  item: J
+  amount: 1
+red_sandstone_slab:
+  shop: building__p13
+  item: K
+  amount: 1
+red_sandstone_wall:
+  shop: building__p13
+  item: L
+  amount: 1
+chiseled_red_sandstone:
+  shop: building__p13
+  item: M
+  amount: 1
+smooth_red_sandstone:
+  shop: building__p13
+  item: 'N'
+  amount: 1
+smooth_red_sandstone_stairs:
+  shop: building__p13
+  item: O
+  amount: 1
+smooth_red_sandstone_slab:
+  shop: building__p13
+  item: P
+  amount: 1
+cut_red_sandstone:
+  shop: building__p13
+  item: Q
+  amount: 1
+cut_red_sandstone_slab:
+  shop: building__p13
+  item: R
+  amount: 1
+sea_lantern:
+  shop: building__p13
+  item: S
+  amount: 1
+prismarine:
+  shop: building__p13
+  item: T
+  amount: 1
+prismarine_stairs:
+  shop: building__p13
+  item: U
+  amount: 1
+prismarine_slab:
+  shop: building__p14
+  item: A
+  amount: 1
+prismarine_wall:
+  shop: building__p14
+  item: B
+  amount: 1
+prismarine_bricks:
+  shop: building__p14
+  item: C
+  amount: 1
+prismarine_brick_stairs:
+  shop: building__p14
+  item: D
+  amount: 1
+prismarine_brick_slab:
+  shop: building__p14
+  item: E
+  amount: 1
+dark_prismarine:
+  shop: building__p14
+  item: F
+  amount: 1
+dark_prismarine_stairs:
+  shop: building__p14
+  item: G
+  amount: 1
+dark_prismarine_slab:
+  shop: building__p14
+  item: H
+  amount: 1
+netherrack:
+  shop: building__p14
+  item: I
+  amount: 1
+nether_bricks:
+  shop: building__p14
+  item: J
+  amount: 1
+cracked_nether_bricks:
+  shop: building__p14
+  item: K
+  amount: 1
+nether_brick_stairs:
+  shop: building__p14
+  item: L
+  amount: 1
+nether_brick_slab:
+  shop: building__p14
+  item: M
+  amount: 1
+nether_brick_wall:
+  shop: building__p14
+  item: 'N'
+  amount: 1
+nether_brick_fence:
+  shop: building__p14
+  item: O
+  amount: 1
+chiseled_nether_bricks:
+  shop: building__p14
+  item: P
+  amount: 1
+red_nether_bricks:
+  shop: building__p14
+  item: Q
+  amount: 1
+red_nether_brick_stairs:
+  shop: building__p14
+  item: R
+  amount: 1
+red_nether_brick_slab:
+  shop: building__p14
+  item: S
+  amount: 1
+red_nether_brick_wall:
+  shop: building__p14
+  item: T
+  amount: 1
+basalt:
+  shop: building__p14
+  item: U
+  amount: 1
+smooth_basalt:
+  shop: building__p15
+  item: A
+  amount: 1
+polished_basalt:
+  shop: building__p15
+  item: B
+  amount: 1
+blackstone:
+  shop: building__p15
+  item: C
+  amount: 1
+gilded_blackstone:
+  shop: building__p15
+  item: D
+  amount: 1
+blackstone_stairs:
+  shop: building__p15
+  item: E
+  amount: 1
+blackstone_slab:
+  shop: building__p15
+  item: F
+  amount: 1
+blackstone_wall:
+  shop: building__p15
+  item: G
+  amount: 1
+chiseled_polished_blackstone:
+  shop: building__p15
+  item: H
+  amount: 1
+polished_blackstone:
+  shop: building__p15
+  item: I
+  amount: 1
+polished_blackstone_stairs:
+  shop: building__p15
+  item: J
+  amount: 1
+polished_blackstone_slab:
+  shop: building__p15
+  item: K
+  amount: 1
+polished_blackstone_wall:
+  shop: building__p15
+  item: L
+  amount: 1
+polished_blackstone_pressure_plate:
+  shop: building__p15
+  item: M
+  amount: 1
+polished_blackstone_button:
+  shop: building__p15
+  item: 'N'
+  amount: 1
+polished_blackstone_bricks:
+  shop: building__p15
+  item: O
+  amount: 1
+cracked_polished_blackstone_bricks:
+  shop: building__p15
+  item: P
+  amount: 1
+polished_blackstone_brick_stairs:
+  shop: building__p15
+  item: Q
+  amount: 1
+polished_blackstone_brick_slab:
+  shop: building__p15
+  item: R
+  amount: 1
+polished_blackstone_brick_wall:
+  shop: building__p15
+  item: S
+  amount: 1
+end_stone:
+  shop: building__p15
+  item: T
+  amount: 1
+end_stone_bricks:
+  shop: building__p15
+  item: U
+  amount: 1
+end_stone_brick_stairs:
+  shop: building__p16
+  item: A
+  amount: 1
+end_stone_brick_slab:
+  shop: building__p16
+  item: B
+  amount: 1
+end_stone_brick_wall:
+  shop: building__p16
+  item: C
+  amount: 1
+purpur_block:
+  shop: building__p16
+  item: D
+  amount: 1
+purpur_pillar:
+  shop: building__p16
+  item: E
+  amount: 1
+purpur_stairs:
+  shop: building__p16
+  item: F
+  amount: 1
+purpur_slab:
+  shop: building__p16
+  item: G
+  amount: 1
+coal_block:
+  shop: building__p16
+  item: H
+  amount: 1
+iron_block:
+  shop: building__p16
+  item: I
+  amount: 1
+iron_bars:
+  shop: building__p16
+  item: J
+  amount: 1
+iron_door:
+  shop: building__p16
+  item: K
+  amount: 1
+iron_trapdoor:
+  shop: building__p16
+  item: L
+  amount: 1
+heavy_weighted_pressure_plate:
+  shop: building__p16
+  item: M
+  amount: 1
+iron_chain:
+  shop: building__p16
+  item: 'N'
+  amount: 1
+gold_block:
+  shop: building__p16
+  item: O
+  amount: 1
+light_weighted_pressure_plate:
+  shop: building__p16
+  item: P
+  amount: 1
+redstone_block:
+  shop: building__p16
+  item: Q
+  amount: 1
+emerald_block:
+  shop: building__p16
+  item: R
+  amount: 1
+lapis_block:
+  shop: building__p16
+  item: S
+  amount: 1
+diamond_block:
+  shop: building__p16
+  item: T
+  amount: 1
+netherite_block:
+  shop: building__p16
+  item: U
+  amount: 1
+quartz_block:
+  shop: building__p17
+  item: A
+  amount: 1
+quartz_stairs:
+  shop: building__p17
+  item: B
+  amount: 1
+quartz_slab:
+  shop: building__p17
+  item: C
+  amount: 1
+chiseled_quartz_block:
+  shop: building__p17
+  item: D
+  amount: 1
+quartz_bricks:
+  shop: building__p17
+  item: E
+  amount: 1
+quartz_pillar:
+  shop: building__p17
+  item: F
+  amount: 1
+smooth_quartz:
+  shop: building__p17
+  item: G
+  amount: 1
+smooth_quartz_stairs:
+  shop: building__p17
+  item: H
+  amount: 1
+smooth_quartz_slab:
+  shop: building__p17
+  item: I
+  amount: 1
+amethyst_block:
+  shop: building__p17
+  item: J
+  amount: 1
+copper_block:
+  shop: building__p17
+  item: K
+  amount: 1
+exposed_copper:
+  shop: building__p17
+  item: L
+  amount: 1
+weathered_copper:
+  shop: building__p17
+  item: M
+  amount: 1
+oxidized_copper:
+  shop: building__p17
+  item: 'N'
+  amount: 1
+chiseled_copper:
+  shop: building__p17
+  item: O
+  amount: 1
+exposed_chiseled_copper:
+  shop: building__p17
+  item: P
+  amount: 1
+weathered_chiseled_copper:
+  shop: building__p17
+  item: Q
+  amount: 1
+oxidized_chiseled_copper:
+  shop: building__p17
+  item: R
+  amount: 1
+copper_grate:
+  shop: building__p17
+  item: S
+  amount: 1
+exposed_copper_grate:
+  shop: building__p17
+  item: T
+  amount: 1
+weathered_copper_grate:
+  shop: building__p17
+  item: U
+  amount: 1
+oxidized_copper_grate:
+  shop: building__p18
+  item: A
+  amount: 1
+cut_copper:
+  shop: building__p18
+  item: B
+  amount: 1
+exposed_cut_copper:
+  shop: building__p18
+  item: C
+  amount: 1
+weathered_cut_copper:
+  shop: building__p18
+  item: D
+  amount: 1
+oxidized_cut_copper:
+  shop: building__p18
+  item: E
+  amount: 1
+cut_copper_stairs:
+  shop: building__p18
+  item: F
+  amount: 1
+exposed_cut_copper_stairs:
+  shop: building__p18
+  item: G
+  amount: 1
+weathered_cut_copper_stairs:
+  shop: building__p18
+  item: H
+  amount: 1
+oxidized_cut_copper_stairs:
+  shop: building__p18
+  item: I
+  amount: 1
+cut_copper_slab:
+  shop: building__p18
+  item: J
+  amount: 1
+exposed_cut_copper_slab:
+  shop: building__p18
+  item: K
+  amount: 1
+weathered_cut_copper_slab:
+  shop: building__p18
+  item: L
+  amount: 1
+oxidized_cut_copper_slab:
+  shop: building__p18
+  item: M
+  amount: 1
+copper_bars:
+  shop: building__p18
+  item: 'N'
+  amount: 1
+exposed_copper_bars:
+  shop: building__p18
+  item: O
+  amount: 1
+weathered_copper_bars:
+  shop: building__p18
+  item: P
+  amount: 1
+oxidized_copper_bars:
+  shop: building__p18
+  item: Q
+  amount: 1
+copper_door:
+  shop: building__p18
+  item: R
+  amount: 1
+exposed_copper_door:
+  shop: building__p18
+  item: S
+  amount: 1
+weathered_copper_door:
+  shop: building__p18
+  item: T
+  amount: 1
+oxidized_copper_door:
+  shop: building__p18
+  item: U
+  amount: 1
+copper_trapdoor:
+  shop: building__p19
+  item: A
+  amount: 1
+exposed_copper_trapdoor:
+  shop: building__p19
+  item: B
+  amount: 1
+weathered_copper_trapdoor:
+  shop: building__p19
+  item: C
+  amount: 1
+oxidized_copper_trapdoor:
+  shop: building__p19
+  item: D
+  amount: 1
+copper_bulb:
+  shop: building__p19
+  item: E
+  amount: 1
+exposed_copper_bulb:
+  shop: building__p19
+  item: F
+  amount: 1
+weathered_copper_bulb:
+  shop: building__p19
+  item: G
+  amount: 1
+oxidized_copper_bulb:
+  shop: building__p19
+  item: H
+  amount: 1
+copper_chain:
+  shop: building__p19
+  item: I
+  amount: 1
+exposed_copper_chain:
+  shop: building__p19
+  item: J
+  amount: 1
+weathered_copper_chain:
+  shop: building__p19
+  item: K
+  amount: 1
+oxidized_copper_chain:
+  shop: building__p19
+  item: L
+  amount: 1
+waxed_copper_block:
+  shop: building__p19
+  item: M
+  amount: 1
+waxed_exposed_copper:
+  shop: building__p19
+  item: 'N'
+  amount: 1
+waxed_weathered_copper:
+  shop: building__p19
+  item: O
+  amount: 1
+waxed_oxidized_copper:
+  shop: building__p19
+  item: P
+  amount: 1
+waxed_chiseled_copper:
+  shop: building__p19
+  item: Q
+  amount: 1
+waxed_exposed_chiseled_copper:
+  shop: building__p19
+  item: R
+  amount: 1
+waxed_weathered_chiseled_copper:
+  shop: building__p19
+  item: S
+  amount: 1
+waxed_oxidized_chiseled_copper:
+  shop: building__p19
+  item: T
+  amount: 1
+waxed_copper_grate:
+  shop: building__p19
+  item: U
+  amount: 1
+spruce_fence_gate:
+  shop: building__p2
+  item: A
+  amount: 1
+spruce_door:
+  shop: building__p2
+  item: B
+  amount: 1
+spruce_trapdoor:
+  shop: building__p2
+  item: C
+  amount: 1
+spruce_pressure_plate:
+  shop: building__p2
+  item: D
+  amount: 1
+spruce_button:
+  shop: building__p2
+  item: E
+  amount: 1
+birch_log:
+  shop: building__p2
+  item: F
+  amount: 1
+birch_wood:
+  shop: building__p2
+  item: G
+  amount: 1
+stripped_birch_log:
+  shop: building__p2
+  item: H
+  amount: 1
+stripped_birch_wood:
+  shop: building__p2
+  item: I
+  amount: 1
+birch_planks:
+  shop: building__p2
+  item: J
+  amount: 1
+birch_stairs:
+  shop: building__p2
+  item: K
+  amount: 1
+birch_slab:
+  shop: building__p2
+  item: L
+  amount: 1
+birch_fence:
+  shop: building__p2
+  item: M
+  amount: 1
+birch_fence_gate:
+  shop: building__p2
+  item: 'N'
+  amount: 1
+birch_door:
+  shop: building__p2
+  item: O
+  amount: 1
+birch_trapdoor:
+  shop: building__p2
+  item: P
+  amount: 1
+birch_pressure_plate:
+  shop: building__p2
+  item: Q
+  amount: 1
+birch_button:
+  shop: building__p2
+  item: R
+  amount: 1
+jungle_log:
+  shop: building__p2
+  item: S
+  amount: 1
+jungle_wood:
+  shop: building__p2
+  item: T
+  amount: 1
+stripped_jungle_log:
+  shop: building__p2
+  item: U
+  amount: 1
+waxed_exposed_copper_grate:
+  shop: building__p20
+  item: A
+  amount: 1
+waxed_weathered_copper_grate:
+  shop: building__p20
+  item: B
+  amount: 1
+waxed_oxidized_copper_grate:
+  shop: building__p20
+  item: C
+  amount: 1
+waxed_cut_copper:
+  shop: building__p20
+  item: D
+  amount: 1
+waxed_exposed_cut_copper:
+  shop: building__p20
+  item: E
+  amount: 1
+waxed_weathered_cut_copper:
+  shop: building__p20
+  item: F
+  amount: 1
+waxed_oxidized_cut_copper:
+  shop: building__p20
+  item: G
+  amount: 1
+waxed_cut_copper_stairs:
+  shop: building__p20
+  item: H
+  amount: 1
+waxed_exposed_cut_copper_stairs:
+  shop: building__p20
+  item: I
+  amount: 1
+waxed_weathered_cut_copper_stairs:
+  shop: building__p20
+  item: J
+  amount: 1
+waxed_oxidized_cut_copper_stairs:
+  shop: building__p20
+  item: K
+  amount: 1
+waxed_cut_copper_slab:
+  shop: building__p20
+  item: L
+  amount: 1
+waxed_exposed_cut_copper_slab:
+  shop: building__p20
+  item: M
+  amount: 1
+waxed_weathered_cut_copper_slab:
+  shop: building__p20
+  item: 'N'
+  amount: 1
+waxed_oxidized_cut_copper_slab:
+  shop: building__p20
+  item: O
+  amount: 1
+waxed_copper_bars:
+  shop: building__p20
+  item: P
+  amount: 1
+waxed_exposed_copper_bars:
+  shop: building__p20
+  item: Q
+  amount: 1
+waxed_weathered_copper_bars:
+  shop: building__p20
+  item: R
+  amount: 1
+waxed_oxidized_copper_bars:
+  shop: building__p20
+  item: S
+  amount: 1
+waxed_copper_door:
+  shop: building__p20
+  item: T
+  amount: 1
+waxed_exposed_copper_door:
+  shop: building__p20
+  item: U
+  amount: 1
+waxed_weathered_copper_door:
+  shop: building__p21
+  item: A
+  amount: 1
+waxed_oxidized_copper_door:
+  shop: building__p21
+  item: B
+  amount: 1
+waxed_copper_trapdoor:
+  shop: building__p21
+  item: C
+  amount: 1
+waxed_exposed_copper_trapdoor:
+  shop: building__p21
+  item: D
+  amount: 1
+waxed_weathered_copper_trapdoor:
+  shop: building__p21
+  item: E
+  amount: 1
+waxed_oxidized_copper_trapdoor:
+  shop: building__p21
+  item: F
+  amount: 1
+waxed_copper_bulb:
+  shop: building__p21
+  item: G
+  amount: 1
+waxed_exposed_copper_bulb:
+  shop: building__p21
+  item: H
+  amount: 1
+waxed_weathered_copper_bulb:
+  shop: building__p21
+  item: I
+  amount: 1
+waxed_oxidized_copper_bulb:
+  shop: building__p21
+  item: J
+  amount: 1
+waxed_copper_chain:
+  shop: building__p21
+  item: K
+  amount: 1
+waxed_exposed_copper_chain:
+  shop: building__p21
+  item: L
+  amount: 1
+waxed_weathered_copper_chain:
+  shop: building__p21
+  item: M
+  amount: 1
+waxed_oxidized_copper_chain:
+  shop: building__p21
+  item: 'N'
+  amount: 1
+cut_sandstone_slab:
+  shop: building__p21
+  item: O
+  amount: 1
+stripped_jungle_wood:
+  shop: building__p3
+  item: A
+  amount: 1
+jungle_planks:
+  shop: building__p3
+  item: B
+  amount: 1
+jungle_stairs:
+  shop: building__p3
+  item: C
+  amount: 1
+jungle_slab:
+  shop: building__p3
+  item: D
+  amount: 1
+jungle_fence:
+  shop: building__p3
+  item: E
+  amount: 1
+jungle_fence_gate:
+  shop: building__p3
+  item: F
+  amount: 1
+jungle_door:
+  shop: building__p3
+  item: G
+  amount: 1
+jungle_trapdoor:
+  shop: building__p3
+  item: H
+  amount: 1
+jungle_pressure_plate:
+  shop: building__p3
+  item: I
+  amount: 1
+jungle_button:
+  shop: building__p3
+  item: J
+  amount: 1
+acacia_log:
+  shop: building__p3
+  item: K
+  amount: 1
+acacia_wood:
+  shop: building__p3
+  item: L
+  amount: 1
+stripped_acacia_log:
+  shop: building__p3
+  item: M
+  amount: 1
+stripped_acacia_wood:
+  shop: building__p3
+  item: 'N'
+  amount: 1
+acacia_planks:
+  shop: building__p3
+  item: O
+  amount: 1
+acacia_stairs:
+  shop: building__p3
+  item: P
+  amount: 1
+acacia_slab:
+  shop: building__p3
+  item: Q
+  amount: 1
+acacia_fence:
+  shop: building__p3
+  item: R
+  amount: 1
+acacia_fence_gate:
+  shop: building__p3
+  item: S
+  amount: 1
+acacia_door:
+  shop: building__p3
+  item: T
+  amount: 1
+acacia_trapdoor:
+  shop: building__p3
+  item: U
+  amount: 1
+acacia_pressure_plate:
+  shop: building__p4
+  item: A
+  amount: 1
+acacia_button:
+  shop: building__p4
+  item: B
+  amount: 1
+dark_oak_log:
+  shop: building__p4
+  item: C
+  amount: 1
+dark_oak_wood:
+  shop: building__p4
+  item: D
+  amount: 1
+stripped_dark_oak_log:
+  shop: building__p4
+  item: E
+  amount: 1
+stripped_dark_oak_wood:
+  shop: building__p4
+  item: F
+  amount: 1
+dark_oak_planks:
+  shop: building__p4
+  item: G
+  amount: 1
+dark_oak_stairs:
+  shop: building__p4
+  item: H
+  amount: 1
+dark_oak_slab:
+  shop: building__p4
+  item: I
+  amount: 1
+dark_oak_fence:
+  shop: building__p4
+  item: J
+  amount: 1
+dark_oak_fence_gate:
+  shop: building__p4
+  item: K
+  amount: 1
+dark_oak_door:
+  shop: building__p4
+  item: L
+  amount: 1
+dark_oak_trapdoor:
+  shop: building__p4
+  item: M
+  amount: 1
+dark_oak_pressure_plate:
+  shop: building__p4
+  item: 'N'
+  amount: 1
+dark_oak_button:
+  shop: building__p4
+  item: O
+  amount: 1
+mangrove_log:
+  shop: building__p4
+  item: P
+  amount: 1
+mangrove_wood:
+  shop: building__p4
+  item: Q
+  amount: 1
+stripped_mangrove_log:
+  shop: building__p4
+  item: R
+  amount: 1
+stripped_mangrove_wood:
+  shop: building__p4
+  item: S
+  amount: 1
+mangrove_planks:
+  shop: building__p4
+  item: T
+  amount: 1
+mangrove_stairs:
+  shop: building__p4
+  item: U
+  amount: 1
+mangrove_slab:
+  shop: building__p5
+  item: A
+  amount: 1
+mangrove_fence:
+  shop: building__p5
+  item: B
+  amount: 1
+mangrove_fence_gate:
+  shop: building__p5
+  item: C
+  amount: 1
+mangrove_door:
+  shop: building__p5
+  item: D
+  amount: 1
+mangrove_trapdoor:
+  shop: building__p5
+  item: E
+  amount: 1
+mangrove_pressure_plate:
+  shop: building__p5
+  item: F
+  amount: 1
+mangrove_button:
+  shop: building__p5
+  item: G
+  amount: 1
+cherry_log:
+  shop: building__p5
+  item: H
+  amount: 1
+cherry_wood:
+  shop: building__p5
+  item: I
+  amount: 1
+stripped_cherry_log:
+  shop: building__p5
+  item: J
+  amount: 1
+stripped_cherry_wood:
+  shop: building__p5
+  item: K
+  amount: 1
+cherry_planks:
+  shop: building__p5
+  item: L
+  amount: 1
+cherry_stairs:
+  shop: building__p5
+  item: M
+  amount: 1
+cherry_slab:
+  shop: building__p5
+  item: 'N'
+  amount: 1
+cherry_fence:
+  shop: building__p5
+  item: O
+  amount: 1
+cherry_fence_gate:
+  shop: building__p5
+  item: P
+  amount: 1
+cherry_door:
+  shop: building__p5
+  item: Q
+  amount: 1
+cherry_trapdoor:
+  shop: building__p5
+  item: R
+  amount: 1
+cherry_pressure_plate:
+  shop: building__p5
+  item: S
+  amount: 1
+cherry_button:
+  shop: building__p5
+  item: T
+  amount: 1
+pale_oak_log:
+  shop: building__p5
+  item: U
+  amount: 1
+pale_oak_wood:
+  shop: building__p6
+  item: A
+  amount: 1
+stripped_pale_oak_log:
+  shop: building__p6
+  item: B
+  amount: 1
+stripped_pale_oak_wood:
+  shop: building__p6
+  item: C
+  amount: 1
+pale_oak_planks:
+  shop: building__p6
+  item: D
+  amount: 1
+pale_oak_stairs:
+  shop: building__p6
+  item: E
+  amount: 1
+pale_oak_slab:
+  shop: building__p6
+  item: F
+  amount: 1
+pale_oak_fence:
+  shop: building__p6
+  item: G
+  amount: 1
+pale_oak_fence_gate:
+  shop: building__p6
+  item: H
+  amount: 1
+pale_oak_door:
+  shop: building__p6
+  item: I
+  amount: 1
+pale_oak_trapdoor:
+  shop: building__p6
+  item: J
+  amount: 1
+pale_oak_pressure_plate:
+  shop: building__p6
+  item: K
+  amount: 1
+pale_oak_button:
+  shop: building__p6
+  item: L
+  amount: 1
+bamboo_block:
+  shop: building__p6
+  item: M
+  amount: 1
+stripped_bamboo_block:
+  shop: building__p6
+  item: 'N'
+  amount: 1
+bamboo_planks:
+  shop: building__p6
+  item: O
+  amount: 1
+bamboo_mosaic:
+  shop: building__p6
+  item: P
+  amount: 1
+bamboo_stairs:
+  shop: building__p6
+  item: Q
+  amount: 1
+bamboo_mosaic_stairs:
+  shop: building__p6
+  item: R
+  amount: 1
+bamboo_slab:
+  shop: building__p6
+  item: S
+  amount: 1
+bamboo_mosaic_slab:
+  shop: building__p6
+  item: T
+  amount: 1
+bamboo_fence:
+  shop: building__p6
+  item: U
+  amount: 1
+bamboo_fence_gate:
+  shop: building__p7
+  item: A
+  amount: 1
+bamboo_door:
+  shop: building__p7
+  item: B
+  amount: 1
+bamboo_trapdoor:
+  shop: building__p7
+  item: C
+  amount: 1
+bamboo_pressure_plate:
+  shop: building__p7
+  item: D
+  amount: 1
+bamboo_button:
+  shop: building__p7
+  item: E
+  amount: 1
+crimson_stem:
+  shop: building__p7
+  item: F
+  amount: 1
+crimson_hyphae:
+  shop: building__p7
+  item: G
+  amount: 1
+stripped_crimson_stem:
+  shop: building__p7
+  item: H
+  amount: 1
+stripped_crimson_hyphae:
+  shop: building__p7
+  item: I
+  amount: 1
+crimson_planks:
+  shop: building__p7
+  item: J
+  amount: 1
+crimson_stairs:
+  shop: building__p7
+  item: K
+  amount: 1
+crimson_slab:
+  shop: building__p7
+  item: L
+  amount: 1
+crimson_fence:
+  shop: building__p7
+  item: M
+  amount: 1
+crimson_fence_gate:
+  shop: building__p7
+  item: 'N'
+  amount: 1
+crimson_door:
+  shop: building__p7
+  item: O
+  amount: 1
+crimson_trapdoor:
+  shop: building__p7
+  item: P
+  amount: 1
+crimson_pressure_plate:
+  shop: building__p7
+  item: Q
+  amount: 1
+crimson_button:
+  shop: building__p7
+  item: R
+  amount: 1
+warped_stem:
+  shop: building__p7
+  item: S
+  amount: 1
+warped_hyphae:
+  shop: building__p7
+  item: T
+  amount: 1
+stripped_warped_stem:
+  shop: building__p7
+  item: U
+  amount: 1
+stripped_warped_hyphae:
+  shop: building__p8
+  item: A
+  amount: 1
+warped_planks:
+  shop: building__p8
+  item: B
+  amount: 1
+warped_stairs:
+  shop: building__p8
+  item: C
+  amount: 1
+warped_slab:
+  shop: building__p8
+  item: D
+  amount: 1
+warped_fence:
+  shop: building__p8
+  item: E
+  amount: 1
+warped_fence_gate:
+  shop: building__p8
+  item: F
+  amount: 1
+warped_door:
+  shop: building__p8
+  item: G
+  amount: 1
+warped_trapdoor:
+  shop: building__p8
+  item: H
+  amount: 1
+warped_pressure_plate:
+  shop: building__p8
+  item: I
+  amount: 1
+warped_button:
+  shop: building__p8
+  item: J
+  amount: 1
+stone:
+  shop: building__p8
+  item: K
+  amount: 1
+stone_stairs:
+  shop: building__p8
+  item: L
+  amount: 1
+stone_slab:
+  shop: building__p8
+  item: M
+  amount: 1
+stone_pressure_plate:
+  shop: building__p8
+  item: 'N'
+  amount: 1
+stone_button:
+  shop: building__p8
+  item: O
+  amount: 1
+cobblestone:
+  shop: building__p8
+  item: P
+  amount: 1
+cobblestone_stairs:
+  shop: building__p8
+  item: Q
+  amount: 1
+cobblestone_slab:
+  shop: building__p8
+  item: R
+  amount: 1
+cobblestone_wall:
+  shop: building__p8
+  item: S
+  amount: 1
+mossy_cobblestone:
+  shop: building__p8
+  item: T
+  amount: 1
+mossy_cobblestone_stairs:
+  shop: building__p8
+  item: U
+  amount: 1
+mossy_cobblestone_slab:
+  shop: building__p9
+  item: A
+  amount: 1
+mossy_cobblestone_wall:
+  shop: building__p9
+  item: B
+  amount: 1
+smooth_stone:
+  shop: building__p9
+  item: C
+  amount: 1
+smooth_stone_slab:
+  shop: building__p9
+  item: D
+  amount: 1
+stone_bricks:
+  shop: building__p9
+  item: E
+  amount: 1
+cracked_stone_bricks:
+  shop: building__p9
+  item: F
+  amount: 1
+stone_brick_stairs:
+  shop: building__p9
+  item: G
+  amount: 1
+stone_brick_slab:
+  shop: building__p9
+  item: H
+  amount: 1
+stone_brick_wall:
+  shop: building__p9
+  item: I
+  amount: 1
+chiseled_stone_bricks:
+  shop: building__p9
+  item: J
+  amount: 1
+mossy_stone_bricks:
+  shop: building__p9
+  item: K
+  amount: 1
+mossy_stone_brick_stairs:
+  shop: building__p9
+  item: L
+  amount: 1
+mossy_stone_brick_slab:
+  shop: building__p9
+  item: M
+  amount: 1
+mossy_stone_brick_wall:
+  shop: building__p9
+  item: 'N'
+  amount: 1
+granite:
+  shop: building__p9
+  item: O
+  amount: 1
+granite_stairs:
+  shop: building__p9
+  item: P
+  amount: 1
+granite_slab:
+  shop: building__p9
+  item: Q
+  amount: 1
+granite_wall:
+  shop: building__p9
+  item: R
+  amount: 1
+polished_granite:
+  shop: building__p9
+  item: S
+  amount: 1
+polished_granite_stairs:
+  shop: building__p9
+  item: T
+  amount: 1
+polished_granite_slab:
+  shop: building__p9
+  item: U
+  amount: 1
+white_wool:
+  shop: colored
+  item: A
+  amount: 1
+light_gray_wool:
+  shop: colored
+  item: B
+  amount: 1
+gray_wool:
+  shop: colored
+  item: C
+  amount: 1
+black_wool:
+  shop: colored
+  item: D
+  amount: 1
+brown_wool:
+  shop: colored
+  item: E
+  amount: 1
+red_wool:
+  shop: colored
+  item: F
+  amount: 1
+orange_wool:
+  shop: colored
+  item: G
+  amount: 1
+yellow_wool:
+  shop: colored
+  item: H
+  amount: 1
+lime_wool:
+  shop: colored
+  item: I
+  amount: 1
+green_wool:
+  shop: colored
+  item: J
+  amount: 1
+cyan_wool:
+  shop: colored
+  item: K
+  amount: 1
+light_blue_wool:
+  shop: colored
+  item: L
+  amount: 1
+blue_wool:
+  shop: colored
+  item: M
+  amount: 1
+purple_wool:
+  shop: colored
+  item: 'N'
+  amount: 1
+magenta_wool:
+  shop: colored
+  item: O
+  amount: 1
+pink_wool:
+  shop: colored
+  item: P
+  amount: 1
+white_carpet:
+  shop: colored
+  item: Q
+  amount: 1
+light_gray_carpet:
+  shop: colored
+  item: R
+  amount: 1
+gray_carpet:
+  shop: colored
+  item: S
+  amount: 1
+black_carpet:
+  shop: colored
+  item: T
+  amount: 1
+brown_carpet:
+  shop: colored
+  item: U
+  amount: 1
+yellow_banner:
+  shop: colored__p10
+  item: A
+  amount: 1
+lime_banner:
+  shop: colored__p10
+  item: B
+  amount: 1
+green_banner:
+  shop: colored__p10
+  item: C
+  amount: 1
+cyan_banner:
+  shop: colored__p10
+  item: D
+  amount: 1
+light_blue_banner:
+  shop: colored__p10
+  item: E
+  amount: 1
+blue_banner:
+  shop: colored__p10
+  item: F
+  amount: 1
+purple_banner:
+  shop: colored__p10
+  item: G
+  amount: 1
+magenta_banner:
+  shop: colored__p10
+  item: H
+  amount: 1
+pink_banner:
+  shop: colored__p10
+  item: I
+  amount: 1
+red_carpet:
+  shop: colored__p2
+  item: A
+  amount: 1
+orange_carpet:
+  shop: colored__p2
+  item: B
+  amount: 1
+yellow_carpet:
+  shop: colored__p2
+  item: C
+  amount: 1
+lime_carpet:
+  shop: colored__p2
+  item: D
+  amount: 1
+green_carpet:
+  shop: colored__p2
+  item: E
+  amount: 1
+cyan_carpet:
+  shop: colored__p2
+  item: F
+  amount: 1
+light_blue_carpet:
+  shop: colored__p2
+  item: G
+  amount: 1
+blue_carpet:
+  shop: colored__p2
+  item: H
+  amount: 1
+purple_carpet:
+  shop: colored__p2
+  item: I
+  amount: 1
+magenta_carpet:
+  shop: colored__p2
+  item: J
+  amount: 1
+pink_carpet:
+  shop: colored__p2
+  item: K
+  amount: 1
+terracotta:
+  shop: colored__p2
+  item: L
+  amount: 1
+white_terracotta:
+  shop: colored__p2
+  item: M
+  amount: 1
+light_gray_terracotta:
+  shop: colored__p2
+  item: 'N'
+  amount: 1
+gray_terracotta:
+  shop: colored__p2
+  item: O
+  amount: 1
+black_terracotta:
+  shop: colored__p2
+  item: P
+  amount: 1
+brown_terracotta:
+  shop: colored__p2
+  item: Q
+  amount: 1
+red_terracotta:
+  shop: colored__p2
+  item: R
+  amount: 1
+orange_terracotta:
+  shop: colored__p2
+  item: S
+  amount: 1
+yellow_terracotta:
+  shop: colored__p2
+  item: T
+  amount: 1
+lime_terracotta:
+  shop: colored__p2
+  item: U
+  amount: 1
+green_terracotta:
+  shop: colored__p3
+  item: A
+  amount: 1
+cyan_terracotta:
+  shop: colored__p3
+  item: B
+  amount: 1
+light_blue_terracotta:
+  shop: colored__p3
+  item: C
+  amount: 1
+blue_terracotta:
+  shop: colored__p3
+  item: D
+  amount: 1
+purple_terracotta:
+  shop: colored__p3
+  item: E
+  amount: 1
+magenta_terracotta:
+  shop: colored__p3
+  item: F
+  amount: 1
+pink_terracotta:
+  shop: colored__p3
   item: G
   amount: 1
 white_concrete:
-  shop: concretes__p2
+  shop: colored__p3
   item: H
   amount: 1
-white_concrete_powder:
-  shop: concretes__p2
+light_gray_concrete:
+  shop: colored__p3
   item: I
   amount: 1
-yellow_concrete:
-  shop: concretes__p2
+gray_concrete:
+  shop: colored__p3
   item: J
   amount: 1
-yellow_concrete_powder:
-  shop: concretes__p2
+black_concrete:
+  shop: colored__p3
   item: K
   amount: 1
-redstone:
-  shop: minerals__p4
-  item: J
+brown_concrete:
+  shop: colored__p3
+  item: L
   amount: 1
-iron_ingot:
-  shop: minerals__p3
-  item: F
+red_concrete:
+  shop: colored__p3
+  item: M
   amount: 1
-gold_ingot:
-  shop: minerals__p3
+orange_concrete:
+  shop: colored__p3
+  item: 'N'
+  amount: 1
+yellow_concrete:
+  shop: colored__p3
+  item: O
+  amount: 1
+lime_concrete:
+  shop: colored__p3
+  item: P
+  amount: 1
+green_concrete:
+  shop: colored__p3
+  item: Q
+  amount: 1
+cyan_concrete:
+  shop: colored__p3
+  item: R
+  amount: 1
+light_blue_concrete:
+  shop: colored__p3
+  item: S
+  amount: 1
+blue_concrete:
+  shop: colored__p3
+  item: T
+  amount: 1
+purple_concrete:
+  shop: colored__p3
+  item: U
+  amount: 1
+magenta_concrete:
+  shop: colored__p4
+  item: A
+  amount: 1
+pink_concrete:
+  shop: colored__p4
   item: B
   amount: 1
+white_concrete_powder:
+  shop: colored__p4
+  item: C
+  amount: 1
+light_gray_concrete_powder:
+  shop: colored__p4
+  item: D
+  amount: 1
+gray_concrete_powder:
+  shop: colored__p4
+  item: E
+  amount: 1
+black_concrete_powder:
+  shop: colored__p4
+  item: F
+  amount: 1
+brown_concrete_powder:
+  shop: colored__p4
+  item: G
+  amount: 1
+red_concrete_powder:
+  shop: colored__p4
+  item: H
+  amount: 1
+orange_concrete_powder:
+  shop: colored__p4
+  item: I
+  amount: 1
+yellow_concrete_powder:
+  shop: colored__p4
+  item: J
+  amount: 1
+lime_concrete_powder:
+  shop: colored__p4
+  item: K
+  amount: 1
+green_concrete_powder:
+  shop: colored__p4
+  item: L
+  amount: 1
+cyan_concrete_powder:
+  shop: colored__p4
+  item: M
+  amount: 1
+light_blue_concrete_powder:
+  shop: colored__p4
+  item: 'N'
+  amount: 1
+blue_concrete_powder:
+  shop: colored__p4
+  item: O
+  amount: 1
+purple_concrete_powder:
+  shop: colored__p4
+  item: P
+  amount: 1
+magenta_concrete_powder:
+  shop: colored__p4
+  item: Q
+  amount: 1
+pink_concrete_powder:
+  shop: colored__p4
+  item: R
+  amount: 1
+white_glazed_terracotta:
+  shop: colored__p4
+  item: S
+  amount: 1
+light_gray_glazed_terracotta:
+  shop: colored__p4
+  item: T
+  amount: 1
+gray_glazed_terracotta:
+  shop: colored__p4
+  item: U
+  amount: 1
+black_glazed_terracotta:
+  shop: colored__p5
+  item: A
+  amount: 1
+brown_glazed_terracotta:
+  shop: colored__p5
+  item: B
+  amount: 1
+red_glazed_terracotta:
+  shop: colored__p5
+  item: C
+  amount: 1
+orange_glazed_terracotta:
+  shop: colored__p5
+  item: D
+  amount: 1
+yellow_glazed_terracotta:
+  shop: colored__p5
+  item: E
+  amount: 1
+lime_glazed_terracotta:
+  shop: colored__p5
+  item: F
+  amount: 1
+green_glazed_terracotta:
+  shop: colored__p5
+  item: G
+  amount: 1
+cyan_glazed_terracotta:
+  shop: colored__p5
+  item: H
+  amount: 1
+light_blue_glazed_terracotta:
+  shop: colored__p5
+  item: I
+  amount: 1
+blue_glazed_terracotta:
+  shop: colored__p5
+  item: J
+  amount: 1
+purple_glazed_terracotta:
+  shop: colored__p5
+  item: K
+  amount: 1
+magenta_glazed_terracotta:
+  shop: colored__p5
+  item: L
+  amount: 1
+pink_glazed_terracotta:
+  shop: colored__p5
+  item: M
+  amount: 1
+glass:
+  shop: colored__p5
+  item: 'N'
+  amount: 1
+tinted_glass:
+  shop: colored__p5
+  item: O
+  amount: 1
+white_stained_glass:
+  shop: colored__p5
+  item: P
+  amount: 1
+light_gray_stained_glass:
+  shop: colored__p5
+  item: Q
+  amount: 1
+gray_stained_glass:
+  shop: colored__p5
+  item: R
+  amount: 1
+black_stained_glass:
+  shop: colored__p5
+  item: S
+  amount: 1
+brown_stained_glass:
+  shop: colored__p5
+  item: T
+  amount: 1
+red_stained_glass:
+  shop: colored__p5
+  item: U
+  amount: 1
+orange_stained_glass:
+  shop: colored__p6
+  item: A
+  amount: 1
+yellow_stained_glass:
+  shop: colored__p6
+  item: B
+  amount: 1
+lime_stained_glass:
+  shop: colored__p6
+  item: C
+  amount: 1
+green_stained_glass:
+  shop: colored__p6
+  item: D
+  amount: 1
+cyan_stained_glass:
+  shop: colored__p6
+  item: E
+  amount: 1
+light_blue_stained_glass:
+  shop: colored__p6
+  item: F
+  amount: 1
+blue_stained_glass:
+  shop: colored__p6
+  item: G
+  amount: 1
+purple_stained_glass:
+  shop: colored__p6
+  item: H
+  amount: 1
+magenta_stained_glass:
+  shop: colored__p6
+  item: I
+  amount: 1
+pink_stained_glass:
+  shop: colored__p6
+  item: J
+  amount: 1
+glass_pane:
+  shop: colored__p6
+  item: K
+  amount: 1
+white_stained_glass_pane:
+  shop: colored__p6
+  item: L
+  amount: 1
+light_gray_stained_glass_pane:
+  shop: colored__p6
+  item: M
+  amount: 1
+gray_stained_glass_pane:
+  shop: colored__p6
+  item: 'N'
+  amount: 1
+black_stained_glass_pane:
+  shop: colored__p6
+  item: O
+  amount: 1
+brown_stained_glass_pane:
+  shop: colored__p6
+  item: P
+  amount: 1
+red_stained_glass_pane:
+  shop: colored__p6
+  item: Q
+  amount: 1
+orange_stained_glass_pane:
+  shop: colored__p6
+  item: R
+  amount: 1
+yellow_stained_glass_pane:
+  shop: colored__p6
+  item: S
+  amount: 1
+lime_stained_glass_pane:
+  shop: colored__p6
+  item: T
+  amount: 1
+green_stained_glass_pane:
+  shop: colored__p6
+  item: U
+  amount: 1
+cyan_stained_glass_pane:
+  shop: colored__p7
+  item: A
+  amount: 1
+light_blue_stained_glass_pane:
+  shop: colored__p7
+  item: B
+  amount: 1
+blue_stained_glass_pane:
+  shop: colored__p7
+  item: C
+  amount: 1
+purple_stained_glass_pane:
+  shop: colored__p7
+  item: D
+  amount: 1
+magenta_stained_glass_pane:
+  shop: colored__p7
+  item: E
+  amount: 1
+pink_stained_glass_pane:
+  shop: colored__p7
+  item: F
+  amount: 1
+shulker_box:
+  shop: colored__p7
+  item: G
+  amount: 1
+white_shulker_box:
+  shop: colored__p7
+  item: H
+  amount: 1
+light_gray_shulker_box:
+  shop: colored__p7
+  item: I
+  amount: 1
+gray_shulker_box:
+  shop: colored__p7
+  item: J
+  amount: 1
+black_shulker_box:
+  shop: colored__p7
+  item: K
+  amount: 1
+brown_shulker_box:
+  shop: colored__p7
+  item: L
+  amount: 1
+red_shulker_box:
+  shop: colored__p7
+  item: M
+  amount: 1
+orange_shulker_box:
+  shop: colored__p7
+  item: 'N'
+  amount: 1
+yellow_shulker_box:
+  shop: colored__p7
+  item: O
+  amount: 1
+lime_shulker_box:
+  shop: colored__p7
+  item: P
+  amount: 1
+green_shulker_box:
+  shop: colored__p7
+  item: Q
+  amount: 1
+cyan_shulker_box:
+  shop: colored__p7
+  item: R
+  amount: 1
+light_blue_shulker_box:
+  shop: colored__p7
+  item: S
+  amount: 1
+blue_shulker_box:
+  shop: colored__p7
+  item: T
+  amount: 1
+purple_shulker_box:
+  shop: colored__p7
+  item: U
+  amount: 1
+magenta_shulker_box:
+  shop: colored__p8
+  item: A
+  amount: 1
+pink_shulker_box:
+  shop: colored__p8
+  item: B
+  amount: 1
+white_bed:
+  shop: colored__p8
+  item: C
+  amount: 1
+light_gray_bed:
+  shop: colored__p8
+  item: D
+  amount: 1
+gray_bed:
+  shop: colored__p8
+  item: E
+  amount: 1
+black_bed:
+  shop: colored__p8
+  item: F
+  amount: 1
+brown_bed:
+  shop: colored__p8
+  item: G
+  amount: 1
+red_bed:
+  shop: colored__p8
+  item: H
+  amount: 1
+orange_bed:
+  shop: colored__p8
+  item: I
+  amount: 1
+yellow_bed:
+  shop: colored__p8
+  item: J
+  amount: 1
+lime_bed:
+  shop: colored__p8
+  item: K
+  amount: 1
+green_bed:
+  shop: colored__p8
+  item: L
+  amount: 1
+cyan_bed:
+  shop: colored__p8
+  item: M
+  amount: 1
+light_blue_bed:
+  shop: colored__p8
+  item: 'N'
+  amount: 1
+blue_bed:
+  shop: colored__p8
+  item: O
+  amount: 1
+purple_bed:
+  shop: colored__p8
+  item: P
+  amount: 1
+magenta_bed:
+  shop: colored__p8
+  item: Q
+  amount: 1
+pink_bed:
+  shop: colored__p8
+  item: R
+  amount: 1
+candle:
+  shop: colored__p8
+  item: S
+  amount: 1
+white_candle:
+  shop: colored__p8
+  item: T
+  amount: 1
+light_gray_candle:
+  shop: colored__p8
+  item: U
+  amount: 1
+gray_candle:
+  shop: colored__p9
+  item: A
+  amount: 1
+black_candle:
+  shop: colored__p9
+  item: B
+  amount: 1
+brown_candle:
+  shop: colored__p9
+  item: C
+  amount: 1
+red_candle:
+  shop: colored__p9
+  item: D
+  amount: 1
+orange_candle:
+  shop: colored__p9
+  item: E
+  amount: 1
+yellow_candle:
+  shop: colored__p9
+  item: F
+  amount: 1
+lime_candle:
+  shop: colored__p9
+  item: G
+  amount: 1
+green_candle:
+  shop: colored__p9
+  item: H
+  amount: 1
+cyan_candle:
+  shop: colored__p9
+  item: I
+  amount: 1
+light_blue_candle:
+  shop: colored__p9
+  item: J
+  amount: 1
+blue_candle:
+  shop: colored__p9
+  item: K
+  amount: 1
+purple_candle:
+  shop: colored__p9
+  item: L
+  amount: 1
+magenta_candle:
+  shop: colored__p9
+  item: M
+  amount: 1
+pink_candle:
+  shop: colored__p9
+  item: 'N'
+  amount: 1
+white_banner:
+  shop: colored__p9
+  item: O
+  amount: 1
+light_gray_banner:
+  shop: colored__p9
+  item: P
+  amount: 1
+gray_banner:
+  shop: colored__p9
+  item: Q
+  amount: 1
+black_banner:
+  shop: colored__p9
+  item: R
+  amount: 1
+brown_banner:
+  shop: colored__p9
+  item: S
+  amount: 1
+red_banner:
+  shop: colored__p9
+  item: T
+  amount: 1
+orange_banner:
+  shop: colored__p9
+  item: U
+  amount: 1
+wooden_sword:
+  shop: combat
+  item: A
+  amount: 1
+stone_sword:
+  shop: combat
+  item: B
+  amount: 1
+copper_sword:
+  shop: combat
+  item: C
+  amount: 1
+iron_sword:
+  shop: combat
+  item: D
+  amount: 1
+golden_sword:
+  shop: combat
+  item: E
+  amount: 1
+diamond_sword:
+  shop: combat
+  item: F
+  amount: 1
+netherite_sword:
+  shop: combat
+  item: G
+  amount: 1
+wooden_spear:
+  shop: combat
+  item: H
+  amount: 1
+stone_spear:
+  shop: combat
+  item: I
+  amount: 1
+copper_spear:
+  shop: combat
+  item: J
+  amount: 1
+iron_spear:
+  shop: combat
+  item: K
+  amount: 1
+golden_spear:
+  shop: combat
+  item: L
+  amount: 1
+diamond_spear:
+  shop: combat
+  item: M
+  amount: 1
+netherite_spear:
+  shop: combat
+  item: 'N'
+  amount: 1
+trident:
+  shop: combat
+  item: O
+  amount: 1
+mace:
+  shop: combat
+  item: P
+  amount: 1
+shield:
+  shop: combat
+  item: Q
+  amount: 1
+leather_helmet:
+  shop: combat
+  item: R
+  amount: 1
+leather_chestplate:
+  shop: combat
+  item: S
+  amount: 1
+leather_leggings:
+  shop: combat
+  item: T
+  amount: 1
+leather_boots:
+  shop: combat
+  item: U
+  amount: 1
+copper_helmet:
+  shop: combat__p2
+  item: A
+  amount: 1
+copper_chestplate:
+  shop: combat__p2
+  item: B
+  amount: 1
+copper_leggings:
+  shop: combat__p2
+  item: C
+  amount: 1
+copper_boots:
+  shop: combat__p2
+  item: D
+  amount: 1
+chainmail_helmet:
+  shop: combat__p2
+  item: E
+  amount: 1
+chainmail_chestplate:
+  shop: combat__p2
+  item: F
+  amount: 1
+chainmail_leggings:
+  shop: combat__p2
+  item: G
+  amount: 1
+chainmail_boots:
+  shop: combat__p2
+  item: H
+  amount: 1
+iron_helmet:
+  shop: combat__p2
+  item: I
+  amount: 1
+iron_chestplate:
+  shop: combat__p2
+  item: J
+  amount: 1
+iron_leggings:
+  shop: combat__p2
+  item: K
+  amount: 1
+iron_boots:
+  shop: combat__p2
+  item: L
+  amount: 1
+golden_helmet:
+  shop: combat__p2
+  item: M
+  amount: 1
+golden_chestplate:
+  shop: combat__p2
+  item: 'N'
+  amount: 1
+golden_leggings:
+  shop: combat__p2
+  item: O
+  amount: 1
+golden_boots:
+  shop: combat__p2
+  item: P
+  amount: 1
+diamond_helmet:
+  shop: combat__p2
+  item: Q
+  amount: 1
+diamond_chestplate:
+  shop: combat__p2
+  item: R
+  amount: 1
+diamond_leggings:
+  shop: combat__p2
+  item: S
+  amount: 1
+diamond_boots:
+  shop: combat__p2
+  item: T
+  amount: 1
+netherite_helmet:
+  shop: combat__p2
+  item: U
+  amount: 1
+netherite_chestplate:
+  shop: combat__p3
+  item: A
+  amount: 1
+netherite_leggings:
+  shop: combat__p3
+  item: B
+  amount: 1
+netherite_boots:
+  shop: combat__p3
+  item: C
+  amount: 1
+turtle_helmet:
+  shop: combat__p3
+  item: D
+  amount: 1
+leather_horse_armor:
+  shop: combat__p3
+  item: E
+  amount: 1
+copper_horse_armor:
+  shop: combat__p3
+  item: F
+  amount: 1
+iron_horse_armor:
+  shop: combat__p3
+  item: G
+  amount: 1
+golden_horse_armor:
+  shop: combat__p3
+  item: H
+  amount: 1
+diamond_horse_armor:
+  shop: combat__p3
+  item: I
+  amount: 1
+netherite_horse_armor:
+  shop: combat__p3
+  item: J
+  amount: 1
+wolf_armor:
+  shop: combat__p3
+  item: K
+  amount: 1
+copper_nautilus_armor:
+  shop: combat__p3
+  item: L
+  amount: 1
+iron_nautilus_armor:
+  shop: combat__p3
+  item: M
+  amount: 1
+golden_nautilus_armor:
+  shop: combat__p3
+  item: 'N'
+  amount: 1
+diamond_nautilus_armor:
+  shop: combat__p3
+  item: O
+  amount: 1
+netherite_nautilus_armor:
+  shop: combat__p3
+  item: P
+  amount: 1
+totem_of_undying:
+  shop: combat__p3
+  item: Q
+  amount: 1
+snowball:
+  shop: combat__p3
+  item: R
+  amount: 1
+egg:
+  shop: combat__p3
+  item: S
+  amount: 1
+brown_egg:
+  shop: combat__p3
+  item: T
+  amount: 1
+blue_egg:
+  shop: combat__p3
+  item: U
+  amount: 1
+bow:
+  shop: combat__p4
+  item: A
+  amount: 1
+crossbow:
+  shop: combat__p4
+  item: B
+  amount: 1
+arrow:
+  shop: combat__p4
+  item: C
+  amount: 1
+spectral_arrow:
+  shop: combat__p4
+  item: D
+  amount: 1
+redstone:
+  shop: redstone
+  item: A
+  amount: 1
+iron_ingot:
+  shop: ingredients
+  item: O
+  amount: 1
+gold_ingot:
+  shop: ingredients
+  item: P
+  amount: 1
 copper_ingot:
-  shop: minerals
+  shop: ingredients
   item: 'N'
   amount: 1
 diamond:
-  shop: minerals__p2
-  item: G
+  shop: ingredients
+  item: H
   amount: 1
 lapis_lazuli:
-  shop: minerals__p3
-  item: J
+  shop: ingredients
+  item: G
   amount: 1
 emerald:
-  shop: minerals__p2
-  item: J
-  amount: 1
-disc_fragment_5:
-  shop: discs
-  item: A
-  amount: 1
-music_disc_11:
-  shop: discs
-  item: B
-  amount: 1
-music_disc_13:
-  shop: discs
-  item: C
-  amount: 1
-music_disc_5:
-  shop: discs
-  item: D
-  amount: 1
-music_disc_blocks:
-  shop: discs
-  item: E
-  amount: 1
-music_disc_cat:
-  shop: discs
+  shop: ingredients
   item: F
-  amount: 1
-music_disc_chirp:
-  shop: discs
-  item: G
-  amount: 1
-music_disc_creator:
-  shop: discs
-  item: H
-  amount: 1
-music_disc_creator_music_box:
-  shop: discs
-  item: I
-  amount: 1
-music_disc_far:
-  shop: discs
-  item: J
-  amount: 1
-music_disc_lava_chicken:
-  shop: discs
-  item: K
-  amount: 1
-music_disc_mall:
-  shop: discs
-  item: L
-  amount: 1
-music_disc_mellohi:
-  shop: discs
-  item: M
-  amount: 1
-music_disc_otherside:
-  shop: discs
-  item: 'N'
-  amount: 1
-music_disc_pigstep:
-  shop: discs
-  item: O
-  amount: 1
-music_disc_precipice:
-  shop: discs
-  item: P
-  amount: 1
-music_disc_relic:
-  shop: discs
-  item: Q
-  amount: 1
-music_disc_stal:
-  shop: discs
-  item: R
-  amount: 1
-music_disc_strad:
-  shop: discs
-  item: S
-  amount: 1
-music_disc_tears:
-  shop: discs
-  item: T
-  amount: 1
-music_disc_wait:
-  shop: discs
-  item: U
-  amount: 1
-music_disc_ward:
-  shop: discs__p2
-  item: A
-  amount: 1
-armadillo_scute:
-  shop: drops
-  item: A
-  amount: 1
-bee_nest:
-  shop: drops
-  item: B
-  amount: 1
-blaze_powder:
-  shop: drops
-  item: C
-  amount: 1
-blaze_rod:
-  shop: drops
-  item: D
-  amount: 1
-bone:
-  shop: drops
-  item: E
-  amount: 1
-breeze_rod:
-  shop: drops
-  item: F
-  amount: 1
-creeper_head:
-  shop: drops
-  item: G
-  amount: 1
-ender_pearl:
-  shop: drops
-  item: H
-  amount: 1
-feather:
-  shop: drops
-  item: I
-  amount: 1
-ghast_tear:
-  shop: drops
-  item: J
-  amount: 1
-glow_ink_sac:
-  shop: drops
-  item: K
-  amount: 1
-goat_horn:
-  shop: drops
-  item: L
-  amount: 1
-gunpowder:
-  shop: drops
-  item: M
-  amount: 1
-honey_block:
-  shop: drops
-  item: 'N'
-  amount: 1
-honey_bottle:
-  shop: drops
-  item: O
-  amount: 1
-honeycomb:
-  shop: drops
-  item: P
-  amount: 1
-honeycomb_block:
-  shop: drops
-  item: Q
-  amount: 1
-ink_sac:
-  shop: drops
-  item: R
-  amount: 1
-leather:
-  shop: drops
-  item: S
-  amount: 1
-magma_cream:
-  shop: drops
-  item: T
-  amount: 1
-nautilus_shell:
-  shop: drops
-  item: U
-  amount: 1
-nether_star:
-  shop: drops__p2
-  item: A
-  amount: 1
-ominous_bottle:
-  shop: drops__p2
-  item: B
-  amount: 1
-ominous_trial_key:
-  shop: drops__p2
-  item: C
-  amount: 1
-phantom_membrane:
-  shop: drops__p2
-  item: D
-  amount: 1
-piglin_head:
-  shop: drops__p2
-  item: E
-  amount: 1
-rabbit_hide:
-  shop: drops__p2
-  item: F
-  amount: 1
-resin_block:
-  shop: drops__p2
-  item: G
-  amount: 1
-resin_clump:
-  shop: drops__p2
-  item: H
-  amount: 1
-rotten_flesh:
-  shop: drops__p2
-  item: I
-  amount: 1
-skeleton_skull:
-  shop: drops__p2
-  item: J
-  amount: 1
-slime_ball:
-  shop: drops__p2
-  item: K
-  amount: 1
-slime_block:
-  shop: drops__p2
-  item: L
-  amount: 1
-spider_eye:
-  shop: drops__p2
-  item: M
-  amount: 1
-string:
-  shop: drops__p2
-  item: 'N'
-  amount: 1
-trial_key:
-  shop: drops__p2
-  item: O
-  amount: 1
-turtle_scute:
-  shop: drops__p2
-  item: P
-  amount: 1
-wind_charge:
-  shop: drops__p2
-  item: Q
-  amount: 1
-wither_rose:
-  shop: drops__p2
-  item: R
-  amount: 1
-wither_skeleton_skull:
-  shop: drops__p2
-  item: S
-  amount: 1
-zombie_head:
-  shop: drops__p2
-  item: T
   amount: 1
 enchanted_book_aqua_affinity_1:
   shop: enchantments
@@ -2545,70 +4001,6 @@ enchanted_book_unbreaking_3:
   shop: enchantments__p6
   item: P
   amount: 1
-dragon_breath:
-  shop: end
-  item: A
-  amount: 1
-dragon_egg:
-  shop: end
-  item: B
-  amount: 1
-dragon_head:
-  shop: end
-  item: C
-  amount: 1
-end_crystal:
-  shop: end
-  item: D
-  amount: 1
-end_stone:
-  shop: end
-  item: E
-  amount: 1
-end_stone_brick_slab:
-  shop: end
-  item: F
-  amount: 1
-end_stone_brick_stairs:
-  shop: end
-  item: G
-  amount: 1
-end_stone_brick_wall:
-  shop: end
-  item: H
-  amount: 1
-end_stone_bricks:
-  shop: end
-  item: I
-  amount: 1
-ender_chest:
-  shop: end
-  item: J
-  amount: 1
-purpur_block:
-  shop: end
-  item: K
-  amount: 1
-purpur_pillar:
-  shop: end
-  item: L
-  amount: 1
-purpur_slab:
-  shop: end
-  item: M
-  amount: 1
-purpur_stairs:
-  shop: end
-  item: 'N'
-  amount: 1
-shulker_box:
-  shop: end
-  item: O
-  amount: 1
-shulker_shell:
-  shop: end
-  item: P
-  amount: 1
 potion:
   shop: example
   item: A
@@ -2632,10 +4024,6 @@ enchanted_book:
 potato:
   shop: example
   item: F
-  amount: 1
-blue_banner:
-  shop: example
-  item: G
   amount: 1
 axolotl_bucket:
   shop: example
@@ -2661,2547 +4049,2183 @@ apple:
   shop: example
   item: P
   amount: 1
-baked_potato:
-  shop: farming
+echo_shard:
+  shop: example
+  item: S
+  amount: 1
+golden_apple:
+  shop: food
   item: B
   amount: 1
-beef:
-  shop: farming
+enchanted_golden_apple:
+  shop: food
   item: C
   amount: 1
-beetroot:
-  shop: farming
+melon_slice:
+  shop: food
   item: D
   amount: 1
-beetroot_soup:
-  shop: farming
+chorus_fruit:
+  shop: food
   item: E
   amount: 1
-blue_egg:
-  shop: farming
+carrot:
+  shop: food
   item: F
   amount: 1
-bread:
-  shop: farming
+golden_carrot:
+  shop: food
   item: G
   amount: 1
-brown_egg:
-  shop: farming
-  item: H
-  amount: 1
-cake:
-  shop: farming
+baked_potato:
+  shop: food
   item: I
   amount: 1
-carrot:
-  shop: farming
+poisonous_potato:
+  shop: food
   item: J
   amount: 1
-chicken:
-  shop: farming
+beetroot:
+  shop: food
   item: K
   amount: 1
-chorus_fruit:
-  shop: farming
+dried_kelp:
+  shop: food
   item: L
   amount: 1
-cod:
-  shop: farming
+beef:
+  shop: food
   item: M
   amount: 1
 cooked_beef:
-  shop: farming
+  shop: food
   item: 'N'
-  amount: 1
-cooked_chicken:
-  shop: farming
-  item: O
-  amount: 1
-cooked_cod:
-  shop: farming
-  item: P
-  amount: 1
-cooked_mutton:
-  shop: farming
-  item: Q
-  amount: 1
-cooked_porkchop:
-  shop: farming
-  item: R
-  amount: 1
-cooked_rabbit:
-  shop: farming
-  item: S
-  amount: 1
-cooked_salmon:
-  shop: farming
-  item: T
-  amount: 1
-cookie:
-  shop: farming
-  item: U
-  amount: 1
-dried_kelp:
-  shop: farming__p2
-  item: A
-  amount: 1
-dried_kelp_block:
-  shop: farming__p2
-  item: B
-  amount: 1
-egg:
-  shop: farming__p2
-  item: C
-  amount: 1
-enchanted_golden_apple:
-  shop: farming__p2
-  item: D
-  amount: 1
-fermented_spider_eye:
-  shop: farming__p2
-  item: E
-  amount: 1
-glistering_melon_slice:
-  shop: farming__p2
-  item: F
-  amount: 1
-glow_berries:
-  shop: farming__p2
-  item: G
-  amount: 1
-golden_apple:
-  shop: farming__p2
-  item: H
-  amount: 1
-golden_carrot:
-  shop: farming__p2
-  item: I
-  amount: 1
-hay_block:
-  shop: farming__p2
-  item: J
-  amount: 1
-melon:
-  shop: farming__p2
-  item: K
-  amount: 1
-melon_slice:
-  shop: farming__p2
-  item: L
-  amount: 1
-mushroom_stew:
-  shop: farming__p2
-  item: M
-  amount: 1
-mutton:
-  shop: farming__p2
-  item: 'N'
-  amount: 1
-poisonous_potato:
-  shop: farming__p2
-  item: O
-  amount: 1
-popped_chorus_fruit:
-  shop: farming__p2
-  item: P
   amount: 1
 porkchop:
-  shop: farming__p2
+  shop: food
+  item: O
+  amount: 1
+cooked_porkchop:
+  shop: food
+  item: P
+  amount: 1
+mutton:
+  shop: food
   item: Q
   amount: 1
-pufferfish:
-  shop: farming__p2
+cooked_mutton:
+  shop: food
+  item: R
+  amount: 1
+chicken:
+  shop: food
   item: S
   amount: 1
-pumpkin_pie:
-  shop: farming__p2
+cooked_chicken:
+  shop: food
   item: T
   amount: 1
 rabbit:
-  shop: farming__p2
+  shop: food
   item: U
   amount: 1
-rabbit_stew:
-  shop: farming__p3
+cooked_rabbit:
+  shop: food__p2
   item: A
   amount: 1
-salmon:
-  shop: farming__p3
+cod:
+  shop: food__p2
   item: B
   amount: 1
-sugar:
-  shop: farming__p3
+cooked_cod:
+  shop: food__p2
   item: C
   amount: 1
-suspicious_stew:
-  shop: farming__p3
+salmon:
+  shop: food__p2
   item: D
   amount: 1
-sweet_berries:
-  shop: farming__p3
+cooked_salmon:
+  shop: food__p2
   item: E
   amount: 1
 tropical_fish:
-  shop: farming__p3
+  shop: food__p2
   item: F
   amount: 1
-wheat:
-  shop: farming__p3
+pufferfish:
+  shop: food__p2
   item: G
   amount: 1
-brain_coral:
-  shop: fish
+bread:
+  shop: food__p2
+  item: H
+  amount: 1
+cookie:
+  shop: food__p2
+  item: I
+  amount: 1
+cake:
+  shop: food__p2
+  item: J
+  amount: 1
+pumpkin_pie:
+  shop: food__p2
+  item: K
+  amount: 1
+rotten_flesh:
+  shop: food__p2
+  item: L
+  amount: 1
+spider_eye:
+  shop: food__p2
+  item: M
+  amount: 1
+mushroom_stew:
+  shop: food__p2
+  item: 'N'
+  amount: 1
+beetroot_soup:
+  shop: food__p2
+  item: O
+  amount: 1
+rabbit_stew:
+  shop: food__p2
+  item: P
+  amount: 1
+honey_bottle:
+  shop: food__p2
+  item: Q
+  amount: 1
+suspicious_stew:
+  shop: food__p2
+  item: R
+  amount: 1
+torch:
+  shop: functional
   item: A
   amount: 1
-brain_coral_block:
-  shop: fish
+soul_torch:
+  shop: functional
   item: B
   amount: 1
-brain_coral_fan:
-  shop: fish
+copper_torch:
+  shop: functional
   item: C
   amount: 1
-bubble_coral:
-  shop: fish
+redstone_torch:
+  shop: functional
   item: D
   amount: 1
-bubble_coral_block:
-  shop: fish
+lantern:
+  shop: functional
   item: E
   amount: 1
-bubble_coral_fan:
-  shop: fish
+soul_lantern:
+  shop: functional
   item: F
+  amount: 1
+copper_lantern:
+  shop: functional
+  item: G
+  amount: 1
+exposed_copper_lantern:
+  shop: functional
+  item: H
+  amount: 1
+weathered_copper_lantern:
+  shop: functional
+  item: I
+  amount: 1
+oxidized_copper_lantern:
+  shop: functional
+  item: J
+  amount: 1
+waxed_copper_lantern:
+  shop: functional
+  item: K
+  amount: 1
+waxed_exposed_copper_lantern:
+  shop: functional
+  item: L
+  amount: 1
+waxed_weathered_copper_lantern:
+  shop: functional
+  item: M
+  amount: 1
+waxed_oxidized_copper_lantern:
+  shop: functional
+  item: 'N'
+  amount: 1
+end_rod:
+  shop: functional
+  item: O
+  amount: 1
+redstone_lamp:
+  shop: functional
+  item: P
+  amount: 1
+crafting_table:
+  shop: functional
+  item: Q
+  amount: 1
+stonecutter:
+  shop: functional
+  item: R
+  amount: 1
+cartography_table:
+  shop: functional
+  item: S
+  amount: 1
+fletching_table:
+  shop: functional
+  item: T
+  amount: 1
+smithing_table:
+  shop: functional
+  item: U
+  amount: 1
+grindstone:
+  shop: functional__p2
+  item: A
+  amount: 1
+loom:
+  shop: functional__p2
+  item: B
+  amount: 1
+furnace:
+  shop: functional__p2
+  item: C
+  amount: 1
+smoker:
+  shop: functional__p2
+  item: D
+  amount: 1
+blast_furnace:
+  shop: functional__p2
+  item: E
+  amount: 1
+campfire:
+  shop: functional__p2
+  item: F
+  amount: 1
+soul_campfire:
+  shop: functional__p2
+  item: G
+  amount: 1
+anvil:
+  shop: functional__p2
+  item: H
+  amount: 1
+chipped_anvil:
+  shop: functional__p2
+  item: I
+  amount: 1
+damaged_anvil:
+  shop: functional__p2
+  item: J
+  amount: 1
+composter:
+  shop: functional__p2
+  item: K
+  amount: 1
+note_block:
+  shop: functional__p2
+  item: L
+  amount: 1
+jukebox:
+  shop: functional__p2
+  item: M
+  amount: 1
+enchanting_table:
+  shop: functional__p2
+  item: 'N'
+  amount: 1
+end_crystal:
+  shop: functional__p2
+  item: O
+  amount: 1
+brewing_stand:
+  shop: functional__p2
+  item: P
+  amount: 1
+cauldron:
+  shop: functional__p2
+  item: Q
+  amount: 1
+bell:
+  shop: functional__p2
+  item: R
+  amount: 1
+beacon:
+  shop: functional__p2
+  item: S
   amount: 1
 conduit:
-  shop: fish
-  item: G
-  amount: 1
-dark_prismarine:
-  shop: fish
-  item: H
-  amount: 1
-dark_prismarine_slab:
-  shop: fish
-  item: I
-  amount: 1
-dark_prismarine_stairs:
-  shop: fish
-  item: J
-  amount: 1
-dead_brain_coral:
-  shop: fish
-  item: K
-  amount: 1
-dead_brain_coral_block:
-  shop: fish
-  item: L
-  amount: 1
-dead_brain_coral_fan:
-  shop: fish
-  item: M
-  amount: 1
-dead_bubble_coral:
-  shop: fish
-  item: 'N'
-  amount: 1
-dead_bubble_coral_block:
-  shop: fish
-  item: O
-  amount: 1
-dead_bubble_coral_fan:
-  shop: fish
-  item: P
-  amount: 1
-dead_fire_coral:
-  shop: fish
-  item: Q
-  amount: 1
-dead_fire_coral_block:
-  shop: fish
-  item: R
-  amount: 1
-dead_fire_coral_fan:
-  shop: fish
-  item: S
-  amount: 1
-dead_horn_coral:
-  shop: fish
+  shop: functional__p2
   item: T
   amount: 1
-dead_horn_coral_block:
-  shop: fish
+lodestone:
+  shop: functional__p2
   item: U
   amount: 1
-dead_horn_coral_fan:
-  shop: fish__p2
+ladder:
+  shop: functional__p3
   item: A
   amount: 1
-dead_tube_coral:
-  shop: fish__p2
+scaffolding:
+  shop: functional__p3
   item: B
   amount: 1
-dead_tube_coral_block:
-  shop: fish__p2
+beehive:
+  shop: functional__p3
   item: C
   amount: 1
-dead_tube_coral_fan:
-  shop: fish__p2
+lightning_rod:
+  shop: functional__p3
   item: D
   amount: 1
-fire_coral:
-  shop: fish__p2
+exposed_lightning_rod:
+  shop: functional__p3
   item: E
   amount: 1
-fire_coral_block:
-  shop: fish__p2
+weathered_lightning_rod:
+  shop: functional__p3
   item: F
   amount: 1
-fire_coral_fan:
-  shop: fish__p2
+oxidized_lightning_rod:
+  shop: functional__p3
   item: G
   amount: 1
-heart_of_the_sea:
-  shop: fish__p2
+waxed_lightning_rod:
+  shop: functional__p3
   item: H
   amount: 1
-horn_coral:
-  shop: fish__p2
+waxed_exposed_lightning_rod:
+  shop: functional__p3
   item: I
   amount: 1
-horn_coral_block:
-  shop: fish__p2
+waxed_weathered_lightning_rod:
+  shop: functional__p3
   item: J
   amount: 1
-horn_coral_fan:
-  shop: fish__p2
-  item: K
-  amount: 1
-kelp:
-  shop: fish__p2
-  item: L
-  amount: 1
-prismarine:
-  shop: fish__p2
-  item: M
-  amount: 1
-prismarine_brick_slab:
-  shop: fish__p2
-  item: 'N'
-  amount: 1
-prismarine_brick_stairs:
-  shop: fish__p2
-  item: O
-  amount: 1
-prismarine_bricks:
-  shop: fish__p2
-  item: P
-  amount: 1
-prismarine_crystals:
-  shop: fish__p2
-  item: Q
-  amount: 1
-prismarine_shard:
-  shop: fish__p2
-  item: R
-  amount: 1
-prismarine_slab:
-  shop: fish__p2
-  item: S
-  amount: 1
-prismarine_stairs:
-  shop: fish__p2
-  item: T
-  amount: 1
-prismarine_wall:
-  shop: fish__p2
-  item: U
-  amount: 1
-sea_pickle:
-  shop: fish__p3
-  item: A
-  amount: 1
-seagrass:
-  shop: fish__p3
-  item: B
-  amount: 1
-sponge:
-  shop: fish__p3
-  item: C
-  amount: 1
-tube_coral:
-  shop: fish__p3
-  item: D
-  amount: 1
-tube_coral_block:
-  shop: fish__p3
-  item: E
-  amount: 1
-tube_coral_fan:
-  shop: fish__p3
-  item: F
-  amount: 1
-turtle_egg:
-  shop: fish__p3
-  item: G
-  amount: 1
-wet_sponge:
-  shop: fish__p3
-  item: H
-  amount: 1
-acacia_leaves:
-  shop: flowers
-  item: A
-  amount: 1
-acacia_sapling:
-  shop: flowers
-  item: B
-  amount: 1
-allium:
-  shop: flowers
-  item: C
-  amount: 1
-azalea:
-  shop: flowers
-  item: D
-  amount: 1
-azalea_leaves:
-  shop: flowers
-  item: E
-  amount: 1
-azure_bluet:
-  shop: flowers
-  item: F
-  amount: 1
-bamboo:
-  shop: flowers
-  item: G
-  amount: 1
-beetroot_seeds:
-  shop: flowers
-  item: H
-  amount: 1
-big_dripleaf:
-  shop: flowers
-  item: I
-  amount: 1
-birch_leaves:
-  shop: flowers
-  item: J
-  amount: 1
-birch_sapling:
-  shop: flowers
-  item: K
-  amount: 1
-blue_orchid:
-  shop: flowers
-  item: L
-  amount: 1
-bone_block:
-  shop: flowers
-  item: M
-  amount: 1
-bone_meal:
-  shop: flowers
-  item: 'N'
-  amount: 1
-brown_mushroom:
-  shop: flowers
-  item: O
-  amount: 1
-brown_mushroom_block:
-  shop: flowers
-  item: P
-  amount: 1
-bush:
-  shop: flowers
-  item: Q
-  amount: 1
-cactus:
-  shop: flowers
-  item: R
-  amount: 1
-cactus_flower:
-  shop: flowers
-  item: S
-  amount: 1
-carved_pumpkin:
-  shop: flowers
-  item: T
-  amount: 1
-cherry_leaves:
-  shop: flowers
-  item: U
-  amount: 1
-cherry_sapling:
-  shop: flowers__p2
-  item: A
-  amount: 1
-chorus_flower:
-  shop: flowers__p2
-  item: B
-  amount: 1
-closed_eyeblossom:
-  shop: flowers__p2
-  item: C
-  amount: 1
-cocoa_beans:
-  shop: flowers__p2
-  item: D
-  amount: 1
-cornflower:
-  shop: flowers__p2
-  item: E
-  amount: 1
-dandelion:
-  shop: flowers__p2
-  item: F
-  amount: 1
-dark_oak_leaves:
-  shop: flowers__p2
-  item: G
-  amount: 1
-dark_oak_sapling:
-  shop: flowers__p2
-  item: H
-  amount: 1
-dead_bush:
-  shop: flowers__p2
-  item: I
-  amount: 1
-fern:
-  shop: flowers__p2
-  item: J
-  amount: 1
-firefly_bush:
-  shop: flowers__p2
+waxed_oxidized_lightning_rod:
+  shop: functional__p3
   item: K
   amount: 1
 flower_pot:
-  shop: flowers__p2
+  shop: functional__p3
   item: L
   amount: 1
-flowering_azalea:
-  shop: flowers__p2
+decorated_pot:
+  shop: functional__p3
   item: M
   amount: 1
-flowering_azalea_leaves:
-  shop: flowers__p2
+armor_stand:
+  shop: functional__p3
   item: 'N'
   amount: 1
-glow_lichen:
-  shop: flowers__p2
+item_frame:
+  shop: functional__p3
   item: O
   amount: 1
-hanging_roots:
-  shop: flowers__p2
+glow_item_frame:
+  shop: functional__p3
   item: P
   amount: 1
-jungle_leaves:
-  shop: flowers__p2
+painting:
+  shop: functional__p3
   item: Q
   amount: 1
-jungle_sapling:
-  shop: flowers__p2
+bookshelf:
+  shop: functional__p3
   item: R
   amount: 1
-large_fern:
-  shop: flowers__p2
+chiseled_bookshelf:
+  shop: functional__p3
   item: S
   amount: 1
-leaf_litter:
-  shop: flowers__p2
+oak_shelf:
+  shop: functional__p3
   item: T
   amount: 1
-lilac:
-  shop: flowers__p2
+spruce_shelf:
+  shop: functional__p3
   item: U
   amount: 1
-lily_of_the_valley:
-  shop: flowers__p3
+birch_shelf:
+  shop: functional__p4
   item: A
   amount: 1
-lily_pad:
-  shop: flowers__p3
+jungle_shelf:
+  shop: functional__p4
   item: B
   amount: 1
-mangrove_leaves:
-  shop: flowers__p3
+acacia_shelf:
+  shop: functional__p4
   item: C
   amount: 1
-mangrove_propagule:
-  shop: flowers__p3
+dark_oak_shelf:
+  shop: functional__p4
   item: D
   amount: 1
-mangrove_roots:
-  shop: flowers__p3
+mangrove_shelf:
+  shop: functional__p4
   item: E
   amount: 1
-melon_seeds:
-  shop: flowers__p3
+cherry_shelf:
+  shop: functional__p4
   item: F
   amount: 1
-moss_block:
-  shop: flowers__p3
+pale_oak_shelf:
+  shop: functional__p4
   item: G
   amount: 1
-moss_carpet:
-  shop: flowers__p3
+bamboo_shelf:
+  shop: functional__p4
   item: H
   amount: 1
-muddy_mangrove_roots:
-  shop: flowers__p3
+crimson_shelf:
+  shop: functional__p4
   item: I
   amount: 1
-mushroom_stem:
-  shop: flowers__p3
+warped_shelf:
+  shop: functional__p4
   item: J
   amount: 1
-oak_leaves:
-  shop: flowers__p3
+lectern:
+  shop: functional__p4
   item: K
   amount: 1
-oak_sapling:
-  shop: flowers__p3
+oak_sign:
+  shop: functional__p4
   item: L
   amount: 1
-open_eyeblossom:
-  shop: flowers__p3
+oak_hanging_sign:
+  shop: functional__p4
   item: M
   amount: 1
-orange_tulip:
-  shop: flowers__p3
+spruce_sign:
+  shop: functional__p4
   item: 'N'
   amount: 1
-oxeye_daisy:
-  shop: flowers__p3
+spruce_hanging_sign:
+  shop: functional__p4
   item: O
   amount: 1
-pale_hanging_moss:
-  shop: flowers__p3
+birch_sign:
+  shop: functional__p4
   item: P
   amount: 1
-pale_moss_block:
-  shop: flowers__p3
+birch_hanging_sign:
+  shop: functional__p4
   item: Q
   amount: 1
-pale_moss_carpet:
-  shop: flowers__p3
+jungle_sign:
+  shop: functional__p4
   item: R
   amount: 1
-pale_oak_leaves:
-  shop: flowers__p3
+jungle_hanging_sign:
+  shop: functional__p4
   item: S
   amount: 1
-pale_oak_sapling:
-  shop: flowers__p3
+acacia_sign:
+  shop: functional__p4
   item: T
   amount: 1
-peony:
-  shop: flowers__p3
+acacia_hanging_sign:
+  shop: functional__p4
   item: U
   amount: 1
-pink_petals:
-  shop: flowers__p4
+dark_oak_sign:
+  shop: functional__p5
   item: A
   amount: 1
-pink_tulip:
-  shop: flowers__p4
+dark_oak_hanging_sign:
+  shop: functional__p5
   item: B
   amount: 1
-pitcher_plant:
-  shop: flowers__p4
+mangrove_sign:
+  shop: functional__p5
   item: C
   amount: 1
-pitcher_pod:
-  shop: flowers__p4
+mangrove_hanging_sign:
+  shop: functional__p5
   item: D
   amount: 1
-poppy:
-  shop: flowers__p4
+cherry_sign:
+  shop: functional__p5
   item: E
   amount: 1
-pumpkin:
-  shop: flowers__p4
+cherry_hanging_sign:
+  shop: functional__p5
   item: F
   amount: 1
-pumpkin_seeds:
-  shop: flowers__p4
+pale_oak_sign:
+  shop: functional__p5
   item: G
   amount: 1
-red_mushroom:
-  shop: flowers__p4
+pale_oak_hanging_sign:
+  shop: functional__p5
   item: H
   amount: 1
-red_mushroom_block:
-  shop: flowers__p4
+bamboo_sign:
+  shop: functional__p5
   item: I
   amount: 1
-red_tulip:
-  shop: flowers__p4
+bamboo_hanging_sign:
+  shop: functional__p5
   item: J
   amount: 1
-rose_bush:
-  shop: flowers__p4
+crimson_sign:
+  shop: functional__p5
   item: K
   amount: 1
-short_dry_grass:
-  shop: flowers__p4
+crimson_hanging_sign:
+  shop: functional__p5
   item: L
   amount: 1
-short_grass:
-  shop: flowers__p4
+warped_sign:
+  shop: functional__p5
   item: M
   amount: 1
-small_dripleaf:
-  shop: flowers__p4
+warped_hanging_sign:
+  shop: functional__p5
   item: 'N'
   amount: 1
-spore_blossom:
-  shop: flowers__p4
+chest:
+  shop: functional__p5
   item: O
   amount: 1
-spruce_leaves:
-  shop: flowers__p4
+copper_chest:
+  shop: functional__p5
   item: P
   amount: 1
-spruce_sapling:
-  shop: flowers__p4
+exposed_copper_chest:
+  shop: functional__p5
   item: Q
   amount: 1
-sugar_cane:
-  shop: flowers__p4
+weathered_copper_chest:
+  shop: functional__p5
   item: R
   amount: 1
-sunflower:
-  shop: flowers__p4
+oxidized_copper_chest:
+  shop: functional__p5
   item: S
   amount: 1
-tall_dry_grass:
-  shop: flowers__p4
+waxed_copper_chest:
+  shop: functional__p5
   item: T
   amount: 1
-torchflower:
-  shop: flowers__p4
+waxed_exposed_copper_chest:
+  shop: functional__p5
   item: U
   amount: 1
-torchflower_seeds:
-  shop: flowers__p5
+waxed_weathered_copper_chest:
+  shop: functional__p6
   item: A
   amount: 1
-twisting_vines:
-  shop: flowers__p5
+waxed_oxidized_copper_chest:
+  shop: functional__p6
   item: B
   amount: 1
-vine:
-  shop: flowers__p5
+barrel:
+  shop: functional__p6
   item: C
   amount: 1
-weeping_vines:
-  shop: flowers__p5
+ender_chest:
+  shop: functional__p6
   item: D
   amount: 1
-wheat_seeds:
-  shop: flowers__p5
+respawn_anchor:
+  shop: functional__p6
   item: E
   amount: 1
-white_tulip:
-  shop: flowers__p5
+skeleton_skull:
+  shop: functional__p6
   item: F
   amount: 1
-wildflowers:
-  shop: flowers__p5
+wither_skeleton_skull:
+  shop: functional__p6
   item: G
   amount: 1
-black_stained_glass:
-  shop: glass
-  item: A
-  amount: 1
-black_stained_glass_pane:
-  shop: glass
-  item: B
-  amount: 1
-blue_stained_glass:
-  shop: glass
-  item: C
-  amount: 1
-blue_stained_glass_pane:
-  shop: glass
-  item: D
-  amount: 1
-brown_stained_glass:
-  shop: glass
-  item: E
-  amount: 1
-brown_stained_glass_pane:
-  shop: glass
-  item: F
-  amount: 1
-cyan_stained_glass:
-  shop: glass
-  item: G
-  amount: 1
-cyan_stained_glass_pane:
-  shop: glass
+zombie_head:
+  shop: functional__p6
   item: H
   amount: 1
-glass:
-  shop: glass
+creeper_head:
+  shop: functional__p6
   item: I
   amount: 1
-glass_pane:
-  shop: glass
+piglin_head:
+  shop: functional__p6
   item: J
   amount: 1
-gray_stained_glass:
-  shop: glass
+dragon_head:
+  shop: functional__p6
   item: K
   amount: 1
-gray_stained_glass_pane:
-  shop: glass
+dragon_egg:
+  shop: functional__p6
   item: L
   amount: 1
-green_stained_glass:
-  shop: glass
+ender_eye:
+  shop: functional__p6
   item: M
   amount: 1
-green_stained_glass_pane:
-  shop: glass
+copper_golem_statue:
+  shop: functional__p6
   item: 'N'
   amount: 1
-light_blue_stained_glass:
-  shop: glass
+exposed_copper_golem_statue:
+  shop: functional__p6
   item: O
   amount: 1
-light_blue_stained_glass_pane:
-  shop: glass
+weathered_copper_golem_statue:
+  shop: functional__p6
   item: P
   amount: 1
-light_gray_stained_glass:
-  shop: glass
+oxidized_copper_golem_statue:
+  shop: functional__p6
   item: Q
   amount: 1
-light_gray_stained_glass_pane:
-  shop: glass
+waxed_copper_golem_statue:
+  shop: functional__p6
   item: R
   amount: 1
-lime_stained_glass:
-  shop: glass
+waxed_exposed_copper_golem_statue:
+  shop: functional__p6
   item: S
   amount: 1
-lime_stained_glass_pane:
-  shop: glass
+waxed_weathered_copper_golem_statue:
+  shop: functional__p6
   item: T
   amount: 1
-magenta_stained_glass:
-  shop: glass
+waxed_oxidized_copper_golem_statue:
+  shop: functional__p6
   item: U
   amount: 1
-magenta_stained_glass_pane:
-  shop: glass__p2
+creaking_heart:
+  shop: functional__p7
   item: A
   amount: 1
-orange_stained_glass:
-  shop: glass__p2
-  item: B
-  amount: 1
-orange_stained_glass_pane:
-  shop: glass__p2
-  item: C
-  amount: 1
-pink_stained_glass:
-  shop: glass__p2
-  item: D
-  amount: 1
-pink_stained_glass_pane:
-  shop: glass__p2
-  item: E
-  amount: 1
-purple_stained_glass:
-  shop: glass__p2
-  item: F
-  amount: 1
-purple_stained_glass_pane:
-  shop: glass__p2
-  item: G
-  amount: 1
-red_stained_glass:
-  shop: glass__p2
-  item: H
-  amount: 1
-red_stained_glass_pane:
-  shop: glass__p2
-  item: I
-  amount: 1
-white_stained_glass:
-  shop: glass__p2
-  item: J
-  amount: 1
-white_stained_glass_pane:
-  shop: glass__p2
-  item: K
-  amount: 1
-yellow_stained_glass:
-  shop: glass__p2
-  item: L
-  amount: 1
-yellow_stained_glass_pane:
-  shop: glass__p2
-  item: M
-  amount: 1
-acacia_log:
-  shop: logs
+coal:
+  shop: ingredients
   item: A
   amount: 1
-acacia_planks:
-  shop: logs
+charcoal:
+  shop: ingredients
   item: B
   amount: 1
-acacia_slab:
-  shop: logs
+raw_copper:
+  shop: ingredients
   item: C
   amount: 1
-acacia_stairs:
-  shop: logs
+raw_iron:
+  shop: ingredients
   item: D
   amount: 1
-acacia_wood:
-  shop: logs
+raw_gold:
+  shop: ingredients
   item: E
   amount: 1
-bamboo_block:
-  shop: logs
-  item: F
-  amount: 1
-bamboo_mosaic:
-  shop: logs
-  item: G
-  amount: 1
-bamboo_mosaic_slab:
-  shop: logs
-  item: H
-  amount: 1
-bamboo_mosaic_stairs:
-  shop: logs
+quartz:
+  shop: ingredients
   item: I
   amount: 1
-bamboo_planks:
-  shop: logs
+amethyst_shard:
+  shop: ingredients
   item: J
   amount: 1
-bamboo_slab:
-  shop: logs
+copper_nugget:
+  shop: ingredients
   item: K
   amount: 1
-bamboo_stairs:
-  shop: logs
+iron_nugget:
+  shop: ingredients
   item: L
   amount: 1
-birch_log:
-  shop: logs
+gold_nugget:
+  shop: ingredients
   item: M
   amount: 1
-birch_planks:
-  shop: logs
+netherite_scrap:
+  shop: ingredients
+  item: Q
+  amount: 1
+netherite_ingot:
+  shop: ingredients
+  item: R
+  amount: 1
+stick:
+  shop: ingredients
+  item: S
+  amount: 1
+flint:
+  shop: ingredients
+  item: T
+  amount: 1
+wheat:
+  shop: ingredients
+  item: U
+  amount: 1
+bone:
+  shop: ingredients__p2
+  item: A
+  amount: 1
+feather:
+  shop: ingredients__p2
+  item: B
+  amount: 1
+leather:
+  shop: ingredients__p2
+  item: C
+  amount: 1
+rabbit_hide:
+  shop: ingredients__p2
+  item: D
+  amount: 1
+honeycomb:
+  shop: ingredients__p2
+  item: E
+  amount: 1
+resin_clump:
+  shop: ingredients__p2
+  item: F
+  amount: 1
+ink_sac:
+  shop: ingredients__p2
+  item: G
+  amount: 1
+glow_ink_sac:
+  shop: ingredients__p2
+  item: H
+  amount: 1
+turtle_scute:
+  shop: ingredients__p2
+  item: I
+  amount: 1
+armadillo_scute:
+  shop: ingredients__p2
+  item: J
+  amount: 1
+slime_ball:
+  shop: ingredients__p2
+  item: K
+  amount: 1
+clay_ball:
+  shop: ingredients__p2
+  item: L
+  amount: 1
+prismarine_shard:
+  shop: ingredients__p2
+  item: M
+  amount: 1
+prismarine_crystals:
+  shop: ingredients__p2
   item: 'N'
   amount: 1
-birch_slab:
-  shop: logs
+nautilus_shell:
+  shop: ingredients__p2
   item: O
   amount: 1
-birch_stairs:
-  shop: logs
+heart_of_the_sea:
+  shop: ingredients__p2
   item: P
   amount: 1
-birch_wood:
-  shop: logs
+blaze_rod:
+  shop: ingredients__p2
   item: Q
   amount: 1
-cherry_log:
-  shop: logs
+breeze_rod:
+  shop: ingredients__p2
   item: R
   amount: 1
-cherry_planks:
-  shop: logs
+heavy_core:
+  shop: ingredients__p2
   item: S
   amount: 1
-cherry_slab:
-  shop: logs
+nether_star:
+  shop: ingredients__p2
   item: T
   amount: 1
-cherry_stairs:
-  shop: logs
+shulker_shell:
+  shop: ingredients__p2
   item: U
   amount: 1
-cherry_wood:
-  shop: logs__p2
+popped_chorus_fruit:
+  shop: ingredients__p3
   item: A
   amount: 1
-crimson_hyphae:
-  shop: logs__p2
-  item: B
-  amount: 1
-crimson_planks:
-  shop: logs__p2
+disc_fragment_5:
+  shop: ingredients__p3
   item: C
   amount: 1
-crimson_slab:
-  shop: logs__p2
+white_dye:
+  shop: ingredients__p3
   item: D
   amount: 1
-crimson_stairs:
-  shop: logs__p2
+orange_dye:
+  shop: ingredients__p3
   item: E
   amount: 1
-crimson_stem:
-  shop: logs__p2
+magenta_dye:
+  shop: ingredients__p3
   item: F
   amount: 1
-dark_oak_log:
-  shop: logs__p2
+light_blue_dye:
+  shop: ingredients__p3
   item: G
   amount: 1
-dark_oak_planks:
-  shop: logs__p2
+yellow_dye:
+  shop: ingredients__p3
   item: H
   amount: 1
-dark_oak_slab:
-  shop: logs__p2
+lime_dye:
+  shop: ingredients__p3
   item: I
   amount: 1
-dark_oak_stairs:
-  shop: logs__p2
+pink_dye:
+  shop: ingredients__p3
   item: J
   amount: 1
-dark_oak_wood:
-  shop: logs__p2
+gray_dye:
+  shop: ingredients__p3
   item: K
   amount: 1
-jungle_log:
-  shop: logs__p2
+light_gray_dye:
+  shop: ingredients__p3
   item: L
   amount: 1
-jungle_planks:
-  shop: logs__p2
+cyan_dye:
+  shop: ingredients__p3
   item: M
   amount: 1
-jungle_slab:
-  shop: logs__p2
+purple_dye:
+  shop: ingredients__p3
   item: 'N'
   amount: 1
-jungle_stairs:
-  shop: logs__p2
+blue_dye:
+  shop: ingredients__p3
   item: O
   amount: 1
-jungle_wood:
-  shop: logs__p2
+brown_dye:
+  shop: ingredients__p3
   item: P
   amount: 1
-mangrove_log:
-  shop: logs__p2
+green_dye:
+  shop: ingredients__p3
   item: Q
   amount: 1
-mangrove_planks:
-  shop: logs__p2
+red_dye:
+  shop: ingredients__p3
   item: R
   amount: 1
-mangrove_slab:
-  shop: logs__p2
+black_dye:
+  shop: ingredients__p3
   item: S
   amount: 1
-mangrove_stairs:
-  shop: logs__p2
+bowl:
+  shop: ingredients__p3
   item: T
   amount: 1
-mangrove_wood:
-  shop: logs__p2
+brick:
+  shop: ingredients__p3
   item: U
   amount: 1
-oak_log:
-  shop: logs__p3
+nether_brick:
+  shop: ingredients__p4
   item: A
   amount: 1
-oak_planks:
-  shop: logs__p3
+resin_brick:
+  shop: ingredients__p4
   item: B
   amount: 1
-oak_slab:
-  shop: logs__p3
+paper:
+  shop: ingredients__p4
   item: C
   amount: 1
-oak_stairs:
-  shop: logs__p3
+book:
+  shop: ingredients__p4
   item: D
   amount: 1
-oak_wood:
-  shop: logs__p3
+firework_star:
+  shop: ingredients__p4
   item: E
   amount: 1
-pale_oak_log:
-  shop: logs__p3
+glass_bottle:
+  shop: ingredients__p4
   item: F
   amount: 1
-pale_oak_planks:
-  shop: logs__p3
+glowstone_dust:
+  shop: ingredients__p4
   item: G
   amount: 1
-pale_oak_slab:
-  shop: logs__p3
+gunpowder:
+  shop: ingredients__p4
   item: H
   amount: 1
-pale_oak_stairs:
-  shop: logs__p3
+dragon_breath:
+  shop: ingredients__p4
   item: I
   amount: 1
-pale_oak_wood:
-  shop: logs__p3
+fermented_spider_eye:
+  shop: ingredients__p4
   item: J
   amount: 1
-spruce_log:
-  shop: logs__p3
+blaze_powder:
+  shop: ingredients__p4
   item: K
   amount: 1
-spruce_planks:
-  shop: logs__p3
+sugar:
+  shop: ingredients__p4
   item: L
   amount: 1
-spruce_slab:
-  shop: logs__p3
+rabbit_foot:
+  shop: ingredients__p4
   item: M
   amount: 1
-spruce_stairs:
-  shop: logs__p3
+glistering_melon_slice:
+  shop: ingredients__p4
   item: 'N'
   amount: 1
-spruce_wood:
-  shop: logs__p3
+magma_cream:
+  shop: ingredients__p4
   item: O
   amount: 1
-stripped_acacia_log:
-  shop: logs__p3
+ghast_tear:
+  shop: ingredients__p4
   item: P
   amount: 1
-stripped_acacia_wood:
-  shop: logs__p3
+phantom_membrane:
+  shop: ingredients__p4
   item: Q
   amount: 1
-stripped_bamboo_block:
-  shop: logs__p3
+field_masoned_banner_pattern:
+  shop: ingredients__p4
   item: R
   amount: 1
-stripped_birch_log:
-  shop: logs__p3
+bordure_indented_banner_pattern:
+  shop: ingredients__p4
   item: S
   amount: 1
-stripped_birch_wood:
-  shop: logs__p3
+flower_banner_pattern:
+  shop: ingredients__p4
   item: T
   amount: 1
-stripped_cherry_log:
-  shop: logs__p3
+creeper_banner_pattern:
+  shop: ingredients__p4
   item: U
   amount: 1
-stripped_cherry_wood:
-  shop: logs__p4
+skull_banner_pattern:
+  shop: ingredients__p5
   item: A
   amount: 1
-stripped_crimson_hyphae:
-  shop: logs__p4
+mojang_banner_pattern:
+  shop: ingredients__p5
   item: B
   amount: 1
-stripped_crimson_stem:
-  shop: logs__p4
+globe_banner_pattern:
+  shop: ingredients__p5
   item: C
   amount: 1
-stripped_dark_oak_log:
-  shop: logs__p4
+piglin_banner_pattern:
+  shop: ingredients__p5
   item: D
   amount: 1
-stripped_dark_oak_wood:
-  shop: logs__p4
+flow_banner_pattern:
+  shop: ingredients__p5
   item: E
   amount: 1
-stripped_jungle_log:
-  shop: logs__p4
+guster_banner_pattern:
+  shop: ingredients__p5
   item: F
   amount: 1
-stripped_jungle_wood:
-  shop: logs__p4
+angler_pottery_sherd:
+  shop: ingredients__p5
   item: G
   amount: 1
-stripped_mangrove_log:
-  shop: logs__p4
+archer_pottery_sherd:
+  shop: ingredients__p5
   item: H
   amount: 1
-stripped_mangrove_wood:
-  shop: logs__p4
+arms_up_pottery_sherd:
+  shop: ingredients__p5
   item: I
   amount: 1
-stripped_oak_log:
-  shop: logs__p4
+blade_pottery_sherd:
+  shop: ingredients__p5
   item: J
   amount: 1
-stripped_oak_wood:
-  shop: logs__p4
+brewer_pottery_sherd:
+  shop: ingredients__p5
   item: K
   amount: 1
-stripped_pale_oak_log:
-  shop: logs__p4
+burn_pottery_sherd:
+  shop: ingredients__p5
   item: L
   amount: 1
-stripped_pale_oak_wood:
-  shop: logs__p4
+danger_pottery_sherd:
+  shop: ingredients__p5
   item: M
   amount: 1
-stripped_spruce_log:
-  shop: logs__p4
+explorer_pottery_sherd:
+  shop: ingredients__p5
   item: 'N'
   amount: 1
-stripped_spruce_wood:
-  shop: logs__p4
+flow_pottery_sherd:
+  shop: ingredients__p5
   item: O
   amount: 1
-stripped_warped_hyphae:
-  shop: logs__p4
+friend_pottery_sherd:
+  shop: ingredients__p5
   item: P
   amount: 1
-stripped_warped_stem:
-  shop: logs__p4
+guster_pottery_sherd:
+  shop: ingredients__p5
   item: Q
   amount: 1
-warped_hyphae:
-  shop: logs__p4
+heart_pottery_sherd:
+  shop: ingredients__p5
   item: R
   amount: 1
-warped_planks:
-  shop: logs__p4
+heartbreak_pottery_sherd:
+  shop: ingredients__p5
   item: S
   amount: 1
-warped_slab:
-  shop: logs__p4
+howl_pottery_sherd:
+  shop: ingredients__p5
   item: T
   amount: 1
-warped_stairs:
-  shop: logs__p4
+miner_pottery_sherd:
+  shop: ingredients__p5
   item: U
   amount: 1
-warped_stem:
-  shop: logs__p5
+mourner_pottery_sherd:
+  shop: ingredients__p6
   item: A
+  amount: 1
+plenty_pottery_sherd:
+  shop: ingredients__p6
+  item: B
+  amount: 1
+prize_pottery_sherd:
+  shop: ingredients__p6
+  item: C
+  amount: 1
+scrape_pottery_sherd:
+  shop: ingredients__p6
+  item: D
+  amount: 1
+sheaf_pottery_sherd:
+  shop: ingredients__p6
+  item: E
+  amount: 1
+shelter_pottery_sherd:
+  shop: ingredients__p6
+  item: F
+  amount: 1
+skull_pottery_sherd:
+  shop: ingredients__p6
+  item: G
+  amount: 1
+snort_pottery_sherd:
+  shop: ingredients__p6
+  item: H
+  amount: 1
+netherite_upgrade_smithing_template:
+  shop: ingredients__p6
+  item: I
+  amount: 1
+sentry_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: J
+  amount: 1
+vex_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: K
+  amount: 1
+wild_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: L
+  amount: 1
+coast_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: M
+  amount: 1
+dune_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: 'N'
+  amount: 1
+wayfinder_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: O
+  amount: 1
+raiser_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: P
+  amount: 1
+shaper_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: Q
+  amount: 1
+host_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: R
+  amount: 1
+ward_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: S
+  amount: 1
+silence_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: T
+  amount: 1
+tide_armor_trim_smithing_template:
+  shop: ingredients__p6
+  item: U
+  amount: 1
+snout_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: A
+  amount: 1
+rib_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: B
+  amount: 1
+eye_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: C
+  amount: 1
+spire_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: D
+  amount: 1
+flow_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: E
+  amount: 1
+bolt_armor_trim_smithing_template:
+  shop: ingredients__p7
+  item: F
+  amount: 1
+experience_bottle:
+  shop: ingredients__p7
+  item: G
+  amount: 1
+trial_key:
+  shop: ingredients__p7
+  item: H
+  amount: 1
+ominous_trial_key:
+  shop: ingredients__p7
+  item: I
+  amount: 1
+goat_horn:
+  shop: ingredients__p7
+  item: J
+  amount: 1
+ominous_bottle:
+  shop: ingredients__p7
+  item: K
   amount: 1
 light:
   shop: mcwws
   item: A
   amount: 1
-amethyst_block:
-  shop: minerals
+grass_block:
+  shop: natural
   item: A
   amount: 1
-amethyst_cluster:
-  shop: minerals
+podzol:
+  shop: natural
   item: B
   amount: 1
-amethyst_shard:
-  shop: minerals
+mycelium:
+  shop: natural
   item: C
   amount: 1
-ancient_debris:
-  shop: minerals
+dirt:
+  shop: natural
   item: D
   amount: 1
-chiseled_copper:
-  shop: minerals
+coarse_dirt:
+  shop: natural
   item: E
   amount: 1
-coal:
-  shop: minerals
+rooted_dirt:
+  shop: natural
   item: F
   amount: 1
-coal_block:
-  shop: minerals
+mud:
+  shop: natural
   item: G
   amount: 1
-coal_ore:
-  shop: minerals
+clay:
+  shop: natural
   item: H
   amount: 1
-copper_bars:
-  shop: minerals
+gravel:
+  shop: natural
   item: I
   amount: 1
-copper_block:
-  shop: minerals
+sand:
+  shop: natural
   item: J
   amount: 1
-copper_chain:
-  shop: minerals
+red_sand:
+  shop: natural
   item: K
   amount: 1
-copper_golem_statue:
-  shop: minerals
+ice:
+  shop: natural
   item: L
   amount: 1
-copper_grate:
-  shop: minerals
+packed_ice:
+  shop: natural
   item: M
   amount: 1
-copper_nugget:
-  shop: minerals
+blue_ice:
+  shop: natural
+  item: 'N'
+  amount: 1
+snow_block:
+  shop: natural
+  item: O
+  amount: 1
+snow:
+  shop: natural
+  item: P
+  amount: 1
+moss_block:
+  shop: natural
+  item: Q
+  amount: 1
+moss_carpet:
+  shop: natural
+  item: R
+  amount: 1
+pale_moss_block:
+  shop: natural
+  item: S
+  amount: 1
+pale_moss_carpet:
+  shop: natural
+  item: T
+  amount: 1
+pale_hanging_moss:
+  shop: natural
+  item: U
+  amount: 1
+pumpkin:
+  shop: natural__p10
+  item: A
+  amount: 1
+carved_pumpkin:
+  shop: natural__p10
+  item: B
+  amount: 1
+jack_o_lantern:
+  shop: natural__p10
+  item: C
+  amount: 1
+hay_block:
+  shop: natural__p10
+  item: D
+  amount: 1
+bee_nest:
+  shop: natural__p10
+  item: E
+  amount: 1
+honeycomb_block:
+  shop: natural__p10
+  item: F
+  amount: 1
+slime_block:
+  shop: natural__p10
+  item: G
+  amount: 1
+honey_block:
+  shop: natural__p10
+  item: H
+  amount: 1
+resin_block:
+  shop: natural__p10
+  item: I
+  amount: 1
+ochre_froglight:
+  shop: natural__p10
+  item: J
+  amount: 1
+verdant_froglight:
+  shop: natural__p10
+  item: K
+  amount: 1
+pearlescent_froglight:
+  shop: natural__p10
+  item: L
+  amount: 1
+sculk:
+  shop: natural__p10
+  item: M
+  amount: 1
+sculk_vein:
+  shop: natural__p10
+  item: 'N'
+  amount: 1
+sculk_catalyst:
+  shop: natural__p10
+  item: O
+  amount: 1
+sculk_shrieker:
+  shop: natural__p10
+  item: P
+  amount: 1
+sculk_sensor:
+  shop: natural__p10
+  item: Q
+  amount: 1
+cobweb:
+  shop: natural__p10
+  item: R
+  amount: 1
+calcite:
+  shop: natural__p2
+  item: A
+  amount: 1
+dripstone_block:
+  shop: natural__p2
+  item: B
+  amount: 1
+pointed_dripstone:
+  shop: natural__p2
+  item: C
+  amount: 1
+magma_block:
+  shop: natural__p2
+  item: D
+  amount: 1
+obsidian:
+  shop: natural__p2
+  item: E
+  amount: 1
+crying_obsidian:
+  shop: natural__p2
+  item: F
+  amount: 1
+crimson_nylium:
+  shop: natural__p2
+  item: G
+  amount: 1
+warped_nylium:
+  shop: natural__p2
+  item: H
+  amount: 1
+soul_sand:
+  shop: natural__p2
+  item: I
+  amount: 1
+soul_soil:
+  shop: natural__p2
+  item: J
+  amount: 1
+bone_block:
+  shop: natural__p2
+  item: K
+  amount: 1
+coal_ore:
+  shop: natural__p2
+  item: L
+  amount: 1
+deepslate_coal_ore:
+  shop: natural__p2
+  item: M
+  amount: 1
+iron_ore:
+  shop: natural__p2
+  item: 'N'
+  amount: 1
+deepslate_iron_ore:
+  shop: natural__p2
   item: O
   amount: 1
 copper_ore:
-  shop: minerals
+  shop: natural__p2
   item: P
   amount: 1
-cut_copper:
-  shop: minerals
+deepslate_copper_ore:
+  shop: natural__p2
   item: Q
   amount: 1
-cut_copper_slab:
-  shop: minerals
+gold_ore:
+  shop: natural__p2
   item: R
   amount: 1
-cut_copper_stairs:
-  shop: minerals
+deepslate_gold_ore:
+  shop: natural__p2
   item: S
   amount: 1
-deepslate_coal_ore:
-  shop: minerals
+redstone_ore:
+  shop: natural__p2
   item: T
   amount: 1
-deepslate_copper_ore:
-  shop: minerals
+deepslate_redstone_ore:
+  shop: natural__p2
   item: U
   amount: 1
-deepslate_diamond_ore:
-  shop: minerals__p2
+emerald_ore:
+  shop: natural__p3
   item: A
   amount: 1
 deepslate_emerald_ore:
-  shop: minerals__p2
+  shop: natural__p3
   item: B
-  amount: 1
-deepslate_gold_ore:
-  shop: minerals__p2
-  item: C
-  amount: 1
-deepslate_iron_ore:
-  shop: minerals__p2
-  item: D
-  amount: 1
-deepslate_lapis_ore:
-  shop: minerals__p2
-  item: E
-  amount: 1
-deepslate_redstone_ore:
-  shop: minerals__p2
-  item: F
-  amount: 1
-diamond_block:
-  shop: minerals__p2
-  item: H
-  amount: 1
-diamond_ore:
-  shop: minerals__p2
-  item: I
-  amount: 1
-emerald_block:
-  shop: minerals__p2
-  item: K
-  amount: 1
-emerald_ore:
-  shop: minerals__p2
-  item: L
-  amount: 1
-exposed_chiseled_copper:
-  shop: minerals__p2
-  item: M
-  amount: 1
-exposed_copper:
-  shop: minerals__p2
-  item: 'N'
-  amount: 1
-exposed_copper_bars:
-  shop: minerals__p2
-  item: O
-  amount: 1
-exposed_copper_chain:
-  shop: minerals__p2
-  item: P
-  amount: 1
-exposed_copper_golem_statue:
-  shop: minerals__p2
-  item: Q
-  amount: 1
-exposed_copper_grate:
-  shop: minerals__p2
-  item: R
-  amount: 1
-exposed_cut_copper:
-  shop: minerals__p2
-  item: S
-  amount: 1
-exposed_cut_copper_slab:
-  shop: minerals__p2
-  item: T
-  amount: 1
-exposed_cut_copper_stairs:
-  shop: minerals__p2
-  item: U
-  amount: 1
-gold_block:
-  shop: minerals__p3
-  item: A
-  amount: 1
-gold_nugget:
-  shop: minerals__p3
-  item: C
-  amount: 1
-gold_ore:
-  shop: minerals__p3
-  item: D
-  amount: 1
-iron_block:
-  shop: minerals__p3
-  item: E
-  amount: 1
-iron_nugget:
-  shop: minerals__p3
-  item: G
-  amount: 1
-iron_ore:
-  shop: minerals__p3
-  item: H
-  amount: 1
-lapis_block:
-  shop: minerals__p3
-  item: I
   amount: 1
 lapis_ore:
-  shop: minerals__p3
-  item: K
+  shop: natural__p3
+  item: C
+  amount: 1
+deepslate_lapis_ore:
+  shop: natural__p3
+  item: D
+  amount: 1
+diamond_ore:
+  shop: natural__p3
+  item: E
+  amount: 1
+deepslate_diamond_ore:
+  shop: natural__p3
+  item: F
   amount: 1
 nether_gold_ore:
-  shop: minerals__p3
-  item: L
-  amount: 1
-netherite_block:
-  shop: minerals__p3
-  item: M
-  amount: 1
-netherite_ingot:
-  shop: minerals__p3
-  item: 'N'
-  amount: 1
-netherite_scrap:
-  shop: minerals__p3
-  item: O
-  amount: 1
-oxidized_chiseled_copper:
-  shop: minerals__p3
-  item: P
-  amount: 1
-oxidized_copper:
-  shop: minerals__p3
-  item: Q
-  amount: 1
-oxidized_copper_bars:
-  shop: minerals__p3
-  item: R
-  amount: 1
-oxidized_copper_chain:
-  shop: minerals__p3
-  item: S
-  amount: 1
-oxidized_copper_golem_statue:
-  shop: minerals__p3
-  item: T
-  amount: 1
-oxidized_copper_grate:
-  shop: minerals__p3
-  item: U
-  amount: 1
-oxidized_cut_copper:
-  shop: minerals__p4
-  item: A
-  amount: 1
-oxidized_cut_copper_slab:
-  shop: minerals__p4
-  item: B
-  amount: 1
-oxidized_cut_copper_stairs:
-  shop: minerals__p4
-  item: C
-  amount: 1
-raw_copper:
-  shop: minerals__p4
-  item: D
-  amount: 1
-raw_copper_block:
-  shop: minerals__p4
-  item: E
-  amount: 1
-raw_gold:
-  shop: minerals__p4
-  item: F
-  amount: 1
-raw_gold_block:
-  shop: minerals__p4
+  shop: natural__p3
   item: G
-  amount: 1
-raw_iron:
-  shop: minerals__p4
-  item: H
-  amount: 1
-raw_iron_block:
-  shop: minerals__p4
-  item: I
-  amount: 1
-redstone_block:
-  shop: minerals__p4
-  item: K
-  amount: 1
-redstone_ore:
-  shop: minerals__p4
-  item: L
-  amount: 1
-waxed_chiseled_copper:
-  shop: minerals__p4
-  item: M
-  amount: 1
-waxed_copper_bars:
-  shop: minerals__p4
-  item: 'N'
-  amount: 1
-waxed_copper_block:
-  shop: minerals__p4
-  item: O
-  amount: 1
-waxed_copper_chain:
-  shop: minerals__p4
-  item: P
-  amount: 1
-waxed_copper_golem_statue:
-  shop: minerals__p4
-  item: Q
-  amount: 1
-waxed_copper_grate:
-  shop: minerals__p4
-  item: R
-  amount: 1
-waxed_cut_copper:
-  shop: minerals__p4
-  item: S
-  amount: 1
-waxed_cut_copper_slab:
-  shop: minerals__p4
-  item: T
-  amount: 1
-waxed_cut_copper_stairs:
-  shop: minerals__p4
-  item: U
-  amount: 1
-waxed_exposed_chiseled_copper:
-  shop: minerals__p5
-  item: A
-  amount: 1
-waxed_exposed_copper:
-  shop: minerals__p5
-  item: B
-  amount: 1
-waxed_exposed_copper_bars:
-  shop: minerals__p5
-  item: C
-  amount: 1
-waxed_exposed_copper_chain:
-  shop: minerals__p5
-  item: D
-  amount: 1
-waxed_exposed_copper_golem_statue:
-  shop: minerals__p5
-  item: E
-  amount: 1
-waxed_exposed_copper_grate:
-  shop: minerals__p5
-  item: F
-  amount: 1
-waxed_exposed_cut_copper:
-  shop: minerals__p5
-  item: G
-  amount: 1
-waxed_exposed_cut_copper_slab:
-  shop: minerals__p5
-  item: H
-  amount: 1
-waxed_exposed_cut_copper_stairs:
-  shop: minerals__p5
-  item: I
-  amount: 1
-waxed_oxidized_chiseled_copper:
-  shop: minerals__p5
-  item: J
-  amount: 1
-waxed_oxidized_copper:
-  shop: minerals__p5
-  item: K
-  amount: 1
-waxed_oxidized_copper_bars:
-  shop: minerals__p5
-  item: L
-  amount: 1
-waxed_oxidized_copper_chain:
-  shop: minerals__p5
-  item: M
-  amount: 1
-waxed_oxidized_copper_golem_statue:
-  shop: minerals__p5
-  item: 'N'
-  amount: 1
-waxed_oxidized_copper_grate:
-  shop: minerals__p5
-  item: O
-  amount: 1
-waxed_oxidized_cut_copper:
-  shop: minerals__p5
-  item: P
-  amount: 1
-waxed_oxidized_cut_copper_slab:
-  shop: minerals__p5
-  item: Q
-  amount: 1
-waxed_oxidized_cut_copper_stairs:
-  shop: minerals__p5
-  item: R
-  amount: 1
-waxed_weathered_chiseled_copper:
-  shop: minerals__p5
-  item: S
-  amount: 1
-waxed_weathered_copper:
-  shop: minerals__p5
-  item: T
-  amount: 1
-waxed_weathered_copper_bars:
-  shop: minerals__p5
-  item: U
-  amount: 1
-waxed_weathered_copper_chain:
-  shop: minerals__p6
-  item: A
-  amount: 1
-waxed_weathered_copper_golem_statue:
-  shop: minerals__p6
-  item: B
-  amount: 1
-waxed_weathered_copper_grate:
-  shop: minerals__p6
-  item: C
-  amount: 1
-waxed_weathered_cut_copper:
-  shop: minerals__p6
-  item: D
-  amount: 1
-waxed_weathered_cut_copper_slab:
-  shop: minerals__p6
-  item: E
-  amount: 1
-waxed_weathered_cut_copper_stairs:
-  shop: minerals__p6
-  item: F
-  amount: 1
-weathered_chiseled_copper:
-  shop: minerals__p6
-  item: G
-  amount: 1
-weathered_copper:
-  shop: minerals__p6
-  item: H
-  amount: 1
-weathered_copper_bars:
-  shop: minerals__p6
-  item: I
-  amount: 1
-weathered_copper_chain:
-  shop: minerals__p6
-  item: J
-  amount: 1
-weathered_copper_golem_statue:
-  shop: minerals__p6
-  item: K
-  amount: 1
-weathered_copper_grate:
-  shop: minerals__p6
-  item: L
-  amount: 1
-weathered_cut_copper:
-  shop: minerals__p6
-  item: M
-  amount: 1
-weathered_cut_copper_slab:
-  shop: minerals__p6
-  item: 'N'
-  amount: 1
-weathered_cut_copper_stairs:
-  shop: minerals__p6
-  item: O
-  amount: 1
-basalt:
-  shop: nether
-  item: A
-  amount: 1
-blackstone:
-  shop: nether
-  item: B
-  amount: 1
-blackstone_slab:
-  shop: nether
-  item: C
-  amount: 1
-blackstone_stairs:
-  shop: nether
-  item: D
-  amount: 1
-blackstone_wall:
-  shop: nether
-  item: E
-  amount: 1
-chiseled_polished_blackstone:
-  shop: nether
-  item: F
-  amount: 1
-chiseled_quartz_block:
-  shop: nether
-  item: G
-  amount: 1
-cracked_polished_blackstone_bricks:
-  shop: nether
-  item: H
-  amount: 1
-crimson_fungus:
-  shop: nether
-  item: I
-  amount: 1
-crimson_nylium:
-  shop: nether
-  item: J
-  amount: 1
-crimson_roots:
-  shop: nether
-  item: K
-  amount: 1
-crying_obsidian:
-  shop: nether
-  item: L
-  amount: 1
-dried_ghast:
-  shop: nether
-  item: M
-  amount: 1
-gilded_blackstone:
-  shop: nether
-  item: 'N'
-  amount: 1
-magma_block:
-  shop: nether
-  item: O
   amount: 1
 nether_quartz_ore:
-  shop: nether
+  shop: natural__p3
+  item: H
+  amount: 1
+ancient_debris:
+  shop: natural__p3
+  item: I
+  amount: 1
+raw_iron_block:
+  shop: natural__p3
+  item: J
+  amount: 1
+raw_copper_block:
+  shop: natural__p3
+  item: K
+  amount: 1
+raw_gold_block:
+  shop: natural__p3
+  item: L
+  amount: 1
+glowstone:
+  shop: natural__p3
+  item: M
+  amount: 1
+amethyst_cluster:
+  shop: natural__p3
+  item: 'N'
+  amount: 1
+mangrove_roots:
+  shop: natural__p3
+  item: O
+  amount: 1
+muddy_mangrove_roots:
+  shop: natural__p3
   item: P
   amount: 1
-nether_sprouts:
-  shop: nether
+mushroom_stem:
+  shop: natural__p3
   item: Q
   amount: 1
-nether_wart:
-  shop: nether
+oak_leaves:
+  shop: natural__p3
   item: R
+  amount: 1
+spruce_leaves:
+  shop: natural__p3
+  item: S
+  amount: 1
+birch_leaves:
+  shop: natural__p3
+  item: T
+  amount: 1
+jungle_leaves:
+  shop: natural__p3
+  item: U
+  amount: 1
+acacia_leaves:
+  shop: natural__p4
+  item: A
+  amount: 1
+dark_oak_leaves:
+  shop: natural__p4
+  item: B
+  amount: 1
+mangrove_leaves:
+  shop: natural__p4
+  item: C
+  amount: 1
+cherry_leaves:
+  shop: natural__p4
+  item: D
+  amount: 1
+pale_oak_leaves:
+  shop: natural__p4
+  item: E
+  amount: 1
+azalea_leaves:
+  shop: natural__p4
+  item: F
+  amount: 1
+flowering_azalea_leaves:
+  shop: natural__p4
+  item: G
+  amount: 1
+brown_mushroom_block:
+  shop: natural__p4
+  item: H
+  amount: 1
+red_mushroom_block:
+  shop: natural__p4
+  item: I
   amount: 1
 nether_wart_block:
-  shop: nether
-  item: S
-  amount: 1
-netherite_upgrade_smithing_template:
-  shop: nether
-  item: T
-  amount: 1
-netherrack:
-  shop: nether
-  item: U
-  amount: 1
-obsidian:
-  shop: nether__p2
-  item: A
-  amount: 1
-polished_basalt:
-  shop: nether__p2
-  item: B
-  amount: 1
-polished_blackstone:
-  shop: nether__p2
-  item: C
-  amount: 1
-polished_blackstone_brick_slab:
-  shop: nether__p2
-  item: D
-  amount: 1
-polished_blackstone_brick_stairs:
-  shop: nether__p2
-  item: E
-  amount: 1
-polished_blackstone_brick_wall:
-  shop: nether__p2
-  item: F
-  amount: 1
-polished_blackstone_bricks:
-  shop: nether__p2
-  item: G
-  amount: 1
-polished_blackstone_slab:
-  shop: nether__p2
-  item: H
-  amount: 1
-polished_blackstone_stairs:
-  shop: nether__p2
-  item: I
-  amount: 1
-polished_blackstone_wall:
-  shop: nether__p2
+  shop: natural__p4
   item: J
-  amount: 1
-quartz:
-  shop: nether__p2
-  item: K
-  amount: 1
-quartz_block:
-  shop: nether__p2
-  item: L
-  amount: 1
-quartz_bricks:
-  shop: nether__p2
-  item: M
-  amount: 1
-quartz_pillar:
-  shop: nether__p2
-  item: 'N'
-  amount: 1
-quartz_slab:
-  shop: nether__p2
-  item: O
-  amount: 1
-quartz_stairs:
-  shop: nether__p2
-  item: P
-  amount: 1
-respawn_anchor:
-  shop: nether__p2
-  item: Q
-  amount: 1
-smooth_basalt:
-  shop: nether__p2
-  item: R
-  amount: 1
-smooth_quartz:
-  shop: nether__p2
-  item: S
-  amount: 1
-smooth_quartz_slab:
-  shop: nether__p2
-  item: T
-  amount: 1
-smooth_quartz_stairs:
-  shop: nether__p2
-  item: U
-  amount: 1
-soul_sand:
-  shop: nether__p3
-  item: A
-  amount: 1
-soul_soil:
-  shop: nether__p3
-  item: B
-  amount: 1
-warped_fungus:
-  shop: nether__p3
-  item: C
-  amount: 1
-warped_nylium:
-  shop: nether__p3
-  item: D
-  amount: 1
-warped_roots:
-  shop: nether__p3
-  item: E
   amount: 1
 warped_wart_block:
-  shop: nether__p3
-  item: F
-  amount: 1
-acacia_button:
-  shop: redstone
-  item: A
-  amount: 1
-acacia_door:
-  shop: redstone
-  item: B
-  amount: 1
-acacia_pressure_plate:
-  shop: redstone
-  item: C
-  amount: 1
-acacia_trapdoor:
-  shop: redstone
-  item: D
-  amount: 1
-bamboo_button:
-  shop: redstone
-  item: E
-  amount: 1
-bamboo_door:
-  shop: redstone
-  item: F
-  amount: 1
-bamboo_pressure_plate:
-  shop: redstone
-  item: G
-  amount: 1
-bamboo_trapdoor:
-  shop: redstone
-  item: H
-  amount: 1
-birch_button:
-  shop: redstone
-  item: I
-  amount: 1
-birch_door:
-  shop: redstone
-  item: J
-  amount: 1
-birch_pressure_plate:
-  shop: redstone
+  shop: natural__p4
   item: K
   amount: 1
-birch_trapdoor:
-  shop: redstone
+shroomlight:
+  shop: natural__p4
   item: L
   amount: 1
-campfire:
-  shop: redstone
+oak_sapling:
+  shop: natural__p4
   item: M
   amount: 1
-candle:
-  shop: redstone
+spruce_sapling:
+  shop: natural__p4
   item: 'N'
   amount: 1
-cherry_button:
-  shop: redstone
+birch_sapling:
+  shop: natural__p4
   item: O
   amount: 1
-cherry_door:
-  shop: redstone
+jungle_sapling:
+  shop: natural__p4
   item: P
   amount: 1
-cherry_pressure_plate:
-  shop: redstone
+acacia_sapling:
+  shop: natural__p4
   item: Q
   amount: 1
-cherry_trapdoor:
-  shop: redstone
+dark_oak_sapling:
+  shop: natural__p4
   item: R
+  amount: 1
+mangrove_propagule:
+  shop: natural__p4
+  item: S
+  amount: 1
+cherry_sapling:
+  shop: natural__p4
+  item: T
+  amount: 1
+pale_oak_sapling:
+  shop: natural__p4
+  item: U
+  amount: 1
+azalea:
+  shop: natural__p5
+  item: A
+  amount: 1
+flowering_azalea:
+  shop: natural__p5
+  item: B
+  amount: 1
+brown_mushroom:
+  shop: natural__p5
+  item: C
+  amount: 1
+red_mushroom:
+  shop: natural__p5
+  item: D
+  amount: 1
+crimson_fungus:
+  shop: natural__p5
+  item: E
+  amount: 1
+warped_fungus:
+  shop: natural__p5
+  item: F
+  amount: 1
+short_grass:
+  shop: natural__p5
+  item: G
+  amount: 1
+fern:
+  shop: natural__p5
+  item: H
+  amount: 1
+short_dry_grass:
+  shop: natural__p5
+  item: I
+  amount: 1
+bush:
+  shop: natural__p5
+  item: J
+  amount: 1
+dead_bush:
+  shop: natural__p5
+  item: K
+  amount: 1
+dandelion:
+  shop: natural__p5
+  item: L
+  amount: 1
+poppy:
+  shop: natural__p5
+  item: M
+  amount: 1
+blue_orchid:
+  shop: natural__p5
+  item: 'N'
+  amount: 1
+allium:
+  shop: natural__p5
+  item: O
+  amount: 1
+azure_bluet:
+  shop: natural__p5
+  item: P
+  amount: 1
+red_tulip:
+  shop: natural__p5
+  item: Q
+  amount: 1
+orange_tulip:
+  shop: natural__p5
+  item: R
+  amount: 1
+white_tulip:
+  shop: natural__p5
+  item: S
+  amount: 1
+pink_tulip:
+  shop: natural__p5
+  item: T
+  amount: 1
+oxeye_daisy:
+  shop: natural__p5
+  item: U
+  amount: 1
+cornflower:
+  shop: natural__p6
+  item: A
+  amount: 1
+lily_of_the_valley:
+  shop: natural__p6
+  item: B
+  amount: 1
+torchflower:
+  shop: natural__p6
+  item: C
+  amount: 1
+cactus_flower:
+  shop: natural__p6
+  item: D
+  amount: 1
+closed_eyeblossom:
+  shop: natural__p6
+  item: E
+  amount: 1
+open_eyeblossom:
+  shop: natural__p6
+  item: F
+  amount: 1
+wither_rose:
+  shop: natural__p6
+  item: G
+  amount: 1
+pink_petals:
+  shop: natural__p6
+  item: H
+  amount: 1
+wildflowers:
+  shop: natural__p6
+  item: I
+  amount: 1
+leaf_litter:
+  shop: natural__p6
+  item: J
+  amount: 1
+spore_blossom:
+  shop: natural__p6
+  item: K
+  amount: 1
+firefly_bush:
+  shop: natural__p6
+  item: L
+  amount: 1
+bamboo:
+  shop: natural__p6
+  item: M
+  amount: 1
+sugar_cane:
+  shop: natural__p6
+  item: 'N'
+  amount: 1
+cactus:
+  shop: natural__p6
+  item: O
+  amount: 1
+crimson_roots:
+  shop: natural__p6
+  item: P
+  amount: 1
+warped_roots:
+  shop: natural__p6
+  item: Q
+  amount: 1
+nether_sprouts:
+  shop: natural__p6
+  item: R
+  amount: 1
+weeping_vines:
+  shop: natural__p6
+  item: S
+  amount: 1
+twisting_vines:
+  shop: natural__p6
+  item: T
+  amount: 1
+vine:
+  shop: natural__p6
+  item: U
+  amount: 1
+large_fern:
+  shop: natural__p7
+  item: A
+  amount: 1
+tall_dry_grass:
+  shop: natural__p7
+  item: B
+  amount: 1
+sunflower:
+  shop: natural__p7
+  item: C
+  amount: 1
+lilac:
+  shop: natural__p7
+  item: D
+  amount: 1
+rose_bush:
+  shop: natural__p7
+  item: E
+  amount: 1
+peony:
+  shop: natural__p7
+  item: F
+  amount: 1
+pitcher_plant:
+  shop: natural__p7
+  item: G
+  amount: 1
+big_dripleaf:
+  shop: natural__p7
+  item: H
+  amount: 1
+small_dripleaf:
+  shop: natural__p7
+  item: I
+  amount: 1
+chorus_flower:
+  shop: natural__p7
+  item: J
+  amount: 1
+glow_lichen:
+  shop: natural__p7
+  item: K
+  amount: 1
+hanging_roots:
+  shop: natural__p7
+  item: L
+  amount: 1
+turtle_egg:
+  shop: natural__p7
+  item: M
+  amount: 1
+sniffer_egg:
+  shop: natural__p7
+  item: 'N'
+  amount: 1
+dried_ghast:
+  shop: natural__p7
+  item: O
+  amount: 1
+wheat_seeds:
+  shop: natural__p7
+  item: P
+  amount: 1
+cocoa_beans:
+  shop: natural__p7
+  item: Q
+  amount: 1
+pumpkin_seeds:
+  shop: natural__p7
+  item: R
+  amount: 1
+melon_seeds:
+  shop: natural__p7
+  item: S
+  amount: 1
+beetroot_seeds:
+  shop: natural__p7
+  item: T
+  amount: 1
+torchflower_seeds:
+  shop: natural__p7
+  item: U
+  amount: 1
+pitcher_pod:
+  shop: natural__p8
+  item: A
+  amount: 1
+glow_berries:
+  shop: natural__p8
+  item: B
+  amount: 1
+sweet_berries:
+  shop: natural__p8
+  item: C
+  amount: 1
+nether_wart:
+  shop: natural__p8
+  item: D
+  amount: 1
+lily_pad:
+  shop: natural__p8
+  item: E
+  amount: 1
+seagrass:
+  shop: natural__p8
+  item: F
+  amount: 1
+sea_pickle:
+  shop: natural__p8
+  item: G
+  amount: 1
+kelp:
+  shop: natural__p8
+  item: H
+  amount: 1
+dried_kelp_block:
+  shop: natural__p8
+  item: I
+  amount: 1
+tube_coral_block:
+  shop: natural__p8
+  item: J
+  amount: 1
+brain_coral_block:
+  shop: natural__p8
+  item: K
+  amount: 1
+bubble_coral_block:
+  shop: natural__p8
+  item: L
+  amount: 1
+fire_coral_block:
+  shop: natural__p8
+  item: M
+  amount: 1
+horn_coral_block:
+  shop: natural__p8
+  item: 'N'
+  amount: 1
+dead_tube_coral_block:
+  shop: natural__p8
+  item: O
+  amount: 1
+dead_brain_coral_block:
+  shop: natural__p8
+  item: P
+  amount: 1
+dead_bubble_coral_block:
+  shop: natural__p8
+  item: Q
+  amount: 1
+dead_fire_coral_block:
+  shop: natural__p8
+  item: R
+  amount: 1
+dead_horn_coral_block:
+  shop: natural__p8
+  item: S
+  amount: 1
+tube_coral:
+  shop: natural__p8
+  item: T
+  amount: 1
+brain_coral:
+  shop: natural__p8
+  item: U
+  amount: 1
+bubble_coral:
+  shop: natural__p9
+  item: A
+  amount: 1
+fire_coral:
+  shop: natural__p9
+  item: B
+  amount: 1
+horn_coral:
+  shop: natural__p9
+  item: C
+  amount: 1
+dead_tube_coral:
+  shop: natural__p9
+  item: D
+  amount: 1
+dead_brain_coral:
+  shop: natural__p9
+  item: E
+  amount: 1
+dead_bubble_coral:
+  shop: natural__p9
+  item: F
+  amount: 1
+dead_fire_coral:
+  shop: natural__p9
+  item: G
+  amount: 1
+dead_horn_coral:
+  shop: natural__p9
+  item: H
+  amount: 1
+tube_coral_fan:
+  shop: natural__p9
+  item: I
+  amount: 1
+brain_coral_fan:
+  shop: natural__p9
+  item: J
+  amount: 1
+bubble_coral_fan:
+  shop: natural__p9
+  item: K
+  amount: 1
+fire_coral_fan:
+  shop: natural__p9
+  item: L
+  amount: 1
+horn_coral_fan:
+  shop: natural__p9
+  item: M
+  amount: 1
+dead_tube_coral_fan:
+  shop: natural__p9
+  item: 'N'
+  amount: 1
+dead_brain_coral_fan:
+  shop: natural__p9
+  item: O
+  amount: 1
+dead_bubble_coral_fan:
+  shop: natural__p9
+  item: P
+  amount: 1
+dead_fire_coral_fan:
+  shop: natural__p9
+  item: Q
+  amount: 1
+dead_horn_coral_fan:
+  shop: natural__p9
+  item: R
+  amount: 1
+sponge:
+  shop: natural__p9
+  item: S
+  amount: 1
+wet_sponge:
+  shop: natural__p9
+  item: T
+  amount: 1
+melon:
+  shop: natural__p9
+  item: U
+  amount: 1
+repeater:
+  shop: redstone
+  item: B
   amount: 1
 comparator:
   shop: redstone
-  item: S
-  amount: 1
-copper_bulb:
-  shop: redstone
-  item: T
-  amount: 1
-copper_door:
-  shop: redstone
-  item: U
-  amount: 1
-copper_lantern:
-  shop: redstone__p2
-  item: A
-  amount: 1
-copper_torch:
-  shop: redstone__p2
-  item: B
-  amount: 1
-copper_trapdoor:
-  shop: redstone__p2
   item: C
-  amount: 1
-crimson_button:
-  shop: redstone__p2
-  item: D
-  amount: 1
-crimson_door:
-  shop: redstone__p2
-  item: E
-  amount: 1
-crimson_pressure_plate:
-  shop: redstone__p2
-  item: F
-  amount: 1
-crimson_trapdoor:
-  shop: redstone__p2
-  item: G
-  amount: 1
-dark_oak_button:
-  shop: redstone__p2
-  item: H
-  amount: 1
-dark_oak_door:
-  shop: redstone__p2
-  item: I
-  amount: 1
-dark_oak_pressure_plate:
-  shop: redstone__p2
-  item: J
-  amount: 1
-dark_oak_trapdoor:
-  shop: redstone__p2
-  item: K
-  amount: 1
-daylight_detector:
-  shop: redstone__p2
-  item: L
-  amount: 1
-dispenser:
-  shop: redstone__p2
-  item: M
-  amount: 1
-dropper:
-  shop: redstone__p2
-  item: 'N'
-  amount: 1
-end_rod:
-  shop: redstone__p2
-  item: O
-  amount: 1
-exposed_copper_bulb:
-  shop: redstone__p2
-  item: P
-  amount: 1
-exposed_copper_door:
-  shop: redstone__p2
-  item: Q
-  amount: 1
-exposed_copper_lantern:
-  shop: redstone__p2
-  item: R
-  amount: 1
-exposed_copper_trapdoor:
-  shop: redstone__p2
-  item: S
-  amount: 1
-glowstone:
-  shop: redstone__p2
-  item: T
-  amount: 1
-glowstone_dust:
-  shop: redstone__p2
-  item: U
-  amount: 1
-heavy_weighted_pressure_plate:
-  shop: redstone__p3
-  item: A
-  amount: 1
-iron_door:
-  shop: redstone__p3
-  item: B
-  amount: 1
-iron_trapdoor:
-  shop: redstone__p3
-  item: C
-  amount: 1
-jack_o_lantern:
-  shop: redstone__p3
-  item: D
-  amount: 1
-jungle_button:
-  shop: redstone__p3
-  item: E
-  amount: 1
-jungle_door:
-  shop: redstone__p3
-  item: F
-  amount: 1
-jungle_pressure_plate:
-  shop: redstone__p3
-  item: G
-  amount: 1
-jungle_trapdoor:
-  shop: redstone__p3
-  item: H
-  amount: 1
-lantern:
-  shop: redstone__p3
-  item: I
-  amount: 1
-lever:
-  shop: redstone__p3
-  item: J
-  amount: 1
-light_weighted_pressure_plate:
-  shop: redstone__p3
-  item: K
-  amount: 1
-mangrove_button:
-  shop: redstone__p3
-  item: L
-  amount: 1
-mangrove_door:
-  shop: redstone__p3
-  item: M
-  amount: 1
-mangrove_pressure_plate:
-  shop: redstone__p3
-  item: 'N'
-  amount: 1
-mangrove_trapdoor:
-  shop: redstone__p3
-  item: O
-  amount: 1
-note_block:
-  shop: redstone__p3
-  item: P
-  amount: 1
-oak_button:
-  shop: redstone__p3
-  item: Q
-  amount: 1
-oak_door:
-  shop: redstone__p3
-  item: R
-  amount: 1
-oak_pressure_plate:
-  shop: redstone__p3
-  item: S
-  amount: 1
-oak_trapdoor:
-  shop: redstone__p3
-  item: T
-  amount: 1
-observer:
-  shop: redstone__p3
-  item: U
-  amount: 1
-ochre_froglight:
-  shop: redstone__p4
-  item: A
-  amount: 1
-oxidized_copper_bulb:
-  shop: redstone__p4
-  item: B
-  amount: 1
-oxidized_copper_door:
-  shop: redstone__p4
-  item: C
-  amount: 1
-oxidized_copper_lantern:
-  shop: redstone__p4
-  item: D
-  amount: 1
-oxidized_copper_trapdoor:
-  shop: redstone__p4
-  item: E
-  amount: 1
-pale_oak_button:
-  shop: redstone__p4
-  item: F
-  amount: 1
-pale_oak_door:
-  shop: redstone__p4
-  item: G
-  amount: 1
-pale_oak_pressure_plate:
-  shop: redstone__p4
-  item: H
-  amount: 1
-pale_oak_trapdoor:
-  shop: redstone__p4
-  item: I
-  amount: 1
-pearlescent_froglight:
-  shop: redstone__p4
-  item: J
-  amount: 1
-piston:
-  shop: redstone__p4
-  item: K
-  amount: 1
-polished_blackstone_button:
-  shop: redstone__p4
-  item: L
-  amount: 1
-polished_blackstone_pressure_plate:
-  shop: redstone__p4
-  item: M
-  amount: 1
-redstone_lamp:
-  shop: redstone__p4
-  item: 'N'
-  amount: 1
-redstone_torch:
-  shop: redstone__p4
-  item: O
-  amount: 1
-repeater:
-  shop: redstone__p4
-  item: P
-  amount: 1
-sea_lantern:
-  shop: redstone__p4
-  item: Q
-  amount: 1
-shroomlight:
-  shop: redstone__p4
-  item: R
-  amount: 1
-soul_campfire:
-  shop: redstone__p4
-  item: S
-  amount: 1
-soul_lantern:
-  shop: redstone__p4
-  item: T
-  amount: 1
-soul_torch:
-  shop: redstone__p4
-  item: U
-  amount: 1
-spruce_button:
-  shop: redstone__p5
-  item: A
-  amount: 1
-spruce_door:
-  shop: redstone__p5
-  item: B
-  amount: 1
-spruce_pressure_plate:
-  shop: redstone__p5
-  item: C
-  amount: 1
-spruce_trapdoor:
-  shop: redstone__p5
-  item: D
-  amount: 1
-sticky_piston:
-  shop: redstone__p5
-  item: E
-  amount: 1
-stone_button:
-  shop: redstone__p5
-  item: F
-  amount: 1
-stone_pressure_plate:
-  shop: redstone__p5
-  item: G
   amount: 1
 target:
-  shop: redstone__p5
-  item: H
+  shop: redstone
+  item: D
   amount: 1
-torch:
-  shop: redstone__p5
-  item: I
+lever:
+  shop: redstone
+  item: E
   amount: 1
-trapped_chest:
-  shop: redstone__p5
-  item: J
+calibrated_sculk_sensor:
+  shop: redstone
+  item: F
   amount: 1
 tripwire_hook:
-  shop: redstone__p5
+  shop: redstone
+  item: G
+  amount: 1
+string:
+  shop: redstone
+  item: H
+  amount: 1
+daylight_detector:
+  shop: redstone
+  item: I
+  amount: 1
+piston:
+  shop: redstone
+  item: J
+  amount: 1
+sticky_piston:
+  shop: redstone
   item: K
   amount: 1
-verdant_froglight:
-  shop: redstone__p5
+dispenser:
+  shop: redstone
   item: L
   amount: 1
-warped_button:
-  shop: redstone__p5
+dropper:
+  shop: redstone
   item: M
   amount: 1
-warped_door:
-  shop: redstone__p5
+crafter:
+  shop: redstone
   item: 'N'
   amount: 1
-warped_pressure_plate:
-  shop: redstone__p5
+hopper:
+  shop: redstone
   item: O
   amount: 1
-warped_trapdoor:
-  shop: redstone__p5
+trapped_chest:
+  shop: redstone
   item: P
   amount: 1
-waxed_copper_bulb:
-  shop: redstone__p5
+observer:
+  shop: redstone
   item: Q
   amount: 1
-waxed_copper_door:
-  shop: redstone__p5
+rail:
+  shop: redstone
   item: R
   amount: 1
-waxed_copper_lantern:
-  shop: redstone__p5
+powered_rail:
+  shop: redstone
   item: S
   amount: 1
-waxed_copper_trapdoor:
-  shop: redstone__p5
+detector_rail:
+  shop: redstone
   item: T
   amount: 1
-waxed_exposed_copper_bulb:
-  shop: redstone__p5
+activator_rail:
+  shop: redstone
   item: U
   amount: 1
-waxed_exposed_copper_door:
-  shop: redstone__p6
+minecart:
+  shop: redstone__p2
   item: A
   amount: 1
-waxed_exposed_copper_lantern:
-  shop: redstone__p6
+hopper_minecart:
+  shop: redstone__p2
   item: B
   amount: 1
-waxed_exposed_copper_trapdoor:
-  shop: redstone__p6
+chest_minecart:
+  shop: redstone__p2
   item: C
   amount: 1
-waxed_oxidized_copper_bulb:
-  shop: redstone__p6
+furnace_minecart:
+  shop: redstone__p2
   item: D
   amount: 1
-waxed_oxidized_copper_door:
-  shop: redstone__p6
+tnt_minecart:
+  shop: redstone__p2
   item: E
   amount: 1
-waxed_oxidized_copper_lantern:
-  shop: redstone__p6
+oak_chest_boat:
+  shop: redstone__p2
   item: F
   amount: 1
-waxed_oxidized_copper_trapdoor:
-  shop: redstone__p6
+bamboo_chest_raft:
+  shop: redstone__p2
   item: G
   amount: 1
-waxed_weathered_copper_bulb:
-  shop: redstone__p6
+tnt:
+  shop: redstone__p2
   item: H
   amount: 1
-waxed_weathered_copper_door:
-  shop: redstone__p6
-  item: I
-  amount: 1
-waxed_weathered_copper_lantern:
-  shop: redstone__p6
-  item: J
-  amount: 1
-waxed_weathered_copper_trapdoor:
-  shop: redstone__p6
-  item: K
-  amount: 1
-weathered_copper_bulb:
-  shop: redstone__p6
-  item: L
-  amount: 1
-weathered_copper_door:
-  shop: redstone__p6
-  item: M
-  amount: 1
-weathered_copper_lantern:
-  shop: redstone__p6
-  item: 'N'
-  amount: 1
-weathered_copper_trapdoor:
-  shop: redstone__p6
-  item: O
-  amount: 1
-experience_bottle:
-  shop: special
+wooden_shovel:
+  shop: tools
   item: A
   amount: 1
-black_glazed_terracotta:
-  shop: terracottas
-  item: A
-  amount: 1
-black_terracotta:
-  shop: terracottas
+wooden_pickaxe:
+  shop: tools
   item: B
   amount: 1
-blue_glazed_terracotta:
-  shop: terracottas
+wooden_axe:
+  shop: tools
   item: C
   amount: 1
-blue_terracotta:
-  shop: terracottas
+wooden_hoe:
+  shop: tools
   item: D
   amount: 1
-brown_glazed_terracotta:
-  shop: terracottas
+stone_shovel:
+  shop: tools
   item: E
   amount: 1
-brown_terracotta:
-  shop: terracottas
+stone_pickaxe:
+  shop: tools
   item: F
   amount: 1
-cyan_glazed_terracotta:
-  shop: terracottas
+stone_axe:
+  shop: tools
   item: G
   amount: 1
-cyan_terracotta:
-  shop: terracottas
+stone_hoe:
+  shop: tools
   item: H
-  amount: 1
-gray_glazed_terracotta:
-  shop: terracottas
-  item: I
-  amount: 1
-gray_terracotta:
-  shop: terracottas
-  item: J
-  amount: 1
-green_glazed_terracotta:
-  shop: terracottas
-  item: K
-  amount: 1
-green_terracotta:
-  shop: terracottas
-  item: L
-  amount: 1
-light_blue_glazed_terracotta:
-  shop: terracottas
-  item: M
-  amount: 1
-light_blue_terracotta:
-  shop: terracottas
-  item: 'N'
-  amount: 1
-light_gray_glazed_terracotta:
-  shop: terracottas
-  item: O
-  amount: 1
-light_gray_terracotta:
-  shop: terracottas
-  item: P
-  amount: 1
-lime_glazed_terracotta:
-  shop: terracottas
-  item: Q
-  amount: 1
-lime_terracotta:
-  shop: terracottas
-  item: R
-  amount: 1
-magenta_glazed_terracotta:
-  shop: terracottas
-  item: S
-  amount: 1
-magenta_terracotta:
-  shop: terracottas
-  item: T
-  amount: 1
-orange_glazed_terracotta:
-  shop: terracottas
-  item: U
-  amount: 1
-orange_terracotta:
-  shop: terracottas__p2
-  item: A
-  amount: 1
-pink_glazed_terracotta:
-  shop: terracottas__p2
-  item: B
-  amount: 1
-pink_terracotta:
-  shop: terracottas__p2
-  item: C
-  amount: 1
-purple_glazed_terracotta:
-  shop: terracottas__p2
-  item: D
-  amount: 1
-purple_terracotta:
-  shop: terracottas__p2
-  item: E
-  amount: 1
-red_glazed_terracotta:
-  shop: terracottas__p2
-  item: F
-  amount: 1
-red_terracotta:
-  shop: terracottas__p2
-  item: G
-  amount: 1
-terracotta:
-  shop: terracottas__p2
-  item: H
-  amount: 1
-white_glazed_terracotta:
-  shop: terracottas__p2
-  item: I
-  amount: 1
-white_terracotta:
-  shop: terracottas__p2
-  item: J
-  amount: 1
-yellow_glazed_terracotta:
-  shop: terracottas__p2
-  item: K
-  amount: 1
-yellow_terracotta:
-  shop: terracottas__p2
-  item: L
-  amount: 1
-carrot_on_a_stick:
-  shop: tools
-  item: A
-  amount: 1
-copper_axe:
-  shop: tools
-  item: B
-  amount: 1
-copper_hoe:
-  shop: tools
-  item: C
-  amount: 1
-copper_pickaxe:
-  shop: tools
-  item: D
   amount: 1
 copper_shovel:
   shop: tools
-  item: E
-  amount: 1
-diamond_hoe:
-  shop: tools
-  item: G
-  amount: 1
-diamond_pickaxe:
-  shop: tools
-  item: H
-  amount: 1
-diamond_shovel:
-  shop: tools
   item: I
   amount: 1
-fishing_rod:
+copper_pickaxe:
   shop: tools
   item: J
   amount: 1
-golden_axe:
+copper_axe:
   shop: tools
   item: K
   amount: 1
-golden_hoe:
+copper_hoe:
   shop: tools
   item: L
   amount: 1
-golden_pickaxe:
+iron_shovel:
   shop: tools
   item: M
   amount: 1
-golden_shovel:
+iron_pickaxe:
   shop: tools
   item: 'N'
   amount: 1
@@ -5213,1471 +6237,447 @@ iron_hoe:
   shop: tools
   item: P
   amount: 1
-iron_pickaxe:
+golden_shovel:
   shop: tools
   item: Q
   amount: 1
-iron_shovel:
+golden_pickaxe:
   shop: tools
   item: R
   amount: 1
-netherite_axe:
+golden_axe:
   shop: tools
   item: S
   amount: 1
-netherite_hoe:
+golden_hoe:
   shop: tools
   item: T
   amount: 1
-netherite_pickaxe:
+diamond_shovel:
   shop: tools
   item: U
+  amount: 1
+diamond_pickaxe:
+  shop: tools__p2
+  item: A
+  amount: 1
+diamond_hoe:
+  shop: tools__p2
+  item: C
   amount: 1
 netherite_shovel:
   shop: tools__p2
+  item: D
+  amount: 1
+netherite_pickaxe:
+  shop: tools__p2
+  item: E
+  amount: 1
+netherite_axe:
+  shop: tools__p2
+  item: F
+  amount: 1
+netherite_hoe:
+  shop: tools__p2
+  item: G
+  amount: 1
+bucket:
+  shop: tools__p2
+  item: H
+  amount: 1
+water_bucket:
+  shop: tools__p2
+  item: I
+  amount: 1
+cod_bucket:
+  shop: tools__p2
+  item: J
+  amount: 1
+salmon_bucket:
+  shop: tools__p2
+  item: K
+  amount: 1
+pufferfish_bucket:
+  shop: tools__p2
+  item: M
+  amount: 1
+tadpole_bucket:
+  shop: tools__p2
+  item: O
+  amount: 1
+lava_bucket:
+  shop: tools__p2
+  item: P
+  amount: 1
+powder_snow_bucket:
+  shop: tools__p2
+  item: Q
+  amount: 1
+milk_bucket:
+  shop: tools__p2
+  item: R
+  amount: 1
+fishing_rod:
+  shop: tools__p2
+  item: S
+  amount: 1
+flint_and_steel:
+  shop: tools__p2
+  item: T
+  amount: 1
+fire_charge:
+  shop: tools__p2
+  item: U
+  amount: 1
+bone_meal:
+  shop: tools__p3
   item: A
   amount: 1
 shears:
-  shop: tools__p2
+  shop: tools__p3
   item: B
   amount: 1
-stone_axe:
-  shop: tools__p2
+brush:
+  shop: tools__p3
   item: C
-  amount: 1
-stone_hoe:
-  shop: tools__p2
-  item: D
-  amount: 1
-stone_pickaxe:
-  shop: tools__p2
-  item: E
-  amount: 1
-stone_shovel:
-  shop: tools__p2
-  item: F
-  amount: 1
-warped_fungus_on_a_stick:
-  shop: tools__p2
-  item: G
-  amount: 1
-wooden_axe:
-  shop: tools__p2
-  item: H
-  amount: 1
-wooden_hoe:
-  shop: tools__p2
-  item: I
-  amount: 1
-wooden_pickaxe:
-  shop: tools__p2
-  item: J
-  amount: 1
-wooden_shovel:
-  shop: tools__p2
-  item: K
-  amount: 1
-acacia_boat:
-  shop: transport
-  item: A
-  amount: 1
-acacia_chest_boat:
-  shop: transport
-  item: B
-  amount: 1
-activator_rail:
-  shop: transport
-  item: C
-  amount: 1
-bamboo_chest_raft:
-  shop: transport
-  item: D
-  amount: 1
-bamboo_raft:
-  shop: transport
-  item: E
-  amount: 1
-birch_boat:
-  shop: transport
-  item: F
-  amount: 1
-birch_chest_boat:
-  shop: transport
-  item: G
-  amount: 1
-black_harness:
-  shop: transport
-  item: H
-  amount: 1
-blue_harness:
-  shop: transport
-  item: I
-  amount: 1
-brown_harness:
-  shop: transport
-  item: J
-  amount: 1
-cherry_boat:
-  shop: transport
-  item: K
-  amount: 1
-cherry_chest_boat:
-  shop: transport
-  item: L
-  amount: 1
-chest_minecart:
-  shop: transport
-  item: M
-  amount: 1
-cyan_harness:
-  shop: transport
-  item: 'N'
-  amount: 1
-dark_oak_boat:
-  shop: transport
-  item: O
-  amount: 1
-dark_oak_chest_boat:
-  shop: transport
-  item: P
-  amount: 1
-detector_rail:
-  shop: transport
-  item: Q
-  amount: 1
-elytra:
-  shop: transport
-  item: R
-  amount: 1
-furnace_minecart:
-  shop: transport
-  item: S
-  amount: 1
-gray_harness:
-  shop: transport
-  item: T
-  amount: 1
-green_harness:
-  shop: transport
-  item: U
-  amount: 1
-hopper_minecart:
-  shop: transport__p2
-  item: A
-  amount: 1
-jungle_boat:
-  shop: transport__p2
-  item: B
-  amount: 1
-jungle_chest_boat:
-  shop: transport__p2
-  item: C
-  amount: 1
-light_blue_harness:
-  shop: transport__p2
-  item: D
-  amount: 1
-light_gray_harness:
-  shop: transport__p2
-  item: E
-  amount: 1
-lime_harness:
-  shop: transport__p2
-  item: F
-  amount: 1
-magenta_harness:
-  shop: transport__p2
-  item: G
-  amount: 1
-mangrove_boat:
-  shop: transport__p2
-  item: H
-  amount: 1
-mangrove_chest_boat:
-  shop: transport__p2
-  item: I
-  amount: 1
-minecart:
-  shop: transport__p2
-  item: J
-  amount: 1
-oak_boat:
-  shop: transport__p2
-  item: K
-  amount: 1
-oak_chest_boat:
-  shop: transport__p2
-  item: L
-  amount: 1
-orange_harness:
-  shop: transport__p2
-  item: M
-  amount: 1
-pale_oak_boat:
-  shop: transport__p2
-  item: 'N'
-  amount: 1
-pale_oak_chest_boat:
-  shop: transport__p2
-  item: O
-  amount: 1
-pink_harness:
-  shop: transport__p2
-  item: P
-  amount: 1
-powered_rail:
-  shop: transport__p2
-  item: Q
-  amount: 1
-purple_harness:
-  shop: transport__p2
-  item: R
-  amount: 1
-rail:
-  shop: transport__p2
-  item: S
-  amount: 1
-red_harness:
-  shop: transport__p2
-  item: T
-  amount: 1
-saddle:
-  shop: transport__p2
-  item: U
-  amount: 1
-spruce_boat:
-  shop: transport__p3
-  item: A
-  amount: 1
-spruce_chest_boat:
-  shop: transport__p3
-  item: B
-  amount: 1
-tnt_minecart:
-  shop: transport__p3
-  item: C
-  amount: 1
-white_harness:
-  shop: transport__p3
-  item: D
-  amount: 1
-yellow_harness:
-  shop: transport__p3
-  item: E
-  amount: 1
-acacia_fence:
-  shop: utility
-  item: A
-  amount: 1
-acacia_fence_gate:
-  shop: utility
-  item: B
-  amount: 1
-acacia_hanging_sign:
-  shop: utility
-  item: C
-  amount: 1
-acacia_shelf:
-  shop: utility
-  item: D
-  amount: 1
-acacia_sign:
-  shop: utility
-  item: E
-  amount: 1
-anvil:
-  shop: utility
-  item: F
-  amount: 1
-bamboo_fence:
-  shop: utility
-  item: H
-  amount: 1
-bamboo_fence_gate:
-  shop: utility
-  item: I
-  amount: 1
-bamboo_hanging_sign:
-  shop: utility
-  item: J
-  amount: 1
-bamboo_shelf:
-  shop: utility
-  item: K
-  amount: 1
-bamboo_sign:
-  shop: utility
-  item: L
-  amount: 1
-barrel:
-  shop: utility
-  item: M
-  amount: 1
-beacon:
-  shop: utility
-  item: 'N'
-  amount: 1
-beehive:
-  shop: utility
-  item: O
-  amount: 1
-bell:
-  shop: utility
-  item: P
-  amount: 1
-birch_fence:
-  shop: utility
-  item: Q
-  amount: 1
-birch_fence_gate:
-  shop: utility
-  item: R
-  amount: 1
-birch_hanging_sign:
-  shop: utility
-  item: S
-  amount: 1
-birch_shelf:
-  shop: utility
-  item: T
-  amount: 1
-birch_sign:
-  shop: utility
-  item: U
-  amount: 1
-blast_furnace:
-  shop: utility__p2
-  item: A
-  amount: 1
-book:
-  shop: utility__p2
-  item: B
-  amount: 1
-bookshelf:
-  shop: utility__p2
-  item: C
-  amount: 1
-bordure_indented_banner_pattern:
-  shop: utility__p2
-  item: D
-  amount: 1
-bowl:
-  shop: utility__p2
-  item: E
-  amount: 1
-brewing_stand:
-  shop: utility__p2
-  item: F
-  amount: 1
-bucket:
-  shop: utility__p2
-  item: G
-  amount: 1
-cartography_table:
-  shop: utility__p2
-  item: I
-  amount: 1
-cauldron:
-  shop: utility__p2
-  item: J
-  amount: 1
-charcoal:
-  shop: utility__p2
-  item: K
-  amount: 1
-cherry_fence:
-  shop: utility__p2
-  item: L
-  amount: 1
-cherry_fence_gate:
-  shop: utility__p2
-  item: M
-  amount: 1
-cherry_hanging_sign:
-  shop: utility__p2
-  item: 'N'
-  amount: 1
-cherry_shelf:
-  shop: utility__p2
-  item: O
-  amount: 1
-cherry_sign:
-  shop: utility__p2
-  item: P
-  amount: 1
-chest:
-  shop: utility__p2
-  item: Q
-  amount: 1
-chipped_anvil:
-  shop: utility__p2
-  item: R
-  amount: 1
-chiseled_bookshelf:
-  shop: utility__p2
-  item: S
-  amount: 1
-clock:
-  shop: utility__p2
-  item: T
-  amount: 1
-cobweb:
-  shop: utility__p2
-  item: U
-  amount: 1
-cod_bucket:
-  shop: utility__p3
-  item: A
-  amount: 1
-compass:
-  shop: utility__p3
-  item: B
-  amount: 1
-composter:
-  shop: utility__p3
-  item: C
-  amount: 1
-copper_chest:
-  shop: utility__p3
-  item: D
-  amount: 1
-crafter:
-  shop: utility__p3
-  item: E
-  amount: 1
-crafting_table:
-  shop: utility__p3
-  item: F
-  amount: 1
-creaking_heart:
-  shop: utility__p3
-  item: G
-  amount: 1
-creeper_banner_pattern:
-  shop: utility__p3
-  item: H
-  amount: 1
-crimson_fence:
-  shop: utility__p3
-  item: I
-  amount: 1
-crimson_fence_gate:
-  shop: utility__p3
-  item: J
-  amount: 1
-crimson_hanging_sign:
-  shop: utility__p3
-  item: K
-  amount: 1
-crimson_shelf:
-  shop: utility__p3
-  item: L
-  amount: 1
-crimson_sign:
-  shop: utility__p3
-  item: M
-  amount: 1
-damaged_anvil:
-  shop: utility__p3
-  item: 'N'
-  amount: 1
-dark_oak_fence:
-  shop: utility__p3
-  item: O
-  amount: 1
-dark_oak_fence_gate:
-  shop: utility__p3
-  item: P
-  amount: 1
-dark_oak_hanging_sign:
-  shop: utility__p3
-  item: Q
-  amount: 1
-dark_oak_shelf:
-  shop: utility__p3
-  item: R
-  amount: 1
-dark_oak_sign:
-  shop: utility__p3
-  item: S
-  amount: 1
-enchanting_table:
-  shop: utility__p3
-  item: T
-  amount: 1
-ender_eye:
-  shop: utility__p3
-  item: U
-  amount: 1
-exposed_copper_chest:
-  shop: utility__p4
-  item: B
-  amount: 1
-exposed_lightning_rod:
-  shop: utility__p4
-  item: C
-  amount: 1
-field_masoned_banner_pattern:
-  shop: utility__p4
-  item: D
-  amount: 1
-fire_charge:
-  shop: utility__p4
-  item: E
-  amount: 1
-firework_star:
-  shop: utility__p4
-  item: G
-  amount: 1
-fletching_table:
-  shop: utility__p4
-  item: H
-  amount: 1
-flint:
-  shop: utility__p4
-  item: I
-  amount: 1
-flint_and_steel:
-  shop: utility__p4
-  item: J
-  amount: 1
-flow_banner_pattern:
-  shop: utility__p4
-  item: K
-  amount: 1
-flower_banner_pattern:
-  shop: utility__p4
-  item: L
-  amount: 1
-furnace:
-  shop: utility__p4
-  item: M
-  amount: 1
-glass_bottle:
-  shop: utility__p4
-  item: 'N'
-  amount: 1
-globe_banner_pattern:
-  shop: utility__p4
-  item: O
-  amount: 1
-glow_item_frame:
-  shop: utility__p4
-  item: P
-  amount: 1
-grindstone:
-  shop: utility__p4
-  item: Q
-  amount: 1
-guster_banner_pattern:
-  shop: utility__p4
-  item: R
-  amount: 1
-heavy_core:
-  shop: utility__p4
-  item: S
-  amount: 1
-hopper:
-  shop: utility__p4
-  item: T
-  amount: 1
-iron_bars:
-  shop: utility__p4
-  item: U
-  amount: 1
-iron_chain:
-  shop: utility__p5
-  item: A
-  amount: 1
-item_frame:
-  shop: utility__p5
-  item: B
-  amount: 1
-jukebox:
-  shop: utility__p5
-  item: C
-  amount: 1
-jungle_fence:
-  shop: utility__p5
-  item: D
-  amount: 1
-jungle_fence_gate:
-  shop: utility__p5
-  item: E
-  amount: 1
-jungle_hanging_sign:
-  shop: utility__p5
-  item: F
-  amount: 1
-jungle_shelf:
-  shop: utility__p5
-  item: G
-  amount: 1
-jungle_sign:
-  shop: utility__p5
-  item: H
-  amount: 1
-ladder:
-  shop: utility__p5
-  item: I
-  amount: 1
-lava_bucket:
-  shop: utility__p5
-  item: J
-  amount: 1
-lead:
-  shop: utility__p5
-  item: K
-  amount: 1
-lectern:
-  shop: utility__p5
-  item: L
-  amount: 1
-lightning_rod:
-  shop: utility__p5
-  item: M
-  amount: 1
-lodestone:
-  shop: utility__p5
-  item: 'N'
-  amount: 1
-loom:
-  shop: utility__p5
-  item: O
-  amount: 1
-mangrove_fence:
-  shop: utility__p5
-  item: P
-  amount: 1
-mangrove_fence_gate:
-  shop: utility__p5
-  item: Q
-  amount: 1
-mangrove_hanging_sign:
-  shop: utility__p5
-  item: R
-  amount: 1
-mangrove_shelf:
-  shop: utility__p5
-  item: S
-  amount: 1
-mangrove_sign:
-  shop: utility__p5
-  item: T
-  amount: 1
-map:
-  shop: utility__p5
-  item: U
-  amount: 1
-milk_bucket:
-  shop: utility__p6
-  item: A
-  amount: 1
-mojang_banner_pattern:
-  shop: utility__p6
-  item: B
   amount: 1
 name_tag:
-  shop: utility__p6
-  item: C
-  amount: 1
-oak_fence:
-  shop: utility__p6
+  shop: tools__p3
   item: D
   amount: 1
-oak_fence_gate:
-  shop: utility__p6
+lead:
+  shop: tools__p3
   item: E
   amount: 1
-oak_hanging_sign:
-  shop: utility__p6
-  item: F
-  amount: 1
-oak_shelf:
-  shop: utility__p6
+white_bundle:
+  shop: tools__p3
   item: G
   amount: 1
-oak_sign:
-  shop: utility__p6
+orange_bundle:
+  shop: tools__p3
   item: H
   amount: 1
-oxidized_copper_chest:
-  shop: utility__p6
+magenta_bundle:
+  shop: tools__p3
   item: I
   amount: 1
-oxidized_lightning_rod:
-  shop: utility__p6
+light_blue_bundle:
+  shop: tools__p3
   item: J
   amount: 1
-painting:
-  shop: utility__p6
+yellow_bundle:
+  shop: tools__p3
   item: K
   amount: 1
-pale_oak_fence:
-  shop: utility__p6
+lime_bundle:
+  shop: tools__p3
   item: L
   amount: 1
-pale_oak_fence_gate:
-  shop: utility__p6
-  item: M
-  amount: 1
-pale_oak_hanging_sign:
-  shop: utility__p6
-  item: 'N'
-  amount: 1
-pale_oak_shelf:
-  shop: utility__p6
-  item: O
-  amount: 1
-pale_oak_sign:
-  shop: utility__p6
-  item: P
-  amount: 1
-paper:
-  shop: utility__p6
-  item: Q
-  amount: 1
-piglin_banner_pattern:
-  shop: utility__p6
-  item: R
-  amount: 1
-powder_snow_bucket:
-  shop: utility__p6
-  item: S
-  amount: 1
-pufferfish_bucket:
-  shop: utility__p6
-  item: T
-  amount: 1
-rabbit_foot:
-  shop: utility__p6
-  item: U
-  amount: 1
-recovery_compass:
-  shop: utility__p7
-  item: A
-  amount: 1
-salmon_bucket:
-  shop: utility__p7
-  item: B
-  amount: 1
-scaffolding:
-  shop: utility__p7
-  item: C
-  amount: 1
-skull_banner_pattern:
-  shop: utility__p7
-  item: D
-  amount: 1
-smithing_table:
-  shop: utility__p7
-  item: E
-  amount: 1
-smoker:
-  shop: utility__p7
-  item: F
-  amount: 1
-spruce_fence:
-  shop: utility__p7
-  item: G
-  amount: 1
-spruce_fence_gate:
-  shop: utility__p7
-  item: H
-  amount: 1
-spruce_hanging_sign:
-  shop: utility__p7
-  item: I
-  amount: 1
-spruce_shelf:
-  shop: utility__p7
-  item: J
-  amount: 1
-spruce_sign:
-  shop: utility__p7
-  item: K
-  amount: 1
-spyglass:
-  shop: utility__p7
-  item: L
-  amount: 1
-stick:
-  shop: utility__p7
-  item: M
-  amount: 1
-stonecutter:
-  shop: utility__p7
-  item: 'N'
-  amount: 1
-tadpole_bucket:
-  shop: utility__p7
-  item: O
-  amount: 1
-tinted_glass:
-  shop: utility__p7
-  item: P
-  amount: 1
-tnt:
-  shop: utility__p7
-  item: Q
-  amount: 1
-totem_of_undying:
-  shop: utility__p7
-  item: R
-  amount: 1
-warped_fence:
-  shop: utility__p7
-  item: T
-  amount: 1
-warped_fence_gate:
-  shop: utility__p7
-  item: U
-  amount: 1
-warped_hanging_sign:
-  shop: utility__p8
-  item: A
-  amount: 1
-warped_shelf:
-  shop: utility__p8
-  item: B
-  amount: 1
-warped_sign:
-  shop: utility__p8
-  item: C
-  amount: 1
-water_bucket:
-  shop: utility__p8
-  item: D
-  amount: 1
-waxed_copper_chest:
-  shop: utility__p8
-  item: E
-  amount: 1
-waxed_exposed_copper_chest:
-  shop: utility__p8
-  item: F
-  amount: 1
-waxed_exposed_lightning_rod:
-  shop: utility__p8
-  item: G
-  amount: 1
-waxed_lightning_rod:
-  shop: utility__p8
-  item: H
-  amount: 1
-waxed_oxidized_copper_chest:
-  shop: utility__p8
-  item: I
-  amount: 1
-waxed_oxidized_lightning_rod:
-  shop: utility__p8
-  item: J
-  amount: 1
-waxed_weathered_copper_chest:
-  shop: utility__p8
-  item: K
-  amount: 1
-waxed_weathered_lightning_rod:
-  shop: utility__p8
-  item: L
-  amount: 1
-weathered_copper_chest:
-  shop: utility__p8
-  item: M
-  amount: 1
-weathered_lightning_rod:
-  shop: utility__p8
-  item: 'N'
-  amount: 1
-white_bed:
-  shop: utility__p8
-  item: O
-  amount: 1
-writable_book:
-  shop: utility__p8
-  item: P
-  amount: 1
-arrow:
-  shop: weapons
-  item: A
-  amount: 1
-bow:
-  shop: weapons
-  item: B
-  amount: 1
-copper_spear:
-  shop: weapons
-  item: C
-  amount: 1
-copper_sword:
-  shop: weapons
-  item: D
-  amount: 1
-crossbow:
-  shop: weapons
-  item: E
-  amount: 1
-diamond_spear:
-  shop: weapons
-  item: F
-  amount: 1
-diamond_sword:
-  shop: weapons
-  item: G
-  amount: 1
-golden_spear:
-  shop: weapons
-  item: H
-  amount: 1
-golden_sword:
-  shop: weapons
-  item: I
-  amount: 1
-iron_spear:
-  shop: weapons
-  item: J
-  amount: 1
-iron_sword:
-  shop: weapons
-  item: K
-  amount: 1
-mace:
-  shop: weapons
-  item: L
-  amount: 1
-netherite_spear:
-  shop: weapons
-  item: M
-  amount: 1
-netherite_sword:
-  shop: weapons
-  item: 'N'
-  amount: 1
-spectral_arrow:
-  shop: weapons
-  item: O
-  amount: 1
-stone_spear:
-  shop: weapons
-  item: P
-  amount: 1
-stone_sword:
-  shop: weapons
-  item: Q
-  amount: 1
-trident:
-  shop: weapons
-  item: R
-  amount: 1
-wooden_spear:
-  shop: weapons
-  item: S
-  amount: 1
-wooden_sword:
-  shop: weapons
-  item: T
-  amount: 1
-black_banner:
-  shop: wools
-  item: A
-  amount: 1
-black_bed:
-  shop: wools
-  item: B
-  amount: 1
-black_bundle:
-  shop: wools
-  item: C
-  amount: 1
-black_candle:
-  shop: wools
-  item: D
-  amount: 1
-black_carpet:
-  shop: wools
-  item: E
-  amount: 1
-black_dye:
-  shop: wools
-  item: F
-  amount: 1
-black_shulker_box:
-  shop: wools
-  item: G
-  amount: 1
-black_wool:
-  shop: wools
-  item: H
-  amount: 1
-blue_bed:
-  shop: wools
-  item: J
-  amount: 1
-blue_bundle:
-  shop: wools
-  item: K
-  amount: 1
-blue_candle:
-  shop: wools
-  item: L
-  amount: 1
-blue_carpet:
-  shop: wools
-  item: M
-  amount: 1
-blue_dye:
-  shop: wools
-  item: 'N'
-  amount: 1
-blue_shulker_box:
-  shop: wools
-  item: O
-  amount: 1
-blue_wool:
-  shop: wools
-  item: P
-  amount: 1
-brown_banner:
-  shop: wools
-  item: Q
-  amount: 1
-brown_bed:
-  shop: wools
-  item: R
-  amount: 1
-brown_bundle:
-  shop: wools
-  item: S
-  amount: 1
-brown_candle:
-  shop: wools
-  item: T
-  amount: 1
-brown_carpet:
-  shop: wools
-  item: U
-  amount: 1
-brown_dye:
-  shop: wools__p2
-  item: A
-  amount: 1
-brown_shulker_box:
-  shop: wools__p2
-  item: B
-  amount: 1
-brown_wool:
-  shop: wools__p2
-  item: C
-  amount: 1
-cyan_banner:
-  shop: wools__p2
-  item: D
-  amount: 1
-cyan_bed:
-  shop: wools__p2
-  item: E
-  amount: 1
-cyan_bundle:
-  shop: wools__p2
-  item: F
-  amount: 1
-cyan_candle:
-  shop: wools__p2
-  item: G
-  amount: 1
-cyan_carpet:
-  shop: wools__p2
-  item: H
-  amount: 1
-cyan_dye:
-  shop: wools__p2
-  item: I
-  amount: 1
-cyan_shulker_box:
-  shop: wools__p2
-  item: J
-  amount: 1
-cyan_wool:
-  shop: wools__p2
-  item: K
-  amount: 1
-gray_banner:
-  shop: wools__p2
-  item: L
-  amount: 1
-gray_bed:
-  shop: wools__p2
+pink_bundle:
+  shop: tools__p3
   item: M
   amount: 1
 gray_bundle:
-  shop: wools__p2
+  shop: tools__p3
   item: 'N'
-  amount: 1
-gray_candle:
-  shop: wools__p2
-  item: O
-  amount: 1
-gray_carpet:
-  shop: wools__p2
-  item: P
-  amount: 1
-gray_dye:
-  shop: wools__p2
-  item: Q
-  amount: 1
-gray_shulker_box:
-  shop: wools__p2
-  item: R
-  amount: 1
-gray_wool:
-  shop: wools__p2
-  item: S
-  amount: 1
-green_banner:
-  shop: wools__p2
-  item: T
-  amount: 1
-green_bed:
-  shop: wools__p2
-  item: U
-  amount: 1
-green_bundle:
-  shop: wools__p3
-  item: A
-  amount: 1
-green_candle:
-  shop: wools__p3
-  item: B
-  amount: 1
-green_carpet:
-  shop: wools__p3
-  item: C
-  amount: 1
-green_dye:
-  shop: wools__p3
-  item: D
-  amount: 1
-green_shulker_box:
-  shop: wools__p3
-  item: E
-  amount: 1
-green_wool:
-  shop: wools__p3
-  item: F
-  amount: 1
-light_blue_banner:
-  shop: wools__p3
-  item: G
-  amount: 1
-light_blue_bed:
-  shop: wools__p3
-  item: H
-  amount: 1
-light_blue_bundle:
-  shop: wools__p3
-  item: I
-  amount: 1
-light_blue_candle:
-  shop: wools__p3
-  item: J
-  amount: 1
-light_blue_carpet:
-  shop: wools__p3
-  item: K
-  amount: 1
-light_blue_dye:
-  shop: wools__p3
-  item: L
-  amount: 1
-light_blue_shulker_box:
-  shop: wools__p3
-  item: M
-  amount: 1
-light_blue_wool:
-  shop: wools__p3
-  item: 'N'
-  amount: 1
-light_gray_banner:
-  shop: wools__p3
-  item: O
-  amount: 1
-light_gray_bed:
-  shop: wools__p3
-  item: P
   amount: 1
 light_gray_bundle:
-  shop: wools__p3
-  item: Q
-  amount: 1
-light_gray_candle:
-  shop: wools__p3
-  item: R
-  amount: 1
-light_gray_carpet:
-  shop: wools__p3
-  item: S
-  amount: 1
-light_gray_dye:
-  shop: wools__p3
-  item: T
-  amount: 1
-light_gray_shulker_box:
-  shop: wools__p3
-  item: U
-  amount: 1
-light_gray_wool:
-  shop: wools__p4
-  item: A
-  amount: 1
-lime_banner:
-  shop: wools__p4
-  item: B
-  amount: 1
-lime_bed:
-  shop: wools__p4
-  item: C
-  amount: 1
-lime_bundle:
-  shop: wools__p4
-  item: D
-  amount: 1
-lime_candle:
-  shop: wools__p4
-  item: E
-  amount: 1
-lime_carpet:
-  shop: wools__p4
-  item: F
-  amount: 1
-lime_dye:
-  shop: wools__p4
-  item: G
-  amount: 1
-lime_shulker_box:
-  shop: wools__p4
-  item: H
-  amount: 1
-lime_wool:
-  shop: wools__p4
-  item: I
-  amount: 1
-magenta_banner:
-  shop: wools__p4
-  item: J
-  amount: 1
-magenta_bed:
-  shop: wools__p4
-  item: K
-  amount: 1
-magenta_bundle:
-  shop: wools__p4
-  item: L
-  amount: 1
-magenta_candle:
-  shop: wools__p4
-  item: M
-  amount: 1
-magenta_carpet:
-  shop: wools__p4
-  item: 'N'
-  amount: 1
-magenta_dye:
-  shop: wools__p4
+  shop: tools__p3
   item: O
   amount: 1
-magenta_shulker_box:
-  shop: wools__p4
+cyan_bundle:
+  shop: tools__p3
   item: P
-  amount: 1
-magenta_wool:
-  shop: wools__p4
-  item: Q
-  amount: 1
-orange_banner:
-  shop: wools__p4
-  item: R
-  amount: 1
-orange_bed:
-  shop: wools__p4
-  item: S
-  amount: 1
-orange_bundle:
-  shop: wools__p4
-  item: T
-  amount: 1
-orange_candle:
-  shop: wools__p4
-  item: U
-  amount: 1
-orange_carpet:
-  shop: wools__p5
-  item: A
-  amount: 1
-orange_dye:
-  shop: wools__p5
-  item: B
-  amount: 1
-orange_shulker_box:
-  shop: wools__p5
-  item: C
-  amount: 1
-orange_wool:
-  shop: wools__p5
-  item: D
-  amount: 1
-pink_banner:
-  shop: wools__p5
-  item: E
-  amount: 1
-pink_bed:
-  shop: wools__p5
-  item: F
-  amount: 1
-pink_bundle:
-  shop: wools__p5
-  item: G
-  amount: 1
-pink_candle:
-  shop: wools__p5
-  item: H
-  amount: 1
-pink_carpet:
-  shop: wools__p5
-  item: I
-  amount: 1
-pink_dye:
-  shop: wools__p5
-  item: J
-  amount: 1
-pink_shulker_box:
-  shop: wools__p5
-  item: K
-  amount: 1
-pink_wool:
-  shop: wools__p5
-  item: L
-  amount: 1
-purple_banner:
-  shop: wools__p5
-  item: M
-  amount: 1
-purple_bed:
-  shop: wools__p5
-  item: 'N'
   amount: 1
 purple_bundle:
-  shop: wools__p5
-  item: O
-  amount: 1
-purple_candle:
-  shop: wools__p5
-  item: P
-  amount: 1
-purple_carpet:
-  shop: wools__p5
+  shop: tools__p3
   item: Q
   amount: 1
-purple_dye:
-  shop: wools__p5
+blue_bundle:
+  shop: tools__p3
   item: R
   amount: 1
-purple_shulker_box:
-  shop: wools__p5
+brown_bundle:
+  shop: tools__p3
   item: S
   amount: 1
-purple_wool:
-  shop: wools__p5
+green_bundle:
+  shop: tools__p3
   item: T
-  amount: 1
-red_banner:
-  shop: wools__p5
-  item: U
-  amount: 1
-red_bed:
-  shop: wools__p6
-  item: A
   amount: 1
 red_bundle:
-  shop: wools__p6
-  item: B
-  amount: 1
-red_candle:
-  shop: wools__p6
-  item: C
-  amount: 1
-red_carpet:
-  shop: wools__p6
-  item: D
-  amount: 1
-red_dye:
-  shop: wools__p6
-  item: E
-  amount: 1
-red_shulker_box:
-  shop: wools__p6
-  item: F
-  amount: 1
-red_wool:
-  shop: wools__p6
-  item: G
-  amount: 1
-white_banner:
-  shop: wools__p6
-  item: H
-  amount: 1
-white_bundle:
-  shop: wools__p6
-  item: I
-  amount: 1
-white_candle:
-  shop: wools__p6
-  item: J
-  amount: 1
-white_carpet:
-  shop: wools__p6
-  item: K
-  amount: 1
-white_dye:
-  shop: wools__p6
-  item: L
-  amount: 1
-white_shulker_box:
-  shop: wools__p6
-  item: M
-  amount: 1
-white_wool:
-  shop: wools__p6
-  item: 'N'
-  amount: 1
-yellow_banner:
-  shop: wools__p6
-  item: O
-  amount: 1
-yellow_bed:
-  shop: wools__p6
-  item: P
-  amount: 1
-yellow_bundle:
-  shop: wools__p6
-  item: Q
-  amount: 1
-yellow_candle:
-  shop: wools__p6
-  item: R
-  amount: 1
-yellow_carpet:
-  shop: wools__p6
-  item: S
-  amount: 1
-yellow_dye:
-  shop: wools__p6
-  item: T
-  amount: 1
-yellow_shulker_box:
-  shop: wools__p6
+  shop: tools__p3
   item: U
   amount: 1
-yellow_wool:
-  shop: wools__p7
+black_bundle:
+  shop: tools__p4
   item: A
+  amount: 1
+compass:
+  shop: tools__p4
+  item: B
+  amount: 1
+recovery_compass:
+  shop: tools__p4
+  item: C
+  amount: 1
+clock:
+  shop: tools__p4
+  item: D
+  amount: 1
+spyglass:
+  shop: tools__p4
+  item: E
+  amount: 1
+map:
+  shop: tools__p4
+  item: F
+  amount: 1
+writable_book:
+  shop: tools__p4
+  item: G
+  amount: 1
+wind_charge:
+  shop: tools__p4
+  item: H
+  amount: 1
+ender_pearl:
+  shop: tools__p4
+  item: I
+  amount: 1
+elytra:
+  shop: tools__p4
+  item: J
+  amount: 1
+saddle:
+  shop: tools__p4
+  item: K
+  amount: 1
+white_harness:
+  shop: tools__p4
+  item: L
+  amount: 1
+orange_harness:
+  shop: tools__p4
+  item: M
+  amount: 1
+magenta_harness:
+  shop: tools__p4
+  item: 'N'
+  amount: 1
+light_blue_harness:
+  shop: tools__p4
+  item: O
+  amount: 1
+yellow_harness:
+  shop: tools__p4
+  item: P
+  amount: 1
+lime_harness:
+  shop: tools__p4
+  item: Q
+  amount: 1
+pink_harness:
+  shop: tools__p4
+  item: R
+  amount: 1
+gray_harness:
+  shop: tools__p4
+  item: S
+  amount: 1
+light_gray_harness:
+  shop: tools__p4
+  item: T
+  amount: 1
+cyan_harness:
+  shop: tools__p4
+  item: U
+  amount: 1
+purple_harness:
+  shop: tools__p5
+  item: A
+  amount: 1
+blue_harness:
+  shop: tools__p5
+  item: B
+  amount: 1
+brown_harness:
+  shop: tools__p5
+  item: C
+  amount: 1
+green_harness:
+  shop: tools__p5
+  item: D
+  amount: 1
+red_harness:
+  shop: tools__p5
+  item: E
+  amount: 1
+black_harness:
+  shop: tools__p5
+  item: F
+  amount: 1
+carrot_on_a_stick:
+  shop: tools__p5
+  item: G
+  amount: 1
+warped_fungus_on_a_stick:
+  shop: tools__p5
+  item: H
+  amount: 1
+oak_boat:
+  shop: tools__p5
+  item: I
+  amount: 1
+spruce_boat:
+  shop: tools__p5
+  item: J
+  amount: 1
+spruce_chest_boat:
+  shop: tools__p5
+  item: K
+  amount: 1
+birch_boat:
+  shop: tools__p5
+  item: L
+  amount: 1
+birch_chest_boat:
+  shop: tools__p5
+  item: M
+  amount: 1
+jungle_boat:
+  shop: tools__p5
+  item: 'N'
+  amount: 1
+jungle_chest_boat:
+  shop: tools__p5
+  item: O
+  amount: 1
+acacia_boat:
+  shop: tools__p5
+  item: P
+  amount: 1
+acacia_chest_boat:
+  shop: tools__p5
+  item: Q
+  amount: 1
+dark_oak_boat:
+  shop: tools__p5
+  item: R
+  amount: 1
+dark_oak_chest_boat:
+  shop: tools__p5
+  item: S
+  amount: 1
+mangrove_boat:
+  shop: tools__p5
+  item: T
+  amount: 1
+mangrove_chest_boat:
+  shop: tools__p5
+  item: U
+  amount: 1
+cherry_boat:
+  shop: tools__p6
+  item: A
+  amount: 1
+cherry_chest_boat:
+  shop: tools__p6
+  item: B
+  amount: 1
+pale_oak_boat:
+  shop: tools__p6
+  item: C
+  amount: 1
+pale_oak_chest_boat:
+  shop: tools__p6
+  item: D
+  amount: 1
+bamboo_raft:
+  shop: tools__p6
+  item: E
+  amount: 1
+music_disc_13:
+  shop: tools__p6
+  item: F
+  amount: 1
+music_disc_cat:
+  shop: tools__p6
+  item: G
+  amount: 1
+music_disc_blocks:
+  shop: tools__p6
+  item: H
+  amount: 1
+music_disc_chirp:
+  shop: tools__p6
+  item: I
+  amount: 1
+music_disc_far:
+  shop: tools__p6
+  item: J
+  amount: 1
+music_disc_mall:
+  shop: tools__p6
+  item: K
+  amount: 1
+music_disc_mellohi:
+  shop: tools__p6
+  item: L
+  amount: 1
+music_disc_stal:
+  shop: tools__p6
+  item: M
+  amount: 1
+music_disc_strad:
+  shop: tools__p6
+  item: 'N'
+  amount: 1
+music_disc_ward:
+  shop: tools__p6
+  item: O
+  amount: 1
+music_disc_11:
+  shop: tools__p6
+  item: P
+  amount: 1
+music_disc_creator_music_box:
+  shop: tools__p6
+  item: Q
+  amount: 1
+music_disc_wait:
+  shop: tools__p6
+  item: R
+  amount: 1
+music_disc_creator:
+  shop: tools__p6
+  item: S
+  amount: 1
+music_disc_precipice:
+  shop: tools__p6
+  item: T
+  amount: 1
+music_disc_otherside:
+  shop: tools__p6
+  item: U
+  amount: 1
+music_disc_relic:
+  shop: tools__p7
+  item: A
+  amount: 1
+music_disc_5:
+  shop: tools__p7
+  item: B
+  amount: 1
+music_disc_pigstep:
+  shop: tools__p7
+  item: C
+  amount: 1
+music_disc_tears:
+  shop: tools__p7
+  item: D
+  amount: 1
+music_disc_lava_chicken:
+  shop: tools__p7
+  item: E
   amount: 1

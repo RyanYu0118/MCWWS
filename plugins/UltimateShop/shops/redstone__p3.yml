@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:ingredients-shop-name} (6/8)'
+  shop-name: '{lang:redstone-shop-name} (3/4)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -21,7 +21,7 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: ingredients__p5
+            shop: redstone__p2
       '5':
         display-item:
           material: ARROW
@@ -29,25 +29,25 @@ settings:
         actions:
           '1':
             type: shop_menu
-            shop: ingredients__p7
+            shop: redstone__p4
 items:
   A:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GUSTER_BANNER_PATTERN
+        material: DECORATED_POT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_guster_banner_pattern%'
+        amount: '%mcwws.price_buy_decorated_pot%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_guster_banner_pattern%'
+        amount: '%mcwws.price_sell_decorated_pot%'
         placeholder: '{amount}$'
         start-apply: 0
   B:
@@ -55,18 +55,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ANGLER_POTTERY_SHERD
+        material: OBSERVER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_angler_pottery_sherd%'
+        amount: '%mcwws.price_buy_observer%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_angler_pottery_sherd%'
+        amount: '%mcwws.price_sell_observer%'
         placeholder: '{amount}$'
         start-apply: 0
   C:
@@ -74,18 +74,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ARCHER_POTTERY_SHERD
+        material: NOTE_BLOCK
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_archer_pottery_sherd%'
+        amount: '%mcwws.price_buy_note_block%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_archer_pottery_sherd%'
+        amount: '%mcwws.price_sell_note_block%'
         placeholder: '{amount}$'
         start-apply: 0
   D:
@@ -93,18 +93,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: ARMS_UP_POTTERY_SHERD
+        material: COMPOSTER
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_arms_up_pottery_sherd%'
+        amount: '%mcwws.price_buy_composter%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_arms_up_pottery_sherd%'
+        amount: '%mcwws.price_sell_composter%'
         placeholder: '{amount}$'
         start-apply: 0
   E:
@@ -112,18 +112,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BLADE_POTTERY_SHERD
+        material: CAULDRON
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_blade_pottery_sherd%'
+        amount: '%mcwws.price_buy_cauldron%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_blade_pottery_sherd%'
+        amount: '%mcwws.price_sell_cauldron%'
         placeholder: '{amount}$'
         start-apply: 0
   F:
@@ -131,18 +131,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BREWER_POTTERY_SHERD
+        material: RAIL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_brewer_pottery_sherd%'
+        amount: '%mcwws.price_buy_rail%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_brewer_pottery_sherd%'
+        amount: '%mcwws.price_sell_rail%'
         placeholder: '{amount}$'
         start-apply: 0
   G:
@@ -150,18 +150,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: BURN_POTTERY_SHERD
+        material: POWERED_RAIL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_burn_pottery_sherd%'
+        amount: '%mcwws.price_buy_powered_rail%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_burn_pottery_sherd%'
+        amount: '%mcwws.price_sell_powered_rail%'
         placeholder: '{amount}$'
         start-apply: 0
   H:
@@ -169,18 +169,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: DANGER_POTTERY_SHERD
+        material: DETECTOR_RAIL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_danger_pottery_sherd%'
+        amount: '%mcwws.price_buy_detector_rail%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_danger_pottery_sherd%'
+        amount: '%mcwws.price_sell_detector_rail%'
         placeholder: '{amount}$'
         start-apply: 0
   I:
@@ -188,18 +188,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: EXPLORER_POTTERY_SHERD
+        material: ACTIVATOR_RAIL
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_explorer_pottery_sherd%'
+        amount: '%mcwws.price_buy_activator_rail%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_explorer_pottery_sherd%'
+        amount: '%mcwws.price_sell_activator_rail%'
         placeholder: '{amount}$'
         start-apply: 0
   J:
@@ -207,18 +207,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FLOW_POTTERY_SHERD
+        material: MINECART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_flow_pottery_sherd%'
+        amount: '%mcwws.price_buy_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_flow_pottery_sherd%'
+        amount: '%mcwws.price_sell_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
   K:
@@ -226,18 +226,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: FRIEND_POTTERY_SHERD
+        material: HOPPER_MINECART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_friend_pottery_sherd%'
+        amount: '%mcwws.price_buy_hopper_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_friend_pottery_sherd%'
+        amount: '%mcwws.price_sell_hopper_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
   L:
@@ -245,18 +245,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: GUSTER_POTTERY_SHERD
+        material: CHEST_MINECART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_guster_pottery_sherd%'
+        amount: '%mcwws.price_buy_chest_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_guster_pottery_sherd%'
+        amount: '%mcwws.price_sell_chest_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
   M:
@@ -264,18 +264,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HEART_POTTERY_SHERD
+        material: FURNACE_MINECART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_heart_pottery_sherd%'
+        amount: '%mcwws.price_buy_furnace_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_heart_pottery_sherd%'
+        amount: '%mcwws.price_sell_furnace_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
   'N':
@@ -283,18 +283,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HEARTBREAK_POTTERY_SHERD
+        material: TNT_MINECART
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_heartbreak_pottery_sherd%'
+        amount: '%mcwws.price_buy_tnt_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_heartbreak_pottery_sherd%'
+        amount: '%mcwws.price_sell_tnt_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
   O:
@@ -302,18 +302,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: HOWL_POTTERY_SHERD
+        material: OAK_CHEST_BOAT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_howl_pottery_sherd%'
+        amount: '%mcwws.price_buy_oak_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_howl_pottery_sherd%'
+        amount: '%mcwws.price_sell_oak_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
   P:
@@ -321,18 +321,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MINER_POTTERY_SHERD
+        material: BAMBOO_CHEST_RAFT
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_miner_pottery_sherd%'
+        amount: '%mcwws.price_buy_bamboo_chest_raft%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_miner_pottery_sherd%'
+        amount: '%mcwws.price_sell_bamboo_chest_raft%'
         placeholder: '{amount}$'
         start-apply: 0
   Q:
@@ -340,18 +340,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: MOURNER_POTTERY_SHERD
+        material: OAK_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_mourner_pottery_sherd%'
+        amount: '%mcwws.price_buy_oak_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_mourner_pottery_sherd%'
+        amount: '%mcwws.price_sell_oak_door%'
         placeholder: '{amount}$'
         start-apply: 0
   R:
@@ -359,18 +359,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PLENTY_POTTERY_SHERD
+        material: IRON_DOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_plenty_pottery_sherd%'
+        amount: '%mcwws.price_buy_iron_door%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_plenty_pottery_sherd%'
+        amount: '%mcwws.price_sell_iron_door%'
         placeholder: '{amount}$'
         start-apply: 0
   S:
@@ -378,18 +378,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: PRIZE_POTTERY_SHERD
+        material: OAK_FENCE_GATE
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_prize_pottery_sherd%'
+        amount: '%mcwws.price_buy_oak_fence_gate%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_prize_pottery_sherd%'
+        amount: '%mcwws.price_sell_oak_fence_gate%'
         placeholder: '{amount}$'
         start-apply: 0
   T:
@@ -397,18 +397,18 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SCRAPE_POTTERY_SHERD
+        material: OAK_TRAPDOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_scrape_pottery_sherd%'
+        amount: '%mcwws.price_buy_oak_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_scrape_pottery_sherd%'
+        amount: '%mcwws.price_sell_oak_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
   U:
@@ -416,17 +416,17 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
-        material: SHEAF_POTTERY_SHERD
+        material: IRON_TRAPDOOR
         amount: 1
     buy-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_buy_sheaf_pottery_sherd%'
+        amount: '%mcwws.price_buy_iron_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0
     sell-prices:
       '1':
         economy-plugin: Vault
-        amount: '%mcwws.price_sell_sheaf_pottery_sherd%'
+        amount: '%mcwws.price_sell_iron_trapdoor%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -1,7 +1,7 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:ingredients-shop-name} (1/7)'
+  shop-name: '{lang:ingredients-shop-name} (1/8)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
@@ -180,6 +180,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: ANCIENT_DEBRIS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_ancient_debris%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_ancient_debris%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  J:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: QUARTZ
         amount: 1
     buy-prices:
@@ -194,7 +213,7 @@ items:
         amount: '%mcwws.price_sell_quartz%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -213,7 +232,7 @@ items:
         amount: '%mcwws.price_sell_amethyst_shard%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -232,7 +251,7 @@ items:
         amount: '%mcwws.price_sell_copper_nugget%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -251,7 +270,7 @@ items:
         amount: '%mcwws.price_sell_iron_nugget%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -270,7 +289,7 @@ items:
         amount: '%mcwws.price_sell_gold_nugget%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -289,7 +308,7 @@ items:
         amount: '%mcwws.price_sell_copper_ingot%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -308,7 +327,7 @@ items:
         amount: '%mcwws.price_sell_iron_ingot%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -327,7 +346,7 @@ items:
         amount: '%mcwws.price_sell_gold_ingot%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -346,7 +365,7 @@ items:
         amount: '%mcwws.price_sell_netherite_scrap%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -365,7 +384,7 @@ items:
         amount: '%mcwws.price_sell_netherite_ingot%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -384,7 +403,7 @@ items:
         amount: '%mcwws.price_sell_stick%'
         placeholder: '{amount}$'
         start-apply: 0
-  T:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -401,24 +420,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_flint%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: WHEAT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_wheat%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_wheat%'
         placeholder: '{amount}$'
         start-apply: 0

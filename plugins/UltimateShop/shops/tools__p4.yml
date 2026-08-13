@@ -207,6 +207,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: ENDER_EYE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_ender_eye%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_ender_eye%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  K:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: ELYTRA
         amount: 1
     buy-prices:
@@ -221,7 +240,7 @@ items:
         amount: '%mcwws.price_sell_elytra%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -240,7 +259,7 @@ items:
         amount: '%mcwws.price_sell_saddle%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -259,7 +278,7 @@ items:
         amount: '%mcwws.price_sell_white_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -278,7 +297,7 @@ items:
         amount: '%mcwws.price_sell_orange_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -297,7 +316,7 @@ items:
         amount: '%mcwws.price_sell_magenta_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -316,7 +335,7 @@ items:
         amount: '%mcwws.price_sell_light_blue_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -335,7 +354,7 @@ items:
         amount: '%mcwws.price_sell_yellow_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -354,7 +373,7 @@ items:
         amount: '%mcwws.price_sell_lime_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -373,7 +392,7 @@ items:
         amount: '%mcwws.price_sell_pink_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -392,7 +411,7 @@ items:
         amount: '%mcwws.price_sell_gray_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  T:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -409,24 +428,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_light_gray_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  U:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: CYAN_HARNESS
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_cyan_harness%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_cyan_harness%'
         placeholder: '{amount}$'
         start-apply: 0
