@@ -470,10 +470,12 @@ useTimes:
       lastBuyTime: '2026-06-19 21:36:18'
       lastSellTime: '2026-08-13 11:41:55'
     A:
-      buyUseTimes: 411
-      sellUseTimes: 422
-      lastBuyTime: '2026-06-24 20:33:49'
-      lastSellTime: '2026-08-05 12:54:09'
+      buyUseTimes: 412
+      totalBuyUseTimes: 1
+      sellUseTimes: 423
+      totalSellUseTimes: 1
+      lastBuyTime: '2026-08-14 00:18:13'
+      lastSellTime: '2026-08-14 00:18:15'
     L:
       buyUseTimes: 1
       lastBuyTime: '2026-06-25 21:56:35'
@@ -498,6 +500,13 @@ useTimes:
     Q:
       sellUseTimes: 42
       lastSellTime: '2026-08-02 15:49:01'
+  terracottas__p2:
+    J:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-23 21:26:41'
+    G:
+      sellUseTimes: 8
+      lastSellTime: '2026-06-23 21:26:41'
   blocks:
     N:
       sellUseTimes: 6
@@ -552,13 +561,6 @@ useTimes:
       sellUseTimes: 231
       lastBuyTime: '2026-07-04 02:48:10'
       lastSellTime: '2026-07-04 02:47:46'
-  terracottas__p2:
-    J:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-23 21:26:41'
-    G:
-      sellUseTimes: 8
-      lastSellTime: '2026-06-23 21:26:41'
   fish:
     L:
       sellUseTimes: 1
@@ -1421,6 +1423,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;C;;E;;F
-    refreshDoneTime: '2026-08-14 00:00:00'
+    nowValue: A;;B;;C;;E;;G
+    refreshDoneTime: '2026-08-15 00:00:00'
 customPlaceholder: {}

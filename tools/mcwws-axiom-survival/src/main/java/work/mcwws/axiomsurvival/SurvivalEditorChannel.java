@@ -4,11 +4,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.messaging.PluginMessageListener;
 
 import java.nio.charset.StandardCharsets;
+import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 /**
  * 客户端模组通道 {@code mcwws:axiom_survival}：
  * <ul>
- *   <li>服务端 → 客户端 {@code hello}：宣告支持生存 Editor</li>
+ *   <li>服务端 → 客户端 {@code hello}：宣告支持生存 Editor；附 {@code |gizmo} 时允许实体操纵小方块</li>
  *   <li>客户端 → 服务端 {@code 1}：进入 Editor</li>
  *   <li>客户端 → 服务端 {@code 0}：退出 Editor</li>
  *   <li>客户端 → 服务端 {@code 2}：打开 Editor 菜单（快照位置）</li>
@@ -22,6 +25,7 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
     private static final byte OP_EXIT = 0;
     private static final byte OP_MENU_OPEN = 2;
     private static final byte OP_MENU_CLOSE = 3;
+    private static final Map<UUID, Boolean> lastGizmoFlag = new ConcurrentHashMap<>();
 
     private final SurvivalEditorService survivalEditorService;
 
@@ -37,8 +41,38 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
         if (!plugin.getPluginConfig().getBoolean("survival-editor-mode", true)) {
             return;
         }
-        byte[] payload = "hello".getBytes(StandardCharsets.UTF_8);
-        player.sendPluginMessage(plugin, CHANNEL, payload);
+        boolean gizmo = allowsEntityGizmo(player);
+        lastGizmoFlag.put(player.getUniqueId(), gizmo);
+        String text = gizmo ? "hello|gizmo" : "hello";
+        player.sendPluginMessage(plugin, CHANNEL, text.getBytes(StandardCharsets.UTF_8));
+    }
+
+    static void syncHelloIfNeeded(Player player) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+        boolean gizmo = allowsEntityGizmo(player);
+        Boolean last = lastGizmoFlag.get(player.getUniqueId());
+        if (last != null && last == gizmo) {
+            return;
+        }
+        sendHello(player);
+    }
+
+    static void clear(Player player) {
+        if (player != null) {
+            lastGizmoFlag.remove(player.getUniqueId());
+        }
+    }
+
+    static boolean allowsEntityGizmo(Player player) {
+        if (player == null) {
+            return false;
+        }
+        McwwsAxiomSurvivalPlugin plugin = McwwsAxiomSurvivalPlugin.getInstance();
+        String perm = plugin.getPluginConfig().getString(
+                "entity.gizmo-permission", "mcwws.axiom.survival.entity");
+        return player.hasPermission(perm);
     }
 
     @Override

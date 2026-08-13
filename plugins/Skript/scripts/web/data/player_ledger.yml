@@ -1,4 +1,4 @@
-next_id: 1937
+next_id: 1939
 entries:
   '1':
     id: 1
@@ -20323,3 +20323,25 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/13 23:44
     createdAt: '2026-08-13T15:44:47.230655100Z'
     updatedAt: '2026-08-13T15:44:50.179463800Z'
+  '1937':
+    id: 1937
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 2.77
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1786637895299-50606531067400
+    createdAt: '2026-08-13T16:18:15.299885Z'
+    balanceAfter: 165448814.58
+  '1938':
+    id: 1938
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 12
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 00:22
+    createdAt: '2026-08-13T16:22:37.888035700Z'
+    updatedAt: '2026-08-13T16:22:39.882051400Z'

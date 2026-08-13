@@ -50,6 +50,8 @@ entity:
   spawn-unit: 20.0
   delete-unit: 5.0
   manipulate-unit: 2.0
+  # 生存里默认不显示可拖动小方块，避免误触普通实体。需要时显式授予此权限（OP 也不会默认拥有）。
+  gizmo-permission: mcwws.axiom.survival.entity
 
 # 生物群系画笔：不消耗材料，只按涂改格数收劳务费
 biome:

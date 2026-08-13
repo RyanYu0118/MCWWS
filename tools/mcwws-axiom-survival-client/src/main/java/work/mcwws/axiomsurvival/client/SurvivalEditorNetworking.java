@@ -30,10 +30,14 @@ final class SurvivalEditorNetworking {
         PayloadTypeRegistry.clientboundPlay().register(HelloPayload.TYPE, HelloPayload.CODEC);
         PayloadTypeRegistry.serverboundPlay().register(EditorStatePayload.TYPE, EditorStatePayload.CODEC);
         ClientPlayNetworking.registerGlobalReceiver(HelloPayload.TYPE, (payload, context) ->
-                context.client().execute(SurvivalEditorController::markSupportedFromHello)
+                context.client().execute(() -> {
+                    SurvivalEditorController.markSupportedFromHello();
+                    SurvivalEditorController.setEntityGizmoAllowed(payload.entityGizmo());
+                })
         );
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             SurvivalEditorController.setServerSupported(false);
+            SurvivalEditorController.setEntityGizmoAllowed(false);
             if (SurvivalEditorController.isLocalEditorActive()) {
                 SurvivalEditorController.onEditorExit();
             }
@@ -66,7 +70,7 @@ final class SurvivalEditorNetworking {
         ));
     }
 
-    private record HelloPayload() implements CustomPacketPayload {
+    private record HelloPayload(boolean entityGizmo) implements CustomPacketPayload {
 
         static final CustomPacketPayload.Type<HelloPayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
@@ -81,8 +85,8 @@ final class SurvivalEditorNetworking {
             byte[] bytes = new byte[buf.readableBytes()];
             buf.readBytes(bytes);
             String text = new String(bytes, StandardCharsets.UTF_8);
-            if ("hello".equals(text)) {
-                return new HelloPayload();
+            if (text.startsWith("hello")) {
+                return new HelloPayload(text.contains("|gizmo"));
             }
             throw new IllegalArgumentException("未知 mcwws:axiom_survival S2C 载荷: " + text);
         }

@@ -11,6 +11,7 @@ import net.minecraft.world.level.GameType;
 public final class SurvivalEditorController {
 
     private static volatile boolean serverSupported;
+    private static volatile boolean entityGizmoAllowed;
     private static volatile boolean localEditorActive;
     private static GameType storedMode;
 
@@ -38,6 +39,9 @@ public final class SurvivalEditorController {
 
     public static void setServerSupported(boolean supported) {
         serverSupported = supported;
+        if (!supported) {
+            entityGizmoAllowed = false;
+        }
         McwwsAxiomSurvivalClientMod.LOGGER.info(
                 supported ? "服务端已宣告生存 Editor 支持" : "服务端生存 Editor 支持已关闭"
         );
@@ -82,6 +86,25 @@ public final class SurvivalEditorController {
      */
     public static boolean shouldSpoofAxiomActive() {
         return serverSupported;
+    }
+
+    /**
+     * 生存里 {@code isAxiomActive} 被谎报为真后，Axiom 会给附近展示实体画出可拖动小方块，
+     * 容易误触村民/展示框/盔甲架。默认关掉；只有服务端授予实体操纵权限才显示。
+     * 未接到本服 hello 时不干预（单人/其他服仍走 Axiom 原逻辑）。
+     */
+    public static boolean shouldShowEntityGizmos() {
+        return !serverSupported || entityGizmoAllowed;
+    }
+
+    public static void setEntityGizmoAllowed(boolean allowed) {
+        if (entityGizmoAllowed == allowed) {
+            return;
+        }
+        entityGizmoAllowed = allowed;
+        McwwsAxiomSurvivalClientMod.LOGGER.info(
+                allowed ? "已允许显示实体操纵小方块" : "已关闭实体操纵小方块"
+        );
     }
 
     /** 供 Axiom 激活判定使用的虚拟模式：菜单开启时旁观，否则创造 */

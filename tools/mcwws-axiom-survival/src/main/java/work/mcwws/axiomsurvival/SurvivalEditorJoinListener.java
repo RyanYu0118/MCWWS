@@ -36,5 +36,6 @@ final class SurvivalEditorJoinListener implements Listener {
         plugin.getChargeNotifier().clear(event.getPlayer());
         plugin.getChargeHistory().clear(event.getPlayer());
         plugin.getUsageLimits().clear(event.getPlayer());
+        SurvivalEditorChannel.clear(event.getPlayer());
     }
 }

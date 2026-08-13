@@ -55,6 +55,11 @@ public final class McwwsAxiomSurvivalPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new AxiomSurvivalListener(this, chargeService, editorRestoreService, survivalEditorService), this);
         getServer().getPluginManager().registerEvents(new EditorVanillaMoveListener(editorRestoreService, survivalEditorService), this);
         getServer().getPluginManager().registerEvents(new SurvivalEditorJoinListener(this, survivalEditorService), this);
+        getServer().getScheduler().runTaskTimer(this, () -> {
+            for (Player online : getServer().getOnlinePlayers()) {
+                SurvivalEditorChannel.syncHelloIfNeeded(online);
+            }
+        }, 40L, 40L);
         getCommand("mcwws-axiom-reload").setExecutor((sender, command, label, args) -> {
             reloadLocalConfig();
             priceCatalog.reload();
