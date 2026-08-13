@@ -31,25 +31,33 @@
 
 ---
 
+
+
 ## 2. 给玩家看的特色总览
 
-| 特色 | 玩家实际感受到什么 |
-|------|-------------------|
-| 动态市场 | 买贵卖便宜会随库存和近期买卖波动；游戏内商店和网页商店同一套价 |
-| 生存创世神 | `//set` 等指令按格扣材料费 + 劳务费；拆除按市场卖价折现 |
-| 生存 Axiom | 装客户端模组后，生存里也能开 Editor；扣费规则与创世神对齐 |
-| 搬运只收劳务 | 同一次编辑里「这里拆、那里放」的同种方块，不走市场 |
-| 撤销退 95% | `//undo` / Axiom 撤销：退上一笔，扣 5% 手续费，市场库存一并还原 |
-| 零钱明细 | 网页账本记录建造、商店、飞行等；毫秒时间戳 |
-| 网页商城 | 购物车可手输数量，单次最多 10000；下单后进游戏背包系统领取 |
-| 游戏内商店 | UltimateShop Premium：搜索、收藏；文字搜索要点漏斗再在聊天栏输入 |
-| 光源可拆可调 | 生存能敲掉 Light 方块并掉落；右键能调亮度 |
-| 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游 |
-| 领地中文 | Residence 权限旗标与拒绝提示是中文 |
+
+| 特色       | 玩家实际感受到什么                                  |
+| -------- | ------------------------------------------ |
+| 动态市场     | 买贵卖便宜会随库存和近期买卖波动；游戏内商店和网页商店同一套价            |
+| 生存创世神    | `//set` 等指令按格扣材料费 + 劳务费；拆除按市场卖价折现          |
+| 生存 Axiom | 装客户端模组后，生存里也能开 Editor；扣费规则与创世神对齐           |
+| 搬运只收劳务   | 同一次编辑里「这里拆、那里放」的同种方块，不走市场                  |
+| 撤销退 95%  | `//undo` / Axiom 撤销：退上一笔，扣 5% 手续费，市场库存一并还原 |
+| 零钱明细     | 网页账本记录建造、商店、飞行等；毫秒时间戳                      |
+| 网页商城     | 购物车可手输数量，单次最多 10000；下单后进游戏背包系统领取           |
+| 游戏内商店    | UltimateShop Premium：搜索、收藏；文字搜索要点漏斗再在聊天栏输入 |
+| 光源可拆可调   | 生存能敲掉 Light 方块并掉落；右键能调亮度                   |
+| 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游        |
+| 领地中文     | Residence 权限旗标与拒绝提示是中文                     |
+
 
 ---
 
+
+
 ## 3. 动态市场经济
+
+
 
 ### 3.1 玩家需要知道的规则
 
@@ -60,6 +68,8 @@
   - 考古类（`archaeology`）：整体 **+10%**
   - 木材类（`wood`）：整体 **-10%**
 - 游戏内商店、网页商店、创世神/Axiom 材料费，读的是同一份导出物价 `web_prices.yml`。
+
+
 
 ### 3.2 动态倍率怎么算（写进「经济说明」页即可）
 
@@ -98,6 +108,8 @@ dynamic_factor = clamp(
 超大编辑会被 Axiom 拆成多个网络包，跨包的搬运无法对冲，只会在**同一个包**里对冲。
 
 ---
+
+
 
 ## 4. 生存创世神（WorldEdit / FAWE）
 
@@ -149,18 +161,22 @@ dynamic_factor = clamp(
 
 ---
 
+
+
 ## 5. 生存 Axiom Editor
 
 这是本服和「原版 Axiom 创造服」差别最大的一块。
 
 ### 5.1 要装什么
 
-| 端 | 名称 | 当前版本 |
-|----|------|----------|
-| 服务端 | AxiomPaper | 5.0.4（MC 26.2） |
-| 服务端 | `MCWWS_AxiomSurvival` | 1.1.2 |
-| 客户端 | Axiom | 5.5.0（MC 26.2） |
-| 客户端 | `MCWWS_AxiomSurvivalClient` | 1.2.4 |
+
+| 端   | 名称                          | 当前版本           |
+| --- | --------------------------- | -------------- |
+| 服务端 | AxiomPaper                  | 5.0.4（MC 26.2） |
+| 服务端 | `MCWWS_AxiomSurvival`       | 1.1.2          |
+| 客户端 | Axiom                       | 5.5.0（MC 26.2） |
+| 客户端 | `MCWWS_AxiomSurvivalClient` | 1.2.4          |
+
 
 没有客户端模组时：服务端仍会拦创造切换、按格扣费，但 Editor 菜单/生存 HUD/飞行权威值对不齐，体验会明显差一截。连上模组后聊天会提示「已启用生存 Editor」。
 
@@ -179,10 +195,10 @@ dynamic_factor = clamp(
 1. 服务端玩家**始终是生存**（菜单打开的那几秒服务端会切旁观，关菜单立刻切回）。
 2. 打开 Editor 菜单：客户端本地旁观；服务端快照位置、朝向、飞行状态。
 3. 关掉菜单进入建造：本地假装创造以便 Axiom 工具槽出现，但：
-   - 飞行以服务端为准（FlyWithFood / 玩家自己开的飞）
-   - `E` 打开的是**生存背包**，不是创造物品栏
-   - 挖掘按生存进度，不是秒破
-   - 饱食度满时不会播进食动作
+  - 飞行以服务端为准（FlyWithFood / 玩家自己开的飞）
+  - `E` 打开的是**生存背包**，不是创造物品栏
+  - 挖掘按生存进度，不是秒破
+  - 饱食度满时不会播进食动作
 4. 完全退出 Editor：位置、模式、飞行按进入前恢复。
 
 进入 Editor **不会**自动帮你开飞，退出也**不会**强行关飞，以免覆盖玩家自己的飞行选择。
@@ -198,6 +214,8 @@ dynamic_factor = clamp(
 ```text
 /axiomcheck
 ```
+
+
 
 ### 5.3 扣费（与创世神对齐）
 
@@ -247,6 +265,8 @@ Axiom 会把超大笔刷拆成多个包，所以：
 
 ---
 
+
+
 ## 6. 零钱明细（钱包账本）
 
 两层一起工作：
@@ -266,6 +286,8 @@ Axiom 会把超大笔刷拆成多个包，所以：
 分类名（账本里能见到的）：飞行消耗、Axiom 建造 / 撤销 / 拆除回收、创世神建造 / 撤销 / 拆除回收、购买 / 出售、转账、其他。
 
 ---
+
+
 
 ## 7. 游戏内商店（UltimateShop Premium）
 
@@ -293,6 +315,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 8. 网页商城与网页服务
 
 服务端插件 `MCWWS_WebHost`：Minecraft 进程在时拉起 Node 网页，关掉 Minecraft 时一并停。不重启游戏的热重载：
@@ -317,6 +341,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 9. 背包（BetterBags）
 
 本服改过默认行为，Wiki 必须写，否则玩家会以为「捡东西自动有头颅背包」：
@@ -328,6 +354,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 管理员回收/重发相关：`/mcwws-bags-reclaim`（管理用）。
 
 ---
+
+
 
 ## 10. 光源（Light 方块）
 
@@ -341,6 +369,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 11. 领地（Residence）
 
 - 权限旗标名称与拒绝消息为**中文**
@@ -349,6 +379,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese.yml` 抄表。
 
 ---
+
+
 
 ## 12. 三维地图 / GIS（BlueMap）
 
@@ -369,6 +401,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 13. 其它生存便利
 
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
@@ -377,20 +411,24 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 14. 权限速查（写进管理员附录）
 
-| 节点 | 默认 | 含义 |
-|------|------|------|
-| `mcwws.axiom.survival.use` | true | 允许生存 Axiom 付费建造 |
-| `mcwws.axiom.survival.entity` | **false**（OP 也无） | 显示实体拖动小方块 |
-| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与保护扫描 |
-| `mcwws.axiom.survival.admin` | op | 重载 Axiom 生存配置 |
-| `mcwws.we.survival.bypass` | **false**（OP 也无） | 跳过创世神扣费与保护扫描 |
-| `mcwws.we.survival.admin` | op | 重载创世神生存配置 |
-| `mcwws.ledger.admin` | op | 重载零钱明细插件 |
-| `mcwws.web.admin` | op | 网页服务重载/状态 |
-| `axiom.*` | default 组脚本授予 | 建造能力；创造/旁观节点会被 unset |
-| `axiom.entity.manipulate` | 随 `axiom.*` | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
+
+| 节点                            | 默认               | 含义                                           |
+| ----------------------------- | ---------------- | -------------------------------------------- |
+| `mcwws.axiom.survival.use`    | true             | 允许生存 Axiom 付费建造                              |
+| `mcwws.axiom.survival.entity` | **false**（OP 也无） | 显示实体拖动小方块                                    |
+| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与保护扫描                             |
+| `mcwws.axiom.survival.admin`  | op               | 重载 Axiom 生存配置                                |
+| `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与保护扫描                                 |
+| `mcwws.we.survival.admin`     | op               | 重载创世神生存配置                                    |
+| `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
+| `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
+| `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |
+| `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
+
 
 经济管理（Skript，建议不要写进玩家页）：
 
@@ -420,6 +458,8 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ---
 
+
+
 ## 15. 建议的公开 Wiki 目录
 
 1. **欢迎 / 服务器是什么** — 用第 1、2 节
@@ -438,19 +478,23 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 ---
 
+
+
 ## 16. 和代码的对应关系（给以后改 Wiki 的人）
 
-| 主题 | 主要位置 |
-|------|----------|
-| 动态价格 | `plugins/Skript/scripts/mcwws/economy/economy.sk`、`z_economy_dynamic.sk`、`market_dynamic_config.yml` |
-| 导出给网页/建造的价 | `plugins/Skript/scripts/web/mcwws/economy/web_prices.yml` |
-| 创世神扣费 | `tools/mcwws-worldedit-survival/` |
-| Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/` |
-| Axiom 客户端 | `tools/mcwws-axiom-survival-client/` |
-| 商店搜索崩溃补丁 | `tools/mcwws-ultimateshop-fix/` |
-| 零钱明细兜底 | `tools/mcwws-economy-ledger/` |
-| 网页进程 | `tools/mcwws-web-host/` |
-| 网页下单入包 | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk` |
-| GIS | `bluemap/web/js/mcwws-gis.js` |
+
+| 主题               | 主要位置                                                                                                 |
+| ---------------- | ---------------------------------------------------------------------------------------------------- |
+| 动态价格             | `plugins/Skript/scripts/mcwws/economy/economy.sk`、`z_economy_dynamic.sk`、`market_dynamic_config.yml` |
+| 导出给网页/建造的价       | `plugins/Skript/scripts/web/mcwws/economy/web_prices.yml`                                            |
+| 创世神扣费            | `tools/mcwws-worldedit-survival/`                                                                    |
+| Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                        |
+| Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                 |
+| 商店搜索崩溃补丁         | `tools/mcwws-ultimateshop-fix/`                                                                      |
+| 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
+| 网页进程             | `tools/mcwws-web-host/`                                                                              |
+| 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
+| GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
+
 
 改了扣费数字、权限默认值或搜索交互，先改这里再同步 Halo。
