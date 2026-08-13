@@ -21,7 +21,11 @@ public final class SurvivalEditorController {
     private static float menuYaw;
     private static float menuPitch;
     private static boolean menuFlying;
-    private static boolean menuMayfly;
+
+    /** 服务端下发的 abilities 是飞行权限的唯一权威来源；本地创造会污染 mayfly，需要这份原值压回去 */
+    private static volatile boolean hasServerAbilities;
+    private static volatile boolean serverMayfly;
+    private static volatile boolean serverFlying;
 
     private SurvivalEditorController() {
     }
@@ -89,11 +93,8 @@ public final class SurvivalEditorController {
         menuYaw = player.getYRot();
         menuPitch = player.getXRot();
         menuFlying = player.getAbilities().flying;
-        menuMayfly = player.getAbilities().mayfly;
         hasMenuPose = true;
-        McwwsAxiomSurvivalClientMod.LOGGER.debug(
-                "开菜单快照: flying={} mayfly={}", menuFlying, menuMayfly
-        );
+        McwwsAxiomSurvivalClientMod.LOGGER.debug("开菜单快照: flying={}", menuFlying);
         SurvivalEditorNetworking.sendMenuState(true, menuFlying);
     }
 
@@ -119,13 +120,12 @@ public final class SurvivalEditorController {
             player.setYRot(menuYaw);
             player.setXRot(menuPitch);
             player.resetFallDistance();
-            player.getAbilities().flying = menuFlying;
-            player.getAbilities().mayfly = menuMayfly;
             hasMenuPose = false;
         }
+        clampFlightToServerState();
         onEnterBuildMode();
         McwwsAxiomSurvivalClientMod.LOGGER.debug(
-                "关菜单: 已恢复建造模式、位置与飞行状态 flying={} mayfly={}", menuFlying, menuMayfly
+                "关菜单: 已恢复建造模式与位置，飞行按服务端 mayfly={} flying={}", serverMayfly, serverFlying
         );
     }
 
@@ -147,6 +147,44 @@ public final class SurvivalEditorController {
         }
     }
 
+    /** 服务端每次下发 abilities 都记一份，这是玩家真实飞行权限的唯一依据 */
+    public static void noteServerAbilities(boolean mayfly, boolean flying) {
+        serverMayfly = mayfly;
+        serverFlying = flying;
+        hasServerAbilities = true;
+    }
+
+    /**
+     * 本地模式切到创造后 vanilla 的 {@code GameType.updatePlayerAbilities} 会把 {@code mayfly} 置为 true，
+     * 等于凭空发飞行权限。建造阶段按服务端权威值压回去；菜单开着时本地是旁观、相机要靠飞行移动，不动。
+     */
+    public static void clampFlightToServerState() {
+        if (!localEditorActive || EditorUI.isEnabled()) {
+            return;
+        }
+        applyServerAbilities();
+    }
+
+    /** {@code setLocalMode} 之后的兜底：创造即建造阶段，撤掉 vanilla 附带的飞行权限 */
+    public static void afterLocalModeChanged(GameType gameType) {
+        if (gameType == GameType.CREATIVE) {
+            clampFlightToServerState();
+        }
+    }
+
+    private static void applyServerAbilities() {
+        if (!hasServerAbilities) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        var abilities = mc.player.getAbilities();
+        abilities.mayfly = serverMayfly;
+        abilities.flying = serverMayfly && serverFlying;
+    }
+
     /** 在 Axiom {@code changeGameMode} 执行前捕获真实生存模式 */
     public static void captureStoredModeBeforeEnter() {
         if (localEditorActive) {
@@ -155,6 +193,10 @@ public final class SurvivalEditorController {
         Minecraft mc = Minecraft.getInstance();
         if (mc.gameMode != null) {
             storedMode = mc.gameMode.getPlayerMode();
+        }
+        // 本局还没收到过 abilities 包时（理论上加入世界就会收到），用进 Editor 前的现值兜底
+        if (!hasServerAbilities && mc.player != null) {
+            noteServerAbilities(mc.player.getAbilities().mayfly, mc.player.getAbilities().flying);
         }
     }
 
@@ -194,6 +236,8 @@ public final class SurvivalEditorController {
         if (mc.gameMode != null && restore != null) {
             mc.gameMode.setLocalMode(restore);
         }
+        // 切回生存的 updatePlayerAbilities 会一并清掉飞行，玩家自己开的飞行要按服务端值恢复
+        applyServerAbilities();
         McwwsAxiomSurvivalClientMod.LOGGER.info("生存 Editor 会话结束");
     }
 }

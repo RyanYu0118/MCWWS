@@ -37,4 +37,17 @@ public class MultiPlayerGameModeLocalModeMixin {
             ci.cancel();
         }
     }
+
+    @Inject(method = "setLocalMode(Lnet/minecraft/world/level/GameType;)V", at = @At("TAIL"))
+    private void mcwws$afterLocalMode(GameType gameType, CallbackInfo ci) {
+        SurvivalEditorController.afterLocalModeChanged(gameType);
+    }
+
+    @Inject(
+            method = "setLocalMode(Lnet/minecraft/world/level/GameType;Lnet/minecraft/world/level/GameType;)V",
+            at = @At("TAIL")
+    )
+    private void mcwws$afterLocalModeWithPrevious(GameType gameType, GameType previousGameType, CallbackInfo ci) {
+        SurvivalEditorController.afterLocalModeChanged(gameType);
+    }
 }

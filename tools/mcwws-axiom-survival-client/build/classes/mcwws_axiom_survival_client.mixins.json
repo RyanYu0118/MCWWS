@@ -7,6 +7,7 @@
   "client": [
     "AxiomClientActiveMixin",
     "AxiomClientSpectatorPermissionMixin",
+    "ClientPacketListenerAbilitiesMixin",
     "EditorUIDisableMixin",
     "MultiPlayerGameModeHudMixin",
     "MultiPlayerGameModeLocalModeMixin",
