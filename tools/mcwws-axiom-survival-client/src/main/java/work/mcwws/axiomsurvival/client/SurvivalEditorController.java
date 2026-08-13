@@ -165,25 +165,26 @@ public final class SurvivalEditorController {
     }
 
     /**
-     * 本地模式切到创造后 vanilla 的 {@code GameType.updatePlayerAbilities} 会把
-     * {@code mayfly/instabuild/invulnerable} 全部置 true：凭空给飞行，E 键也会打开创造物品栏。
-     * 建造阶段按服务端权威值压回去；菜单开着时本地是旁观、相机要靠飞行移动，不动。
+     * 本地模式切到创造后 vanilla 会把 {@code mayfly} 置 true，凭空给飞行。
+     * 只压飞行；{@code instabuild} 必须留给 Axiom 工具菜单——它每 tick 检查
+     * {@code hasInfiniteMaterials()}，为 false 会立刻关掉 SwitchHotbarScreen。
+     * E 键创造物品栏由 {@code InventoryScreen} mixin 单独拦截。
      */
     public static void clampAbilitiesToServerState() {
         if (!localEditorActive || EditorUI.isEnabled()) {
             return;
         }
-        applyServerAbilities();
+        applyServerFlight();
     }
 
-    /** {@code setLocalMode} 之后的兜底：创造即建造阶段，撤掉 vanilla 附带的创造能力 */
+    /** {@code setLocalMode} 之后的兜底：创造即建造阶段，撤掉 vanilla 附带的飞行权限 */
     public static void afterLocalModeChanged(GameType gameType) {
         if (gameType == GameType.CREATIVE) {
             clampAbilitiesToServerState();
         }
     }
 
-    private static void applyServerAbilities() {
+    private static void applyServerFlight() {
         if (!hasServerAbilities) {
             return;
         }
@@ -194,6 +195,18 @@ public final class SurvivalEditorController {
         var abilities = mc.player.getAbilities();
         abilities.mayfly = serverMayfly;
         abilities.flying = serverMayfly && serverFlying;
+    }
+
+    private static void applyServerAbilities() {
+        applyServerFlight();
+        if (!hasServerAbilities) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        var abilities = mc.player.getAbilities();
         abilities.instabuild = serverInstabuild;
         abilities.invulnerable = serverInvulnerable;
     }

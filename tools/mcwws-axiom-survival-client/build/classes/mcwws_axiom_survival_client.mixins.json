@@ -14,7 +14,8 @@
     "MultiPlayerGameModeMiningMixin",
     "ServerIntegrationChangeGameModeMixin",
     "ServerIntegrationSendGamemodeMixin",
-    "HudHasExperienceMixin"
+    "HudHasExperienceMixin",
+    "InventoryScreenSurvivalMixin"
   ],
   "injectors": {
     "defaultRequire": 1
