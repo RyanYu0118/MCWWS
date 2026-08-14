@@ -260,6 +260,16 @@ public final class FeeEstimate {
             finals.put(entry.getKey().add(offset), entry.getValue());
         }
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
+        // 被搬走的方块按种类记账：目标格原本就是同种方块（或受保护）时差异里看不到「放置」，
+        // 只有拿这份清单去对冲，才不会把搬运当成拆除卖给市场。
+        Map<String, Long> relocated = new HashMap<>();
+        for (BaseBlock moved : copies.values()) {
+            String id = itemIdFromBaseBlock(moved);
+            if (!"air".equals(id)) {
+                relocated.merge(id, 1L, Long::sum);
+            }
+        }
+        builder.relocated(relocated);
         for (Map.Entry<BlockVector3, BaseBlock> entry : finals.entrySet()) {
             BlockVector3 pos = entry.getKey();
             if (BlockProtection.isProtectedWorldBlock(world, pos)) {
@@ -317,6 +327,8 @@ public final class FeeEstimate {
         long protectedBlocks;
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
+        /** //move 真正搬走的方块，按种类计数；目标格没变化时差异里没有对应的放置 */
+        private Map<String, Long> relocatedCounts = Map.of();
 
         ResultBuilder(PriceCatalog prices, LaborRates laborRates) {
             this.prices = prices;
@@ -324,6 +336,10 @@ public final class FeeEstimate {
             McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
             this.salvageRate = plugin == null ? 0.8D : plugin.salvageRate();
             this.netMoves = plugin == null || plugin.netMoves();
+        }
+
+        void relocated(Map<String, Long> counts) {
+            this.relocatedCounts = counts == null ? Map.of() : counts;
         }
 
         void addChange(BaseBlock existing, BaseBlock target) {
@@ -375,13 +391,16 @@ public final class FeeEstimate {
                 for (Map.Entry<String, Long> entry : removedCounts.entrySet()) {
                     String id = entry.getKey();
                     long placedSame = placedCounts.getOrDefault(id, 0L);
-                    if (placedSame <= 0L) {
+                    // 目标格原本就是同种方块时，差异里没有「放置」，得按实际搬走的数量对冲
+                    long candidate = Math.max(placedSame, relocatedCounts.getOrDefault(id, 0L));
+                    if (candidate <= 0L) {
                         continue;
                     }
                     // 同种方块「这里拆掉、那里放下」就是搬运：材料没消耗、市场也没进出，只该收劳务费
-                    long count = Math.min(entry.getValue(), placedSame);
+                    long count = Math.min(entry.getValue(), candidate);
                     moved += count;
-                    netMaterial -= prices.getBuyPrice(id) * count;
+                    // 材料只在真的记到放置时才会累加，扣减不能超过它，否则会连别的方块的材料费一起抹掉
+                    netMaterial -= prices.getBuyPrice(id) * Math.min(count, placedSame);
                     netSalvage -= prices.getSellPrice(id) * salvageRate * count;
                     subtract(netRemoved, id, count);
                     subtract(netPlaced, id, count);
