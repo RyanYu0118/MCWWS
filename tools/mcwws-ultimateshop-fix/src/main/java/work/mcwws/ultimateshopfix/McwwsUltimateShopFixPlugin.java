@@ -27,6 +27,7 @@ public final class McwwsUltimateShopFixPlugin extends JavaPlugin implements List
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        LocaleNames.reload();
         install();
         getServer().getPluginManager().registerEvents(this, this);
         getServer().getScheduler().runTaskTimer(this, this::install, 20L, 100L);
@@ -41,15 +42,20 @@ public final class McwwsUltimateShopFixPlugin extends JavaPlugin implements List
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onPlayerCommand(PlayerCommandPreprocessEvent event) {
         if (isShopReload(event.getMessage())) {
-            getServer().getScheduler().runTaskLater(this, this::install, 20L);
+            getServer().getScheduler().runTaskLater(this, this::reinstall, 20L);
         }
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onServerCommand(ServerCommandEvent event) {
         if (isShopReload(event.getCommand())) {
-            getServer().getScheduler().runTaskLater(this, this::install, 20L);
+            getServer().getScheduler().runTaskLater(this, this::reinstall, 20L);
         }
+    }
+
+    void reinstall() {
+        LocaleNames.reload();
+        install();
     }
 
     void install() {

@@ -1,4 +1,4 @@
-next_id: 1966
+next_id: 1972
 entries:
   '1':
     id: 1
@@ -20642,3 +20642,67 @@ entries:
     refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1786720719907-45651734721000
     createdAt: '2026-08-14T15:18:39.908248400Z'
     balanceAfter: 165445372.06
+  '1966':
+    id: 1966
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 20
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 23:37
+    createdAt: '2026-08-14T15:37:07.693561600Z'
+    updatedAt: '2026-08-14T15:37:11.693218100Z'
+  '1967':
+    id: 1967
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 16
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 23:38
+    createdAt: '2026-08-14T15:38:00.697831500Z'
+    updatedAt: '2026-08-14T15:38:03.701957600Z'
+  '1968':
+    id: 1968
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 60
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 23:39
+    createdAt: '2026-08-14T15:39:25.704439500Z'
+    updatedAt: '2026-08-14T15:39:39.698392700Z'
+  '1969':
+    id: 1969
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 4
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 23:40
+    createdAt: '2026-08-14T15:40:53.692171900Z'
+  '1970':
+    id: 1970
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 4
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 23:41
+    createdAt: '2026-08-14T15:41:00.703374900Z'
+  '1971':
+    id: 1971
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 8.72
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1786722060963-46992790420200
+    createdAt: '2026-08-14T15:41:00.964065700Z'
+    balanceAfter: 165445136.78

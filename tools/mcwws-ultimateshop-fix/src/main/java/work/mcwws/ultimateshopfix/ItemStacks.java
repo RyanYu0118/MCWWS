@@ -5,7 +5,12 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.LinkedHashSet;
+import java.util.List;
 import java.util.Locale;
+import java.util.Set;
+import java.util.function.Supplier;
 import java.util.logging.Level;
 
 /**
@@ -36,22 +41,36 @@ final class ItemStacks {
         return item;
     }
 
+    /**
+     * 同一个物品在不同版本里可能挂在 item.* 或 block.* 键上，按优先级全试一遍。
+     */
+    static List<String> translationKeys(ItemStack original, ItemStack safe) {
+        Set<String> keys = new LinkedHashSet<>();
+        addKey(keys, () -> safe == null ? null : safe.getTranslationKey());
+        addKey(keys, () -> original.getType().getItemTranslationKey());
+        addKey(keys, () -> original.getType().isBlock() ? original.getType().getBlockTranslationKey() : null);
+        return new ArrayList<>(keys);
+    }
+
     static String fallbackName(ItemStack item) {
         if (item == null || item.getType().isAir()) {
             return "";
-        }
-        try {
-            String key = item.getType().getItemTranslationKey();
-            if (key != null && !key.isEmpty()) {
-                return key;
-            }
-        } catch (Throwable ignored) {
         }
         String raw = item.getType().name().toLowerCase(Locale.ROOT).replace('_', ' ');
         if (raw.isEmpty()) {
             return "";
         }
         return Character.toUpperCase(raw.charAt(0)) + raw.substring(1);
+    }
+
+    private static void addKey(Set<String> keys, Supplier<String> supplier) {
+        try {
+            String key = supplier.get();
+            if (key != null && !key.isBlank()) {
+                keys.add(key);
+            }
+        } catch (Throwable ignored) {
+        }
     }
 
     static boolean canReadTranslationKey(ItemStack item) {
