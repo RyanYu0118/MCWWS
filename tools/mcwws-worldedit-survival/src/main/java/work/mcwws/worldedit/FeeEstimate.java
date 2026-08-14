@@ -199,8 +199,8 @@ public final class FeeEstimate {
 
     /**
      * //move：源位置留下 leave（默认空气），目标位置放下原来的方块。
-     * 先算出每格最终状态再计费，避免 FAWE moveRegion 干跑只统计到拆除。
-     * 同种方块拆+放仍走搬运对冲，只收劳务。
+     * 对账必须用「移动前快照 vs 最终状态」，不能再走 {@link EstimateCountExtent} 现场读世界：
+     * 读块器在「写成空气」时可能把源格看成已是空气，拆除进不了账，搬运对冲失败，就会误收材料费。
      */
     public static Result forMove(
             PriceCatalog prices,
@@ -210,13 +210,22 @@ public final class FeeEstimate {
             BlockVector3 offset,
             String leaveInput,
             boolean copyAir,
+            String maskInput,
             com.sk89q.worldedit.extension.platform.Actor actor
     ) throws InputParseException {
         ParserContext context = new ParserContext();
         context.setActor(actor);
         context.setWorld(world);
-        String leavePatternInput = leaveInput == null || leaveInput.isBlank() ? "air" : leaveInput;
-        Pattern leave = WorldEdit.getInstance().getPatternFactory().parseFromInput(leavePatternInput, context);
+        String leavePatternInput = leaveInput == null || leaveInput.isBlank() ? "air" : leaveInput.trim();
+        boolean leaveIsAir = "air".equalsIgnoreCase(leavePatternInput);
+        Pattern leave = leaveIsAir
+                ? null
+                : WorldEdit.getInstance().getPatternFactory().parseFromInput(leavePatternInput, context);
+        Mask mask = null;
+        if (maskInput != null && !maskInput.isBlank()) {
+            mask = WorldEdit.getInstance().getMaskFactory().parseFromInput(maskInput, context);
+            new MaskTraverser(mask).setNewExtent(BukkitSnapshotExtent.forEstimate(world));
+        }
         FaweRegionSync.flushBeforeEstimate(world, region);
         EstimateContext.setRegion(region);
         BlockVector3 min = region.getMinimumPoint();
@@ -224,31 +233,56 @@ public final class FeeEstimate {
         RegionChunkLoader.ensureLoaded(world, min, max);
         RegionChunkLoader.ensureLoaded(world, min.add(offset), max.add(offset));
 
+        Map<BlockVector3, BaseBlock> original = new LinkedHashMap<>();
         Map<BlockVector3, BaseBlock> copies = new LinkedHashMap<>();
         for (BlockVector3 pos : region) {
             BaseBlock source = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
-            if (!copyAir && source.getBlockType() == BlockTypes.AIR) {
+            original.put(pos, source);
+            original.computeIfAbsent(pos.add(offset), dest -> BukkitSnapshotExtent.readBlock(world, dest).toBaseBlock());
+            if (mask != null && !mask.test(pos)) {
+                continue;
+            }
+            if (!copyAir && isAirBlock(source)) {
                 continue;
             }
             copies.put(pos, source);
         }
-        Map<BlockVector3, BaseBlock> finals = new LinkedHashMap<>();
-        for (Map.Entry<BlockVector3, BaseBlock> entry : copies.entrySet()) {
-            finals.put(entry.getKey(), leave.applyBlock(entry.getKey()));
+        Map<BlockVector3, BaseBlock> finals = new LinkedHashMap<>(original);
+        for (BlockVector3 sourcePos : copies.keySet()) {
+            BaseBlock left = leaveIsAir
+                    ? BlockTypes.AIR.getDefaultState().toBaseBlock()
+                    : leave.applyBlock(sourcePos);
+            finals.put(sourcePos, left);
         }
         for (Map.Entry<BlockVector3, BaseBlock> entry : copies.entrySet()) {
             finals.put(entry.getKey().add(offset), entry.getValue());
         }
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
-        Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (Map.Entry<BlockVector3, BaseBlock> entry : finals.entrySet()) {
-            counter.setBlock(entry.getKey(), entry.getValue());
+            BlockVector3 pos = entry.getKey();
+            if (BlockProtection.isProtectedWorldBlock(world, pos)) {
+                builder.protectedBlocks++;
+                continue;
+            }
+            BaseBlock before = original.get(pos);
+            if (before == null) {
+                before = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
+            }
+            builder.addChange(before, entry.getValue());
         }
         return builder.build();
     }
 
+    static boolean isAirBlock(BaseBlock block) {
+        if (block == null) {
+            return true;
+        }
+        var type = block.getBlockType();
+        return type == null || type.getMaterial().isAir();
+    }
+
     public static String itemIdFromBaseBlock(BaseBlock block) {
-        if (block == null || block.getBlockType() == BlockTypes.AIR) {
+        if (isAirBlock(block)) {
             return "air";
         }
         return PriceCatalog.normalize(block.getBlockType().id());
@@ -284,6 +318,9 @@ public final class FeeEstimate {
 
         void addChange(BaseBlock existing, BaseBlock target) {
             if (existing == null || target == null) {
+                return;
+            }
+            if (isAirBlock(existing) && isAirBlock(target)) {
                 return;
             }
             if (existing.equals(target)) {

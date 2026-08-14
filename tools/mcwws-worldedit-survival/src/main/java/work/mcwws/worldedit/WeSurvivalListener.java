@@ -223,7 +223,14 @@ public final class WeSurvivalListener {
     }
 
     private static long paidBlockBudget(String command, long affected) {
-        if (!WeCommandAlias.isRandomCommand(command) || affected <= 0L) {
+        if (affected <= 0L) {
+            return 0L;
+        }
+        if ("move".equals(command)) {
+            // 源格变空气 + 目标格放下，FAWE 可能各写一次；预算按改动格数加倍，避免源格拆除被闸门截掉
+            return affected * 2L;
+        }
+        if (!WeCommandAlias.isRandomCommand(command)) {
             return affected;
         }
         // 树林/植被是随机的，预扫描与实际会有偏差；多给预算避免树冠被闸门截断

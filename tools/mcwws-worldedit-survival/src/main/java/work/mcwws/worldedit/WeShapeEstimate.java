@@ -126,10 +126,10 @@ final class WeShapeEstimate {
         if (count < 1) {
             throw new InputParseException("移动格数必须 >= 1");
         }
-        BlockVector3 dir = WeDirection.forward(player);
+        BlockVector3 dir = WeDirection.aim(actor, player);
         if (idx < tokens.size()) {
             try {
-                dir = WeDirection.parse(tokens.get(idx), player);
+                dir = WeDirection.parse(tokens.get(idx), actor, player);
                 idx++;
             } catch (InputParseException ignored) {
                 // 下一参数是留下的方块
@@ -138,7 +138,7 @@ final class WeShapeEstimate {
         String leave = idx < tokens.size() ? tokens.joinFrom(idx) : "air";
         boolean copyAir = !tokens.has('a');
         BlockVector3 offset = dir.multiply(count);
-        return FeeEstimate.forMove(prices, laborRates, region, world, offset, leave, copyAir, actor);
+        return FeeEstimate.forMove(prices, laborRates, region, world, offset, leave, copyAir, tokens.maskInput, actor);
     }
 
     private static FeeEstimate.Result dryRegion(
