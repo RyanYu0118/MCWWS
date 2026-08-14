@@ -230,7 +230,32 @@ final class SurvivalEditorService {
         if (snapshot != null) {
             applyMenuSnapshot(player, snapshot);
             plugin.getLogger().info("修正掉线遗留的菜单状态: " + player.getName());
+            return;
         }
+        restoreLeftoverSpectator(player);
+    }
+
+    /**
+     * 菜单开着时服务端是旁观；若此时停服/崩溃，旁观会写进玩家存档。
+     * 内存里的菜单快照随进程消失，进服就会带着旁观去握手，Axiom 会被拒掉，快捷键全无反应。
+     */
+    boolean restoreLeftoverSpectator(Player player) {
+        if (player == null || !player.isOnline()) {
+            return false;
+        }
+        if (player.getGameMode() != GameMode.SPECTATOR) {
+            return false;
+        }
+        if (isMenuOpen(player) || isClientEditorSession(player)) {
+            return false;
+        }
+        if (!player.hasPermission("mcwws.axiom.survival.use")) {
+            return false;
+        }
+        player.setGameMode(GameMode.SURVIVAL);
+        player.setFallDistance(0f);
+        plugin.getLogger().info("进服时修正 Editor 遗留旁观: " + player.getName());
+        return true;
     }
 
     private void applyMenuSnapshot(Player player, MenuSnapshot snapshot) {

@@ -45,6 +45,9 @@ public final class AxiomSurvivalListener implements Listener {
             return;
         }
         if (!BlockProtection.isSurvivalLike(player)) {
+            survivalEditorService.restoreLeftoverSpectator(player);
+        }
+        if (!BlockProtection.isSurvivalLike(player)) {
             event.setCancelled(true);
             McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg(
                     "handshake-denied",
