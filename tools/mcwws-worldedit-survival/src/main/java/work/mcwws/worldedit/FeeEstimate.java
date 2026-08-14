@@ -185,13 +185,13 @@ public final class FeeEstimate {
         Extent counter = EstimateCountExtent.forEstimate(world, builder);
         for (int repetition = 1; repetition <= stackArgs.count; repetition++) {
             BlockVector3 translation = blockOffset.multiply(repetition);
-            for (BlockVector3 pos : region) {
+            for (BlockVector3 raw : region) {
+                BlockVector3 pos = freeze(raw);
                 BaseBlock source = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
-                if (stackArgs.ignoreAir && source.getBlockType() == BlockTypes.AIR) {
+                if (stackArgs.ignoreAir && isAirBlock(source)) {
                     continue;
                 }
-                BlockVector3 dest = pos.add(translation);
-                counter.setBlock(dest, source);
+                counter.setBlock(pos.add(translation), source);
             }
         }
         return builder.build();
@@ -235,7 +235,9 @@ public final class FeeEstimate {
 
         Map<BlockVector3, BaseBlock> original = new LinkedHashMap<>();
         Map<BlockVector3, BaseBlock> copies = new LinkedHashMap<>();
-        for (BlockVector3 pos : region) {
+        for (BlockVector3 raw : region) {
+            // FAWE 选区迭代器复用 MutableBlockVector3，add() 会改原地坐标。必须先冻成不可变点再当 Map 键。
+            BlockVector3 pos = freeze(raw);
             BaseBlock source = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
             original.put(pos, source);
             original.computeIfAbsent(pos.add(offset), dest -> BukkitSnapshotExtent.readBlock(world, dest).toBaseBlock());
@@ -271,6 +273,14 @@ public final class FeeEstimate {
             builder.addChange(before, entry.getValue());
         }
         return builder.build();
+    }
+
+    /** FAWE 选区迭代器里的点会原地改坐标，不能直接当 Map 键或对其调用会 mutate 的 add()。 */
+    static BlockVector3 freeze(BlockVector3 pos) {
+        if (pos == null) {
+            return BlockVector3.at(0, 0, 0);
+        }
+        return BlockVector3.at(pos.x(), pos.y(), pos.z());
     }
 
     static boolean isAirBlock(BaseBlock block) {
