@@ -15,7 +15,8 @@ import java.util.concurrent.ConcurrentHashMap;
  *   <li>客户端 → 服务端 {@code 1}：进入 Editor</li>
  *   <li>客户端 → 服务端 {@code 0}：退出 Editor</li>
  *   <li>客户端 → 服务端 {@code 2}：打开 Editor 菜单（快照位置）</li>
- *   <li>客户端 → 服务端 {@code 3}：关闭 Editor 菜单（传送回快照，第二字节为开菜单前的飞行状态）</li>
+ *   <li>客户端 → 服务端 {@code 3}：关闭 Editor 菜单（传送回快照；第二字节为开菜单前的飞行状态；
+ *       其后 4 字节为大端 float，编辑界面里调过的 NMS 飞行速度）</li>
  * </ul>
  */
 public final class SurvivalEditorChannel implements PluginMessageListener {
@@ -89,11 +90,17 @@ public final class SurvivalEditorChannel implements PluginMessageListener {
         survivalEditorService.noteClientPresent(player);
         byte op = message[0];
         boolean flag = message.length > 1 && message[1] != 0;
+        Float flySpeed = null;
+        if (message.length >= 6) {
+            flySpeed = java.nio.ByteBuffer.wrap(message)
+                    .order(java.nio.ByteOrder.BIG_ENDIAN)
+                    .getFloat(2);
+        }
         switch (op) {
             case OP_ENTER -> survivalEditorService.onClientEditorEnter(player);
-            case OP_EXIT -> survivalEditorService.onClientEditorExit(player);
+            case OP_EXIT -> survivalEditorService.onClientEditorExit(player, flySpeed);
             case OP_MENU_OPEN -> survivalEditorService.onClientMenuOpen(player);
-            case OP_MENU_CLOSE -> survivalEditorService.onClientMenuClose(player, flag);
+            case OP_MENU_CLOSE -> survivalEditorService.onClientMenuClose(player, flag, flySpeed);
             default -> { }
         }
     }

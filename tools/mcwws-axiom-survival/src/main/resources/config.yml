@@ -83,6 +83,8 @@ disable-fly-on-editor-exit: false
 # 打开 Editor 菜单期间服务端切旁观（客户端本地本来就是旁观），关菜单时按快照切回；
 # 关掉则沿用旧行为：保持生存并强制飞行以规避摔落
 spectator-during-menu: true
+# 关掉 Editor 菜单或退出时，保留在编辑界面里调过的飞行速度（Axiom 默认可能换回进菜单前的速度）
+persist-editor-fly-speed: true
 # 无客户端模组时的兜底：Editor 需旁观；退出时恢复进入前位置与模式
 restore-editor-on-exit: true
 # 进入 Editor 后此 tick 内忽略 vanilla 移动退出检测（防 Shift 进入误触发，20tick≈1秒）

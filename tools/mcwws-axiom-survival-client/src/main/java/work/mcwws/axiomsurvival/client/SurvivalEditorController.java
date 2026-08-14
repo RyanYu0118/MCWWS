@@ -1,6 +1,7 @@
 package work.mcwws.axiomsurvival.client;
 
 import com.moulberry.axiom.editor.EditorUI;
+import com.moulberry.axiom.integration.ServerIntegration;
 import net.minecraft.client.Minecraft;
 import net.minecraft.world.level.GameType;
 
@@ -30,7 +31,61 @@ public final class SurvivalEditorController {
     private static volatile boolean serverInstabuild;
     private static volatile boolean serverInvulnerable;
 
+    /**
+     * 关菜单前记下的 NMS {@code flyingSpeed}。Axiom 若开启「编辑界面与游戏内分开记速度」，
+     * {@code EditorUI.disable()} 会把它换回进菜单前的值，必须在那之前捕获。
+     */
+    private static float pendingEditorFlySpeed = Float.NaN;
+    private static float lastPersistedFlySpeed = Float.NaN;
+
     private SurvivalEditorController() {
+    }
+
+    /** vanilla / Axiom 使用的 NMS 飞行速度，默认 0.05 */
+    public static float currentNmsFlySpeed() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return 0.05f;
+        }
+        return mc.player.getAbilities().getFlyingSpeed();
+    }
+
+    /** {@code EditorUI.disable()} 开头调用：此时 abilities 仍是编辑界面里刚调过的速度 */
+    public static void captureEditorFlySpeedBeforeMenuClose() {
+        if (!EditorUI.isEnabled()) {
+            return;
+        }
+        pendingEditorFlySpeed = currentNmsFlySpeed();
+        McwwsAxiomSurvivalClientMod.LOGGER.debug(
+                "关菜单前捕获飞行速度: {}", pendingEditorFlySpeed
+        );
+    }
+
+    private static float takePersistedFlySpeed() {
+        float captured = pendingEditorFlySpeed;
+        pendingEditorFlySpeed = Float.NaN;
+        if (Float.isFinite(captured) && captured > 0f) {
+            return captured;
+        }
+        return currentNmsFlySpeed();
+    }
+
+    public static void clearPersistedFlySpeed() {
+        pendingEditorFlySpeed = Float.NaN;
+        lastPersistedFlySpeed = Float.NaN;
+    }
+
+    private static void persistFlySpeedLocally(float nmsSpeed) {
+        if (!Float.isFinite(nmsSpeed) || nmsSpeed <= 0f) {
+            return;
+        }
+        Minecraft mc = Minecraft.getInstance();
+        if (mc.player == null) {
+            return;
+        }
+        mc.player.getAbilities().setFlyingSpeed(nmsSpeed);
+        lastPersistedFlySpeed = nmsSpeed;
+        ServerIntegration.changeFlySpeed(nmsSpeed);
     }
 
     public static boolean isServerSupported() {
@@ -144,7 +199,9 @@ public final class SurvivalEditorController {
             return;
         }
         var player = mc.player;
-        SurvivalEditorNetworking.sendMenuState(false, menuFlying);
+        float flySpeed = takePersistedFlySpeed();
+        persistFlySpeedLocally(flySpeed);
+        SurvivalEditorNetworking.sendMenuState(false, menuFlying, flySpeed);
         mc.gameMode.setLocalMode(GameType.CREATIVE);
         mc.setCameraEntity(player);
         if (hasMenuPose) {
@@ -225,6 +282,9 @@ public final class SurvivalEditorController {
         var abilities = mc.player.getAbilities();
         abilities.mayfly = serverMayfly;
         abilities.flying = serverMayfly && serverFlying;
+        if (Float.isFinite(lastPersistedFlySpeed) && lastPersistedFlySpeed > 0f) {
+            abilities.setFlyingSpeed(lastPersistedFlySpeed);
+        }
     }
 
     private static void applyServerAbilities() {
@@ -291,7 +351,9 @@ public final class SurvivalEditorController {
         localEditorActive = false;
         storedMode = null;
         hasMenuPose = false;
-        SurvivalEditorNetworking.sendEditorState(false);
+        float flySpeed = takePersistedFlySpeed();
+        persistFlySpeedLocally(flySpeed);
+        SurvivalEditorNetworking.sendEditorState(false, flySpeed);
         if (mc.player != null) {
             mc.setCameraEntity(mc.player);
         }

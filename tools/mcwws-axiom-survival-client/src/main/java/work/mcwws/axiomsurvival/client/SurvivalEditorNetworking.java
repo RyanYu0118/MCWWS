@@ -38,6 +38,7 @@ final class SurvivalEditorNetworking {
         ClientPlayConnectionEvents.DISCONNECT.register((handler, client) -> {
             SurvivalEditorController.setServerSupported(false);
             SurvivalEditorController.setEntityGizmoAllowed(false);
+            SurvivalEditorController.clearPersistedFlySpeed();
             if (SurvivalEditorController.isLocalEditorActive()) {
                 SurvivalEditorController.onEditorExit();
             }
@@ -45,6 +46,10 @@ final class SurvivalEditorNetworking {
     }
 
     static void sendEditorState(boolean enter) {
+        sendEditorState(enter, SurvivalEditorController.currentNmsFlySpeed());
+    }
+
+    static void sendEditorState(boolean enter, float flySpeed) {
         if (!SurvivalEditorController.isServerSupported()) {
             return;
         }
@@ -52,21 +57,30 @@ final class SurvivalEditorNetworking {
             McwwsAxiomSurvivalClientMod.LOGGER.warn("无法发送 Editor 状态：通道未就绪");
             return;
         }
-        ClientPlayNetworking.send(new EditorStatePayload(enter ? OP_ENTER : OP_EXIT, (byte) 0));
+        ClientPlayNetworking.send(new EditorStatePayload(
+                enter ? OP_ENTER : OP_EXIT,
+                (byte) 0,
+                flySpeed
+        ));
     }
 
     /**
      * 请求服务端在开菜单时快照位置、关菜单时传送回该位置；关菜单时附带开菜单前的飞行状态，
-     * 由服务端下发权威 abilities 包还原。
+     * 以及编辑界面里调过的飞行速度，由服务端下发权威 abilities 包还原。
      */
     static void sendMenuState(boolean open, boolean flying) {
+        sendMenuState(open, flying, SurvivalEditorController.currentNmsFlySpeed());
+    }
+
+    static void sendMenuState(boolean open, boolean flying, float flySpeed) {
         if (!SurvivalEditorController.isServerSupported()
                 || !ClientPlayNetworking.canSend(EditorStatePayload.TYPE)) {
             return;
         }
         ClientPlayNetworking.send(new EditorStatePayload(
                 open ? OP_MENU_OPEN : OP_MENU_CLOSE,
-                (byte) (flying ? 1 : 0)
+                (byte) (flying ? 1 : 0),
+                flySpeed
         ));
     }
 
@@ -97,7 +111,7 @@ final class SurvivalEditorNetworking {
         }
     }
 
-    private record EditorStatePayload(byte op, byte flag) implements CustomPacketPayload {
+    private record EditorStatePayload(byte op, byte flag, float flySpeed) implements CustomPacketPayload {
 
         static final CustomPacketPayload.Type<EditorStatePayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
@@ -107,8 +121,9 @@ final class SurvivalEditorNetworking {
                         (buf, payload) -> {
                             buf.writeByte(payload.op());
                             buf.writeByte(payload.flag());
+                            buf.writeFloat(payload.flySpeed());
                         },
-                        buf -> new EditorStatePayload(buf.readByte(), buf.readByte())
+                        buf -> new EditorStatePayload(buf.readByte(), buf.readByte(), buf.readFloat())
                 );
 
         @Override

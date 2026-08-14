@@ -113,14 +113,14 @@ final class SurvivalEditorService {
      * 客户端单方面改 {@code abilities.flying} 会被 {@code PlayerToggleFlightEvent} 的处理插件顶回去，
      * 必须由服务端 {@code setFlying} 下发权威 abilities 包，两端才一致（否则会出现在飞却吃摔落伤害）。
      */
-    void onClientMenuClose(Player player, boolean flying) {
+    void onClientMenuClose(Player player, boolean flying, Float flySpeed) {
         if (player == null) {
             return;
         }
         MenuSnapshot snapshot = menuSnapshots.remove(player.getUniqueId());
         plugin.getLogger().fine(String.format(
-                "菜单关闭: %s 客户端上报 flying=%s，快照 allowFlight=%s flying=%s",
-                player.getName(), flying,
+                "菜单关闭: %s 客户端上报 flying=%s flySpeed=%s，快照 allowFlight=%s flying=%s",
+                player.getName(), flying, flySpeed,
                 snapshot == null ? "无" : snapshot.allowFlight(),
                 snapshot == null ? "无" : snapshot.flying()
         ));
@@ -132,15 +132,17 @@ final class SurvivalEditorService {
         restoreGameMode(player, snapshot);
         player.setFallDistance(0f);
         restoreFlight(player, snapshot);
+        persistEditorFlySpeed(player, flySpeed);
         // FlyWithFood 等插件可能在同 tick 内改回飞行状态，下一 tick 再重申一次
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
             if (player.isOnline()) {
                 restoreGameMode(player, snapshot);
                 restoreFlight(player, snapshot);
+                persistEditorFlySpeed(player, flySpeed);
                 player.setFallDistance(0f);
                 plugin.getLogger().fine(String.format(
-                        "菜单关闭后一 tick: %s allowFlight=%s isFlying=%s",
-                        player.getName(), player.getAllowFlight(), player.isFlying()
+                        "菜单关闭后一 tick: %s allowFlight=%s isFlying=%s flySpeed=%s",
+                        player.getName(), player.getAllowFlight(), player.isFlying(), player.getFlySpeed()
                 ));
             }
         }, 1L);
@@ -173,7 +175,14 @@ final class SurvivalEditorService {
         player.setFlying(snapshot.allowFlight() && snapshot.flying());
     }
 
-    void onClientEditorExit(Player player) {
+    private void persistEditorFlySpeed(Player player, Float flySpeed) {
+        if (!plugin.getPluginConfig().getBoolean("persist-editor-fly-speed", true)) {
+            return;
+        }
+        FlySpeeds.applyNms(player, flySpeed);
+    }
+
+    void onClientEditorExit(Player player, Float flySpeed) {
         if (player == null) {
             return;
         }
@@ -184,6 +193,12 @@ final class SurvivalEditorService {
         }
         boolean hadSnapshot = EditorSessionState.has(player);
         editorRestoreService.restoreNow(player);
+        persistEditorFlySpeed(player, flySpeed);
+        plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline()) {
+                persistEditorFlySpeed(player, flySpeed);
+            }
+        }, 1L);
         if (!hadSnapshot && plugin.getPluginConfig().getBoolean("disable-fly-on-editor-exit", true)) {
             FlyWithFoodBridge.disableFly(player);
         }
