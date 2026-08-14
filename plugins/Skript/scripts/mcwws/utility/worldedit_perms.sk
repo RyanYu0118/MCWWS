@@ -1,11 +1,67 @@
-# 为 default 组开放生存创世神常用权限（选区切换、//stack 等）
-# FAWE 权限节点见 FastAsyncWorldEdit plugin.yml / fawe.permpack.basic
+# 为 default 组开放生存创世神：选区、已纳入扣费的改块指令、剪贴板与撤销
+# 不授予笔刷 / 超级稿 / //fill / //repl（工具绑定）/ 生物群系 / 变形平滑再生
 
 function mcwwsGrantWorldEditSurvivalPerms():
     if plugin "LuckPerms" is enabled:
+        # 选区与分析
         execute console command "lp group default permission set worldedit.analysis.sel true"
+        execute console command "lp group default permission set worldedit.analysis.count true"
+        execute console command "lp group default permission set worldedit.analysis.distr true"
+        execute console command "lp group default permission set worldedit.selection.pos true"
+        execute console command "lp group default permission set worldedit.selection.hpos true"
+        execute console command "lp group default permission set worldedit.selection.chunk true"
+        execute console command "lp group default permission set worldedit.selection.expand true"
+        execute console command "lp group default permission set worldedit.selection.contract true"
+        execute console command "lp group default permission set worldedit.selection.outset true"
+        execute console command "lp group default permission set worldedit.selection.inset true"
+        execute console command "lp group default permission set worldedit.selection.shift true"
+        execute console command "lp group default permission set worldedit.selection.size true"
+        execute console command "lp group default permission set worldedit.wand true"
+        execute console command "lp group default permission set worldedit.wand.toggle true"
+        execute console command "lp group default permission set worldedit.history.undo true"
+        execute console command "lp group default permission set worldedit.history.redo true"
+        # 剪贴板（copy 不改世界；cut/paste/place 走扣费）
+        execute console command "lp group default permission set worldedit.clipboard.copy true"
+        execute console command "lp group default permission set worldedit.clipboard.clear true"
+        execute console command "lp group default permission set worldedit.clipboard.rotate true"
+        execute console command "lp group default permission set worldedit.clipboard.flip true"
+        execute console command "lp group default permission set worldedit.clipboard.cut true"
+        execute console command "lp group default permission set worldedit.clipboard.paste true"
+        execute console command "lp group default permission set worldedit.clipboard.place true"
+        # 选区改块
+        execute console command "lp group default permission set worldedit.region.set true"
+        execute console command "lp group default permission set worldedit.region.replace true"
         execute console command "lp group default permission set worldedit.region.stack true"
-        log "[MCWWS] 已为 default 组授予 worldedit.analysis.sel 与 worldedit.region.stack"
+        execute console command "lp group default permission set worldedit.region.walls true"
+        execute console command "lp group default permission set worldedit.region.overlay true"
+        execute console command "lp group default permission set worldedit.region.faces true"
+        execute console command "lp group default permission set worldedit.region.hollow true"
+        execute console command "lp group default permission set worldedit.region.center true"
+        execute console command "lp group default permission set worldedit.region.line true"
+        execute console command "lp group default permission set worldedit.region.curve true"
+        execute console command "lp group default permission set worldedit.region.move true"
+        execute console command "lp group default permission set worldedit.region.naturalize true"
+        execute console command "lp group default permission set worldedit.region.forest true"
+        execute console command "lp group default permission set worldedit.region.flora true"
+        execute console command "lp group default permission set worldedit.region.fall true"
+        # 生成
+        execute console command "lp group default permission set worldedit.generation.cylinder true"
+        execute console command "lp group default permission set worldedit.generation.sphere true"
+        execute console command "lp group default permission set worldedit.generation.pyramid true"
+        execute console command "lp group default permission set worldedit.generation.cone true"
+        # 附近工具
+        execute console command "lp group default permission set worldedit.replacenear true"
+        execute console command "lp group default permission set worldedit.removenear true"
+        execute console command "lp group default permission set worldedit.removeabove true"
+        execute console command "lp group default permission set worldedit.removebelow true"
+        execute console command "lp group default permission set worldedit.drain true"
+        execute console command "lp group default permission set worldedit.extinguish true"
+        execute console command "lp group default permission set worldedit.snow true"
+        execute console command "lp group default permission set worldedit.thaw true"
+        execute console command "lp group default permission set worldedit.green true"
+        execute console command "lp group default permission set worldedit.fixlava true"
+        execute console command "lp group default permission set worldedit.fixwater true"
+        log "[MCWWS] 已为 default 组授予生存创世神选区、剪贴板与已扣费改块指令权限"
 
 on Skript start:
     wait 5 seconds

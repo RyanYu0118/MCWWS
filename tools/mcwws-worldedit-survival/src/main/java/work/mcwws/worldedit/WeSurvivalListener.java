@@ -59,19 +59,23 @@ public final class WeSurvivalListener {
 
         String raw = event.getArguments();
         String command = FeeEstimate.rootCommand(raw);
-        if ("undo".equals(command) || "u".equals(command)) {
+        String root = command;
+        if ("undo".equals(root) || "u".equals(root)) {
             WeEditAuthorization.grantHistory(player);
             UndoRefundService.handleUndo(player);
             return;
         }
-        if ("redo".equals(command) || "re".equals(command)) {
+        // //re 是 replace 别名；redo 只认 redo
+        if ("redo".equals(root)) {
             WeEditAuthorization.grantHistory(player);
             return;
         }
-        if (isSelectionChangeCommand(command)) {
+        if (isSelectionChangeCommand(root)) {
             WeRecentEditMemory.clear(player);
             return;
         }
+        boolean setAirAlias = WeCommandAlias.isSetAirAlias(root);
+        command = WeCommandAlias.canonical(root);
         if (!plugin.getChargeCommands().contains(command)) {
             return;
         }
@@ -84,17 +88,18 @@ public final class WeSurvivalListener {
 
         LocalSession session = WorldEdit.getInstance().getSessionManager().get(actor);
         String[] args = FeeEstimate.splitArgs(raw);
+        WeArgTokens tokens = WeArgTokens.parse(args);
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
 
         FeeEstimate.Result estimate;
         EstimateContext.setPlayer(player);
         try {
-            if ("replacenear".equals(command)) {
-                estimate = estimateReplaceNear(args, session, event, actor, player, maxScan);
-            } else if ("stack".equals(command)) {
+            if ("stack".equals(command)) {
                 estimate = estimateStack(raw, session, event, actor, player, maxScan);
+            } else if ("replacenear".equals(command)) {
+                estimate = estimateReplaceNear(args, session, event, actor, player, maxScan);
             } else {
-                estimate = estimateSelectionCommand(command, args, session, event, actor, maxScan);
+                estimate = estimateChargedCommand(command, tokens, setAirAlias, session, event, actor, player, maxScan);
             }
         } catch (InputParseException ex) {
             String key = ex.getMessage();
@@ -102,6 +107,12 @@ public final class WeSurvivalListener {
                 actor.printError(plugin.msg("no-selection"));
             } else if ("scan-too-large".equals(key)) {
                 actor.printError(plugin.msg("scan-too-large", "max", String.valueOf(maxScan)));
+            } else if ("empty-clipboard".equals(key)) {
+                actor.printError(plugin.msg("empty-clipboard"));
+            } else if ("need-cuboid".equals(key)) {
+                actor.printError(plugin.msg("need-cuboid"));
+            } else if ("need-convex".equals(key)) {
+                actor.printError(plugin.msg("need-convex"));
             } else {
                 actor.printError("无法解析方块参数: " + key);
             }
@@ -121,7 +132,7 @@ public final class WeSurvivalListener {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("protected-present"));
         }
 
-        if (requiresBlockChanges(command) && estimate.affectedBlocks() <= 0L) {
+        if (requiresBlockChanges(command, tokens) && estimate.affectedBlocks() <= 0L) {
             actor.printError(plugin.msg("prefix") + plugin.msg("estimate-no-blocks"));
             event.setCancelled(true);
             WeEditAuthorization.revokeUnpaid(player);
@@ -172,7 +183,7 @@ public final class WeSurvivalListener {
         }
 
         if (estimate.affectedBlocks() > 0L) {
-            WeEditAuthorization.grantPaid(player, estimate.affectedBlocks());
+            WeEditAuthorization.grantPaid(player, paidBlockBudget(command, estimate.affectedBlocks()));
             recordRecentEdit(player, session, event, command, args, estimate);
         }
 
@@ -204,11 +215,19 @@ public final class WeSurvivalListener {
         }
     }
 
-    private static boolean requiresBlockChanges(String command) {
-        return switch (command) {
-            case "set", "replace", "replacenear", "fill", "walls", "overlay", "repl", "stack" -> true;
-            default -> false;
-        };
+    private static boolean requiresBlockChanges(String command, WeArgTokens tokens) {
+        if (("paste".equals(command) || "place".equals(command)) && tokens.has('n')) {
+            return false;
+        }
+        return WeCommandAlias.CHARGE_CANONICAL.contains(command);
+    }
+
+    private static long paidBlockBudget(String command, long affected) {
+        if (!WeCommandAlias.isRandomCommand(command) || affected <= 0L) {
+            return affected;
+        }
+        // 树林/植被是随机的，预扫描与实际会有偏差；多给预算避免树冠被闸门截断
+        return Math.max(affected + 256L, (long) (affected * 2.5D));
     }
 
     private static boolean isSelectionChangeCommand(String command) {
@@ -277,61 +296,52 @@ public final class WeSurvivalListener {
         return FeeEstimate.forReplaceNear(prices, plugin.laborRates(), world, center, radius, args[1], args[2], actor);
     }
 
-    private FeeEstimate.Result estimateSelectionCommand(String command, String[] args, LocalSession session, CommandEvent event, Actor actor, long maxScan) throws InputParseException {
+    private FeeEstimate.Result estimateChargedCommand(
+            String command,
+            WeArgTokens tokens,
+            boolean setAirAlias,
+            LocalSession session,
+            CommandEvent event,
+            Actor actor,
+            Player player,
+            long maxScan
+    ) throws InputParseException {
         World world = session.getSelectionWorld();
         if (world == null && event.getSession() != null) {
             world = event.getSession().getWorld();
         }
         if (world == null) {
-            throw new InputParseException("no-selection");
+            world = com.sk89q.worldedit.bukkit.BukkitAdapter.adapt(player.getWorld());
+        }
+        if (world == null) {
+            throw new InputParseException("无法确定世界");
         }
 
-        Region region;
-        try {
-            region = session.getSelection(world);
-        } catch (Exception ex) {
-            throw new InputParseException("no-selection");
-        }
-        if (region == null) {
-            throw new InputParseException("no-selection");
-        }
-
-        long volume = FeeEstimate.regionVolume(region);
-        if (volume > maxScan) {
-            throw new InputParseException("scan-too-large");
-        }
-        return estimateCommand(command, args, region, world, actor);
-    }
-
-    private FeeEstimate.Result estimateCommand(String command, String[] args, Region region, World world, Actor actor) throws InputParseException {
-        PriceCatalog prices = plugin.getPriceCatalog();
-        FeeEstimate.LaborRates laborRates = plugin.laborRates();
-        return switch (command) {
-            case "set", "fill", "walls", "overlay", "repl" -> {
-                if (args.length < 1) {
-                    throw new InputParseException("缺少方块参数");
-                }
-                yield FeeEstimate.forSet(prices, laborRates, region, world, joinArgs(args, 0), actor);
+        Region region = null;
+        if (WeShapeEstimate.needsSelection(command)) {
+            try {
+                region = session.getSelection(world);
+            } catch (Exception ex) {
+                throw new InputParseException("no-selection");
             }
-            case "replace" -> {
-                if (args.length < 2) {
-                    throw new InputParseException("replace 需要两个方块参数");
-                }
-                yield FeeEstimate.forReplace(prices, laborRates, region, world, args[0], args[1], actor);
+            if (region == null) {
+                throw new InputParseException("no-selection");
             }
-            default -> throw new UnsupportedOperationException(command);
-        };
-    }
-
-    private static String joinArgs(String[] args, int start) {
-        StringBuilder sb = new StringBuilder();
-        for (int i = start; i < args.length; i++) {
-            if (i > start) {
-                sb.append(' ');
-            }
-            sb.append(args[i]);
         }
-        return sb.toString();
+
+        return WeShapeEstimate.estimate(
+                command,
+                tokens,
+                setAirAlias,
+                plugin.getPriceCatalog(),
+                plugin.laborRates(),
+                session,
+                actor,
+                player,
+                world,
+                region,
+                maxScan
+        );
     }
 
     private void recordRecentEdit(Player player, LocalSession session, CommandEvent event, String command, String[] args, FeeEstimate.Result estimate) {

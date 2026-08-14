@@ -31,13 +31,42 @@ undo-refund:
   fee-rate: 0.05
 charge-commands:
   - set
-  - stack
   - replace
+  - stack
   - replacenear
-  - fill
   - walls
   - overlay
-  - repl
+  - lay
+  - faces
+  - hollow
+  - center
+  - line
+  - curve
+  - move
+  - fall
+  - naturalize
+  - forest
+  - flora
+  - cut
+  - paste
+  - place
+  - cyl
+  - hcyl
+  - sphere
+  - hsphere
+  - pyramid
+  - hpyramid
+  - cone
+  - removenear
+  - removeabove
+  - removebelow
+  - drain
+  - extinguish
+  - snow
+  - thaw
+  - green
+  - fixlava
+  - fixwater
 messages:
   prefix: "§6[创世神] §f"
   insufficient-balance: "余额不足，需要 §e{total}§f（§7{blocks} 格§f：材料 §e{material}§f + 劳务 §e{labor}§f − 回收 §a{salvage}§f），当前 §c{balance}§f。"
@@ -47,6 +76,9 @@ messages:
   no-selection: "请先选择区域。"
   scan-too-large: "选区过大（>{max} 格），请缩小后重试。"
   estimate-no-blocks: "未检测到会变更的方块，命令已取消。"
+  empty-clipboard: "剪贴板是空的，请先 //copy 或 //cut。"
+  need-cuboid: "//line 只能用于立方体选区。"
+  need-convex: "//curve 只能用于凸多边形选区。"
   undo-refunded: "已退还建造费用 §e{gross}§f，手续费 §c{fee}§f（§7{percent}%§f），实际到账 §a{net}§f；市场库存已同步还原。"
   undo-market-only: "已还原上一笔建造的市场库存变动。"
   undo-clawback: "已收回拆除回收款 §c{net}§f（原收 §7{gross}§f，手续费 §c{fee}§f）；市场库存已同步还原。"

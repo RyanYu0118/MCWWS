@@ -118,9 +118,18 @@ dynamic_factor = clamp(
 
 ### 4.1 何时扣费
 
-纳入生存扣费的指令包括：`set`、`stack`、`replace`、`replacenear`、`fill`、`walls`、`overlay`、`repl`。未列入的指令会直接取消并提示未纳入扣费。
+生存 / 冒险下，下列**会改方块**的指令按格扣费（别名一并生效，例如 `//0`/`//air`＝`//set air`，`//re`/`//rep`＝`//replace`，`//p`＝`//paste`）。选区类请先选区；生成 / 粘贴 / 附近工具以准星或放置点为中心。一次扫描超过 **50 万格**会拒绝。
 
-仅生存 / 冒险可用。请先选区。选区超过 **50 万格**会拒绝扫描。
+- **选区：** `set`、`replace`、`stack`、`walls`、`overlay`/`lay`、`faces`/`outline`、`hollow`、`center`/`middle`、`line`、`curve`、`move`/`mv`、`fall`、`naturalize`、`forest`、`flora`
+- **剪贴板：** `cut`、`paste`/`p`/`pa`、`place`（网页投影粘贴也走玩家本人的 `//paste`，同样扣费）
+- **生成：** `cyl`/`hcyl`、`sphere`/`hsphere`、`pyramid`/`hpyramid`、`cone`
+- **附近：** `replacenear`、`removenear`、`removeabove`、`removebelow`、`drain`、`extinguish`、`snow`、`thaw`、`green`、`fixlava`、`fixwater`
+
+**不按「改方块指令」扣费、生存里也不会放行写块：** 笔刷、超级稿、`//repl`（只是绑定替换工具）、`//fill`（填洞工具，不是选区 `//set`）、`smooth`/`deform`/`regen`/`generate`、改生物群系。
+
+`//re` 是 **replace**，不是重做；重做请用 `//redo`。`//forest` / `//flora` 是随机的，按预扫描扣费，树冠格数可能和实际略有出入。
+
+仅生存 / 冒险可用。default 组已开放上表对应的 WorldEdit 权限（含选区、木斧、复制、撤销）；笔刷和 `//fill`/`//repl` 默认不给。
 
 ### 4.2 费用公式
 
@@ -432,7 +441,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 ## 13. 其它生存便利
 
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
-- **创世神选区/堆叠：** default 组有 `worldedit.analysis.sel` 与 `worldedit.region.stack`
+- **创世神选区与已扣费指令：** default 组有选区/木斧/复制/撤销，以及 `set`、`replace`、`stack`、剪贴板粘贴、圆柱球体、附近替换等已纳入扣费的节点；不给笔刷、`//fill`、`//repl`
 - **DeluxeMenus 管理界面：** 重载插件后会尝试把「服务器管理」菜单重新打开，避免管理员卡在空白界面
 
 ---
@@ -450,6 +459,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | `mcwws.axiom.survival.admin`  | op               | 重载 Axiom 生存配置                                |
 | `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与保护扫描                                 |
 | `mcwws.we.survival.admin`     | op               | 重载创世神生存配置                                    |
+| WorldEdit 选区/已扣费指令         | default 组脚本授予    | 见 `worldedit_perms.sk`；不含笔刷/`//fill`/`//repl` |
 | `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
 | `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
 | `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |

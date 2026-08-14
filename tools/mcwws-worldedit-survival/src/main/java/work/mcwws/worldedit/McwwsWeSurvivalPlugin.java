@@ -60,11 +60,16 @@ public final class McwwsWeSurvivalPlugin extends JavaPlugin {
         reloadConfig();
         config = getConfig();
         chargeCommands.clear();
+        chargeCommands.addAll(WeCommandAlias.CHARGE_CANONICAL);
         List<String> cmds = config.getStringList("charge-commands");
         if (cmds != null) {
             for (String cmd : cmds) {
-                if (cmd != null && !cmd.isBlank()) {
-                    chargeCommands.add(cmd.toLowerCase());
+                if (cmd == null || cmd.isBlank()) {
+                    continue;
+                }
+                String canonical = WeCommandAlias.canonical(cmd.trim());
+                if (WeCommandAlias.CHARGE_CANONICAL.contains(canonical)) {
+                    chargeCommands.add(canonical);
                 }
             }
         }

@@ -51,7 +51,14 @@ public final class RegionChunkLoader {
         ensureBoxLoaded(world, minX, minY, minZ, maxX, maxY, maxZ);
     }
 
-    private static void ensureBoxLoaded(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
+    static void ensureLoaded(World world, BlockVector3 min, BlockVector3 max) {
+        if (world == null || min == null || max == null) {
+            return;
+        }
+        ensureBoxLoaded(world, min.x(), min.y(), min.z(), max.x(), max.y(), max.z());
+    }
+
+    static void ensureBoxLoaded(World world, int minX, int minY, int minZ, int maxX, int maxY, int maxZ) {
         org.bukkit.World bukkit = BukkitAdapter.adapt(world);
         if (bukkit == null) {
             return;

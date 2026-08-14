@@ -44,5 +44,12 @@ items:
   id: minecraft:dirt
   count: 4
   schema_version: 1
+- DataVersion: 4903
+  id: minecraft:copper_leggings
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:fire_protection":2,"minecraft:unbreaking":2}'
+    minecraft:damage: '102'
+  schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

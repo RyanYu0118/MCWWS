@@ -45,6 +45,21 @@ final class FaweRegionSync {
         }
     }
 
+    static void flushBeforeEstimate(World world, com.sk89q.worldedit.math.BlockVector3 min, com.sk89q.worldedit.math.BlockVector3 max) {
+        if (world == null || min == null || max == null || !isFawePresent()) {
+            return;
+        }
+        RegionChunkLoader.ensureLoaded(world, min, max);
+        try {
+            com.fastasyncworldedit.core.queue.IQueueExtent<?> queue =
+                    com.fastasyncworldedit.core.FaweAPI.createQueue(world, false);
+            if (queue != null) {
+                queue.flush();
+            }
+        } catch (Throwable ignored) {
+        }
+    }
+
     private static boolean isFawePresent() {
         if (fawePresent == null) {
             try {
