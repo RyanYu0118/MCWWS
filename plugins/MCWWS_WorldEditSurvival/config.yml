@@ -26,6 +26,8 @@ move-netting:
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true
+# 排查用：在控制台打印 EditSession 是否挂上闸门、是否被拒
+debug: true
 undo-refund:
   enabled: true
   fee-rate: 0.05

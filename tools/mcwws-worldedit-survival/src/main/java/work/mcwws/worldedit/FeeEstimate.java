@@ -261,10 +261,11 @@ public final class FeeEstimate {
             finals.put(entry.getKey().add(offset), entry.getValue());
         }
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
-        com.sk89q.worldedit.extension.platform.Actor moveActor = actor;
-        org.bukkit.entity.Player movePlayer = moveActor instanceof com.sk89q.worldedit.bukkit.BukkitPlayer bukkitPlayer
-                ? bukkitPlayer.getPlayer()
-                : null;
+        // FAWE 可能把 actor 包成 wrapper，不能只认 BukkitPlayer；预估上下文里的玩家才是可靠来源
+        org.bukkit.entity.Player movePlayer = EstimateContext.player();
+        if (movePlayer == null && actor instanceof com.sk89q.worldedit.bukkit.BukkitPlayer bukkitPlayer) {
+            movePlayer = bukkitPlayer.getPlayer();
+        }
         // 被搬走的方块按种类记账：目标格原本就是同种方块（或受保护）时差异里看不到「放置」，
         // 只有拿这份清单去对冲，才不会把搬运当成拆除卖给市场。
         Map<String, Long> relocated = new HashMap<>();

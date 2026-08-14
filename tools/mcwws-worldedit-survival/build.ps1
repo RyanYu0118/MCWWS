@@ -44,6 +44,13 @@ if (Test-Path $Out) { Remove-Item $Out -Recurse -Force }
 New-Item -ItemType Directory -Path $Out | Out-Null
 
 $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
+# Editors may write a UTF-8 BOM back into sources; javac -encoding UTF-8 rejects it as an illegal character.
+foreach ($JavaFile in $JavaFiles) {
+    $Bytes = [System.IO.File]::ReadAllBytes($JavaFile)
+    if ($Bytes.Length -ge 3 -and $Bytes[0] -eq 0xEF -and $Bytes[1] -eq 0xBB -and $Bytes[2] -eq 0xBF) {
+        [System.IO.File]::WriteAllBytes($JavaFile, $Bytes[3..($Bytes.Length - 1)])
+    }
+}
 javac -encoding UTF-8 -cp $Cp -d $Out $JavaFiles
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 

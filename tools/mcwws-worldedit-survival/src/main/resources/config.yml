@@ -28,6 +28,8 @@ move-netting:
 max-scan-blocks: 500000
 edit-authorization:
   enabled: true
+# 排查用：在控制台打印 EditSession 是否挂上闸门、是否被拒
+debug: false
 # //undo：还原市场库存 + 退还上一笔建造扣款（扣 gross×fee-rate 手续费）
 undo-refund:
   enabled: true

@@ -1,0 +1,966 @@
+﻿Compiled from "PlatformManager.java"
+public class com.sk89q.worldedit.extension.platform.PlatformManager {
+  private static final org.apache.logging.log4j.Logger LOGGER;
+
+  private final com.sk89q.worldedit.WorldEdit worldEdit;
+
+  private final com.sk89q.worldedit.extension.platform.PlatformCommandManager platformCommandManager;
+
+  private final com.sk89q.worldedit.util.lifecycle.SimpleLifecycled<com.google.common.util.concurrent.ListeningExecutorService> executorService;
+
+  private final java.util.Map<com.sk89q.worldedit.extension.platform.Platform, java.lang.Boolean> platforms;
+
+  private final java.util.Map<com.sk89q.worldedit.extension.platform.Capability, com.sk89q.worldedit.extension.platform.Platform> preferences;
+
+  private java.lang.String firstSeenVersion;
+
+  private final java.util.concurrent.atomic.AtomicBoolean initialized;
+
+  private final java.util.concurrent.atomic.AtomicBoolean configured;
+
+  public com.sk89q.worldedit.extension.platform.PlatformManager(com.sk89q.worldedit.WorldEdit);
+    Code:
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: aload_0
+         5: invokestatic  #7                  // Method com/google/common/collect/Maps.newHashMap:()Ljava/util/HashMap;
+         8: putfield      #13                 // Field platforms:Ljava/util/Map;
+        11: aload_0
+        12: new           #19                 // class java/util/EnumMap
+        15: dup
+        16: ldc           #21                 // class com/sk89q/worldedit/extension/platform/Capability
+        18: invokespecial #23                 // Method java/util/EnumMap."<init>":(Ljava/lang/Class;)V
+        21: putfield      #26                 // Field preferences:Ljava/util/Map;
+        24: aload_0
+        25: new           #29                 // class java/util/concurrent/atomic/AtomicBoolean
+        28: dup
+        29: invokespecial #31                 // Method java/util/concurrent/atomic/AtomicBoolean."<init>":()V
+        32: putfield      #32                 // Field initialized:Ljava/util/concurrent/atomic/AtomicBoolean;
+        35: aload_0
+        36: new           #29                 // class java/util/concurrent/atomic/AtomicBoolean
+        39: dup
+        40: invokespecial #31                 // Method java/util/concurrent/atomic/AtomicBoolean."<init>":()V
+        43: putfield      #36                 // Field configured:Ljava/util/concurrent/atomic/AtomicBoolean;
+        46: aload_1
+        47: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+        50: pop
+        51: aload_0
+        52: aload_1
+        53: putfield      #45                 // Field worldEdit:Lcom/sk89q/worldedit/WorldEdit;
+        56: aload_0
+        57: new           #49                 // class com/sk89q/worldedit/extension/platform/PlatformCommandManager
+        60: dup
+        61: aload_1
+        62: aload_0
+        63: invokespecial #51                 // Method com/sk89q/worldedit/extension/platform/PlatformCommandManager."<init>":(Lcom/sk89q/worldedit/WorldEdit;Lcom/sk89q/worldedit/extension/platform/PlatformManager;)V
+        66: putfield      #54                 // Field platformCommandManager:Lcom/sk89q/worldedit/extension/platform/PlatformCommandManager;
+        69: aload_0
+        70: invokestatic  #58                 // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.invalid:()Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        73: putfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        76: aload_1
+        77: invokevirtual #68                 // Method com/sk89q/worldedit/WorldEdit.getEventBus:()Lcom/sk89q/worldedit/util/eventbus/EventBus;
+        80: aload_0
+        81: invokevirtual #74                 // Method com/sk89q/worldedit/util/eventbus/EventBus.register:(Ljava/lang/Object;)V
+        84: return
+
+  public synchronized void register(com.sk89q.worldedit.extension.platform.Platform);
+    Code:
+         0: aload_1
+         1: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+         4: pop
+         5: getstatic     #80                 // Field LOGGER:Lorg/apache/logging/log4j/Logger;
+         8: aload_1
+         9: invokeinterface #84,  1           // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getClass:()Ljava/lang/Class;
+        14: invokestatic  #90                 // Method java/lang/String.valueOf:(Ljava/lang/Object;)Ljava/lang/String;
+        17: aload_0
+        18: invokespecial #96                 // Method java/lang/Object.toString:()Ljava/lang/String;
+        21: invokedynamic #100,  0            // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+        26: invokeinterface #104,  2          // InterfaceMethod org/apache/logging/log4j/Logger.info:(Ljava/lang/String;)V
+        31: aload_0
+        32: getfield      #13                 // Field platforms:Ljava/util/Map;
+        35: aload_1
+        36: iconst_0
+        37: invokestatic  #110                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+        40: invokeinterface #115,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        45: pop
+        46: aload_0
+        47: getfield      #121                // Field firstSeenVersion:Ljava/lang/String;
+        50: ifnull        92
+        53: aload_0
+        54: getfield      #121                // Field firstSeenVersion:Ljava/lang/String;
+        57: aload_1
+        58: invokeinterface #125,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getVersion:()Ljava/lang/String;
+        63: invokevirtual #128                // Method java/lang/String.equals:(Ljava/lang/Object;)Z
+        66: ifne          102
+        69: getstatic     #80                 // Field LOGGER:Lorg/apache/logging/log4j/Logger;
+        72: ldc           #132                // String Multiple ports of WorldEdit are installed but they report different versions ({} and {}). If these two versions are truly different, then you may run into unexpected crashes and errors.
+        74: aload_0
+        75: getfield      #121                // Field firstSeenVersion:Ljava/lang/String;
+        78: aload_1
+        79: invokeinterface #125,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getVersion:()Ljava/lang/String;
+        84: invokeinterface #134,  4          // InterfaceMethod org/apache/logging/log4j/Logger.warn:(Ljava/lang/String;Ljava/lang/Object;Ljava/lang/Object;)V
+        89: goto          102
+        92: aload_0
+        93: aload_1
+        94: invokeinterface #125,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getVersion:()Ljava/lang/String;
+        99: putfield      #121                // Field firstSeenVersion:Ljava/lang/String;
+       102: return
+
+  public synchronized boolean unregister(com.sk89q.worldedit.extension.platform.Platform);
+    Code:
+         0: aload_1
+         1: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+         4: pop
+         5: aload_0
+         6: getfield      #13                 // Field platforms:Ljava/util/Map;
+         9: aload_1
+        10: invokeinterface #138,  2          // InterfaceMethod java/util/Map.remove:(Ljava/lang/Object;)Ljava/lang/Object;
+        15: ifnull        22
+        18: iconst_1
+        19: goto          23
+        22: iconst_0
+        23: istore_2
+        24: iload_2
+        25: ifeq          153
+        28: getstatic     #80                 // Field LOGGER:Lorg/apache/logging/log4j/Logger;
+        31: aload_1
+        32: invokeinterface #141,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getClass:()Ljava/lang/Class;
+        37: invokevirtual #142                // Method java/lang/Class.getCanonicalName:()Ljava/lang/String;
+        40: invokedynamic #147,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+        45: invokeinterface #104,  2          // InterfaceMethod org/apache/logging/log4j/Logger.info:(Ljava/lang/String;)V
+        50: iconst_0
+        51: istore_3
+        52: aload_0
+        53: getfield      #26                 // Field preferences:Ljava/util/Map;
+        56: invokeinterface #150,  1          // InterfaceMethod java/util/Map.entrySet:()Ljava/util/Set;
+        61: invokeinterface #154,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+        66: astore        4
+        68: aload         4
+        70: invokeinterface #160,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+        75: ifeq          145
+        78: aload         4
+        80: invokeinterface #166,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+        85: checkcast     #170                // class java/util/Map$Entry
+        88: astore        5
+        90: aload         5
+        92: invokeinterface #172,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+        97: checkcast     #85                 // class com/sk89q/worldedit/extension/platform/Platform
+       100: aload_1
+       101: invokeinterface #175,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.equals:(Ljava/lang/Object;)Z
+       106: ifeq          142
+       109: aload         5
+       111: invokeinterface #176,  1          // InterfaceMethod java/util/Map$Entry.getKey:()Ljava/lang/Object;
+       116: checkcast     #21                 // class com/sk89q/worldedit/extension/platform/Capability
+       119: aload_0
+       120: aload         5
+       122: invokeinterface #172,  1          // InterfaceMethod java/util/Map$Entry.getValue:()Ljava/lang/Object;
+       127: checkcast     #85                 // class com/sk89q/worldedit/extension/platform/Platform
+       130: invokevirtual #179                // Method com/sk89q/worldedit/extension/platform/Capability.uninitialize:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/extension/platform/Platform;)V
+       133: aload         4
+       135: invokeinterface #183,  1          // InterfaceMethod java/util/Iterator.remove:()V
+       140: iconst_1
+       141: istore_3
+       142: goto          68
+       145: iload_3
+       146: ifeq          153
+       149: aload_0
+       150: invokevirtual #185                // Method choosePreferred:()V
+       153: iload_2
+       154: ireturn
+
+  public synchronized com.sk89q.worldedit.extension.platform.Platform queryCapability(com.sk89q.worldedit.extension.platform.Capability) throws com.sk89q.worldedit.extension.platform.NoCapablePlatformException;
+    Code:
+         0: aload_0
+         1: getfield      #26                 // Field preferences:Ljava/util/Map;
+         4: aload_1
+         5: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+         8: invokeinterface #188,  2          // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+        13: checkcast     #85                 // class com/sk89q/worldedit/extension/platform/Platform
+        16: astore_2
+        17: aload_2
+        18: ifnull        23
+        21: aload_2
+        22: areturn
+        23: aload_0
+        24: getfield      #26                 // Field preferences:Ljava/util/Map;
+        27: invokeinterface #191,  1          // InterfaceMethod java/util/Map.isEmpty:()Z
+        32: ifeq          45
+        35: new           #194                // class com/sk89q/worldedit/extension/platform/NoCapablePlatformException
+        38: dup
+        39: ldc           #196                // String Not all platforms have been registered yet! Please wait until FastAsyncWorldEdit is initialized.
+        41: invokespecial #198                // Method com/sk89q/worldedit/extension/platform/NoCapablePlatformException."<init>":(Ljava/lang/String;)V
+        44: athrow
+        45: new           #194                // class com/sk89q/worldedit/extension/platform/NoCapablePlatformException
+        48: dup
+        49: aload_1
+        50: invokevirtual #200                // Method com/sk89q/worldedit/extension/platform/Capability.name:()Ljava/lang/String;
+        53: invokedynamic #203,  0            // InvokeDynamic #2:makeConcatWithConstants:(Ljava/lang/String;)Ljava/lang/String;
+        58: invokespecial #198                // Method com/sk89q/worldedit/extension/platform/NoCapablePlatformException."<init>":(Ljava/lang/String;)V
+        61: athrow
+
+  private synchronized void choosePreferred();
+    Code:
+         0: invokestatic  #204                // Method com/sk89q/worldedit/extension/platform/Capability.values:()[Lcom/sk89q/worldedit/extension/platform/Capability;
+         3: astore_1
+         4: aload_1
+         5: arraylength
+         6: istore_2
+         7: iconst_0
+         8: istore_3
+         9: iload_3
+        10: iload_2
+        11: if_icmpge     84
+        14: aload_1
+        15: iload_3
+        16: aaload
+        17: astore        4
+        19: aload_0
+        20: aload         4
+        22: invokevirtual #208                // Method findMostPreferred:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        25: astore        5
+        27: aload         5
+        29: ifnull        78
+        32: aload_0
+        33: getfield      #26                 // Field preferences:Ljava/util/Map;
+        36: aload         4
+        38: aload         5
+        40: invokeinterface #115,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        45: checkcast     #85                 // class com/sk89q/worldedit/extension/platform/Platform
+        48: astore        6
+        50: aload         5
+        52: aload         6
+        54: if_acmpeq     78
+        57: aload         6
+        59: ifnull        70
+        62: aload         4
+        64: aload_0
+        65: aload         6
+        67: invokevirtual #179                // Method com/sk89q/worldedit/extension/platform/Capability.uninitialize:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/extension/platform/Platform;)V
+        70: aload         4
+        72: aload_0
+        73: aload         5
+        75: invokevirtual #212                // Method com/sk89q/worldedit/extension/platform/Capability.initialize:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/extension/platform/Platform;)V
+        78: iinc          3, 1
+        81: goto          9
+        84: aload_0
+        85: getfield      #26                 // Field preferences:Ljava/util/Map;
+        88: getstatic     #215                // Field com/sk89q/worldedit/extension/platform/Capability.CONFIGURATION:Lcom/sk89q/worldedit/extension/platform/Capability;
+        91: invokeinterface #219,  2          // InterfaceMethod java/util/Map.containsKey:(Ljava/lang/Object;)Z
+        96: ifeq          140
+        99: aload_0
+       100: getfield      #36                 // Field configured:Ljava/util/concurrent/atomic/AtomicBoolean;
+       103: iconst_0
+       104: iconst_1
+       105: invokevirtual #222                // Method java/util/concurrent/atomic/AtomicBoolean.compareAndSet:(ZZ)Z
+       108: ifeq          140
+       111: aload_0
+       112: getfield      #45                 // Field worldEdit:Lcom/sk89q/worldedit/WorldEdit;
+       115: invokevirtual #68                 // Method com/sk89q/worldedit/WorldEdit.getEventBus:()Lcom/sk89q/worldedit/util/eventbus/EventBus;
+       118: new           #226                // class com/sk89q/worldedit/event/platform/ConfigurationLoadEvent
+       121: dup
+       122: aload_0
+       123: getstatic     #215                // Field com/sk89q/worldedit/extension/platform/Capability.CONFIGURATION:Lcom/sk89q/worldedit/extension/platform/Capability;
+       126: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+       129: invokeinterface #231,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+       134: invokespecial #235                // Method com/sk89q/worldedit/event/platform/ConfigurationLoadEvent."<init>":(Lcom/sk89q/worldedit/LocalConfiguration;)V
+       137: invokevirtual #238                // Method com/sk89q/worldedit/util/eventbus/EventBus.post:(Ljava/lang/Object;)V
+       140: return
+
+  private synchronized com.sk89q.worldedit.extension.platform.Platform findMostPreferred(com.sk89q.worldedit.extension.platform.Capability);
+    Code:
+         0: aconst_null
+         1: astore_2
+         2: aconst_null
+         3: astore_3
+         4: aload_0
+         5: getfield      #13                 // Field platforms:Ljava/util/Map;
+         8: invokeinterface #241,  1          // InterfaceMethod java/util/Map.keySet:()Ljava/util/Set;
+        13: invokeinterface #154,  1          // InterfaceMethod java/util/Set.iterator:()Ljava/util/Iterator;
+        18: astore        4
+        20: aload         4
+        22: invokeinterface #160,  1          // InterfaceMethod java/util/Iterator.hasNext:()Z
+        27: ifeq          87
+        30: aload         4
+        32: invokeinterface #166,  1          // InterfaceMethod java/util/Iterator.next:()Ljava/lang/Object;
+        37: checkcast     #85                 // class com/sk89q/worldedit/extension/platform/Platform
+        40: astore        5
+        42: aload         5
+        44: invokeinterface #244,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getCapabilities:()Ljava/util/Map;
+        49: aload_1
+        50: invokeinterface #188,  2          // InterfaceMethod java/util/Map.get:(Ljava/lang/Object;)Ljava/lang/Object;
+        55: checkcast     #248                // class com/sk89q/worldedit/extension/platform/Preference
+        58: astore        6
+        60: aload         6
+        62: ifnull        84
+        65: aload_3
+        66: ifnull        78
+        69: aload         6
+        71: aload_3
+        72: invokevirtual #250                // Method com/sk89q/worldedit/extension/platform/Preference.isPreferredOver:(Lcom/sk89q/worldedit/extension/platform/Preference;)Z
+        75: ifeq          84
+        78: aload         5
+        80: astore_2
+        81: aload         6
+        83: astore_3
+        84: goto          20
+        87: aload_2
+        88: areturn
+
+  public synchronized java.util.List<com.sk89q.worldedit.extension.platform.Platform> getPlatforms();
+    Code:
+         0: new           #254                // class java/util/ArrayList
+         3: dup
+         4: aload_0
+         5: getfield      #13                 // Field platforms:Ljava/util/Map;
+         8: invokeinterface #241,  1          // InterfaceMethod java/util/Map.keySet:()Ljava/util/Set;
+        13: invokespecial #256                // Method java/util/ArrayList."<init>":(Ljava/util/Collection;)V
+        16: areturn
+
+  public com.sk89q.worldedit.world.World getWorldForEditing(com.sk89q.worldedit.world.World);
+    Code:
+         0: aload_1
+         1: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+         4: pop
+         5: aload_1
+         6: invokestatic  #259                // Method com/fastasyncworldedit/core/wrappers/WorldWrapper.unwrap:(Lcom/sk89q/worldedit/world/World;)Lcom/sk89q/worldedit/world/World;
+         9: astore_1
+        10: aload_0
+        11: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        14: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        17: aload_1
+        18: invokeinterface #268,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.matchWorld:(Lcom/sk89q/worldedit/world/World;)Lcom/sk89q/worldedit/world/World;
+        23: astore_2
+        24: aload_2
+        25: ifnull        32
+        28: aload_2
+        29: goto          33
+        32: aload_1
+        33: areturn
+
+  public <T extends com.sk89q.worldedit.extension.platform.Actor> T createProxyActor(T);
+    Code:
+         0: aload_1
+         1: invokestatic  #39                 // Method com/google/common/base/Preconditions.checkNotNull:(Ljava/lang/Object;)Ljava/lang/Object;
+         4: pop
+         5: aload_1
+         6: instanceof    #271                // class com/sk89q/worldedit/entity/Player
+         9: ifeq          103
+        12: aload_1
+        13: checkcast     #271                // class com/sk89q/worldedit/entity/Player
+        16: astore_2
+        17: aload_0
+        18: getstatic     #273                // Field com/sk89q/worldedit/extension/platform/Capability.PERMISSIONS:Lcom/sk89q/worldedit/extension/platform/Capability;
+        21: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        24: aload_2
+        25: invokeinterface #276,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.matchPlayer:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/entity/Player;
+        30: astore_3
+        31: aload_3
+        32: ifnonnull     37
+        35: aload_2
+        36: astore_3
+        37: aload_0
+        38: getstatic     #280                // Field com/sk89q/worldedit/extension/platform/Capability.WORLDEDIT_CUI:Lcom/sk89q/worldedit/extension/platform/Capability;
+        41: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        44: aload_2
+        45: invokeinterface #276,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.matchPlayer:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/entity/Player;
+        50: astore        4
+        52: aload         4
+        54: ifnonnull     60
+        57: aload_2
+        58: astore        4
+        60: aload_2
+        61: aload_3
+        62: if_acmpne     77
+        65: aload_2
+        66: aload         4
+        68: if_acmpne     77
+        71: aload_0
+        72: aload_2
+        73: invokevirtual #283                // Method proxyFawe:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/entity/Player;
+        76: areturn
+        77: aload_0
+        78: new           #286                // class com/sk89q/worldedit/extension/platform/PlayerProxy
+        81: dup
+        82: aload_2
+        83: aload_3
+        84: aload         4
+        86: aload_0
+        87: aload_2
+        88: invokeinterface #288,  1          // InterfaceMethod com/sk89q/worldedit/entity/Player.getWorld:()Lcom/sk89q/worldedit/world/World;
+        93: invokevirtual #292                // Method getWorldForEditing:(Lcom/sk89q/worldedit/world/World;)Lcom/sk89q/worldedit/world/World;
+        96: invokespecial #295                // Method com/sk89q/worldedit/extension/platform/PlayerProxy."<init>":(Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/extension/platform/Actor;Lcom/sk89q/worldedit/extension/platform/Actor;Lcom/sk89q/worldedit/world/World;)V
+        99: invokevirtual #283                // Method proxyFawe:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/entity/Player;
+       102: areturn
+       103: aload_1
+       104: areturn
+
+  private <T extends com.sk89q.worldedit.entity.Player> T proxyFawe(T);
+    Code:
+         0: new           #298                // class com/fastasyncworldedit/core/wrappers/LocationMaskedPlayerWrapper
+         3: dup
+         4: aload_1
+         5: aload_1
+         6: invokeinterface #300,  1          // InterfaceMethod com/sk89q/worldedit/entity/Player.getLocation:()Lcom/sk89q/worldedit/util/Location;
+        11: iconst_1
+        12: invokespecial #304                // Method com/fastasyncworldedit/core/wrappers/LocationMaskedPlayerWrapper."<init>":(Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/util/Location;Z)V
+        15: areturn
+
+  public com.sk89q.worldedit.extension.platform.PlatformCommandManager getPlatformCommandManager();
+    Code:
+         0: aload_0
+         1: getfield      #54                 // Field platformCommandManager:Lcom/sk89q/worldedit/extension/platform/PlatformCommandManager;
+         4: areturn
+
+  public com.google.common.util.concurrent.ListeningExecutorService getExecutorService();
+    Code:
+         0: aload_0
+         1: getfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+         4: invokevirtual #307                // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.valueOrThrow:()Ljava/lang/Object;
+         7: checkcast     #310                // class com/google/common/util/concurrent/ListeningExecutorService
+        10: areturn
+
+  private static com.google.common.util.concurrent.ListeningExecutorService createExecutor();
+    Code:
+         0: iconst_0
+         1: iconst_1
+         2: bipush        20
+         4: ldc_w         #312                // String WorldEdit Task Executor - %s
+         7: invokestatic  #314                // Method com/sk89q/worldedit/util/concurrency/EvenMoreExecutors.newBoundedCachedThreadPool:(IIILjava/lang/String;)Ljava/util/concurrent/ExecutorService;
+        10: invokestatic  #320                // Method com/google/common/util/concurrent/MoreExecutors.listeningDecorator:(Ljava/util/concurrent/ExecutorService;)Lcom/google/common/util/concurrent/ListeningExecutorService;
+        13: areturn
+
+  public com.sk89q.worldedit.LocalConfiguration getConfiguration();
+    Code:
+         0: aload_0
+         1: getstatic     #215                // Field com/sk89q/worldedit/extension/platform/Capability.CONFIGURATION:Lcom/sk89q/worldedit/extension/platform/Capability;
+         4: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+         7: invokeinterface #231,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        12: areturn
+
+  public java.util.Collection<com.sk89q.worldedit.util.SideEffect> getSupportedSideEffects();
+    Code:
+         0: aload_0
+         1: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+         4: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+         7: invokeinterface #326,  1          // InterfaceMethod com/sk89q/worldedit/extension/platform/Platform.getSupportedSideEffects:()Ljava/util/Set;
+        12: areturn
+
+  public boolean isInitialized();
+    Code:
+         0: aload_0
+         1: getfield      #32                 // Field initialized:Ljava/util/concurrent/atomic/AtomicBoolean;
+         4: invokevirtual #329                // Method java/util/concurrent/atomic/AtomicBoolean.get:()Z
+         7: ireturn
+
+  public void handlePlatformReady(com.sk89q.worldedit.event.platform.PlatformReadyEvent);
+    Code:
+         0: aload_0
+         1: new           #331                // class com/sk89q/worldedit/event/platform/PlatformsRegisteredEvent
+         4: dup
+         5: invokespecial #333                // Method com/sk89q/worldedit/event/platform/PlatformsRegisteredEvent."<init>":()V
+         8: invokevirtual #334                // Method handlePlatformsRegistered:(Lcom/sk89q/worldedit/event/platform/PlatformsRegisteredEvent;)V
+        11: return
+
+  public void handlePlatformsRegistered(com.sk89q.worldedit.event.platform.PlatformsRegisteredEvent);
+    Code:
+         0: aload_0
+         1: invokevirtual #185                // Method choosePreferred:()V
+         4: aload_0
+         5: getfield      #32                 // Field initialized:Ljava/util/concurrent/atomic/AtomicBoolean;
+         8: iconst_0
+         9: iconst_1
+        10: invokevirtual #222                // Method java/util/concurrent/atomic/AtomicBoolean.compareAndSet:(ZZ)Z
+        13: ifeq          33
+        16: aload_0
+        17: getfield      #45                 // Field worldEdit:Lcom/sk89q/worldedit/WorldEdit;
+        20: invokevirtual #68                 // Method com/sk89q/worldedit/WorldEdit.getEventBus:()Lcom/sk89q/worldedit/util/eventbus/EventBus;
+        23: new           #338                // class com/sk89q/worldedit/event/platform/PlatformInitializeEvent
+        26: dup
+        27: invokespecial #340                // Method com/sk89q/worldedit/event/platform/PlatformInitializeEvent."<init>":()V
+        30: invokevirtual #238                // Method com/sk89q/worldedit/util/eventbus/EventBus.post:(Ljava/lang/Object;)V
+        33: return
+
+  public void handleNewPlatformReady(com.sk89q.worldedit.event.platform.PlatformReadyEvent);
+    Code:
+         0: aload_0
+         1: getfield      #26                 // Field preferences:Ljava/util/Map;
+         4: aload_0
+         5: invokedynamic #341,  0            // InvokeDynamic #3:accept:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;)Ljava/util/function/BiConsumer;
+        10: invokeinterface #345,  2          // InterfaceMethod java/util/Map.forEach:(Ljava/util/function/BiConsumer;)V
+        15: aload_0
+        16: getfield      #13                 // Field platforms:Ljava/util/Map;
+        19: aload_1
+        20: invokevirtual #349                // Method com/sk89q/worldedit/event/platform/PlatformReadyEvent.getPlatform:()Lcom/sk89q/worldedit/extension/platform/Platform;
+        23: iconst_1
+        24: invokestatic  #110                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+        27: invokeinterface #115,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        32: pop
+        33: aload_0
+        34: getfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        37: invokevirtual #355                // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.isValid:()Z
+        40: ifne          53
+        43: aload_0
+        44: getfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        47: invokestatic  #358                // Method createExecutor:()Lcom/google/common/util/concurrent/ListeningExecutorService;
+        50: invokevirtual #362                // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.newValue:(Ljava/lang/Object;)V
+        53: return
+
+  public void handleNewPlatformUnready(com.sk89q.worldedit.event.platform.PlatformUnreadyEvent);
+    Code:
+         0: aload_0
+         1: getfield      #26                 // Field preferences:Ljava/util/Map;
+         4: aload_0
+         5: invokedynamic #365,  0            // InvokeDynamic #4:accept:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;)Ljava/util/function/BiConsumer;
+        10: invokeinterface #345,  2          // InterfaceMethod java/util/Map.forEach:(Ljava/util/function/BiConsumer;)V
+        15: aload_0
+        16: getfield      #13                 // Field platforms:Ljava/util/Map;
+        19: aload_1
+        20: invokevirtual #366                // Method com/sk89q/worldedit/event/platform/PlatformUnreadyEvent.getPlatform:()Lcom/sk89q/worldedit/extension/platform/Platform;
+        23: iconst_0
+        24: invokestatic  #110                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+        27: invokeinterface #115,  3          // InterfaceMethod java/util/Map.put:(Ljava/lang/Object;Ljava/lang/Object;)Ljava/lang/Object;
+        32: pop
+        33: aload_0
+        34: getfield      #13                 // Field platforms:Ljava/util/Map;
+        37: iconst_1
+        38: invokestatic  #110                // Method java/lang/Boolean.valueOf:(Z)Ljava/lang/Boolean;
+        41: invokeinterface #369,  2          // InterfaceMethod java/util/Map.containsValue:(Ljava/lang/Object;)Z
+        46: ifne          71
+        49: aload_0
+        50: getfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        53: invokevirtual #372                // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.value:()Ljava/util/Optional;
+        56: invokedynamic #376,  0            // InvokeDynamic #5:accept:()Ljava/util/function/Consumer;
+        61: invokevirtual #379                // Method java/util/Optional.ifPresent:(Ljava/util/function/Consumer;)V
+        64: aload_0
+        65: getfield      #64                 // Field executorService:Lcom/sk89q/worldedit/util/lifecycle/SimpleLifecycled;
+        68: invokevirtual #385                // Method com/sk89q/worldedit/util/lifecycle/SimpleLifecycled.invalidate:()V
+        71: return
+
+  private <T extends com.sk89q.worldedit.command.tool.Tool> T reset(T);
+    Code:
+         0: new           #388                // class com/fastasyncworldedit/core/function/pattern/PatternTraverser
+         3: dup
+         4: aload_1
+         5: invokespecial #390                // Method com/fastasyncworldedit/core/function/pattern/PatternTraverser."<init>":(Ljava/lang/Object;)V
+         8: aconst_null
+         9: invokevirtual #392                // Method com/fastasyncworldedit/core/function/pattern/PatternTraverser.reset:(Lcom/sk89q/worldedit/extent/Extent;)V
+        12: aload_1
+        13: areturn
+
+  public void handleBlockInteract(com.sk89q.worldedit.event.platform.BlockInteractEvent);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: invokevirtual #396                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getCause:()Lcom/sk89q/worldedit/extension/platform/Actor;
+         5: invokevirtual #402                // Method createProxyActor:(Lcom/sk89q/worldedit/extension/platform/Actor;)Lcom/sk89q/worldedit/extension/platform/Actor;
+         8: astore_2
+         9: aload_1
+        10: invokevirtual #406                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getLocation:()Lcom/sk89q/worldedit/util/Location;
+        13: astore_3
+        14: aload_2
+        15: instanceof    #271                // class com/sk89q/worldedit/entity/Player
+        18: ifeq          30
+        21: aload_2
+        22: checkcast     #271                // class com/sk89q/worldedit/entity/Player
+        25: astore        4
+        27: goto          31
+        30: return
+        31: aload_0
+        32: getfield      #45                 // Field worldEdit:Lcom/sk89q/worldedit/WorldEdit;
+        35: invokevirtual #407                // Method com/sk89q/worldedit/WorldEdit.getSessionManager:()Lcom/sk89q/worldedit/session/SessionManager;
+        38: aload_2
+        39: invokevirtual #411                // Method com/sk89q/worldedit/session/SessionManager.get:(Lcom/sk89q/worldedit/session/SessionOwner;)Lcom/sk89q/worldedit/LocalSession;
+        42: astore        5
+        44: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+        47: invokestatic  #420                // Method com/sk89q/worldedit/session/request/Request.request:()Lcom/sk89q/worldedit/session/request/Request;
+        50: aload         5
+        52: invokevirtual #424                // Method com/sk89q/worldedit/session/request/Request.setSession:(Lcom/sk89q/worldedit/LocalSession;)V
+        55: invokestatic  #420                // Method com/sk89q/worldedit/session/request/Request.request:()Lcom/sk89q/worldedit/session/request/Request;
+        58: aload         4
+        60: invokeinterface #288,  1          // InterfaceMethod com/sk89q/worldedit/entity/Player.getWorld:()Lcom/sk89q/worldedit/world/World;
+        65: invokevirtual #428                // Method com/sk89q/worldedit/session/request/Request.setWorld:(Lcom/sk89q/worldedit/world/World;)V
+        68: aload_1
+        69: invokevirtual #432                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getType:()Lcom/sk89q/worldedit/event/platform/Interaction;
+        72: getstatic     #436                // Field com/sk89q/worldedit/event/platform/Interaction.HIT:Lcom/sk89q/worldedit/event/platform/Interaction;
+        75: if_acmpne     214
+        78: aload         5
+        80: invokevirtual #442                // Method com/sk89q/worldedit/LocalSession.hasSuperPickAxe:()Z
+        83: ifeq          153
+        86: aload         4
+        88: invokeinterface #447,  1          // InterfaceMethod com/sk89q/worldedit/entity/Player.isHoldingPickAxe:()Z
+        93: ifeq          153
+        96: aload         5
+        98: invokevirtual #450                // Method com/sk89q/worldedit/LocalSession.getSuperPickaxe:()Lcom/sk89q/worldedit/command/tool/BlockTool;
+       101: astore        6
+       103: aload         6
+       105: ifnull        153
+       108: aload         6
+       110: aload         4
+       112: invokeinterface #454,  2          // InterfaceMethod com/sk89q/worldedit/command/tool/BlockTool.canUse:(Lcom/sk89q/worldedit/extension/platform/Actor;)Z
+       117: ifeq          153
+       120: aload         4
+       122: aload_0
+       123: aload         6
+       125: aload         4
+       127: aload         5
+       129: aload_3
+       130: aload_1
+       131: invokedynamic #460,  0            // InvokeDynamic #6:run:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/command/tool/BlockTool;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/event/platform/BlockInteractEvent;)Ljava/lang/Runnable;
+       136: iconst_0
+       137: iconst_1
+       138: invokeinterface #464,  4          // InterfaceMethod com/sk89q/worldedit/entity/Player.runAction:(Ljava/lang/Runnable;ZZ)Z
+       143: pop
+       144: aload_1
+       145: iconst_1
+       146: invokevirtual #468                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.setCancelled:(Z)V
+       149: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       152: return
+       153: aload         5
+       155: aload         4
+       157: invokevirtual #472                // Method com/sk89q/worldedit/LocalSession.getTool:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/command/tool/Tool;
+       160: astore        6
+       162: aload         6
+       164: instanceof    #476                // class com/sk89q/worldedit/command/tool/DoubleActionBlockTool
+       167: ifeq          211
+       170: aload         6
+       172: aload         4
+       174: invokeinterface #478,  2          // InterfaceMethod com/sk89q/worldedit/command/tool/Tool.canUse:(Lcom/sk89q/worldedit/extension/platform/Actor;)Z
+       179: ifeq          211
+       182: aload         4
+       184: aload_0
+       185: aload         6
+       187: aload         4
+       189: aload         5
+       191: aload_3
+       192: aload_1
+       193: invokedynamic #481,  0            // InvokeDynamic #7:run:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/command/tool/Tool;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/event/platform/BlockInteractEvent;)Ljava/lang/Runnable;
+       198: iconst_0
+       199: iconst_1
+       200: invokeinterface #464,  4          // InterfaceMethod com/sk89q/worldedit/entity/Player.runAction:(Ljava/lang/Runnable;ZZ)Z
+       205: pop
+       206: aload_1
+       207: iconst_1
+       208: invokevirtual #468                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.setCancelled:(Z)V
+       211: goto          292
+       214: aload_1
+       215: invokevirtual #432                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getType:()Lcom/sk89q/worldedit/event/platform/Interaction;
+       218: getstatic     #484                // Field com/sk89q/worldedit/event/platform/Interaction.OPEN:Lcom/sk89q/worldedit/event/platform/Interaction;
+       221: if_acmpne     292
+       224: aload         5
+       226: aload         4
+       228: invokevirtual #472                // Method com/sk89q/worldedit/LocalSession.getTool:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/command/tool/Tool;
+       231: astore        6
+       233: aload         6
+       235: instanceof    #455                // class com/sk89q/worldedit/command/tool/BlockTool
+       238: ifeq          292
+       241: aload         6
+       243: aload         4
+       245: invokeinterface #478,  2          // InterfaceMethod com/sk89q/worldedit/command/tool/Tool.canUse:(Lcom/sk89q/worldedit/extension/platform/Actor;)Z
+       250: ifeq          292
+       253: aload         4
+       255: invokeinterface #487,  1          // InterfaceMethod com/sk89q/worldedit/entity/Player.checkAction:()Z
+       260: ifeq          292
+       263: aload         4
+       265: aload_0
+       266: aload         6
+       268: aload         4
+       270: aload         5
+       272: aload_3
+       273: aload_1
+       274: invokedynamic #490,  0            // InvokeDynamic #8:run:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/command/tool/Tool;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/event/platform/BlockInteractEvent;)Ljava/lang/Runnable;
+       279: iconst_0
+       280: iconst_1
+       281: invokeinterface #464,  4          // InterfaceMethod com/sk89q/worldedit/entity/Player.runAction:(Ljava/lang/Runnable;ZZ)Z
+       286: pop
+       287: aload_1
+       288: iconst_1
+       289: invokevirtual #468                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.setCancelled:(Z)V
+       292: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       295: goto          321
+       298: astore        6
+       300: aload_0
+       301: aload         6
+       303: aload_2
+       304: invokevirtual #493                // Method handleThrowable:(Ljava/lang/Throwable;Lcom/sk89q/worldedit/extension/platform/Actor;)V
+       307: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       310: goto          321
+       313: astore        7
+       315: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       318: aload         7
+       320: athrow
+       321: return
+      Exception table:
+         from    to  target type
+            68   149   298   Class java/lang/Throwable
+           153   292   298   Class java/lang/Throwable
+            68   149   313   any
+           153   292   313   any
+           298   307   313   any
+           313   315   313   any
+
+  public void handleThrowable(java.lang.Throwable, com.sk89q.worldedit.extension.platform.Actor);
+    Code:
+         0: aload_1
+         1: invokestatic  #497                // Method com/fastasyncworldedit/core/internal/exception/FaweException.get:(Ljava/lang/Throwable;)Lcom/fastasyncworldedit/core/internal/exception/FaweException;
+         4: astore_3
+         5: aload_3
+         6: ifnull        35
+         9: aload_2
+        10: ldc_w         #502                // String fawe.cancel.reason
+        13: iconst_1
+        14: anewarray     #2                  // class java/lang/Object
+        17: dup
+        18: iconst_0
+        19: aload_3
+        20: invokevirtual #504                // Method com/fastasyncworldedit/core/internal/exception/FaweException.getComponent:()Lcom/sk89q/worldedit/util/formatting/text/Component;
+        23: aastore
+        24: invokestatic  #508                // Method com/fastasyncworldedit/core/configuration/Caption.of:(Ljava/lang/String;[Ljava/lang/Object;)Lcom/sk89q/worldedit/util/formatting/text/TranslatableComponent;
+        27: invokeinterface #514,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Actor.print:(Lcom/sk89q/worldedit/util/formatting/text/Component;)V
+        32: goto          88
+        35: aload_2
+        36: ldc_w         #520                // String worldedit.command.error.report
+        39: iconst_0
+        40: anewarray     #2                  // class java/lang/Object
+        43: invokestatic  #508                // Method com/fastasyncworldedit/core/configuration/Caption.of:(Ljava/lang/String;[Ljava/lang/Object;)Lcom/sk89q/worldedit/util/formatting/text/TranslatableComponent;
+        46: invokeinterface #514,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Actor.print:(Lcom/sk89q/worldedit/util/formatting/text/Component;)V
+        51: aload_2
+        52: aload_1
+        53: invokevirtual #522                // Method java/lang/Object.getClass:()Ljava/lang/Class;
+        56: invokevirtual #523                // Method java/lang/Class.getName:()Ljava/lang/String;
+        59: aload_1
+        60: invokevirtual #526                // Method java/lang/Throwable.getMessage:()Ljava/lang/String;
+        63: invokedynamic #529,  0            // InvokeDynamic #9:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+        68: invokestatic  #530                // InterfaceMethod com/sk89q/worldedit/util/formatting/text/TextComponent.of:(Ljava/lang/String;)Lcom/sk89q/worldedit/util/formatting/text/TextComponent;
+        71: invokeinterface #514,  2          // InterfaceMethod com/sk89q/worldedit/extension/platform/Actor.print:(Lcom/sk89q/worldedit/util/formatting/text/Component;)V
+        76: getstatic     #80                 // Field LOGGER:Lorg/apache/logging/log4j/Logger;
+        79: ldc_w         #535                // String Error occurred executing player action
+        82: aload_1
+        83: invokeinterface #537,  3          // InterfaceMethod org/apache/logging/log4j/Logger.error:(Ljava/lang/String;Ljava/lang/Throwable;)V
+        88: return
+
+  public void handlePlayerInput(com.sk89q.worldedit.event.platform.PlayerInputEvent);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: invokevirtual #541                // Method com/sk89q/worldedit/event/platform/PlayerInputEvent.getPlayer:()Lcom/sk89q/worldedit/entity/Player;
+         5: invokevirtual #402                // Method createProxyActor:(Lcom/sk89q/worldedit/extension/platform/Actor;)Lcom/sk89q/worldedit/extension/platform/Actor;
+         8: checkcast     #271                // class com/sk89q/worldedit/entity/Player
+        11: astore_2
+        12: aload_0
+        13: getfield      #45                 // Field worldEdit:Lcom/sk89q/worldedit/WorldEdit;
+        16: invokevirtual #407                // Method com/sk89q/worldedit/WorldEdit.getSessionManager:()Lcom/sk89q/worldedit/session/SessionManager;
+        19: aload_2
+        20: invokevirtual #411                // Method com/sk89q/worldedit/session/SessionManager.get:(Lcom/sk89q/worldedit/session/SessionOwner;)Lcom/sk89q/worldedit/LocalSession;
+        23: astore_3
+        24: getstatic     #547                // Field com/sk89q/worldedit/extension/platform/PlatformManager$1.$SwitchMap$com$sk89q$worldedit$event$platform$InputType:[I
+        27: aload_1
+        28: invokevirtual #553                // Method com/sk89q/worldedit/event/platform/PlayerInputEvent.getInputType:()Lcom/sk89q/worldedit/event/platform/InputType;
+        31: invokevirtual #557                // Method com/sk89q/worldedit/event/platform/InputType.ordinal:()I
+        34: iaload
+        35: lookupswitch  { // 2
+
+                       1: 60
+
+                       2: 112
+                 default: 166
+            }
+        60: aload_3
+        61: aload_2
+        62: invokevirtual #472                // Method com/sk89q/worldedit/LocalSession.getTool:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/command/tool/Tool;
+        65: astore        4
+        67: aload         4
+        69: instanceof    #563                // class com/sk89q/worldedit/command/tool/DoubleActionTraceTool
+        72: ifeq          166
+        75: aload         4
+        77: aload_2
+        78: invokeinterface #478,  2          // InterfaceMethod com/sk89q/worldedit/command/tool/Tool.canUse:(Lcom/sk89q/worldedit/extension/platform/Actor;)Z
+        83: ifeq          166
+        86: aload_2
+        87: aload_0
+        88: aload         4
+        90: aload_2
+        91: aload_3
+        92: invokedynamic #565,  0            // InvokeDynamic #10:run:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/command/tool/Tool;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;)Ljava/lang/Runnable;
+        97: invokeinterface #568,  2          // InterfaceMethod com/sk89q/worldedit/entity/Player.runAsyncIfFree:(Ljava/lang/Runnable;)Z
+       102: pop
+       103: aload_1
+       104: iconst_1
+       105: invokevirtual #572                // Method com/sk89q/worldedit/event/platform/PlayerInputEvent.setCancelled:(Z)V
+       108: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       111: return
+       112: aload_3
+       113: aload_2
+       114: invokevirtual #472                // Method com/sk89q/worldedit/LocalSession.getTool:(Lcom/sk89q/worldedit/entity/Player;)Lcom/sk89q/worldedit/command/tool/Tool;
+       117: astore        4
+       119: aload         4
+       121: instanceof    #573                // class com/sk89q/worldedit/command/tool/TraceTool
+       124: ifeq          166
+       127: aload         4
+       129: aload_2
+       130: invokeinterface #478,  2          // InterfaceMethod com/sk89q/worldedit/command/tool/Tool.canUse:(Lcom/sk89q/worldedit/extension/platform/Actor;)Z
+       135: ifeq          166
+       138: aload_2
+       139: aload_0
+       140: aload         4
+       142: aload_2
+       143: aload_3
+       144: invokedynamic #575,  0            // InvokeDynamic #11:run:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/command/tool/Tool;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;)Ljava/lang/Runnable;
+       149: iconst_0
+       150: iconst_1
+       151: invokeinterface #464,  4          // InterfaceMethod com/sk89q/worldedit/entity/Player.runAction:(Ljava/lang/Runnable;ZZ)Z
+       156: pop
+       157: aload_1
+       158: iconst_1
+       159: invokevirtual #572                // Method com/sk89q/worldedit/event/platform/PlayerInputEvent.setCancelled:(Z)V
+       162: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       165: return
+       166: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       169: goto          195
+       172: astore        4
+       174: aload_0
+       175: aload         4
+       177: aload_2
+       178: invokevirtual #493                // Method handleThrowable:(Ljava/lang/Throwable;Lcom/sk89q/worldedit/extension/platform/Actor;)V
+       181: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       184: goto          195
+       187: astore        5
+       189: invokestatic  #416                // Method com/sk89q/worldedit/session/request/Request.reset:()V
+       192: aload         5
+       194: athrow
+       195: return
+      Exception table:
+         from    to  target type
+            24   108   172   Class java/lang/Throwable
+           112   162   172   Class java/lang/Throwable
+            24   108   187   any
+           112   162   187   any
+           172   181   187   any
+           187   189   187   any
+
+  private void lambda$handlePlayerInput$1(com.sk89q.worldedit.command.tool.Tool, com.sk89q.worldedit.entity.Player, com.sk89q.worldedit.LocalSession);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: checkcast     #573                // class com/sk89q/worldedit/command/tool/TraceTool
+         5: invokevirtual #576                // Method reset:(Lcom/sk89q/worldedit/command/tool/Tool;)Lcom/sk89q/worldedit/command/tool/Tool;
+         8: checkcast     #573                // class com/sk89q/worldedit/command/tool/TraceTool
+        11: aload_0
+        12: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        15: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        18: aload_0
+        19: invokevirtual #579                // Method getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        22: aload_2
+        23: aload_3
+        24: invokeinterface #580,  5          // InterfaceMethod com/sk89q/worldedit/command/tool/TraceTool.actPrimary:(Lcom/sk89q/worldedit/extension/platform/Platform;Lcom/sk89q/worldedit/LocalConfiguration;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;)Z
+        29: pop
+        30: return
+
+  private void lambda$handlePlayerInput$0(com.sk89q.worldedit.command.tool.Tool, com.sk89q.worldedit.entity.Player, com.sk89q.worldedit.LocalSession);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: checkcast     #563                // class com/sk89q/worldedit/command/tool/DoubleActionTraceTool
+         5: invokevirtual #576                // Method reset:(Lcom/sk89q/worldedit/command/tool/Tool;)Lcom/sk89q/worldedit/command/tool/Tool;
+         8: checkcast     #563                // class com/sk89q/worldedit/command/tool/DoubleActionTraceTool
+        11: aload_0
+        12: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        15: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        18: aload_0
+        19: invokevirtual #579                // Method getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        22: aload_2
+        23: aload_3
+        24: invokeinterface #584,  5          // InterfaceMethod com/sk89q/worldedit/command/tool/DoubleActionTraceTool.actSecondary:(Lcom/sk89q/worldedit/extension/platform/Platform;Lcom/sk89q/worldedit/LocalConfiguration;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;)Z
+        29: pop
+        30: return
+
+  private void lambda$handleBlockInteract$2(com.sk89q.worldedit.command.tool.Tool, com.sk89q.worldedit.entity.Player, com.sk89q.worldedit.LocalSession, com.sk89q.worldedit.util.Location, com.sk89q.worldedit.event.platform.BlockInteractEvent);
+    Code:
+         0: aload_1
+         1: checkcast     #455                // class com/sk89q/worldedit/command/tool/BlockTool
+         4: astore        6
+         6: aload_1
+         7: instanceof    #587                // class com/sk89q/worldedit/command/tool/BrushTool
+        10: ifne          24
+        13: aload_0
+        14: aload         6
+        16: invokevirtual #576                // Method reset:(Lcom/sk89q/worldedit/command/tool/Tool;)Lcom/sk89q/worldedit/command/tool/Tool;
+        19: checkcast     #455                // class com/sk89q/worldedit/command/tool/BlockTool
+        22: astore        6
+        24: aload         6
+        26: aload_0
+        27: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        30: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        33: aload_0
+        34: invokevirtual #579                // Method getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        37: aload_2
+        38: aload_3
+        39: aload         4
+        41: aload         5
+        43: invokevirtual #589                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getFace:()Lcom/sk89q/worldedit/util/Direction;
+        46: invokeinterface #593,  7          // InterfaceMethod com/sk89q/worldedit/command/tool/BlockTool.actPrimary:(Lcom/sk89q/worldedit/extension/platform/Platform;Lcom/sk89q/worldedit/LocalConfiguration;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/util/Direction;)Z
+        51: pop
+        52: return
+
+  private void lambda$handleBlockInteract$1(com.sk89q.worldedit.command.tool.Tool, com.sk89q.worldedit.entity.Player, com.sk89q.worldedit.LocalSession, com.sk89q.worldedit.util.Location, com.sk89q.worldedit.event.platform.BlockInteractEvent);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: checkcast     #476                // class com/sk89q/worldedit/command/tool/DoubleActionBlockTool
+         5: invokevirtual #576                // Method reset:(Lcom/sk89q/worldedit/command/tool/Tool;)Lcom/sk89q/worldedit/command/tool/Tool;
+         8: checkcast     #476                // class com/sk89q/worldedit/command/tool/DoubleActionBlockTool
+        11: aload_0
+        12: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        15: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        18: aload_0
+        19: invokevirtual #579                // Method getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        22: aload_2
+        23: aload_3
+        24: aload         4
+        26: aload         5
+        28: invokevirtual #589                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getFace:()Lcom/sk89q/worldedit/util/Direction;
+        31: invokeinterface #596,  7          // InterfaceMethod com/sk89q/worldedit/command/tool/DoubleActionBlockTool.actSecondary:(Lcom/sk89q/worldedit/extension/platform/Platform;Lcom/sk89q/worldedit/LocalConfiguration;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/util/Direction;)Z
+        36: pop
+        37: return
+
+  private void lambda$handleBlockInteract$0(com.sk89q.worldedit.command.tool.BlockTool, com.sk89q.worldedit.entity.Player, com.sk89q.worldedit.LocalSession, com.sk89q.worldedit.util.Location, com.sk89q.worldedit.event.platform.BlockInteractEvent);
+    Code:
+         0: aload_0
+         1: aload_1
+         2: invokevirtual #576                // Method reset:(Lcom/sk89q/worldedit/command/tool/Tool;)Lcom/sk89q/worldedit/command/tool/Tool;
+         5: checkcast     #455                // class com/sk89q/worldedit/command/tool/BlockTool
+         8: aload_0
+         9: getstatic     #265                // Field com/sk89q/worldedit/extension/platform/Capability.WORLD_EDITING:Lcom/sk89q/worldedit/extension/platform/Capability;
+        12: invokevirtual #228                // Method queryCapability:(Lcom/sk89q/worldedit/extension/platform/Capability;)Lcom/sk89q/worldedit/extension/platform/Platform;
+        15: aload_0
+        16: invokevirtual #579                // Method getConfiguration:()Lcom/sk89q/worldedit/LocalConfiguration;
+        19: aload_2
+        20: aload_3
+        21: aload         4
+        23: aload         5
+        25: invokevirtual #589                // Method com/sk89q/worldedit/event/platform/BlockInteractEvent.getFace:()Lcom/sk89q/worldedit/util/Direction;
+        28: invokeinterface #593,  7          // InterfaceMethod com/sk89q/worldedit/command/tool/BlockTool.actPrimary:(Lcom/sk89q/worldedit/extension/platform/Platform;Lcom/sk89q/worldedit/LocalConfiguration;Lcom/sk89q/worldedit/entity/Player;Lcom/sk89q/worldedit/LocalSession;Lcom/sk89q/worldedit/util/Location;Lcom/sk89q/worldedit/util/Direction;)Z
+        33: pop
+        34: return
+
+  private void lambda$handleNewPlatformUnready$0(com.sk89q.worldedit.extension.platform.Capability, com.sk89q.worldedit.extension.platform.Platform);
+    Code:
+         0: aload_1
+         1: aload_0
+         2: aload_2
+         3: invokevirtual #598                // Method com/sk89q/worldedit/extension/platform/Capability.unready:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/extension/platform/Platform;)V
+         6: return
+
+  private void lambda$handleNewPlatformReady$0(com.sk89q.worldedit.extension.platform.Capability, com.sk89q.worldedit.extension.platform.Platform);
+    Code:
+         0: aload_1
+         1: aload_0
+         2: aload_2
+         3: invokevirtual #601                // Method com/sk89q/worldedit/extension/platform/Capability.ready:(Lcom/sk89q/worldedit/extension/platform/PlatformManager;Lcom/sk89q/worldedit/extension/platform/Platform;)V
+         6: return
+
+  static {};
+    Code:
+         0: invokestatic  #604                // Method com/sk89q/worldedit/internal/util/LogManagerCompat.getLogger:()Lorg/apache/logging/log4j/Logger;
+         3: putstatic     #80                 // Field LOGGER:Lorg/apache/logging/log4j/Logger;
+         6: return
+}

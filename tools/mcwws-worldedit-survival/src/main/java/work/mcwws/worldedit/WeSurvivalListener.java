@@ -14,8 +14,11 @@ import com.sk89q.worldedit.regions.Region;
 import com.sk89q.worldedit.util.eventbus.EventHandler;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
+
+import java.util.UUID;
 
 public final class WeSurvivalListener {
 
@@ -52,10 +55,7 @@ public final class WeSurvivalListener {
             return;
         }
         Actor actor = event.getActor();
-        if (!(actor instanceof BukkitPlayer bukkitPlayer)) {
-            return;
-        }
-        Player player = bukkitPlayer.getPlayer();
+        Player player = resolvePlayer(actor);
         if (player == null || !BlockProtection.isSurvivalLike(player)) {
             return;
         }
@@ -403,18 +403,17 @@ public final class WeSurvivalListener {
             return;
         }
         Actor actor = event.getActor();
-        if (!(actor instanceof BukkitPlayer bukkitPlayer)) {
-            return;
-        }
-        Player player = bukkitPlayer.getPlayer();
+        Player player = resolvePlayer(actor);
         // 扣费 bypass 仍要挂 Extent，才能拦无领地权限的写块
         if (player == null || !BlockProtection.isSurvivalLike(player)) {
+            debug("EditSession 跳过: stage=" + event.getStage() + " actor=" + actorName(actor));
             return;
         }
         // FAWE 无视 CommandEvent 的取消，但 EditSessionEvent 一取消就会换成 NullExtent，
         // 这是唯一能整条掐掉「余额不足 / 缺领地权限」编辑的地方
         if (WeEditAuthorization.isDenied(player)) {
             event.setCancelled(true);
+            debug("EditSession 已取消: stage=" + event.getStage() + " player=" + player.getName());
             return;
         }
         if (event.getStage() != EditSession.Stage.BEFORE_HISTORY) {
@@ -422,5 +421,38 @@ public final class WeSurvivalListener {
         }
         Extent current = event.getExtent();
         event.setExtent(new ProtectedFeeExtent(current, event.getWorld(), player));
+        debug("EditSession 已挂闸门: player=" + player.getName() + " actor=" + actorName(actor));
+    }
+
+    /**
+     * FAWE 执行指令时会把玩家包成 LocationMaskedPlayerWrapper，EditSessionEvent 里的 actor 不再是 BukkitPlayer，
+     * 只按类型判断会漏掉所有编辑，必须按 UUID 反查。
+     */
+    private static Player resolvePlayer(Actor actor) {
+        if (actor == null) {
+            return null;
+        }
+        if (actor instanceof BukkitPlayer bukkitPlayer) {
+            Player direct = bukkitPlayer.getPlayer();
+            if (direct != null) {
+                return direct;
+            }
+        }
+        try {
+            UUID uuid = actor.getUniqueId();
+            return uuid == null ? null : Bukkit.getPlayer(uuid);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static String actorName(Actor actor) {
+        return actor == null ? "null" : actor.getClass().getName();
+    }
+
+    private void debug(String message) {
+        if (plugin.getPluginConfig().getBoolean("debug", false)) {
+            plugin.getLogger().info("[debug] " + message);
+        }
     }
 }
