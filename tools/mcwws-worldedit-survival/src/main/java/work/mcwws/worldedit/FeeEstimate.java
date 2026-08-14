@@ -18,6 +18,7 @@ import com.sk89q.worldedit.world.block.BlockState;
 import com.sk89q.worldedit.world.block.BlockTypes;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -192,6 +193,56 @@ public final class FeeEstimate {
                 BlockVector3 dest = pos.add(translation);
                 counter.setBlock(dest, source);
             }
+        }
+        return builder.build();
+    }
+
+    /**
+     * //move：源位置留下 leave（默认空气），目标位置放下原来的方块。
+     * 先算出每格最终状态再计费，避免 FAWE moveRegion 干跑只统计到拆除。
+     * 同种方块拆+放仍走搬运对冲，只收劳务。
+     */
+    public static Result forMove(
+            PriceCatalog prices,
+            LaborRates laborRates,
+            Region region,
+            World world,
+            BlockVector3 offset,
+            String leaveInput,
+            boolean copyAir,
+            com.sk89q.worldedit.extension.platform.Actor actor
+    ) throws InputParseException {
+        ParserContext context = new ParserContext();
+        context.setActor(actor);
+        context.setWorld(world);
+        String leavePatternInput = leaveInput == null || leaveInput.isBlank() ? "air" : leaveInput;
+        Pattern leave = WorldEdit.getInstance().getPatternFactory().parseFromInput(leavePatternInput, context);
+        FaweRegionSync.flushBeforeEstimate(world, region);
+        EstimateContext.setRegion(region);
+        BlockVector3 min = region.getMinimumPoint();
+        BlockVector3 max = region.getMaximumPoint();
+        RegionChunkLoader.ensureLoaded(world, min, max);
+        RegionChunkLoader.ensureLoaded(world, min.add(offset), max.add(offset));
+
+        Map<BlockVector3, BaseBlock> copies = new LinkedHashMap<>();
+        for (BlockVector3 pos : region) {
+            BaseBlock source = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
+            if (!copyAir && source.getBlockType() == BlockTypes.AIR) {
+                continue;
+            }
+            copies.put(pos, source);
+        }
+        Map<BlockVector3, BaseBlock> finals = new LinkedHashMap<>();
+        for (Map.Entry<BlockVector3, BaseBlock> entry : copies.entrySet()) {
+            finals.put(entry.getKey(), leave.applyBlock(entry.getKey()));
+        }
+        for (Map.Entry<BlockVector3, BaseBlock> entry : copies.entrySet()) {
+            finals.put(entry.getKey().add(offset), entry.getValue());
+        }
+        ResultBuilder builder = new ResultBuilder(prices, laborRates);
+        Extent counter = EstimateCountExtent.forEstimate(world, builder);
+        for (Map.Entry<BlockVector3, BaseBlock> entry : finals.entrySet()) {
+            counter.setBlock(entry.getKey(), entry.getValue());
         }
         return builder.build();
     }

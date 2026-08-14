@@ -1,4 +1,4 @@
-next_id: 1940
+next_id: 1944
 entries:
   '1':
     id: 1
@@ -20356,3 +20356,47 @@ entries:
     refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1786643890728-56601960276900
     createdAt: '2026-08-13T17:58:10.729865700Z'
     balanceAfter: 165448822.38
+  '1940':
+    id: 1940
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 28
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 12:27
+    createdAt: '2026-08-14T04:27:17.842689900Z'
+    updatedAt: '2026-08-14T04:27:24.169938500Z'
+  '1941':
+    id: 1941
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_salvage
+    amount: 56.34
+    description: '创世神拆除回收: move'
+    refId: we-salvage-5196d15c-e346-42c2-bce7-124e747f654f
+    createdAt: '2026-08-14T04:48:33.098471300Z'
+    balanceAfter: 165448850.72
+  '1942':
+    id: 1942
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_salvage
+    amount: 56.28
+    description: '创世神拆除回收: move'
+    refId: we-salvage-e182fe5e-bb88-4657-bcd4-fd5df8594239
+    createdAt: '2026-08-14T12:21:19.486253300Z'
+    balanceAfter: 165448907
+  '1943':
+    id: 1943
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 844
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 20:22
+    createdAt: '2026-08-14T12:22:15.071230400Z'
+    updatedAt: '2026-08-14T12:25:45.072868600Z'

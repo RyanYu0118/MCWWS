@@ -85,8 +85,13 @@ final class WeShapeEstimate {
                 }
                 yield FeeEstimate.forSet(prices, laborRates, region, world, leave, actor);
             }
+            case "move" -> {
+                requireRegion(region);
+                checkVolume(scanVolume(command, tokens, region, world), maxScan);
+                yield estimateMove(tokens, prices, laborRates, actor, player, world, region);
+            }
             case "walls", "overlay", "lay", "faces", "hollow", "center", "line", "curve",
-                 "move", "fall", "naturalize", "forest", "flora" -> {
+                 "fall", "naturalize", "forest", "flora" -> {
                 requireRegion(region);
                 checkVolume(scanVolume(command, tokens, region, world), maxScan);
                 FaweRegionSync.flushBeforeEstimate(world, region);
@@ -101,6 +106,39 @@ final class WeShapeEstimate {
                     estimateUtility(command, tokens, prices, laborRates, session, actor, player, world, maxScan);
             default -> throw new UnsupportedOperationException(command);
         };
+    }
+
+    private static FeeEstimate.Result estimateMove(
+            WeArgTokens tokens,
+            PriceCatalog prices,
+            FeeEstimate.LaborRates laborRates,
+            Actor actor,
+            Player player,
+            World world,
+            Region region
+    ) throws InputParseException {
+        int idx = 0;
+        int count = 1;
+        if (tokens.size() > 0 && WeArgTokens.isInt(tokens.get(0))) {
+            count = Integer.parseInt(tokens.get(0));
+            idx = 1;
+        }
+        if (count < 1) {
+            throw new InputParseException("移动格数必须 >= 1");
+        }
+        BlockVector3 dir = WeDirection.forward(player);
+        if (idx < tokens.size()) {
+            try {
+                dir = WeDirection.parse(tokens.get(idx), player);
+                idx++;
+            } catch (InputParseException ignored) {
+                // 下一参数是留下的方块
+            }
+        }
+        String leave = idx < tokens.size() ? tokens.joinFrom(idx) : "air";
+        boolean copyAir = !tokens.has('a');
+        BlockVector3 offset = dir.multiply(count);
+        return FeeEstimate.forMove(prices, laborRates, region, world, offset, leave, copyAir, actor);
     }
 
     private static FeeEstimate.Result dryRegion(
@@ -185,43 +223,6 @@ final class WeShapeEstimate {
                         }
                         List<BlockVector3> vertices = new ArrayList<>(convex.getVertices());
                         edit.drawSpline(curvePattern, vertices, 0, 0, 0, 10, thickness, !tokens.has('h'));
-                    }
-                    case "move" -> {
-                        int idx = 0;
-                        int count = 1;
-                        if (tokens.size() > 0 && WeArgTokens.isInt(tokens.get(0))) {
-                            count = Integer.parseInt(tokens.get(0));
-                            idx = 1;
-                        }
-                        if (count < 1) {
-                            throw new InputParseException("移动格数必须 >= 1");
-                        }
-                        BlockVector3 dir = WeDirection.forward(player);
-                        if (idx < tokens.size()) {
-                            try {
-                                dir = WeDirection.parse(tokens.get(idx), player);
-                                idx++;
-                            } catch (InputParseException ignored) {
-                                // 下一参数是留下的方块
-                            }
-                        }
-                        String leave = idx < tokens.size() ? tokens.joinFrom(idx) : "air";
-                        boolean copyAir = !tokens.has('a');
-                        BlockVector3 total = dir.multiply(count);
-                        RegionChunkLoader.ensureLoaded(
-                                world,
-                                region.getMinimumPoint().add(
-                                        Math.min(0, total.x()),
-                                        Math.min(0, total.y()),
-                                        Math.min(0, total.z())
-                                ),
-                                region.getMaximumPoint().add(
-                                        Math.max(0, total.x()),
-                                        Math.max(0, total.y()),
-                                        Math.max(0, total.z())
-                                )
-                        );
-                        edit.moveRegion(region, dir, count, copyAir, false, false, parsePattern(leave, actor, world));
                     }
                     case "fall" -> {
                         String replaceInput = tokens.get(0, "air");
