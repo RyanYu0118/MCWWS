@@ -1,13 +1,13 @@
 # 将 Minecraft 侧的管理权限导出给网页管理面板读取。
 # 网页端仍会直接读取 ops.json；此文件主要用于同步 LuckPerms/插件权限节点。
+# 不用 skript-yaml 写盘：admin_access.yml 不存在时 save 会在主线程 NPE，原先每 15 秒对全体在线玩家各写一次，表现为周期性卡顿。
 
-function mcwwsInitWebAdminAccess():
-    load yaml "plugins/Skript/scripts/web/data/admin_access.yml" as "mcwws_admin_access"
-    save yaml "mcwws_admin_access"
-    unload yaml "mcwws_admin_access"
+import:
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
 
-function mcwwsWriteWebAdminAccess(p: player):
-    load yaml "plugins/Skript/scripts/web/data/admin_access.yml" as "mcwws_admin_access"
+function mcwwsRememberWebAdminAccess(p: player):
     set {_name} to name of {_p}
     set {_uuid} to "%uuid of {_p}%"
     set {_has_editor} to false
@@ -16,44 +16,44 @@ function mcwwsWriteWebAdminAccess(p: player):
         set {_has_editor} to true
     if {_p} is op:
         set {_is_op} to true
+    set {mcwws.webAdmin.name::%{_uuid}%} to {_name}
+    set {mcwws.webAdmin.op::%{_uuid}%} to {_is_op}
+    set {mcwws.webAdmin.editor::%{_uuid}%} to {_has_editor}
+    if {mcwws.webAdmin.uuids::*} does not contain {_uuid}:
+        add {_uuid} to {mcwws.webAdmin.uuids::*}
 
-    set yaml value "players.%{_name}%.name" from "mcwws_admin_access" to {_name}
-    set yaml value "players.%{_name}%.uuid" from "mcwws_admin_access" to {_uuid}
-    if {_is_op} is true:
-        set yaml value "players.%{_name}%.op" from "mcwws_admin_access" to true
+function mcwwsFlushWebAdminAccessFile():
+    set {_rel} to "plugins/Skript/scripts/web/data/admin_access.yml"
+    set {_file} to new File({_rel})
+    set {_parent} to {_file}.getParentFile()
+    if {_parent}.exists() is false:
+        {_parent}.mkdirs()
+    if size of {mcwws.webAdmin.uuids::*} < 1:
+        set {_text} to "players: {}%nl%"
     else:
-        set yaml value "players.%{_name}%.op" from "mcwws_admin_access" to false
-    if {_has_editor} is true:
-        set yaml value "players.%{_name}%.ultimateshopEditor" from "mcwws_admin_access" to true
-        set yaml value "players.%{_name}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to true
-    else:
-        set yaml value "players.%{_name}%.ultimateshopEditor" from "mcwws_admin_access" to false
-        set yaml value "players.%{_name}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to false
+        set {_text} to "players:%nl%"
+        loop {mcwws.webAdmin.uuids::*}:
+            set {_uuid} to loop-value
+            set {_name} to {mcwws.webAdmin.name::%{_uuid}%}
+            set {_op} to "false"
+            if {mcwws.webAdmin.op::%{_uuid}%} is true:
+                set {_op} to "true"
+            set {_ed} to "false"
+            if {mcwws.webAdmin.editor::%{_uuid}%} is true:
+                set {_ed} to "true"
+            set {_text} to "%{_text}%  ""%{_name}%"":%nl%    name: ""%{_name}%""%nl%    uuid: ""%{_uuid}%""%nl%    op: %{_op}%%nl%    ultimateshopEditor: %{_ed}%%nl%    permissions:%nl%      ""ultimateshop.editor"": %{_ed}%%nl%  ""%{_uuid}%"":%nl%    name: ""%{_name}%""%nl%    uuid: ""%{_uuid}%""%nl%    op: %{_op}%%nl%    ultimateshopEditor: %{_ed}%%nl%    permissions:%nl%      ""ultimateshop.editor"": %{_ed}%%nl%"
+    set {_bytes} to {_text}.getBytes(StandardCharsets.UTF_8)
+    Files.write({_file}.toPath(), {_bytes})
 
-    set yaml value "players.%{_uuid}%.name" from "mcwws_admin_access" to {_name}
-    set yaml value "players.%{_uuid}%.uuid" from "mcwws_admin_access" to {_uuid}
-    if {_is_op} is true:
-        set yaml value "players.%{_uuid}%.op" from "mcwws_admin_access" to true
-    else:
-        set yaml value "players.%{_uuid}%.op" from "mcwws_admin_access" to false
-    if {_has_editor} is true:
-        set yaml value "players.%{_uuid}%.ultimateshopEditor" from "mcwws_admin_access" to true
-        set yaml value "players.%{_uuid}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to true
-    else:
-        set yaml value "players.%{_uuid}%.ultimateshopEditor" from "mcwws_admin_access" to false
-        set yaml value "players.%{_uuid}%.permissions.ultimateshop.editor" from "mcwws_admin_access" to false
-
-    save yaml "mcwws_admin_access"
-    unload yaml "mcwws_admin_access"
+function mcwwsWriteWebAdminAccess(p: player):
+    mcwwsRememberWebAdminAccess({_p})
+    mcwwsFlushWebAdminAccessFile()
 
 on load:
-    mcwwsInitWebAdminAccess()
     loop all players:
-        mcwwsWriteWebAdminAccess(loop-player)
+        mcwwsRememberWebAdminAccess(loop-player)
+    mcwwsFlushWebAdminAccessFile()
 
 on join:
+    wait 1 tick
     mcwwsWriteWebAdminAccess(player)
-
-every 15 seconds:
-    loop all players:
-        mcwwsWriteWebAdminAccess(loop-player)
