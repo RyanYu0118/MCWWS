@@ -41,8 +41,6 @@ final class EditorRestoreService {
         }
         if (player.getGameMode() == GameMode.SPECTATOR) {
             player.setGameMode(GameMode.SURVIVAL);
-            player.setFlying(false);
-            player.setAllowFlight(false);
             McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("editor-restored"));
             plugin.getLogger().info("Editor 强制生存: " + player.getName());
         }

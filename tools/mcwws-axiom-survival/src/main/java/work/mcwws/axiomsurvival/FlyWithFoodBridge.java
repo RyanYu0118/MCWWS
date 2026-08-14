@@ -60,6 +60,10 @@ final class FlyWithFoodBridge {
         player.setAllowFlight(false);
     }
 
+    /**
+     * {@code allowFlight} 表示玩家开着飞行权限（FlyWithFood on），不等于当前正在天上飞。
+     * 站在地上开着飞时 {@code isFlying} 为 false，若因此调用 disableFly 会把飞行模式整段关掉。
+     */
     static void restoreFlyState(Player player, boolean allowFlight, boolean flying) {
         if (player == null) {
             return;
@@ -69,11 +73,13 @@ final class FlyWithFoodBridge {
                 Class<?> fwfUserClass = Class.forName("me.xpyex.plugin.flywithfood.common.implementation.FWFUser");
                 Object user = fwfUserClass.getMethod("of", String.class).invoke(null, player.getName());
                 if (user != null) {
-                    if (allowFlight && flying && (boolean) fwfUserClass.getMethod("canFly").invoke(user)) {
+                    if (allowFlight && (boolean) fwfUserClass.getMethod("canFly").invoke(user)) {
                         fwfUserClass.getMethod("enableFly").invoke(user);
-                    } else {
+                    } else if (!allowFlight) {
                         fwfUserClass.getMethod("disableFly").invoke(user);
                     }
+                    player.setAllowFlight(allowFlight);
+                    player.setFlying(allowFlight && flying);
                     return;
                 }
             } catch (Throwable ignored) {

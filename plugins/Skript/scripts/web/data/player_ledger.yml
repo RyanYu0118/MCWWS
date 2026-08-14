@@ -1,4 +1,4 @@
-next_id: 1955
+next_id: 1962
 entries:
   '1':
     id: 1
@@ -20521,3 +20521,80 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 21:25
     createdAt: '2026-08-14T13:25:21.625017100Z'
     updatedAt: '2026-08-14T13:26:03.620229100Z'
+  '1955':
+    id: 1955
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-41e7f75d-aa2b-45f8-b496-aaa34aac938d
+    createdAt: '2026-08-14T13:44:28.508623500Z'
+    balanceAfter: 165446287.22
+  '1956':
+    id: 1956
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4.27
+    description: '创世神撤销退款: move (原扣 4.5 手续费 0.23)'
+    refId: we-undo-b2c06336-cbff-4181-8fa4-8617d498f66f
+    createdAt: '2026-08-14T13:44:33.243228500Z'
+    balanceAfter: 165446291.49
+  '1957':
+    id: 1957
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-1dda87a9-819b-49c9-b3d5-4e8ec885ead6
+    createdAt: '2026-08-14T13:44:41.438913100Z'
+    balanceAfter: 165446286.99
+  '1958':
+    id: 1958
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4.27
+    description: '创世神撤销退款: move (原扣 4.5 手续费 0.23)'
+    refId: we-undo-fcac46e4-0ee3-46e1-ac8b-c949703a0827
+    createdAt: '2026-08-14T13:44:49.699023900Z'
+    balanceAfter: 165446291.26
+  '1959':
+    id: 1959
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 8.9
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1786715204509-40136336809100
+    createdAt: '2026-08-14T13:46:44.509894600Z'
+    balanceAfter: 165446300.16
+  '1960':
+    id: 1960
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 152
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 21:47
+    createdAt: '2026-08-14T13:47:46.938880600Z'
+    updatedAt: '2026-08-14T13:48:23.938379900Z'
+  '1961':
+    id: 1961
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 388
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/14 21:48
+    createdAt: '2026-08-14T13:48:33.937941500Z'
+    updatedAt: '2026-08-14T13:50:09.945456400Z'

@@ -93,6 +93,8 @@ final class SurvivalEditorService {
         menuSnapshots.put(player.getUniqueId(), new MenuSnapshot(
                 location.clone(), player.getAllowFlight(), player.isFlying(), player.getGameMode()
         ));
+        // 必须在切旁观之前快照：旁观自带飞行，进 Editor 时若已是旁观就捕获不到生存飞行权限
+        editorRestoreService.onEnterSpectator(player);
         plugin.getLogger().fine(String.format(
                 "菜单打开快照: %s allowFlight=%s isFlying=%s mode=%s",
                 player.getName(), player.getAllowFlight(), player.isFlying(), player.getGameMode()
