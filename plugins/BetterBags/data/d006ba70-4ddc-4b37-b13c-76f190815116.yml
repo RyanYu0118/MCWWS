@@ -12,13 +12,13 @@ items:
   id: minecraft:golden_chestplate
   count: 1
   components:
-    minecraft:damage: '16'
+    minecraft:damage: '8'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:golden_helmet
+  id: minecraft:copper_leggings
   count: 1
   components:
-    minecraft:damage: '71'
+    minecraft:damage: '60'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:copper_boots
@@ -27,10 +27,10 @@ items:
     minecraft:damage: '1'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:copper_leggings
+  id: minecraft:golden_helmet
   count: 1
   components:
-    minecraft:damage: '131'
+    minecraft:damage: '62'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:snowball
@@ -45,11 +45,10 @@ items:
   count: 4
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:copper_leggings
+  id: minecraft:copper_helmet
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:fire_protection":2,"minecraft:unbreaking":2}'
-    minecraft:damage: '102'
+    minecraft:damage: '79'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

@@ -15,6 +15,7 @@ $FaweCandidates = Get-ChildItem (Join-Path $Root "plugins") -Filter "FastAsyncWo
 $Fawe = if ($FaweCandidates) { $FaweCandidates[0].FullName } else { Join-Path $Root "plugins/FastAsyncWorldEdit-Paper-2.15.3.jar" }
 $Vault = Join-Path $Root "plugins/Vault.jar"
 $Slimefun = Get-ChildItem (Join-Path $Root "plugins") -Filter "Slimefun-*.jar" | Select-Object -First 1 -ExpandProperty FullName
+$Residence = Get-ChildItem (Join-Path $Root "plugins") -Filter "Residence*.jar" | Select-Object -First 1 -ExpandProperty FullName
 $Libs = @(
     (Join-Path $Root "libraries/com/google/guava/guava/33.6.0-jre/guava-33.6.0-jre.jar"),
     (Join-Path $Root "libraries/com/google/guava/failureaccess/1.0.3/failureaccess-1.0.3.jar"),
@@ -28,7 +29,7 @@ $Libs = @(
     (Join-Path $Root "libraries/org/jetbrains/annotations/26.1.0/annotations-26.1.0.jar")
 )
 
-$Cp = (@($PaperApi, $Fawe, $Vault, $Slimefun) + $Libs) -join ';'
+$Cp = (@($PaperApi, $Fawe, $Vault, $Slimefun, $Residence) + $Libs) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 if (-not (Test-Path $Fawe)) { throw "Missing FAWE jar: $Fawe" }
 

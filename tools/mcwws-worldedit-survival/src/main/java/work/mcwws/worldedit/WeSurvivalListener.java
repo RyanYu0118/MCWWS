@@ -128,6 +128,16 @@ public final class WeSurvivalListener {
             EstimateContext.clear();
         }
 
+        if (estimate.residenceDeniedBlocks() > 0L) {
+            actor.printError(plugin.msg(
+                    "residence-denied",
+                    "count", String.valueOf(estimate.residenceDeniedBlocks())
+            ));
+            event.setCancelled(true);
+            WeEditAuthorization.revokeUnpaid(player);
+            return;
+        }
+
         if (estimate.protectedBlocks() > 0) {
             McwwsWeSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("protected-present"));
         }

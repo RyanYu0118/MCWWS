@@ -85,5 +85,6 @@ messages:
   undo-clawback-failed: "§c余额不足，未能收回上一笔拆除回收款，请联系管理员。"
   undo-refund-failed: "撤销退款失败，请联系管理员。"
   unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
-  protected-present: "选区内含 Slimefun 机器或无法破坏的方块，这些方块将被保留。"
+  protected-present: "选区内含受保护方块（Slimefun/不可破坏），这些方块将被保留且不计费。"
+  residence-denied: "选区内有 {count} 格缺少领地权限：纯拆除需要「破坏」，其他改动需要同时拥有「放置」和「破坏」；本次编辑已取消。"
   not-survival: "仅生存/冒险模式可使用付费创世神建造。"

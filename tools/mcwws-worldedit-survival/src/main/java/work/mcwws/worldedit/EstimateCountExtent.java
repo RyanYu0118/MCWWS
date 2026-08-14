@@ -69,6 +69,10 @@ final class EstimateCountExtent extends AbstractDelegateExtent {
             return false;
         }
         BaseBlock after = block.toBaseBlock();
+        if (!ResidenceProtection.canChange(EstimateContext.player(), world, location, after)) {
+            builder.residenceDeniedBlocks++;
+            return false;
+        }
         BlockState existing;
         if (overlay != null && overlay.containsKey(location)) {
             existing = overlay.get(location).toImmutableState();

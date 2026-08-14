@@ -16,6 +16,7 @@ $AxiomCandidates = Get-ChildItem (Join-Path $Root "plugins") -Filter "AxiomPaper
 $Axiom = if ($AxiomCandidates) { $AxiomCandidates[0].FullName } else { Join-Path $PSScriptRoot "lib/AxiomPaper.jar" }
 $Vault = Join-Path $Root "plugins/Vault.jar"
 $Slimefun = Get-ChildItem (Join-Path $Root "plugins") -Filter "Slimefun-*.jar" | Select-Object -First 1 -ExpandProperty FullName
+$Residence = Get-ChildItem (Join-Path $Root "plugins") -Filter "Residence*.jar" | Select-Object -First 1 -ExpandProperty FullName
 $PaperServer = Join-Path $Root "paper-26.2-98.jar"
 if (-not (Test-Path $PaperServer)) {
     $PaperServerCandidates = Get-ChildItem $Root -Filter "paper-26.2-*.jar" | Sort-Object Name -Descending
@@ -37,7 +38,7 @@ $Libs = @(
     (Join-Path $Root "libraries/io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.jar")
 )
 
-$CpParts = @($PaperApi, $Axiom, $Vault, $Slimefun) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$CpParts = @($PaperApi, $Axiom, $Vault, $Slimefun, $Residence) + $Libs | Where-Object { $_ -and (Test-Path $_) }
 $Cp = ($CpParts | Select-Object -Unique) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 if (-not (Test-Path $Axiom)) { throw "Missing AxiomPaper jar: $Axiom" }

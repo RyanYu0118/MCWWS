@@ -33,6 +33,7 @@ public final class FeeAccumulator {
             double labor,
             long affectedBlocks,
             long protectedBlocks,
+            long residenceDeniedBlocks,
             long movedBlocks,
             Map<String, Long> removedCounts,
             Map<String, Long> placedCounts,
@@ -50,7 +51,7 @@ public final class FeeAccumulator {
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE);
+            return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE);
         }
     }
 
@@ -68,9 +69,11 @@ public final class FeeAccumulator {
         private double labor;
         private long affectedBlocks;
         long protectedBlocks;
+        long residenceDeniedBlocks;
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
         private final List<BlockState> protectedStates = new ArrayList<>();
+        private Player player;
         private boolean hasOrigin;
         private double originX;
         private double originY;
@@ -95,6 +98,7 @@ public final class FeeAccumulator {
             if (player == null) {
                 return this;
             }
+            this.player = player;
             Location location = player.getLocation();
             this.originX = location.getX();
             this.originY = location.getY();
@@ -137,6 +141,11 @@ public final class FeeAccumulator {
             }
             BlockData existing = block.getBlockData();
             if (existing.matches(target)) {
+                return;
+            }
+            if (!ResidenceProtection.canChange(player, block, target)) {
+                residenceDeniedBlocks++;
+                offerBlock(block.getX(), block.getY(), block.getZ());
                 return;
             }
             offerBlock(block.getX(), block.getY(), block.getZ());
@@ -199,6 +208,7 @@ public final class FeeAccumulator {
                     round(labor),
                     affectedBlocks,
                     protectedBlocks,
+                    residenceDeniedBlocks,
                     moved,
                     Map.copyOf(removedCounts),
                     Map.copyOf(placedCounts),

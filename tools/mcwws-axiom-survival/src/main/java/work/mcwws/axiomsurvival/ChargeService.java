@@ -57,6 +57,7 @@ public final class ChargeService {
         if (plugin.isDebug()) {
             plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
                     + ", 受保护=" + estimate.protectedBlocks()
+                    + ", 领地拒绝=" + estimate.residenceDeniedBlocks()
                     + ", 搬运=" + estimate.movedBlocks()
                     + ", 最近=" + FeeAccumulator.formatDistance(estimate.minDistance())
                     + ", 回收=" + estimate.salvage()
@@ -71,6 +72,15 @@ public final class ChargeService {
                     + plugin.msg("scan-too-large", FeeAccumulator.withNear(
                             estimate.minDistance(), "max", String.valueOf(maxScan))));
             return ChargeDecision.deny("scan-too-large");
+        }
+
+        if (estimate.residenceDeniedBlocks() > 0L) {
+            deny(player, "residence-denied", plugin.msg("prefix") + plugin.msg(
+                    "residence-denied", FeeAccumulator.withNear(
+                            estimate.minDistance(),
+                            "count", String.valueOf(estimate.residenceDeniedBlocks())
+                    )));
+            return ChargeDecision.deny("residence-denied");
         }
 
         if (estimate.protectedBlocks() > 0L) {

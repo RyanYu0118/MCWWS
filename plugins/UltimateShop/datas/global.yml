@@ -509,13 +509,6 @@ useTimes:
     Q:
       sellUseTimes: 42
       lastSellTime: '2026-08-02 15:49:01'
-  terracottas__p2:
-    J:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-23 21:26:41'
-    G:
-      sellUseTimes: 8
-      lastSellTime: '2026-06-23 21:26:41'
   blocks:
     N:
       sellUseTimes: 6
@@ -570,6 +563,13 @@ useTimes:
       sellUseTimes: 231
       lastBuyTime: '2026-07-04 02:48:10'
       lastSellTime: '2026-07-04 02:47:46'
+  terracottas__p2:
+    J:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-23 21:26:41'
+    G:
+      sellUseTimes: 8
+      lastSellTime: '2026-06-23 21:26:41'
   functional:
     l:
       sellUseTimes: 1
@@ -640,6 +640,10 @@ useTimes:
       sellUseTimes: 3
       lastSellTime: '2026-06-25 21:37:36'
   tools:
+    C:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-08-15 00:48:06'
     I:
       buyUseTimes: 1
       lastBuyTime: '2026-06-25 22:06:25'

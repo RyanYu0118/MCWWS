@@ -23,6 +23,9 @@ public final class ProtectedFeeExtent extends AbstractDelegateExtent {
         if (BlockProtection.isProtectedWorldBlock(world, location)) {
             return false;
         }
+        if (player != null && !ResidenceProtection.canChange(player, world, location, block)) {
+            return false;
+        }
         if (player != null && !BlockProtection.shouldBypass(player) && !WeEditAuthorization.tryConsumeBlock(player)) {
             return false;
         }

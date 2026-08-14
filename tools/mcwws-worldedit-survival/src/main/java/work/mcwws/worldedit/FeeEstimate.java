@@ -47,6 +47,7 @@ public final class FeeEstimate {
             double labor,
             long affectedBlocks,
             long protectedBlocks,
+            long residenceDeniedBlocks,
             long movedBlocks,
             Map<String, Long> removedCounts,
             Map<String, Long> placedCounts,
@@ -66,7 +67,7 @@ public final class FeeEstimate {
     }
 
     public static Result empty() {
-        return new Result(0D, 0D, 0D, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of());
+        return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of());
     }
 
     public static Result forSet(PriceCatalog prices, LaborRates laborRates, Region region, World world, String patternInput, com.sk89q.worldedit.extension.platform.Actor actor) throws InputParseException {
@@ -260,6 +261,10 @@ public final class FeeEstimate {
             finals.put(entry.getKey().add(offset), entry.getValue());
         }
         ResultBuilder builder = new ResultBuilder(prices, laborRates);
+        com.sk89q.worldedit.extension.platform.Actor moveActor = actor;
+        org.bukkit.entity.Player movePlayer = moveActor instanceof com.sk89q.worldedit.bukkit.BukkitPlayer bukkitPlayer
+                ? bukkitPlayer.getPlayer()
+                : null;
         // 被搬走的方块按种类记账：目标格原本就是同种方块（或受保护）时差异里看不到「放置」，
         // 只有拿这份清单去对冲，才不会把搬运当成拆除卖给市场。
         Map<String, Long> relocated = new HashMap<>();
@@ -274,6 +279,10 @@ public final class FeeEstimate {
             BlockVector3 pos = entry.getKey();
             if (BlockProtection.isProtectedWorldBlock(world, pos)) {
                 builder.protectedBlocks++;
+                continue;
+            }
+            if (!ResidenceProtection.canChange(movePlayer, world, pos, entry.getValue())) {
+                builder.residenceDeniedBlocks++;
                 continue;
             }
             BaseBlock before = original.get(pos);
@@ -325,6 +334,7 @@ public final class FeeEstimate {
         private double labor;
         private long affectedBlocks;
         long protectedBlocks;
+        long residenceDeniedBlocks;
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
         /** //move 真正搬走的方块，按种类计数；目标格没变化时差异里没有对应的放置 */
@@ -416,6 +426,7 @@ public final class FeeEstimate {
                     labor,
                     affectedBlocks,
                     protectedBlocks,
+                    residenceDeniedBlocks,
                     moved,
                     Map.copyOf(removedCounts),
                     Map.copyOf(placedCounts),

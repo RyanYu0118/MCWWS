@@ -1,4 +1,4 @@
-next_id: 1988
+next_id: 2002
 entries:
   '1':
     id: 1
@@ -20882,3 +20882,156 @@ entries:
     refId: we-salvage-6a54d5ba-44a3-4dbe-8755-d4bda16c2859
     createdAt: '2026-08-14T16:19:42.942488900Z'
     balanceAfter: 165440414.12
+  '1988':
+    id: 1988
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-31ab8a67-f3a7-4e84-9dd5-d0bef30e2da9
+    createdAt: '2026-08-14T16:36:05.248898700Z'
+    balanceAfter: 165440409.62
+  '1989':
+    id: 1989
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4.27
+    description: '创世神撤销退款: move (原扣 4.5 手续费 0.23)'
+    refId: we-undo-d846635a-80b7-456f-b1a0-e5f0b509a65d
+    createdAt: '2026-08-14T16:36:11.217166600Z'
+    balanceAfter: 165440413.89
+  '1990':
+    id: 1990
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/15 00:37
+    createdAt: '2026-08-14T16:37:16.672314500Z'
+    updatedAt: '2026-08-14T16:37:17.678108100Z'
+  '1991':
+    id: 1991
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-12cda029-6fd2-467d-917d-b8d722ca28cb
+    createdAt: '2026-08-14T16:38:06.435114300Z'
+    balanceAfter: 165440385.39
+  '1992':
+    id: 1992
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4.27
+    description: '创世神撤销退款: move (原扣 4.5 手续费 0.23)'
+    refId: we-undo-fb7752fa-1235-423a-bb8c-0a91edd9d2df
+    createdAt: '2026-08-14T16:38:16.528192800Z'
+    balanceAfter: 165440389.66
+  '1993':
+    id: 1993
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-b33f399f-d0f4-474a-93eb-82a6f3038e0e
+    createdAt: '2026-08-14T16:38:27.384764200Z'
+    balanceAfter: 165440385.16
+  '1994':
+    id: 1994
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/15 00:39
+    createdAt: '2026-08-14T16:39:55.672337400Z'
+    updatedAt: '2026-08-14T16:39:56.676730400Z'
+  '1995':
+    id: 1995
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 12
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/15 00:40
+    createdAt: '2026-08-14T16:40:06.683950800Z'
+    updatedAt: '2026-08-14T16:40:08.680473800Z'
+  '1996':
+    id: 1996
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 32
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/15 00:44
+    createdAt: '2026-08-14T16:44:30.673535100Z'
+    updatedAt: '2026-08-14T16:44:37.677208400Z'
+  '1997':
+    id: 1997
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-a5b47bed-2b15-4342-a869-4bd8229f3746
+    createdAt: '2026-08-14T16:44:45.992635400Z'
+    balanceAfter: 165440311.66
+  '1998':
+    id: 1998
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.42
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.5 手续费 0.08)'
+    refId: axiom-undo-69ae5ea1-343d-460c-a9b3-acb7019003ec
+    createdAt: '2026-08-14T16:45:05.168750200Z'
+    balanceAfter: 165440313.08
+  '1999':
+    id: 1999
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: worldedit
+    amount: 4.5
+    description: '创世神建造: move'
+    refId: we-d7e249b5-60ba-4fdc-a257-aa9ffb63cb15
+    createdAt: '2026-08-14T16:48:27.020819200Z'
+    balanceAfter: 165440308.58
+  '2000':
+    id: 2000
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: worldedit_undo
+    amount: 4.27
+    description: '创世神撤销退款: move (原扣 4.5 手续费 0.23)'
+    refId: we-undo-d5a565cc-cb82-4c15-aba2-ecd19f826086
+    createdAt: '2026-08-14T16:48:39.382222700Z'
+    balanceAfter: 165440312.85
+  '2001':
+    id: 2001
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 4
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/15 00:56
+    createdAt: '2026-08-14T16:56:23.677884500Z'

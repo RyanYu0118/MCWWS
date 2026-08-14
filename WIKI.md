@@ -113,7 +113,8 @@ dynamic_factor = clamp(
 
 ## 4. 生存创世神（WorldEdit / FAWE）
 
-插件：`MCWWS_WorldEditSurvival`  
+插件：`MCWWS_WorldEditSurvival` 1.0.1
+
 权限：`mcwws.we.survival.bypass` 默认 **false**（含 OP，不会因为是管理员就免费）
 
 ### 4.1 何时扣费
@@ -182,7 +183,7 @@ dynamic_factor = clamp(
 | 端   | 名称                          | 当前版本           |
 | --- | --------------------------- | -------------- |
 | 服务端 | AxiomPaper                  | 5.0.4（MC 26.2） |
-| 服务端 | `MCWWS_AxiomSurvival`       | 1.1.5          |
+| 服务端 | `MCWWS_AxiomSurvival`       | 1.1.6          |
 | 客户端 | Axiom                       | 5.5.0（MC 26.2） |
 | 客户端 | `MCWWS_AxiomSurvivalClient` | 1.2.5          |
 
@@ -417,6 +418,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 - 权限旗标名称与拒绝消息为**中文**
 - 服务器地主账号为 **MCWWS**（用于公共领地归属，不是让玩家把家过户给管理员私人号）
+- WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限的领地方块会保持原样且不计费，选区跨越多个领地时分别按每一格所在领地判断。
 
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese.yml` 抄表。
 
