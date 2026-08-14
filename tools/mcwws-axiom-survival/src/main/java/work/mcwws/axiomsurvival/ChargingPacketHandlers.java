@@ -58,20 +58,14 @@ final class ChargingPacketHandlers {
             Player player,
             Object friendlyByteBuf
     ) {
-        if (!chargeService.shouldCharge(player)) {
-            if (plugin.isDebug()) {
-                plugin.getLogger().info("[debug] " + channel + " 免费放行: player=" + player.getName()
-                        + ", 模式=" + player.getGameMode()
-                        + ", bypass=" + BlockProtection.shouldBypass(player)
-                        + ", use权限=" + player.hasPermission("mcwws.axiom.survival.use")
-                        + ", Axiom会话=" + AxiomPaperHook.isAxiomSessionActive(player));
-            }
-            invokeDelegate(delegate, player, friendlyByteBuf);
-            return;
-        }
+        // 即使不扣费（含 bypass）也要走预估，否则领地拒绝会被整包跳过
         if (plugin.isDebug()) {
-            plugin.getLogger().info("[debug] " + channel + " 进入扣费判定: player=" + player.getName()
-                    + ", 主线程=" + Bukkit.isPrimaryThread());
+            plugin.getLogger().info("[debug] " + channel + " 进入判定: player=" + player.getName()
+                    + ", 主线程=" + Bukkit.isPrimaryThread()
+                    + ", 扣费=" + chargeService.shouldCharge(player)
+                    + ", bypass=" + BlockProtection.shouldBypass(player)
+                    + ", use权限=" + player.hasPermission("mcwws.axiom.survival.use")
+                    + ", Axiom会话=" + AxiomPaperHook.isAxiomSessionActive(player));
         }
         try {
             if (!decide(plugin, gate, player, friendlyByteBuf, channel)) {

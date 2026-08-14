@@ -1,18 +1,19 @@
 package work.mcwws.worldedit;
 
 import com.bekvon.bukkit.residence.Residence;
-import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.listeners.ResidenceBlockListener;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
-import com.bekvon.bukkit.residence.protection.FlagPermissions;
 import com.sk89q.worldedit.bukkit.BukkitAdapter;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.world.World;
 import com.sk89q.worldedit.world.block.BlockStateHolder;
 import org.bukkit.Location;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 
 /**
- * 让批量编辑遵守 Residence 与玩家手动放置/破坏相同的权限。
+ * 批量编辑的领地闸门：只约束「落在领地内」的格子。
+ * 纯拆除走 Residence 官方破坏检查；非空气目标要求官方放置与破坏检查同时通过。
  */
 final class ResidenceProtection {
 
@@ -39,16 +40,14 @@ final class ResidenceProtection {
         }
         ClaimedResidence claim = residence.getResidenceManager().getByLoc(location);
         if (claim == null) {
+            // 用户规则只约束领地内；荒野不拦
             return true;
         }
-
-        FlagPermissions permissions = residence.getPermsByLocForPlayer(location, player);
-        boolean build = permissions.playerHas(player, Flags.build, true);
-        boolean destroy = permissions.playerHas(player, Flags.destroy, build);
+        Block block = location.getBlock();
         if (demolitionOnly) {
-            return destroy;
+            return ResidenceBlockListener.canBreakBlock(player, block, false);
         }
-        boolean place = permissions.playerHas(player, Flags.place, build);
-        return destroy && place;
+        return ResidenceBlockListener.canBreakBlock(player, block, false)
+                && ResidenceBlockListener.canPlaceBlock(player, block, false);
     }
 }

@@ -11,6 +11,7 @@ import com.sk89q.worldedit.extension.platform.Actor;
 import com.sk89q.worldedit.extent.Extent;
 import com.sk89q.worldedit.math.BlockVector3;
 import com.sk89q.worldedit.regions.Region;
+import com.sk89q.worldedit.util.eventbus.EventHandler;
 import com.sk89q.worldedit.util.eventbus.Subscribe;
 import com.sk89q.worldedit.world.World;
 import org.bukkit.Location;
@@ -24,12 +25,14 @@ public final class WeSurvivalListener {
     public WeSurvivalListener(McwwsWeSurvivalPlugin plugin) {
         this.plugin = plugin;
         this.busSubscriber = new Object() {
-            @Subscribe
+            // 必须抢在 FAWE 的 PlatformCommandManager 之前：它收到 CommandEvent 就把指令丢去异步线程执行，
+            // 排在后面的话预估还没跑完方块就已经写下去了。
+            @Subscribe(priority = EventHandler.Priority.VERY_EARLY)
             public void onCommand(CommandEvent event) {
                 handleCommand(event);
             }
 
-            @Subscribe
+            @Subscribe(priority = EventHandler.Priority.VERY_EARLY)
             public void onEditSession(EditSessionEvent event) {
                 handleEditSession(event);
             }
@@ -53,21 +56,24 @@ public final class WeSurvivalListener {
             return;
         }
         Player player = bukkitPlayer.getPlayer();
-        if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
+        if (player == null || !BlockProtection.isSurvivalLike(player)) {
             return;
         }
+        boolean bypass = BlockProtection.shouldBypass(player);
 
         String raw = event.getArguments();
         String command = FeeEstimate.rootCommand(raw);
         String root = command;
         if ("undo".equals(root) || "u".equals(root)) {
-            WeEditAuthorization.grantHistory(player);
-            UndoRefundService.handleUndo(player);
+            WeEditAuthorization.allow(player);
+            if (!bypass) {
+                UndoRefundService.handleUndo(player);
+            }
             return;
         }
         // //re 是 replace 别名；redo 只认 redo
         if ("redo".equals(root)) {
-            WeEditAuthorization.grantHistory(player);
+            WeEditAuthorization.allow(player);
             return;
         }
         if (isSelectionChangeCommand(root)) {
@@ -80,7 +86,7 @@ public final class WeSurvivalListener {
             return;
         }
 
-        WeEditAuthorization.clear(player);
+        WeEditAuthorization.reset(player);
 
         if (plugin.getPluginConfig().getBoolean("reload-prices-before-estimate", true)) {
             plugin.getPriceCatalog().reload();
@@ -117,12 +123,12 @@ public final class WeSurvivalListener {
                 actor.printError("无法解析方块参数: " + key);
             }
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         } catch (UnsupportedOperationException ex) {
             actor.printError(plugin.msg("unsupported-command"));
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         } finally {
             EstimateContext.clear();
@@ -134,7 +140,12 @@ public final class WeSurvivalListener {
                     "count", String.valueOf(estimate.residenceDeniedBlocks())
             ));
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
+            return;
+        }
+
+        if (bypass) {
+            WeEditAuthorization.allow(player);
             return;
         }
 
@@ -145,7 +156,7 @@ public final class WeSurvivalListener {
         if (requiresBlockChanges(command, tokens) && estimate.affectedBlocks() <= 0L) {
             actor.printError(plugin.msg("prefix") + plugin.msg("estimate-no-blocks"));
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         }
 
@@ -165,7 +176,7 @@ public final class WeSurvivalListener {
                     "balance", EconomyService.format(balance)
             ));
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         }
 
@@ -176,14 +187,14 @@ public final class WeSurvivalListener {
         if (charge > 0D && !LedgerBridge.withdraw(player, charge, command)) {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         }
         if (payout > 0D && !LedgerBridge.deposit(player, payout, "worldedit_salvage",
                 "创世神拆除回收: " + command, "we-salvage-" + java.util.UUID.randomUUID())) {
             actor.printError(plugin.msg("prefix") + "回收款入账失败，请联系管理员。");
             event.setCancelled(true);
-            WeEditAuthorization.revokeUnpaid(player);
+            WeEditAuthorization.deny(player);
             return;
         }
 
@@ -192,8 +203,8 @@ public final class WeSurvivalListener {
             WeChargeMemory.record(player, charge > 0D ? charge : -payout, command);
         }
 
+        WeEditAuthorization.allow(player);
         if (estimate.affectedBlocks() > 0L) {
-            WeEditAuthorization.grantPaid(player, paidBlockBudget(command, estimate.affectedBlocks()));
             recordRecentEdit(player, session, event, command, args, estimate);
         }
 
@@ -230,21 +241,6 @@ public final class WeSurvivalListener {
             return false;
         }
         return WeCommandAlias.CHARGE_CANONICAL.contains(command);
-    }
-
-    private static long paidBlockBudget(String command, long affected) {
-        if (affected <= 0L) {
-            return 0L;
-        }
-        if ("move".equals(command)) {
-            // 源格变空气 + 目标格放下，FAWE 可能各写一次；预算按改动格数加倍，避免源格拆除被闸门截掉
-            return affected * 2L;
-        }
-        if (!WeCommandAlias.isRandomCommand(command)) {
-            return affected;
-        }
-        // 树林/植被是随机的，预扫描与实际会有偏差；多给预算避免树冠被闸门截断
-        return Math.max(affected + 256L, (long) (affected * 2.5D));
     }
 
     private static boolean isSelectionChangeCommand(String command) {
@@ -411,7 +407,14 @@ public final class WeSurvivalListener {
             return;
         }
         Player player = bukkitPlayer.getPlayer();
-        if (player == null || !BlockProtection.isSurvivalLike(player) || BlockProtection.shouldBypass(player)) {
+        // 扣费 bypass 仍要挂 Extent，才能拦无领地权限的写块
+        if (player == null || !BlockProtection.isSurvivalLike(player)) {
+            return;
+        }
+        // FAWE 无视 CommandEvent 的取消，但 EditSessionEvent 一取消就会换成 NullExtent，
+        // 这是唯一能整条掐掉「余额不足 / 缺领地权限」编辑的地方
+        if (WeEditAuthorization.isDenied(player)) {
+            event.setCancelled(true);
             return;
         }
         if (event.getStage() != EditSession.Stage.BEFORE_HISTORY) {

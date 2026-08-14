@@ -277,6 +277,14 @@ public final class FeeEstimate {
         builder.relocated(relocated);
         for (Map.Entry<BlockVector3, BaseBlock> entry : finals.entrySet()) {
             BlockVector3 pos = entry.getKey();
+            BaseBlock before = original.get(pos);
+            if (before == null) {
+                before = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
+            }
+            // finals 里既有源格也有目标格，两侧重叠处最终没变化，不能算受保护/缺权限
+            if (before.equals(entry.getValue())) {
+                continue;
+            }
             if (BlockProtection.isProtectedWorldBlock(world, pos)) {
                 builder.protectedBlocks++;
                 continue;
@@ -284,10 +292,6 @@ public final class FeeEstimate {
             if (!ResidenceProtection.canChange(movePlayer, world, pos, entry.getValue())) {
                 builder.residenceDeniedBlocks++;
                 continue;
-            }
-            BaseBlock before = original.get(pos);
-            if (before == null) {
-                before = BukkitSnapshotExtent.readBlock(world, pos).toBaseBlock();
             }
             builder.addChange(before, entry.getValue());
         }

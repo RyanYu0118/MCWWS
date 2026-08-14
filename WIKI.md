@@ -113,9 +113,9 @@ dynamic_factor = clamp(
 
 ## 4. 生存创世神（WorldEdit / FAWE）
 
-插件：`MCWWS_WorldEditSurvival` 1.0.1
+插件：`MCWWS_WorldEditSurvival` 1.0.3
 
-权限：`mcwws.we.survival.bypass` 默认 **false**（含 OP，不会因为是管理员就免费）
+权限：`mcwws.we.survival.bypass` 默认 **false**（含 OP，不会因为是管理员就免费；bypass 只跳过扣费与 Slimefun 保护扫描，**不能**绕过领地放置/破坏权限）
 
 ### 4.1 何时扣费
 
@@ -183,7 +183,7 @@ dynamic_factor = clamp(
 | 端   | 名称                          | 当前版本           |
 | --- | --------------------------- | -------------- |
 | 服务端 | AxiomPaper                  | 5.0.4（MC 26.2） |
-| 服务端 | `MCWWS_AxiomSurvival`       | 1.1.6          |
+| 服务端 | `MCWWS_AxiomSurvival`       | 1.1.7          |
 | 客户端 | Axiom                       | 5.5.0（MC 26.2） |
 | 客户端 | `MCWWS_AxiomSurvivalClient` | 1.2.5          |
 
@@ -198,7 +198,7 @@ dynamic_factor = clamp(
 
 `axiom.player.gamemode.creative` 和 `axiom.player.gamemode.spectator` 会从 default 组撤掉，避免 Axiom 把玩家真切到创造/旁观。default 组会开放 `axiom.*` 其余建造能力，**扣费仍走 MCWWS**。
 
-免费通行证 `mcwws.axiom.survival.bypass` 默认 **false**，OP 也没有。
+免费通行证 `mcwws.axiom.survival.bypass` 默认 **false**，OP 也没有；它只跳过扣费与 Slimefun 保护扫描，**不能**绕过领地放置/破坏权限。
 
 ### 5.2 会话怎么走（玩家流程）
 
@@ -418,7 +418,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 - 权限旗标名称与拒绝消息为**中文**
 - 服务器地主账号为 **MCWWS**（用于公共领地归属，不是让玩家把家过户给管理员私人号）
-- WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限的领地方块会保持原样且不计费，选区跨越多个领地时分别按每一格所在领地判断。
+- WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限时整条指令 / 整包编辑取消且不计费；`//move` 会同时检查源格与目标格，提示里的格数按「实际会发生变化」的格子计（不会把搬运后本来就不变的重叠格算进去）。选区跨越多个领地时分别按每一格所在领地判断。扣费 bypass 不能绕过这套领地检查；真正的管理员放行仍走 Residence 自己的 ResAdmin / `residence.admin`。FAWE 本身会忽略 `CommandEvent` 的取消，本服靠写块闸门与取消 `EditSessionEvent` 真正拦住无权限编辑。
 
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese.yml` 抄表。
 
@@ -464,9 +464,9 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | ----------------------------- | ---------------- | -------------------------------------------- |
 | `mcwws.axiom.survival.use`    | true             | 允许生存 Axiom 付费建造                              |
 | `mcwws.axiom.survival.entity` | **false**（OP 也无） | 显示实体拖动小方块                                    |
-| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与保护扫描                             |
+| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与 Slimefun 保护扫描；**不能**绕过领地权限 |
 | `mcwws.axiom.survival.admin`  | op               | 重载 Axiom 生存配置                                |
-| `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与保护扫描                                 |
+| `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与 Slimefun 保护扫描；**不能**绕过领地权限 |
 | `mcwws.we.survival.admin`     | op               | 重载创世神生存配置                                    |
 | WorldEdit 选区/已扣费指令         | default 组脚本授予    | 见 `worldedit_perms.sk`；不含笔刷/`//fill`/`//repl` |
 | `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |

@@ -20,13 +20,13 @@ public final class ProtectedFeeExtent extends AbstractDelegateExtent {
 
     @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 location, B block) throws com.sk89q.worldedit.WorldEditException {
+        if (WeEditAuthorization.isDenied(player)) {
+            return false;
+        }
         if (BlockProtection.isProtectedWorldBlock(world, location)) {
             return false;
         }
         if (player != null && !ResidenceProtection.canChange(player, world, location, block)) {
-            return false;
-        }
-        if (player != null && !BlockProtection.shouldBypass(player) && !WeEditAuthorization.tryConsumeBlock(player)) {
             return false;
         }
         return super.setBlock(location, block);

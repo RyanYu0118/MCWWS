@@ -48,9 +48,6 @@ public final class ChargeService {
     }
 
     public ChargeDecision evaluate(Player player, String label, FeeAccumulator.Result estimate) {
-        if (!shouldCharge(player)) {
-            return ChargeDecision.allow();
-        }
         if (estimate == null) {
             return ChargeDecision.allow();
         }
@@ -63,7 +60,22 @@ public final class ChargeService {
                     + ", 回收=" + estimate.salvage()
                     + ", 材料=" + estimate.material()
                     + ", 劳务=" + estimate.labor()
-                    + ", 合计=" + estimate.total());
+                    + ", 合计=" + estimate.total()
+                    + ", 扣费=" + shouldCharge(player));
+        }
+
+        // 领地权限与扣费 bypass 无关：有 bypass 也不能改别人的领地
+        if (estimate.residenceDeniedBlocks() > 0L) {
+            deny(player, "residence-denied", plugin.msg("prefix") + plugin.msg(
+                    "residence-denied", FeeAccumulator.withNear(
+                            estimate.minDistance(),
+                            "count", String.valueOf(estimate.residenceDeniedBlocks())
+                    )));
+            return ChargeDecision.deny("residence-denied");
+        }
+
+        if (!shouldCharge(player)) {
+            return ChargeDecision.allow();
         }
 
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
@@ -72,15 +84,6 @@ public final class ChargeService {
                     + plugin.msg("scan-too-large", FeeAccumulator.withNear(
                             estimate.minDistance(), "max", String.valueOf(maxScan))));
             return ChargeDecision.deny("scan-too-large");
-        }
-
-        if (estimate.residenceDeniedBlocks() > 0L) {
-            deny(player, "residence-denied", plugin.msg("prefix") + plugin.msg(
-                    "residence-denied", FeeAccumulator.withNear(
-                            estimate.minDistance(),
-                            "count", String.valueOf(estimate.residenceDeniedBlocks())
-                    )));
-            return ChargeDecision.deny("residence-denied");
         }
 
         if (estimate.protectedBlocks() > 0L) {

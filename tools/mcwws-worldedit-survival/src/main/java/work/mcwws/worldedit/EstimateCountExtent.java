@@ -61,18 +61,10 @@ final class EstimateCountExtent extends AbstractDelegateExtent {
 
     @Override
     public <B extends BlockStateHolder<B>> boolean setBlock(BlockVector3 location, B block) {
-        if (BlockProtection.isProtectedWorldBlock(world, location)) {
-            builder.protectedBlocks++;
-            return false;
-        }
         if (block == null) {
             return false;
         }
         BaseBlock after = block.toBaseBlock();
-        if (!ResidenceProtection.canChange(EstimateContext.player(), world, location, after)) {
-            builder.residenceDeniedBlocks++;
-            return false;
-        }
         BlockState existing;
         if (overlay != null && overlay.containsKey(location)) {
             existing = overlay.get(location).toImmutableState();
@@ -83,7 +75,16 @@ final class EstimateCountExtent extends AbstractDelegateExtent {
             return false;
         }
         BaseBlock before = existing.toBaseBlock();
+        // 目标与现状一致时这一格根本不会写，别算成受保护或缺领地权限
         if (before.equals(after)) {
+            return false;
+        }
+        if (BlockProtection.isProtectedWorldBlock(world, location)) {
+            builder.protectedBlocks++;
+            return false;
+        }
+        if (!ResidenceProtection.canChange(EstimateContext.player(), world, location, after)) {
+            builder.residenceDeniedBlocks++;
             return false;
         }
         builder.addChange(before, after);

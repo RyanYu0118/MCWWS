@@ -7,95 +7,71 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * 生存扣费与 FAWE 异步改块之间的闸门：仅在有「已扣费」或「撤销/重做」授权时允许 EditSession 写方块。
- * 防止 CommandEvent 已取消（预估 0 格）但 FAWE 仍执行 replace 的白嫖。
+ * 生存扣费与 FAWE 改块之间的闸门。
+ * FAWE 的 PlatformCommandManager 根本不看 {@code CommandEvent.isCancelled()}，取消事件拦不住指令，
+ * 因此「余额不足 / 缺领地权限 / 预估失败」必须靠这里的拒绝标记，在 EditSession 与写块两处兜住。
+ * 没有结论的写入（笔刷、其他插件的编辑）一律放行，避免误伤正常功能。
  */
 final class WeEditAuthorization {
 
-    private enum Kind {
-        PAID,
-        HISTORY
+    private enum State {
+        ALLOWED,
+        DENIED
     }
 
-    private record Pass(Kind kind, long remaining, long expiresAtMs) {
+    private record Decision(State state, long expiresAtMs) {
         boolean expired() {
             return System.currentTimeMillis() > expiresAtMs;
         }
     }
 
-    private static final Map<UUID, Pass> active = new ConcurrentHashMap<>();
-    private static final Map<UUID, Long> deniedUntil = new ConcurrentHashMap<>();
-    private static final long PAID_TTL_MS = 120_000L;
-    private static final long HISTORY_TTL_MS = 60_000L;
-    private static final long DENY_MS = 8_000L;
+    private static final Map<UUID, Decision> decisions = new ConcurrentHashMap<>();
+    private static final long ALLOW_TTL_MS = 120_000L;
+    private static final long DENY_TTL_MS = 8_000L;
 
     private WeEditAuthorization() {
     }
 
-    static void grantPaid(Player player, long blockBudget) {
-        if (player == null || blockBudget <= 0L) {
-            return;
-        }
-        deniedUntil.remove(player.getUniqueId());
-        active.put(player.getUniqueId(), new Pass(Kind.PAID, blockBudget, System.currentTimeMillis() + PAID_TTL_MS));
-    }
-
-    static void grantHistory(Player player) {
+    /** 扣费成功、bypass 放行或撤销/重做：解除拒绝标记。 */
+    static void allow(Player player) {
         if (player == null) {
             return;
         }
-        deniedUntil.remove(player.getUniqueId());
-        active.put(player.getUniqueId(), new Pass(Kind.HISTORY, Long.MAX_VALUE, System.currentTimeMillis() + HISTORY_TTL_MS));
+        decisions.put(player.getUniqueId(), new Decision(State.ALLOWED, System.currentTimeMillis() + ALLOW_TTL_MS));
     }
 
-    static void clear(Player player) {
+    /** 指令被判定不可执行：短时间内禁止该玩家的一切 WorldEdit 写块。 */
+    static void deny(Player player) {
+        if (player == null) {
+            return;
+        }
+        decisions.put(player.getUniqueId(), new Decision(State.DENIED, System.currentTimeMillis() + DENY_TTL_MS));
+    }
+
+    static void reset(Player player) {
         if (player != null) {
-            active.remove(player.getUniqueId());
+            decisions.remove(player.getUniqueId());
         }
     }
 
-    /** 命令因预估失败/余额不足等被取消：撤销写块授权并短暂禁止未扣费写入。 */
-    static void revokeUnpaid(Player player) {
-        if (player == null) {
-            return;
-        }
-        active.remove(player.getUniqueId());
-        deniedUntil.put(player.getUniqueId(), System.currentTimeMillis() + DENY_MS);
-    }
-
-    static boolean tryConsumeBlock(Player player) {
-        if (player == null) {
+    static boolean isDenied(Player player) {
+        if (player == null || !enabled()) {
             return false;
         }
+        Decision decision = decisions.get(player.getUniqueId());
+        if (decision == null || decision.expired()) {
+            decisions.remove(player.getUniqueId());
+            return false;
+        }
+        return decision.state() == State.DENIED;
+    }
+
+    static boolean allowWrite(Player player) {
+        return !isDenied(player);
+    }
+
+    private static boolean enabled() {
         McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
-        if (plugin != null && !plugin.getPluginConfig().getBoolean("edit-authorization.enabled", true)) {
-            return true;
-        }
-        Long deny = deniedUntil.get(player.getUniqueId());
-        if (deny != null) {
-            if (System.currentTimeMillis() < deny) {
-                return false;
-            }
-            deniedUntil.remove(player.getUniqueId());
-        }
-        Pass pass = active.get(player.getUniqueId());
-        if (pass == null || pass.expired()) {
-            active.remove(player.getUniqueId());
-            return false;
-        }
-        if (pass.kind() == Kind.HISTORY) {
-            return true;
-        }
-        if (pass.remaining() <= 0L) {
-            active.remove(player.getUniqueId());
-            return false;
-        }
-        long left = pass.remaining() - 1L;
-        if (left <= 0L) {
-            active.remove(player.getUniqueId());
-        } else {
-            active.put(player.getUniqueId(), new Pass(Kind.PAID, left, pass.expiresAtMs()));
-        }
-        return true;
+        return plugin == null || plugin.getPluginConfig().getBoolean("edit-authorization.enabled", true);
     }
 }
