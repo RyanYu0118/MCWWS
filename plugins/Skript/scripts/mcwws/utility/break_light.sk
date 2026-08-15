@@ -1,6 +1,7 @@
-# MCWWS：生存/冒险左键拆除光源并掉落；站立右键调节已放光源亮度
+# MCWWS：生存/冒险左键拆除光源并掉落（须主手持光源）；站立右键调节已放光源亮度
 # 生存：手持光源对空气右键 → 选择放置亮度 0–15（默认 15）；手持物品外观仍为原版默认
 # 世界图标 / 选择 UI：按真实亮度显示对应贴图
+# 主手未持光源时不能拆除光源（避免空手乱点误拆）
 
 import:
     org.bukkit.Bukkit
@@ -251,6 +252,9 @@ on left click:
         stop
     # 潜行时优先放置/交互，不触发拆除（与潜行右键放置冲突）
     if player is sneaking:
+        stop
+    # 主手未持光源时不能拆除（图标刷新也只在持光源时开启）
+    if tool of player is not light:
         stop
     set {_uuid} to "%uuid of player%"
     if {mcwws.recentPlace::%{_uuid}%} is set:
