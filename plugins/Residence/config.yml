@@ -1,16 +1,10 @@
 # These are Global Settings for Residence.
 Global:
-  # Starts UUID conversion on plugin startup
-  # DON'T change this if you are not sure what you doing
-  UUIDConvertion: false
-  # STRONGLY not recomended to be used anymore. Only enable if you are sure you want to use this
-  # If you running offline server. Suggestion would be to keep this at false and base residence ownership from UUID and not on players name
-  OfflineMode: false
   # Players with residence.versioncheck permission node will be noticed about new residence version on login
   versionCheck: true
   # This loads the <language>.yml file in the Residence Language folder
   # All Residence text comes from this file. (NOT DONE YET)
-  Language: Chinese
+  Language: Chinese_MCWWSS
   # Wooden Hoe is the default selection tool for Residence.
   SelectionToolId: FEATHER
   Selection:
@@ -41,7 +35,7 @@ Global:
     # When this is set to true and CanTeleport set to false, players will not have option to teleport to residences in general
     # Keep in mind that this only applies for commands like /res tp
     CanTeleportIncludeOwner: false
-    # Name of your main residence world. Usually normal starting world 'World'. Capitalization essential
+    # Name of your main residence world. Usually normal starting world 'world'. Capitalization essential
     DefaultWorld: world
     DisabledWorlds:
       # List Of Worlds where this plugin is disabled
@@ -100,9 +94,6 @@ Global:
     # When this set to true, any teleportation to residence where player don't have tp flag, action will be denyied
     # This can prevent from teleporting players to residence with 3rd party plugins like esentials /tpa
     BlockAnyTeleportation: true
-    # By setting this to true, regular pvp flag will be acting as overridepvp flag
-    # Overridepvp flag tries to ignore any pvp protection in that residence by any other plugin
-    OverridePvp: false
     KickLocation:
       # By setting this to true, when player kicks another player from residence, he will be teleported to this location instead of getting outside residence
       Use: false
@@ -326,9 +317,6 @@ Global:
     MaxTries: 20
   # The interval, in minutes, between residence saves.
   SaveInterval: 10
-  # New save mechanic can minimize save file couple times and speedup save/load time in general
-  # Bigger files have bigger impact
-  NewSaveMechanic: true
   Backup:
     AutoCleanUp:
       # Do you want to automatically remove backup files from main backup folder if they are older than defined day amount
@@ -471,7 +459,7 @@ Global:
   LeaseAutoRenew: true
   # Whether or not to use the Permissions system in conjunction with this config.
   EnablePermissions: true
-  # Enable / Disable Residence's Economy System (iConomy, MineConomy, Essentials, BOSEconomy, and RealEconomy supported).
+  # Enable / Disable Residence's Economy System (CMIEconomy, Essentials, Vault supported).
   EnableEconomy: true
   # Defines when we should charge money. Only works if economy is enabled
   ChargeWhen:
@@ -483,7 +471,7 @@ Global:
     AreaAdd: true
   # Defaults to None which will start by looking to default economy engine throw vault API and if it fails to any supported economy engine
   # Custom economy engines can be defined to access economy directly
-  # Supported variables: Vault, iConomy, Essentials, RealEconomy, CMIEconomy, None
+  # Supported variables: Vault, Essentials, CMIEconomy, Auto
   Type: None
   # When enabled extra message will appear in chat if residence is for rent or for sell to inform how he can rent/buy residence with basic information.
   ExtraEnterMessage: true
@@ -529,9 +517,14 @@ Global:
   # The interval, in minutes, between residence rent expiration checks (if the rent system is enabled).
   RentCheckInterval: 10
   Messages:
-    # Defines where you want to send residence enter/leave/deny move and similar messages. Possible options: ActionBar, TitleBar, ChatBox
+    # Defines where you want to send residence enter/leave/deny move and similar messages. Possible options: ActionBarinfo_ListSpliterTitleBarinfo_ListSpliterChatBox
     # TitleBar can have %subtitle% variable to define second line
     GeneralMessages: ActionBar
+    # Classified under Language MessageType of GeneralMessages
+    MessageType:
+    - Flag_Deny
+    - Residence_FlagDeny
+    - General_NoPVPZone
   ActionBar:
     ShowOnSelection: true
   # Enable or disable residence chat channels.
@@ -560,6 +553,7 @@ Global:
   # Setting this to false will cause residence to continue to load even if a error is detected in the save file.
   StopOnSaveFault: true
   ResidenceNameRegex: '[^a-zA-Z0-9\-\_]'
+  ResidenceNameLength: 64
   # Setting this to true sends a message to the console every time Residence does a rent expire check or a lease expire check.
   ShowIntervalMessages: false
   # Setting this to true sends a tutorial message to the new player when he places chest on ground.
@@ -571,6 +565,9 @@ Global:
     # Setting this to true, residence will be created for free
     # By setting to false, money will be taken from player, if he has them
     Free: true
+    # Setting this to true, residence will be created for free when using /res create or /res auto
+    # Only applies if player never created any residences before, including owning one
+    CommandFree: false
     # Range from placed chest to both sides. By setting to 5, residence will be 5+5+1 = 11 blocks wide in total
     Range:
       X: 5
@@ -617,8 +614,8 @@ Global:
       Sides: FLAME
     # Shows particle effect when player enters residence. Only applies to main residence area
     EnterAnimation: true
-  # Shows particle effect when player are being pushed back
-  BounceAnimation: true
+    # Shows particle effect when player are being pushed back
+    BounceAnimation: true
   GUI:
     # Enable or disable flag GUI
     Enabled: true
@@ -639,72 +636,41 @@ Global:
   EnableLeaseMoneyAccount: true
   # By setting this to true, partial compatibility for kCouldron servers will be enabled. Action bar messages and selection visualizer will be disabled automatically as off incorrect compatibility
   Couldroncompatibility: false
-DynMap:
-  # Enables or disable DynMap Support
-  Use: false
-  # When set to true we will hide residence areas by default on dynmap window
-  # Residences can still be enabled throw provided DynMap option on left top side
+WebMap:
+  # Enables or disable DynMap, Pl3exMap or BlueMap support
+  Use: true
+  # When set to true we will hide residence areas by default on WebMap window
+  # Residences can still be enabled throw provided WebMap option on left top side
   HideByDefault: false
   # Shows or hides residence flags
   ShowFlags: true
   # When enabled default flags will not be included in residence overview
   ExcludeDefaultFlags: true
-  # If set true, residence with hidden flag set to true will be hidden from dynmap
-  HideHidden: true
-  Layer:
-    # Enables 3D zones
-    3dRegions: true
-    # How deep to go into subzones to show
-    SubZoneDepth: 2
-  Border:
-    # Color of border. Pick color from this page http://www.w3schools.com/colors/colors_picker.asp
-    Color: '#FF0000'
-    # Transparency. 0.3 means that only 30% of color will be visible
-    Opacity: 0.3
-    # Border thickness
-    Weight: 3
-  Fill:
-    Opacity: 0.3
-    Color: '#FFFF00'
-    ForRent: '#33cc33'
-    Rented: '#99ff33'
-    ForSale: '#0066ff'
-  # Shows only regions on this list
-  VisibleRegions: []
-  # Hides region on map even if its not hidden in game
-  HiddenRegions: []
-Pl3xMap:
-  # Enables or disable Pl3xMap Support
-  Use: false
-  # When set to true we will hide residence areas by default on Pl3xMap window
-  # Residences can still be enabled throw provided Pl3xMap option on left top side
-  HideByDefault: false
-  # Shows or hides residence flags
-  ShowFlags: true
-  # When enabled default flags will not be included in residence overview
-  ExcludeDefaultFlags: true
-  # If set true, residence with hidden flag set to true will be hidden from Pl3xMap
+  # If set true, residence with hidden flag set to true will be hidden from WebMap
   HideHidden: true
   Layer:
     # How deep to go into subzones to show
     SubZoneDepth: 2
   Border:
-    # Color of border. Pick color from this page http://www.w3schools.com/colors/colors_picker.asp
-    Color: '#FF0000'
-    # Transparency. 0.3 means that only 30% of color will be visible
-    Opacity: 0.3
+    # Color of border. Pick color from this page https://rgbcolorpicker.com/
+    # Color code is defined with HEX color code including alpha value, so follow RGBA format
+    # If alpha is not provided then it will default to 0% opacity
+    # 00 - 100% opacity, 40 - 75% opacity, 80 - 50% opacity, BF - 25% opacity, FF - 0% opacity
+    Color: '{#FF000040}'
     # Border thickness
     Weight: 3
   Fill:
-    Opacity: 0.3
-    Color: '#FF0000'
-    ForRent: '#33cc33'
-    Rented: '#99ff33'
-    ForSale: '#0066ff'
+    Color: '{#FF000040}'
+    ForRent: '{#33cc3340}'
+    Rented: '{#99ff3340}'
+    ForSale: '{#0066ff40}'
+    ServerLand: '{#8F8F8F40}'
   # Shows only regions on this list
   VisibleRegions: []
   # Hides region on map even if its not hidden in game
   HiddenRegions: []
+  # List of player names whose residences should be hidden in DynMap, Pl3exMap or BlueMap independent of their settings
+  HiddenPlayerResidences: []
 # In development
 Raid:
   # Determines if you want to enable raid feature for your server

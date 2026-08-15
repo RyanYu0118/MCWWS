@@ -468,10 +468,11 @@ Flags:
     pvp: false
     animalkilling: false
     hook: false
+    build: false
     explode: false
     vehicledestroy: false
     tnt: false
-    place: true
+    place: false
     leash: false
     pistonprotection: true
     tp: true
