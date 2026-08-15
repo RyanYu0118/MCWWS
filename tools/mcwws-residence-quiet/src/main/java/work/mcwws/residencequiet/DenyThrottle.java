@@ -71,7 +71,7 @@ final class DenyThrottle {
         return bag.add(normalized);
     }
 
-    private boolean isDenyTip(String normalized) {
+    boolean isDenyTip(String normalized) {
         for (Pattern pattern : patterns) {
             if (pattern.matcher(normalized).matches()) {
                 return true;

@@ -1,4 +1,13 @@
 enabled: true
+# actionbar = 经验条上方动作栏（同时只能一条，后到的会盖掉先到的）
+# bossbar = 每条拒绝提示单独一条 Boss 栏，血量从满到空当作倒计时
+display: bossbar
+bossbar:
+  # 20 tick = 1 秒；默认 4 秒
+  duration-ticks: 80
+  color: RED
+  overlay: PROGRESS
+  max-bars: 6
 # 离开或换领地后重置；同一趟停留里，相同纯文本只显示一次
 patterns:
   # Flag.Deny：你没有 破坏方块 权限.

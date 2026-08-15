@@ -8,6 +8,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 public final class McwwsResidenceQuietPlugin extends JavaPlugin {
 
     private DenyThrottle throttle;
+    private DenyHud hud;
     private PacketDenyFilter packetFilter;
 
     @Override
@@ -18,7 +19,7 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
             packetFilter = new PacketDenyFilter(this);
             packetFilter.register();
-            getLogger().info("已挂接 ProtocolLib，领地权限拒绝提示将按「每次进入只提醒一次」节流。");
+            getLogger().info("已挂接 ProtocolLib：拒绝提示按进入次数节流，并显示为带倒计时的 Boss 栏。");
         } else {
             getLogger().warning("未找到 ProtocolLib，无法拦截领地拒绝刷屏。");
         }
@@ -29,6 +30,10 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         if (packetFilter != null) {
             packetFilter.unregister();
             packetFilter = null;
+        }
+        if (hud != null) {
+            hud.shutdown();
+            hud = null;
         }
         if (throttle != null) {
             throttle.clearAll();
@@ -47,10 +52,19 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
 
     void reloadLocal() {
         reloadConfig();
+        if (hud != null) {
+            hud.shutdown();
+        }
         throttle = DenyThrottle.fromConfig(getConfig());
+        hud = DenyHud.fromConfig(this, getConfig());
+        hud.start();
     }
 
     DenyThrottle throttle() {
         return throttle;
+    }
+
+    DenyHud hud() {
+        return hud;
     }
 }

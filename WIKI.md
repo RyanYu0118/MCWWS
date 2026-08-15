@@ -420,7 +420,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - 权限旗标名称与拒绝消息为**纯中文**（例如显示「破坏」，不显示内部键名 `destroy`）；服务器使用独立语言文件 `Chinese_MCWWSS.yml`，Residence 更新不会覆盖本服补充的中文
 - 新版独立支持制图台、制箭台、砂轮、织布机、锻造台、切石机、喂养动物、铜氧化、袭击等旗标；旧版无效的 `craft` 旗标已移除
 - 服务器地主账号为 **MCWWS**（用于公共领地归属，不是让玩家把家过户给管理员私人号）
-- 权限不足提示由 `MCWWS_ResidenceQuiet` 节流：玩家**每次进入（或换）一块领地后**，同一条拒绝文案只显示一次；反复破坏/放置不会刷屏。离开该领地再进来会重新提醒。创世神 / Axiom 自己的「整条编辑已取消」提示不受此限制。
+- 权限不足提示由 `MCWWS_ResidenceQuiet` 节流：玩家**每次进入（或换）一块领地后**，同一条拒绝文案只显示一次；反复破坏/放置不会刷屏。离开该领地再进来会重新提醒。创世神 / Axiom 自己的「整条编辑已取消」提示不受此限制。同时触发「没有破坏权限」和「没有放置权限」时，原版动作栏只能留下后到的那一条；本服改成屏幕顶端 **每条提示一条 Boss 栏**，血量从满到空约 **4 秒**倒计时，归零后该条消失，两条可以一起出现。
 - WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限时整条指令 / 整包编辑取消且不计费；`//move` 会同时检查源格与目标格，提示里的格数按「实际会发生变化」的格子计（不会把搬运后本来就不变的重叠格算进去）。选区跨越多个领地时分别按每一格所在领地判断。扣费 bypass 不能绕过这套领地检查；真正的管理员放行仍走 Residence 自己的 ResAdmin / `residence.admin`。FAWE 本身会忽略 `CommandEvent` 的取消，本服靠写块闸门与取消 `EditSessionEvent` 真正拦住无权限编辑。
 
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese_MCWWSS.yml` 抄表。
@@ -474,6 +474,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | WorldEdit 选区/已扣费指令         | default 组脚本授予    | 见 `worldedit_perms.sk`；不含笔刷/`//fill`/`//repl` |
 | `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
 | `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
+| `mcwws.residence.quiet.admin` | op               | 重载领地拒绝提示（Boss 栏）节流配置                      |
 | `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |
 | `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
 
@@ -502,6 +503,12 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ```text
 /eco-market-reset-all
+```
+
+领地拒绝提示重载：
+
+```text
+/mcwws-resquiet-reload
 ```
 
 ---
@@ -544,6 +551,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
+| 领地拒绝提示（Boss 栏） | `tools/mcwws-residence-quiet/`                                                                       |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
 
 

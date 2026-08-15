@@ -28,5 +28,6 @@ final class ResidenceVisitListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         plugin.throttle().resetVisit(event.getPlayer().getUniqueId());
+        plugin.hud().clear(event.getPlayer().getUniqueId());
     }
 }
