@@ -1,0 +1,16 @@
+name: MCWWS_ResidenceQuiet
+main: work.mcwws.residencequiet.McwwsResidenceQuietPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [ProtocolLib, Residence]
+description: 领地权限拒绝提示按进入次数节流，避免刷屏
+
+commands:
+  mcwws-resquiet-reload:
+    description: 重载领地拒绝提示节流配置
+    permission: mcwws.residence.quiet.admin
+    usage: /mcwws-resquiet-reload
+
+permissions:
+  mcwws.residence.quiet.admin:
+    default: op
