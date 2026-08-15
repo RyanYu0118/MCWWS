@@ -23,5 +23,4 @@ if not defined PAPER_JAR (
 )
 
 echo Using jar: %PAPER_JAR%
-java -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar "%PAPER_JAR%" nogui
-pause
+start "" javaw -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar "%PAPER_JAR%"
