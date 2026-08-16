@@ -1,9 +1,9 @@
 name: MCWWS_ResidenceQuiet
 main: work.mcwws.residencequiet.McwwsResidenceQuietPlugin
-version: 1.1.0
+version: 1.4.0
 api-version: '1.21'
 depend: [ProtocolLib, Residence]
-description: 领地权限拒绝提示按进入次数节流，并以带倒计时的 Boss 栏显示
+description: 领地拒绝提示走带倒计时的 Boss 栏，并可兜底拦下无权限的容器
 
 commands:
   mcwws-resquiet-reload:

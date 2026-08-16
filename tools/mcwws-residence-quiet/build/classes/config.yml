@@ -3,20 +3,36 @@ enabled: true
 # bossbar = 每条拒绝提示单独一条 Boss 栏，血量从满到空当作倒计时
 display: bossbar
 bossbar:
-  # 20 tick = 1 秒；默认 4 秒
-  duration-ticks: 80
+  # 20 tick = 1 秒；默认 2 秒
+  duration-ticks: 40
   color: RED
   overlay: PROGRESS
   max-bars: 6
-# 离开或换领地后重置；同一趟停留里，相同纯文本只显示一次
+# 打开后，凡是带「权限」二字的提示都会打到控制台，便于核对文案是否被识别
+debug: false
+# Residence 6.0.2.4 在 Paper 26.2 上判定出没权限、也发了提示，却不取消交互
+# 下面这组开关由本插件补上真正的拦截；领地管理员与 /resadmin 状态不受影响
+interact-guard:
+  # 把每次交互的判定结果打到控制台
+  debug: false
+  # 只要 Residence 在同一 tick 发过拒绝提示，就取消这次交互（覆盖所有旗标）
+  follow-deny-message: true
+  # 另外直接按领地旗标拦下容器与门/活板门/栅栏门
+  enforce-container: true
+  enforce-door: true
+# 下面的规则按「包含」匹配，所以末尾句号是全角还是半角都不影响
+# Boss 栏模式：每次触发都重新走一轮倒计时；同一条还在倒计时时不叠加、也不回血
+# 动作栏兜底模式：同一趟停留里相同文案只显示一次，离开或换领地后重置
 patterns:
-  # Flag.Deny：你没有 破坏方块 权限.
-  - '你没有 .+ 权限\.?'
-  # Residence.FlagDeny：你没有领地 X 的 Y 权限.
-  - '你没有领地 .+ 的 .+ 权限\.?'
+  # Flag.Deny：你没有 破坏 权限。
+  - '你没有 .+ 权限'
+  # Residence.FlagDeny：你没有领地 X 的 Y 权限。
+  - '你没有领地 .+ 的 .+ 权限'
   # MoveDeny
-  - '你没有领地 .+ 的移动权限\.?'
+  - '你没有领地 .+ 的移动权限'
+  # NoSpawn：你没有重生点的 移动 权限, 正在重新定位。
+  - '你没有重生点的 .+ 权限'
   # TeleportDeny / 其它常见拒绝
-  - '你没有传送的权限\.?'
-  - '你没有该领地的传送权限\.?'
-  - '你没有执行此操作的权限\.?'
+  - '你没有权限传送'
+  - '你没有该领地的传送权限'
+  - '你没有权限执行此操作'

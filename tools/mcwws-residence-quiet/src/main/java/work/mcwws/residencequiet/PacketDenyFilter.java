@@ -6,8 +6,12 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import org.bukkit.entity.Player;
@@ -42,24 +46,32 @@ final class PacketDenyFilter {
                 if (extracted.plain == null || extracted.plain.isBlank()) {
                     return;
                 }
-                if (!host.throttle().isDenyTip(DenyThrottle.normalize(extracted.plain))) {
-                    return;
-                }
+                String normalized = DenyThrottle.normalize(extracted.plain);
                 boolean actionBar = isActionBar(event);
-                if (!host.throttle().allow(player.getUniqueId(), extracted.plain)) {
-                    event.setCancelled(true);
+                boolean deny = host.throttle().isDenyTip(normalized);
+                if (host.debug() && normalized.contains("权限")) {
+                    host.getLogger().info("[deny-debug] type=" + event.getPacketType().name()
+                            + " actionBar=" + actionBar + " deny=" + deny + " text=" + normalized);
+                }
+                if (!deny) {
                     return;
                 }
+                // 记下「这一 tick Residence 判了这名玩家没权限」，交互监听据此真正取消动作
+                host.denySignal().mark(player.getUniqueId());
                 if (!actionBar || !host.hud().useBossBar()) {
+                    // 动作栏兜底模式：仍按「每趟停留只提醒一次」节流
+                    if (!host.throttle().allow(player.getUniqueId(), normalized)) {
+                        event.setCancelled(true);
+                    }
                     return;
                 }
+                // Boss 栏模式：每次触发都重新计一轮，重复的由 DenyHud 按剩余倒计时挡掉
                 event.setCancelled(true);
                 Component title = extracted.visual != null
                         ? extracted.visual
-                        : Component.text(DenyThrottle.normalize(extracted.plain));
-                String fingerprint = DenyThrottle.normalize(extracted.plain);
+                        : Component.text(normalized, NamedTextColor.RED);
                 host.getServer().getScheduler().runTask(host, () ->
-                        host.hud().show(player, fingerprint, title));
+                        host.hud().show(player, normalized, title));
             }
         };
         ProtocolLibrary.getProtocolManager().addPacketListener(adapter);
@@ -87,40 +99,80 @@ final class PacketDenyFilter {
         return true;
     }
 
+    /**
+     * 逐个字段找文本：Paper 的 adventure 字段、NMS 聊天组件、退化的字符串都可能承载提示。
+     */
     private static Extracted extract(PacketContainer packet) {
-        Component visual = null;
-        String plain = null;
+        StructureModifier<Object> modifier = packet.getModifier();
+        int size = modifier.size();
+        for (int i = 0; i < size; i++) {
+            Object value = readSafely(modifier, i);
+            if (value instanceof Component adventure) {
+                Extracted hit = fromComponent(adventure);
+                if (hit != null) {
+                    return hit;
+                }
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            Object value = readSafely(modifier, i);
+            if (value == null || !MinecraftReflection.isIChatBaseComponent(value.getClass())) {
+                continue;
+            }
+            Extracted hit = fromNmsComponent(value);
+            if (hit != null) {
+                return hit;
+            }
+        }
+        for (int i = 0; i < size; i++) {
+            Object value = readSafely(modifier, i);
+            if (!(value instanceof String legacy) || legacy.isBlank()) {
+                continue;
+            }
+            Extracted hit = fromComponent(LegacyComponentSerializer.legacySection().deserialize(legacy));
+            if (hit != null) {
+                return hit;
+            }
+        }
+        return new Extracted(null, null);
+    }
+
+    private static Object readSafely(StructureModifier<Object> modifier, int index) {
         try {
-            Object raw = packet.getModifier().withType(Component.class).readSafely(0);
-            if (raw instanceof Component adventure) {
-                visual = adventure;
-                plain = PlainTextComponentSerializer.plainText().serialize(adventure);
+            return modifier.readSafely(index);
+        } catch (Throwable ignored) {
+            return null;
+        }
+    }
+
+    private static Extracted fromComponent(Component component) {
+        if (component == null) {
+            return null;
+        }
+        String plain = PlainTextComponentSerializer.plainText().serialize(component);
+        return plain.isBlank() ? null : new Extracted(plain, component);
+    }
+
+    private static Extracted fromNmsComponent(Object handle) {
+        String json;
+        try {
+            WrappedChatComponent wrapped = WrappedChatComponent.fromHandle(handle);
+            json = wrapped == null ? null : wrapped.getJson();
+        } catch (Throwable ignored) {
+            return null;
+        }
+        if (json == null || json.isBlank()) {
+            return null;
+        }
+        try {
+            Extracted hit = fromComponent(GsonComponentSerializer.gson().deserialize(json));
+            if (hit != null) {
+                return hit;
             }
         } catch (Throwable ignored) {
         }
-        if (plain == null || plain.isBlank()) {
-            try {
-                WrappedChatComponent wrapped = packet.getChatComponents().readSafely(0);
-                if (wrapped != null) {
-                    String json = wrapped.getJson();
-                    if (json != null && !json.isBlank()) {
-                        plain = roughPlainFromJson(json);
-                    }
-                }
-            } catch (Throwable ignored) {
-            }
-        }
-        if (plain == null || plain.isBlank()) {
-            try {
-                String legacy = packet.getStrings().readSafely(0);
-                if (legacy != null && !legacy.isBlank()) {
-                    visual = LegacyComponentSerializer.legacySection().deserialize(legacy);
-                    plain = PlainTextComponentSerializer.plainText().serialize(visual);
-                }
-            } catch (Throwable ignored) {
-            }
-        }
-        return new Extracted(plain, visual);
+        String plain = roughPlainFromJson(json);
+        return plain == null || plain.isBlank() ? null : new Extracted(plain, null);
     }
 
     private static String roughPlainFromJson(String json) {

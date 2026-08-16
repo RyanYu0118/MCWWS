@@ -31,6 +31,8 @@ $Libs = @(
     (Find-Newest "libraries/net/kyori/adventure-key" "adventure-key-*.jar"),
     (Find-Newest "libraries/net/kyori/adventure-text-serializer-plain" "adventure-text-serializer-plain-*.jar"),
     (Find-Newest "libraries/net/kyori/adventure-text-serializer-legacy" "adventure-text-serializer-legacy-*.jar"),
+    (Find-Newest "libraries/net/kyori/adventure-text-serializer-gson" "adventure-text-serializer-gson-*.jar"),
+    (Find-Newest "libraries/net/kyori/adventure-text-serializer-json" "adventure-text-serializer-json-*.jar"),
     (Find-Newest "libraries/net/kyori/examination-api" "examination-api-*.jar"),
     (Find-Newest "libraries/org/jetbrains/annotations" "annotations-*.jar"),
     (Find-Newest "libraries/net/md-5/bungeecord-chat" "bungeecord-chat-*.jar")

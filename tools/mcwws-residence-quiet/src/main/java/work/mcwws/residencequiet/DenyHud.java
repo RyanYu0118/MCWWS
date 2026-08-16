@@ -75,8 +75,13 @@ final class DenyHud {
         }
         UUID id = player.getUniqueId();
         LinkedHashMap<String, Active> bag = bars.computeIfAbsent(id, ignored -> new LinkedHashMap<>());
-        Active existing = bag.remove(fingerprint);
+        Active existing = bag.get(fingerprint);
+        if (existing != null && existing.remainingTicks > 0) {
+            // 这条的倒计时还没走完：不叠第二条，也不把血量重新加满
+            return;
+        }
         if (existing != null) {
+            bag.remove(fingerprint);
             player.hideBossBar(existing.bar);
         }
         while (bag.size() >= maxBars) {

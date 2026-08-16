@@ -35,9 +35,9 @@ final class DenyThrottle {
             patterns.add(Pattern.compile(raw.trim()));
         }
         if (patterns.isEmpty()) {
-            patterns.add(Pattern.compile("你没有 .+ 权限\\.?"));
-            patterns.add(Pattern.compile("你没有领地 .+ 的 .+ 权限\\.?"));
-            patterns.add(Pattern.compile("你没有领地 .+ 的移动权限\\.?"));
+            patterns.add(Pattern.compile("你没有 .+ 权限"));
+            patterns.add(Pattern.compile("你没有领地 .+ 的 .+ 权限"));
+            patterns.add(Pattern.compile("你没有领地 .+ 的移动权限"));
         }
         return new DenyThrottle(enabled, patterns);
     }
@@ -71,9 +71,10 @@ final class DenyThrottle {
         return bag.add(normalized);
     }
 
+    /** 用 find 而不是 matches：提示可能带插件前缀，也可能以中文句号结尾 */
     boolean isDenyTip(String normalized) {
         for (Pattern pattern : patterns) {
-            if (pattern.matcher(normalized).matches()) {
+            if (pattern.matcher(normalized).find()) {
                 return true;
             }
         }

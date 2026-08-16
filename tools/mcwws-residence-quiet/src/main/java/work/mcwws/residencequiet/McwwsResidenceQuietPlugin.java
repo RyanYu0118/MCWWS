@@ -10,16 +10,23 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
     private DenyThrottle throttle;
     private DenyHud hud;
     private PacketDenyFilter packetFilter;
+    private final DenySignal denySignal = new DenySignal();
+    private boolean debug;
+    private boolean guardDebug;
+    private boolean guardEnforceContainer;
+    private boolean guardEnforceDoor;
+    private boolean guardFollowDenyMessage;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         reloadLocal();
         getServer().getPluginManager().registerEvents(new ResidenceVisitListener(this), this);
+        getServer().getPluginManager().registerEvents(new InteractGuardListener(this), this);
         if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
             packetFilter = new PacketDenyFilter(this);
             packetFilter.register();
-            getLogger().info("已挂接 ProtocolLib：拒绝提示按进入次数节流，并显示为带倒计时的 Boss 栏。");
+            getLogger().info("已挂接 ProtocolLib：拒绝提示显示为带倒计时的 Boss 栏，倒计时未结束前不重复叠加。");
         } else {
             getLogger().warning("未找到 ProtocolLib，无法拦截领地拒绝刷屏。");
         }
@@ -38,6 +45,7 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         if (throttle != null) {
             throttle.clearAll();
         }
+        denySignal.clearAll();
     }
 
     @Override
@@ -58,10 +66,39 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         throttle = DenyThrottle.fromConfig(getConfig());
         hud = DenyHud.fromConfig(this, getConfig());
         hud.start();
+        debug = getConfig().getBoolean("debug", false);
+        guardDebug = getConfig().getBoolean("interact-guard.debug", false);
+        guardEnforceContainer = getConfig().getBoolean("interact-guard.enforce-container", true);
+        guardEnforceDoor = getConfig().getBoolean("interact-guard.enforce-door", true);
+        guardFollowDenyMessage = getConfig().getBoolean("interact-guard.follow-deny-message", true);
     }
 
     DenyThrottle throttle() {
         return throttle;
+    }
+
+    DenySignal denySignal() {
+        return denySignal;
+    }
+
+    boolean debug() {
+        return debug;
+    }
+
+    boolean guardDebug() {
+        return guardDebug;
+    }
+
+    boolean guardEnforceContainer() {
+        return guardEnforceContainer;
+    }
+
+    boolean guardEnforceDoor() {
+        return guardEnforceDoor;
+    }
+
+    boolean guardFollowDenyMessage() {
+        return guardFollowDenyMessage;
     }
 
     DenyHud hud() {
