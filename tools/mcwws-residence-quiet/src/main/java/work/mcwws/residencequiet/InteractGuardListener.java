@@ -9,6 +9,7 @@ import org.bukkit.Tag;
 import org.bukkit.block.Block;
 import org.bukkit.block.Container;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -19,6 +20,9 @@ import org.bukkit.event.player.PlayerInteractEvent;
 
 /**
  * Residence 6.0.2.4 在 Paper 26.2 上判定出没权限、发了提示，却不取消交互，这里补上真正的拦截。
+ *
+ * <p>只处理「使用方块」这类交互。放置与破坏仍由 Residence 自己的 BlockPlace / BlockBreak 检查负责，
+ * 否则会把放置掐在 interact 阶段，连「没有放置权限」的提示都发不出来。
  */
 final class InteractGuardListener implements Listener {
 
@@ -38,23 +42,34 @@ final class InteractGuardListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
+        Flags flag = flagFor(block);
+        if (flag == null) {
+            return;
+        }
         boolean denySeen = plugin.denySignal().seenThisTick(player.getUniqueId());
-        Verdict verdict = evaluate(player, block.getLocation(), flagFor(block));
-        if (plugin.guardDebug() && (denySeen || verdict != null)) {
+        Verdict verdict = evaluate(player, block.getLocation(), flag);
+        if (verdict == null) {
+            return;
+        }
+        boolean placing = isPlacementAttempt(player);
+        if (plugin.guardDebug()) {
             plugin.getLogger().info("[guard-debug] interact " + player.getName()
                     + " block=" + block.getType()
-                    + " flag=" + (verdict == null ? "-" : verdict.flag)
-                    + " res=" + (verdict == null ? "-" : verdict.residence)
-                    + " allowed=" + (verdict == null ? "-" : verdict.allowed)
-                    + " resAdmin=" + (verdict != null && verdict.admin)
+                    + " flag=" + flag
+                    + " res=" + verdict.residence
+                    + " allowed=" + verdict.allowed
+                    + " resAdmin=" + verdict.admin
+                    + " placing=" + placing
                     + " denySeen=" + denySeen
                     + " cancelled=" + event.isCancelled());
         }
-        if (event.isCancelled()) {
+        if (event.isCancelled() || placing) {
             return;
         }
-        if (shouldBlock(event.getPlayer(), verdict, denySeen)) {
-            event.setUseInteractedBlock(org.bukkit.event.Event.Result.DENY);
+        boolean block1 = plugin.guardEnforce() && !verdict.allowed && !verdict.admin;
+        boolean block2 = plugin.guardFollowDenyMessage() && denySeen;
+        if (block1 || block2) {
+            event.setUseInteractedBlock(Event.Result.DENY);
             event.setCancelled(true);
         }
     }
@@ -71,7 +86,7 @@ final class InteractGuardListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryOpen(InventoryOpenEvent event) {
-        if (!plugin.guardEnforceContainer() || !(event.getPlayer() instanceof Player player)) {
+        if (!plugin.guardEnforce() || !(event.getPlayer() instanceof Player player)) {
             return;
         }
         Location location = event.getInventory().getLocation();
@@ -94,36 +109,57 @@ final class InteractGuardListener implements Listener {
         }
     }
 
-    private boolean shouldBlock(Player player, Verdict verdict, boolean denySeen) {
-        if (verdict != null && !verdict.allowed && !verdict.admin) {
-            if (verdict.flag == Flags.container && plugin.guardEnforceContainer()) {
-                return true;
-            }
-            if (verdict.flag == Flags.door && plugin.guardEnforceDoor()) {
-                // 潜行 + 手持物品是放置方块，交给 build/place 那套检查
-                return !(player.isSneaking() && !player.getInventory().getItemInMainHand().getType().isAir());
-            }
-        }
-        return denySeen && plugin.guardFollowDenyMessage();
+    /** 潜行且手上有东西时右键是放置方块，交给 Residence 的放置检查 */
+    private static boolean isPlacementAttempt(Player player) {
+        return player.isSneaking()
+                && !player.getInventory().getItemInMainHand().getType().isAir();
     }
 
-    /** @return null 表示这个方块不在本插件直接管的旗标里，只能靠拒绝提示兜底 */
+    /** @return null 表示这个方块不算「使用」类交互（例如普通建材，右键就是放置） */
     private static Flags flagFor(Block block) {
         Material type = block.getType();
+        String name = type.name();
         if (Tag.DOORS.isTagged(type) || Tag.TRAPDOORS.isTagged(type) || Tag.FENCE_GATES.isTagged(type)) {
             return Flags.door;
         }
-        if (block.getState(false) instanceof Container) {
-            return Flags.container;
+        if (name.endsWith("_BUTTON")) {
+            return Flags.button;
         }
-        return null;
+        if (name.endsWith("_BED")) {
+            return Flags.bed;
+        }
+        if (name.endsWith("_ANVIL") || type == Material.ANVIL) {
+            return Flags.anvil;
+        }
+        if (type == Material.FLOWER_POT || name.startsWith("POTTED_")) {
+            return Flags.flowerpot;
+        }
+        Flags mapped = switch (type) {
+            case LEVER -> Flags.lever;
+            case ENCHANTING_TABLE -> Flags.enchant;
+            case CRAFTING_TABLE -> Flags.table;
+            case BREWING_STAND -> Flags.brew;
+            case BEACON -> Flags.beacon;
+            case GRINDSTONE -> Flags.grindstone;
+            case LOOM -> Flags.loom;
+            case SMITHING_TABLE -> Flags.smithing;
+            case STONECUTTER -> Flags.stonecutter;
+            case CARTOGRAPHY_TABLE -> Flags.cartography;
+            case FLETCHING_TABLE -> Flags.fletching;
+            case NOTE_BLOCK -> Flags.note;
+            case REPEATER, COMPARATOR -> Flags.diode;
+            case CAKE -> Flags.cake;
+            case JUKEBOX -> Flags.use;
+            default -> null;
+        };
+        if (mapped != null) {
+            return mapped;
+        }
+        return block.getState(false) instanceof Container ? Flags.container : null;
     }
 
-    /** @return null 表示不在领地里，或没有对应旗标 */
+    /** @return null 表示不在领地里，交给世界旗标处理 */
     private Verdict evaluate(Player player, Location location, Flags flag) {
-        if (flag == null) {
-            return null;
-        }
         ClaimedResidence residence;
         try {
             residence = Residence.getInstance().getResidenceManager().getByLoc(location);
@@ -141,9 +177,9 @@ final class InteractGuardListener implements Listener {
         } catch (Throwable ignored) {
             admin = false;
         }
-        return new Verdict(residence.getName(), flag, allowed, admin);
+        return new Verdict(residence.getName(), allowed, admin);
     }
 
-    private record Verdict(String residence, Flags flag, boolean allowed, boolean admin) {
+    private record Verdict(String residence, boolean allowed, boolean admin) {
     }
 }

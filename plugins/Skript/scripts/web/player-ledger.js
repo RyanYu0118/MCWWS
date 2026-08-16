@@ -4,7 +4,7 @@ const yaml = require('js-yaml');
 
 const CATEGORY_LABELS = {
     web_shop: '网页商城',
-    web_build: '投影粘贴',
+    web_build: '投影粘贴（已下线）',
     shop_buy: '商店购买',
     shop_sell: '商店出售',
     flight: '飞行消耗',

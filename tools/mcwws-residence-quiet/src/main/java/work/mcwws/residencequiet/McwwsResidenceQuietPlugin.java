@@ -13,8 +13,7 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
     private final DenySignal denySignal = new DenySignal();
     private boolean debug;
     private boolean guardDebug;
-    private boolean guardEnforceContainer;
-    private boolean guardEnforceDoor;
+    private boolean guardEnforce;
     private boolean guardFollowDenyMessage;
 
     @Override
@@ -68,8 +67,7 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         hud.start();
         debug = getConfig().getBoolean("debug", false);
         guardDebug = getConfig().getBoolean("interact-guard.debug", false);
-        guardEnforceContainer = getConfig().getBoolean("interact-guard.enforce-container", true);
-        guardEnforceDoor = getConfig().getBoolean("interact-guard.enforce-door", true);
+        guardEnforce = getConfig().getBoolean("interact-guard.enforce", true);
         guardFollowDenyMessage = getConfig().getBoolean("interact-guard.follow-deny-message", true);
     }
 
@@ -89,12 +87,8 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         return guardDebug;
     }
 
-    boolean guardEnforceContainer() {
-        return guardEnforceContainer;
-    }
-
-    boolean guardEnforceDoor() {
-        return guardEnforceDoor;
+    boolean guardEnforce() {
+        return guardEnforce;
     }
 
     boolean guardFollowDenyMessage() {

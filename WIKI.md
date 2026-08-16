@@ -122,7 +122,7 @@ dynamic_factor = clamp(
 生存 / 冒险下，下列**会改方块**的指令按格扣费（别名一并生效，例如 `//0`/`//air`＝`//set air`，`//re`/`//rep`＝`//replace`，`//p`＝`//paste`）。选区类请先选区；生成 / 粘贴 / 附近工具以准星或放置点为中心。一次扫描超过 **50 万格**会拒绝。
 
 - **选区：** `set`、`replace`、`stack`、`walls`、`overlay`/`lay`、`faces`/`outline`、`hollow`、`center`/`middle`、`line`、`curve`、`move`/`mv`、`fall`、`naturalize`、`forest`、`flora`
-- **剪贴板：** `cut`、`paste`/`p`/`pa`、`place`（网页投影粘贴也走玩家本人的 `//paste`，同样扣费）
+- **剪贴板：** `cut`、`paste`/`p`/`pa`、`place`
 - **生成：** `cyl`/`hcyl`、`sphere`/`hsphere`、`pyramid`/`hpyramid`、`cone`
 - **附近：** `replacenear`、`removenear`、`removeabove`、`removebelow`、`drain`、`extinguish`、`snow`、`thaw`、`green`、`fixlava`、`fixwater`
 
@@ -380,7 +380,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 网页商店也可以嵌在 Halo Wiki 里（全宽、隐藏目录），那是发布站配置，不是游戏内命令。
 
-**投影粘贴：** 网页付款 → 选定锚点 → 玩家在线时以**玩家本人身份**执行 WorldEdit 粘贴，因此同样走生存创世神扣费与保护规则。相关命令（管理/网页回调，不必写在玩家首页）：`/build`、`/mcwwswebpaste`、`/mcwwspasteasplayer`。
+**网页建造工具已下线：** 原先的投影粘贴与材料清单导入入口已撤除。请在游戏内用 **Axiom** 粘贴原理图，按生存建造规则计费。旧命令 `/build`、`/mcwwswebpaste`、`/mcwwspasteasplayer` 与网页 `/api/build/*` 已停用。
 
 ---
 
@@ -422,7 +422,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - 服务器地主账号为 **MCWWS**（用于公共领地归属，不是让玩家把家过户给管理员私人号）
 - 权限不足提示由 `MCWWS_ResidenceQuiet` 接管，显示在屏幕顶端的 **Boss 栏**，不走经验条上方的动作栏（动作栏同时只能一行，「没有破坏权限」和「没有放置权限」会互相覆盖）。**每条文案各占一条 Boss 栏**，血量从满到空约 **2 秒**倒计时，归零后该条自动消失，两条可以并列出现。
 - 拒绝提示**每次触发都会重新计一轮倒计时**；但同一条文案的倒计时还没走完时，不会叠出第二条，也不会把血量重新加满，所以连续挖/放不会刷屏。创世神 / Axiom 自己的「整条编辑已取消」提示不受此限制。
-- Residence 6.0.2.4 在 Paper 26.2 上会出现「发了没权限提示却不取消交互」的问题（箱子、门、活板门、栅栏门等）。本服由 `MCWWS_ResidenceQuiet` 补上拦截：无权限时真正打不开容器、门也不会被扳动；领地管理员与 `/resadmin` 状态不受影响。
+- Residence 6.0.2.4 在 Paper 26.2 上会出现「发了没权限提示却不取消交互」的问题（箱子、门、活板门、栅栏门等）。本服由 `MCWWS_ResidenceQuiet` 补上拦截：无权限时真正打不开容器、门也不会被扳动；按钮、拉杆、床、工作方块等「使用」类交互同样按旗标拦下。该兜底**只管使用类交互**，放置与破坏仍由 Residence 自己判定，因此「没有放置权限」「没有破坏权限」提示照常出现。潜行 + 手持物品右键视为放置尝试，不受兜底影响。领地管理员与 `/resadmin` 状态不受影响。
 - WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限时整条指令 / 整包编辑取消且不计费；`//move` 会同时检查源格与目标格，提示里的格数按「实际会发生变化」的格子计（不会把搬运后本来就不变的重叠格算进去）。选区跨越多个领地时分别按每一格所在领地判断。扣费 bypass 不能绕过这套领地检查；真正的管理员放行仍走 Residence 自己的 ResAdmin / `residence.admin`。FAWE 本身会忽略 `CommandEvent` 的取消，本服靠写块闸门与取消 `EditSessionEvent` 真正拦住无权限编辑。
 
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese_MCWWSS.yml` 抄表。
@@ -454,6 +454,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ## 13. 其它生存便利
 
+- **一键砍树：** 使用 TreeTimber 1.8.4（支持 Paper 26.2）。用斧头砍树时会一次处理整棵树，单次最多 150 根原木，每根原木消耗 1 点斧头耐久；插件每 2 tick 依次砍掉原木并清理附近树叶，形成从下到上的简易倒树/腐烂动画，完成后自动在树干基座补种树苗（最多 5 棵）。所有玩家默认可用；玩家可打开菜单开关功能和选择砍树粒子。潜行砍伐会临时按普通方式只砍一格。该插件没有旧 UltimateTimber 那种整棵树化为 FallingBlock 后旋转倒地的物理动画。
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
 - **创世神选区与已扣费指令：** default 组有选区/木斧/复制/撤销，以及 `set`、`replace`、`stack`、剪贴板粘贴、圆柱球体、附近替换等已纳入扣费的节点；不给笔刷、`//fill`、`//repl`
 - **DeluxeMenus 管理界面：** 重载插件后会尝试把「服务器管理」菜单重新打开，避免管理员卡在空白界面
@@ -477,6 +478,9 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
 | `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
 | `mcwws.residence.quiet.admin` | op               | 重载领地拒绝提示（Boss 栏）节流配置                      |
+| `timber.capitate`             | 配置中无需权限       | 一键砍树；`needsperms: false`，所有玩家默认可用          |
+| `timber.useparticle`          | true             | 允许玩家在一键砍树菜单中选择粒子效果                      |
+| `timber.admin`                | op               | 打开一键砍树管理菜单与重载配置                           |
 | `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |
 | `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
 
@@ -554,6 +558,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
+| 一键砍树             | `plugins/Timber/config.yml`、`plugins/Timber/gui/usermenu.yml`、`plugins/Timber/effects.yml`           |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
 
 

@@ -1,0 +1,50 @@
+# #------------------------------------------------------------------------------------------
+# #                 author: Imperialroma10
+# #     our project: https://modrinth.com/user/imperialroma10                
+# #------------------------------------------------------------------------------------------
+# #            Our Minecraft community is waiting for you 
+# #              Discord : http://discord.gg/fsEZEnE58g
+# #------------------------------------------------------------------------------------------
+# #              If you like our plugin support us with a cup of coffee
+# #             Donate:   https://www.patreon.com/c/PluginDEV/membership
+#     
+#             If you need a custom plugin, please contact us on Discord!
+# #------------------------------------------------------------------------------------------
+
+gui:
+  # Works only after server reboot
+  # the rest is reloaded with the /timber reload command
+  title: 一键砍树
+  logscount:
+    title: '&e你已砍伐 {count} 根原木'
+    lore:
+    - ''
+    - '&7继续保护森林，及时补种树苗。'
+  top:
+    title: '&6伐木排行榜'
+    format: '&e#{pos} &6{player} &7- &a{count} 根'
+    empty: '&7暂无数据'
+treecuting:
+  enable:
+    title: '&b功能：&3一键砍树'
+    lore:
+    - '  '
+    - '&7状态：§a已开启'
+    - '&7点击关闭一键砍树'
+  disable:
+    title: '&b功能：&3一键砍树'
+    lore:
+    - '  '
+    - '&7状态：&c已关闭'
+    - '&7点击开启一键砍树'
+effects:
+  title: '&e砍树粒子效果'
+  description: '&b当前粒子：&a{particle}'
+  descriptionnotselected:
+  - '  '
+  - '&7左键打开粒子菜单'
+  descriptionselected:
+  - '  '
+  - '&7右键取消当前粒子'
+  selectmessage: §b已选择粒子：&a{particle}
+norightmessage: '&c你没有权限。'

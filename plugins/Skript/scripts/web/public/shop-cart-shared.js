@@ -1,5 +1,5 @@
 /**
- * 商店购物车共享逻辑 — 供建造工具模块与物品目录复用
+ * 商店购物车共享逻辑 — 供物品目录等页面复用
  */
 (function () {
     const CART_STORAGE_KEY = 'mcwws_shop_cart';

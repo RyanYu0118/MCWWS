@@ -15,11 +15,11 @@ debug: false
 interact-guard:
   # 把每次交互的判定结果打到控制台
   debug: false
-  # 只要 Residence 在同一 tick 发过拒绝提示，就取消这次交互（覆盖所有旗标）
+  # 按领地旗标拦下「使用」类交互：容器、门/活板门/栅栏门、按钮、拉杆、床、工作方块等
+  # 放置与破坏不在这里管，仍由 Residence 自己的检查负责，否则连拒绝提示都发不出来
+  enforce: true
+  # 同一 tick 内 Residence 发过拒绝提示时，也取消这次「使用」类交互
   follow-deny-message: true
-  # 另外直接按领地旗标拦下容器与门/活板门/栅栏门
-  enforce-container: true
-  enforce-door: true
 # 下面的规则按「包含」匹配，所以末尾句号是全角还是半角都不影响
 # Boss 栏模式：每次触发都重新走一轮倒计时；同一条还在倒计时时不叠加、也不回血
 # 动作栏兜底模式：同一趟停留里相同文案只显示一次，离开或换领地后重置
