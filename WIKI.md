@@ -454,7 +454,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ## 13. 其它生存便利
 
-- **一键砍树：** 使用 TreeTimber 1.8.4（支持 Paper 26.2）。用斧头砍树时会一次处理整棵树，单次最多 150 根原木，每根原木消耗 1 点斧头耐久；插件每 2 tick 依次砍掉原木并清理附近树叶，形成从下到上的简易倒树/腐烂动画，完成后自动在树干基座补种树苗（最多 5 棵）。所有玩家默认可用；玩家可打开菜单开关功能和选择砍树粒子。潜行砍伐会临时按普通方式只砍一格。该插件没有旧 UltimateTimber 那种整棵树化为 FallingBlock 后旋转倒地的物理动画。
+- **一键砍树：** 使用 UltimateTimber 4.10.0（Songoda Reborn）。用斧头砍树时会一次放倒整棵树，单次最多 150 根原木，耐久按砍掉的原木数量扣除；树干与树叶会变成 FallingBlock，默认 **FANCY** 动画（整棵树旋转倒地）。砍完后自动在树干基座补种树苗，倒下的树叶落地也有 1% 概率补种。所有玩家默认可用（`require-chop-permission: false`）；潜行不会关掉一键砍树。倒下的方块砸到玩家会造成 1 点伤害。
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
 - **创世神选区与已扣费指令：** default 组有选区/木斧/复制/撤销，以及 `set`、`replace`、`stack`、剪贴板粘贴、圆柱球体、附近替换等已纳入扣费的节点；不给笔刷、`//fill`、`//repl`
 - **DeluxeMenus 管理界面：** 重载插件后会尝试把「服务器管理」菜单重新打开，避免管理员卡在空白界面
@@ -478,9 +478,9 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
 | `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
 | `mcwws.residence.quiet.admin` | op               | 重载领地拒绝提示（Boss 栏）节流配置                      |
-| `timber.capitate`             | 配置中无需权限       | 一键砍树；`needsperms: false`，所有玩家默认可用          |
-| `timber.useparticle`          | true             | 允许玩家在一键砍树菜单中选择粒子效果                      |
-| `timber.admin`                | op               | 打开一键砍树管理菜单与重载配置                           |
+| `ultimatetimber.chop`         | 配置中无需权限       | 一键砍树；`require-chop-permission: false`，所有玩家默认可用 |
+| `ultimatetimber.bonusloot`    | false            | 额外掉落倍率（配置 `bonus-loot-multiplier`）             |
+| `ultimatetimber.animation.*`  | 可选覆盖           | 覆盖个人倒树动画类型（`fancy` / `disintegrate` / `crumble` / `none`） |
 | `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |
 | `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
 
@@ -558,7 +558,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
-| 一键砍树             | `plugins/Timber/config.yml`、`plugins/Timber/gui/usermenu.yml`、`plugins/Timber/effects.yml`           |
+| 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
 
 
