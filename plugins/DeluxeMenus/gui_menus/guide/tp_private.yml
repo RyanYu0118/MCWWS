@@ -34,13 +34,13 @@ items:
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[takepermission] essentials.mail.*'
     shift_right_click_commands:
-      - '[player] lp user <-p 你要&4撤销&r谁的许可证？> permission set server.licence.lore false <-exa dm open licence>'
+      - '[player] lp user <p:你要&4撤销&r谁的许可证？> permission set server.licence.lore false <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     shift_left_click_commands:
-      - '[player] lp user <-p 你要&2给予&r谁许可证？> permission set server.licence.lore true <-exa dm open licence>'
+      - '[player] lp user <p:你要&2给予&r谁许可证？> permission set server.licence.lore true <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     right_click_commands:
-      - '[player] lp user <-p 你要&2给予&r谁临时许可证？> permission settemp server.licence.lore true <&e请在聊天框中输入生效时长。> <-exa dm open licence>'
+      - '[player] lp user <p:你要&2给予&r谁临时许可证？> permission settemp server.licence.lore true <&e请在聊天框中输入生效时长。> <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     shift_left_click_requirement:
       requirements:
@@ -95,13 +95,13 @@ items:
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[takepermission] essentials.mail.*'
     shift_right_click_commands:
-      - '[player] lp user <-p 你要&4撤销&r谁的许可证？> permission set server.licence.stock false <-exa dm open licence>'
+      - '[player] lp user <p:你要&4撤销&r谁的许可证？> permission set server.licence.stock false <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     shift_left_click_commands:
-      - '[player] lp user <-p 你要&2给予&r谁许可证？> permission set server.licence.stock true <-exa dm open licence>'
+      - '[player] lp user <p:你要&2给予&r谁许可证？> permission set server.licence.stock true <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     right_click_commands:
-      - '[player] lp user <-p 你要&2给予&r谁临时许可证？> permission settemp server.licence.stock true <&e请在聊天框中输入生效时长。> <-exa dm open licence>'
+      - '[player] lp user <p:你要&2给予&r谁临时许可证？> permission settemp server.licence.stock true <&e请在聊天框中输入生效时长。> <!dm open licence>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
     shift_left_click_requirement:
       requirements:

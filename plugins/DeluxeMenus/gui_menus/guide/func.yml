@@ -156,162 +156,10 @@ items:
           input: "%luckperms_expiry_time_chestsort.*%%luckperms_has_permission_chestsort.*%"
           output: "yes"
     display_name: '&a∞ 永久有效'
-#2 超大容量背包扩展
-  'bag':
-    material: bundle
-    slot: 1
-    priority: 1
-    update: true
-    hide_attributes: true
-    display_name: '&b▶ 超大容量背包扩展'
-    lore:
-      - ''
-      - '&a&o- 顾名思义'
-      - '&a&o- 对建筑党极其友好'
-      - ''
-      - '%changeoutput_equals_input:{luckperms_has_permission_geekbag.vip.gui}_matcher:yes_ifmatch:&e当前剩余时长：&a{luckperms_expiry_time_geekbag.vip.gui}_else:&7未激活%%changeoutput_equals_input:{luckperms_has_permission_geekbag.vip.gui}{luckperms_expiry_time_geekbag.vip.gui}_matcher:yes_ifmatch:&a∞_else:%'
-      - '%changeoutput_equals_input:{luckperms_has_permission_geekbag.vip.gui}{luckperms_expiry_time_geekbag.vip.gui}_matcher:yes_ifmatch:_else:&e请在下方选择生效时长 {animations_<flash>↓</flash>}%'
-  'bag_choice1':
-    material: lime_dye
-    enchantments:
-      - ARROW_DAMAGE;1
-    slot: 10
-    priority: 1
-    update: true
-    hide_attributes: true
-    hide_enchantments: true
-    view_requirement:
-      requirements:
-        a:
-          type: "!string equals"
-          input: "%luckperms_expiry_time_geekbag.vip.gui%%luckperms_has_permission_geekbag.vip.gui%"
-          output: "yes"
-          #意思是检测不到永久性的该权限就会显示此物品
-    display_name: '&a▶ 两小时'
-    lore:
-      - '&c注：此操作会覆盖当前比购买时长小的剩余有效时长'
-      - '&c   当购买时长小于剩余有效时长时将不起任何作用！'
-      - '&e¥120/次'
-    left_click_commands:
-      - '[console] lp user %player_name% permission settemp geekbag.vip.gui true 2h replace'
-      - '[takemoney] 120'
-      - '[sound] entity_experience_orb_pickup 1 0.5'
-      - '[refresh]<delay=10>'
-    left_click_requirement:
-      requirements:
-        money:
-          type: has money
-          amount: 120
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[refresh]<delay=10>'
-  'bag_choice2':
-    material: pink_dye
-    enchantments:
-      - ARROW_DAMAGE;1
-    slot: 19
-    priority: 1
-    update: true
-    hide_attributes: true
-    hide_enchantments: true
-    view_requirement:
-      requirements:
-        a:
-          type: "!string equals"
-          input: "%luckperms_expiry_time_geekbag.vip.gui%%luckperms_has_permission_geekbag.vip.gui%" 
-          output: "yes"
-          #意思是检测不到永久性的该权限就会显示此物品
-    display_name: '&d▶ 一周'
-    lore:
-      - '&c注：此操作会覆盖当前比购买时长小的剩余有效时长'
-      - '&c   当购买时长小于剩余有效时长时将不起任何作用！'
-      - '&e¥2400/次'
-    left_click_commands:
-      - '[console] lp user %player_name% permission settemp geekbag.vip.gui true 1w replace'
-      - '[takemoney] 2400'
-      - '[sound] entity_experience_orb_pickup 1 1'
-      - '[refresh]<delay=10>'
-    left_click_requirement:
-      requirements:
-        money:
-          type: has money
-          amount: 2400
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[refresh]<delay=10>'
-  'bag_choice3':
-    material: light_blue_dye
-    enchantments:
-      - ARROW_DAMAGE;1
-    slot: 28
-    priority: 1
-    update: true
-    hide_attributes: true
-    hide_enchantments: true
-    view_requirement:
-      requirements:
-        a:
-          type: "!string equals"
-          input: "%luckperms_expiry_time_geekbag.vip.gui%%luckperms_has_permission_geekbag.vip.gui%"
-          output: "yes"
-          #意思是检测不到永久性的该权限就会显示此物品
-    display_name: '&b▶ 无限时长'
-    lore:
-      - '&c注：此操作会覆盖当前比购买时长小的剩余有效时长'
-      - '&c   当购买时长小于剩余有效时长时将不起任何作用！'
-      - ''
-      - '&e解锁条件：'
-      - '&7- 完成成就“...”'
-      - '&7- ...'
-      - '&e¥20,0000'
-    left_click_commands:
-      #- '[console] lp user %player_name% permission settemp geekbag.vip.gui true 2h replace'
-      #- '[takemoney] 2400'
-      - '[sound] entity_experience_orb_pickup 1 2'
-      - '[refresh]<delay=10>'
-    left_click_requirement:
-      requirements:
-        money:
-          type: has permission
-          permission: dsads.asd
-      deny_commands:
-        - '[message] &c啊哦，你没有满足解锁条件捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[refresh]<delay=10>'
-  'bag_state_1':
-    material: yellow_stained_glass_pane
-    slot: 37
-    priority: 1
-    update: true
-    hide_attributes: true
-    hide_enchantments: true
-    view_requirement:
-      requirements:
-        a:
-          type: "!string equals"
-          input: "%luckperms_expiry_time_geekbag.vip.gui%"
-          output: ""
-    display_name: '&e✔ 生效中%animations_<flash>●</flash>%'
-  'bag_state_2':
-    material: lime_stained_glass_pane
-    slot: 37
-    priority: 2
-    update: true
-    hide_attributes: true
-    hide_enchantments: true
-    view_requirement:
-      requirements:
-        a:
-          type: "string equals"
-          input: "%luckperms_expiry_time_geekbag.vip.gui%%luckperms_has_permission_geekbag.vip.gui%"
-          output: "yes"
-    display_name: '&a∞ 永久有效'
-#3 自动化收集与出售仓库
+#2 自动化收集与出售仓库
   'ultradepository':
     material: chest
-    slot: 2
+    slot: 1
     priority: 1
     update: true
     hide_attributes: true
@@ -327,7 +175,7 @@ items:
     material: lime_dye
     enchantments:
       - ARROW_DAMAGE;1
-    slot: 11
+    slot: 10
     priority: 1
     update: true
     hide_attributes: true
@@ -363,7 +211,7 @@ items:
     material: pink_dye
     enchantments:
       - ARROW_DAMAGE;1
-    slot: 20
+    slot: 19
     priority: 1
     update: true
     hide_attributes: true
@@ -399,7 +247,7 @@ items:
     material: light_blue_dye
     enchantments:
       - ARROW_DAMAGE;1
-    slot: 29
+    slot: 28
     priority: 1
     update: true
     hide_attributes: true
@@ -437,7 +285,7 @@ items:
         - '[refresh]<delay=10>'
   'ultradepository_state_1':
     material: yellow_stained_glass_pane
-    slot: 38
+    slot: 37
     priority: 1
     update: true
     hide_attributes: true
@@ -451,7 +299,7 @@ items:
     display_name: '&e✔ 生效中%animations_<flash>●</flash>%'
   'ultradepository_state_2':
     material: lime_stained_glass_pane
-    slot: 38
+    slot: 37
     priority: 2
     update: true
     hide_attributes: true

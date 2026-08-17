@@ -1,0 +1,72 @@
+$ErrorActionPreference = "Stop"
+$Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
+$Src = $PSScriptRoot
+$Out = Join-Path $PSScriptRoot "build/classes"
+$Jar = Join-Path $Root "plugins/BetterBags.jar"
+$JarNew = Join-Path $Root "plugins/BetterBags.jar.new"
+
+function Find-Newest {
+    param([string]$RelativeDir, [string]$Filter)
+    $dir = Join-Path $Root $RelativeDir
+    if (-not (Test-Path $dir)) { return $null }
+    $hit = Get-ChildItem $dir -Recurse -Filter $Filter | Sort-Object Name -Descending | Select-Object -First 1
+    if ($hit) { return $hit.FullName }
+    return $null
+}
+
+$PaperApi = Find-Newest "libraries/io/papermc/paper/paper-api" "paper-api-*.jar"
+if (-not $PaperApi) {
+    $PaperApi = Join-Path $Root "libraries/io/papermc/paper/paper-api/26.2.build.103-stable/paper-api-26.2.build.103-stable.jar"
+}
+if (-not (Test-Path $Jar)) { throw "Missing BetterBags.jar" }
+if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
+
+$Libs = @(
+    (Find-Newest "libraries/com/google/guava/guava" "guava-*.jar"),
+    (Find-Newest "libraries/net/kyori/adventure-api" "adventure-api-*.jar"),
+    (Find-Newest "libraries/net/kyori/adventure-key" "adventure-key-*.jar"),
+    (Find-Newest "libraries/net/kyori/examination-api" "examination-api-*.jar"),
+    (Find-Newest "libraries/org/jetbrains/annotations" "annotations-*.jar")
+)
+
+$CpParts = @($PaperApi, $Jar) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$Cp = ($CpParts | Select-Object -Unique) -join ';'
+
+$JavaHome = [System.Environment]::GetEnvironmentVariable("JAVA_HOME")
+if ([string]::IsNullOrWhiteSpace($JavaHome)) {
+    $JavaHome = "C:\Program Files\Java\jdk-25.0.2"
+}
+$JarExe = Join-Path $JavaHome "bin/jar.exe"
+$JavacExe = Join-Path $JavaHome "bin/javac.exe"
+if (-not (Test-Path $JarExe)) { throw "Missing jar.exe: $JarExe" }
+if (-not (Test-Path $JavacExe)) { throw "Missing javac.exe: $JavacExe" }
+
+if (Test-Path $Out) { Remove-Item $Out -Recurse -Force }
+New-Item -ItemType Directory -Path $Out | Out-Null
+
+$JavaFiles = @(
+    (Join-Path $Src "cat/necko/bags/config/bags/BagsData.java"),
+    (Join-Path $Src "cat/necko/bags/common/ServerListener.java")
+)
+& $JavacExe -encoding UTF-8 -cp $Cp -d $Out $JavaFiles
+if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+
+Copy-Item -Force $Jar $JarNew
+Push-Location $Out
+try {
+    $ClassFiles = Get-ChildItem -Recurse -Filter "*.class" | ForEach-Object {
+        $_.FullName.Substring($Out.Length + 1).Replace('\', '/')
+    }
+    & $JarExe uf $JarNew @ClassFiles
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+} finally {
+    Pop-Location
+}
+
+try {
+    Remove-Item $Jar -Force
+    Move-Item $JarNew $Jar
+    Write-Host "Patched $Jar"
+} catch {
+    Write-Host "Built $JarNew (原 jar 被占用，停服后替换 plugins/BetterBags.jar)"
+}

@@ -1,0 +1,5 @@
+# CommandPrompterPaper 3.x：允许所有玩家使用菜单提示与点击取消
+on load:
+    wait 40 ticks
+    execute console command "lp group default permission set promptpaper.use true"
+    execute console command "lp group default permission set promptpaper.cancel true"

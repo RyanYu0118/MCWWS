@@ -13,8 +13,8 @@
  *  org.bukkit.enchantments.Enchantment
  *  org.bukkit.entity.Player
  *  org.bukkit.inventory.ItemFlag
+ *  org.bukkit.inventory.Inventory
  *  org.bukkit.inventory.ItemStack
- *  org.bukkit.inventory.PlayerInventory
  *  org.bukkit.inventory.meta.SkullMeta
  *  org.bukkit.persistence.PersistentDataType
  *  org.jetbrains.annotations.NotNull
@@ -41,9 +41,9 @@ import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.enchantments.Enchantment;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.persistence.PersistentDataType;
 import org.jetbrains.annotations.NotNull;
@@ -99,34 +99,32 @@ public class BagsData {
         return itemStack;
     }
 
-    public static void giveBagToPlayer(Player player) {
-        PlayerInventory inv = player.getInventory();
-        int bagSlot = Plugin.getInstance().getConfigData().bagSlot;
-        for (ItemStack item : inv.getContents()) {
-            if (item == null || !item.getPersistentDataContainer().has(ItemHash.KEY, PersistentDataType.STRING)) continue;
-            item.setAmount(0);
-        }
-        ItemStack itemBefore = inv.getItem(bagSlot);
-        inv.setItem(bagSlot, BagsData.getItemFor(BAG, Plugin.getInstance().getPlayerData(player.getUniqueId())));
-        if (itemBefore != null) {
-            inv.addItem(new ItemStack[]{itemBefore});
+    public static boolean isBagItem(@Nullable ItemStack item) {
+        return BAG != null && BAG.compareTags(item);
+    }
+
+    public static void stripBagItems(Player player) {
+        BagsData.stripBagItemsFrom(player.getInventory());
+        BagsData.stripBagItemsFrom(player.getEnderChest());
+        if (BagsData.isBagItem(player.getItemOnCursor())) {
+            player.setItemOnCursor(null);
         }
     }
 
+    public static void stripBagItemsFrom(Inventory inventory) {
+        ItemStack[] contents = inventory.getContents();
+        for (int slot = 0; slot < contents.length; ++slot) {
+            if (!BagsData.isBagItem(contents[slot])) continue;
+            inventory.setItem(slot, null);
+        }
+    }
+
+    public static void giveBagToPlayer(Player player) {
+        BagsData.stripBagItems(player);
+    }
+
     public static void updatePlayerBag(Player player) {
-        PlayerInventory inv = player.getInventory();
-        int bagSlot = -1;
-        for (int slot = 0; slot < inv.getSize(); ++slot) {
-            ItemStack item = inv.getItem(slot);
-            if (item == null || !BAG.compareTags(item)) continue;
-            bagSlot = slot;
-            break;
-        }
-        if (bagSlot == -1) {
-            BagsData.giveBagToPlayer(player);
-            return;
-        }
-        inv.setItem(bagSlot, BagsData.getItemFor(BAG, Plugin.getInstance().getPlayerData(player.getUniqueId())));
+        BagsData.stripBagItems(player);
     }
 
     private static /* synthetic */ void $$$reportNull$$$0(int n) {
@@ -157,7 +155,7 @@ public class BagsData {
             }
             this.item.editMeta(itemMeta -> {
                 itemMeta.setCustomModelData(Integer.valueOf(itemSection.getInt("custom-model-data", 0)));
-                itemMeta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, (Object)this.section);
+                itemMeta.getPersistentDataContainer().set(KEY, PersistentDataType.STRING, this.section);
                 if (itemSection.getBoolean("glowing", false)) {
                     itemMeta.addEnchant(Enchantment.BINDING_CURSE, 4, true);
                     itemMeta.addItemFlags(new ItemFlag[]{ItemFlag.HIDE_ENCHANTS});

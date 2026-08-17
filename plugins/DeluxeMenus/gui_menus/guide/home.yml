@@ -278,12 +278,14 @@ items:
       - ''
       - '&a左键点击 &7| &f将自己传送至某玩家'
       - '&a右键点击 &7| &f将某玩家传送至自己'
+      - '&7点选后弹出在线玩家头颅列表，输入 x 可取消'
       - ''
       - '&e¥64/次'
     left_click_commands:
-      - '[givepermission] minecraft.command.teleport'
-      - '[player] minecraft:tp <-p 请选择你要传送到的玩家>'
-      - '[takepermission] minecraft.command.teleport <delay=10s>'
+      - '[givepermission] promptpaper.use'
+      - '[givepermission] promptpaper.pcm.console'
+      - '[close]'
+      - '[console] consoledelegate %player_name% tp %player_name% <p:s:请选择你要传送到的玩家> <!eco take %player_name% 64>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     left_click_requirement:
       requirements:
@@ -295,9 +297,10 @@ items:
         - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
         - '[close]'
     right_click_commands:
-      - '[givepermission] minecraft.command.teleport'
-      - '[player] minecraft:tp <-p 请选择要传送到你的玩家> %player_name%'
-      - '[takepermission] minecraft.command.teleport <delay=10s>'
+      - '[givepermission] promptpaper.use'
+      - '[givepermission] promptpaper.pcm.console'
+      - '[close]'
+      - '[console] consoledelegate %player_name% tp <p:s:请选择要传送到你的玩家> %player_name% <!eco take %player_name% 64>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     right_click_requirement:
       requirements:
@@ -367,19 +370,8 @@ items:
       - '&f槽位数量：按当前等级决定'
       - ''
       - '&e左键 &7打开背包系统'
-      - '&eShift+左键 &7领取背包头颅'
-      - '&eShift+右键 &7收回背包头颅'
     left_click_commands:
       - '[player] bags open<delay=2>'
-      - '[close]'
-      - '[sound] BLOCK_NOTE_BLOCK_HAT'
-    shift_left_click_commands:
-      - '[console] bags give %player_name%'
-      - '[message] &6[背包] &f已发放背包头颅。'
-      - '[close]'
-      - '[sound] BLOCK_NOTE_BLOCK_HAT'
-    shift_right_click_commands:
-      - '[player] mcwws-bags-reclaim'
       - '[close]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'back_to_death':

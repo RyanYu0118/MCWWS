@@ -48,7 +48,7 @@
 | 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；打开搜索点放大镜，打字前还要点漏斗 |
 | 光源可拆可调   | 生存须手持 Light（主手或副手）才能敲掉并掉落；右键能调亮度                   |
 | 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游        |
-| 领地中文     | Residence 权限旗标与拒绝提示是中文                     |
+| 指南传送玩家 | 指南菜单点头颅后弹出在线玩家列表；成功扣 64 零钱 |
 
 
 ---
@@ -388,13 +388,22 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ## 9. 背包（BetterBags）
 
-本服改过默认行为，Wiki 必须写，否则玩家会以为「捡东西自动有头颅背包」：
+本服改过默认行为，Wiki 必须写，否则玩家会以为能拿到「头颅背包方块」或捡东西会自动进包：
 
-- 禁止除 `/bags give` 外自动发放背包头颅
-- 可售物品的自动入包由 MCWWS 脚本接管
-- 没有授权头颅时，不会因为捡起可售物就送一个新背包
+- **任何时候都不发放** BetterBags 的玩家头颅背包物品（含进服、复活、`/bags give`、刷新背包）
+- 已有的头颅会从物品栏、盔甲栏、副手、光标和末影箱收回；不能放置、不能捡起
+- **关闭自动拾取 / 自动入包**：地上的物品不会被插件塞进 BetterBags
+- 打开背包：指南菜单左键，或游戏内
 
-管理员回收/重发相关：`/mcwws-bags-reclaim`（管理用）。
+```text
+/bags open
+```
+
+管理员回收残留头颅：
+
+```text
+/mcwws-bags-reclaim
+```
 
 ---
 
@@ -557,6 +566,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
+| 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、CommandPrompterPaper 3.2 |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
 | 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |

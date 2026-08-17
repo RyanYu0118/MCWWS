@@ -1,80 +1,46 @@
-# BetterBags：禁止除 /bags give 外自动发放背包头颅
-# - auto-picking 必须 false；原版拾取可售物后会 updatePlayerBag()，无头颅时会自动 give
-# - 自动入包由本脚本接管（仅 /bags give 授权后可持有头颅）
-# - 绝不调用 BagsData.updatePlayerBag()（该方法在找不到头颅时会发放新头颅）
+# BetterBags：任何时候都不发放/保留背包头颅，也不自动入包
+# - 插件侧已切断 giveBagToPlayer / auto-picking；本脚本为热重载兜底
+# - 打开背包请走菜单左键 /bags open，不要发 PLAYER_HEAD
 
 import:
-    org.bukkit.Material
     org.bukkit.NamespacedKey
     org.bukkit.persistence.PersistentDataType
     org.bukkit.event.player.PlayerAttemptPickupItemEvent
-    org.bukkit.event.server.ServerCommandEvent
-    cat.necko.bags.Plugin as BetterBagsPlugin
-    cat.necko.bags.config.bags.BagsData
+    org.bukkit.event.block.BlockPlaceEvent
+    org.bukkit.event.inventory.InventoryClickEvent
+    org.bukkit.event.inventory.InventoryDragEvent
+    org.bukkit.event.player.PlayerDropItemEvent
 
-function mcwwsPlayerHasBetterBag(p: player) :: boolean:
+function mcwwsIsBetterBagItem(it: object) :: boolean:
+    if {_it} is not set:
+        return false
+    if {_it} is air:
+        return false
     set {_key} to new NamespacedKey("betterbags", "item")
-    loop all items in {_p}'s inventory:
-        set {_it} to loop-item
-        if {_it} is not set:
-            continue
-        if {_it} is air:
-            continue
-        set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
-        if {_tag} is "bag":
-            return true
+    set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
+    if {_tag} is "bag":
+        return true
     return false
 
-function mcwwsIsBetterBagsSellable(type: object) :: boolean:
-    set {_plugin} to BetterBagsPlugin.getInstance()
-    if {_plugin} is not set:
-        return false
-    return {_plugin}.getItemsData().isSellable({_type})
-
-function mcwwsAllowBetterBag(p: offline player):
-    set {mcwws.bags.allowed::%uuid of {_p}%} to true
-
-function mcwwsRefreshBetterBagIfPresent(p: player):
-    set {_plugin} to BetterBagsPlugin.getInstance()
-    if {_plugin} is not set:
-        stop
-    set {_key} to new NamespacedKey("betterbags", "item")
-    set {_inv} to {_p}.getInventory()
-    set {_pd} to {_plugin}.getPlayerData({_p}.getUniqueId())
-    loop 36 times:
-        set {_slot} to loop-number - 1
-        set {_it} to {_inv}.getItem({_slot})
-        if {_it} is not set:
-            continue
-        if {_it} is air:
-            continue
-        set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
-        if {_tag} is "bag":
-            set {_new} to BagsData.getItemFor(BagsData.BAG, {_pd})
-            {_inv}.setItem({_slot}, {_new})
-            stop loop
-
-function mcwwsRemoveBetterBagSkull(p: player):
-    mcwwsRemoveBetterBagSkullInternal({_p}, false)
-
-function mcwwsRemoveBetterBagSkullSilent(p: player):
-    mcwwsRemoveBetterBagSkullInternal({_p}, true)
-
-function mcwwsRemoveBetterBagSkullInternal(p: player, silent: boolean):
-    set {_key} to new NamespacedKey("betterbags", "item")
-    set {_inv} to {_p}.getInventory()
+function mcwwsStripInventoryBagItems(inv: object, size: number) :: boolean:
     set {_removed} to false
-    loop 36 times:
+    if {_inv} is not set:
+        return false
+    loop {_size} times:
         set {_slot} to loop-number - 1
         set {_it} to {_inv}.getItem({_slot})
-        if {_it} is not set:
-            continue
-        if {_it} is air:
-            continue
-        set {_tag} to {_it}.getItemMeta().getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
-        if {_tag} is "bag":
+        if mcwwsIsBetterBagItem({_it}) is true:
             {_inv}.setItem({_slot}, null)
             set {_removed} to true
+    return {_removed}
+
+function mcwwsRemoveBetterBagSkullInternal(p: player, silent: boolean):
+    set {_removed} to mcwwsStripInventoryBagItems({_p}.getInventory(), 41)
+    if mcwwsStripInventoryBagItems({_p}.getEnderChest(), 27) is true:
+        set {_removed} to true
+    if mcwwsIsBetterBagItem({_p}.getItemOnCursor()) is true:
+        {_p}.setItemOnCursor(null)
+        set {_removed} to true
     if {_silent} is true:
         stop
     if {_removed} is true:
@@ -82,77 +48,60 @@ function mcwwsRemoveBetterBagSkullInternal(p: player, silent: boolean):
     else:
         send "§6[背包] §7物品栏里没有背包头颅。" to {_p}
 
-function mcwwsMarkBagsGiveFromCommand(raw: text):
-    set {_cmd} to "%{_raw}%"
-    if {_cmd} does not contain "bags give":
-        stop
-    if {_cmd} is not "bags give":
-        if {_cmd} does not start with "bags give ":
-            stop
-    set {_rest} to subtext of {_cmd} from 9 to length of {_cmd}
-    set {_parts::*} to {_rest} split at " "
-    if {_parts::1} is not set:
-        stop
-    if {_parts::1} is "":
-        stop
-    set {_target} to {_parts::1} parsed as offline player
-    if {_target} is set:
-        mcwwsAllowBetterBag({_target})
+function mcwwsRemoveBetterBagSkull(p: player):
+    mcwwsRemoveBetterBagSkullInternal({_p}, false)
+
+function mcwwsRemoveBetterBagSkullSilent(p: player):
+    mcwwsRemoveBetterBagSkullInternal({_p}, true)
 
 command /mcwws-bags-reclaim:
-    description: 收回 BetterBags 背包头颅（物品栏）
+    description: 收回 BetterBags 背包头颅（物品栏 / 末影箱 / 光标）
     trigger:
         delete {mcwws.bags.allowed::%uuid of player%}
         mcwwsRemoveBetterBagSkull(player)
 
 on join:
     wait 2 ticks
-    if mcwwsPlayerHasBetterBag(player) is true:
-        mcwwsAllowBetterBag(player)
+    mcwwsRemoveBetterBagSkullSilent(player)
 
-on ServerCommandEvent:
-    mcwwsMarkBagsGiveFromCommand(event.getCommand())
+every 5 seconds:
+    loop all players:
+        mcwwsRemoveBetterBagSkullSilent(loop-player)
 
 on command:
     if command is "bags":
         if arg-1 is "give":
-            if arg-2 is set:
-                set {_t} to arg-2 parsed as offline player
-                if {_t} is set:
-                    mcwwsAllowBetterBag({_t})
+            wait 1 tick
+            loop all players:
+                mcwwsRemoveBetterBagSkullSilent(loop-player)
 
 on PlayerAttemptPickupItemEvent with priority lowest:
-    set {mcwws.bags.had::%uuid of event.getPlayer()%} to mcwwsPlayerHasBetterBag(event.getPlayer())
-
-on PlayerAttemptPickupItemEvent with priority monitor:
-    set {_p} to event.getPlayer()
-    if mcwwsPlayerHasBetterBag({_p}) is false:
-        stop
-    if {mcwws.bags.had::%uuid of {_p}%} is true:
-        stop
-    if {mcwws.bags.allowed::%uuid of {_p}%} is true:
-        stop
-    mcwwsRemoveBetterBagSkullSilent({_p})
-
-on PlayerAttemptPickupItemEvent with priority high:
-    set {_plugin} to BetterBagsPlugin.getInstance()
-    if {_plugin} is not set:
-        stop
-    set {_p} to event.getPlayer()
-    if mcwwsPlayerHasBetterBag({_p}) is false:
-        stop
     set {_itemEnt} to event.getItem()
     set {_item} to {_itemEnt}.getItemStack()
-    if mcwwsIsBetterBagsSellable({_item}.getType()) is false:
-        stop
-    set {_key} to new NamespacedKey("betterbags", "item")
-    if {_item}.getPersistentDataContainer().has({_key}, PersistentDataType.STRING):
+    if mcwwsIsBetterBagItem({_item}) is true:
+        event.setCancelled(true)
         {_item}.setAmount(0)
         {_itemEnt}.setItemStack({_item})
-        stop
-    set {_pd} to {_plugin}.getPlayerData({_p}.getUniqueId())
-    set {_returned} to {_pd}.addItem({_item})
-    {_item}.setAmount({_returned})
-    {_itemEnt}.setItemStack({_item})
-    mcwwsRefreshBetterBagIfPresent({_p})
-    {_pd}.save()
+        {_itemEnt}.remove()
+        mcwwsRemoveBetterBagSkullSilent(event.getPlayer())
+
+on BlockPlaceEvent:
+    if mcwwsIsBetterBagItem(event.getItemInHand()) is true:
+        event.setCancelled(true)
+        mcwwsRemoveBetterBagSkullSilent(event.getPlayer())
+
+on InventoryClickEvent with priority monitor:
+    if event.getWhoClicked() is a player:
+        set {_p} to event.getWhoClicked()
+        mcwwsRemoveBetterBagSkullSilent({_p})
+
+on InventoryDragEvent with priority monitor:
+    if event.getWhoClicked() is a player:
+        set {_p} to event.getWhoClicked()
+        mcwwsRemoveBetterBagSkullSilent({_p})
+
+on PlayerDropItemEvent:
+    set {_drop} to event.getItemDrop().getItemStack()
+    if mcwwsIsBetterBagItem({_drop}) is true:
+        event.setCancelled(true)
+        mcwwsRemoveBetterBagSkullSilent(event.getPlayer())

@@ -1,0 +1,163 @@
+# Prompts
+# Configuration
+
+# PlayerUI formatting
+PlayerUI:
+  # The display name format for the player heads
+  Skull-Name-Format: '&6%s'
+  Skull-Custom-Model-Data: 0
+  # the size of the UI (multiple of 9, between 18-54)
+  Size: 54
+  # Size for the head cache
+  Cache-Size: 256
+  # Delay in ticks after the player joins before their head gets cached
+  Cache-Delay: 1
+  Previous:
+    Item: Feather
+    Custom-Model-Data: 0
+    Column: 3
+    Text: '&7◀◀ Previous'
+  Next:
+    Item: Feather
+    Custom-Model-Data: 0
+    Column: 7
+    Text: Next ▶▶
+  Cancel:
+    Item: Barrier
+    Custom-Model-Data: 0
+    Column: 5
+    Text: '&7Cancel ✘'
+  Search:
+    Item: Name_Tag
+    Custom-Model-Data: 0
+    Column: 9
+    Text: '&6Search ⌕'
+    AnvilItem:
+      Title: '&6&lPlayer Search'
+      Material: PAPER
+      CustomModelData: 0
+      Text: '&6Enter Player Name'
+  # Should the player heads be sorted?
+  Sorted: false
+  # Message to be displayed when the head cache is empty
+  Empty-Message: '&cNo players found!'
+  Filter-Format:
+    World: '&6𑁍 %s'
+    Radial: '&cᯤ %s'
+
+# AnvilUI formatting
+AnvilGUI:
+  # Show the first line of the prompt (if with {br}) as title of Anvil GUI
+  Enable-Title: true
+  # If title is enabled, and if custom title is not empty, use this instead
+  Custom-Title: ''
+  # The message to be displayed on the Anvil GUI
+  Prompt-Message: ''
+  # Show a cancel item on the right slot input slot.
+  Enable-Cancel-Item: false
+  # The Left item to place on the Anvil GUI
+  Item:
+    Material: Paper
+    # Hide tooltips of item (1.21.2 OR ABOVE)
+    HideTooltips: false
+    Custom-Model-Data: 0
+    # Do you want the item enchanted?
+    Enchanted: false
+  # The Result item to place on the Anvil GUI
+  ResultItem:
+    Material: Paper
+    # Hide tooltips of item (1.21.2 OR ABOVE)
+    HideTooltips: false
+    Custom-Model-Data: 0
+    # Do you want the item enchanted?
+    Enchanted: false
+  # The Cancel item to place on the Anvil GUI
+  CancelItem:
+    Material: Barrier
+    # Hide tooltips of item (1.21.2 OR ABOVE)
+    HideTooltips: false
+    Custom-Model-Data: 0
+    # Do you want the item enchanted?
+    Enchanted: false
+    HoverText: '&cClick to Cancel'
+
+# Text Prompt Config
+TextPrompt:
+  # Enable clickable cancel
+  Clickable-Cancel: true
+  # Clickable text message
+  Cancel-Message: '&7[&c&l✘&7]'
+  # Message to show when a player hovers over the clickable cancel message.
+  Cancel-Hover-Message: '&7Click here to cancel command completion'
+  # Change the priority of the response listener
+  # Available Priority - LOWEST, LOW, NORMAL, HIGH, HIGHEST, MONITOR
+  Response-Listener-Priority: LOWEST
+
+# Sign UI Settings
+SignUI:
+  # Which line should the answer be read from.
+  # Valid locations - top, top-aggregate, bottom, bottom-aggregate
+  Input-Field-Location: bottom
+  Material: OAK_SIGN
+
+# Input Validation
+Input-Validation:
+  Integer-Sample:
+    # The alias of the input validation
+    Alias: is
+    # Regex to use for the input validation
+    Regex: ^\d+
+    Err-Message: '&cPlease enter a valid integer!'
+  Alpha-Sample:
+    # The alias of the input validation
+    Alias: ss
+    # Regex to use for the input validation
+    Regex: '[A-Za-z ]+'
+    Err-Message: '&cInput must only consist letters of the alphabet!'
+
+# Dialog UI Settings
+# Used by the <d:...> prompt tag.
+# No filter / unknown filter -> text field (single-line or multi-line).
+# Available kinds
+#   <d:num[a,b]:Display>, <d:num[a,b,s]:Display>, <d:num[a,b,s,i]:Display>
+#   <d:choice[opt1,opt2,...]:Display> - single-select dropdown
+# Compound form split sub-tags with ' && ' inside a single <d:...> block
+#   <d:choice[set,add]:Sub && d:num[0,24]:Value>
+#   renders ONE dialog with TWO input rows; block-level flags (-ds, -iv:alias, ...)
+#   apply to the whole block.
+DialogUI:
+  # the dialog window title.
+  Title: Prompt
+  # submit / dismiss button label+tooltip.
+  Confirm-Button:
+    Label: <green>Confirm</green>
+    Tooltip: Confirm this action
+  # submit / dismiss button label+tooltip.
+  Cancel-Button:
+    Label: <red>Cancel</red>
+    Tooltip: Cancel this action
+  Defaults:
+    Text:
+      # max chars for text input.
+      MaxLength: 256
+      # allow multi-line text input.
+      Multiline: false
+      # line cap when multiline is true.
+      MultilineMaxLines: 4
+      # Default width of text inputs in pixels.
+      Width: 200
+    Choice:
+      # Default options for the <d:choice[...]:...> form when no
+      # explicit list is provided. Comma-separated. Empty by default.
+      Default-Options: ''
+    Number:
+      # defaults for the <d:num...> variant.
+      # Initial is optional; if omitted, uses (min + max) / 2.
+      Min: 0.0
+      Max: 100.0
+      Step: 1.0
+    Tab:
+      # threshold for the <d:tab:Display> form. When the
+      # completion count is at or below this number, the dialog shows a button
+      # grid (one per completion). Above this, it falls back to a text input.
+      MaxButtons: 5

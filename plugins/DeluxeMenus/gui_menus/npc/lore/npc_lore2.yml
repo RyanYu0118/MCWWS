@@ -20,7 +20,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore add <-ds &e请在聊天框中填写内容，若取消，请回复"x"> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore add <&e请在聊天框中填写内容，若取消，请回复"x" -ds> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -51,7 +51,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore set <-a 想更改哪一行？> <-ds &e请在聊天框中填写内容，若取消，请回复"x"> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore set <a:想更改哪一行？> <&e请在聊天框中填写内容，若取消，请回复"x" -ds> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -82,7 +82,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore ins <-a 想插入在哪一行前面？> <-ds &e请在聊天框中填写内容，若取消，请回复"x"> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore ins <a:想插入在哪一行前面？> <&e请在聊天框中填写内容，若取消，请回复"x" -ds> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -113,7 +113,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore del <-a 想删除哪一行？> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore del <a:想删除哪一行？> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -143,7 +143,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore name <-ds &e请在聊天框中填写内容，若取消，请回复"x"> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore name <&e请在聊天框中填写内容，若取消，请回复"x" -ds> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -173,7 +173,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore import <-a 请输入名称> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore import <a:请输入名称> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -203,7 +203,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore export <-a 起个名吧> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore export <a:起个名吧> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:
@@ -233,7 +233,7 @@ items:
       - '&7¥8/次'
       - ''
     left_click_commands:
-      - '[player] lore owner <-p 填写玩家名称> <-exa economy take %player_name% 8> <-exa playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
+      - '[player] lore owner <p:填写玩家名称> <!economy take %player_name% 8> <!playsound minecraft:ui.cartography_table.take_result ambient %player_name% ~ ~ ~ 1 1 1>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
       - '[close]'
     left_click_requirement:

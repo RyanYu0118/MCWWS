@@ -1741,9 +1741,9 @@ toolinv:
         count: 1
         components:
           minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"奖励样品",underlined:0b}],text:""}]'
-          minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"超级钻石剑",underlined:0b}],text:""}'
           minecraft:enchantments: '{"minecraft:sharpness":10,"minecraft:thorns":255,"minecraft:unbreaking":10}'
-          minecraft:damage: '810'
+          minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"超级钻石剑",underlined:0b}],text:""}'
+          minecraft:damage: '816'
         schema_version: 1
     b:
       itemstack:
@@ -1774,7 +1774,7 @@ toolinv:
         id: minecraft:diamond_shovel
         count: 1
         components:
-          minecraft:damage: '1284'
+          minecraft:damage: '1340'
         schema_version: 1
     e:
       itemstack:

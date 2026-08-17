@@ -20,7 +20,8 @@ items:
     lore: 
     - '&e当前您的预设数量：%objective_score_number%件'
     left_click_commands:
-      - '[givepermission] commandprompter.*'
+      - '[givepermission] promptpaper.use'
+      - '[givepermission] promptpaper.cancel'
       - '[givepermission] minecraft.command.scoreboard'
       - '[givepermission] minecraft.command.gamerule'
       - '[givepermission] minecraft.command.playsound'
@@ -28,7 +29,7 @@ items:
       - '[givepermission] luckperms.user.permission.unset'
       #- '[player] ap use number'
       - '[close]'
-      - '[player] scoreboard players set %player_name% number <&a请在聊天框中输入有效数字（取消请回复"x"）> <-exa gamerule sendCommandFeedback false> <-exa playsound ui.cartography_table.take_result player %player_name% ~ ~ ~ 1 1 1> <-exa menu_sheep_pink> <-exa schedule function economic_system:feedback 1s replace> <-exa lp user %player_name% permission unset minecraft.command.scoreboard> <-exa lp user %player_name% permission unset minecraft.command.gamerule> <-exa lp user %player_name% permission unset minecraft.command.playsound> <-exa lp user %player_name% permission unset minecraft.command.schedule> <-exa lp user %player_name% permission unset luckperms.user.permission.unset>'
+      - '[player] scoreboard players set %player_name% number <&a请在聊天框中输入有效数字（取消请回复"x"）> <!gamerule sendCommandFeedback false> <!playsound ui.cartography_table.take_result player %player_name% ~ ~ ~ 1 1 1> <!menu_sheep_pink> <!schedule function economic_system:feedback 1s replace> <!lp user %player_name% permission unset minecraft.command.scoreboard> <!lp user %player_name% permission unset minecraft.command.gamerule> <!lp user %player_name% permission unset minecraft.command.playsound> <!lp user %player_name% permission unset minecraft.command.schedule> <!lp user %player_name% permission unset luckperms.user.permission.unset>'
       - '[sound] entity_snow_golem_death 1 1'
   '1':
     material: pink_wool

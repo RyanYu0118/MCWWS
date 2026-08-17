@@ -1,0 +1,72 @@
+# Command PrompterPaper
+# Configuration
+
+# Set the plugin prefix
+Prompt-Prefix: '<gradient:gold:yellow>[Prompter]</gradient> '
+
+# After how many seconds until CommandPrompter cancels a prompt
+Prompt-Timeout: 300
+
+# Word that cancels command prompting.
+Cancel-Keyword: x
+
+# Enable permission check before a player can use the prompting feature
+# Checking for promptpaper.use
+Enable-Permission: true
+
+# Enable debug mode for CommandPrompter.
+Debug-Mode: false
+
+# Enable fancy ANSI colored console output.
+Fancy-Logger: true
+
+# Should CommandPrompter send the completed command to the player before dispatching it?
+Show-Complete-Command: false
+
+# Should CommandPrompter send a prompt cancellation message to the player.
+Show-Prompt-Cancelled: true
+
+# This will determine if a part of a command is a prompt.
+# ONLY CHANGE THE FIRST AND LAST. The opening and closing delimiters
+# must each be a single character (e.g. (.*?), {.*?}, or [.*?]).
+# Changes take effect on /commandprompter reload.
+Argument-Regex: <.*?>
+
+# When the prompt delimiters are angle brackets (< >), MiniMessage
+# formatting tags (e.g. <red>, </red>, <gradient:gold:yellow>) use the same
+# syntax. When enabled, CommandPrompter detects and ignores MiniMessage tags
+# so they are not treated as prompts.
+Ignore-MiniMessage: true
+
+# What commands should CommandPrompter ignore
+# Do not include the /
+Ignored-Commands:
+- sampleCommand
+- sampleCommand2
+
+# What commands should CommandPrompter allow while a player is completing a prompt.
+# Do not include the /
+Allowed-Commands-In-Prompt:
+- sampleCommand
+- sampleCommand2
+
+# Enable command tab complete for CommandPrompter
+Command-Tab-Complete: true
+
+# Permission Attachment Config
+Permission-Attachment:
+  # ticks - Set how long (in ticks) should the
+  #         permission attachment persist.
+  ticks: 0
+  # Permissions to temporarily attach to the player.
+  Permissions:
+    # Usage - /playerdelegate <player> GAMEMODE <command>
+    GAMEMODE:
+    - bukkit.command.gamemode
+    - essentials.gamemode.survival
+    - essentials.gamemode.creative
+
+# Language locale for plugin messages (e.g. en_US, es_ES).
+# Bundled locales are loaded from the plugin JAR.
+# Custom overrides go in plugins/CommandPrompterPaper/locales/
+Locale: en_US
