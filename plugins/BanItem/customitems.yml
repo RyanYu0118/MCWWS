@@ -98,3 +98,9 @@ unplacable:
   material: PLAYER_HEAD # whatever
   lore-contains:
     - '§c🚫🫳 不可放置§c§kﷲ'
+portable_crafter:
+  material: PLAYER_HEAD
+  modeldata-equals: '2200013'
+portable_crafter_table:
+  material: CRAFTING_TABLE
+  modeldata-equals: '2200013'

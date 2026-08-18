@@ -161,7 +161,7 @@ check-update: true
 # Giving maximum priority will force the ban item plugin to have the final word on an event
 # This is used mainly to also block other plugins events, if the action is banned
 # You can use the actions formatting ('*', 'action1, action2', '*,!break' etc.)
-priority: use,consume,click
+priority: use,consume,click,place
 
 # Some configurable stuffs for actions
 actions:
@@ -232,10 +232,16 @@ illegal-stacks:
   vanilla-max-stack-size: true
   block-type: split
 blacklist:
-  world:
+  '*':
     unplacable:
       place:
         message: '§c啊哦，你不能放置它捏......'
+    portable_crafter:
+      place:
+        message: '§c便携式工作台不能放下，请手持右键打开合成界面。'
+    portable_crafter_table:
+      place:
+        message: '§c便携式工作台不能放下，请手持右键打开合成界面。'
 # items:
 #  'diamond_helmet,iron_helmet':
 #    amount: 1

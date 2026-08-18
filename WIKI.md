@@ -286,6 +286,7 @@ Axiom 会把超大笔刷拆成多个包，所以：
 - Axiom 配置里的 Fast Place：在生存里若开启，可能让「擦到门板边缘」的右键变成放置/超出距离而点不开门。普通生存建议关掉 Fast Place。
 - 无限触及、Phantom、强制放置等能力在服务端配置里默认关，且受 Axiom 权限约束。
 - 推荐启用史莱姆科技材质包（`Slimefun-ResourcePack`）：史莱姆指南和游戏内商店的空白格都会变成平底细线网格，而不是染色玻璃边框。
+- **便携式工作台不能放下**：只能手持右键打开合成界面。放下再拆会变成普通工作台/头颅、史莱姆功能丢失；本服用 BanItem 拦截放置。
 
 ---
 
@@ -575,6 +576,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
 | 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、`plugins/Skript/scripts/mcwws/utility/guide_tp_player.sk`、CommandPrompterPaper 3.2 |
+| 便携式工作台禁放置     | `plugins/BanItem/config.yml`、`customitems.yml`（CMD 2200013） |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
 | 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
