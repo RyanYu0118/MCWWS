@@ -285,7 +285,7 @@ items:
       - '[givepermission] minecraft.command.teleport'
       - '[givepermission] promptpaper.use'
       - '[close]'
-      - '[player] minecraft:tp <p:请选择你要传送到的玩家> <!@tp_charge><delay=15>'
+      - '[player] minecraft:tp <p:请选择你要传送到的玩家> <!@tp_charge><delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     left_click_requirement:
       requirements:
@@ -300,7 +300,7 @@ items:
       - '[givepermission] minecraft.command.teleport'
       - '[givepermission] promptpaper.use'
       - '[close]'
-      - '[player] minecraft:tp <p:请选择要传送到你的玩家> %player_name% <!@tp_charge><delay=15>'
+      - '[player] minecraft:tp <p:请选择要传送到你的玩家> %player_name% <!@tp_charge><delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     right_click_requirement:
       requirements:
