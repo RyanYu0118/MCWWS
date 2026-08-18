@@ -339,7 +339,7 @@ Axiom 会把超大笔刷拆成多个包，所以：
 
 把物品放进筛选槽是按物品匹配，不需要打字。
 
-Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是 1、格子却是空的」。服务端插件 `MCWWS_UltimateShopFix` 已补上，不需要玩家操作。
+Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是 1、格子却是空的」。服务端插件 `MCWWS_UltimateShopFix` 已补上（含商店界面丢弃键误开史莱姆指南），不需要玩家操作。
 
 买卖成功的聊天提示曾出现「出售 block.minecraft.oak_sign x2」这种翻译键，现在同一个补丁会自己再查一遍 26.2 的中文语言文件，提示里固定显示「橡木告示牌」这类译名；万一某个物品在语言文件里查不到，也只会退成英文名，不会再露出键名。
 
@@ -356,6 +356,14 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 刷怪蛋和管理员方块（屏障、命令方块）不进商店。
 
 分类店界面：第一行是功能键（收藏、放大镜搜索，空一格后是上一页、返回、下一页，关闭在最右侧），**后五行 5×9** 放商品。没有上一页或下一页时，箭头仍在原位，换成史莱姆指南的灰色失效贴图，不会留空。空白格、箭头、返回、搜索放大镜都复用 **Slimefun-ResourcePack**；没装材质包时退回普通玻璃板 / 名牌。返回键仍用附魔书模型，但关掉了附魔光效。进了搜索界面之后，文字搜索仍要点漏斗再打聊天。
+
+悬停商品时的快捷键按**键位名称**生效（可在客户端控制设置里改绑定，不要记成默认字母）：
+
+- **丢弃键**：对该商品「选择全部 / 一键回收」
+- **副手交换键**：收藏该商品
+- **Shift + 鼠标右键**：打开数量选择
+
+服务器指南针**右键**打开指南菜单再进商店时，手里往往还拿着指南针；同一把指南针的**左键**是打开史莱姆指南。商店界面里按丢弃键时，客户端有时会额外漏出一次「手持物品左键」，看起来像误开史莱姆指南。`MCWWS_UltimateShopFix` 会在商店等外部 GUI 打开时拦住这次左键，丢弃键仍只作用于商店。
 
 商店物价占位符走 `%mcwws.price_buy_…%` / `%mcwws.price_sell_…%`，与网页同步。管理员改完商店文件后，在游戏内重载：
 
@@ -573,7 +581,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 创世神扣费            | `tools/mcwws-worldedit-survival/`                                                                                                 |
 | Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                                                     |
 | Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                                              |
-| 商店搜索崩溃补丁         | `tools/mcwws-ultimateshop-fix/`                                                                                                   |
+| 商店搜索崩溃补丁 / 丢弃键误触手持物品 | `tools/mcwws-ultimateshop-fix/`（`MCWWS_UltimateShopFix` 1.0.1）                                                                    |
 | 商店创造栏分类          | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`                                    |
 | 商店平底格子（史莱姆材质）    | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003）       |
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                                                     |

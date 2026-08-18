@@ -30,8 +30,10 @@ public final class McwwsUltimateShopFixPlugin extends JavaPlugin implements List
         LocaleNames.reload();
         install();
         getServer().getPluginManager().registerEvents(this, this);
+        getServer().getPluginManager().registerEvents(new HeldItemGuiGuard(), this);
         getServer().getScheduler().runTaskTimer(this, this::install, 20L, 100L);
         getLogger().info("UltimateShop 搜索译名补丁已启用（Paper 26.2 craftDelegate）。");
+        getLogger().info("已拦截商店界面丢弃键误触手持指南针左键（史莱姆指南）。");
     }
 
     @Override
