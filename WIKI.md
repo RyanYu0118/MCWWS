@@ -475,7 +475,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - **一键砍树：** 使用 UltimateTimber 4.10.0（Songoda Reborn）。用斧头砍树时会一次放倒整棵树，单次最多 150 根原木，耐久按砍掉的原木数量扣除；树干与树叶会变成 FallingBlock，默认 **FANCY** 动画（整棵树旋转倒地）。砍完后自动在树干基座补种树苗，倒下的树叶落地也有 1% 概率补种。所有玩家默认可用（`require-chop-permission: false`）；潜行不会关掉一键砍树。倒下的方块砸到玩家会造成 1 点伤害。
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
 - **创世神选区与已扣费指令：** default 组有选区/木斧/复制/撤销，以及 `set`、`replace`、`stack`、剪贴板粘贴、圆柱球体、附近替换等已纳入扣费的节点；不给笔刷、`//fill`、`//repl`
-- **DeluxeMenus 管理界面：** 重载插件后会尝试把「服务器管理」菜单重新打开，避免管理员卡在空白界面
+- **DeluxeMenus 管理界面：** 指南「服务器管理」用左键重载常用插件（Skript / 商店 / 网页 / BanItem / Axiom 扣费等），不必按住 Shift，也不必再敲聊天命令。重载后会尝试把本菜单重新打开，避免管理员卡在空白界面
 
 ---
 
@@ -503,7 +503,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 | `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
 
 
-经济管理（Skript，建议不要写进玩家页）：
+经济管理（Skript，建议不要写进玩家页）。指南「服务器管理」左键也可执行 `/eco-reload`、`/eco-market-reload` 以及网页/商店等热重载，不必再按住 Shift：
 
 ```text
 /eco-reload
@@ -576,6 +576,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
 | 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、`plugins/Skript/scripts/mcwws/utility/guide_tp_player.sk`、CommandPrompterPaper 3.2 |
+| 服务器管理菜单         | `plugins/DeluxeMenus/gui_menus/guide/server.yml`（左键重载，无需 Shift） |
 | 便携式工作台禁放置     | `plugins/Skript/scripts/mcwws/utility/portable_crafter_place.sk` |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
 | 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |

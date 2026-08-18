@@ -1,7 +1,7 @@
 menu_title: '&c&l服务器管理'
 update_interval: 1
 open_command: []
-size: 27
+size: 54
 open_requirement:
   requirements:
     admin:
@@ -22,22 +22,46 @@ items:
     priority: 1
     update: true
     hide_attributes: true
-    display_name: '&e重载 Skript'
+    display_name: '&e重载 Skript（全部）'
     lore:
       - ''
       - '&f执行：&a/sk reload all'
       - '&7以你的身份执行，聊天栏可见日志'
       - '&7重载后会自动恢复本界面'
       - ''
-      - '&cShift+左键 &7确认执行'
-    shift_left_click_commands:
+      - '&a左键 &7执行'
+    left_click_commands:
       - '[console] lp user %player_name% permission settemp skript.admin true 30s'
       - '[console] mcwws_queue_reopen_server %player_name%'
       - '[close]'
       - '[player] sk reload all<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-  'reload_cc':
-    material: CRAFTING_TABLE
+  'reload_skript_mcwws':
+    material: WRITABLE_BOOK
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 11
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 Skript（mcwws）'
+    lore:
+      - ''
+      - '&f执行：&a/sk reload mcwws/'
+      - '&7只重载 scripts/mcwws 目录'
+      - '&7改完传送、账本、便携工作台等脚本用这个'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp skript.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] sk reload mcwws/<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_dm':
+    material: NETHER_STAR
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
@@ -45,27 +69,26 @@ items:
     priority: 1
     update: true
     hide_attributes: true
-    display_name: '&e重载 CustomCrafting'
+    display_name: '&e重载 DeluxeMenus'
     lore:
       - ''
-      - '&f执行：&a/cc reload'
-      - '&7以你的身份执行，聊天栏可见日志'
+      - '&f执行：&a/dm reload'
+      - '&7改完指南/管理菜单后用'
       - '&7重载后会自动恢复本界面'
       - ''
-      - '&cShift+左键 &7确认执行'
-    shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp customcrafting.cmd.reload true 30s'
-      - '[console] lp user %player_name% permission settemp customcrafting.cmd.* true 30s'
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp deluxemenus.admin true 30s'
       - '[console] mcwws_queue_reopen_server %player_name%'
       - '[close]'
-      - '[player] cc reload<delay=2>'
+      - '[player] dm reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'reload_shop':
     material: EMERALD
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
-    slot: 14
+    slot: 13
     priority: 1
     update: true
     hide_attributes: true
@@ -73,18 +96,65 @@ items:
     lore:
       - ''
       - '&f执行：&a/shop reload'
-      - '&7以你的身份执行，聊天栏可见日志'
+      - '&7改完商店菜单/商品后用'
       - '&7重载后会自动恢复本界面'
       - ''
-      - '&cShift+左键 &7确认执行'
-    shift_left_click_commands:
+      - '&a左键 &7执行'
+    left_click_commands:
       - '[console] lp user %player_name% permission settemp ultimateshop.reload true 30s'
       - '[console] mcwws_queue_reopen_server %player_name%'
       - '[close]'
       - '[player] shop reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
-  'reload_dm':
-    material: NETHER_STAR
+  'reload_cc':
+    material: CRAFTING_TABLE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 14
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 CustomCrafting'
+    lore:
+      - ''
+      - '&f执行：&a/cc reload'
+      - '&7改完自定义配方后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.reload true 30s'
+      - '[console] lp user %player_name% permission settemp customcrafting.cmd.* true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] cc reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_papi':
+    material: NAME_TAG
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 15
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 PlaceholderAPI'
+    lore:
+      - ''
+      - '&f执行：&a/papi reload'
+      - '&7占位符扩展改完后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp placeholderapi.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] papi reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_lp':
+    material: LIGHT
     enchantments:
       - ARROW_DAMAGE;1
     hide_enchantments: true
@@ -92,23 +162,321 @@ items:
     priority: 1
     update: true
     hide_attributes: true
-    display_name: '&e重载 DeluxeMenus'
+    display_name: '&e重载 LuckPerms'
     lore:
       - ''
-      - '&f执行：&a/dm reload'
-      - '&7以你的身份执行，聊天栏可见日志'
+      - '&f执行：&a/lp reload'
+      - '&7权限文件改完后用'
       - '&7重载后会自动恢复本界面'
       - ''
-      - '&cShift+左键 &7确认执行'
-    shift_left_click_commands:
-      - '[console] lp user %player_name% permission settemp deluxemenus.admin true 30s'
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp luckperms.reload true 30s'
       - '[console] mcwws_queue_reopen_server %player_name%'
       - '[close]'
-      - '[player] dm reload<delay=2>'
+      - '[player] lp reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_web':
+    material: ENDER_CHEST
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 19
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载网页服务'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-web-reload'
+      - '&7零钱明细前端、物价页、网页商城'
+      - '&7只重启 Node，不重启 Minecraft'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.web.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] mcwws-web-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'status_web':
+    material: CLOCK
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 20
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e网页服务状态'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-web-status'
+      - '&7看 Node 是否在跑，不重启'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.web.admin true 30s'
+      - '[player] mcwws-web-status'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_axiom':
+    material: AMETHYST_SHARD
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 21
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 Axiom 生存扣费'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-axiom-reload'
+      - '&7改完 Axiom 生存配置后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.axiom.survival.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] mcwws-axiom-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_we':
+    material: WOODEN_AXE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 22
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载创世神生存扣费'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-we-reload'
+      - '&7改完创世神生存配置后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.we.survival.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] mcwws-we-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_ledger':
+    material: GOLD_INGOT
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 23
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载零钱明细插件'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-ledger-reload'
+      - '&7改完账本经济层配置后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.ledger.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] mcwws-ledger-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_resquiet':
+    material: SHIELD
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 24
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载领地拒绝提示'
+    lore:
+      - ''
+      - '&f执行：&a/mcwws-resquiet-reload'
+      - '&7改完 Boss 栏节流配置后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp mcwws.residence.quiet.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] mcwws-resquiet-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_banitem':
+    material: BARRIER
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 25
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 BanItem'
+    lore:
+      - ''
+      - '&f执行：&a/bi reload'
+      - '&7改完禁放置物品后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp banitem.command.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] bi reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_prompt':
+    material: OAK_SIGN
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 28
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 CommandPrompter'
+    lore:
+      - ''
+      - '&f执行：&a/commandprompter reload'
+      - '&7指南传送玩家点头选人等提示'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp promptpaper.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] commandprompter reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_fawe':
+    material: BRUSH
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 29
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 FAWE'
+    lore:
+      - ''
+      - '&f执行：&a/fawe reload'
+      - '&7创世神配置改完后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp fawe.reload true 30s'
+      - '[console] lp user %player_name% permission settemp worldedit.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] fawe reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_ess':
+    material: COMPASS
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 30
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 Essentials'
+    lore:
+      - ''
+      - '&f执行：&a/ess reload'
+      - '&7传送费、出生点等配置'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp essentials.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] ess reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_bags':
+    material: BUNDLE
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 31
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载 BetterBags'
+    lore:
+      - ''
+      - '&f执行：&a/bags reload'
+      - '&7背包插件配置改完后用'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp betterbags.reload true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] bags reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_eco':
+    material: SUNFLOWER
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 32
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载经济脚本'
+    lore:
+      - ''
+      - '&f执行：&a/eco-reload'
+      - '&7基础物价脚本配置'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp skript.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] eco-reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'reload_eco_market':
+    material: HOPPER
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 33
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载动态市场'
+    lore:
+      - ''
+      - '&f执行：&a/eco-market-reload'
+      - '&7动态物价公式/配置'
+      - '&7重载后会自动恢复本界面'
+      - ''
+      - '&a左键 &7执行'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp skript.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] eco-market-reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'back':
     material: ARROW
-    slot: 22
+    slot: 49
     priority: 1
     update: true
     hide_attributes: true
@@ -131,16 +499,27 @@ items:
       - 7
       - 8
       - 9
-      - 11
-      - 13
-      - 15
       - 17
       - 18
-      - 19
-      - 20
-      - 21
-      - 23
-      - 24
-      - 25
       - 26
+      - 27
+      - 34
+      - 35
+      - 36
+      - 37
+      - 38
+      - 39
+      - 40
+      - 41
+      - 42
+      - 43
+      - 44
+      - 45
+      - 46
+      - 47
+      - 48
+      - 50
+      - 51
+      - 52
+      - 53
     display_name: ' '
