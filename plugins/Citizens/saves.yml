@@ -191,12 +191,12 @@ npc:
           amount: 1
           type: stone_pickaxe
       location:
-        bodyYaw: -74.14269
+        bodyYaw: 64.06091
         x: -183.4521
         y: 77.0
         z: -964.502
-        yaw: -74.1427
-        pitch: -7.0736
+        yaw: 64.0609
+        pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
       gravity: {
@@ -232,6 +232,12 @@ npc:
           globalcooldown: 120
           command: npc speak &r需求量大的话建议放在背包里面！
           hand: RIGHT
+        globalCooldowns:
+          Z2FtZXJ1bGUgc2VuZENvbW1hbmRGZWVkYmFjayBmYWxzZQ==: 1787067617
+          bnBjIHNwZWFrICZy6ZyA5rGC6YeP5aSn55qE6K+d5bu66K6u5pS+5Zyo6IOM5YyF6YeM6Z2i77yB: 1787067617
+          cGxheXNvdW5kIG1pbmVjcmFmdDplbnRpdHkudmlsbGFnZXIudHJhZGUgcGxheWVyIEBhW25hbWU9JXBsYXllcl9uYW1lJV0gfiB+IH4gMSAwLjggMQ==: 1787067617
+          bnBjIHNwZWFrICZy5oKo5aW977yB6K+36Zeu6ZyA6KaB6YeH6LSt54mp6LWE5ZCX77yf: 1787067614
+          bnBjIHNwZWFrICZy5oiR6L+Z6YeM5pyJ5ZCE56eN5ZCE5qC355qE55+z5p2Q5ZKM55+z5Yi25ZOB77yB: 1787067617
       text:
         text:
         - Hi, I'm <npc>!
