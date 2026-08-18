@@ -42,6 +42,13 @@ final class InteractGuardListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
+        if (isResidenceBypass(player)) {
+            if (plugin.guardDebug()) {
+                plugin.getLogger().info("[guard-debug] skip admin/op interact " + player.getName()
+                        + " block=" + block.getType());
+            }
+            return;
+        }
         Flags flag = flagFor(block);
         if (flag == null) {
             return;
@@ -79,6 +86,9 @@ final class InteractGuardListener implements Listener {
         if (event.isCancelled() || !plugin.guardFollowDenyMessage()) {
             return;
         }
+        if (isResidenceBypass(event.getPlayer())) {
+            return;
+        }
         if (plugin.denySignal().seenThisTick(event.getPlayer().getUniqueId())) {
             event.setCancelled(true);
         }
@@ -87,6 +97,9 @@ final class InteractGuardListener implements Listener {
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onInventoryOpen(InventoryOpenEvent event) {
         if (!plugin.guardEnforce() || !(event.getPlayer() instanceof Player player)) {
+            return;
+        }
+        if (isResidenceBypass(player)) {
             return;
         }
         Location location = event.getInventory().getLocation();
@@ -171,13 +184,30 @@ final class InteractGuardListener implements Listener {
         }
         boolean useAllowed = residence.getPermissions().playerHas(player, Flags.use, true);
         boolean allowed = residence.getPermissions().playerHas(player, flag, useAllowed);
-        boolean admin;
-        try {
-            admin = Residence.getInstance().isResAdminOn(player);
-        } catch (Throwable ignored) {
-            admin = false;
-        }
+        boolean admin = isResidenceBypass(player);
         return new Verdict(residence.getName(), allowed, admin);
+    }
+
+    /**
+     * 与 Residence 对齐：{@code /resadmin} 开关、{@code residence.admin}、
+     * 以及 {@code AdminOPs: true} 时的服务器 OP，都应覆盖领地旗标。
+     */
+    static boolean isResidenceBypass(Player player) {
+        if (player == null) {
+            return false;
+        }
+        try {
+            Residence residence = Residence.getInstance();
+            if (residence == null) {
+                return false;
+            }
+            if (residence.isResAdminOn(player)) {
+                return true;
+            }
+            return residence.getPermissionManager().isResidenceAdmin(player);
+        } catch (Throwable ignored) {
+            return false;
+        }
     }
 
     private record Verdict(String residence, boolean allowed, boolean admin) {

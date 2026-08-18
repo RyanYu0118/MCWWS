@@ -11,7 +11,7 @@ bossbar:
 # 打开后，凡是带「权限」二字的提示都会打到控制台，便于核对文案是否被识别
 debug: false
 # Residence 6.0.2.4 在 Paper 26.2 上判定出没权限、也发了提示，却不取消交互
-# 下面这组开关由本插件补上真正的拦截；领地管理员与 /resadmin 状态不受影响
+# 下面这组开关由本插件补上真正的拦截；/resadmin、residence.admin、以及 AdminOPs 开启时的服务器 OP 不受影响
 interact-guard:
   # 把每次交互的判定结果打到控制台
   debug: false
