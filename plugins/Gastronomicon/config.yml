@@ -20,7 +20,12 @@ drops:
 
   # 相应方块掉落美食家(Gastronomicon)种子的几率 (0-1)
   block-break-chances:
+    short-grass: 0.05
+
+    # 1.20.3及以上的服务器改这个修改草的掉率
     grass: 0.15
+
+    # 1.20.3以下的服务器改这个修改草的掉率
     tall-grass: 0.15
     fern: 0.15
     large-fern: 0.15
