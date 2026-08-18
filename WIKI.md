@@ -36,19 +36,19 @@
 ## 2. 给玩家看的特色总览
 
 
-| 特色       | 玩家实际感受到什么                                  |
-| -------- | ------------------------------------------ |
-| 动态市场     | 买贵卖便宜会随库存和近期买卖波动；游戏内商店和网页商店同一套价            |
-| 生存创世神    | `//set` 等指令按格扣材料费 + 劳务费；拆除按市场卖价折现          |
-| 生存 Axiom | 装客户端模组后，生存里也能开 Editor；扣费规则与创世神对齐           |
-| 搬运只收劳务   | 同一次编辑里「这里拆、那里放」的同种方块，不走市场                  |
-| 撤销退 95%  | `//undo` 按栈逐笔退；`//redo` 按原额再扣；Axiom 撤销配对退款，均扣 5% 手续费 |
-| 零钱明细     | 网页账本记录建造、商店、飞行等；毫秒时间戳                      |
-| 网页商城     | 购物车可手输数量，单次最多 10000；下单后进游戏背包系统领取           |
-| 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；打开搜索点放大镜，打字前还要点漏斗 |
-| 光源可拆可调   | 生存须手持 Light（主手或副手）才能敲掉并掉落；右键能调亮度                   |
-| 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游        |
-| 指南传送 | 固定地点与传送玩家同一套距离公式：同维 100 格内免费，5000 格外距离费封顶 ¥128，跨维度另加 ¥64。传送玩家点头颅后约 2 tick 弹出列表；弹出前不要再打开指南 |
+| 特色       | 玩家实际感受到什么                                                                                 |
+| -------- | ----------------------------------------------------------------------------------------- |
+| 动态市场     | 买贵卖便宜会随库存和近期买卖波动；游戏内商店和网页商店同一套价                                                           |
+| 生存创世神    | `//set` 等指令按格扣材料费 + 劳务费；拆除按市场卖价折现                                                         |
+| 生存 Axiom | 装客户端模组后，生存里也能开 Editor；扣费规则与创世神对齐                                                          |
+| 搬运只收劳务   | 同一次编辑里「这里拆、那里放」的同种方块，不走市场                                                                 |
+| 撤销退 95%  | `//undo` 按栈逐笔退；`//redo` 按原额再扣；Axiom 撤销配对退款，均扣 5% 手续费                                      |
+| 零钱明细     | 网页账本记录建造、商店、飞行等；毫秒时间戳                                                                     |
+| 网页商城     | 购物车可手输数量，单次最多 10000；下单后进游戏背包系统领取                                                          |
+| 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；打开搜索点放大镜，打字前还要点漏斗                                        |
+| 光源可拆可调   | 生存须手持 Light（主手或副手）才能敲掉并掉落；右键能调亮度                                                          |
+| 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游                                                       |
+| 指南传送     | 固定地点与传送玩家同一套距离公式：同维 100 格内免费，5000 格外距离费封顶 ¥128，跨维度另加 ¥64。传送玩家点头颅后约 2 tick 弹出列表；弹出前不要再打开指南 |
 
 
 距离费（与 `tp.yml` 相同）：
@@ -393,7 +393,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 网页商店也可以嵌在 Halo Wiki 里（全宽、隐藏目录），那是发布站配置，不是游戏内命令。
 
-**网页建造工具已下线：** 原先的投影粘贴与材料清单导入入口已撤除。请在游戏内用 **Axiom** 粘贴原理图，按生存建造规则计费。旧命令 `/build`、`/mcwwswebpaste`、`/mcwwspasteasplayer` 与网页 `/api/build/*` 已停用。
+**网页建造工具已下线：** 原先的投影粘贴与材料清单导入入口已撤除。请在游戏内用 **Axiom** 粘贴原理图，按生存建造规则计费。旧命令 `/build`、`/mcwwswebpaste`、`/mcwwspasteasplayer` 与网页 `/api/build/`* 已停用。
 
 ---
 
@@ -444,7 +444,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - 服务器地主账号为 **MCWWS**（用于公共领地归属，不是让玩家把家过户给管理员私人号）
 - 权限不足提示由 `MCWWS_ResidenceQuiet` 接管，显示在屏幕顶端的 **Boss 栏**，不走经验条上方的动作栏（动作栏同时只能一行，「没有破坏权限」和「没有放置权限」会互相覆盖）。**每条文案各占一条 Boss 栏**，血量从满到空约 **2 秒**倒计时，归零后该条自动消失，两条可以并列出现。
 - 拒绝提示**每次触发都会重新计一轮倒计时**；但同一条文案的倒计时还没走完时，不会叠出第二条，也不会把血量重新加满，所以连续挖/放不会刷屏。创世神 / Axiom 自己的「整条编辑已取消」提示不受此限制。
-- Residence 6.0.2.4 在 Paper 26.2 上会出现「发了没权限提示却不取消交互」的问题（箱子、门、活板门、栅栏门等）。本服由 `MCWWS_ResidenceQuiet` 补上拦截：无权限时真正打不开容器、门也不会被扳动；按钮、拉杆、床、工作方块等「使用」类交互同样按旗标拦下。该兜底**只管使用类交互**，放置与破坏仍由 Residence 自己判定，因此「没有放置权限」「没有破坏权限」提示照常出现。潜行 + 手持物品右键视为放置尝试，不受兜底影响。与 Residence 对齐：拥有 `residence.admin` 或服务器 OP（本服 `AdminOPs: true`）时覆盖旗标。指南里开关「管理员身份」（`/op` / `/deop`）会立刻同步 `/resadmin`，关掉 OP 后马上按普通玩家检查，不会残留覆盖。
+- Residence 6.0.2.4 在 Paper 26.2 上会出现「发了没权限提示却不取消交互」的问题（箱子、门、活板门、栅栏门、甜浆果/发光浆果采收等）。本服由 `MCWWS_ResidenceQuiet` 补上拦截：无权限时真正打不开容器、门也不会被扳动；按钮、拉杆、床、工作方块等「使用」类交互同样按旗标拦下；没有 `harvest` 时也不能右键采甜浆果或洞穴藤蔓上的发光浆果。该兜底**只管使用类交互**，放置与破坏仍由 Residence 自己判定，因此「没有放置权限」「没有破坏权限」提示照常出现。潜行 + 手持物品右键视为放置尝试，不受兜底影响。与 Residence 对齐：拥有 `residence.admin` 或服务器 OP（本服 `AdminOPs: true`）时覆盖旗标。指南里开关「管理员身份」（`/op` / `/deop`）会立刻同步 `/resadmin`，关掉 OP 后马上按普通玩家检查，不会残留覆盖。
 - WorldEdit / FAWE 与 Axiom 的批量编辑同样逐格遵守领地权限：目标变成空气的**纯拆除**只检查该位置的「破坏」权限；放置、替换、搬运、粘贴等任何目标不是空气的改动，都要求玩家在该位置**同时拥有「放置」和「破坏」权限**。没有权限时整条指令 / 整包编辑取消且不计费；`//move` 会同时检查源格与目标格，提示里的格数按「实际会发生变化」的格子计（不会把搬运后本来就不变的重叠格算进去）。选区跨越多个领地时分别按每一格所在领地判断。扣费 bypass 不能绕过这套领地检查；真正的管理员放行仍走 Residence 自己的 ResAdmin / `residence.admin`。FAWE 本身会忽略 `CommandEvent` 的取消，本服靠写块闸门与取消 `EditSessionEvent` 真正拦住无权限编辑。
 
 具体旗标表以游戏内 `/res` 说明和语言文件为准；Wiki 可另开「领地旗标对照」页从 `plugins/Residence/Language/Chinese_MCWWSS.yml` 抄表。
@@ -488,23 +488,23 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 ## 14. 权限速查（写进管理员附录）
 
 
-| 节点                            | 默认               | 含义                                           |
-| ----------------------------- | ---------------- | -------------------------------------------- |
-| `mcwws.axiom.survival.use`    | true             | 允许生存 Axiom 付费建造                              |
-| `mcwws.axiom.survival.entity` | **false**（OP 也无） | 显示实体拖动小方块                                    |
-| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与 Slimefun 保护扫描；**不能**绕过领地权限 |
-| `mcwws.axiom.survival.admin`  | op               | 重载 Axiom 生存配置                                |
-| `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与 Slimefun 保护扫描；**不能**绕过领地权限 |
-| `mcwws.we.survival.admin`     | op               | 重载创世神生存配置                                    |
-| WorldEdit 选区/已扣费指令         | default 组脚本授予    | 见 `worldedit_perms.sk`；不含笔刷/`//fill`/`//repl` |
-| `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                     |
-| `mcwws.web.admin`             | op               | 网页服务重载/状态                                    |
-| `mcwws.residence.quiet.admin` | op               | 重载领地拒绝提示（Boss 栏）节流配置                      |
-| `ultimatetimber.chop`         | 配置中无需权限       | 一键砍树；`require-chop-permission: false`，所有玩家默认可用 |
-| `ultimatetimber.bonusloot`    | false            | 额外掉落倍率（配置 `bonus-loot-multiplier`）             |
-| `ultimatetimber.animation.*`  | 可选覆盖           | 覆盖个人倒树动画类型（`fancy` / `disintegrate` / `crumble` / `none`） |
-| `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                         |
-| `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity` |
+| 节点                            | 默认               | 含义                                                        |
+| ----------------------------- | ---------------- | --------------------------------------------------------- |
+| `mcwws.axiom.survival.use`    | true             | 允许生存 Axiom 付费建造                                           |
+| `mcwws.axiom.survival.entity` | **false**（OP 也无） | 显示实体拖动小方块                                                 |
+| `mcwws.axiom.survival.bypass` | **false**（OP 也无） | 跳过 Axiom 扣费与 Slimefun 保护扫描；**不能**绕过领地权限                   |
+| `mcwws.axiom.survival.admin`  | op               | 重载 Axiom 生存配置                                             |
+| `mcwws.we.survival.bypass`    | **false**（OP 也无） | 跳过创世神扣费与 Slimefun 保护扫描；**不能**绕过领地权限                       |
+| `mcwws.we.survival.admin`     | op               | 重载创世神生存配置                                                 |
+| WorldEdit 选区/已扣费指令            | default 组脚本授予    | 见 `worldedit_perms.sk`；不含笔刷/`//fill`/`//repl`             |
+| `mcwws.ledger.admin`          | op               | 重载零钱明细插件                                                  |
+| `mcwws.web.admin`             | op               | 网页服务重载/状态                                                 |
+| `mcwws.residence.quiet.admin` | op               | 重载领地拒绝提示（Boss 栏）节流配置                                      |
+| `ultimatetimber.chop`         | 配置中无需权限          | 一键砍树；`require-chop-permission: false`，所有玩家默认可用            |
+| `ultimatetimber.bonusloot`    | false            | 额外掉落倍率（配置 `bonus-loot-multiplier`）                        |
+| `ultimatetimber.animation.*`  | 可选覆盖             | 覆盖个人倒树动画类型（`fancy` / `disintegrate` / `crumble` / `none`） |
+| `axiom.*`                     | default 组脚本授予    | 建造能力；创造/旁观节点会被 unset                                      |
+| `axiom.entity.manipulate`     | 随 `axiom.*`      | 有能力不等于显示小方块，还要 `mcwws.axiom.survival.entity`              |
 
 
 经济管理（Skript，建议不要写进玩家页）。指南「服务器管理」左键也可执行 `/eco-reload`、`/eco-market-reload` 以及网页/商店等热重载，不必再按住 Shift：
@@ -566,25 +566,25 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 ## 16. 和代码的对应关系（给以后改 Wiki 的人）
 
 
-| 主题               | 主要位置                                                                                                 |
-| ---------------- | ---------------------------------------------------------------------------------------------------- |
-| 动态价格             | `plugins/Skript/scripts/mcwws/economy/economy.sk`、`z_economy_dynamic.sk`、`market_dynamic_config.yml` |
-| 导出给网页/建造的价       | `plugins/Skript/scripts/web/mcwws/economy/web_prices.yml`                                            |
-| 创世神扣费            | `tools/mcwws-worldedit-survival/`                                                                    |
-| Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                        |
-| Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                 |
-| 商店搜索崩溃补丁         | `tools/mcwws-ultimateshop-fix/`                                                                      |
-| 商店创造栏分类           | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`       |
-| 商店平底格子（史莱姆材质） | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003） |
-| 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
-| 网页进程             | `tools/mcwws-web-host/`                                                                              |
-| 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
+| 主题               | 主要位置                                                                                                                              |
+| ---------------- | --------------------------------------------------------------------------------------------------------------------------------- |
+| 动态价格             | `plugins/Skript/scripts/mcwws/economy/economy.sk`、`z_economy_dynamic.sk`、`market_dynamic_config.yml`                              |
+| 导出给网页/建造的价       | `plugins/Skript/scripts/web/mcwws/economy/web_prices.yml`                                                                         |
+| 创世神扣费            | `tools/mcwws-worldedit-survival/`                                                                                                 |
+| Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                                                     |
+| Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                                              |
+| 商店搜索崩溃补丁         | `tools/mcwws-ultimateshop-fix/`                                                                                                   |
+| 商店创造栏分类          | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`                                    |
+| 商店平底格子（史莱姆材质）    | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003）       |
+| 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                                                     |
+| 网页进程             | `tools/mcwws-web-host/`                                                                                                           |
+| 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                                                       |
 | 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、`plugins/Skript/scripts/mcwws/utility/guide_tp_player.sk`、CommandPrompterPaper 3.2 |
-| 服务器管理菜单         | `plugins/DeluxeMenus/gui_menus/guide/server.yml`（左键重载，无需 Shift） |
-| 便携式工作台禁放置     | `plugins/Skript/scripts/mcwws/utility/portable_crafter_place.sk` |
-| 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
-| 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |
-| GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |
+| 服务器管理菜单          | `plugins/DeluxeMenus/gui_menus/guide/server.yml`（左键重载，无需 Shift）                                                                   |
+| 便携式工作台禁放置        | `plugins/Skript/scripts/mcwws/utility/portable_crafter_place.sk`                                                                  |
+| 领地拒绝提示与交互兜底      | `tools/mcwws-residence-quiet/`                                                                                                    |
+| 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                                               |
+| GIS              | `bluemap/web/js/mcwws-gis.js`                                                                                                     |
 
 
 改了扣费数字、权限默认值或搜索交互，先改这里再同步 Halo。

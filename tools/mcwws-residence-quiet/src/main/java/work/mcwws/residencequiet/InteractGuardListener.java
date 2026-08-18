@@ -16,6 +16,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.inventory.InventoryOpenEvent;
+import org.bukkit.event.player.PlayerHarvestBlockEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 
@@ -71,13 +72,46 @@ final class InteractGuardListener implements Listener {
                     + " denySeen=" + denySeen
                     + " cancelled=" + event.isCancelled());
         }
-        if (event.isCancelled() || placing) {
+        if (event.isCancelled()) {
+            return;
+        }
+        // 潜行放置不要拦；采浆果即使潜行也要按 harvest 检查
+        if (placing && flag != Flags.harvest) {
             return;
         }
         boolean block1 = plugin.guardEnforce() && !verdict.allowed && !verdict.admin;
         boolean block2 = plugin.guardFollowDenyMessage() && denySeen;
         if (block1 || block2) {
             event.setUseInteractedBlock(Event.Result.DENY);
+            event.setCancelled(true);
+        }
+    }
+
+    @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
+    public void onHarvest(PlayerHarvestBlockEvent event) {
+        if (!plugin.guardEnforce()) {
+            return;
+        }
+        Player player = event.getPlayer();
+        if (isResidenceBypass(player)) {
+            return;
+        }
+        Block block = event.getHarvestedBlock();
+        if (block == null) {
+            return;
+        }
+        Verdict verdict = evaluate(player, block.getLocation(), Flags.harvest);
+        if (verdict == null) {
+            return;
+        }
+        if (plugin.guardDebug()) {
+            plugin.getLogger().info("[guard-debug] harvest " + player.getName()
+                    + " block=" + block.getType()
+                    + " res=" + verdict.residence
+                    + " allowed=" + verdict.allowed
+                    + " resAdmin=" + verdict.admin);
+        }
+        if (!verdict.allowed && !verdict.admin) {
             event.setCancelled(true);
         }
     }
@@ -135,6 +169,9 @@ final class InteractGuardListener implements Listener {
         String name = type.name();
         if (Tag.DOORS.isTagged(type) || Tag.TRAPDOORS.isTagged(type) || Tag.FENCE_GATES.isTagged(type)) {
             return Flags.door;
+        }
+        if (type == Material.SWEET_BERRY_BUSH || type == Material.CAVE_VINES || type == Material.CAVE_VINES_PLANT) {
+            return Flags.harvest;
         }
         if (name.endsWith("_BUTTON")) {
             return Flags.button;

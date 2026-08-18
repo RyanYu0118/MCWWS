@@ -416,25 +416,38 @@ Flags:
   17:
     container: false
     ignite: false
+    door: true
+    use: false
+    decay: false
+    animalkilling: false
+    phantomspawn: false
+    smithing: true
+    hook: false
+    explode: false
+    stonecutter: true
+    copper: false
+    vehicledestroy: false
+    place: false
+    nmonsters: true
+    wspeed2: true
+    table: true
+    harvest: false
+    grow: false
     shear: false
     firespread: false
-    use: false
     destroy: false
     monsters: false
     pvp: false
-    animalkilling: false
-    hook: false
+    pressure: true
+    copperoxidation: false
+    nomobs: true
     build: false
-    explode: false
-    vehicledestroy: false
+    enchant: true
     tnt: false
-    place: false
     leash: false
     pistonprotection: true
     tp: true
-    nmonsters: true
     creeper: false
-    wspeed2: true
   18:
     container: true
     ignite: false
