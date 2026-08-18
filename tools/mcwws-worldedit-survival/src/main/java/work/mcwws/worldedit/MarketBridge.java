@@ -10,8 +10,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 /**
@@ -20,35 +18,35 @@ import java.util.logging.Level;
  */
 final class MarketBridge {
 
-    private static final Map<UUID, List<String>> lastBatchByPlayer = new ConcurrentHashMap<>();
-
     private MarketBridge() {
     }
 
-    static void enqueue(Player player, FeeEstimate.Result estimate) {
-        if (player == null || estimate == null || estimate.affectedBlocks() <= 0L) {
-            return;
+    static List<String> linesOf(FeeEstimate.Result estimate) {
+        if (estimate == null || estimate.affectedBlocks() <= 0L) {
+            return List.of();
         }
         McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
         if (plugin == null || !plugin.getPluginConfig().getBoolean("record-market-stock", true)) {
-            return;
+            return List.of();
         }
         List<String> lines = new ArrayList<>();
-        // 用净量：被判定为搬运的方块没有真正进出市场，不该在库存与压力上留痕
         collectLines(lines, estimate.netRemovedCounts(), "sell");
         collectLines(lines, estimate.netPlacedCounts(), "buy");
-        if (lines.isEmpty()) {
+        return List.copyOf(lines);
+    }
+
+    static void write(List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
             return;
         }
-        lastBatchByPlayer.put(player.getUniqueId(), List.copyOf(lines));
+        McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
+        if (plugin == null) {
+            return;
+        }
         appendLines(plugin, lines);
     }
 
-    /** //undo 时冲销上一笔创世神操作对应的市场变动；若存在记录则返回 true */
-    static boolean reverseLastBatch(Player player) {
-        if (player == null) {
-            return false;
-        }
+    static boolean writeReversed(List<String> lines) {
         McwwsWeSurvivalPlugin plugin = McwwsWeSurvivalPlugin.getInstance();
         if (plugin == null || !plugin.getPluginConfig().getBoolean("record-market-stock", true)) {
             return false;
@@ -56,9 +54,17 @@ final class MarketBridge {
         if (!plugin.getPluginConfig().getBoolean("reverse-market-on-undo", true)) {
             return false;
         }
-        List<String> lines = lastBatchByPlayer.remove(player.getUniqueId());
-        if (lines == null || lines.isEmpty()) {
+        List<String> reversed = reverseLines(lines);
+        if (reversed.isEmpty()) {
             return false;
+        }
+        appendLines(plugin, reversed);
+        return true;
+    }
+
+    private static List<String> reverseLines(List<String> lines) {
+        if (lines == null || lines.isEmpty()) {
+            return List.of();
         }
         List<String> reversed = new ArrayList<>(lines.size());
         for (String line : lines) {
@@ -70,11 +76,7 @@ final class MarketBridge {
             String opposite = "buy".equals(side) ? "sell" : "buy";
             reversed.add(parts[0] + "|" + parts[1] + "|" + opposite);
         }
-        if (!reversed.isEmpty()) {
-            appendLines(plugin, reversed);
-            return true;
-        }
-        return false;
+        return reversed;
     }
 
     private static void collectLines(List<String> lines, Map<String, Long> counts, String side) {

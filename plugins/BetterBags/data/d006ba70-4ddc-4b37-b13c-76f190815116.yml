@@ -46,5 +46,45 @@ items:
   components:
     minecraft:damage: '79'
   schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pumpkin_seeds
+  count: 2
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"孜然籽",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203080.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_CUMIN_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:beetroot_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"燕麦",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203036.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_OATS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom
+  count: 3
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_KING_OYSTER_MUSHROOM"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom
+  count: 3
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203095.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_ENOKI_MUSHROOMS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom
+  count: 7
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203097.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_BUTTON_MUSHROOM"}}'
+  schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

@@ -31,6 +31,7 @@ debug: true
 undo-refund:
   enabled: true
   fee-rate: 0.05
+  history-size: 128
 charge-commands:
   - set
   - replace
@@ -82,10 +83,14 @@ messages:
   need-cuboid: "//line 只能用于立方体选区。"
   need-convex: "//curve 只能用于凸多边形选区。"
   undo-refunded: "已退还建造费用 §e{gross}§f，手续费 §c{fee}§f（§7{percent}%§f），实际到账 §a{net}§f；市场库存已同步还原。"
-  undo-market-only: "已还原上一笔建造的市场库存变动。"
+  undo-market-only: "已还原该笔建造的市场库存变动。"
   undo-clawback: "已收回拆除回收款 §c{net}§f（原收 §7{gross}§f，手续费 §c{fee}§f）；市场库存已同步还原。"
-  undo-clawback-failed: "§c余额不足，未能收回上一笔拆除回收款，请联系管理员。"
-  undo-refund-failed: "撤销退款失败，请联系管理员。"
+  undo-clawback-failed: "§c余额不足，未能收回拆除回收款，本次撤销已取消。"
+  undo-refund-failed: "撤销退款失败，本次撤销已取消。"
+  redo-charged: "已重做并扣除建造费用 §e{total}§f；市场库存已重新写入。"
+  redo-salvaged: "已重做并重新发放拆除回收款 §a+{total}§f；市场库存已重新写入。"
+  redo-insufficient: "§c余额不足，无法重做上一笔建造，本次重做已取消。"
+  redo-failed: "重做入账失败，本次重做已取消。"
   unsupported-command: "该创世神指令暂未纳入生存扣费，已取消。"
   protected-present: "选区内含受保护方块（Slimefun/不可破坏），这些方块将被保留且不计费。"
   residence-denied: "有 {count} 格缺少领地权限（含搬运的源格与目标格）：纯拆除需要「破坏」，其他改动需要同时拥有「放置」和「破坏」；本次编辑已取消。"

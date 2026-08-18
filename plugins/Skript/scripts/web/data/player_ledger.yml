@@ -1,4 +1,4 @@
-next_id: 2164
+next_id: 2174
 entries:
   '1':
     id: 1
@@ -22030,11 +22030,11 @@ entries:
     playerId: Ryan_yu__
     direction: debit
     category: flight
-    amount: 1040
+    amount: 20160
     description: 飞行消耗
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/18 15:50
     createdAt: '2026-08-18T07:50:40.068448900Z'
-    updatedAt: '2026-08-18T07:54:59.059377500Z'
+    updatedAt: '2026-08-18T09:14:48.484467600Z'
   '2099':
     id: 2099
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -22685,3 +22685,112 @@ entries:
     description: 购买 diorite_slab x16
     refId: us-34d58d30-2e0e-4d56-b445-bc43767ab6c2
     createdAt: '2026-08-17T14:25:25.000Z'
+  '2164':
+    id: 2164
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/18 18:04
+    createdAt: '2026-08-18T10:04:38.688570Z'
+    updatedAt: '2026-08-18T10:04:38.695313Z'
+  '2165':
+    id: 2165
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 92
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/18 19:57
+    createdAt: '2026-08-18T11:57:42.973075Z'
+    updatedAt: '2026-08-18T11:58:04.963048400Z'
+  '2166':
+    id: 2166
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 4.12
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400018-781449121300
+    createdAt: '2026-08-18T12:00:00.020224700Z'
+    balanceAfter: 165342420.71
+  '2167':
+    id: 2167
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 13.86
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400429-781859143600
+    createdAt: '2026-08-18T12:00:00.429311600Z'
+    balanceAfter: 165342434.57
+  '2168':
+    id: 2168
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 1.98
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400557-781986695700
+    createdAt: '2026-08-18T12:00:00.557385100Z'
+    balanceAfter: 165342436.55
+  '2169':
+    id: 2169
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 9.9
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400683-782112918400
+    createdAt: '2026-08-18T12:00:00.683714200Z'
+    balanceAfter: 165342446.45
+  '2170':
+    id: 2170
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 22.77
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400781-782211074500
+    createdAt: '2026-08-18T12:00:00.782018600Z'
+    balanceAfter: 165342469.22
+  '2171':
+    id: 2171
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: other
+    amount: 47.53
+    description: 经济 API 扣款（收入）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787054400892-782321861800
+    createdAt: '2026-08-18T12:00:00.892454700Z'
+    balanceAfter: 165342516.75
+  '2172':
+    id: 2172
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 4
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/18 20:00
+    createdAt: '2026-08-18T12:00:20.973267300Z'
+  '2173':
+    id: 2173
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 228
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/18 20:02
+    createdAt: '2026-08-18T12:02:53.968236500Z'
+    updatedAt: '2026-08-18T12:03:52.976004500Z'

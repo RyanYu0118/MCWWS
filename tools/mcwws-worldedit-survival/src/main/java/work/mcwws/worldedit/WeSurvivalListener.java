@@ -18,6 +18,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
+import java.util.List;
 import java.util.UUID;
 
 public final class WeSurvivalListener {
@@ -65,14 +66,21 @@ public final class WeSurvivalListener {
         String command = FeeEstimate.rootCommand(raw);
         String root = command;
         if ("undo".equals(root) || "u".equals(root)) {
-            WeEditAuthorization.allow(player);
-            if (!bypass) {
-                UndoRefundService.handleUndo(player);
+            if (!bypass && !UndoRefundService.handleUndo(player, parseHistoryTimes(raw))) {
+                event.setCancelled(true);
+                WeEditAuthorization.deny(player);
+                return;
             }
+            WeEditAuthorization.allow(player);
             return;
         }
         // //re 是 replace 别名；redo 只认 redo
         if ("redo".equals(root)) {
+            if (!bypass && !UndoRefundService.handleRedo(player, parseHistoryTimes(raw))) {
+                event.setCancelled(true);
+                WeEditAuthorization.deny(player);
+                return;
+            }
             WeEditAuthorization.allow(player);
             return;
         }
@@ -180,10 +188,6 @@ public final class WeSurvivalListener {
             return;
         }
 
-        if (estimate.affectedBlocks() > 0L) {
-            MarketBridge.enqueue(player, estimate);
-        }
-
         if (charge > 0D && !LedgerBridge.withdraw(player, charge, command)) {
             actor.printError(plugin.msg("prefix") + "扣款失败，请联系管理员。");
             event.setCancelled(true);
@@ -198,10 +202,14 @@ public final class WeSurvivalListener {
             return;
         }
 
-        // 记带符号净额：撤销时正数退款、负数把回收款收回
-        if (charge > 0D || payout > 0D) {
-            WeChargeMemory.record(player, charge > 0D ? charge : -payout, command);
+        List<String> marketLines = MarketBridge.linesOf(estimate);
+        if (!marketLines.isEmpty()) {
+            MarketBridge.write(marketLines);
         }
+
+        // 记带符号净额：撤销时正数退款、负数把回收款收回；与 FAWE 历史栈对齐
+        double signed = charge > 0D ? charge : (payout > 0D ? -payout : 0D);
+        WeChargeMemory.record(player, signed, command, marketLines);
 
         WeEditAuthorization.allow(player);
         if (estimate.affectedBlocks() > 0L) {
@@ -234,6 +242,30 @@ public final class WeSurvivalListener {
                     "moved", String.valueOf(estimate.movedBlocks())
             ));
         }
+    }
+
+    /** //undo [次数] / //redo [次数]；跳过 -o 之类开关，第一个数字即次数。 */
+    private static int parseHistoryTimes(String raw) {
+        String[] args = FeeEstimate.splitArgs(raw);
+        int times = 1;
+        for (String arg : args) {
+            if (arg == null || arg.isBlank() || arg.startsWith("-")) {
+                continue;
+            }
+            try {
+                times = Integer.parseInt(arg);
+                break;
+            } catch (NumberFormatException ignored) {
+            }
+        }
+        int max = WeChargeMemory.maxSize();
+        if (times < 1) {
+            times = 1;
+        }
+        if (times > max) {
+            times = max;
+        }
+        return times;
     }
 
     private static boolean requiresBlockChanges(String command, WeArgTokens tokens) {
