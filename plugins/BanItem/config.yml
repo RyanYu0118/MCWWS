@@ -236,12 +236,6 @@ blacklist:
     unplacable:
       place:
         message: '§c啊哦，你不能放置它捏......'
-    portable_crafter:
-      place:
-        message: '§c便携式工作台不能放下，请手持右键打开合成界面。'
-    portable_crafter_table:
-      place:
-        message: '§c便携式工作台不能放下，请手持右键打开合成界面。'
 # items:
 #  'diamond_helmet,iron_helmet':
 #    amount: 1
