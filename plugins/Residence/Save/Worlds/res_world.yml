@@ -543,11 +543,14 @@ Flags:
     firespread: false
     use: false
     destroy: true
+    decay: true
     pvp: false
+    pressure: true
     animalkilling: false
     hook: false
     build: true
     explode: false
+    stonecutter: true
     vehicledestroy: false
     place: true
     tnt: false
@@ -556,6 +559,7 @@ Flags:
     tp: true
     creeper: false
     wspeed2: true
+    table: true
   24:
     container: false
     ignite: false

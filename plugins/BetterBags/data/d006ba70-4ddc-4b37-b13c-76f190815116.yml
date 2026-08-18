@@ -44,7 +44,7 @@ items:
   id: minecraft:copper_helmet
   count: 1
   components:
-    minecraft:damage: '79'
+    minecraft:damage: '61'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:pumpkin_seeds
@@ -85,6 +85,12 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_BUTTON_MUSHROOM"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:chainmail_helmet
+  count: 1
+  components:
+    minecraft:damage: '30'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
