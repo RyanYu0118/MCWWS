@@ -3325,7 +3325,11 @@ function localIpv4Addresses() {
 
 function logServerStart(protocol) {
     analytics.reload();
-    playerLedger.processQueue();
+    try {
+        playerLedger.processQueue();
+    } catch (error) {
+        console.error('[player-ledger] 启动时处理队列失败:', error.message || error);
+    }
     purgeBlueMapShopMarkers();
     const mappingCount = syncUltimateShopMappingsFile();
     if (mappingCount > 0) {

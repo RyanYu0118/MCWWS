@@ -19,6 +19,59 @@ const MAX_PER_PLAYER_LIST = 200;
 const FLIGHT_MERGE_WINDOW_MS = 30000;
 /** 列表展示：相邻飞行记录间隔不超过此时长则合成一行（含旧的每秒一条） */
 const FLIGHT_DISPLAY_GAP_MS = 60000;
+const WRITE_ATTEMPTS = 8;
+
+function isRetryableFsError(error) {
+    const code = String(error && error.code ? error.code : '');
+    return code === 'UNKNOWN' || code === 'EPERM' || code === 'EBUSY'
+        || code === 'EACCES' || code === 'EAGAIN' || code === 'EIO';
+}
+
+function waitMs(ms) {
+    const until = Date.now() + Math.max(ms, 1);
+    while (Date.now() < until) {
+        // Windows 上账本文件偶发被杀毒/索引占用，短自旋后重试
+    }
+}
+
+/** 先写临时文件再替换，避免 Windows 上对正打开的 yml 做 writeFileSync 得到 UNKNOWN / -4094 */
+function writeFileAtomicSync(filePath, content) {
+    const dir = path.dirname(filePath);
+    if (!fs.existsSync(dir)) {
+        fs.mkdirSync(dir, { recursive: true });
+    }
+    const tempPath = path.join(dir, `${path.basename(filePath)}.${process.pid}.tmp`);
+    let lastError = null;
+    for (let attempt = 1; attempt <= WRITE_ATTEMPTS; attempt += 1) {
+        try {
+            fs.writeFileSync(tempPath, content, 'utf8');
+            try {
+                fs.renameSync(tempPath, filePath);
+            } catch (renameError) {
+                fs.copyFileSync(tempPath, filePath);
+                try {
+                    fs.unlinkSync(tempPath);
+                } catch (_) {
+                    // 替换成功后清临时文件失败可忽略
+                }
+            }
+            return;
+        } catch (error) {
+            lastError = error;
+            try {
+                fs.unlinkSync(tempPath);
+            } catch (_) {
+                // 重试前尽量去掉残留临时文件
+            }
+            if (!isRetryableFsError(error) || attempt === WRITE_ATTEMPTS) {
+                throw error;
+            }
+            console.warn(`[player-ledger] 写入占用中，${25 * attempt}ms 后重试 (${attempt}/${WRITE_ATTEMPTS}): ${error.message}`);
+            waitMs(25 * attempt);
+        }
+    }
+    throw lastError;
+}
 
 function normalizeUuid(uuid) {
     return String(uuid || '').trim().toLowerCase();
@@ -65,7 +118,7 @@ function createPlayerLedgerService(opts) {
             fs.mkdirSync(dir, { recursive: true });
         }
         if (!fs.existsSync(ledgerPath)) {
-            fs.writeFileSync(ledgerPath, 'next_id: 1\nentries: {}\n', 'utf8');
+            writeFileAtomicSync(ledgerPath, 'next_id: 1\nentries: {}\n');
         }
     }
 
@@ -88,7 +141,7 @@ function createPlayerLedgerService(opts) {
 
     function saveStore(store) {
         ensureLedgerFile();
-        fs.writeFileSync(ledgerPath, yaml.dump(store, { lineWidth: 120, noRefs: true }), 'utf8');
+        writeFileAtomicSync(ledgerPath, yaml.dump(store, { lineWidth: 120, noRefs: true }));
     }
 
     function flightAnchorMs(row) {
@@ -155,7 +208,12 @@ function createPlayerLedgerService(opts) {
             const mergeTarget = findMergeableFlightEntry(store, uuid, createdMs);
             if (mergeTarget) {
                 mergeFlightEntry(mergeTarget, amount, entry, createdAt);
-                saveStore(store);
+                try {
+                    saveStore(store);
+                } catch (error) {
+                    console.error('[player-ledger] 写入失败:', error.message);
+                    return null;
+                }
                 return mergeTarget;
             }
         }
@@ -190,7 +248,12 @@ function createPlayerLedgerService(opts) {
                 .slice(0, keys.length - MAX_ENTRIES)
                 .forEach(({ k }) => delete store.entries[k]);
         }
-        saveStore(store);
+        try {
+            saveStore(store);
+        } catch (error) {
+            console.error('[player-ledger] 写入失败:', error.message);
+            return null;
+        }
         return row;
     }
 
@@ -231,17 +294,22 @@ function createPlayerLedgerService(opts) {
                 refId,
                 createdAt
             ] = parts;
-            const appended = appendEntry({
-                uuid,
-                playerId,
-                direction,
-                category,
-                amount: amountRaw,
-                balanceAfter: balanceAfterRaw ? Number(balanceAfterRaw) : null,
-                description,
-                refId,
-                createdAt: createdAt || undefined
-            });
+            let appended = null;
+            try {
+                appended = appendEntry({
+                    uuid,
+                    playerId,
+                    direction,
+                    category,
+                    amount: amountRaw,
+                    balanceAfter: balanceAfterRaw ? Number(balanceAfterRaw) : null,
+                    description,
+                    refId,
+                    createdAt: createdAt || undefined
+                });
+            } catch (error) {
+                console.error('[player-ledger] 写入队列条目失败:', error.message);
+            }
             if (appended) {
                 count += 1;
             }
