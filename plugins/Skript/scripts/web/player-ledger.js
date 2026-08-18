@@ -15,7 +15,10 @@ const CATEGORY_LABELS = {
 
 const MAX_ENTRIES = 5000;
 const MAX_PER_PLAYER_LIST = 200;
-const FLIGHT_MERGE_WINDOW_MS = 2000;
+/** 写入时：距上一次飞行更新不超过此时长则累加到同一行 */
+const FLIGHT_MERGE_WINDOW_MS = 30000;
+/** 列表展示：相邻飞行记录间隔不超过此时长则合成一行（含旧的每秒一条） */
+const FLIGHT_DISPLAY_GAP_MS = 60000;
 
 function normalizeUuid(uuid) {
     return String(uuid || '').trim().toLowerCase();
@@ -386,6 +389,12 @@ function createPlayerLedgerService(opts) {
         const absFormatted = formatBalance(Math.abs(signedAmount));
         const amountFormatted = absFormatted != null ? absFormatted : String(Math.abs(signedAmount));
         const signedAmountFormatted = `${signedAmount >= 0 ? '+' : '-'}${amountFormatted}`;
+        const ticks = Number(row.flightTicks) || 0;
+        let description = row.description || '';
+        if (row.category === 'flight' && ticks > 1) {
+            const base = description || CATEGORY_LABELS.flight;
+            description = `${base} ×${ticks}`;
+        }
         return {
             id: row.id,
             direction,
@@ -399,11 +408,49 @@ function createPlayerLedgerService(opts) {
             balanceAfterFormatted: row.balanceAfter != null && Number.isFinite(Number(row.balanceAfter))
                 ? formatBalance(row.balanceAfter)
                 : null,
-            description: row.description || '',
+            description,
             refId: row.refId || '',
             createdAt: row.updatedAt || row.createdAt,
-            isFlight: row.category === 'flight'
+            isFlight: row.category === 'flight',
+            flightTicks: ticks > 0 ? ticks : undefined
         };
+    }
+
+    function rowTimeMs(row, field) {
+        return Date.parse(row?.[field] || row?.updatedAt || row?.createdAt || '') || 0;
+    }
+
+    function collapseFlightSessions(rows) {
+        const sorted = rows
+            .map((row) => ({ ...row }))
+            .sort((a, b) => rowTimeMs(a, 'createdAt') - rowTimeMs(b, 'createdAt'));
+        const out = [];
+        sorted.forEach((row) => {
+            const last = out[out.length - 1];
+            const isFlightDebit = row.category === 'flight' && row.direction === 'debit';
+            if (
+                isFlightDebit
+                && last
+                && last.category === 'flight'
+                && last.direction === 'debit'
+            ) {
+                const gap = rowTimeMs(row, 'createdAt') - rowTimeMs(last, 'updatedAt');
+                if (gap >= 0 && gap <= FLIGHT_DISPLAY_GAP_MS) {
+                    last.amount = roundMoney(Number(last.amount) + Number(row.amount));
+                    last.updatedAt = row.updatedAt || row.createdAt || last.updatedAt;
+                    if (row.balanceAfter != null && Number.isFinite(Number(row.balanceAfter))) {
+                        last.balanceAfter = roundMoney(row.balanceAfter);
+                    }
+                    last.flightTicks = (Number(last.flightTicks) || 1) + (Number(row.flightTicks) || 1);
+                    return;
+                }
+            }
+            if (isFlightDebit) {
+                row.flightTicks = Number(row.flightTicks) || 1;
+            }
+            out.push(row);
+        });
+        return out;
     }
 
     function listForUuid(uuid, options = {}) {
@@ -423,10 +470,11 @@ function createPlayerLedgerService(opts) {
 
         if (filter === 'flight') {
             rows = rows.filter((row) => row.category === 'flight');
-        } else if (filter === 'exclude_flight') {
+        } else         if (filter === 'exclude_flight') {
             rows = rows.filter((row) => row.category !== 'flight');
         }
 
+        rows = collapseFlightSessions(rows);
         rows.sort((a, b) => {
             const ta = Date.parse(a.updatedAt || a.createdAt || '') || 0;
             const tb = Date.parse(b.updatedAt || b.createdAt || '') || 0;
