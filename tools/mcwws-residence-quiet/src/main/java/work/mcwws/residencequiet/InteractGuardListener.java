@@ -2,6 +2,7 @@ package work.mcwws.residencequiet;
 
 import com.bekvon.bukkit.residence.Residence;
 import com.bekvon.bukkit.residence.containers.Flags;
+import com.bekvon.bukkit.residence.containers.ResAdmin;
 import com.bekvon.bukkit.residence.protection.ClaimedResidence;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -189,10 +190,15 @@ final class InteractGuardListener implements Listener {
     }
 
     /**
-     * 与 Residence 对齐：{@code /resadmin} 开关、{@code residence.admin}、
-     * 以及 {@code AdminOPs: true} 时的服务器 OP，都应覆盖领地旗标。
+     * 以 Residence 当前的管理员身份为准（OP + AdminOPs，或 residence.admin）。
+     * 进服时 OP 会把 /resadmin 拨开，但关掉 OP 后这个开关不会自己关上，这里立刻同步。
      */
     static boolean isResidenceBypass(Player player) {
+        return syncResAdminToggle(player);
+    }
+
+    /** @return 现在是否应按管理员覆盖领地旗标 */
+    static boolean syncResAdminToggle(Player player) {
         if (player == null) {
             return false;
         }
@@ -201,10 +207,14 @@ final class InteractGuardListener implements Listener {
             if (residence == null) {
                 return false;
             }
-            if (residence.isResAdminOn(player)) {
-                return true;
+            boolean admin = residence.getPermissionManager().isResidenceAdmin(player);
+            boolean toggled = residence.isResAdminOn(player);
+            if (admin && !toggled) {
+                ResAdmin.turnResAdminOn(player);
+            } else if (!admin && toggled) {
+                ResAdmin.turnResAdminOff(player);
             }
-            return residence.getPermissionManager().isResidenceAdmin(player);
+            return admin;
         } catch (Throwable ignored) {
             return false;
         }

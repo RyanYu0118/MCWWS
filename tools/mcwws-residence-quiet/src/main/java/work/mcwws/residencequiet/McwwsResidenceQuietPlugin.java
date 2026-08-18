@@ -22,6 +22,8 @@ public final class McwwsResidenceQuietPlugin extends JavaPlugin {
         reloadLocal();
         getServer().getPluginManager().registerEvents(new ResidenceVisitListener(this), this);
         getServer().getPluginManager().registerEvents(new InteractGuardListener(this), this);
+        getServer().getPluginManager().registerEvents(new OpAdminSyncListener(this), this);
+        getServer().getOnlinePlayers().forEach(InteractGuardListener::syncResAdminToggle);
         if (getServer().getPluginManager().getPlugin("ProtocolLib") != null) {
             packetFilter = new PacketDenyFilter(this);
             packetFilter.register();
