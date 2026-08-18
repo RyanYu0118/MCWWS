@@ -73,12 +73,6 @@
   ],
   "post_commands": [
     {
-      "id": "tp_charge",
-      "command": "eco take {player} 64",
-      "execution_policy": "on_complete",
-      "execute_as": "console"
-    },
-    {
       "id": "log_reason",
       "command": "discord broadcast {player} punished {input:1} for: {input:2}",
       "execution_policy": "on_complete",

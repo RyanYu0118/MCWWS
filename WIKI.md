@@ -48,8 +48,16 @@
 | 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；打开搜索点放大镜，打字前还要点漏斗 |
 | 光源可拆可调   | 生存须手持 Light（主手或副手）才能敲掉并掉落；右键能调亮度                   |
 | 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游        |
-| 指南传送玩家 | 指南点头颅后菜单会先关掉，约 2 tick 弹出在线玩家头颅列表；点目标头颅传送并扣 64 零钱。弹出前不要再打开指南，否则会取消选择 |
+| 指南传送 | 固定地点与传送玩家同一套距离公式：同维 100 格内免费，5000 格外距离费封顶 ¥128，跨维度另加 ¥64。传送玩家点头颅后约 2 tick 弹出列表；弹出前不要再打开指南 |
 
+
+距离费（与 `tp.yml` 相同）：
+
+```
+16/1225 × |d − 100| − 16/1225 × |d − 5000| + 64
+```
+
+`d` 是起点与终点当前坐标的三维直线距离（跨世界不换算下界 1:8）。不在同一世界再加 **¥64** 维度转接费。传送玩家由点菜单的人付费；选人前无法显示准确金额，零钱不够会取消传送。
 
 ---
 
@@ -287,7 +295,7 @@ Axiom 会把超大笔刷拆成多个包，所以：
 
 两层一起工作：
 
-1. **Skript** `player_ledger.sk`：飞行消耗、商店等写入 `ledger_queue.txt`
+1. **Skript** `player_ledger.sk`：飞行消耗、商店、指南传送玩家等写入 `ledger_queue.txt`
 2. **插件** `MCWWS_EconomyLedger`：兜住 Essentials 余额变动，避免漏记；同一笔 4 秒内不重复写
 
 网页账本：
@@ -299,7 +307,7 @@ Axiom 会把超大笔刷拆成多个包，所以：
 
 屏幕左下角浮层（装了 Axiom 生存客户端时）目前配置为**关闭**；未装模组的玩家可回退到 action bar。聊天里各插件自己的 `[创世神]` / `[Axiom]` 提示仍然在。
 
-分类名（账本里能见到的）：飞行消耗、Axiom 建造 / 撤销 / 拆除回收、创世神建造 / 撤销 / 拆除回收、购买 / 出售、转账、其他。
+分类名（账本里能见到的）：飞行消耗、Axiom 建造 / 撤销 / 拆除回收、创世神建造 / 撤销 / 拆除回收、购买 / 出售、转账、指南传送、其他。
 
 ---
 
@@ -566,7 +574,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                        |
 | 网页进程             | `tools/mcwws-web-host/`                                                                              |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                          |
-| 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、CommandPrompterPaper 3.2 |
+| 指南传送玩家           | `plugins/DeluxeMenus/gui_menus/guide/home.yml`、`plugins/Skript/scripts/mcwws/utility/guide_tp_player.sk`、CommandPrompterPaper 3.2 |
 | 领地拒绝提示与交互兜底 | `tools/mcwws-residence-quiet/`                                                                       |
 | 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                  |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                        |

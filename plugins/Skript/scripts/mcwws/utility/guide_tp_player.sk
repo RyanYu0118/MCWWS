@@ -1,0 +1,59 @@
+# 指南「传送玩家」：扣费与固定地点相同
+# 距离费 = 16/1225 * |d-100| - 16/1225 * |d-5000| + 64
+# d < 100 → 0；d > 5000 → 128；跨世界另加 64 维度转接费
+
+function mcwwsGuideTpDistanceFee(fromP: player, toP: player) :: number:
+    set {_dx} to x-coord of {_fromP} - x-coord of {_toP}
+    set {_dy} to y-coord of {_fromP} - y-coord of {_toP}
+    set {_dz} to z-coord of {_fromP} - z-coord of {_toP}
+    set {_d} to sqrt({_dx} * {_dx} + {_dy} * {_dy} + {_dz} * {_dz})
+    set {_fee} to (16 / 1225) * abs({_d} - 100) - (16 / 1225) * abs({_d} - 5000) + 64
+    if world of {_fromP} is not world of {_toP}:
+        set {_fee} to {_fee} + 64
+    if {_fee} < 0:
+        set {_fee} to 0
+    return round({_fee} * 100) / 100
+
+command /mcwws-guide-tp-player <text> <player>:
+    description: 指南传送玩家（按固定地点距离公式扣费）
+    executable by: players
+    trigger:
+        set {_mode} to arg-1
+        set {_target} to arg-2
+        if {_mode} is not "to":
+            if {_mode} is not "here":
+                send "&c用法：/mcwws-guide-tp-player to|here <玩家>" to player
+                stop
+        if {_target} is not set:
+            send "&c找不到该玩家。" to player
+            stop
+        if uuid of {_target} is uuid of player:
+            send "&c不能传送自己。" to player
+            stop
+        set {_fee} to mcwwsGuideTpDistanceFee(player, {_target})
+        if {_fee} > 0:
+            if player's balance < {_fee}:
+                send "&c啊哦，你零钱不够捏......" to player
+                play sound "entity.enderman.teleport" with volume 1 and pitch 0.1 to player
+                stop
+            remove {_fee} from player's balance
+            set {_name} to name of player
+            replace "," with "|" in {_name}
+            set {_desc} to "传送玩家"
+            if {_mode} is "here":
+                set {_desc} to "传送玩家（拉过来）"
+            else:
+                set {_desc} to "传送玩家（过去）"
+            set {_ref} to "guide-tp-%uuid of player%-%now%"
+            mcwwsAppendLedgerQueueLine("%uuid of player%", {_name}, "debit", "teleport", {_fee}, {_desc}, {_ref})
+        if {_mode} is "to":
+            teleport player to {_target}
+        else:
+            teleport {_target} to player
+            play sound "entity.snow_golem.death" with volume 1 and pitch 1 to {_target}
+        play sound "entity.snow_golem.death" with volume 1 and pitch 1 to player
+        set {_shown} to mcwwsFormatMoney({_fee})
+        if {_fee} > 0:
+            send "&a传送完成，扣费 ¥%{_shown}%" to player
+        else:
+            send "&a传送完成（100 格内同维度免费）" to player

@@ -260,7 +260,7 @@ items:
     lore:
       - ''
       - '&f点击选择想要传送的固定地点'
-      - '&f点数：32点/次'
+      - '&7按直线距离计费，跨维度另加 ¥64'
     left_click_commands:
       - '[openguimenu] tp'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
@@ -279,38 +279,19 @@ items:
       - '&a左键点击 &7| &f将自己传送至某玩家'
       - '&a右键点击 &7| &f将某玩家传送至自己'
       - '&7点选后弹出在线玩家头颅列表'
-      - ''
-      - '&e¥64/次'
+      - '&7费用与固定地点相同：按直线距离计费'
+      - '&7同维 100 格内免费，5000 格外封顶 ¥128'
+      - '&7跨维度另加 ¥64 转接费'
     left_click_commands:
-      - '[givepermission] minecraft.command.teleport'
       - '[givepermission] promptpaper.use'
       - '[close]'
-      - '[player] minecraft:tp <p:请选择你要传送到的玩家> <!@tp_charge><delay=2>'
+      - '[player] mcwws-guide-tp-player to <p:请选择你要传送到的玩家><delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
-    left_click_requirement:
-      requirements:
-        money:
-          type: has money
-          amount: 64
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
     right_click_commands:
-      - '[givepermission] minecraft.command.teleport'
       - '[givepermission] promptpaper.use'
       - '[close]'
-      - '[player] minecraft:tp <p:请选择要传送到你的玩家> %player_name% <!@tp_charge><delay=2>'
+      - '[player] mcwws-guide-tp-player here <p:请选择要传送到你的玩家><delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
-    right_click_requirement:
-      requirements:
-        money:
-          type: has money
-          amount: 64
-      deny_commands:
-        - '[message] &c啊哦，你零钱不够捏......'
-        - '[sound] ENTITY_ENDERMAN_TELEPORT 1 0.1'
-        - '[close]'
   'we':
     material: WOODEN_AXE
     enchantments:
