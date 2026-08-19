@@ -1,0 +1,32 @@
+name: BetterBags
+version: '1.2.1'
+main: cat.necko.bags.Plugin
+api-version: '1.21'
+load: POSTWORLD
+authors: [ necko1 ]
+softdepend: [ Vault ]
+commands:
+  bags:
+    usage: '/bags help'
+    description: "Bag and data management"
+    aliases: [ 'bag' ]
+    permission: betterbags.usage
+permissions:
+  betterbags.usage:
+    default: op
+  betterbags.reload:
+    default: op
+  betterbags.save:
+    default: op
+  betterbags.clear:
+    default: op
+  betterbags.setlevel:
+    default: op
+  betterbags.give:
+    default: op
+  betterbags.multiplier:
+    default: op
+  betterbags.open:
+    default: op
+  betterbags.sell-all:
+    default: op

@@ -23,14 +23,15 @@ public final class StashNotifier {
                 "amount", String.valueOf(amount),
                 "item", display
         ));
-        player.sendActionBar(line + "§a[返回至背包]");
+        String token = plugin.pendingReturns().register(player, itemKey, amount);
 
         TextComponent button = new TextComponent("[返回至背包]");
         button.setColor(net.md_5.bungee.api.ChatColor.GREEN);
         button.setBold(true);
-        button.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mcwwsstash exempt " + itemKey));
+        button.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mcwwsstash return " + token));
         button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("1 分钟内不再自动入库").color(net.md_5.bungee.api.ChatColor.GRAY).create()));
+                new ComponentBuilder("按操作栏 → 背包栏 → BetterBags 的顺序返回本次物品")
+                        .color(net.md_5.bungee.api.ChatColor.GRAY).create()));
         BaseComponent[] prefix = TextComponent.fromLegacyText(line);
         BaseComponent[] message = new BaseComponent[prefix.length + 1];
         System.arraycopy(prefix, 0, message, 0, prefix.length);

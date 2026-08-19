@@ -29,6 +29,13 @@ public final class StashCommand implements CommandExecutor, TabCompleter {
             return false;
         }
         String sub = args[0].toLowerCase(Locale.ROOT);
+        if ("return".equals(sub)) {
+            if (!(sender instanceof Player player) || args.length < 2) {
+                return true;
+            }
+            plugin.pendingReturns().returnBatch(player, args[1]);
+            return true;
+        }
         if ("exempt".equals(sub)) {
             if (!(sender instanceof Player player)) {
                 return true;

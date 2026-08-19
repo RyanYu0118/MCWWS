@@ -10,6 +10,7 @@ import work.mcwws.ultimateshopstash.gui.WithdrawGuiListener;
 import work.mcwws.ultimateshopstash.gui.WithdrawMenu;
 import work.mcwws.ultimateshopstash.migrate.UltraDepositoryMigrator;
 import work.mcwws.ultimateshopstash.papi.StashExpansion;
+import work.mcwws.ultimateshopstash.returning.PendingReturnManager;
 import work.mcwws.ultimateshopstash.shop.ShopDropListener;
 import work.mcwws.ultimateshopstash.shop.ShopLorePatcher;
 import work.mcwws.ultimateshopstash.shop.ShopReloadListener;
@@ -27,6 +28,7 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
     private ExemptManager exemptManager;
     private WithdrawMenu withdrawMenu;
     private ShopLorePatcher lorePatcher;
+    private PendingReturnManager pendingReturns;
 
     public static McwwsUltimateShopStashPlugin getInstance() {
         return instance;
@@ -54,6 +56,10 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
 
     public ShopLorePatcher lorePatcher() {
         return lorePatcher;
+    }
+
+    public PendingReturnManager pendingReturns() {
+        return pendingReturns;
     }
 
     public String autoCollectPermission() {
@@ -121,6 +127,7 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
         exemptManager = new ExemptManager(this);
         withdrawMenu = new WithdrawMenu(this);
         lorePatcher = new ShopLorePatcher(this);
+        pendingReturns = new PendingReturnManager(this);
     }
 
     @Override

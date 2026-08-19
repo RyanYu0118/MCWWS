@@ -26,6 +26,9 @@ $UltimateShop = Get-ChildItem (Join-Path $Root "plugins") -Filter "UltimateShop*
 $PlaceholderApi = Get-ChildItem (Join-Path $Root "plugins") -Filter "PlaceholderAPI*.jar" |
     Sort-Object Name -Descending |
     Select-Object -First 1 -ExpandProperty FullName
+$BetterBags = Get-ChildItem (Join-Path $Root "plugins") -Filter "BetterBags*.jar" |
+    Sort-Object Name -Descending |
+    Select-Object -First 1 -ExpandProperty FullName
 $BungeeChat = Find-Newest "libraries/net/md-5/bungeecord-chat" "bungeecord-chat-*.jar"
 if (-not $UltimateShop) { throw "Missing UltimateShop jar in plugins/" }
 
@@ -38,7 +41,7 @@ $Libs = @(
     (Find-Newest "libraries/org/jetbrains/annotations" "annotations-*.jar")
 )
 
-$CpParts = @($PaperApi, $UltimateShop, $PlaceholderApi, $BungeeChat) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$CpParts = @($PaperApi, $UltimateShop, $PlaceholderApi, $BetterBags, $BungeeChat) + $Libs | Where-Object { $_ -and (Test-Path $_) }
 $Cp = ($CpParts | Select-Object -Unique) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 

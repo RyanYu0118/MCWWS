@@ -3,13 +3,13 @@ main: work.mcwws.ultimateshopstash.McwwsUltimateShopStashPlugin
 version: 1.0.0
 api-version: '1.21'
 depend: [UltimateShop]
-softdepend: [PlaceholderAPI]
+softdepend: [PlaceholderAPI, BetterBags]
 description: UltimateShop 本地仓库（替代 UltraDepository），自动吸入商店物品并在商店内取回
 
 commands:
   mcwwsstash:
     description: 仓库豁免 / 管理
-    usage: /mcwwsstash exempt <物品> | migrate
+    usage: /mcwwsstash return <收集单> | exempt <物品> | migrate
     aliases: [mstash]
 
 permissions:
