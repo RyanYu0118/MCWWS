@@ -198,17 +198,39 @@ menu:
   # Support value: https://hub.spigotmc.org/javadocs/spigot/org/bukkit/event/inventory/ClickType.html
   # Support use ;; symbol to make multi click type.
   click-event:
-    buy: 'SHIFT_LEFT'
+    buy: 'NEVER'
     sell: 'RIGHT'
     buy-or-sell: 'LEFT'
-    # If you want to disable select-amount feature, set this to NEVER.
-    select-amount: 'SHIFT_RIGHT'
+    # Combined buy+sell amount menu (extra step). Disabled; use buy-more-buy / buy-more-sell instead.
+    select-amount: 'NEVER'
     add-favourite: 'SWAP_OFFHAND'
     sell-all: 'DROP'
+    buy-more-buy: 'SHIFT_LEFT'
+    buy-more-sell: 'SHIFT_RIGHT'
     # buy-one-stack: 'SWAP_OFFHAND'
   # Custom click actions for shop menu.
   # Premium version only.
   click-event-actions:
+    buy-more-buy:
+      display-name: '选择购买数量'
+      buy-only: true
+      1:
+        type: buy_more_menu
+        shop: '{shop}'
+        item: '{item}'
+        buy-more-menu:
+          menu: buy-more-buy
+          max-amount: 693
+    buy-more-sell:
+      display-name: '选择出售数量'
+      sell-only: true
+      1:
+        type: buy_more_menu
+        shop: '{shop}'
+        item: '{item}'
+        buy-more-menu:
+          menu: buy-more-sell
+          max-amount: 693
     buy-one-stack:
       display-name: 'Buy One Stack'
       buy-only: true
