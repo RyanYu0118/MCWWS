@@ -364,7 +364,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - **Shift + 鼠标左键**：打开购买数量选择（只有买按钮，不再先选买还是卖）
 - **Shift + 鼠标右键**：打开出售数量选择（只有卖按钮）
 
-数量界面第一行：左上角返回，右上角关闭，中间是 **1 / 2 / 4 / 8 / 16 / 32 / 64**；选好数量后点纸确认。×1 在原版里通常不显示数字，看物品名即可。
+数量界面第一行：左上角返回，右上角关闭，中间七个发光绿羊毛 **×1 / ×2 / ×4 / ×8 / ×16 / ×32 / ×64**（数字写在物品名上，不靠堆叠数量）；中间预览商品，再下一行点纸确认。
 
 服务器指南针**右键**打开指南菜单再进商店时，手里往往还拿着指南针；同一把指南针的**左键**是打开史莱姆指南。商店界面里按丢弃键时，客户端有时会额外漏出一次「手持物品左键」，看起来像误开史莱姆指南。`MCWWS_UltimateShopFix` 会在商店等外部 GUI 打开时拦住这次左键，丢弃键仍只作用于商店。
 
@@ -588,7 +588,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 商店创造栏分类          | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`                                    |
 | 商店平底格子（史莱姆材质）    | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003）       |
 | 商店商品快捷键           | `plugins/UltimateShop/config.yml`（`click-event`：左键买或卖 1 个、右键卖 1 个、Shift+左键买数量、Shift+右键卖数量） |
-| 商店数量选择界面          | `plugins/UltimateShop/menus/buy-more-buy.yml`、`buy-more-sell.yml`、`buy-more.yml`（顶栏 `B1234567X`：返回、1–64、关闭；布局符区分大小写不敏感，勿与预览格撞车） |
+| 商店数量选择界面          | `plugins/UltimateShop/menus/buy-more-buy.yml`、`buy-more-sell.yml`、`buy-more.yml`（顶栏 `RabcdefgQ`：返回、×1–×64、关闭；数量按钮堆叠固定为 1） |
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                                                     |
 | 网页进程             | `tools/mcwws-web-host/`                                                                                                           |
 | 网页下单入包           | `plugins/Skript/scripts/mcwws/shop/web_pending_delivery.sk`                                                                       |

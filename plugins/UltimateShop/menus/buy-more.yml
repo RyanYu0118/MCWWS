@@ -1,75 +1,82 @@
 title: '{lang:buy-more-title}'
 size: 54
 
-# Layout symbols are case-insensitive. Do not reuse a/A, c/C, f/F, etc.
 layout:
-  - 'B1234567X'
+  - 'RabcdefgQ'
   - '000000000'
-  - '0000p0000'
+  - '0000P0000'
   - '000D0E000'
   - '000000000'
   - '000000000'
 
 amount-items:
-  1:
+  a:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
+      material: LIME_WOOL
       amount: 1
-      name: '&a选择数量 &f×1'
+      glow: true
+      name: '&a&l×1'
       lore:
         - '{lang:buy-more-set-1}'
     set-amount: 1
-  2:
+  b:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 2
-      name: '&a选择数量 &f×2'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×2'
       lore:
         - '{lang:buy-more-set-2}'
     set-amount: 2
-  3:
+  c:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 4
-      name: '&a选择数量 &f×4'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×4'
       lore:
         - '{lang:buy-more-set-4}'
     set-amount: 4
-  4:
+  d:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 8
-      name: '&a选择数量 &f×8'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×8'
       lore:
         - '{lang:buy-more-set-8}'
     set-amount: 8
-  5:
+  e:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 16
-      name: '&a选择数量 &f×16'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×16'
       lore:
         - '{lang:buy-more-set-16}'
     set-amount: 16
-  6:
+  f:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 32
-      name: '&a选择数量 &f×32'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×32'
       lore:
         - '{lang:buy-more-set-32}'
     set-amount: 32
-  7:
+  g:
     display-item:
-      material: LIME_STAINED_GLASS_PANE
-      amount: 64
-      name: '&a选择数量 &f×64'
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×64'
       lore:
         - '{lang:buy-more-set-64}'
     set-amount: 64
 
+display-item: P
 display-items:
-  - p
+  - P
 
 confirm-items:
   D:
@@ -96,7 +103,7 @@ buttons:
       name: ' '
       custom-model-data: 2200002
       hide-tool-tip: true
-  B:
+  R:
     display-item:
       material: ENCHANTED_BOOK
       name: '{lang:back-button}'
@@ -106,7 +113,7 @@ buttons:
       1:
         type: shop_menu
         shop: '{shop}'
-  X:
+  Q:
     display-item:
       material: BARRIER
       name: '{lang:close-button}'

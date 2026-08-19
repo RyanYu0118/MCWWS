@@ -182,7 +182,7 @@ menu:
         back: '{lang}'
   buy-more-menu:
     not-open-when-invalid: true
-    display-item-max-stack: true
+    display-item-max-stack: false
     default:
       menu: buy-more
       max-amount: 693
