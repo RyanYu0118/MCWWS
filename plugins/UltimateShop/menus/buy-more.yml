@@ -1,16 +1,19 @@
 title: '{lang:buy-more-title}'
 size: 54
 
+dialog:
+  enabled: false
+
 layout:
   - '0000R000Q'
-  - '0abcdefg0'
+  - '012345670'
   - '0000P0000'
   - '000D0E000'
   - '000000000'
   - '000000000'
 
 amount-items:
-  a:
+  1:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -19,7 +22,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-1}'
     set-amount: 1
-  b:
+  2:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -28,7 +31,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-2}'
     set-amount: 2
-  c:
+  3:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -37,7 +40,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-4}'
     set-amount: 4
-  d:
+  4:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -46,7 +49,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-8}'
     set-amount: 8
-  e:
+  5:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -55,7 +58,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-16}'
     set-amount: 16
-  f:
+  6:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -64,7 +67,7 @@ amount-items:
       lore:
         - '{lang:buy-more-set-32}'
     set-amount: 32
-  g:
+  7:
     display-item:
       material: LIME_WOOL
       amount: 1
@@ -75,8 +78,6 @@ amount-items:
     set-amount: 64
 
 display-item: P
-display-items:
-  - P
 
 confirm-items:
   D:
@@ -105,10 +106,8 @@ buttons:
       hide-tool-tip: true
   R:
     display-item:
-      material: ENCHANTED_BOOK
+      material: ARROW
       name: '{lang:back-button}'
-      custom-model-data: 2200003
-      glow: false
     actions:
       1:
         type: shop_menu

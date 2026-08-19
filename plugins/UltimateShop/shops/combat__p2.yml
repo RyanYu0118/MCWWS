@@ -1,18 +1,11 @@
 settings:
-  menu: example-shop-menu
+  menu: shop-menu-combat__p2
   buy-more: true
   shop-name: '{lang:combat-shop-name} (2/2)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
-    layout:
-      - fs043500x
-      - ABCDEFGHI
-      - JKLMNOPQR
-      - STUVWXYZa
-      - bcdeg0000
-      - '000000000'
     buttons:
       '4':
         display-item:
