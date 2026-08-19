@@ -1,13 +1,14 @@
 title: '{lang:buy-more-title}'
 size: 54
 
+# Layout symbols are case-insensitive. Do not reuse a/A, c/C, f/F, etc.
 layout:
+  - 'B1234567X'
   - '000000000'
-  - '0abcdefg0'
-  - '000000000'
-  - '012345670'
+  - '0000p0000'
   - '000D0E000'
-  - 'A0000000C'
+  - '000000000'
+  - '000000000'
 
 amount-items:
   1:
@@ -68,13 +69,7 @@ amount-items:
     set-amount: 64
 
 display-items:
-  - a
-  - b
-  - c
-  - d
-  - e
-  - f
-  - g
+  - p
 
 confirm-items:
   D:
@@ -101,7 +96,7 @@ buttons:
       name: ' '
       custom-model-data: 2200002
       hide-tool-tip: true
-  A:
+  B:
     display-item:
       material: ENCHANTED_BOOK
       name: '{lang:back-button}'
@@ -111,7 +106,7 @@ buttons:
       1:
         type: shop_menu
         shop: '{shop}'
-  C:
+  X:
     display-item:
       material: BARRIER
       name: '{lang:close-button}'
