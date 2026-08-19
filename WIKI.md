@@ -364,7 +364,7 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 - **Shift + 鼠标左键**：打开购买数量选择（只有买按钮，不再先选买还是卖）
 - **Shift + 鼠标右键**：打开出售数量选择（只有卖按钮）
 
-数量界面没有上一页 / 下一页。第一行正中是返回（原版箭矢，不是分类店的翻页贴图），右上角关闭；第二行七个发光绿羊毛 **×1 / ×2 / ×4 / ×8 / ×16 / ×32 / ×64**；中间预览商品，再下一行点纸确认。
+数量界面为 **4×9**（36 格），没有上一页 / 下一页。第一行正中是返回（原版箭矢，不是分类店的翻页贴图），右上角关闭；第二行七个发光绿羊毛 **×1 / ×2 / ×4 / ×8 / ×16 / ×32 / ×64**；第三行预览商品，第四行点纸确认。
 
 分类店的 `menu-settings.layout` 会被 UltimateShop 误合并进数量页；已从各分类店去掉 layout，只保留翻页按钮 override，避免数量页再被盖成商店布局。
 
@@ -590,7 +590,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 商店创造栏分类          | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`                                    |
 | 商店平底格子（史莱姆材质）    | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003）       |
 | 商店商品快捷键           | `plugins/UltimateShop/config.yml`（`click-event`：左键买或卖 1 个、右键卖 1 个、Shift+左键买数量、Shift+右键卖数量） |
-| 商店数量选择界面          | `plugins/UltimateShop/menus/buy-more-buy.yml`、`buy-more-sell.yml`（第一行正中返回、右上关闭；第二行 ×1–×64；勿在分类店 `menu-settings` 写 layout，会被合并进数量页） |
+| 商店数量选择界面          | `plugins/UltimateShop/menus/buy-more-buy.yml`、`buy-more-sell.yml`（4×9；第一行正中返回、右上关闭；第二行 ×1–×64；勿在分类店 `menu-settings` 写 layout） |
 | 末页/特殊布局分类店菜单      | `plugins/UltimateShop/menus/shop-menu-*.yml`（仅末页或短布局分类店使用；`settings.menu` 指向此文件） |
 | 零钱明细兜底           | `tools/mcwws-economy-ledger/`                                                                                                     |
 | 网页进程             | `tools/mcwws-web-host/`                                                                                                           |
