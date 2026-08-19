@@ -359,12 +359,14 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 悬停商品时的快捷键按**键位名称**生效（可在客户端控制设置里改绑定，不要记成默认字母）：
 
-- **丢弃键**：对该商品「选择全部 / 一键回收」
+- **丢弃键**：对该商品「从仓库取出数量」（4×9 界面，单次最多 64，不扣钱）
 - **副手交换键**：收藏该商品
 - **Shift + 鼠标左键**：打开购买数量选择（只有买按钮，不再先选买还是卖）
 - **Shift + 鼠标右键**：打开出售数量选择（只有卖按钮）
 
 数量界面为 **4×9**（36 格），没有上一页 / 下一页。第一行正中是返回（史莱姆材质包附魔书 CMD 2200003，与分类店返回键一致），右上角关闭；第二行七个发光绿羊毛 **×1 / ×2 / ×4 / ×8 / ×16 / ×32 / ×64**；第三行预览商品，第四行点纸确认。
+
+**商店本地仓库**（插件 `MCWWS_UltimateShopStash`，替代 UltraDepository）：在指南「功能」页购买 **`ultradepository.*` 时效权限**后，UltimateShop 目录内的物品会在拾取 / 击杀掉落时自动进入**按玩家本地保存的统一仓库**（首次启动会从 UltraDepository 合并旧数据）。悬停商品 lore 会显示**仓库余量**；左下角 ActionBar 提示入库，并可点 **「返回背包」** 使该物品 **1 分钟内不再自动入库**。商店内对该商品按**丢弃键**打开取回数量页（布局与买卖数量页相同，**不扣钱**，单次最多取 **64** 个）。商店购买在已激活权限时也会直接入库。
 
 分类店的 `menu-settings.layout` 会被 UltimateShop 误合并进数量页；已从各分类店去掉 layout，只保留翻页按钮 override，避免数量页再被盖成商店布局。
 
@@ -587,6 +589,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | Axiom 扣费与 Editor | `tools/mcwws-axiom-survival/`                                                                                                     |
 | Axiom 客户端        | `tools/mcwws-axiom-survival-client/`                                                                                              |
 | 商店搜索崩溃补丁 / 丢弃键误触手持物品 | `tools/mcwws-ultimateshop-fix/`（`MCWWS_UltimateShopFix` 1.0.1）                                                                    |
+| 商店本地仓库 / 丢弃键取回      | `tools/mcwws-ultimateshop-stash/`（`MCWWS_UltimateShopStash` 1.0.0；权限 `ultradepository.*`；迁移 `plugins/UltraDepository/data`） |
 | 商店创造栏分类          | `plugins/Skript/scripts/web/scripts/sync-ultimateshop-from-items.js`、`creative_tabs_26.2.json`                                    |
 | 商店平底格子（史莱姆材质）    | `plugins/UltimateShop/menus/example-shop-menu.yml`（第一行功能键；后五行 5×9；填充格 CMD 2200002；搜索 2200005；翻页 2200007–2200010；返回 2200003）       |
 | 商店商品快捷键           | `plugins/UltimateShop/config.yml`（`click-event`：左键买或卖 1 个、右键卖 1 个、Shift+左键买数量、Shift+右键卖数量） |

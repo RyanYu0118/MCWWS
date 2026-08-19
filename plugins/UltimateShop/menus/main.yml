@@ -52,13 +52,14 @@ buttons:
   S:
     display-item:
       material: CHEST
-      name: '{lang:sell-all-menu-button-name}'
+      name: '&6商店仓库说明'
       lore:
-        - '{lang:sell-all-menu-button-line-1}'
-        - '{lang:sell-all-menu-button-line-2}'
+        - '&7商店目录内的采集物会进入本地仓库'
+        - '&7在分类店对商品按丢弃键可取回（单次最多 64）'
     actions:
       1:
-        type: sell_all_menu
+        type: sound
+        sound: ui.button.click
   A:
     display-item:
       material: BRICKS
