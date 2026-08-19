@@ -14,6 +14,7 @@ import work.mcwws.ultimateshopstash.shop.ShopDropListener;
 import work.mcwws.ultimateshopstash.shop.ShopLorePatcher;
 import work.mcwws.ultimateshopstash.shop.ShopReloadListener;
 import work.mcwws.ultimateshopstash.storage.StashStorage;
+import work.mcwws.ultimateshopstash.util.ChineseItemNames;
 import work.mcwws.ultimateshopstash.util.Messages;
 
 public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
@@ -112,6 +113,7 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
 
     public void reloadLocal() {
         reloadConfig();
+        ChineseItemNames.reload(this);
         messages = new Messages(this);
         catalog = new ShopCatalog(this);
         catalog.reload();

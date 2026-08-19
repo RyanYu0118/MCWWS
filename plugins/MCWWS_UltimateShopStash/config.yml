@@ -1,0 +1,19 @@
+# 与指南「功能」页购买的 LuckPerms 节点一致
+auto-collect-permission: ultradepository.*
+
+exempt-duration-seconds: 60
+max-withdraw-amount: 64
+
+collect:
+  pickup: true
+  kill: true
+
+deposit-shop-buys: true
+
+migration:
+  ultra-depository-data: plugins/UltraDepository/data
+  marker-file: migrated_from_ultradepository.flag
+
+sounds:
+  collect: ENTITY_EXPERIENCE_ORB_PICKUP
+  withdraw: ENTITY_ITEM_PICKUP

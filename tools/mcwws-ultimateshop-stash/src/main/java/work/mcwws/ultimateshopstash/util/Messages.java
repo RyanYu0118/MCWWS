@@ -70,23 +70,6 @@ public final class Messages {
     }
 
     public static String displayMaterial(String key) {
-        if (key == null || key.isBlank()) {
-            return "?";
-        }
-        String[] parts = key.split("_");
-        StringBuilder sb = new StringBuilder();
-        for (String part : parts) {
-            if (part.isEmpty()) {
-                continue;
-            }
-            if (!sb.isEmpty()) {
-                sb.append(' ');
-            }
-            sb.append(Character.toUpperCase(part.charAt(0)));
-            if (part.length() > 1) {
-                sb.append(part.substring(1).toLowerCase(Locale.ROOT));
-            }
-        }
-        return sb.toString();
+        return ChineseItemNames.lookup(key);
     }
 }
