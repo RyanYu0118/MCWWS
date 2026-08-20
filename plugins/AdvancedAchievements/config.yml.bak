@@ -462,19 +462,6 @@ Kills:
           Execute: 'eco give PLAYER 1'
         Item:
           - diamond 1
-  specificplayer-631e3896-da2a-4077-974b-d047859d76bc:
-    1:
-      Goal: 击杀服务器服主。
-      Message: 耶！你击杀了服务器服主！
-      Name: kills_1_mrfloris
-      DisplayName: 不再有 mrfloris
-      Type: rare
-      Reward:
-        IncreaseMaxHealth: 1
-        Command:
-          Execute: 'eco give PLAYER 25000'
-        Item:
-          - diamond 16
   skeleton:
     100:
       Goal: 击杀 100 个骷髅。
@@ -946,16 +933,37 @@ PlayedTime:
     Type: normal
   100:
     Goal: 游玩 100 小时。
-    Message: 欢迎回来——服务器大大认可你！
+    Message: 累计在线 100 小时——网瘾少年认证！
     Name: playedtime_100
-    DisplayName: 服务器认可
+    DisplayName: 网瘾少年
     Type: rare
     Reward:
       Command:
-        Execute: say §6PLAYER has been here many times before!
-        Display: 名誉与荣耀
+        Execute: 'eco give PLAYER 1000'
       Item:
-        - diamond_block 3
+        - diamond 8
+  1000:
+    Goal: 游玩 1000 小时。
+    Message: 累计在线 1000 小时——网瘾中年本中年！
+    Name: playedtime_1000
+    DisplayName: 网瘾中年
+    Type: rare
+    Reward:
+      Command:
+        Execute: 'eco give PLAYER 10000'
+      Item:
+        - diamond_block 2
+  10000:
+    Goal: 游玩 10000 小时。
+    Message: 累计在线 10000 小时——网瘾老年，岁月不饶人！
+    Name: playedtime_10000
+    DisplayName: 网瘾老年
+    Type: rare
+    Reward:
+      Command:
+        Execute: 'eco give PLAYER 100000'
+      Item:
+        - netherite_ingot 4
 DistanceFoot:
   1000:
     Goal: 步行移动 1000 格。
@@ -1527,6 +1535,7 @@ FishableFish:
 #         Money: 5
 
 # Statistics for this category can be increased using commands such as '/aach add 1 Custom.votes PLAYER'.
+# 本服特色统计由 MCWWS_IdeaAchievements 写入（长矛击杀服主、经济流水、日活连续、暗藏悬坤等）。
 Custom:
   votes:
     10:
@@ -1537,3 +1546,53 @@ Custom:
       Reward:
         Command:
           Execute: 'eco give PLAYER 5'
+  owner_spear:
+    10:
+      Goal: 用长矛击杀服主 Ryan_yu__ 十次。
+      Message: 长矛十杀服主——倒反天罡！
+      Name: custom_owner_spear_10
+      DisplayName: 倒反天罡
+      Type: rare
+      Reward:
+        Command:
+          Execute: 'eco give PLAYER 10000'
+  economy_flow:
+    100000000:
+      Goal: 花费与赚得总量累计一亿游戏币。
+      Message: 流水破亿——亿万富翁！
+      Name: custom_economy_1e8
+      DisplayName: 亿万富翁
+      Type: rare
+      Reward:
+        Command:
+          Execute: 'eco give PLAYER 100000'
+  daily_active:
+    64:
+      Goal: 连续 64 天每天赚得 9999 以上游戏币。
+      Message: 连续日活拉满——日活王！
+      Name: custom_daily_active_64
+      DisplayName: 日活王
+      Type: rare
+      Reward:
+        Command:
+          Execute: 'eco give PLAYER 64000'
+  owner_revenge:
+    1:
+      Goal: 完成「倒反天罡」后被服主击杀。
+      Message: 谁让你倒反天罡？
+      Name: custom_owner_revenge_1
+      DisplayName: 谁让你倒反天罡？
+      Type: rare
+      Reward:
+        Command:
+          Execute: 'eco give PLAYER 1'
+  dark_chicken:
+    1:
+      Goal: 在亮度为 0 处用栓绳吊着一只脚下无方块的鸡。
+      Message: 暗藏悬坤！
+      Name: custom_dark_chicken_1
+      DisplayName: 暗藏悬坤
+      Type: rare
+      Reward:
+        Command:
+          Execute: 'eco give PLAYER 8888'

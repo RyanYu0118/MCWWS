@@ -1,0 +1,17 @@
+name: MCWWS_IdeaAchievements
+main: work.mcwws.ideachievements.McwwsIdeaAchievementsPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [AdvancedAchievements]
+softdepend: [BankPlus]
+description: Idea 表本服特色成就（长矛倒反、经济流水、日活王、暗藏悬坤等）
+
+commands:
+  mcwws-ideaach:
+    description: 本服特色成就调试与经济流水注入
+    permission: mcwws.ideaach.admin
+    usage: /mcwws-ideaach <reload|money>
+
+permissions:
+  mcwws.ideaach.admin:
+    default: op

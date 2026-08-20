@@ -1,0 +1,23 @@
+# 服主（倒反天罡 / 谁让你倒反天罡）
+owner-uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+owner-name: Ryan_yu__
+
+# 日活王：单日赚得阈值（游戏币）
+daily-earn-threshold: 9999
+
+# 时区（连续自然日）
+timezone: Asia/Shanghai
+
+# AdvancedAchievements Custom 子类名（须与 plugins/AdvancedAchievements/config.yml 一致）
+categories:
+  owner-spear: owner_spear
+  economy-flow: economy_flow
+  daily-active: daily_active
+  owner-revenge: owner_revenge
+  dark-chicken: dark_chicken
+
+# 倒反天罡完成后才能触发「谁让你倒反天罡？」的成就 Name
+owner-spear-achievement-name: custom_owner_spear_10
+
+# 暗藏悬坤检测间隔（tick）
+dark-chicken-interval-ticks: 40

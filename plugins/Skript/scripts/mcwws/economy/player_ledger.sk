@@ -35,6 +35,9 @@ function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text,
         {_file}.getParentFile().mkdirs()
     set {_bytes} to (concat {_line}, nl).getBytes(StandardCharsets.UTF_8)
     Files.write({_file}.toPath(), {_bytes}, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
+    # 本服特色成就：流水注入（亿万富翁 / 日活王）
+    if {_amount} > 0:
+        execute console command "mcwws-ideaach money %{_uuid}% %{_amount}% %{_dir}%"
 
 function mcwwsLedgerPriceForMaterial(material: text, buyOrSell: text) :: number:
     set {_id} to "%{_material}%"

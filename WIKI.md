@@ -320,6 +320,7 @@
 | ---- | ---------- |
 | 世界进度（L 键） | **只显示一页「流浪世界」**：按模块分行、横向延伸（新手入门 / 矿区探索 / 建造与改造）；成就不进 L 键竖树 |
 | 成就（聊天 GUI） | `/aach list` 查看完整成就目录；获得时仍有提示，不占 L 键标签页 |
+| 本服特色成就 | 「本服特色」分类：倒反天罡（长矛击杀服主 ×10）、谁让你倒反天罡？（完成后被服主击杀）、亿万富翁（收支累计 1 亿）、日活王（连续 64 天日赚 ≥9999）、暗藏悬坤（亮度 0 + 栓绳吊鸡且脚下无方块）；游玩时长成就：网瘾少年 / 中年 / 老年（100 / 1000 / 10000 小时） |
 | 赛季任务 | `/battlepass`；中文任务、商店与消息；高级档可用战斗币兑换 |
 
 界面保留常用英文：**NPC、VIP、XP、mcMMO** 等。
@@ -469,6 +470,6 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页服务 | `tools/mcwws-web-host/` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/` |
-| 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
+| 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js` |

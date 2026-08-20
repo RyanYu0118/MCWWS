@@ -1,4 +1,4 @@
-next_id: 2453
+next_id: 2455
 entries:
   '1':
     id: 1
@@ -25853,3 +25853,25 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/20 22:45
     createdAt: '2026-08-20T14:45:26.132072200Z'
     updatedAt: '2026-08-20T15:04:17.126301600Z'
+  '2453':
+    id: 2453
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-ecae8e20-8b28-4f52-95f1-21457a1eb67c
+    createdAt: '2026-08-20T15:24:11.826214600Z'
+    balanceAfter: 165269321.27
+  '2454':
+    id: 2454
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.42
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.5 手续费 0.08)'
+    refId: axiom-undo-16077713-a190-49aa-9c1f-37d77dfbe69e
+    createdAt: '2026-08-20T15:24:14.550681300Z'
+    balanceAfter: 165269322.69
