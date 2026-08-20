@@ -1,0 +1,103 @@
+# Battle Pass Configuration
+version: 1  # DON'T CHANGE THIS VALUE
+
+# Season configuration
+season:
+  # Reset type: MONTH_START (reset at beginning of month) or DURATION (reset after X days)
+  reset-type: "DURATION"
+  # Season duration in days (only used when reset-type is DURATION)
+  duration: 30
+  # Whether to reset battle coins when season ends
+  reset-coins-on-season-end: true
+  # Season Rotation - automatically cycle through different reward sets
+  # When enabled, each season reset will load the next set of rewards from the /seasons/ folder
+  # Seasons loop: season-1 -> season-2 -> season-3 -> season-1 -> ...
+  rotation:
+    enabled: false
+    # How many seasons to cycle through (must match the number of folders in /seasons/)
+    total-seasons: 3
+
+# Database configuration
+# type: SQLITE (default) or MYSQL
+# If SQLITE is selected, the plugin will use the local 'Database' folder.
+database:
+  type: SQLITE #Or MySQL
+  #MySQL Settings (Uncomment to use MySQL)
+  #host: localhost
+  #port: 3306
+  #database: battlepass
+  #username: root
+  #password: ""
+  #prefix: "bp_"
+  #pool-size: 10
+
+# Experience configuration
+# xp-per-level: Fixed XP required to advance to next level
+# Total XP needed for level 54 = xp-per-level × 53
+# Examples:
+# - 100 XP per level = 5,300 total XP (very easy)
+# - 400 XP per level = 21,200 total XP (easy)
+# - 1000 XP per level = 53,000 total XP (balanced for 30 days)
+# - 2000 XP per level = 106,000 total XP (hard)
+experience:
+  xp-per-level: 400
+
+# Daily reward configuration
+daily-reward:
+  xp: 200
+
+# Missions configuration
+missions:
+  reset-hours: 24
+
+# Battle Coins distribution configuration
+# Coins distributed to top players at specified intervals
+# distribution-hours: How often coins are distributed (in hours)
+# Format: position = coins amount
+battle-coins:
+  distribution-hours: 24
+  distribution:
+    1: 10
+    2: 9
+    3: 8
+    4: 7
+    5: 6
+    6: 5
+    7: 4
+    8: 3
+    9: 2
+    10: 1
+
+# Shop configuration
+shop:
+  enabled: true
+
+# Custom Items configuration
+custom-items:
+  sounds-enabled: true
+
+# GUI Customization
+gui:
+  # Blocks displayed for locked rewards (when player doesn't have the required level)
+  reward-locked:
+    # Free rewards locked block
+    free: FURNACE_MINECART
+    # Premium rewards locked block (when player has premium but not the level)
+    premium: FURNACE_MINECART
+
+  # Block displayed for premium rewards when player doesn't have premium pass
+  premium-no-pass: BARRIER
+
+  # Block displayed for available rewards (when player can claim)
+  reward-available: CHEST_MINECART
+
+  # Blocks displayed for already claimed rewards
+  # Use 'NONE' to hide the slot completely (empty slot)
+  reward-claimed:
+    # Free rewards claimed block
+    free: MINECART
+    # Premium rewards claimed block
+    premium: MINECART
+
+  # Separator blocks between premium and free rows (middle row)
+  separator: GRAY_STAINED_GLASS_PANE

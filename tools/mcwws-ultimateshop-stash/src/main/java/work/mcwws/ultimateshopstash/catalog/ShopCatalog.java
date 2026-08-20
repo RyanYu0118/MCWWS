@@ -11,13 +11,15 @@ import work.mcwws.ultimateshopstash.util.Messages;
 import java.io.File;
 import java.util.Collections;
 import java.util.HashSet;
-import java.util.Locale;
+import java.util.Map;
+import java.util.HashMap;
 import java.util.Set;
 
 public final class ShopCatalog {
 
     private final McwwsUltimateShopStashPlugin plugin;
     private final Set<String> materialKeys = new HashSet<>();
+    private final Map<String, ObjectItem> itemToObjectItem = new HashMap<>();
 
     public ShopCatalog(McwwsUltimateShopStashPlugin plugin) {
         this.plugin = plugin;
@@ -25,6 +27,7 @@ public final class ShopCatalog {
 
     public void reload() {
         materialKeys.clear();
+        itemToObjectItem.clear();
         ConfigManager manager = ConfigManager.configManager;
         if (manager != null) {
             for (ObjectShop shop : manager.getShops()) {
@@ -49,6 +52,8 @@ public final class ShopCatalog {
         String key = ItemKeys.fromObjectItem(item);
         if (key != null && !key.isBlank()) {
             materialKeys.add(key);
+            // If multiple shops define the same key, keep the first one.
+            itemToObjectItem.putIfAbsent(key, item);
         }
     }
 
@@ -71,6 +76,11 @@ public final class ShopCatalog {
 
     public boolean contains(String materialEnumOrKey) {
         return materialKeys.contains(Messages.normalizeKey(materialEnumOrKey));
+    }
+
+    public ObjectItem findObjectItem(String itemKey) {
+        if (itemKey == null || itemKey.isBlank()) return null;
+        return itemToObjectItem.get(Messages.normalizeKey(itemKey));
     }
 
     public Set<String> keys() {

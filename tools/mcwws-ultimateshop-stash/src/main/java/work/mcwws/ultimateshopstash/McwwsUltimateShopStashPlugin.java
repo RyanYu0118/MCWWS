@@ -15,6 +15,7 @@ import work.mcwws.ultimateshopstash.shop.ShopDropListener;
 import work.mcwws.ultimateshopstash.shop.ShopLorePatcher;
 import work.mcwws.ultimateshopstash.shop.ShopReloadListener;
 import work.mcwws.ultimateshopstash.storage.StashStorage;
+import work.mcwws.ultimateshopstash.trade.TradeInterceptor;
 import work.mcwws.ultimateshopstash.util.ChineseItemNames;
 import work.mcwws.ultimateshopstash.util.Messages;
 
@@ -104,6 +105,7 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
         getServer().getPluginManager().registerEvents(new WithdrawGuiListener(this), this);
         getServer().getPluginManager().registerEvents(lorePatcher, this);
         getServer().getPluginManager().registerEvents(new ShopReloadListener(this), this);
+        getServer().getPluginManager().registerEvents(new TradeInterceptor(this), this);
 
         StashCommand command = new StashCommand(this);
         getCommand("mcwwsstash").setExecutor(command);

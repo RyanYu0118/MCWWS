@@ -6,6 +6,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import work.mcwws.ultimateshopstash.McwwsUltimateShopStashPlugin;
+import work.mcwws.ultimateshopstash.util.ItemKeys;
 
 import java.io.IOException;
 import java.util.Locale;
@@ -27,7 +28,14 @@ final class ItemReturnService {
             return ReturnResult.failed();
         }
 
-        ItemStack prototype = new ItemStack(material);
+        // Reconstruct a full UltimateShop item (skull texture / Slimefun PDC / lore) when possible.
+        ItemStack prototype;
+        var objectItem = plugin.catalog().findObjectItem(itemKey);
+        if (objectItem != null) {
+            prototype = ItemKeys.unitStack(objectItem, player);
+        } else {
+            prototype = new ItemStack(material);
+        }
         PlayerInventory inventory = player.getInventory();
         long hotbarCapacity = capacity(inventory, HOTBAR_SLOTS, prototype);
         long inventoryCapacity = capacity(inventory, INVENTORY_SLOTS, prototype);
@@ -43,7 +51,7 @@ final class ItemReturnService {
             return ReturnResult.failed();
         }
 
-        if (betterBagsAmount > 0 && !addToBetterBags(bags, material, betterBagsAmount)) {
+        if (betterBagsAmount > 0 && !addToBetterBags(bags, prototype, betterBagsAmount)) {
             return ReturnResult.failed();
         }
 
@@ -53,7 +61,7 @@ final class ItemReturnService {
         if (hotbarLeft != 0 || inventoryLeft != 0) {
             inventory.setStorageContents(snapshot);
             if (betterBagsAmount > 0) {
-                removeFromBetterBags(bags, material, betterBagsAmount);
+                removeFromBetterBags(bags, prototype, betterBagsAmount);
             }
             return ReturnResult.failed();
         }
@@ -80,15 +88,18 @@ final class ItemReturnService {
         );
     }
 
-    private boolean addToBetterBags(BetterBagsTarget target, Material material, long amount) {
+    private boolean addToBetterBags(BetterBagsTarget target, ItemStack prototype, long amount) {
         long added = 0;
         while (added < amount) {
-            int stackAmount = (int) Math.min(material.getMaxStackSize(), amount - added);
-            int leftover = target.data().addItem(new ItemStack(material, stackAmount));
+            int maxStack = prototype.getMaxStackSize();
+            int stackAmount = (int) Math.min(maxStack, amount - added);
+            ItemStack toAdd = prototype.clone();
+            toAdd.setAmount(stackAmount);
+            int leftover = target.data().addItem(toAdd);
             int accepted = stackAmount - Math.max(0, leftover);
             added += accepted;
             if (leftover > 0) {
-                removeFromBetterBags(target, material, added);
+                removeFromBetterBags(target, prototype, added);
                 return false;
             }
         }
@@ -96,12 +107,15 @@ final class ItemReturnService {
         return true;
     }
 
-    private void removeFromBetterBags(BetterBagsTarget target, Material material, long amount) {
+    private void removeFromBetterBags(BetterBagsTarget target, ItemStack prototype, long amount) {
         long removed = 0;
         while (removed < amount) {
-            int stackAmount = (int) Math.min(material.getMaxStackSize(), amount - removed);
-            if (!target.data().removeItem(new ItemStack(material, stackAmount))) {
-                plugin.getLogger().severe("回滚 BetterBags 物品失败: " + material + " x" + (amount - removed));
+            int maxStack = prototype.getMaxStackSize();
+            int stackAmount = (int) Math.min(maxStack, amount - removed);
+            ItemStack toRemove = prototype.clone();
+            toRemove.setAmount(stackAmount);
+            if (!target.data().removeItem(toRemove)) {
+                plugin.getLogger().severe("回滚 BetterBags 物品失败: " + prototype.getType() + " x" + (amount - removed));
                 return;
             }
             removed += stackAmount;

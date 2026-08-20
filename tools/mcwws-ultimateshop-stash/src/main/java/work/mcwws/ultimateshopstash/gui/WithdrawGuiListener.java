@@ -98,15 +98,20 @@ public final class WithdrawGuiListener implements Listener {
             Chat.send(player, plugin.messages(), "not-shop-item", null);
             return;
         }
+        ItemStack prototype = ItemKeys.unitStack(session.objectItem(), player);
+        HashMap<Integer, ItemStack> leftover = new HashMap<>();
         long remain = totalItems;
+        int maxStack = prototype.getMaxStackSize();
         while (remain > 0) {
-            int stackSize = (int) Math.min(remain, material.getMaxStackSize());
-            HashMap<Integer, ItemStack> leftover = player.getInventory().addItem(new ItemStack(material, stackSize));
+            ItemStack stack = prototype.clone();
+            int give = (int) Math.min(remain, maxStack);
+            stack.setAmount(give);
+            leftover.putAll(player.getInventory().addItem(stack));
             if (!leftover.isEmpty()) {
                 Chat.send(player, plugin.messages(), "withdraw-no-space", null);
                 return;
             }
-            remain -= stackSize;
+            remain -= give;
         }
         plugin.storage().remove(player.getUniqueId(), session.itemKey(), totalItems);
         Chat.send(player, plugin.messages(), "withdraw-success", Map.of(

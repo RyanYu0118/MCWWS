@@ -6,8 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.PlayerInventory;
 import work.mcwws.ultimateshopstash.McwwsUltimateShopStashPlugin;
 import work.mcwws.ultimateshopstash.notify.StashNotifier;
 import work.mcwws.ultimateshopstash.util.ItemKeys;
@@ -43,31 +41,18 @@ public final class ShopBuyDepositListener implements Listener {
         if (material == null) {
             return;
         }
-        long removed = removeMatching(player.getInventory(), material, totalItems);
+        // Only deposit overflow plain vanilla items; Slimefun / custom heads stay in inventory.
+        long capacity = ItemKeys.plainCapacity(player.getInventory(), material);
+        long overflow = totalItems - capacity;
+        if (overflow <= 0) {
+            return;
+        }
+        long removed = ItemKeys.removePlainMaterial(player.getInventory(), material, overflow);
         if (removed <= 0) {
             return;
         }
         plugin.storage().add(player.getUniqueId(), key, removed);
         StashNotifier.collect(plugin, player, key, removed);
         plugin.getServer().getScheduler().runTask(plugin, () -> plugin.lorePatcher().patchOpenShop(player));
-    }
-
-    private static long removeMatching(PlayerInventory inventory, Material material, long needed) {
-        long left = needed;
-        ItemStack[] contents = inventory.getStorageContents();
-        for (int i = 0; i < contents.length && left > 0; i++) {
-            ItemStack stack = contents[i];
-            if (stack == null || stack.getType() != material) {
-                continue;
-            }
-            int take = (int) Math.min(left, stack.getAmount());
-            stack.setAmount(stack.getAmount() - take);
-            if (stack.getAmount() <= 0) {
-                contents[i] = null;
-            }
-            left -= take;
-        }
-        inventory.setStorageContents(contents);
-        return needed - left;
     }
 }
