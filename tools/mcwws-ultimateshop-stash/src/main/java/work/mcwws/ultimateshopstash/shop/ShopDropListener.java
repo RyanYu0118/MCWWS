@@ -10,6 +10,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.ClickType;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.player.PlayerDropItemEvent;
 import org.bukkit.inventory.InventoryHolder;
@@ -34,7 +35,10 @@ public final class ShopDropListener implements Listener {
             return;
         }
         ClickType click = event.getClick();
-        if (click != ClickType.DROP && click != ClickType.CONTROL_DROP) {
+        InventoryAction action = event.getAction();
+        boolean dropOne = click == ClickType.DROP || action == InventoryAction.DROP_ONE_SLOT;
+        boolean dropAll = click == ClickType.CONTROL_DROP || action == InventoryAction.DROP_ALL_SLOT;
+        if (!dropOne && !dropAll) {
             return;
         }
         if (event.getRawSlot() != event.getSlot()) {
@@ -50,7 +54,8 @@ public final class ShopDropListener implements Listener {
         }
         event.setCancelled(true);
         event.setResult(Event.Result.DENY);
-        if (click == ClickType.CONTROL_DROP) {
+        // Prefer "drop all" (Ctrl+Q) for collect toggle; plain Q opens withdraw.
+        if (dropAll) {
             plugin.getServer().getScheduler().runTask(plugin, () -> toggleCollect(player, objectItem));
             return;
         }

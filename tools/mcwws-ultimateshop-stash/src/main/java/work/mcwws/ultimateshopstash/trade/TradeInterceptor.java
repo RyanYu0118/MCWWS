@@ -71,6 +71,12 @@ public final class TradeInterceptor implements Listener {
         Player player = event.getPlayer();
         if (!plugin.hasAutoCollect(player)) return;
 
+        // Sell-all sells from its own chest GUI, not the player inventory. Injecting stash
+        // items into the backpack would leave them there after the GUI contents are sold.
+        if (isSellAllGui(player)) {
+            return;
+        }
+
         String key = ItemKeys.fromObjectItem(event.getItem());
         if (key == null || !plugin.catalog().contains(key)) return;
 
@@ -106,8 +112,15 @@ public final class TradeInterceptor implements Listener {
         if (event.isBuyOrSell()) return; // we only care about sell completions
         SellSnapshot snapshot = sellSnapshots.remove(event.getPlayer().getUniqueId());
         if (snapshot == null) return;
-        // Transaction succeeded; items were consumed from inventory. Nothing to reconcile.
-        plugin.getServer().getScheduler().runTask(plugin, () -> plugin.lorePatcher().patchOpenShop(event.getPlayer()));
+        Player player = event.getPlayer();
+        // Sell-all takes from its own GUI, not the player inventory. Any stash items we
+        // temporarily injected would still be sitting in the backpack — put them back.
+        long leftover = removeMatchingStacks(
+                player.getInventory(), snapshot.objectItem(), player, snapshot.fromStash());
+        if (leftover > 0) {
+            plugin.storage().add(player.getUniqueId(), snapshot.key(), leftover);
+        }
+        plugin.getServer().getScheduler().runTask(plugin, () -> plugin.lorePatcher().patchOpenShop(player));
     }
 
     // If the pre-transaction was cancelled after our injection (another plugin cancelled it),
@@ -123,6 +136,12 @@ public final class TradeInterceptor implements Listener {
     }
 
     // ─── Helpers ────────────────────────────────────────────────────────────
+
+    private static boolean isSellAllGui(Player player) {
+        org.bukkit.inventory.InventoryHolder holder =
+                player.getOpenInventory().getTopInventory().getHolder();
+        return holder instanceof cn.superiormc.ultimateshop.gui.inv.SellAllGUI;
+    }
 
     private void injectItems(PlayerInventory inv, ObjectItem objectItem, Player player, long amount) {
         ItemStack prototype = ItemKeys.unitStack(objectItem, player);

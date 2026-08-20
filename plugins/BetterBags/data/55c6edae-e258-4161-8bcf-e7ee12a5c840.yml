@@ -26,8 +26,8 @@ items:
     minecraft:banner_patterns: '[{color:"yellow",pattern:"minecraft:base"},{color:"black",pattern:"minecraft:half_horizontal_bottom"},{color:"yellow",pattern:"minecraft:triangle_bottom"},{color:"red",pattern:"minecraft:rhombus"},{color:"black",pattern:"minecraft:circle"},{color:"red",pattern:"minecraft:flower"},{color:"black",pattern:"minecraft:triangle_top"}]'
     minecraft:lore: '[{color:"#77CC00",fallback:"Releases radiation",italic:0b,translate:"incendium.item.radiation_shield.desc1"},{color:"#77CC00",fallback:"when
       blocking an attack",italic:0b,translate:"incendium.item.radiation_shield.desc2"},"",{color:"#FF8000",fallback:"Incendium",italic:1b,translate:"incendium"}]'
-    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
     minecraft:custom_name: '{color:"#44FF00",fallback:"Radiation Shield",italic:0b,translate:"incendium.item.radiation_shield.name"}'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
     minecraft:custom_model_data: '{floats:[1450302.0f]}'
     minecraft:custom_data: '{incendium:{item:"radiation_shield"}}'
     minecraft:damage: '77'
@@ -243,8 +243,8 @@ items:
   id: minecraft:golden_sword
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:fire_aspect":5,"minecraft:looting":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运剑",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:fire_aspect":5,"minecraft:looting":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:damage: '27'
   schema_version: 1
 - DataVersion: 4903
@@ -413,8 +413,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:damage: '306'
   schema_version: 1
 - DataVersion: 4903
@@ -613,8 +613,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:ominous_bottle
@@ -656,8 +656,8 @@ items:
   id: minecraft:golden_axe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运斧",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:damage: '6'
   schema_version: 1
 - DataVersion: 4903
@@ -732,15 +732,15 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:wheat_seeds
-  count: 8
+  count: 9
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spider_eye
-  count: 37
+  count: 38
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:string
-  count: 45
+  count: 46
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glow_ink_sac
@@ -778,8 +778,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:damage: '106'
   schema_version: 1
 - DataVersion: 4903
@@ -828,7 +828,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:raw_iron
-  count: 58
+  count: 59
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:quartz
@@ -969,8 +969,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glow_ink_sac
@@ -990,7 +990,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:arrow
-  count: 13
+  count: 14
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:enchanted_book
@@ -1167,8 +1167,8 @@ items:
   id: minecraft:stick
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"爷爷的拐杖",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:knockback":5}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"爷爷的拐杖",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2200012.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GRANDPAS_WALKING_STICK"}}'
   schema_version: 1
@@ -1517,7 +1517,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
-  count: 1
+  count: 2
   components:
     minecraft:profile: '{id:[I;2086925263,-1453117158,-1362478585,1531017222],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2Q1NDE1NDFkYWFmZjUwODk2Y2QyNThiZGJkZDRjZjgwYzNiYTgxNjczNTcyNjA3OGJmZTM5MzkyN2U1N2YxIn19fQ=="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,click_event:{action:"open_url",url:"http://entity.minecraft.spider头"},color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"entity.minecraft.spider头",underlined:0b},{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""}'
@@ -1532,8 +1532,8 @@ items:
   count: 1
   components:
     minecraft:lore: '[{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金制的剑",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"至尊武器",underlined:0b}],text:""},{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"灵魂绑定",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金剑",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:fire_aspect":2,"minecraft:sharpness":8,"minecraft:unbreaking":8}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金剑",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SUPREME_TITANIUM_SWORD"}}'
     minecraft:damage: '24'
   schema_version: 1
@@ -1599,7 +1599,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:feather
-  count: 2
+  count: 3
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:beetroot_seeds
@@ -1732,7 +1732,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:iron_ingot
-  count: 12
+  count: 13
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:mutton
@@ -1751,7 +1751,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spruce_sapling
-  count: 18
+  count: 19
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:torch
@@ -1760,6 +1760,101 @@ items:
 - DataVersion: 4903
   id: minecraft:pale_oak_planks
   count: 64
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pumpkin_seeds
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:cocoa_beans
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:diamond
+  count: 1
+  components:
+    minecraft:custom_name: '{italic:0b,text:"Diamond"}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:netherite_shovel
+  count: 1
+  components:
+    minecraft:damage: '197'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:custom_name: '{italic:0b,text:"Enchanted Book"}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:iron_shovel
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:efficiency":2}'
+    minecraft:damage: '128'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bow
+  count: 1
+  components:
+    minecraft:damage: '319'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:white_wool
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:flint
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bone
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:leather
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:slime_ball
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:clay_ball
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom_block
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:beetroot_seeds
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:melon_seeds
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:snowball
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:gunpowder
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:ender_pearl
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:cobblestone
+  count: 1
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
