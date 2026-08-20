@@ -77,7 +77,7 @@ messages:
     forced-reset: "<gradient:#FF6B6B:#4ECDC4>⟳ 管理员已重置每日任务！</gradient>"
     reset-complete: "<gradient:#00FF88:#00D4FF>✓ 任务已成功重置！</gradient>"
     reset-admin: "<gradient:#FF6B6B:#4ECDC4>⟳ %admin% 已强制重置每日任务！</gradient>"
-    actionbar-progress: "&c%mission%: &7%current%&f/&8%required%"
+    actionbar-progress: "&e%mission% &7进度 &a%current%&f/&8%required%"
     actionbar-completed: "<gradient:#00FF88:#45B7D1>✓ 已完成：</gradient> &a&l%mission%"
 
   season:

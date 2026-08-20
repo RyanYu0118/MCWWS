@@ -556,12 +556,6 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:bow
-  count: 1
-  components:
-    minecraft:damage: '383'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:diamond_helmet
   count: 1
   components:
@@ -690,13 +684,6 @@ items:
   count: 1
   components:
     minecraft:stored_enchantments: '{"minecraft:aqua_affinity":1}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:bow
-  count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:power":4,"minecraft:punch":2}'
-    minecraft:damage: '185'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:diamond_helmet

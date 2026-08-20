@@ -4,6 +4,7 @@ import cn.superiormc.ultimateshop.gui.InvGUI;
 import cn.superiormc.ultimateshop.objects.buttons.AbstractButton;
 import cn.superiormc.ultimateshop.objects.buttons.ObjectItem;
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,9 +20,6 @@ import java.util.List;
 import java.util.Map;
 
 public final class ShopLorePatcher implements Listener {
-
-    private static final String MARKER = "§8§l仓库余量";
-    private static final String COLLECT_MARKER = "§8§l仓库吸取";
 
     private final McwwsUltimateShopStashPlugin plugin;
 
@@ -65,15 +63,25 @@ public final class ShopLorePatcher implements Listener {
                 continue;
             }
             List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
-            lore.removeIf(line -> line != null && (line.contains(MARKER) || line.contains(COLLECT_MARKER)));
-            lore.add(MARKER);
+            // Paper 重读 lore 时颜色码可能变化，旧版用 §8§l 标记匹配会失败，导致「仓库余量/自动吸取」反复叠加。
+            lore.removeIf(ShopLorePatcher::isStashLoreLine);
             lore.add(plugin.messages().legacy("stash-lore", Map.of("amount", String.valueOf(amount))));
             boolean skipped = plugin.storage().isSkipCollect(player.getUniqueId(), key);
-            lore.add(COLLECT_MARKER);
             lore.add(plugin.messages().legacy(skipped ? "stash-collect-lore-off" : "stash-collect-lore-on", null));
             meta.setLore(lore);
             patched.setItemMeta(meta);
             top.setItem(slot, patched);
         }
+    }
+
+    private static boolean isStashLoreLine(String line) {
+        if (line == null || line.isEmpty()) {
+            return false;
+        }
+        String plain = ChatColor.stripColor(line);
+        if (plain == null || plain.isEmpty()) {
+            return false;
+        }
+        return plain.contains("仓库余量") || plain.contains("自动吸取") || plain.contains("仓库吸取");
     }
 }

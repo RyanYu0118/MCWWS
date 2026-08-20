@@ -4,9 +4,10 @@
 # Whether to disable every vanilla advancement.
 # NB: This will make players lose their vanilla advancement progresses (since they are disabled).
 #     In addition, some lines may be printed on the console every time a player joins. You can ignore them.
-disable-vanilla-advancements: false
+# 本服只展示「流浪世界」一页；原版五页（故事/下界/末地/冒险/农牧）全部关闭。
+disable-vanilla-advancements: true
 # Whether to disable every vanilla recipe advancement (i.e. the advancements which unlock recipes).
-disable-vanilla-recipe-advancements: false
+disable-vanilla-recipe-advancements: true
 
 # Database settings
 #

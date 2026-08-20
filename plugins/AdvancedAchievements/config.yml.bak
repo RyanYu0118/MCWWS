@@ -174,17 +174,20 @@ IgnoreAFKPlayedTime: false
 
 # Register advancements with a description corresponding to the Goal parameter of each achievement. If changed, run
 # /aach generate to regenerate advancements with the new value taken into account. Minimum Minecraft version: 1.12.
-RegisterAdvancementDescriptions: true
+# 关闭：勿再 /aach generate，否则会在 L 键重新生成竖长成就树；成就请用 /aach list。
+RegisterAdvancementDescriptions: false
 
 # Hide advancements from the advancement GUI. Advancement notifications will still appear when receiving achievements.
 # Minimum Minecraft version: 1.12.
-HideAdvancements: false
+# 与「流浪世界」进度树共用 L 键时只保留一页自定义标签；成就仍用 /aach list 查看。
+HideAdvancements: true
 
 # Title shown on the root advancement.
-RootAdvancementTitle: "MCWWS / 成就"
+RootAdvancementTitle: "流浪世界 · 成就"
 
-# Background shown on the advancement tab. Must be a resource location to any image in a resource pack.
-AdvancementsBackground: "minecraft:textures/block/raw_iron_block.png"
+# Background shown on the advancement tab.
+# Minecraft 26.2 起必须用 gui/advancements/backgrounds/* 标识（旧的 textures/block/*.png 会显示占位符）。
+AdvancementsBackground: "minecraft:gui/advancements/backgrounds/stone"
 
 #======================================================================================================================#
 #                                                     GUI SETTINGS                                                     #
