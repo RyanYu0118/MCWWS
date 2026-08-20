@@ -141,8 +141,7 @@ DisableSilkTouchOreBreaks: true
 # Language file to use. Available: lang.yml, lang-BP.yml, lang-CN.yml, lang-CZ.yml, lang-DA.yml, lang-DE.yml,
 # lang-ES.yml, lang-FI.yml, lang-FR.yml, lang-HU.yml, lang-IT.yml, lang-PL.yml, lang-RO.yml, lang-RU.yml, lang-SE.yml,
 # lang-SK.yml, lang-TR.yml, lang-TW.yml, lang-VN.yml
-LanguageFileName: lang.yml
-
+LanguageFileName: lang-CN.yml
 # Time in seconds between each statistic count. Only the listed categories are currently supported.
 StatisticCooldown:
   LavaBuckets: 10
@@ -157,8 +156,7 @@ CooldownActionBar: true
 
 # Locale used to format dates in /aach book and /aach list. You must select an ISO 639 language code. The list of
 # possible language codes can be found at https://www.loc.gov/standards/iso639-2/php/code_list.php
-DateLocale: en
-
+DateLocale: zh
 # Display reception time of achievements in /aach book and /aach list in addition to the date.
 DateDisplayTime: true
 
@@ -183,7 +181,7 @@ RegisterAdvancementDescriptions: true
 HideAdvancements: false
 
 # Title shown on the root advancement.
-RootAdvancementTitle: 1MB /Achievements
+RootAdvancementTitle: "MCWWS / 成就"
 
 # Background shown on the advancement tab. Must be a resource location to any image in a resource pack.
 AdvancementsBackground: "minecraft:textures/block/raw_iron_block.png"
@@ -294,40 +292,40 @@ BungeeMode: false
 Places:
   chest:
     5:
-      Goal: Place 5 chests.
-      Message: §6You have placed 5 chests!
+      Goal: 放置 5 个箱子。
+      Message: §6你放置了 5 个箱子！
       Name: place_5_chest
-      DisplayName: Storage Expert
+      DisplayName: 仓储专家
       Type: normal
     50:
-      Goal: Place 50 chests.
-      Message: §6You have placed 50 chests!
+      Goal: 放置 50 个箱子。
+      Message: §6你放置了 50 个箱子！
       Name: place_50_chest
-      DisplayName: Tetris Master
+      DisplayName: 俄罗斯方块大师
       Type: normal
   stone:
     100:
-      Goal: Place 100 Stones.
-      Message: One hundred placed stones!
+      Goal: 放置 100 个石头。
+      Message: 放置了一百个石头！
       Name: place_100_stone
-      DisplayName: Stone Addict
+      DisplayName: 石头成瘾者
       Type: normal
     1000:
-      Goal: Place 1000 stones.
-      Message: One thousand placed stones!
+      Goal: 放置 1000 个石头。
+      Message: 放置了一千个石头！
       Name: place_1000_stone
-      DisplayName: Stone God
+      DisplayName: 石头之神
       Type: normal
       Reward:
         Command:
           Execute: 'say §7ALERT: §4PLAYER§7 has become the §4STONE GOD§7!'
-          Display: Become the Stone God!
+          Display: 成为石头之神！
   obsidian:
     50:
-      Goal: Place 50 obsidian blocks.
-      Message: You built something... indestructible?
+      Goal: 放置 50 个黑曜石。
+      Message: 你建造了……不可摧毁的东西？
       Name: place_50_obsidian
-      DisplayName: Bedrock Wannabe
+      DisplayName: 基岩崇拜者
       Type: rare
       Reward:
         Item:
@@ -335,10 +333,10 @@ Places:
           - SHULKER_SHELL 1
   crafting_table:
     25:
-      Goal: Place 25 crafting tables.
-      Message: You placed 25 crafting tables! Workbench Collector!
+      Goal: 放置 25 个工作台。
+      Message: 你放置了 25 个工作台！工作台收藏家！
       Name: place_25_crafting_table
-      DisplayName: Workshop Tycoon
+      DisplayName: 工坊大亨
       Type: normal
       Reward:
         Experience: 150
@@ -346,20 +344,20 @@ Places:
           - NETHERITE_UPGRADE_SMITHING_TEMPLATE 1
   bamboo:
     200:
-      Goal: Place 200 bamboo.
-      Message: Panda paradise achieved!
+      Goal: 放置 200 根竹子。
+      Message: 熊猫天堂达成！
       Name: place_200_bamboo
-      DisplayName: Bamboo Gardener
+      DisplayName: 竹林园丁
       Type: normal
       Reward:
         Item:
           - scaffolding 32
   honey_block:
     10:
-      Goal: Place 10 honey blocks.
-      Message: Sticky situation!
+      Goal: 放置 10 个蜂蜜块。
+      Message: 黏黏的情况！
       Name: place_10_honey_block
-      DisplayName: The Sticky Architect
+      DisplayName: 黏性建筑师
       Type: rare
       Reward:
         Item:
@@ -368,24 +366,24 @@ Places:
 Breaks:
   ice:
     10:
-      Goal: Break 10 ice blocks.
-      Message: You have broken 10 ice blocks!
+      Goal: 破坏 10 个冰块。
+      Message: 你破坏了 10 个冰块！
       Name: break_10_ice
-      DisplayName: Cold Drink Supplier
+      DisplayName: 冷饮供应商
       Type: normal
   snow|snow_block|ice:
     32:
-      Goal: Break 32 ice and/or snow.
-      Message: You have broken 32 ice and snow, Woo!
+      Goal: 破坏 32 个冰和/或雪。
+      Message: 你破坏了 32 个冰和雪，哇！
       Name: break_32_ice_any
-      DisplayName: Praying for Summer
+      DisplayName: 盼望夏天
       Type: normal
   stone:
     1:
-      Goal: Break a block.
-      Message: §1The first time you went mining!
+      Goal: 破坏一个方块。
+      Message: §1第一次挖矿！
       Name: break_1_stone
-      DisplayName: Cobble Gobble!
+      DisplayName: 圆石吞噬者
       Type: normal
       Reward:
         Command:
@@ -394,10 +392,10 @@ Breaks:
             - give PLAYER oak_wood 15
   mossy_cobblestone:
     15:
-      Goal: Break 15 mossy cobblestone blocks.
-      Message: §1Taiga biome master!
+      Goal: 破坏 15 个苔石。
+      Message: §1针叶林大师！
       Name: break_15_mossy_cobblestone
-      DisplayName: Taiga Biome Master!
+      DisplayName: 针叶林大师！
       Type: normal
       Reward:
         Command:
@@ -405,10 +403,10 @@ Breaks:
             - give PLAYER deepslate_diamond_ore 3
   dripstone_block:
     15:
-      Goal: Break 12 dripstone blocks.
-      Message: §1Cave Apprentice!
+      Goal: 破坏 12 个滴水石块。
+      Message: §1洞穴学徒！
       Name: break_12_dripstone_block
-      DisplayName: Keep exploring!
+      DisplayName: 继续探索！
       Type: normal
       Reward:
         Command:
@@ -416,10 +414,10 @@ Breaks:
             - give PLAYER deepslate_emerald_ore 3
   deepslate:
     500:
-      Goal: Break 500 deepslate blocks.
-      Message: 500 deepslate blocks shattered!
+      Goal: 破坏 500 个深板岩。
+      Message: 粉碎了 500 个深板岩！
       Name: break_500_deepslate
-      DisplayName: Deep Miner
+      DisplayName: 深板岩矿工
       Type: normal
       Reward:
         Experience: 250
@@ -428,10 +426,10 @@ Breaks:
           - DEEPSLATE_COAL_ORE 16
   ancient_debris:
     5:
-      Goal: Break 5 ancient debris.
-      Message: You discovered ancient tech!
+      Goal: 破坏 5 个远古残骸。
+      Message: 你发现了远古科技！
       Name: break_5_ancient_debris
-      DisplayName: Nether Prospector
+      DisplayName: 下界勘探者
       Type: rare
       Reward:
         Item:
@@ -440,10 +438,10 @@ Breaks:
           - NETHER_QUARTZ_ORE 8
   glass:
     100:
-      Goal: Break 100 glass blocks.
-      Message: Hope you recycled all that glass!
+      Goal: 破坏 100 个玻璃。
+      Message: 希望你把玻璃都回收了！
       Name: break_100_glass
-      DisplayName: Glassbreaker
+      DisplayName: 玻璃粉碎者
       Type: normal
       Reward:
         Item:
@@ -451,33 +449,35 @@ Breaks:
 Kills:
   zombie:
     1:
-      Goal: Kill a zombie.
-      Message: The first time you killed a zombie!
+      Goal: 击杀一只僵尸。
+      Message: 第一次击杀僵尸！
       Name: kills_1_zombie
-      DisplayName: The Walking Dead
+      DisplayName: 行尸走肉
       Type: normal
       Reward:
-        Money: 1
+        Command:
+          Execute: 'eco give PLAYER 1'
         Item:
           - diamond 1
   specificplayer-631e3896-da2a-4077-974b-d047859d76bc:
     1:
-      Goal: Kill the server Owner.
-      Message: Yippie! You killed the owner of the server!
+      Goal: 击杀服务器服主。
+      Message: 耶！你击杀了服务器服主！
       Name: kills_1_mrfloris
-      DisplayName: No More mrfloris
+      DisplayName: 不再有 mrfloris
       Type: rare
       Reward:
         IncreaseMaxHealth: 1
-        Money: 25000
+        Command:
+          Execute: 'eco give PLAYER 25000'
         Item:
           - diamond 16
   skeleton:
     100:
-      Goal: Slay 100 skeletons.
-      Message: 100 skeletons vanquished!
+      Goal: 击杀 100 个骷髅。
+      Message: 击杀了 100 个骷髅！
       Name: kills_100_skeleton
-      DisplayName: Bone Collector
+      DisplayName: 骨头收藏家
       Type: normal
       Reward:
         Item:
@@ -485,10 +485,10 @@ Kills:
           - bow 1 Power:2
   enderman:
     25:
-      Goal: Defeat 25 endermen.
-      Message: 25 endermen met their end!
+      Goal: 击败 25 个末影人。
+      Message: 25 个末影人迎来了终结！
       Name: kills_25_enderman
-      DisplayName: The Eyewitness
+      DisplayName: 目击者
       Type: rare
       Reward:
         Item:
@@ -496,10 +496,10 @@ Kills:
           - pumpkin 4
   witch:
     10:
-      Goal: Defeat 10 witches.
-      Message: Brewed some trouble for those witches!
+      Goal: 击败 10 个女巫。
+      Message: 给那些女巫惹了点麻烦！
       Name: kills_10_witch
-      DisplayName: Potion Purger
+      DisplayName: 药水清道夫
       Type: rare
       Reward:
         Experience: 200
@@ -509,24 +509,24 @@ Kills:
 TargetsShot:
   villager:
     10:
-      Goal: Throw things at villagers.
-      Message: You lapidated villagers 10 times.
+      Goal: 向村民投掷物品。
+      Message: 你向村民投掷了 10 次。
       Name: targetsshot_10_villager
-      DisplayName: The Stoner
+      DisplayName: 投石者
       Type: normal
   glass:
     100:
-      Goal: Try to break granny's windows.
-      Message: You shot 100 projectiles at glass blocks!
+      Goal: 试图打碎奶奶的窗户。
+      Message: 你向玻璃射出了 100 个弹射物！
       Name: targetsshot_100_glass
-      DisplayName: Window Breaker
+      DisplayName: 窗户破坏者
       Type: normal
   creeper:
     15:
-      Goal: Shoot 15 creepers.
-      Message: 15 creepers shot from a distance!
+      Goal: 射杀 15 只苦力怕。
+      Message: 从远处射杀 15 只苦力怕！
       Name: targetsshot_15_creeper
-      DisplayName: Safety First
+      DisplayName: 安全第一
       Type: normal
       Reward:
         Item:
@@ -534,10 +534,10 @@ TargetsShot:
           - arrow 32
   item_frame:
     20:
-      Goal: Hit 20 item frames with projectiles.
-      Message: Picasso would be proud.
+      Goal: 用弹射物击中 20 个展示框。
+      Message: 毕加索也会为你骄傲。
       Name: targetsshot_20_item_frame
-      DisplayName: Frame Smasher
+      DisplayName: 展示框粉碎者
       Type: normal
       Reward:
         Item:
@@ -547,27 +547,28 @@ TargetsShot:
 Crafts:
   diamond_sword:
     1:
-      Goal: Craft a diamond sword.
-      Message: The first time you crafted a blade!
+      Goal: 合成一把钻石剑。
+      Message: 第一次打造利刃！
       Name: craft_1_blade
-      DisplayName: Blacksmith Apprentice
+      DisplayName: 铁匠学徒
       Type: normal
       Reward:
-        Money: 2000
+        Command:
+          Execute: 'eco give PLAYER 2000'
     100:
-      Goal: Craft 100 diamond swords.
-      Message: Next craft, Excalibur?
+      Goal: 合成 100 把钻石剑。
+      Message: 下次合成，王者之剑？
       Name: craft_100_blade
-      DisplayName: Blacksmith Legend
+      DisplayName: 铁匠传奇
       Type: rare
       Reward:
         Experience: 500
   shield:
     10:
-      Goal: Craft 10 shields.
-      Message: You are the ultimate defender!
+      Goal: 合成 10 面盾牌。
+      Message: 你是终极防御者！
       Name: craft_10_shield
-      DisplayName: Shieldsmith
+      DisplayName: 盾牌匠
       Type: normal
       Reward:
         Item:
@@ -575,10 +576,10 @@ Crafts:
           - iron_ingot 4
   cake:
     5:
-      Goal: Bake 5 cakes.
-      Message: Let them eat cake!
+      Goal: 烘焙 5 个蛋糕。
+      Message: 让他们吃蛋糕吧！
       Name: craft_5_cake
-      DisplayName: Cake Boss
+      DisplayName: 蛋糕大亨
       Type: normal
       Reward:
         Experience: 50
@@ -586,10 +587,10 @@ Crafts:
           - cake 2
   banner:
     20:
-      Goal: Craft 20 banners.
-      Message: Made 20 banners—decorate the world!
+      Goal: 合成 20 面旗帜。
+      Message: 制作了 20 面旗帜——装饰世界吧！
       Name: craft_20_banner
-      DisplayName: Banner Designer
+      DisplayName: 旗帜设计师
       Type: normal
       Reward:
         Item:
@@ -598,21 +599,21 @@ Crafts:
 PlayerCommands:
   aach stats:
     10:
-      Goal: Check your stats 10x.
-      Message: Run the stats command 10 times!
+      Goal: 查看 10 次统计。
+      Message: 运行了 10 次统计命令！
       Name: playercommand_aachstats_10
-      DisplayName: Statistician
+      DisplayName: 统计学家
       Type: normal
       Rewards:
         Command:
           Execute: say §7PLAYER is now a statistician
-          Display: Broadcast
+          Display: 全服广播
   mcstats:
     30:
-      Goal: Use /mcstats 30 times without spamming
-      Message: So social!
+      Goal: 使用 /mcstats 30 次（请勿刷屏）
+      Message: 真社交！
       Name: playercommand_mcstats_30
-      DisplayName: mcMMO level grinder
+      DisplayName: mcMMO 等级狂人
       Type: normal
       Reward:
         Item:
@@ -620,20 +621,20 @@ PlayerCommands:
 Breeding:
   sheep:
     1:
-      Goal: Breed a sheep.
-      Message: You bred your first sheep!
+      Goal: 繁殖一只羊。
+      Message: 你繁殖了第一只羊！
       Name: breeding_1_sheep
-      DisplayName: Breeder
+      DisplayName: 畜牧新手
       Type: normal
       Reward:
         Item:
           - SHEEP_SPAWN_EGG 1
   cat:
     3:
-      Goal: Breed 3 cats.
-      Message: Cats everywhere!
+      Goal: 繁殖 3 只猫。
+      Message: 到处都是猫！
       Name: breeding_3_cat
-      DisplayName: Feline Frenzy
+      DisplayName: 猫咪狂热
       Type: normal
       Reward:
         Item:
@@ -641,10 +642,10 @@ Breeding:
           - string 8
   bee:
     10:
-      Goal: Breed 10 bees.
-      Message: Buzzing with success!
+      Goal: 繁殖 10 只蜜蜂。
+      Message: 嗡嗡作响，大获成功！
       Name: breeding_10_bee
-      DisplayName: Apiarist
+      DisplayName: 养蜂人
       Type: rare
       Reward:
         Item:
@@ -653,10 +654,10 @@ Breeding:
 JobsReborn:
   hunter:
     5:
-      Goal: Reach hunter level 5!
-      Message: You have reached hunter level 5!
+      Goal: 达到猎人等级 5！
+      Message: 你达到了猎人等级 5！
       Name: jobsreborn_5_hunter
-      DisplayName: Hunter
+      DisplayName: 猎人
       Type: normal
       Reward:
         Item:
@@ -664,10 +665,10 @@ JobsReborn:
           - arrow 64
   fisherman:
     10:
-      Goal: Reach fisherman level 10!
-      Message: Master of the seas!
+      Goal: 达到渔夫等级 10！
+      Message: 海洋之主！
       Name: jobsreborn_10_fisherman
-      DisplayName: Grand Fisher
+      DisplayName: 钓鱼大师
       Type: rare
       Reward:
         Item:
@@ -675,50 +676,50 @@ JobsReborn:
           - cooked_cod 16
   miner:
     5:
-      Goal: Reach miner level 5!
-      Message: Digging deep!
+      Goal: 达到矿工等级 5！
+      Message: 挖得够深！
       Name: jobsreborn_5_miner
-      DisplayName: Pickaxe Prodigy
+      DisplayName: 镐子天才
       Type: normal
       Reward:
         Item:
           - iron_pickaxe 1 Unbreaking:2
           - cobbled_deepslate 32
     15:
-      Goal: Reach miner level 15!
-      Message: Legendary digger!
+      Goal: 达到矿工等级 15！
+      Message: 传奇挖掘者！
       Name: jobsreborn_15_miner
-      DisplayName: Bedrock Breaker
+      DisplayName: 基岩破坏者
       Type: rare
       Reward:
         Item:
           - diamond_pickaxe 1 Efficiency:3
   farmer:
     10:
-      Goal: Reach farmer level 10!
-      Message: Green Thumb Unlocked!
+      Goal: 达到农业等级 10！
+      Message: 绿手指解锁！
       Name: jobsreborn_10_farmer
-      DisplayName: Harvester Supreme
+      DisplayName: 收割至尊
       Type: normal
       Reward:
         Item:
           - golden_hoe 1
           - carrot 32
     25:
-      Goal: Reach farmer level 25!
-      Message: Agriculture Legend!
+      Goal: 达到农业等级 25！
+      Message: 农业传奇！
       Name: jobsreborn_25_farmer
-      DisplayName: Lord of the Land
+      DisplayName: 大地领主
       Type: rare
       Reward:
         Item:
           - diamond_hoe 1 Unbreaking:3
   explorer:
     10:
-      Goal: Reach explorer level 10!
-      Message: The world awaits!
+      Goal: 达到探险等级 10！
+      Message: 世界在等你！
       Name: jobsreborn_10_explorer
-      DisplayName: Nomad
+      DisplayName: 流浪者
       Type: normal
       Reward:
         Item:
@@ -726,10 +727,10 @@ JobsReborn:
           - emerald 4
   woodcutter:
     8:
-      Goal: Reach woodcutter level 8!
-      Message: Timber!
+      Goal: 达到伐木等级 8！
+      Message: 伐木！
       Name: jobsreborn_8_woodcutter
-      DisplayName: Treehugger
+      DisplayName: 抱树者
       Type: normal
       Reward:
         Item:
@@ -737,41 +738,41 @@ JobsReborn:
           - oak_log 32
 Connections:
   1:
-    Message: You connected to our server for the first time!
+    Message: 你第一次连接我们的服务器！
     Name: connect_1
-    DisplayName: Good Choice
+    DisplayName: 明智之选
     Type: normal
 Deaths:
   1:
-    Goal: You have to Die.
-    Message: The first time you died!
+    Goal: 你必须死亡。
+    Message: 第一次死亡！
     Name: deaths_1
-    DisplayName: Rest in Peace
+    DisplayName: 安息吧
     Type: normal
     Reward:
       Item:
         - stone 5 Tombstone
 Arrows:
   50:
-    Goal: Shoot 50 arrows.
-    Message: 50 arrows shot!
+    Goal: 射出 50 支箭。
+    Message: 射出了 50 支箭！
     Name: arrows_50
-    DisplayName: Arrows Around the Place
+    DisplayName: 箭矢满天飞
     Type: normal
 Snowballs:
   1000:
-    Goal: Throw 1000 snowballs.
-    Message: 1000 snowballs thrown. That's the spirit!
+    Goal: 投掷 1000 个雪球。
+    Message: 投掷了 1000 个雪球，精神可嘉！
     Name: snowballs_1000
-    DisplayName: Winter Addict
+    DisplayName: 冬季成瘾者
     Type: normal
     Reward:
       IncreaseMaxOxygen: 30
   5000:
-    Goal: Throw 5000 snowballs.
-    Message: 5000 snowballs? Blizzard incoming!
+    Goal: 投掷 5000 个雪球。
+    Message: 5000 个雪球？暴风雪来了！
     Name: snowballs_5000
-    DisplayName: Snowmageddon
+    DisplayName: 雪灾
     Type: rare
     Reward:
       Item:
@@ -779,16 +780,16 @@ Snowballs:
         - ice 16
 Eggs:
   1000:
-    Goal: Throw 1000 eggs.
-    Message: 1000 eggs thrown!
+    Goal: 投掷 1000 个鸡蛋。
+    Message: 投掷了 1000 个鸡蛋！
     Name: eggs_1000
-    DisplayName: Omelet Addict
+    DisplayName: 煎蛋成瘾者
     Type: normal
   2500:
-    Goal: Throw 2500 eggs.
-    Message: You might start a farm soon.
+    Goal: 投掷 2500 个鸡蛋。
+    Message: 你很快就要开农场了。
     Name: eggs_2500
-    DisplayName: Scrambled Expert
+    DisplayName: 炒蛋专家
     Type: rare
     Reward:
       Item:
@@ -796,16 +797,16 @@ Eggs:
         - cake 1
 Fish:
   1:
-    Goal: Fish a fish.
-    Message: The first time you caught a fish!
+    Goal: 钓一条鱼。
+    Message: 第一次钓到鱼！
     Name: fish_1
-    DisplayName: Time for Fish and Chips
+    DisplayName: 炸鱼薯条时间
     Type: normal
   100:
-    Goal: Catch 100 fish.
-    Message: Fishmaster! Sushi night!
+    Goal: 捕获 100 条鱼。
+    Message: 钓鱼大师！寿司之夜！
     Name: fish_100
-    DisplayName: The Angler
+    DisplayName: 垂钓者
     Type: rare
     Reward:
       Item:
@@ -813,30 +814,30 @@ Fish:
         - salmon_bucket 1
 Treasures:
   1:
-    Goal: Get a treasure from the sea.
-    Message: Your first treasure from the sea!
+    Goal: 从海中获取宝藏。
+    Message: 你从海中获得的第一个宝藏！
     Name: treasure_1
-    DisplayName: Treasure Hunter
+    DisplayName: 宝藏猎人
     Type: normal
 ItemBreaks:
   1:
-    Goal: Let an item break.
-    Message: You broke your favorite tool!
+    Goal: 让一件物品损坏。
+    Message: 你弄坏了最爱的工具！
     Name: itembreaks_1
-    DisplayName: §4Clumsy Guy
+    DisplayName: §4笨拙家伙
     Type: normal
 EatenItems:
   1:
-    Goal: Eat something.
-    Message: Just had a snack!
+    Goal: 吃点东西。
+    Message: 刚吃了点零食！
     Name: eatenitems_1
-    DisplayName: First Snack
+    DisplayName: 第一口零食
     Type: normal
   10:
-    Goal: Eat 10 suspicious stews.
-    Message: You lived to tell the tale!
+    Goal: 食用 10 碗迷之炖菜。
+    Message: 你活了下来，还能讲述这段经历！
     Name: suspiciousstew_10
-    DisplayName: Adventurous Eater
+    DisplayName: 冒险食客
     Type: fun
     Reward:
       Item:
@@ -844,83 +845,83 @@ EatenItems:
         - suspicious_stew 4
 Shear:
   100:
-    Goal: Shear 100 sheep.
-    Message: 100 sheep sheared!
+    Goal: 剪 100 只羊的毛。
+    Message: 剪了 100 只羊！
     Name: shear_100
-    DisplayName: §1Wool Addict
+    DisplayName: §1羊毛成瘾者
     Type: normal
 Milk:
   1:
-    Goal: Milk a cow.
-    Message: §eJust milked a cow!.... §cMOOW
+    Goal: 给牛挤奶。
+    Message: §e刚给牛挤了奶…… §c哞~
     Name: milk_1
-    DisplayName: First Milk
+    DisplayName: 第一次挤奶
     Type: normal
     Reward:
       Experience: 100
 LavaBuckets:
   10:
-    Goal: Fill 10 buckets with lava.
-    Message: 10 buckets filled with lava!
+    Goal: 装满 10 桶熔岩。
+    Message: 装满 10 桶熔岩！
     Name: lavabuckets_10
-    DisplayName: Pyroman
+    DisplayName: 纵火狂
     Type: normal
 WaterBuckets:
   15:
-    Goal: Fill 10 buckets with water.
-    Message: 15 buckets filled with water!
+    Goal: 装满 10 桶水。
+    Message: 装满 15 桶水！
     Name: waterbuckets_15
-    DisplayName: Fireman
+    DisplayName: 消防员
     Type: normal
 Trades:
   1:
-    Goal: Trade with a villager.
-    Message: Doing business with your first villager!
+    Goal: 与村民交易。
+    Message: 与第一位村民做生意！
     Name: trades_1
-    DisplayName: First Trade
+    DisplayName: 第一笔交易
     Type: normal
 AnvilsUsed:
   1:
-    Goal: Repair an item.
-    Message: You just repaired your first item!
+    Goal: 修复一件物品。
+    Message: 你刚修复了第一件物品！
     Name: anvilsused_1
-    DisplayName: First Repair
+    DisplayName: 第一次修复
     Type: normal
 Enchantments:
   5:
-    Goal: Enchant 5 things.
-    Message: 5 objects enchanted!
+    Goal: 附魔 5 次。
+    Message: 附魔了 5 次！
     Name: enchantments_5
-    DisplayName: §5Wizard
+    DisplayName: §5巫师
     Type: normal
 Beds:
   5:
-    Goal: Sleep 5 times.
-    Message: You entered a bed 5 times!
+    Goal: 睡觉 5 次。
+    Message: 你睡了 5 次觉！
     Name: bed_5
-    DisplayName: Sleepy Guy
+    DisplayName: 瞌睡虫
     Type: normal
   50:
-    Goal: Sleep in a bed 50 times.
-    Message: Wheee! Master of dreams
+    Goal: 在床上睡觉 50 次。
+    Message: 哇！梦境大师
     Name: bedbounce_50
-    DisplayName: God of Slumber
+    DisplayName: 睡眠之神
     Type: fun
     Reward:
       Item:
         - slime_block 8
 MaxLevel:
   10:
-    Goal: Reach level 10.
-    Message: Level 10 reached!
+    Goal: 达到等级 10。
+    Message: 达到 10 级！
     Name: maxlevel_10
-    DisplayName: §4Rookie
+    DisplayName: §4新手
     Type: normal
   50:
-    Goal: Reach level 50.
-    Message: You've become a master!
+    Goal: 达到等级 50。
+    Message: 你已成为大师！
     Name: maxlevel_50
-    DisplayName: Overpowered
+    DisplayName: 过于强大
     Type: rare
     Reward:
       Experience: 1000
@@ -928,368 +929,368 @@ MaxLevel:
         - enchanted_book 1
 ConsumedPotions:
   100:
-    Goal: Drink 100 potions.
-    Message: Drinking weird beverages all the time...
+    Goal: 饮用 100 瓶药水。
+    Message: 一直在喝奇怪的饮料……
     Name: consumedpotions_100
-    DisplayName: Potioneer
+    DisplayName: 药水师
     Type: normal
 PlayedTime:
   1:
-    Goal: Play an hour.
-    Message: You played for one hour on the server!
+    Goal: 游玩 1 小时。
+    Message: 你在服务器上游玩了一小时！
     Name: playedtime_1
-    DisplayName: First Hour
+    DisplayName: 第一小时
     Type: normal
   100:
-    Goal: Play for 100 hours.
-    Message: Welcome back - the server recognizes you big time!
+    Goal: 游玩 100 小时。
+    Message: 欢迎回来——服务器大大认可你！
     Name: playedtime_100
-    DisplayName: Server Recognition
+    DisplayName: 服务器认可
     Type: rare
     Reward:
       Command:
         Execute: say §6PLAYER has been here many times before!
-        Display: Fame and Glory
+        Display: 名誉与荣耀
       Item:
         - diamond_block 3
 DistanceFoot:
   1000:
-    Goal: Travel 1000 Blocks with your feet.
-    Message: You traveled 1000 blocks by foot!
+    Goal: 步行移动 1000 格。
+    Message: 你步行移动了 1000 格！
     Name: distancefoot_1000
-    DisplayName: Big Walker
+    DisplayName: 远行旅人
     Type: normal
 DistancePig:
   100:
-    Goal: Travel 100 Blocks with a pig.
-    Message: You traveled 100 blocks on a pig!
+    Goal: 骑猪移动 100 格。
+    Message: 你骑猪移动了 100 格！
     Name: distancepig_100
-    DisplayName: Carrot on a Stick Master
+    DisplayName: 胡萝卜钓竿大师
     Type: rare
 DistanceHorse:
   500:
-    Goal: Travel 500 Blocks with a horse.
-    Message: You traveled 500 blocks on a horse!
+    Goal: 骑马移动 500 格。
+    Message: 你骑马移动了 500 格！
     Name: distancehorse_500
-    DisplayName: The Avener
+    DisplayName: 复仇者
     Type: normal
 DistanceMinecart:
   100:
-    Goal: Travel 100 Blocks with a minecart.
-    Message: You traveled 100 blocks in a minecart!
+    Goal: 乘坐矿车移动 100 格。
+    Message: 你乘坐矿车移动了 100 格！
     Name: distanceminecart_100
-    DisplayName: Carting Fan
+    DisplayName: 矿车爱好者
     Type: normal
 DistanceBoat:
   200:
-    Goal: Travel 200 Blocks with a boat.
-    Message: You traveled 200 blocks in a boat!
+    Goal: 乘船移动 200 格。
+    Message: 你乘船移动了 200 格！
     Name: distanceboat_200
-    DisplayName: Great Sailor
+    DisplayName: 伟大水手
     Type: normal
 DistanceGliding:
   100:
-    Goal: Fly 100 blocks with an elytra.
-    Message: You traveled 100 blocks with elytra!
+    Goal: 用鞘翅飞行 100 格。
+    Message: 你用鞘翅飞行了 100 格！
     Name: distancegliding_100
-    DisplayName: Angel
+    DisplayName: 天使
     Type: rare
 DistanceLlama:
   150:
-    Goal: Travel 150 blocks with a llama.
-    Message: You traveled 150 blocks on a llama!
+    Goal: 骑羊驼移动 150 格。
+    Message: 你骑羊驼移动了 150 格！
     Name: distancellama_150
-    DisplayName: Llama Rider
+    DisplayName: 羊驼骑手
     Type: rare
 DistanceSneaking:
   500:
-    Goal: Travel 500 blocks whilst sneaking.
-    Message: You traveled 500 blocks whilst sneaking!
+    Goal: 潜行移动 500 格。
+    Message: 你潜行移动了 500 格！
     Name: distancesneaking_500
-    DisplayName: Ninja
+    DisplayName: 忍者
     Type: normal
 ItemDrops:
   15:
-    Goal: Drop 15 items.
-    Message: §cYou're killing the planet!
+    Goal: 丢弃 15 个物品。
+    Message: §c你在破坏地球！
     Name: itemdrops_15
-    DisplayName: Polluter
+    DisplayName: 污染者
     Type: normal
 ItemPickups:
   40:
-    Goal: Pick 40 items up.
-    Message: You're saving the planet!
+    Goal: 拾取 40 个物品。
+    Message: 你在拯救地球！
     Name: itempickups_40
-    DisplayName: Environmentalist
+    DisplayName: 环保主义者
     Type: normal
 HoePlowings:
   10:
-    Goal: Plow 10 times.
-    Message: You plowed the ground 10 times!
+    Goal: 耕地 10 次。
+    Message: 你耕地了 10 次！
     Name: hoeplowings_10
-    DisplayName: Farmer
+    DisplayName: 农夫
     Type: normal
     Reward:
       Item:
         - cookie 15
 Fertilising:
   15:
-    Goal: Use bonemeal 15 times.
-    Message: You used bone meal on plants 15 times!
+    Goal: 使用骨粉 15 次。
+    Message: 你对植物使用了 15 次骨粉！
     Name: fertilising_15
-    DisplayName: Gardener
+    DisplayName: 园丁
     Type: normal
 Taming:
   1:
-    Goal: Tame an animal.
-    Message: You tamed your first animal!
+    Goal: 驯服一只动物。
+    Message: 你驯服了第一只动物！
     Name: taming_1
-    DisplayName: Tamer
+    DisplayName: 驯兽师
     Type: normal
 Brewing:
   1:
-    Goal: Brew a potion.
-    Message: You brewed your first potion!
+    Goal: 酿造一瓶药水。
+    Message: 你酿造了第一瓶药水！
     Name: brewing_1
-    DisplayName: Alchemist
+    DisplayName: 炼金师
     Type: normal
 Fireworks:
   10:
-    Goal: Launch fireworks 10 times.
-    Message: You launched 10 fireworks!
+    Goal: 燃放 10 次烟花。
+    Message: 你燃放了 10 次烟花！
     Name: fireworks_10
-    DisplayName: Pyrotechnist
+    DisplayName: 烟火师
     Type: normal
     Reward:
       Experience: 200
 MusicDiscs:
   1:
-    Goal: Use a jukebox.
-    Message: One jukebox used!
+    Goal: 使用唱片机。
+    Message: 使用了一次唱片机！
     Name: musicdiscs_1
-    DisplayName: DJ
+    DisplayName: 唱片骑师
     Type: normal
   10:
-    Goal: Play 10 music discs.
-    Message: The party never ends!
+    Goal: 播放 10 张唱片。
+    Message: 派对永不结束！
     Name: musicdiscs_10
-    DisplayName: Party Host
+    DisplayName: 派对主人
     Type: normal
     Reward:
       Item:
         - music_disc_cat 1
 EnderPearls:
   10:
-    Goal: Teleport with ender pearls 10 times.
-    Message: 10 teleportations with ender pearls!
+    Goal: 用末影珍珠传送 10 次。
+    Message: 用末影珍珠传送 10 次！
     Name: enderpearls_10
-    DisplayName: Teleport Man
+    DisplayName: 传送人
     Type: normal
 PetMasterGive:
   3:
-    Goal: Give 3 pets to friends.
-    Message: 3 pets given to friends!
+    Goal: 赠送 3 只宠物给好友。
+    Message: 赠送了 3 只宠物给好友！
     Name: petmastergive_3
-    DisplayName: Donator
+    DisplayName: 赞助者
     Type: rare
 PetMasterReceive:
   10:
-    Goal: Receive 10 pets.
-    Message: 10 pets received from friends!
+    Goal: 接收 10 只宠物。
+    Message: 从好友处收到 10 只宠物！
     Name: petmasterreceive_10
-    DisplayName: Receiver
+    DisplayName: 接收者
     Type: rare
 Smelting:
   250:
-    Goal: Smelt 250 items.
-    Message: 250 items smelt in a furnace!
+    Goal: 熔炼 250 个物品。
+    Message: 在熔炉中熔炼了 250 个物品！
     Name: smeltitems_250
-    DisplayName: The Smelter
+    DisplayName: 熔炼师
     Type: normal
 RaidsWon:
   1:
-    Goal: Win a raid.
-    Message: A raid won!
+    Goal: 赢得一场袭击。
+    Message: 赢得一场袭击！
     Name: raidswon_1
-    DisplayName: Accident or intentional?
+    DisplayName: 意外还是故意？
     Type: normal
     Reward:
       Item:
         - emerald 8
   10:
-    Goal: Win ten raids.
-    Message: Ten raids!
+    Goal: 赢得十次袭击。
+    Message: 十次袭击！
     Name: raidswon_10
-    DisplayName: Village Protector
+    DisplayName: 村庄守护者
     Type: rare
     Reward:
       Item:
         - totem_of_undying 1
 Riptides:
   1:
-    Goal: Use a magical trident.
-    Message: You've mastered the powers of the sea!
+    Goal: 使用魔法三叉戟。
+    Message: 你掌握了海洋之力！
     Name: riptides_1
-    DisplayName: Poseidon
+    DisplayName: 波塞冬
     Type: normal
 mcMMO:
   mining:
     25:
-      Goal: Reach mining level 25
-      Message: You've reached mining level 25!
+      Goal: 达到挖矿等级 25
+      Message: 你达到了挖矿等级 25！
       Name: mining_lvl_25
-      DisplayName: Diggy diggy hole
+      DisplayName: 挖呀挖呀挖
       Type: normal
   excavation:
     25:
-      Goal: Reach excavation level 25
-      Message: You've reached excavation level 25!
+      Goal: 达到挖掘等级 25
+      Message: 你达到了挖掘等级 25！
       Name: excavation_lvl_25
-      DisplayName: Dirt, dirt and more dirt
+      DisplayName: 泥土，泥土，还是泥土
       Type: normal
   fishing:
     25:
-      Goal: Reach fishing level 25
-      Message: You've reached fishing level 25!
+      Goal: 达到钓鱼等级 25
+      Message: 你达到了钓鱼等级 25！
       Name: fishing_lvl_25
-      DisplayName: Swimmy Swimmy little fishes
+      DisplayName: 游啊游，小鱼儿
       Type: normal
   herbalism:
     25:
-      Goal: Reach herbalism level 25
-      Message: You've reached herbalism level 25!
+      Goal: 达到草药学等级 25
+      Message: 你达到了草药学等级 25！
       Name: herbalism_lvl_25
-      DisplayName: You can never have too many crops
+      DisplayName: 作物永远不嫌多
       Type: normal
   woodcutting:
     25:
-      Goal: Reach woodcutting level 25
-      Message: You've reached woodcutting level 25!
+      Goal: 达到伐木等级 25
+      Message: 你达到了伐木等级 25！
       Name: woodcutting_lvl_25
-      DisplayName: The poor trees :(
+      DisplayName: 可怜的树 :(
       Type: normal
   archery:
     25:
-      Goal: Reach archery level 25
-      Message: You've reached archery level 25!
+      Goal: 达到箭术等级 25
+      Message: 你达到了箭术等级 25！
       Name: archery_lvl_25
-      DisplayName: Poing! (the noise of an arrow hitting a target)
+      DisplayName: 砰！（箭矢命中目标）
       Type: normal
   axes:
     25:
-      Goal: Reach axes level 25
-      Message: You've reached axes level 25!
+      Goal: 达到斧等级 25
+      Message: 你达到了斧等级 25！
       Name: axes_lvl_25
-      DisplayName: You know these are made to cut wood, right?
+      DisplayName: 你知道这是用来砍树的吧？
       Type: normal
   crossbows:
     25:
-      Goal: Reach crossbows level 25
-      Message: You've reached crossbows level 25!
+      Goal: 达到弩等级 25
+      Message: 你达到了弩等级 25！
       Name: crossbows_lvl_25
-      DisplayName: Your bow must be enraged now...
+      DisplayName: 你的弓现在一定很生气……
       Type: normal
   maces:
     25:
-      Goal: Reach maces level 25
-      Message: You've reached maces level 25!
+      Goal: 达到重锤等级 25
+      Message: 你达到了重锤等级 25！
       Name: maces_lvl_25
-      DisplayName: Haha! Surprise attack!
+      DisplayName: 哈！偷袭成功！
       Type: normal
   swords:
     25:
-      Goal: Reach swords level 25
-      Message: You've reached swords level 25!
+      Goal: 达到剑等级 25
+      Message: 你达到了剑等级 25！
       Name: swords_lvl_25
-      DisplayName: This sword is surpisingly sharp
+      DisplayName: 这把剑意外地锋利
       Type: normal
   taming:
     25:
-      Goal: Reach taming level 25
-      Message: You've reached taming level 25!
+      Goal: 达到驯兽等级 25
+      Message: 你达到了驯兽等级 25！
       Name: taming_lvl_25
-      DisplayName: The birds, the bees, the sheep, the cows, the ark!
+      DisplayName: 飞禽走兽，诺亚方舟！
       Type: normal
   tridents:
     25:
-      Goal: Reach tridents level 25
-      Message: You've reached tridents level 25!
+      Goal: 达到三叉戟等级 25
+      Message: 你达到了三叉戟等级 25！
       Name: tridents_lvl_25
-      DisplayName: Neptune has asked for his trident back
+      DisplayName: 海神想要收回三叉戟
       Type: normal
   unarmed:
     25:
-      Goal: Reach unarmed level 25
-      Message: You've reached unarmed level 25!
+      Goal: 达到徒手等级 25
+      Message: 你达到了徒手等级 25！
       Name: unarmed_lvl_25
-      DisplayName: You should really get some tools, you know?
+      DisplayName: 你真的该弄点工具了
       Type: normal
   acrobatics:
     25:
-      Goal: Reach acrobatics level 25
-      Message: You've reached acrobatics level 25!
+      Goal: 达到杂技等级 25
+      Message: 你达到了杂技等级 25！
       Name: acrobatics_lvl_25
-      DisplayName: Time for the olympics
+      DisplayName: 奥运会时间
       Type: normal
   repair:
     25:
-      Goal: Reach repair level 25
-      Message: You've reached repair level 25!
+      Goal: 达到修复等级 25
+      Message: 你达到了修复等级 25！
       Name: repair_lvl_25
-      DisplayName: Stop damaging your gear!
+      DisplayName: 别再损坏装备了！
       Type: normal
   salvage:
     25:
-      Goal: Reach salvage level 25
-      Message: You've reached salvage level 25!
+      Goal: 达到回收等级 25
+      Message: 你达到了回收等级 25！
       Name: salvage_lvl_25
-      DisplayName: Taking in the old to create the new
+      DisplayName: 旧物新生
       Type: normal
   alchemy:
     25:
-      Goal: Reach alchemy level 25
-      Message: You've reached alchemy level 25!
+      Goal: 达到炼金等级 25
+      Message: 你达到了炼金等级 25！
       Name: alchemy_lvl_25
-      DisplayName: Fire burn and cauldron bubble
+      DisplayName: 烈火烹油
       Type: normal
   smelting:
     25:
-      Goal: Reach smelting level 25
-      Message: You've reached smelting level 25!
+      Goal: 达到熔炼等级 25
+      Message: 你达到了熔炼等级 25！
       Name: smelting_lvl_25
-      DisplayName: Time for a blast furnace?
+      DisplayName: 该用高炉了吗？
       Type: normal
   power:
     50:
-      Goal: Reach power level 50
-      Message: Reached power level 50!
+      Goal: 达到综合等级 50
+      Message: 达到综合等级 50！
       Name: power_lvl_50
-      DisplayName: Slowly climbing the ranks
+      DisplayName: 稳步攀升
       Type: normal
     150:
-      Goal: Reach power level 150
-      Message: Reached power level 150!
+      Goal: 达到综合等级 150
+      Message: 达到综合等级 150！
       Name: power_lvl_150
-      DisplayName: Powahhh!!!
+      DisplayName: 力量！！！
       Type: normal
     300:
-      Goal: Reach power level 300
-      Message: Reached power level 300!
+      Goal: 达到综合等级 300
+      Message: 达到综合等级 300！
       Name: power_lvl_300
-      DisplayName: You've been grinding ranks too much
+      DisplayName: 你刷等级刷太多了
       Type: normal
     500:
-      Goal: Reach power level 500
-      Message: Reached power level 500!
+      Goal: 达到综合等级 500
+      Message: 达到综合等级 500！
       Name: power_lvl_500
-      DisplayName: Really, it is time to stop leveling up now.. this is getting ridiculous
+      DisplayName: 说真的，该停手升级了……这太离谱了
       Type: normal
   ability:
     10:
-      Goal: Activate 10 mcMMO abilities
-      Message: Activated 10 mcMMO abilities!
+      Goal: 激活 10 次 mcMMO 技能
+      Message: 激活了 10 次 mcMMO 技能！
       Name: 10_abilities_activated
-      DisplayName: Superpowers! Let's go!
+      DisplayName: 超能力！冲！
       Type: normal
 
 #======================================================================================================================#
@@ -1305,10 +1306,10 @@ MultiCommand: true
 # command does not work with other achievements.
 Commands:
   yourAch1:
-    Goal: Take part in the special 1MoreBlock event!
-    Message: You took part in the special event!
+    Goal: 参加 1MoreBlock 特别活动！
+    Message: 你参加了特别活动！
     Name: your_ach1
-    DisplayName: 1MB Event Achievement!
+    DisplayName: 1MB 活动成就！
     Type: rare
 
 # # Statistics for this category can be increased using commands such as '/aach add 1 Custom.votes PLAYER'.
@@ -1331,10 +1332,10 @@ Commands:
 # Count the number of advancements completed.
 AdvancementsCompleted:
   20:
-    Goal: Complete 20 advancements.
-    Message: 20 advancements completed!
+    Goal: 完成 20 个进度。
+    Message: 完成了 20 个进度！
     Name: advancements_20
-    DisplayName: Game Block Advance
+    DisplayName: 方块进阶
     Type: normal
     Reward:
       Item:
@@ -1348,19 +1349,19 @@ BossBarProgress: true
 EffectsHeld:
   jump_boost:
     1:
-      Goal: Hold the jump boost effect!
-      Message: You jumped as high as a kangaroo!
+      Goal: 获得跳跃提升效果！
+      Message: 你跳得像袋鼠一样高！
       Name: effectsheld_1_jump
-      DisplayName: Kangaroo
+      DisplayName: 袋鼠
       Type: normal
 
 # Count books edited.
 BooksEdited:
   10:
-    Goal: Edit 10 books.
-    Message: You've used an entire pot of ink!
+    Goal: 编辑 10 本书。
+    Message: 你用光了一整瓶墨水！
     Name: booksedited_10
-    DisplayName: Scribe
+    DisplayName: 抄写员
     Type: normal
 
 # Used for the Breaks achievement category. You may need to expand this list when new Minecraft versions are released.
@@ -1526,9 +1527,10 @@ FishableFish:
 Custom:
   votes:
     10:
-      Message: Voted 10 times for the server!
+      Message: 为服务器投票 10 次！
       Name: customs_votes_10
-      DisplayName: Server fan
+      DisplayName: 服务器粉丝
       Type: normal
       Reward:
-        Money: 5
+        Command:
+          Execute: 'eco give PLAYER 5'

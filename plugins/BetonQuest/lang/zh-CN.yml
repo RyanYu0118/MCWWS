@@ -1,5 +1,5 @@
 configVersion: 3.2.0-CONFIG-2 # Don't change this! The plugin's automatic config updater handles it.
-conversation_nothing_to_start: '@[legacy]&e====&b{npc}&b has nothing to say!&e===='
+conversation_nothing_to_start: '@[legacy]&e====&b{npc}&b 暂时没有话要说！&e===='
 conversation_start: '@[legacy]&e====&b与{npc}&b对话中&e===='
 conversation_end: '@[legacy]&e====&b与{npc}&b的对话已经结束&e===='
 no_permission: '@[legacy]&c你没有相应的权限.'
@@ -19,7 +19,7 @@ money_given: '@[legacy]&2收到 {amount} {currency}'
 money_taken: '@[legacy]&2丢失 {amount} {currency}'
 point_given: '@[legacy]&2你收到了 {amount} 点券，来自 {category}'
 point_taken: '@[legacy]&2你花费了 {amount} 点券，在 {category}'
-point_set: '@[legacy]&2Your points {category} are set to {amount}'
+point_set: '@[legacy]&2你的点券 {category} 已设为 {amount}'
 point_multiplied: '@[legacy]&2你的点券 {category} 被乘以 {amount}'
 busy: '@[legacy]&c你还在战斗中'
 quest_canceled: '@[legacy]&2任务 {name}&2 已取消!'
@@ -58,20 +58,20 @@ objective:
   items_to_craft: '@[legacy]&2{absoluteleft} 个物品需要制作'
   items_to_enchant: '@[legacy]&2{absoluteleft} 个物品需要附魔'
   level_to_gain: '@[legacy]&2{absoluteleft} 级经验还需要获取'
-  payment_to_receive: '@[legacy]&2{absoluteleft} money left to receive'
-  animals_to_tame: '@[legacy]&2{absoluteleft} animals left to tame'
-  times_to_jump: '@[legacy]&2{absoluteleft} jumps left'
+  payment_to_receive: '@[legacy]&2还需收到 {absoluteleft} 金钱'
+  animals_to_tame: '@[legacy]&2还需驯服 {absoluteleft} 只动物'
+  times_to_jump: '@[legacy]&2还需跳跃 {absoluteleft} 次'
 menu:
-  no_permission: '@[legacy]&7[&c&l!&7] No permission!'
+  no_permission: '@[legacy]&7[&c&l!&7] 没有权限！'
   command_usage: |-
-    @[legacy]&cUsage:
+    @[legacy]&c用法：
     &7{usage}
-  command_info_list: '@[legacy]&bopens specific menu [for a player]'
-  command_info_open: '@[legacy]&blists all loaded menus'
-  command_invalid_menu: '@[legacy]&7[&c&l!&7] &c{menu}&7 is not a loaded menu!'
-  command_no_player: '@[legacy]&7[&c&l!&7] Please specify a player!'
-  command_invalid_player: '@[legacy]&7[&c&l!&7] There is no player with the name &c{player}&7!'
-  command_no_menu: '@[legacy]&7[&c&l!&7] Please specify a menu!'
-  command_open_successful: '@[legacy]&7[&a&li&7]&a Successfully opened &7{menu}&a!'
-  command_list: "@[legacy]&e----- &aRPGMenu &e-----\n&aLoaded menus:&e "
-  click_to_open: '@[legacy]&bclick to open menu'
+  command_info_list: '@[legacy]&b打开指定菜单 [可指定玩家]'
+  command_info_open: '@[legacy]&b列出所有已加载菜单'
+  command_invalid_menu: '@[legacy]&7[&c&l!&7] &c{menu}&7 不是已加载的菜单！'
+  command_no_player: '@[legacy]&7[&c&l!&7] 请指定一名玩家！'
+  command_invalid_player: '@[legacy]&7[&c&l!&7] 找不到名为 &c{player}&7 的玩家！'
+  command_no_menu: '@[legacy]&7[&c&l!&7] 请指定一个菜单！'
+  command_open_successful: '@[legacy]&7[&a&li&7]&a 已成功打开 &7{menu}&a！'
+  command_list: "@[legacy]&e----- &aRPGMenu &e-----\n&a已加载菜单：&e "
+  click_to_open: '@[legacy]&b点击打开菜单'

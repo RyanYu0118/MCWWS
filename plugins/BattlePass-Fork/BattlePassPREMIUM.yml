@@ -28,275 +28,275 @@ level-1:
   items:
     diamonds:
       material: DIAMOND
-      display: x8 Diamond
+      display: "x8 钻石"
       amount: 8
     money:
       command: "eco give <player> 5000"
       display: "$5000"
     kit:
       command: "kit premium <player>"
-      display: "Premium Kit"
+      display: "高级工具包"
 level-2:
   material: NETHERITE_INGOT
-  display: x1 Netherite Ingot
+  display: "x1 下界合金锭"
   amount: 1
 level-3:
   material: GOLDEN_APPLE
-  display: x4 Golden Apple
+  display: "x4 金苹果"
   amount: 4
 level-4:
   material: ENCHANTED_GOLDEN_APPLE
-  display: x1 Enchanted Golden Apple
+  display: "x1 附魔金苹果"
   amount: 1
 level-5:
   items:
     beacon:
       material: BEACON
-      display: x1 Beacon
+      display: "x1 信标"
       amount: 1
     money:
       command: "eco give <player> 15000"
       display: "$15,000"
 level-6:
   material: ELYTRA
-  display: x1 Elytra
+  display: "x1 鞘翅"
   amount: 1
 level-7:
   material: NETHER_STAR
-  display: x2 Nether Star
+  display: "x2 下界之星"
   amount: 2
 level-8:
   material: DRAGON_HEAD
-  display: x1 Dragon Head
+  display: "x1 龙首"
   amount: 1
 level-9:
   material: HEART_OF_THE_SEA
-  display: x1 Heart of the Sea
+  display: "x1 海洋之心"
   amount: 1
 level-10:
   items:
     totem:
       material: TOTEM_OF_UNDYING
-      display: x2 Totem of Undying
+      display: "x2 不死图腾"
       amount: 2
     money:
       command: "eco give <player> 25000"
       display: "$25,000"
     fly:
       command: "lp user <player> permission set essentials.fly true"
-      display: "Fly Permission"
+      display: "飞行权限"
     announce:
       command: "say <player> has reached Battle Pass Level 10!"
-      display: "Server Announcement"
+      display: "全服公告"
 level-11:
   material: TRIDENT
-  display: x1 Trident
+  display: "x1 三叉戟"
   amount: 1
 level-12:
   material: DIAMOND_HELMET
-  display: x1 Diamond Helmet
+  display: "x1 钻石头盔"
   amount: 1
 level-13:
   material: DIAMOND_CHESTPLATE
-  display: x1 Diamond Chestplate
+  display: "x1 钻石胸甲"
   amount: 1
 level-14:
   material: DIAMOND_LEGGINGS
-  display: x1 Diamond Leggings
+  display: "x1 钻石护腿"
   amount: 1
 level-15:
   material: DIAMOND_BOOTS
-  display: x1 Diamond Boots
+  display: "x1 钻石靴子"
   amount: 1
 level-16:
   material: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-  display: x1 Netherite Upgrade Smithing Template
+  display: "x1 下界合金升级锻造模板"
   amount: 1
 level-17:
   material: DIAMOND_HORSE_ARMOR
-  display: x1 Diamond Horse Armor
+  display: "x1 钻石马铠"
   amount: 1
 level-18:
   material: ENCHANTED_BOOK
-  display: x3 Enchanted Book
+  display: "x3 附魔书"
   amount: 3
 level-19:
   material: EXPERIENCE_BOTTLE
-  display: x64 Experience Bottle
+  display: "x64 经验瓶"
   amount: 64
 level-20:
   items:
     dragonegg:
       material: DRAGON_EGG
-      display: x1 Dragon Egg
+      display: "x1 龙蛋"
       amount: 1
     money:
       command: "eco give <player> 50000"
       display: "$50,000"
     rank:
       command: "lp user <player> parent add vip"
-      display: "VIP Rank"
+      display: "VIP 等级"
     crate:
       command: "crate give <player> legendary 3"
-      display: "3x Legendary Crates"
+      display: "3x 传奇宝箱"
 level-21:
   material: NETHERITE_HELMET
-  display: x1 Netherite Helmet
+  display: "x1 下界合金头盔"
   amount: 1
 level-22:
   material: NETHERITE_CHESTPLATE
-  display: x1 Netherite Chestplate
+  display: "x1 下界合金胸甲"
   amount: 1
 level-23:
   material: NETHERITE_LEGGINGS
-  display: x1 Netherite Leggings
+  display: "x1 下界合金护腿"
   amount: 1
 level-24:
   material: NETHERITE_BOOTS
-  display: x1 Netherite Boots
+  display: "x1 下界合金靴子"
   amount: 1
 level-25:
   material: BEACON
-  display: x2 Beacon
+  display: "x2 信标"
   amount: 2
 level-26:
   material: NETHERITE_BOOTS
-  display: x1 Netherite Boots
+  display: "x1 下界合金靴子"
   amount: 1
 level-27:
   material: ANVIL
-  display: x3 Anvil
+  display: "x3 铁砧"
   amount: 3
 level-28:
   material: BREWING_STAND
-  display: x3 Brewing Stand
+  display: "x3 酿造台"
   amount: 3
 level-29:
   material: ENDER_CHEST
-  display: x2 Ender Chest
+  display: "x2 末影箱"
   amount: 2
 level-30:
   material: SHULKER_BOX
-  display: x1 Shulker Box
+  display: "x1 潜影盒"
   amount: 1
 level-31:
   material: CONDUIT
-  display: x1 Conduit
+  display: "x1 潮涌核心"
   amount: 1
 level-32:
   material: MUSIC_DISC_PIGSTEP
-  display: x1 Music Disc Pigstep
+  display: "x1 音乐唱片 Pigstep"
   amount: 1
 level-33:
   material: MUSIC_DISC_OTHERSIDE
-  display: x1 Music Disc Otherside
+  display: "x1 音乐唱片 Otherside"
   amount: 1
 level-34:
   material: CREEPER_HEAD
-  display: x1 Creeper Head
+  display: "x1 苦力怕头颅"
   amount: 1
 level-35:
   material: ZOMBIE_HEAD
-  display: x1 Zombie Head
+  display: "x1 僵尸头颅"
   amount: 1
 level-36:
   material: SKELETON_SKULL
-  display: x1 Skeleton Skull
+  display: "x1 骷髅头颅"
   amount: 1
 level-37:
   material: WITHER_SKELETON_SKULL
-  display: x3 Wither Skeleton Skull
+  display: "x3 凋灵骷髅头颅"
   amount: 3
 level-38:
   material: NETHERITE_INGOT
-  display: x3 Netherite Ingot
+  display: "x3 下界合金锭"
   amount: 3
 level-39:
   material: NETHERITE_BLOCK
-  display: x1 Netherite Block
+  display: "x1 下界合金块"
   amount: 1
 level-40:
   items:
     elytra:
       material: ELYTRA
-      display: x2 Elytra
+      display: "x2 鞘翅"
       amount: 2
     money:
       command: "eco give <player> 75000"
       display: "$75,000"
     effect:
       command: "effect give <player> minecraft:regeneration 7200 2"
-      display: "Regeneration II (2 hours)"
+      display: "生命恢复 II（2 小时）"
 level-41:
   material: DRAGON_BREATH
-  display: x16 Dragon Breath
+  display: "x16 龙息"
   amount: 16
 level-42:
   material: END_CRYSTAL
-  display: x4 End Crystal
+  display: "x4 末地水晶"
   amount: 4
 level-43:
   material: CHORUS_FRUIT
-  display: x32 Chorus Fruit
+  display: "x32 紫颂果"
   amount: 32
 level-44:
   material: TOTEM_OF_UNDYING
-  display: x3 Totem of Undying
+  display: "x3 不死图腾"
   amount: 3
 level-45:
   material: NETHER_STAR
-  display: x4 Nether Star
+  display: "x4 下界之星"
   amount: 4
 level-46:
   material: ENCHANTED_GOLDEN_APPLE
-  display: x3 Enchanted Golden Apple
+  display: "x3 附魔金苹果"
   amount: 3
 level-47:
   material: NETHERITE_UPGRADE_SMITHING_TEMPLATE
-  display: x3 Netherite Upgrade Smithing Template
+  display: "x3 下界合金升级锻造模板"
   amount: 3
 level-48:
   material: NETHERITE_SWORD
-  display: x1 Netherite Sword
+  display: "x1 下界合金剑"
   amount: 1
 level-49:
   material: AMETHYST_BLOCK
-  display: x8 Amethyst Block
+  display: "x8 紫水晶块"
   amount: 8
 level-50:
   material: DRAGON_EGG
-  display: x2 Dragon Egg
+  display: "x2 龙蛋"
   amount: 2
 level-51:
   material: ECHO_SHARD
-  display: x8 Echo Shard
+  display: "x8 回响碎片"
   amount: 8
 level-52:
   material: SPYGLASS
-  display: x1 Spyglass
+  display: "x1 望远镜"
   amount: 1
 level-53:
   material: RECOVERY_COMPASS
-  display: x1 Recovery Compass
+  display: "x1 追溯指针"
   amount: 1
 level-54:
   items:
     dragonegg:
       material: DRAGON_EGG
-      display: x3 Dragon egg
+      display: "x3 龙蛋"
       amount: 3
     money:
       command: "eco give <player> 100000"
       display: "$100,000"
     rank:
       command: "lp user <player> parent add legend"
-      display: "Legend Rank"
+      display: "传奇等级"
     title:
       command: "lp user <player> meta addprefix 100 \"&5[Legend] \""
-      display: "Legend Title"
+      display: "传奇称号"
     announce:
       command: "say <player> has become a LEGEND by completing the Premium Battle Pass!"
-      display: "Legendary Achievement"
+      display: "传奇成就"
 level-57:
   command: "eco give <player> 50000"
   display: "$50,000"

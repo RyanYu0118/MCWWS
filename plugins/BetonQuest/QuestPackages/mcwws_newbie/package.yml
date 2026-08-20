@@ -1,0 +1,123 @@
+npcs:
+  starterGuide: citizens 2
+  miningMentor: citizens 4
+
+npc_conversations:
+  starterGuide: mcwws_intro
+  miningMentor: mcwws_mining
+
+items:
+  intro_pickaxe: simple IRON_PICKAXE
+  intro_bread: simple BREAD
+  mining_rewards_sword: simple IRON_SWORD
+  mining_rewards_torches: simple TORCH
+
+conversations:
+  mcwws_intro:
+    quester: 流浪世界导引
+    # NPC_options 的优先级顺序（从前到后）。
+    first: introDoneOption,readyFinishOption,inProgressOption,startOption
+    NPC_options:
+      startOption:
+        text: 冒险者，欢迎来到流浪世界。先从两件事开始：挖到第一块石头，然后去矿区找矿区探险家领取奖励！
+        pointers: startQuest
+        conditions: '!introStarted'
+      inProgressOption:
+        text: 你已经开始新手引导了。再挖一挖，等你完成任务我就把入门装备交给你。
+        pointers: bye
+        conditions: introStarted,!stoneDone
+      readyFinishOption:
+        text: 不错！你已经挖到第一块石头了。拿上你的入门装备，继续前往矿区！
+        actions: introQuestDone
+        conditions: introStarted,stoneDone,!introDone
+      introDoneOption:
+        text: 你已经完成新手引导。继续努力，我们矿区见！
+        pointers: bye
+        conditions: introDone
+      bye:
+        text: 去吧，期待你的好消息！
+    
+    player_options:
+      startQuest:
+        text: 好！我现在就开始挖石头。
+        pointers: bye
+        actions: introQuestStarted
+      bye:
+        text: 好的，稍后见。
+  
+  mcwws_mining:
+    quester: 矿区探险家
+    first: miningDoneOption,coalDoneOption,needCoalOption,needIntroOption
+    NPC_options:
+      needIntroOption:
+        text: 你还没完成新手引导。先去找导引 NPC，完成‘挖到第一块石头’吧。
+        pointers: bye
+        conditions: '!introDone'
+      needCoalOption:
+        text: 现在你已经可以开工了。去挖 5 个煤矿石（COAL_ORE）。挖完回到这里。
+        pointers: startCoalQuest
+        conditions: introDone,!coalDone
+      coalDoneOption:
+        text: 很好！煤矿石已经够了。把奖励拿走，然后继续在矿区探索！
+        actions: coalQuestDone
+        conditions: introDone,coalDone,!miningDone
+      miningDoneOption:
+        text: 奖励你已经拿过了。矿区还在等你继续探索。
+        pointers: bye
+        conditions: miningDone
+      bye:
+        text: 祝你好运，矿工！
+    
+    player_options:
+      startCoalQuest:
+        text: 没问题！我去挖煤。
+        actions: coalQuestStarted
+        pointers: bye
+      bye:
+        text: 明白了。
+
+actions:
+  introQuestStarted: folder addIntroStartedTag,addStoneObj,notifyIntroStart
+  addIntroStartedTag: tag add intro_started
+  addStoneObj: objective add stoneBreakObj
+  notifyIntroStart: notify &a新手引导开始：挖 1 个石头（STONE）！
+  
+  addStoneDoneTag: folder tagAddStoneDone,notifyStoneDone
+  tagAddStoneDone: tag add stone_done
+  notifyStoneDone: notify &a完成：你挖到了第一块石头！现在回导引 NPC 领取入门装备。
+  
+  introQuestDone: folder giveIntroRewards,tagAddIntroDone,notifyIntroDone
+  giveIntroRewards: folder giveIntroPickaxe,giveIntroBread
+  giveIntroPickaxe: give intro_pickaxe
+  giveIntroBread: give intro_bread:8
+  tagAddIntroDone: tag add intro_done
+  notifyIntroDone: notify &a领取完成！去矿区找矿区探险家吧。
+  
+  coalQuestStarted: folder addCoalObj,notifyCoalStart
+  addCoalObj: objective add coalBreakObj
+  notifyCoalStart: notify &a矿区任务开始：挖 5 个煤矿石（COAL_ORE）！
+  
+  addCoalDoneTag: folder tagAddCoalDone,notifyCoalDone
+  tagAddCoalDone: tag add coal_done
+  notifyCoalDone: notify &a完成：煤矿石够了！回到矿区探险家领取奖励。
+  
+  coalQuestDone: folder giveCoalRewards,tagAddMiningDone,notifyCoalQuestDone
+  giveCoalRewards: folder giveCoalSword,giveCoalTorches
+  giveCoalSword: give mining_rewards_sword
+  giveCoalTorches: give mining_rewards_torches:32
+  tagAddMiningDone: tag add mining_done
+  notifyCoalQuestDone: notify &a你已经完成矿区新手任务！继续探索吧。
+
+objectives:
+  stoneBreakObj: block STONE -1 notify actions:addStoneDoneTag
+  coalBreakObj: block COAL_ORE -5 notify actions:addCoalDoneTag
+
+conditions:
+  introStarted: tag intro_started
+  stoneDone: tag stone_done
+  introDone: tag intro_done
+  coalDone: tag coal_done
+  miningDone: tag mining_done
+package:
+  version: 3.2.0-QUEST-2 # Don't change this! The plugin's automatic quest updater handles it.
+

@@ -48,6 +48,8 @@
 | 游戏内商店    | UltimateShop：分类跟 26.2 创造栏走；搜索、收藏；打开搜索点放大镜，打字前还要点漏斗                                        |
 | 光源可拆可调   | 生存须手持 Light（主手或副手）才能敲掉并掉落；右键能调亮度                                                          |
 | 三维地图 GIS | BlueMap 上规划道路/建筑、导入 Litematica、自由漫游                                                       |
+| 进度与成就     | L 键可见「流浪世界」进度树、AdvancedAchievements 成就、BattlePass 赛季任务；界面与提示均为中文（保留 NPC、VIP、XP 等常用词） |
+| 新手引导       | 与导引 NPC（印刷部门）和矿区探险家 NPC 对话，完成挖石头与挖煤任务链                                                       |
 | 指南传送     | 固定地点与传送玩家同一套距离公式：同维 100 格内免费，5000 格外距离费封顶 ¥128，跨维度另加 ¥64。传送玩家点头颅后约 2 tick 弹出列表；弹出前不要再打开指南 |
 
 
@@ -491,6 +493,11 @@ Paper 26.2 上商店物品取中文名时曾会崩溃，表现为「匹配数是
 
 ## 13. 其它生存便利
 
+- **进度与成就（中文界面）：**
+  - **流浪世界**（UltimateAdvancementAPI）：按 L 键打开进度，默认显示「流浪世界」标签页，含启程、第一块石头、第一次打造等节点。
+  - **AdvancedAchievements**：成就名称、目标与聊天提示为中文；部分奖励通过 Vault 账本发放（`eco give`）。常用词如 mcMMO、VIP、XP 保留英文。
+  - **BattlePass 战斗通行证**：任务、商店、奖励展示与系统消息均为中文；高级通行证可用战斗币兑换。
+  - **新手引导（BetonQuest）**：与 world 内 **印刷部门**（导引 NPC）对话开始「挖 1 个石头」任务，完成后领取入门装备；再到 **矿区探险家** 处接「挖 5 个煤矿石」并领奖励。
 - **一键砍树：** 使用 UltimateTimber 4.10.0（Songoda Reborn）。用斧头砍树时会一次放倒整棵树，单次最多 150 根原木，耐久按砍掉的原木数量扣除；树干与树叶会变成 FallingBlock，默认 **FANCY** 动画（整棵树旋转倒地）。砍完后自动在树干基座补种树苗，倒下的树叶落地也有 1% 概率补种。所有玩家默认可用（`require-chop-permission: false`）；潜行不会关掉一键砍树。倒下的方块砸到玩家会造成 1 点伤害。
 - **CustomCrafting 配方书：** default 组已给配方书分类总览权限，普通玩家能打开分类，而不是只有 OP 能看
 - **创世神选区与已扣费指令：** default 组有选区/木斧/复制/撤销，以及 `set`、`replace`、`stack`、剪贴板粘贴、圆柱球体、附近替换等已纳入扣费的节点；不给笔刷、`//fill`、`//repl`
@@ -603,6 +610,11 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 便携式工作台禁放置        | `plugins/Skript/scripts/mcwws/utility/portable_crafter_place.sk`                                                                  |
 | 领地拒绝提示与交互兜底      | `tools/mcwws-residence-quiet/`                                                                                                    |
 | 一键砍树             | `plugins/UltimateTimber/config.yml`                                                                                               |
+| 成就（AdvancedAchievements） | `plugins/AdvancedAchievements/config.yml`、`lang-CN.yml`（`LanguageFileName: lang-CN.yml`） |
+| 战斗通行证（BattlePass） | `plugins/BattlePass-Fork/messages.yml`、`missions.yml`、`BattlePassFREE.yml`、`BattlePassPREMIUM.yml`、`shop.yml` |
+| 流浪世界进度树          | `tools/mcwws-ultimateadvancements/` → `plugins/MCWWS_UltimateAdvancements.jar` |
+| 新手引导（BetonQuest）   | `plugins/BetonQuest/QuestPackages/mcwws_newbie/package.yml`、`plugins/BetonQuest/lang/zh-CN.yml` |
+| 汉化脚本（维护用）        | `tools/scripts/localize-progress-cn.py` |
 | GIS              | `bluemap/web/js/mcwws-gis.js`                                                                                                     |
 
 

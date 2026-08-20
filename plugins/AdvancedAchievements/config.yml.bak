@@ -457,7 +457,8 @@ Kills:
       DisplayName: The Walking Dead
       Type: normal
       Reward:
-        Money: 1
+        Command:
+          Execute: 'eco give PLAYER 1'
         Item:
           - diamond 1
   specificplayer-631e3896-da2a-4077-974b-d047859d76bc:
@@ -469,7 +470,8 @@ Kills:
       Type: rare
       Reward:
         IncreaseMaxHealth: 1
-        Money: 25000
+        Command:
+          Execute: 'eco give PLAYER 25000'
         Item:
           - diamond 16
   skeleton:
@@ -553,7 +555,8 @@ Crafts:
       DisplayName: Blacksmith Apprentice
       Type: normal
       Reward:
-        Money: 2000
+        Command:
+          Execute: 'eco give PLAYER 2000'
     100:
       Goal: Craft 100 diamond swords.
       Message: Next craft, Excalibur?
@@ -1531,4 +1534,5 @@ Custom:
       DisplayName: Server fan
       Type: normal
       Reward:
-        Money: 5
+        Command:
+          Execute: 'eco give PLAYER 5'

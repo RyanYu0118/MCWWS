@@ -42,7 +42,7 @@ mission-pools:
       - ZOMBIE_VILLAGER
       - DROWNED
       - HUSK
-    display-name: "Kill <amount> Zombies"
+    display-name: "击杀 <amount> 只僵尸"
     min-required: 15
     max-required: 40
     min-xp: 150
@@ -55,7 +55,7 @@ mission-pools:
     additional-targets:
       - STRAY
       - BOGGED
-    display-name: "Kill <amount> Skeletons"
+    display-name: "击杀 <amount> 只骷髅"
     min-required: 15
     max-required: 35
     min-xp: 150
@@ -67,7 +67,7 @@ mission-pools:
     target: SPIDER
     additional-targets:
       - CAVE_SPIDER
-    display-name: "Kill <amount> Spiders"
+    display-name: "击杀 <amount> 只蜘蛛"
     min-required: 10
     max-required: 30
     min-xp: 120
@@ -77,7 +77,7 @@ mission-pools:
   kill-creepers:
     type: KILL_MOB
     target: CREEPER
-    display-name: "Kill <amount> Creepers"
+    display-name: "击杀 <amount> 只苦力怕"
     min-required: 5
     max-required: 20
     min-xp: 180
@@ -88,7 +88,7 @@ mission-pools:
   kill-endermen:
     type: KILL_MOB
     target: ENDERMAN
-    display-name: "Kill <amount> Endermen"
+    display-name: "击杀 <amount> 个末影人"
     min-required: 5
     max-required: 15
     min-xp: 250
@@ -98,7 +98,7 @@ mission-pools:
   kill-blazes:
     type: KILL_MOB
     target: BLAZE
-    display-name: "Kill <amount> Blazes"
+    display-name: "击杀 <amount> 个烈焰人"
     min-required: 10
     max-required: 20
     min-xp: 300
@@ -108,7 +108,7 @@ mission-pools:
   kill-witches:
     type: KILL_MOB
     target: WITCH
-    display-name: "Kill <amount> Witches"
+    display-name: "击杀 <amount> 个女巫"
     min-required: 3
     max-required: 8
     min-xp: 250
@@ -118,7 +118,7 @@ mission-pools:
   kill-piglins:
     type: KILL_MOB
     target: PIGLIN
-    display-name: "Kill <amount> Piglins"
+    display-name: "击杀 <amount> 个猪灵"
     min-required: 10
     max-required: 25
     min-xp: 200
@@ -128,7 +128,7 @@ mission-pools:
   kill-magma-cubes:
     type: KILL_MOB
     target: MAGMA_CUBE
-    display-name: "Kill <amount> Magma Cubes"
+    display-name: "击杀 <amount> 个岩浆怪"
     min-required: 5
     max-required: 15
     min-xp: 200
@@ -141,7 +141,7 @@ mission-pools:
     target: COPPER_ORE
     additional-targets:
       - DEEPSLATE_COPPER_ORE
-    display-name: "Mine <amount> Copper Ore"
+    display-name: "挖掘 <amount> 个铜矿"
     min-required: 30
     max-required: 100
     min-xp: 100
@@ -153,7 +153,7 @@ mission-pools:
     target: COAL_ORE
     additional-targets:
       - DEEPSLATE_COAL_ORE
-    display-name: "Mine <amount> Coal Ore"
+    display-name: "挖掘 <amount> 个煤矿"
     min-required: 30
     max-required: 100
     min-xp: 100
@@ -165,7 +165,7 @@ mission-pools:
     target: IRON_ORE
     additional-targets:
       - DEEPSLATE_IRON_ORE
-    display-name: "Mine <amount> Iron Ore"
+    display-name: "挖掘 <amount> 个铁矿"
     min-required: 20
     max-required: 60
     min-xp: 150
@@ -177,7 +177,7 @@ mission-pools:
     target: GOLD_ORE
     additional-targets:
       - DEEPSLATE_GOLD_ORE
-    display-name: "Mine <amount> Gold Ore"
+    display-name: "挖掘 <amount> 个金矿"
     min-required: 10
     max-required: 30
     min-xp: 200
@@ -189,7 +189,7 @@ mission-pools:
     target: DIAMOND_ORE
     additional-targets:
       - DEEPSLATE_DIAMOND_ORE
-    display-name: "Mine <amount> Diamonds"
+    display-name: "挖掘 <amount> 个钻石"
     min-required: 5
     max-required: 15
     min-xp: 425
@@ -201,7 +201,7 @@ mission-pools:
     target: LAPIS_ORE
     additional-targets:
       - DEEPSLATE_LAPIS_ORE
-    display-name: "Mine <amount> Lapis Ore"
+    display-name: "挖掘 <amount> 个青金石矿"
     min-required: 15
     max-required: 40
     min-xp: 150
@@ -213,7 +213,7 @@ mission-pools:
     target: REDSTONE_ORE
     additional-targets:
       - DEEPSLATE_REDSTONE_ORE
-    display-name: "Mine <amount> Redstone Ore"
+    display-name: "挖掘 <amount> 个红石矿"
     min-required: 20
     max-required: 50
     min-xp: 150
@@ -223,7 +223,7 @@ mission-pools:
   mine-quartz:
     type: MINE_BLOCK
     target: NETHER_QUARTZ_ORE
-    display-name: "Mine <amount> Nether Quartz"
+    display-name: "挖掘 <amount> 个下界石英"
     min-required: 30
     max-required: 80
     min-xp: 150
@@ -233,7 +233,7 @@ mission-pools:
   mine-ancient-debris:
     type: MINE_BLOCK
     target: ANCIENT_DEBRIS
-    display-name: "Mine <amount> Ancient Debris"
+    display-name: "挖掘 <amount> 个远古残骸"
     min-required: 2
     max-required: 5
     min-xp: 600
@@ -248,7 +248,7 @@ mission-pools:
       - STRIPPED_OAK_LOG
       - OAK_WOOD
       - STRIPPED_OAK_WOOD
-    display-name: "Break <amount> Oak Logs"
+    display-name: "破坏 <amount> 个橡木原木"
     min-required: 64
     max-required: 200
     min-xp: 100
@@ -262,7 +262,7 @@ mission-pools:
       - STRIPPED_JUNGLE_LOG
       - JUNGLE_WOOD
       - STRIPPED_JUNGLE_WOOD
-    display-name: "Break <amount> Jungle Logs"
+    display-name: "破坏 <amount> 个丛林原木"
     min-required: 64
     max-required: 200
     min-xp: 110
@@ -272,7 +272,7 @@ mission-pools:
   break-stone:
     type: BREAK_BLOCK
     target: STONE
-    display-name: "Break <amount> Stone"
+    display-name: "破坏 <amount> 个石头"
     min-required: 200
     max-required: 500
     min-xp: 100
@@ -290,7 +290,7 @@ mission-pools:
       - MYCELIUM
       - DIRT_PATH
       - FARMLAND
-    display-name: "Break <amount> Dirt"
+    display-name: "破坏 <amount> 个泥土"
     min-required: 200
     max-required: 500
     min-xp: 80
@@ -300,7 +300,7 @@ mission-pools:
   break-gravel:
     type: BREAK_BLOCK
     target: GRAVEL
-    display-name: "Break <amount> Gravel"
+    display-name: "破坏 <amount> 个沙砾"
     min-required: 100
     max-required: 250
     min-xp: 110
@@ -311,7 +311,7 @@ mission-pools:
   eat-bread:
     type: EAT_ITEM
     target: BREAD
-    display-name: "Eat <amount> Bread"
+    display-name: "食用 <amount> 个面包"
     min-required: 5
     max-required: 20
     min-xp: 100
@@ -321,7 +321,7 @@ mission-pools:
   eat-steak:
     type: EAT_ITEM
     target: COOKED_BEEF
-    display-name: "Eat <amount> Steaks"
+    display-name: "食用 <amount> 块牛排"
     min-required: 5
     max-required: 20
     min-xp: 120
@@ -331,7 +331,7 @@ mission-pools:
   eat-golden-apple:
     type: EAT_ITEM
     target: GOLDEN_APPLE
-    display-name: "Eat <amount> Golden Apples"
+    display-name: "食用 <amount> 个金苹果"
     min-required: 1
     max-required: 3
     min-xp: 500
@@ -342,7 +342,7 @@ mission-pools:
   place-stone:
     type: PLACE_BLOCK
     target: STONE
-    display-name: "Place <amount> Stone"
+    display-name: "放置 <amount> 个石头"
     min-required: 64
     max-required: 200
     min-xp: 80
@@ -364,7 +364,7 @@ mission-pools:
       - CRIMSON_PLANKS
       - WARPED_PLANKS
       - PALE_OAK_PLANKS
-    display-name: "Place <amount> Planks"
+    display-name: "放置 <amount> 个木板"
     min-required: 64
     max-required: 200
     min-xp: 80
@@ -374,7 +374,7 @@ mission-pools:
   place-glass:
     type: PLACE_BLOCK
     target: GLASS
-    display-name: "Place <amount> Glass"
+    display-name: "放置 <amount> 个玻璃"
     min-required: 32
     max-required: 96
     min-xp: 120
@@ -385,7 +385,7 @@ mission-pools:
   smelt-iron:
     type: SMELT_ITEM
     target: IRON_INGOT
-    display-name: "Smelt <amount> Iron Ingots"
+    display-name: "熔炼 <amount> 个铁锭"
     min-required: 32
     max-required: 128
     min-xp: 150
@@ -395,7 +395,7 @@ mission-pools:
   smelt-gold:
     type: SMELT_ITEM
     target: GOLD_INGOT
-    display-name: "Smelt <amount> Gold Ingots"
+    display-name: "熔炼 <amount> 个金锭"
     min-required: 16
     max-required: 64
     min-xp: 200
@@ -405,7 +405,7 @@ mission-pools:
   craft-bread:
     type: CRAFT_ITEM
     target: BREAD
-    display-name: "Craft <amount> Bread"
+    display-name: "合成 <amount> 个面包"
     min-required: 20
     max-required: 64
     min-xp: 100
@@ -415,7 +415,7 @@ mission-pools:
   craft-tnt:
     type: CRAFT_ITEM
     target: TNT
-    display-name: "Craft <amount> TNT"
+    display-name: "合成 <amount> 个 TNT"
     min-required: 5
     max-required: 20
     min-xp: 300
@@ -426,7 +426,7 @@ mission-pools:
   fish-cod:
     type: FISH_ITEM
     target: COD
-    display-name: "Fish <amount> Cod"
+    display-name: "钓 <amount> 条鳕鱼"
     min-required: 10
     max-required: 30
     min-xp: 150
@@ -436,7 +436,7 @@ mission-pools:
   fish-salmon:
     type: FISH_ITEM
     target: SALMON
-    display-name: "Fish <amount> Salmon"
+    display-name: "钓 <amount> 条鲑鱼"
     min-required: 10
     max-required: 30
     min-xp: 150
@@ -446,7 +446,7 @@ mission-pools:
   fish-pufferfish:
     type: FISH_ITEM
     target: PUFFERFISH
-    display-name: "Fish <amount> Pufferfish"
+    display-name: "钓 <amount> 条河豚"
     min-required: 10
     max-required: 30
     min-xp: 230
@@ -464,7 +464,7 @@ mission-pools:
       - COPPER_SWORD
       - STONE_SWORD
       - WOODEN_SWORD
-    display-name: "Enchant <amount> swords"
+    display-name: "附魔 <amount> 把剑"
     min-required: 3
     max-required: 10
     min-xp: 250
@@ -502,7 +502,7 @@ mission-pools:
       - CHAINMAIL_CHESTPLATE
       - CHAINMAIL_LEGGINGS
       - CHAINMAIL_BOOTS
-    display-name: "Enchant <amount> armors"
+    display-name: "附魔 <amount> 件盔甲"
     min-required: 3
     max-required: 10
     min-xp: 250
@@ -515,7 +515,7 @@ mission-pools:
     target: COW
     additional-targets:
       - MOOSHROOM
-    display-name: "Breed <amount> Cows"
+    display-name: "繁殖 <amount> 头牛"
     min-required: 5
     max-required: 20
     min-xp: 150
@@ -525,7 +525,7 @@ mission-pools:
   breed-pigs:
     type: BREED_ANIMAL
     target: PIG
-    display-name: "Breed <amount> Pigs"
+    display-name: "繁殖 <amount> 头猪"
     min-required: 5
     max-required: 20
     min-xp: 150
@@ -535,7 +535,7 @@ mission-pools:
   shear-sheep:
     type: SHEAR_SHEEP
     target: SHEEP
-    display-name: "Shear <amount> Sheep"
+    display-name: "剪 <amount> 只羊的毛"
     min-required: 10
     max-required: 50
     min-xp: 100
@@ -546,7 +546,7 @@ mission-pools:
   tame-dog:
     type: TAME_ANIMAL
     target: WOLF
-    display-name: "Tame <amount> Wolves"
+    display-name: "驯服 <amount> 只狼"
     min-required: 1
     max-required: 5
     min-xp: 300
@@ -558,7 +558,7 @@ mission-pools:
     target: CAT
     additional-targets:
       - OCELOT
-    display-name: "Tame <amount> Cats"
+    display-name: "驯服 <amount> 只猫"
     min-required: 1
     max-required: 5
     min-xp: 300
@@ -575,7 +575,7 @@ mission-pools:
       - FISHERMAN
       - SHEPHERD
       - BUTCHER
-    display-name: "Trade with Agriculture Villagers <amount> Times"
+    display-name: "与农业村民交易 <amount> 次"
     min-required: 5
     max-required: 20
     min-xp: 200
@@ -591,7 +591,7 @@ mission-pools:
       - FLETCHER
       - LEATHERWORKER
       - MASON
-    display-name: "Change with Crafters Villagers <amount> Times"
+    display-name: "与工匠村民交易 <amount> 次"
     min-required: 5
     max-required: 20
     min-xp: 200
@@ -614,7 +614,7 @@ mission-pools:
       - PUFFERFISH
       - TROPICAL_FISH
       - AXOLOTL
-    display-name: "Deal <amount> Damage to sea creatures"
+    display-name: "对海洋生物造成 <amount> 点伤害"
     min-required: 700
     max-required: 3500
     min-xp: 200
@@ -634,7 +634,7 @@ mission-pools:
       - HOGLIN
       - ZOGLIN
       - STRIDER
-    display-name: "Deal <amount> Damage to nether creatures"
+    display-name: "对下界生物造成 <amount> 点伤害"
     min-required: 700
     max-required: 3500
     min-xp: 200
@@ -648,7 +648,7 @@ mission-pools:
       - ENDERMITE
       - SHULKER
       - ENDER_DRAGON
-    display-name: "Deal <amount> Damage to end creatures"
+    display-name: "对末地生物造成 <amount> 点伤害"
     min-required: 450
     max-required: 1500
     min-xp: 190
@@ -679,7 +679,7 @@ mission-pools:
       - GOAT
       - FROG
       - TADPOLE
-    display-name: "Deal <amount> Damage to overworld animals"
+    display-name: "对主世界动物造成 <amount> 点伤害"
     min-required: 500
     max-required: 2500
     min-xp: 160
@@ -697,7 +697,7 @@ mission-pools:
       - BEE
       - ENDER_DRAGON
       - WITHER
-    display-name: "Deal <amount> Damage to Flying creatures"
+    display-name: "对飞行生物造成 <amount> 点伤害"
     min-required: 250
     max-required: 1500
     min-xp: 190
@@ -710,7 +710,7 @@ mission-pools:
   take-damage-fall:
     type: DAMAGE_TAKEN
     target: FALL
-    display-name: "Take <amount> Damage from fall"
+    display-name: "受到 <amount> 点摔落伤害"
     min-required: 25
     max-required: 75
     min-xp: 100
@@ -722,7 +722,7 @@ mission-pools:
     target: FIRE
     additional-targets:
       - LAVA
-    display-name: "Take <amount> Damage from fire"
+    display-name: "受到 <amount> 点火焰伤害"
     min-required: 50
     max-required: 150
     min-xp: 100
@@ -735,7 +735,7 @@ mission-pools:
   die-times-explosion:
     type: DEATH
     target: EXPLOSION
-    display-name: "Die <amount> Times from explosion"
+    display-name: "因爆炸死亡 <amount> 次"
     min-required: 2
     max-required: 4
     min-xp: 100
@@ -747,7 +747,7 @@ mission-pools:
   move-distance:
     type: WALK_DISTANCE
     target: ANY
-    display-name: "Move <amount> Blocks"
+    display-name: "移动 <amount> 格"
     min-required: 2000
     max-required: 10000
     min-xp: 150
@@ -757,7 +757,7 @@ mission-pools:
   swim-distance:
     type: WALK_DISTANCE
     target: SWIM
-    display-name: "Swim <amount> Blocks"
+    display-name: "游泳 <amount> 格"
     min-required: 1500
     max-required: 7500
     min-xp: 160
@@ -768,7 +768,7 @@ mission-pools:
   gain-xp:
     type: GAIN_XP
     target: ANY
-    display-name: "Gain <amount> XP Points"
+    display-name: "获得 <amount> 点 XP"
     min-required: 500
     max-required: 2000
     min-xp: 200
@@ -778,7 +778,7 @@ mission-pools:
   play-time:
     type: PLAY_TIME
     target: ANY
-    display-name: "Play for <amount> Minutes"
+    display-name: "游玩 <amount> 分钟"
     min-required: 60
     max-required: 180
     min-xp: 250
