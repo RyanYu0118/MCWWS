@@ -21,6 +21,7 @@ import java.util.Map;
 public final class ShopLorePatcher implements Listener {
 
     private static final String MARKER = "§8§l仓库余量";
+    private static final String COLLECT_MARKER = "§8§l仓库吸取";
 
     private final McwwsUltimateShopStashPlugin plugin;
 
@@ -64,9 +65,12 @@ public final class ShopLorePatcher implements Listener {
                 continue;
             }
             List<String> lore = meta.hasLore() ? new ArrayList<>(meta.getLore()) : new ArrayList<>();
-            lore.removeIf(line -> line != null && line.contains(MARKER));
+            lore.removeIf(line -> line != null && (line.contains(MARKER) || line.contains(COLLECT_MARKER)));
             lore.add(MARKER);
             lore.add(plugin.messages().legacy("stash-lore", Map.of("amount", String.valueOf(amount))));
+            boolean skipped = plugin.storage().isSkipCollect(player.getUniqueId(), key);
+            lore.add(COLLECT_MARKER);
+            lore.add(plugin.messages().legacy(skipped ? "stash-collect-lore-off" : "stash-collect-lore-on", null));
             meta.setLore(lore);
             patched.setItemMeta(meta);
             top.setItem(slot, patched);

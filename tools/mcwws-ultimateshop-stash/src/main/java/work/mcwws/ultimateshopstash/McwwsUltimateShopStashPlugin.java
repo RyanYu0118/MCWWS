@@ -140,6 +140,16 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
         instance = null;
     }
 
+    public boolean shouldAutoCollect(org.bukkit.entity.Player player, String itemKey) {
+        if (!hasAutoCollect(player)) {
+            return false;
+        }
+        if (storage != null && storage.isSkipCollect(player.getUniqueId(), itemKey)) {
+            return false;
+        }
+        return exemptManager == null || !exemptManager.isExempt(player, itemKey);
+    }
+
     public boolean hasAutoCollect(org.bukkit.entity.Player player) {
         return player.hasPermission(autoCollectPermission());
     }

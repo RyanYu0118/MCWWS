@@ -24,14 +24,11 @@ public final class ShopBuyDepositListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
-        if (!plugin.hasAutoCollect(player)) {
-            return;
-        }
         String key = ItemKeys.fromObjectItem(event.getItem());
         if (key == null || !plugin.catalog().contains(key)) {
             return;
         }
-        if (plugin.exemptManager().isExempt(player, key)) {
+        if (!plugin.shouldAutoCollect(player, key)) {
             return;
         }
         int units = Math.max(1, event.getAmount());

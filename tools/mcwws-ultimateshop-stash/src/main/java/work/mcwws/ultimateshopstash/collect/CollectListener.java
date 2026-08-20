@@ -80,9 +80,6 @@ public final class CollectListener implements Listener {
     }
 
     private boolean shouldCollect(Player player, String itemKey) {
-        if (!plugin.hasAutoCollect(player)) {
-            return false;
-        }
-        return !plugin.exemptManager().isExempt(player, itemKey);
+        return plugin.shouldAutoCollect(player, itemKey);
     }
 }

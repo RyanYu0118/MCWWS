@@ -7,7 +7,9 @@ import work.mcwws.ultimateshopstash.util.Messages;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -59,6 +61,16 @@ public final class StashStorage {
         return true;
     }
 
+    public boolean isSkipCollect(UUID uuid, String itemKey) {
+        return getStash(uuid).isSkipCollect(Messages.normalizeKey(itemKey));
+    }
+
+    public boolean toggleSkipCollect(UUID uuid, String itemKey) {
+        boolean skipped = getStash(uuid).toggleSkipCollect(Messages.normalizeKey(itemKey));
+        saveAsync(uuid);
+        return skipped;
+    }
+
     private PlayerStash getStash(UUID uuid) {
         return cache.computeIfAbsent(uuid, this::load);
     }
@@ -71,13 +83,17 @@ public final class StashStorage {
         }
         YamlConfiguration yaml = YamlConfiguration.loadConfiguration(file);
         var section = yaml.getConfigurationSection("items");
-        if (section == null) {
-            return stash;
+        if (section != null) {
+            for (String key : section.getKeys(false)) {
+                long amount = section.getLong(key, 0L);
+                if (amount > 0) {
+                    stash.put(Messages.normalizeKey(key), amount);
+                }
+            }
         }
-        for (String key : section.getKeys(false)) {
-            long amount = section.getLong(key, 0L);
-            if (amount > 0) {
-                stash.put(Messages.normalizeKey(key), amount);
+        for (String key : yaml.getStringList("skip-collect")) {
+            if (key != null && !key.isBlank()) {
+                stash.setSkipCollect(Messages.normalizeKey(key), true);
             }
         }
         return stash;
@@ -94,6 +110,11 @@ public final class StashStorage {
             if (entry.getValue() > 0) {
                 yaml.set("items." + entry.getKey(), entry.getValue());
             }
+        }
+        List<String> skipped = new ArrayList<>(stash.skipCollectSnapshot());
+        if (!skipped.isEmpty()) {
+            skipped.sort(String::compareTo);
+            yaml.set("skip-collect", skipped);
         }
         try {
             yaml.save(file);
