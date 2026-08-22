@@ -1513,8 +1513,80 @@ function normalizeDeliveryCode(raw) {
     return String(raw || '').trim().replace(/§./g, '').slice(0, 24);
 }
 
+function isDeliveryLockerEntry(node) {
+    return Boolean(
+        node
+        && typeof node === 'object'
+        && !Array.isArray(node)
+        && (node.major != null || node.minor != null)
+        && (node.world != null || (node.x != null && node.y != null && node.z != null))
+    );
+}
+
+function collectDeliveryLockerEntries(node, out = []) {
+    if (!node || typeof node !== 'object' || Array.isArray(node)) return out;
+    if (isDeliveryLockerEntry(node)) {
+        out.push(node);
+        return out;
+    }
+    for (const child of Object.values(node)) {
+        collectDeliveryLockerEntries(child, out);
+    }
+    return out;
+}
+
+function lockerEntryStorageKey(entry) {
+    const world = String(entry.world || 'world').trim() || 'world';
+    const x = Math.floor(Number(entry.x));
+    const y = Math.floor(Number(entry.y));
+    const z = Math.floor(Number(entry.z));
+    if (![x, y, z].every(Number.isFinite)) return null;
+    // Flat key only — dots nest in skript-yaml paths
+    return `${world}_${x}_${y}_${z}`;
+}
+
+function flattenDeliveryLockersData(data) {
+    const raw = data && typeof data === 'object' ? data : { version: 1 };
+    const entries = collectDeliveryLockerEntries(raw.lockers || {});
+    const lockers = {};
+    for (const entry of entries) {
+        const key = lockerEntryStorageKey(entry);
+        if (!key) continue;
+        lockers[key] = {
+            world: String(entry.world || 'world'),
+            x: String(Math.floor(Number(entry.x))),
+            y: String(Math.floor(Number(entry.y))),
+            z: String(Math.floor(Number(entry.z))),
+            major: normalizeDeliveryCode(entry.major),
+            minor: normalizeDeliveryCode(entry.minor) || '01',
+            ownerUuid: entry.ownerUuid != null ? String(entry.ownerUuid) : '',
+            ownerName: entry.ownerName != null ? String(entry.ownerName) : '',
+            updatedAt: entry.updatedAt != null ? String(entry.updatedAt) : ''
+        };
+    }
+    return {
+        version: Number(raw.version) || 1,
+        lockers
+    };
+}
+
+function loadDeliveryLockersStore({ rewrite = true } = {}) {
+    const raw = loadYamlFile(DELIVERY_LOCKERS_PATH) || { version: 1 };
+    const flat = flattenDeliveryLockersData(raw);
+    const before = JSON.stringify(raw.lockers || {});
+    const after = JSON.stringify(flat.lockers || {});
+    if (rewrite && before !== after) {
+        try {
+            saveYamlFile(DELIVERY_LOCKERS_PATH, flat);
+        } catch (error) {
+            console.warn('展平外卖柜注册表失败（仍使用内存展平结果）:', error.message || error);
+        }
+    }
+    return flat;
+}
+
 function listDeliveryMajors() {
-    const data = loadYamlFile(DELIVERY_LOCKERS_PATH);
+    const data = loadDeliveryLockersStore({ rewrite: true });
     const lockers = data && data.lockers && typeof data.lockers === 'object' ? data.lockers : {};
     const majors = new Set();
     for (const entry of Object.values(lockers)) {

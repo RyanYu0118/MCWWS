@@ -201,8 +201,12 @@
             </div>
             <p class="cart-drawer-hint" id="cartDrawerHint">登录后填写收货地址再提交。系统会随机生成取件码；到柜后须用下单账号输入取件码才能取走包裹。</p>
             <label class="cart-delivery-label" for="cartDeliveryMajor">收货地址（大编号）
-                <input id="cartDeliveryMajor" class="cart-delivery-input" type="text" maxlength="24" placeholder="例如 A1 / 主城东" list="cartDeliveryMajorList" autocomplete="off">
-                <datalist id="cartDeliveryMajorList"></datalist>
+                <div class="cart-delivery-combo" id="cartDeliveryCombo">
+                    <input id="cartDeliveryMajor" class="cart-delivery-input" type="text" maxlength="24" placeholder="搜索或从列表选择，例如 A01" autocomplete="off" role="combobox" aria-autocomplete="list" aria-expanded="false" aria-controls="cartDeliveryMajorMenu">
+                    <button type="button" id="cartDeliveryMajorToggle" class="cart-delivery-toggle" aria-label="展开收货地址列表" tabindex="-1">▾</button>
+                    <ul id="cartDeliveryMajorMenu" class="cart-delivery-menu" role="listbox" hidden></ul>
+                </div>
+                <span class="cart-delivery-meta" id="cartDeliveryMeta">正在加载可用收货地址…</span>
             </label>
             <div id="cartPendingOrders" class="cart-pending-orders" hidden></div>
             <div class="cart-drawer-actions">

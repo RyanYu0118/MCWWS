@@ -131,7 +131,12 @@ function mcwwsInitDeliveryLockers():
 
 function mcwwsLockerLocKey(loc: location) :: text:
     set {_b} to block at {_loc}
-    return "%world of {_b}%_%x-coordinate of {_b}%_%y-coordinate of {_b}%_%z-coordinate of {_b}%"
+    set {_w} to "%world of {_b}%"
+    set {_x} to "%floor(x-coordinate of {_b})%"
+    set {_y} to "%floor(y-coordinate of {_b})%"
+    set {_z} to "%floor(z-coordinate of {_b})%"
+    # 禁止小数点：skript-yaml 会把路径里的 . 当成嵌套节点
+    return "%{_w}%_%{_x}%_%{_y}%_%{_z}%"
 
 function mcwwsIsDeliveryLocker(loc: location) :: boolean:
     set {_item} to StorageCacheUtils.getSlimefunItem({_loc})
@@ -446,7 +451,7 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
             stop
         mcwwsClearLockerPrompt({_p})
         send "§a[外卖柜] §f编号完成：收货地址 §e%{_major}%§f / 柜位 §e%{_code}%§f。" to {_p}
-        send "§7网页下单时在「收货地址」填写大编号 §e%{_major}% §7即可自动分货到本址各柜。" to {_p}
+        send "§7网页下单时可在收货地址搜索/选择大编号 §e%{_major}%§7。" to {_p}
 
 function mcwwsLockerGuiTitle(major: text, minor: text) :: text:
     if {_major} is "":

@@ -511,25 +511,158 @@ function getCheckoutDeliveryMajor() {
     return readSavedDeliveryMajor();
 }
 
+let deliveryMajorOptions = [];
+let deliveryMenuOpen = false;
+let deliveryMenuActiveIndex = -1;
+
+function setDeliveryMenuOpen(open) {
+    const input = document.getElementById('cartDeliveryMajor');
+    const menu = document.getElementById('cartDeliveryMajorMenu');
+    if (!menu) return;
+    deliveryMenuOpen = Boolean(open);
+    menu.hidden = !deliveryMenuOpen;
+    if (input) input.setAttribute('aria-expanded', deliveryMenuOpen ? 'true' : 'false');
+    if (!deliveryMenuOpen) deliveryMenuActiveIndex = -1;
+}
+
+function filteredDeliveryMajors(query = '') {
+    const q = String(query || '').trim().toLowerCase();
+    if (!q) return deliveryMajorOptions.slice();
+    return deliveryMajorOptions.filter((major) => String(major).toLowerCase().includes(q));
+}
+
+function renderDeliveryMajorMenu(query) {
+    const menu = document.getElementById('cartDeliveryMajorMenu');
+    if (!menu) return;
+    const majors = filteredDeliveryMajors(query);
+    if (!majors.length) {
+        menu.innerHTML = `<li class="cart-delivery-option-empty" role="presentation">${
+            deliveryMajorOptions.length
+                ? '没有匹配的收货地址'
+                : '暂无已编号外卖柜，请先在游戏内设置大编号'
+        }</li>`;
+        deliveryMenuActiveIndex = -1;
+        return;
+    }
+    if (deliveryMenuActiveIndex >= majors.length) deliveryMenuActiveIndex = majors.length - 1;
+    menu.innerHTML = majors.map((major, index) => (
+        `<li role="option">
+            <button type="button" class="cart-delivery-option${index === deliveryMenuActiveIndex ? ' is-active' : ''}" data-delivery-major="${escapeHtml(String(major))}">${escapeHtml(String(major))}</button>
+        </li>`
+    )).join('');
+}
+
+function selectDeliveryMajor(major) {
+    const input = document.getElementById('cartDeliveryMajor');
+    const value = persistDeliveryMajor(major);
+    if (input) input.value = value;
+    setDeliveryMenuOpen(false);
+}
+
+function updateDeliveryMeta() {
+    const meta = document.getElementById('cartDeliveryMeta');
+    if (!meta) return;
+    if (!deliveryMajorOptions.length) {
+        meta.textContent = '暂无可用收货地址。请先在游戏内放置外卖柜并设置大编号。';
+        return;
+    }
+    meta.textContent = `共 ${deliveryMajorOptions.length} 个可用收货地址，可搜索后点选。`;
+}
+
 async function loadDeliveryAddressOptions() {
     const input = document.getElementById('cartDeliveryMajor');
-    const list = document.getElementById('cartDeliveryMajorList');
     if (!input) return;
     if (!input.value) input.value = readSavedDeliveryMajor();
+    const meta = document.getElementById('cartDeliveryMeta');
+    if (meta) meta.textContent = '正在加载可用收货地址…';
     try {
         const res = await fetch('/api/shop/delivery-addresses', { cache: 'no-store' });
-        if (!res.ok) return;
+        if (!res.ok) {
+            if (meta) meta.textContent = '收货地址列表加载失败，仍可手动输入大编号。';
+            return;
+        }
         const data = await res.json();
-        const majors = Array.isArray(data.majors) ? data.majors : [];
-        if (list) {
-            list.innerHTML = majors.map((major) => `<option value="${escapeHtml(String(major))}"></option>`).join('');
+        deliveryMajorOptions = Array.isArray(data.majors)
+            ? data.majors.map((major) => String(major || '').trim()).filter(Boolean)
+            : [];
+        updateDeliveryMeta();
+        if (!input.value && deliveryMajorOptions.length === 1) {
+            input.value = deliveryMajorOptions[0];
+            persistDeliveryMajor(deliveryMajorOptions[0]);
         }
-        if (!input.value && majors.length === 1) {
-            input.value = majors[0];
-        }
+        if (deliveryMenuOpen) renderDeliveryMajorMenu(input.value);
     } catch {
-        /* ignore */
+        if (meta) meta.textContent = '收货地址列表加载失败，仍可手动输入大编号。';
     }
+}
+
+function bindDeliveryAddressCombo() {
+    const input = document.getElementById('cartDeliveryMajor');
+    const toggle = document.getElementById('cartDeliveryMajorToggle');
+    const menu = document.getElementById('cartDeliveryMajorMenu');
+    const combo = document.getElementById('cartDeliveryCombo');
+    if (!input || !menu || input.dataset.deliveryComboBound === '1') return;
+    input.dataset.deliveryComboBound = '1';
+
+    input.addEventListener('focus', () => {
+        renderDeliveryMajorMenu(input.value);
+        setDeliveryMenuOpen(true);
+    });
+    input.addEventListener('input', () => {
+        persistDeliveryMajor(input.value);
+        renderDeliveryMajorMenu(input.value);
+        setDeliveryMenuOpen(true);
+    });
+    input.addEventListener('keydown', (e) => {
+        const majors = filteredDeliveryMajors(input.value);
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            if (!deliveryMenuOpen) {
+                renderDeliveryMajorMenu(input.value);
+                setDeliveryMenuOpen(true);
+            }
+            deliveryMenuActiveIndex = Math.min(majors.length - 1, deliveryMenuActiveIndex + 1);
+            if (deliveryMenuActiveIndex < 0 && majors.length) deliveryMenuActiveIndex = 0;
+            renderDeliveryMajorMenu(input.value);
+        } else if (e.key === 'ArrowUp') {
+            e.preventDefault();
+            deliveryMenuActiveIndex = Math.max(-1, deliveryMenuActiveIndex - 1);
+            renderDeliveryMajorMenu(input.value);
+        } else if (e.key === 'Enter' && deliveryMenuOpen && deliveryMenuActiveIndex >= 0) {
+            e.preventDefault();
+            const pick = majors[deliveryMenuActiveIndex];
+            if (pick) selectDeliveryMajor(pick);
+        } else if (e.key === 'Escape') {
+            setDeliveryMenuOpen(false);
+        }
+    });
+    input.addEventListener('change', () => {
+        persistDeliveryMajor(input.value);
+    });
+
+    toggle?.addEventListener('click', (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        if (deliveryMenuOpen) {
+            setDeliveryMenuOpen(false);
+            return;
+        }
+        renderDeliveryMajorMenu(input.value);
+        setDeliveryMenuOpen(true);
+        input.focus();
+    });
+
+    menu.addEventListener('click', (e) => {
+        const btn = e.target.closest('[data-delivery-major]');
+        if (!btn) return;
+        selectDeliveryMajor(btn.getAttribute('data-delivery-major') || '');
+    });
+
+    document.addEventListener('click', (e) => {
+        if (!combo) return;
+        if (combo.contains(e.target)) return;
+        setDeliveryMenuOpen(false);
+    });
 }
 
 function getCartTotalQuantity() {
@@ -855,6 +988,7 @@ function openCartDrawer() {
     renderCartDrawer();
     void loadPendingOrdersUi();
     void loadDeliveryAddressOptions();
+    bindDeliveryAddressCombo();
     syncItemsStateToUrl();
 }
 
@@ -2510,9 +2644,7 @@ function setupEventListeners() {
     document.getElementById('cartCheckoutBtn')?.addEventListener('click', () => {
         void submitCartCheckout();
     });
-    document.getElementById('cartDeliveryMajor')?.addEventListener('change', (e) => {
-        persistDeliveryMajor(e.target.value);
-    });
+    bindDeliveryAddressCombo();
 
     const cartDrawerBody = document.getElementById('cartDrawerBody');
     if (cartDrawerBody) {
