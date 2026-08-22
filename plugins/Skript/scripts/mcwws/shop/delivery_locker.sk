@@ -483,6 +483,34 @@ function mcwwsLockerChromePane() :: ItemStack:
     set {_it} to orange stained glass pane named "§7"
     return mcwwsTagLockerGuiItem({_it})
 
+function mcwwsIsLockerStoragePlaceholder(stack: ItemStack) :: boolean:
+    if {_stack} is not set:
+        return false
+    if {_stack}.getType() is Material.AIR:
+        return false
+    if mcwwsIsLockerGuiItem({_stack}) is true:
+        return true
+    set {_type} to {_stack}.getType()
+    if {_type} is Material.GRAY_STAINED_GLASS_PANE:
+        return true
+    if {_type} is Material.ORANGE_STAINED_GLASS_PANE:
+        return true
+    if {_type} is Material.BLACK_STAINED_GLASS_PANE:
+        return true
+    if {_type} is Material.LIGHT_GRAY_STAINED_GLASS_PANE:
+        return true
+    return false
+
+function mcwwsPurgeLockerStoragePlaceholders(loc: location):
+    set {_menu} to mcwwsGetBlockMenuAt({_loc})
+    if {_menu} is not set:
+        stop
+    loop 45 times:
+        set {_s} to loop-number - 1
+        set {_it} to {_menu}.getItemInSlot({_s})
+        if mcwwsIsLockerStoragePlaceholder({_it}) is true:
+            {_menu}.replaceExistingItem({_s}, null)
+
 function mcwwsLockerCabinetIcon(major: text, minor: text, unlock: text) :: ItemStack:
     set {_it} to player head named "§6外卖柜"
     set lore of {_it} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件: §f%{_unlock}%" and "§7网页包裹需下单者输入取件码" and "§8底部按钮改号/取件"
@@ -529,7 +557,11 @@ function mcwwsLoadLockerGuiFromBlock(inv: object, loc: location):
     loop 45 times:
         set {_s} to loop-number - 1
         set {_it} to {_menu}.getItemInSlot({_s})
-        {_inv}.setItem({_s}, {_it})
+        if mcwwsIsLockerStoragePlaceholder({_it}) is true:
+            {_menu}.replaceExistingItem({_s}, null)
+            {_inv}.setItem({_s}, null)
+        else:
+            {_inv}.setItem({_s}, {_it})
 
 function mcwwsSaveLockerGuiToBlock(inv: object, loc: location):
     set {_menu} to mcwwsGetBlockMenuAt({_loc})
@@ -538,11 +570,15 @@ function mcwwsSaveLockerGuiToBlock(inv: object, loc: location):
     loop 45 times:
         set {_s} to loop-number - 1
         set {_it} to {_inv}.getItem({_s})
-        {_menu}.replaceExistingItem({_s}, {_it})
+        if mcwwsIsLockerStoragePlaceholder({_it}) is true:
+            {_menu}.replaceExistingItem({_s}, null)
+        else:
+            {_menu}.replaceExistingItem({_s}, {_it})
 
 function mcwwsOpenLockerGui(p: player, loc: location):
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
+    mcwwsPurgeLockerStoragePlaceholders({_loc})
     set {_major} to mcwwsGetLockerMajor({_loc})
     set {_minor} to mcwwsGetLockerMinor({_loc})
     set {_title} to mcwwsLockerGuiTitle({_major}, {_minor})
@@ -571,6 +607,7 @@ function mcwwsEnsureChunkLoaded(loc: location):
 
 function mcwwsPushStackToLocker(loc: location, stack: ItemStack) :: ItemStack:
     mcwwsEnsureChunkLoaded({_loc})
+    mcwwsPurgeLockerStoragePlaceholders({_loc})
     set {_data} to StorageCacheUtils.getBlock({_loc})
     if {_data} is not set:
         return {_stack}
@@ -787,6 +824,14 @@ on inventory click:
             stop
         if mcwwsIsLockerGuiItem({_item}) is true:
             cancel event
+            stop
+        if mcwwsIsLockerStoragePlaceholder({_item}) is true:
+            cancel event
+            set {_loc} to mcwwsLockerGuiLoc({_top})
+            if {_loc} is set:
+                mcwwsPurgeLockerStoragePlaceholders({_loc})
+                mcwwsLoadLockerGuiFromBlock({_top}, {_loc})
+                mcwwsPaintLockerChrome({_top}, {_loc}, {_p})
             stop
         if mcwwsIsPickupLockedItem({_item}) is false:
             stop

@@ -1149,8 +1149,37 @@ orders:
                 shopTitle: 农作物商店 (1/3)
                 status: delivered
     '43':
+        id: 456af8dc-fd82-414a-8cde-a4db39498993
+        numericId: 43
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 1.5
+        balanceAfter: 1.6525864431E8
         economyChargedInGame: true
-        updatedAt: '2026-07-11 23:22:46'
+        createdAt: '2026-08-22T17:10:53.720Z'
+        updatedAt: '2026-08-23 01:11:36'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-08-23 01:11:35'
+        deliveryMajor: A01
+        deliveredTo: ；A01/1
+        pickupCode: TMMFP4
+        lineCount: 1
+        lines:
+            '1':
+                itemId: andesite_stairs
+                shopId: building__p5
+                slot: R
+                quantity: 1
+                unitBuyPrice: 1.5
+                lineTotal: 1.5
+                productAmount: 1
+                material: andesite_stairs
+                shopTitle: 建筑方块 (5/10)
+                status: delivered
+                deliveredTo: A01/1
     '44':
         economyChargedInGame: true
         updatedAt: '2026-07-11 23:28:05'
@@ -1185,4 +1214,4 @@ orders:
         economyChargedInGame: true
         updatedAt: '2026-08-07 15:06:18'
 
-next_id: 43
+next_id: 44

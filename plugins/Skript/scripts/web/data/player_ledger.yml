@@ -1,4 +1,4 @@
-next_id: 2461
+next_id: 2650
 entries:
   '1':
     id: 1
@@ -25941,3 +25941,1895 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/22 23:48
     createdAt: '2026-08-22T15:48:37.726546700Z'
     updatedAt: '2026-08-22T16:26:05.367026100Z'
+  '2461':
+    id: 2461
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: web_shop
+    amount: 1.5
+    description: 网页商城：andesite_stairs×1
+    refId: web-order-43
+    createdAt: '2026-08-22T17:10:53.784Z'
+    balanceAfter: 165258644.31
+  '2462':
+    id: 2462
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 1.5
+    description: 管理员经济命令（支出）
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787418654489-53311918266200
+    createdAt: '2026-08-22T17:10:54.490175800Z'
+    balanceAfter: 165258644.31
+  '2463':
+    id: 2463
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8
+    description: 购买 diorite_slab x16
+    refId: us-128a26d4-46f9-4a12-874d-0b45d3e64a69
+    createdAt: '2026-08-17T14:25:25.000Z'
+  '2464':
+    id: 2464
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8
+    description: 购买 diorite_slab x16
+    refId: us-c1dfc33a-1225-4266-ab66-ac8e2bc07eef
+    createdAt: '2026-08-17T14:25:25.000Z'
+  '2465':
+    id: 2465
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8
+    description: 购买 diorite_slab x16
+    refId: us-7aeb8001-4628-4833-beea-69c7037d05db
+    createdAt: '2026-08-17T14:25:26.000Z'
+  '2466':
+    id: 2466
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 3.96
+    description: 出售 dirt x4
+    refId: us-e7f384c2-feba-4728-bf1b-526660267206
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2467':
+    id: 2467
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 13.86
+    description: 出售 rose_bush x7
+    refId: us-5eefc087-79d3-48de-9694-e00c94fceee8
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2468':
+    id: 2468
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1.98
+    description: 出售 dark_oak_sapling x1
+    refId: us-3cf2c6ef-4234-44f9-a1cc-15e8c1ff617d
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2469':
+    id: 2469
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 9.9
+    description: 出售 azalea x5
+    refId: us-3950a2f1-cf28-42d0-b089-a74e21f96e73
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2470':
+    id: 2470
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 22.77
+    description: 出售 poppy x23
+    refId: us-6670ad1a-bdb8-4b7c-af0d-f8358cbc34d9
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2471':
+    id: 2471
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 48.51
+    description: 出售 oak_leaves x49
+    refId: us-659b814b-ffb4-4f8c-b36f-b77b1219af8a
+    createdAt: '2026-08-18T12:00:00.000Z'
+  '2472':
+    id: 2472
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 dirt x1
+    refId: us-13a50de0-c010-44f2-815d-62d925a2d7d0
+    createdAt: '2026-08-18T13:53:39.000Z'
+  '2473':
+    id: 2473
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 142.4
+    description: 出售 warped_stem x16
+    refId: us-457787d9-ea66-4aac-aa5f-4b3f6efec4f8
+    createdAt: '2026-08-18T13:53:39.000Z'
+  '2474':
+    id: 2474
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 5.54
+    description: 出售 arrow x2
+    refId: us-085e2546-49be-4483-801a-d5d28b2253a1
+    createdAt: '2026-08-18T13:53:40.000Z'
+  '2475':
+    id: 2475
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.92
+    description: 出售 string x4
+    refId: us-1e5a2c3e-85f3-46ae-9964-968cfc507651
+    createdAt: '2026-08-18T13:53:40.000Z'
+  '2476':
+    id: 2476
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 23.76
+    description: 出售 shroomlight x4
+    refId: us-bdc36ff9-8e16-4509-8b66-be78db0bc9f1
+    createdAt: '2026-08-18T13:53:40.000Z'
+  '2477':
+    id: 2477
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 4.95
+    description: 出售 bone x1
+    refId: us-f472f418-ae0a-4c5c-9923-fcd335c7831f
+    createdAt: '2026-08-18T13:53:40.000Z'
+  '2478':
+    id: 2478
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 178.2
+    description: 出售 warped_wart_block x90
+    refId: us-053acf94-b810-4edf-9990-d73a570bc197
+    createdAt: '2026-08-18T13:53:41.000Z'
+  '2479':
+    id: 2479
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 6.93
+    description: 出售 rotten_flesh x7
+    refId: us-29e9d018-df36-4ea6-87d1-ef788cde55cf
+    createdAt: '2026-08-18T13:53:41.000Z'
+  '2480':
+    id: 2480
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1226.36
+    description: 出售 ochre_froglight x62
+    refId: us-f3e3a953-1cbd-45e0-b881-ecea7f80075a
+    createdAt: '2026-08-18T15:38:15.000Z'
+  '2481':
+    id: 2481
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 17.82
+    description: 出售 redstone x6
+    refId: us-9bda1efd-0540-413c-b14a-bfb8777fc9c8
+    createdAt: '2026-08-18T15:38:41.000Z'
+  '2482':
+    id: 2482
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 11.08
+    description: 出售 arrow x4
+    refId: us-ab8d3a29-e50f-47dc-a178-989f3b30c359
+    createdAt: '2026-08-18T15:38:41.000Z'
+  '2483':
+    id: 2483
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1.98
+    description: 出售 string x1
+    refId: us-ff1dce23-684c-4164-8098-e7d911f7a9d7
+    createdAt: '2026-08-18T15:38:41.000Z'
+  '2484':
+    id: 2484
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1.68
+    description: 出售 bone_meal x1
+    refId: us-29418525-3751-4f46-8b09-65d694355d4e
+    createdAt: '2026-08-18T15:38:41.000Z'
+  '2485':
+    id: 2485
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 stick x1
+    refId: us-e33baccc-8175-4cd3-ba1e-1f610bf3984a
+    createdAt: '2026-08-18T15:38:42.000Z'
+  '2486':
+    id: 2486
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 9.9
+    description: 出售 bone x2
+    refId: us-94545b31-2f36-489e-ad72-94de2e46f39d
+    createdAt: '2026-08-18T15:38:42.000Z'
+  '2487':
+    id: 2487
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 14.85
+    description: 出售 rotten_flesh x15
+    refId: us-7d603045-5645-4179-b509-de2b5974f9a0
+    createdAt: '2026-08-18T15:38:42.000Z'
+  '2488':
+    id: 2488
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 7.19
+    description: 购买 oak_log x1
+    refId: us-f59ca133-68e9-4bee-b1f4-da644436ee81
+    createdAt: '2026-08-19T02:10:35.000Z'
+  '2489':
+    id: 2489
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 7.19
+    description: 购买 oak_log x1
+    refId: us-08b24066-2dee-4450-b918-9aa7d574f001
+    createdAt: '2026-08-19T02:10:36.000Z'
+  '2490':
+    id: 2490
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-68d6097c-c126-4ba2-95f9-52ea1af6d9c7
+    createdAt: '2026-08-19T02:10:37.000Z'
+  '2491':
+    id: 2491
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-4f87ec77-5ed9-440f-ba6a-d029d12b164d
+    createdAt: '2026-08-19T02:10:38.000Z'
+  '2492':
+    id: 2492
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 7.19
+    description: 购买 oak_log x1
+    refId: us-8cc21897-0de6-4de7-84e1-1f478b4b021b
+    createdAt: '2026-08-19T03:29:20.000Z'
+  '2493':
+    id: 2493
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 7.19
+    description: 购买 oak_log x1
+    refId: us-ad46b0af-f8c2-4d41-a599-faad33dd2b1a
+    createdAt: '2026-08-19T03:50:46.000Z'
+  '2494':
+    id: 2494
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-43b2531b-348f-45d4-9865-57607e8f3ae3
+    createdAt: '2026-08-19T03:50:47.000Z'
+  '2495':
+    id: 2495
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-8407f0b7-1587-4ec4-a66b-7274c5a44140
+    createdAt: '2026-08-19T03:50:48.000Z'
+  '2496':
+    id: 2496
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 460.16
+    description: 购买 oak_log x64
+    refId: us-ff340492-765b-4f43-8ef8-3734db0e50e1
+    createdAt: '2026-08-19T03:50:58.000Z'
+  '2497':
+    id: 2497
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-fd650e01-b2ec-4b77-86c3-27a882f57402
+    createdAt: '2026-08-19T03:51:20.000Z'
+  '2498':
+    id: 2498
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-7230429b-b1dc-42ac-bb63-b90e5dcd75c5
+    createdAt: '2026-08-19T03:51:22.000Z'
+  '2499':
+    id: 2499
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 227.84
+    description: 出售 oak_log x32
+    refId: us-df82cf7b-477b-404c-94a7-2bf836f3906c
+    createdAt: '2026-08-19T03:51:26.000Z'
+  '2500':
+    id: 2500
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 113.92
+    description: 出售 oak_log x16
+    refId: us-fbb03d69-1103-41d8-b84c-b12295b5ab11
+    createdAt: '2026-08-19T03:51:34.000Z'
+  '2501':
+    id: 2501
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 28.48
+    description: 出售 oak_log x4
+    refId: us-bf77eb51-0c46-4cfa-8a3d-bc59339d7ddb
+    createdAt: '2026-08-19T03:51:41.000Z'
+  '2502':
+    id: 2502
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 28.48
+    description: 出售 oak_log x4
+    refId: us-ce252be2-05a9-465a-90f8-8dc508a3e6d7
+    createdAt: '2026-08-19T03:51:41.000Z'
+  '2503':
+    id: 2503
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 28.48
+    description: 出售 oak_log x4
+    refId: us-81d8ccd3-4818-4167-ab6f-698b825a8575
+    createdAt: '2026-08-19T03:51:42.000Z'
+  '2504':
+    id: 2504
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 14.24
+    description: 出售 oak_log x2
+    refId: us-83dce3ad-1e08-4f37-aa8f-6f35a18d0715
+    createdAt: '2026-08-19T03:51:45.000Z'
+  '2505':
+    id: 2505
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 7.19
+    description: 购买 oak_log x1
+    refId: us-0df9bd6e-5d52-45f3-8a86-06931b9e9004
+    createdAt: '2026-08-19T11:47:30.000Z'
+  '2506':
+    id: 2506
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 wheat_seeds x1
+    refId: us-3404d30c-f87d-4cf9-a99a-a2f57874416a
+    createdAt: '2026-08-19T13:01:16.000Z'
+  '2507':
+    id: 2507
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 63.36
+    description: 出售 wheat_seeds x64
+    refId: us-15fc1cb2-c356-4ed3-a1b5-b801ed4c6fe4
+    createdAt: '2026-08-19T13:01:26.000Z'
+  '2508':
+    id: 2508
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 5
+    description: 购买 mycelium x1
+    refId: us-d385e5c0-f6f6-487f-ab7f-85277a5d913d
+    createdAt: '2026-08-19T13:14:27.000Z'
+  '2509':
+    id: 2509
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 5
+    description: 购买 mycelium x1
+    refId: us-f6005a43-decd-40a5-9647-2c80875e488d
+    createdAt: '2026-08-19T13:14:30.000Z'
+  '2510':
+    id: 2510
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 5
+    description: 购买 mycelium x1
+    refId: us-07d389a1-7e00-4536-8504-6267f713e3f5
+    createdAt: '2026-08-19T13:14:33.000Z'
+  '2511':
+    id: 2511
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 5
+    description: 购买 mycelium x1
+    refId: us-b47a0a28-9fa3-4d2c-a08a-e1a560fffa3b
+    createdAt: '2026-08-19T13:14:33.000Z'
+  '2512':
+    id: 2512
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3
+    description: 购买 brown_mushroom x1
+    refId: us-6cc4ffd7-04a3-4957-b770-269e52a96fa6
+    createdAt: '2026-08-19T13:15:06.000Z'
+  '2513':
+    id: 2513
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3
+    description: 购买 red_mushroom x1
+    refId: us-4e6ac81a-62e4-4b71-be58-6ebd6985359d
+    createdAt: '2026-08-19T13:15:07.000Z'
+  '2514':
+    id: 2514
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3
+    description: 购买 brown_mushroom x1
+    refId: us-2afd19a4-32a5-4e9b-b1a8-c7cd777ce02d
+    createdAt: '2026-08-19T13:18:01.000Z'
+  '2515':
+    id: 2515
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-7690a075-8703-4931-8765-70862cef7ba6
+    createdAt: '2026-08-19T13:27:05.000Z'
+  '2516':
+    id: 2516
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-ef6acd79-b04d-4401-80f3-98842bd4160f
+    createdAt: '2026-08-19T13:27:05.000Z'
+  '2517':
+    id: 2517
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-816902ac-6aae-4112-af53-e8a23c20fca5
+    createdAt: '2026-08-19T13:27:06.000Z'
+  '2518':
+    id: 2518
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-f8af1b8c-980a-4795-8b50-3bea46d6ca53
+    createdAt: '2026-08-19T13:27:06.000Z'
+  '2519':
+    id: 2519
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-c890e24a-2578-41a5-a023-ddc1ee40ba1a
+    createdAt: '2026-08-19T13:27:06.000Z'
+  '2520':
+    id: 2520
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-535e4449-7797-42a5-9db4-7a0ecbced1f5
+    createdAt: '2026-08-19T13:27:11.000Z'
+  '2521':
+    id: 2521
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-05d18943-d9cc-4de9-98c5-fc02a73aca63
+    createdAt: '2026-08-19T13:27:20.000Z'
+  '2522':
+    id: 2522
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-8a9e44ef-6690-4aa4-ad5e-a5ffb2086c15
+    createdAt: '2026-08-19T13:27:20.000Z'
+  '2523':
+    id: 2523
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-3c509f08-be22-453f-978a-0b31ba34ba20
+    createdAt: '2026-08-19T13:27:20.000Z'
+  '2524':
+    id: 2524
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-e2b9b5d5-5a53-4845-8816-c726a1640fcc
+    createdAt: '2026-08-19T13:27:21.000Z'
+  '2525':
+    id: 2525
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-98420696-5fa6-4520-9fde-1fee12bbafee
+    createdAt: '2026-08-19T13:27:21.000Z'
+  '2526':
+    id: 2526
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1.8
+    description: 购买 dark_oak_planks x1
+    refId: us-991e3a4e-1817-4747-bbbc-8892d1c851b9
+    createdAt: '2026-08-19T13:27:22.000Z'
+  '2527':
+    id: 2527
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2
+    description: 购买 dark_oak_sapling x1
+    refId: us-88fe0ea1-6626-48dd-aeaf-1326a971d8f2
+    createdAt: '2026-08-19T13:28:00.000Z'
+  '2528':
+    id: 2528
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2
+    description: 购买 dark_oak_sapling x1
+    refId: us-ca122322-e683-4b4a-82c6-480c1af6032a
+    createdAt: '2026-08-19T13:28:00.000Z'
+  '2529':
+    id: 2529
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2
+    description: 购买 dark_oak_sapling x1
+    refId: us-827157a5-447c-446a-a829-9458b6cf1f0e
+    createdAt: '2026-08-19T13:28:01.000Z'
+  '2530':
+    id: 2530
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2
+    description: 购买 dark_oak_sapling x1
+    refId: us-c5858542-d7bd-473d-ae86-344cf7579713
+    createdAt: '2026-08-19T13:28:01.000Z'
+  '2531':
+    id: 2531
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-4427bbe1-0545-440e-bef6-dd06cae2033f
+    createdAt: '2026-08-19T13:56:11.000Z'
+  '2532':
+    id: 2532
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-63de6e4b-7a2b-4dd7-b994-bf778f2f9f06
+    createdAt: '2026-08-19T13:56:23.000Z'
+  '2533':
+    id: 2533
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-d39ef7d3-5c1a-4139-a404-c9115c309a6d
+    createdAt: '2026-08-19T13:56:31.000Z'
+  '2534':
+    id: 2534
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-60ab04db-3bce-4bdc-b6de-b8f05d73f27e
+    createdAt: '2026-08-19T13:56:39.000Z'
+  '2535':
+    id: 2535
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-b2a2d33d-2280-423f-8a2a-4ea9e8602c67
+    createdAt: '2026-08-19T13:56:50.000Z'
+  '2536':
+    id: 2536
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-f66ef377-608c-4114-b61a-66abfac5052a
+    createdAt: '2026-08-19T14:00:09.000Z'
+  '2537':
+    id: 2537
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-f57b3066-2318-4068-bdd1-c02369b109a1
+    createdAt: '2026-08-19T14:00:12.000Z'
+  '2538':
+    id: 2538
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-2ffa4d46-674c-45c7-b3e3-b91666a9757f
+    createdAt: '2026-08-19T14:00:12.000Z'
+  '2539':
+    id: 2539
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-259aeb34-896a-4fac-a03e-f4f3e4fb7eeb
+    createdAt: '2026-08-19T14:00:13.000Z'
+  '2540':
+    id: 2540
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-bac335e0-1840-40f0-9b60-cd3b91a3c31f
+    createdAt: '2026-08-19T14:00:13.000Z'
+  '2541':
+    id: 2541
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-ac6cde80-f652-4fdd-ac66-ea95d72409c6
+    createdAt: '2026-08-19T14:00:13.000Z'
+  '2542':
+    id: 2542
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-a804d0b4-11b1-4135-b53d-09a1538372ac
+    createdAt: '2026-08-19T14:00:13.000Z'
+  '2543':
+    id: 2543
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-a61fc242-660e-4f75-8fe2-f54eb1abe75c
+    createdAt: '2026-08-19T14:00:13.000Z'
+  '2544':
+    id: 2544
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-6ad9ecfd-afef-474d-8580-a0492de7fe69
+    createdAt: '2026-08-19T14:00:14.000Z'
+  '2545':
+    id: 2545
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-fbb18e5a-020e-419a-9f93-317209fb86ab
+    createdAt: '2026-08-19T14:01:22.000Z'
+  '2546':
+    id: 2546
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.4
+    description: 购买 dark_oak_fence x1
+    refId: us-05a75794-8464-4c88-a8c0-0f1350a6d438
+    createdAt: '2026-08-19T14:01:23.000Z'
+  '2547':
+    id: 2547
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 dark_oak_fence_gate x1
+    refId: us-7e7f7aee-cc5b-4dd3-a4e2-8958369e559f
+    createdAt: '2026-08-19T14:01:25.000Z'
+  '2548':
+    id: 2548
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 dark_oak_fence_gate x1
+    refId: us-4a718f96-4d3f-4687-9dc5-9f44c51d9d56
+    createdAt: '2026-08-19T14:01:25.000Z'
+  '2549':
+    id: 2549
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 dark_oak_fence_gate x1
+    refId: us-0ee5dcc9-5cc2-481c-950b-7c77d111f6a7
+    createdAt: '2026-08-19T14:01:25.000Z'
+  '2550':
+    id: 2550
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-e19d2f14-c23a-4566-bffa-b501f39c0689
+    createdAt: '2026-08-19T14:01:27.000Z'
+  '2551':
+    id: 2551
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-c67d55ba-0d5a-4d81-8d5c-c384927e23e4
+    createdAt: '2026-08-19T14:01:27.000Z'
+  '2552':
+    id: 2552
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-5cc35c28-4e6f-45ba-9a92-f9f6fcec0a10
+    createdAt: '2026-08-19T14:01:27.000Z'
+  '2553':
+    id: 2553
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-7c79a1a3-1c6e-4786-8de8-f4bbc9a39b37
+    createdAt: '2026-08-19T14:01:28.000Z'
+  '2554':
+    id: 2554
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-e8a18986-857b-43bc-a1e5-a0e8bf76d637
+    createdAt: '2026-08-19T14:01:28.000Z'
+  '2555':
+    id: 2555
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4
+    description: 购买 dark_oak_pressure_plate x1
+    refId: us-2dd88c1c-8d39-4241-a381-4087313826c8
+    createdAt: '2026-08-19T14:01:28.000Z'
+  '2556':
+    id: 2556
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-55d8f72b-d8af-41a1-8a8b-1bf00177dbbd
+    createdAt: '2026-08-19T14:02:46.000Z'
+  '2557':
+    id: 2557
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-e8d5d422-a2c9-4458-805f-34bf99c362c2
+    createdAt: '2026-08-19T14:02:46.000Z'
+  '2558':
+    id: 2558
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-46dc08d2-548b-47d5-b513-0f96f9ea1c32
+    createdAt: '2026-08-19T14:02:47.000Z'
+  '2559':
+    id: 2559
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-896f0370-b4d3-4fbc-9999-e5b216da59de
+    createdAt: '2026-08-19T14:02:47.000Z'
+  '2560':
+    id: 2560
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-8a1f2799-bb3d-434e-be73-073a6259af16
+    createdAt: '2026-08-19T14:02:47.000Z'
+  '2561':
+    id: 2561
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-64ef63e7-d9b1-4b66-bce8-3e3bfeaaea19
+    createdAt: '2026-08-19T14:02:47.000Z'
+  '2562':
+    id: 2562
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-275cb25e-29a2-497a-a710-fb4f597339c9
+    createdAt: '2026-08-19T14:02:48.000Z'
+  '2563':
+    id: 2563
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-4ab6b111-cb7f-4ffd-994e-9153820f1394
+    createdAt: '2026-08-19T14:02:48.000Z'
+  '2564':
+    id: 2564
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-50b2a9ad-037c-4f39-9139-8b175d4b5602
+    createdAt: '2026-08-19T14:02:48.000Z'
+  '2565':
+    id: 2565
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-6e4e4e02-498f-459e-adc7-d531b8258af2
+    createdAt: '2026-08-19T14:02:48.000Z'
+  '2566':
+    id: 2566
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-478d4189-fe1c-46b3-96f3-376a2a160127
+    createdAt: '2026-08-19T14:02:48.000Z'
+  '2567':
+    id: 2567
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 2.07
+    description: 购买 pale_oak_planks x1
+    refId: us-f20e1c9e-fdc1-4d39-9729-34477b43602a
+    createdAt: '2026-08-19T14:02:49.000Z'
+  '2568':
+    id: 2568
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1
+    description: 购买 pale_oak_sapling x1
+    refId: us-023333de-959a-4273-ae63-c3ad46cfe2d8
+    createdAt: '2026-08-19T14:03:55.000Z'
+  '2569':
+    id: 2569
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1
+    description: 购买 pale_oak_sapling x1
+    refId: us-7b1e92ba-3613-4a92-b0b1-456bfc1121f3
+    createdAt: '2026-08-19T14:04:15.000Z'
+  '2570':
+    id: 2570
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1
+    description: 购买 pale_oak_sapling x1
+    refId: us-9966670e-eeac-41c3-bea0-8f41dbdd354a
+    createdAt: '2026-08-19T14:04:15.000Z'
+  '2571':
+    id: 2571
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1
+    description: 购买 pale_oak_sapling x1
+    refId: us-a33ab894-6175-4734-8af7-a5b87c679338
+    createdAt: '2026-08-19T14:04:16.000Z'
+  '2572':
+    id: 2572
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 9.91
+    description: 购买 spruce_wood x1
+    refId: us-26bc53ea-08f2-4fbf-b1d1-830a1fc0b50b
+    createdAt: '2026-08-19T14:07:57.000Z'
+  '2573':
+    id: 2573
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 10.81
+    description: 购买 pale_oak_wood x1
+    refId: us-e42ddeac-c9b7-49ca-b112-e354348eedf2
+    createdAt: '2026-08-19T14:08:00.000Z'
+  '2574':
+    id: 2574
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-6ba1328e-be82-4818-936d-b5b7611ef52b
+    createdAt: '2026-08-19T14:09:35.000Z'
+  '2575':
+    id: 2575
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-3b454f91-bbb1-4e14-9356-88086cb0c0af
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2576':
+    id: 2576
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-be3f1944-369e-488d-b776-d567bb5d7f42
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2577':
+    id: 2577
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-df989fd4-b057-40c4-8793-6b445d1b5bc5
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2578':
+    id: 2578
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-91089409-64ea-457c-ae0e-5bcad674ab2a
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2579':
+    id: 2579
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-c4495d8a-9a92-4cd8-b363-8b08ebae9cc6
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2580':
+    id: 2580
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-0dfaef6a-5b93-4367-ad69-4b29c77c93bc
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2581':
+    id: 2581
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-2ca11955-d851-46dc-8693-04780c476a30
+    createdAt: '2026-08-19T14:09:36.000Z'
+  '2582':
+    id: 2582
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-83d1eb2a-06df-4bfe-9508-62fe8de4e579
+    createdAt: '2026-08-19T14:09:37.000Z'
+  '2583':
+    id: 2583
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-3dce1926-a284-4cbf-9e3e-4d5c3ee4059f
+    createdAt: '2026-08-19T14:09:37.000Z'
+  '2584':
+    id: 2584
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-11a4e544-7fdf-4dd6-8c9d-bb3e2fb55572
+    createdAt: '2026-08-19T14:09:37.000Z'
+  '2585':
+    id: 2585
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-84b68cc1-7628-4bda-8456-294fe74e0433
+    createdAt: '2026-08-19T14:09:37.000Z'
+  '2586':
+    id: 2586
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-f9a2004e-a844-4f3e-b129-dc2cf52ba33f
+    createdAt: '2026-08-19T14:09:38.000Z'
+  '2587':
+    id: 2587
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-3d4b088d-6f0f-4ce6-aaf8-87dcd07c66f4
+    createdAt: '2026-08-19T14:09:38.000Z'
+  '2588':
+    id: 2588
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-3d4695f5-5251-46df-b5b3-c6d95d9cc41c
+    createdAt: '2026-08-19T14:09:38.000Z'
+  '2589':
+    id: 2589
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-a274015a-d94a-4ff1-8257-cb331fb6ef59
+    createdAt: '2026-08-19T14:09:39.000Z'
+  '2590':
+    id: 2590
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-04b94030-a541-4beb-9b7e-88785f056fa2
+    createdAt: '2026-08-19T14:09:39.000Z'
+  '2591':
+    id: 2591
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 9.01
+    description: 购买 pale_oak_fence_gate x1
+    refId: us-bba711ad-7dd5-4e24-852f-84942f087162
+    createdAt: '2026-08-19T14:09:41.000Z'
+  '2592':
+    id: 2592
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 9.01
+    description: 购买 pale_oak_fence_gate x1
+    refId: us-37214b30-18bd-4fcf-b02b-6f1787f7d8b2
+    createdAt: '2026-08-19T14:09:41.000Z'
+  '2593':
+    id: 2593
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4.5
+    description: 购买 pale_oak_pressure_plate x1
+    refId: us-c37f2433-c48f-486c-b94e-8b08acf49908
+    createdAt: '2026-08-19T14:09:42.000Z'
+  '2594':
+    id: 2594
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4.5
+    description: 购买 pale_oak_pressure_plate x1
+    refId: us-f0eea60e-7092-4d88-b7e3-6b8d1e2c8a3c
+    createdAt: '2026-08-19T14:09:42.000Z'
+  '2595':
+    id: 2595
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4.5
+    description: 购买 pale_oak_pressure_plate x1
+    refId: us-f15e55a0-c2af-43f6-bf0c-94f1b958c2ae
+    createdAt: '2026-08-19T14:09:43.000Z'
+  '2596':
+    id: 2596
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 4.5
+    description: 购买 pale_oak_pressure_plate x1
+    refId: us-52b10672-7286-4c43-9f9b-5704c4614bc4
+    createdAt: '2026-08-19T14:09:43.000Z'
+  '2597':
+    id: 2597
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 3.7
+    description: 购买 pale_oak_fence x1
+    refId: us-c86af6d1-0c24-436f-a2dd-b8583d4bc19a
+    createdAt: '2026-08-19T14:11:21.000Z'
+  '2598':
+    id: 2598
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 crafting_table x1
+    refId: us-a4f171f2-c264-4b68-a56f-fba2080d53b7
+    createdAt: '2026-08-19T14:23:36.000Z'
+  '2599':
+    id: 2599
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 crafting_table x1
+    refId: us-e3b0ec6e-c311-412e-af62-66d0ccac72f7
+    createdAt: '2026-08-19T14:23:37.000Z'
+  '2600':
+    id: 2600
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 crafting_table x1
+    refId: us-179ffc8c-91eb-4e63-b301-b6e484cde3ef
+    createdAt: '2026-08-19T14:23:40.000Z'
+  '2601':
+    id: 2601
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 8.01
+    description: 购买 crafting_table x1
+    refId: us-47257743-7352-43e6-a532-d9d35a568272
+    createdAt: '2026-08-19T14:23:40.000Z'
+  '2602':
+    id: 2602
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-d37dd8f2-140e-403a-b739-480b9520ccb6
+    createdAt: '2026-08-19T15:20:06.000Z'
+  '2603':
+    id: 2603
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 spruce_log x1
+    refId: us-87861dcf-6e4e-43b2-9399-f5d07abb1c18
+    createdAt: '2026-08-19T15:20:06.000Z'
+  '2604':
+    id: 2604
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 27.72
+    description: 出售 spruce_pressure_plate x7
+    refId: us-746c04fb-edd2-46de-bdc3-d2455be56589
+    createdAt: '2026-08-19T15:20:06.000Z'
+  '2605':
+    id: 2605
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 jungle_log x1
+    refId: us-200c1339-5cf5-4b3f-b4ac-215f40eb1d15
+    createdAt: '2026-08-19T15:20:07.000Z'
+  '2606':
+    id: 2606
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 dark_oak_log x1
+    refId: us-7c4438a0-b840-40a8-9212-e302496a7b66
+    createdAt: '2026-08-19T15:20:07.000Z'
+  '2607':
+    id: 2607
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.13
+    description: 出售 stripped_dark_oak_log x1
+    refId: us-068f8dba-ee09-408b-afc2-1f0e06424d0c
+    createdAt: '2026-08-19T15:20:07.000Z'
+  '2608':
+    id: 2608
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.92
+    description: 出售 dark_oak_pressure_plate x2
+    refId: us-b0ee83c1-245f-4efd-8109-6c39955fb4de
+    createdAt: '2026-08-19T15:20:07.000Z'
+  '2609':
+    id: 2609
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 8.9
+    description: 出售 bow x1
+    refId: us-1fd91560-760d-45ff-a976-127cf767e9ac
+    createdAt: '2026-08-19T15:20:07.000Z'
+  '2610':
+    id: 2610
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 jungle_log x1
+    refId: us-342fb1a4-5991-44bc-999a-c323a5837bee
+    createdAt: '2026-08-20T11:54:11.000Z'
+  '2611':
+    id: 2611
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 dark_oak_log x1
+    refId: us-936d32ee-fe8a-4b21-a495-8209c3e68a3a
+    createdAt: '2026-08-20T11:54:11.000Z'
+  '2612':
+    id: 2612
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 dirt x1
+    refId: us-264b5648-ef5b-4c28-be63-f8713c5f92dc
+    createdAt: '2026-08-20T11:54:12.000Z'
+  '2613':
+    id: 2613
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 cobblestone x1
+    refId: us-7a29675b-cfd5-4679-b256-9fca361c6f27
+    createdAt: '2026-08-20T11:54:12.000Z'
+  '2614':
+    id: 2614
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 15.82
+    description: 出售 ender_pearl x1
+    refId: us-d26c439f-5d83-414b-8639-a3551b2d8a82
+    createdAt: '2026-08-20T11:54:12.000Z'
+  '2615':
+    id: 2615
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 2.97
+    description: 出售 redstone x1
+    refId: us-8251b99c-485d-4240-8dd6-1b6da3bfeffe
+    createdAt: '2026-08-20T11:54:13.000Z'
+  '2616':
+    id: 2616
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-6f8523fb-b109-471c-bb4c-7633b2945b0e
+    createdAt: '2026-08-20T12:02:32.000Z'
+  '2617':
+    id: 2617
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 spruce_log x1
+    refId: us-e0251d03-0743-44ad-9852-3d49f7eaffd6
+    createdAt: '2026-08-20T12:02:32.000Z'
+  '2618':
+    id: 2618
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 jungle_log x1
+    refId: us-093a8332-5b91-4f76-98b1-9eeefb6ba9b7
+    createdAt: '2026-08-20T12:02:32.000Z'
+  '2619':
+    id: 2619
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 dark_oak_log x1
+    refId: us-d36f4657-364f-4aaf-852d-3a44b20628c2
+    createdAt: '2026-08-20T12:02:32.000Z'
+  '2620':
+    id: 2620
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 dirt x1
+    refId: us-88721bbd-8398-4458-b754-7101dabd0b0d
+    createdAt: '2026-08-20T12:02:32.000Z'
+  '2621':
+    id: 2621
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 cobblestone x1
+    refId: us-ee319a2b-f731-4216-8a2f-0f553bba7dde
+    createdAt: '2026-08-20T12:02:33.000Z'
+  '2622':
+    id: 2622
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 15.82
+    description: 出售 ender_pearl x1
+    refId: us-928e285e-f5bb-4167-b36a-08b061d51b1a
+    createdAt: '2026-08-20T12:02:33.000Z'
+  '2623':
+    id: 2623
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 2.97
+    description: 出售 redstone x1
+    refId: us-2654a6e9-e90a-4cc7-a60c-cc8435cb6ddd
+    createdAt: '2026-08-20T12:02:33.000Z'
+  '2624':
+    id: 2624
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-3f888b48-c1ca-4f76-8203-cb75c4171430
+    createdAt: '2026-08-20T12:04:28.000Z'
+  '2625':
+    id: 2625
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 spruce_log x1
+    refId: us-3b667745-1571-4d9f-8499-fb9f06164121
+    createdAt: '2026-08-20T12:04:28.000Z'
+  '2626':
+    id: 2626
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 jungle_log x1
+    refId: us-d103c265-a3e4-43cd-960b-fee0ea514958
+    createdAt: '2026-08-20T12:04:28.000Z'
+  '2627':
+    id: 2627
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 dark_oak_log x1
+    refId: us-d9f76ce0-082e-4440-96d2-775f1adc4d29
+    createdAt: '2026-08-20T12:04:28.000Z'
+  '2628':
+    id: 2628
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 dirt x1
+    refId: us-a502035d-c1e9-40c5-a2ea-904479dd7da2
+    createdAt: '2026-08-20T12:04:28.000Z'
+  '2629':
+    id: 2629
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 cobblestone x1
+    refId: us-79881706-acbf-4e51-8430-a66c05f2537b
+    createdAt: '2026-08-20T12:04:29.000Z'
+  '2630':
+    id: 2630
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 15.82
+    description: 出售 ender_pearl x1
+    refId: us-e9de890a-7842-412f-9f95-2c783555d044
+    createdAt: '2026-08-20T12:04:29.000Z'
+  '2631':
+    id: 2631
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 2.97
+    description: 出售 redstone x1
+    refId: us-78ad0007-0310-4c44-9db3-0deb971d0cfb
+    createdAt: '2026-08-20T12:04:29.000Z'
+  '2632':
+    id: 2632
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 wheat_seeds x1
+    refId: us-95a6c86c-1d6e-46e7-9b56-d8b55098f274
+    createdAt: '2026-08-20T12:05:40.000Z'
+  '2633':
+    id: 2633
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1.98
+    description: 出售 carrot x1
+    refId: us-e99ac329-852f-4cb3-8d53-af3bafe021bc
+    createdAt: '2026-08-20T12:05:55.000Z'
+  '2634':
+    id: 2634
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 9.89
+    description: 出售 gunpowder x1
+    refId: us-75de77bc-b26e-4d08-bc26-46d409fb74d1
+    createdAt: '2026-08-20T12:06:10.000Z'
+  '2635':
+    id: 2635
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 4.95
+    description: 出售 spider_eye x1
+    refId: us-5d14013d-f60c-4b1d-906a-cc2945357e68
+    createdAt: '2026-08-20T12:06:11.000Z'
+  '2636':
+    id: 2636
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 spruce_log x1
+    refId: us-8d1685fb-4c82-4564-bd25-627dfc18e0cf
+    createdAt: '2026-08-20T12:12:47.000Z'
+  '2637':
+    id: 2637
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 dark_oak_planks x4
+    refId: us-562e8c2a-46d3-44d9-9cad-6f6170cd286e
+    createdAt: '2026-08-20T12:12:47.000Z'
+  '2638':
+    id: 2638
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 dirt x1
+    refId: us-32ec2404-c4b8-4a57-a5d5-e32a20b55c32
+    createdAt: '2026-08-20T12:12:47.000Z'
+  '2639':
+    id: 2639
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 0.99
+    description: 出售 cobblestone x1
+    refId: us-8f38a8b8-f710-4a9f-81ad-40ee1023f998
+    createdAt: '2026-08-20T12:12:47.000Z'
+  '2640':
+    id: 2640
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 jungle_log x1
+    refId: us-c34b0d10-296c-4d1c-9da2-12ae201dc91e
+    createdAt: '2026-08-20T12:13:16.000Z'
+  '2641':
+    id: 2641
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 15.82
+    description: 出售 ender_pearl x1
+    refId: us-68aa713a-0998-493c-8cb2-b11d6f75aaed
+    createdAt: '2026-08-20T12:13:16.000Z'
+  '2642':
+    id: 2642
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 1.98
+    description: 出售 glowstone_dust x1
+    refId: us-da8f8d1c-6304-4323-b4f1-07190e637938
+    createdAt: '2026-08-20T12:13:17.000Z'
+  '2643':
+    id: 2643
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 9.89
+    description: 出售 gunpowder x1
+    refId: us-36cf1f30-a72d-4c7d-9d20-7a0ad9b0fbfe
+    createdAt: '2026-08-20T12:13:17.000Z'
+  '2644':
+    id: 2644
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 4.95
+    description: 出售 spider_eye x1
+    refId: us-cc8fcd85-1e94-4808-8743-1d9b14c1a5b6
+    createdAt: '2026-08-20T12:13:17.000Z'
+  '2645':
+    id: 2645
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 146.85
+    description: 出售 oak_wood x15
+    refId: us-56869d45-03f7-448a-9422-9b3c5d74e5b9
+    createdAt: '2026-08-20T14:42:21.000Z'
+  '2646':
+    id: 2646
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 19.8
+    description: 出售 grass_block x10
+    refId: us-69ab6117-8285-43cc-84d1-4dc2da0724b3
+    createdAt: '2026-08-20T14:42:22.000Z'
+  '2647':
+    id: 2647
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 2.97
+    description: 出售 redstone x1
+    refId: us-18dbfd53-144f-401f-b7f7-1206c9965226
+    createdAt: '2026-08-20T14:42:22.000Z'
+  '2648':
+    id: 2648
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 30.66
+    description: 出售 iron_sword x1
+    refId: us-ae24d594-56fd-4d00-a027-a10221ae4eee
+    createdAt: '2026-08-20T14:42:41.000Z'
+  '2649':
+    id: 2649
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 7.12
+    description: 出售 oak_log x1
+    refId: us-99d977ee-1f0f-4ed6-8b61-4c54f26e15ec
+    createdAt: '2026-08-22T15:44:34.000Z'
