@@ -7,6 +7,9 @@ import work.mcwws.ultimateshopstash.util.Messages;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.AtomicMoveNotSupportedException;
+import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -117,10 +120,45 @@ public final class StashStorage {
             yaml.set("skip-collect", skipped);
         }
         try {
-            yaml.save(file);
+            writeYamlAtomically(file, yaml);
         } catch (IOException ex) {
             plugin.getLogger().warning("无法保存仓库 " + uuid + ": " + ex.getMessage());
         }
+    }
+
+    private void writeYamlAtomically(File file, YamlConfiguration yaml) throws IOException {
+        File parent = file.getParentFile();
+        if (parent != null && !parent.exists()) {
+            parent.mkdirs();
+        }
+        File tmp = new File(parent, file.getName() + ".tmp");
+        IOException last = null;
+        for (int attempt = 0; attempt < 5; attempt++) {
+            try {
+                yaml.save(tmp);
+                try {
+                    Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+                } catch (AtomicMoveNotSupportedException ex) {
+                    Files.move(tmp.toPath(), file.toPath(), StandardCopyOption.REPLACE_EXISTING);
+                }
+                return;
+            } catch (IOException ex) {
+                last = ex;
+                if (tmp.exists() && !tmp.delete()) {
+                    tmp.deleteOnExit();
+                }
+                try {
+                    Thread.sleep(50L * (attempt + 1));
+                } catch (InterruptedException interrupted) {
+                    Thread.currentThread().interrupt();
+                    throw new IOException("保存仓库被中断", interrupted);
+                }
+            }
+        }
+        if (last != null) {
+            throw last;
+        }
+        throw new IOException("无法写入 " + file.getName());
     }
 
     private void saveAsync(UUID uuid) {

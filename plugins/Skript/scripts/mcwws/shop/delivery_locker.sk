@@ -14,11 +14,16 @@ options:
     locker_id: MCWWS_DELIVERY_LOCKER
     pickup_unlock_minutes: 10
 
-function mcwwsLockerYamlPath() :: text:
-    return "{@locker_yaml}"
+function mcwwsLoadLockerYaml():
+    load yaml "{@locker_yaml}" as "dlockers"
+    if yaml value "version" from "dlockers" is not set:
+        set yaml value "version" from "dlockers" to 1
+    if yaml value "lockers" from "dlockers" is not set:
+        set yaml value "lockers.__init__" from "dlockers" to 1
+        delete yaml value "lockers.__init__" in "dlockers"
 
-function mcwwsOrdersYamlPath() :: text:
-    return "{@orders_yaml}"
+function mcwwsUnloadLockerYaml():
+    unload yaml "dlockers"
 
 function mcwwsLockerUuidKey(u: text) :: text:
     set {_s} to "%{_u}%"
@@ -55,13 +60,16 @@ function mcwwsTagLockerGuiItem(stack: ItemStack) :: ItemStack:
     return {_stack}
 
 function mcwwsLockerIsChromeRaw(raw: number) :: boolean:
+    if {_raw} >= 45:
+        if {_raw} <= 53:
+            return true
+    return false
+
+function mcwwsLockerIsStorageRaw(raw: number) :: boolean:
     if {_raw} < 0:
         return false
-    if {_raw} < 9:
+    if {_raw} <= 44:
         return true
-    if {_raw} > 44:
-        if {_raw} < 54:
-            return true
     return false
 
 function mcwwsStripLockerGuiCursor(p: player):
@@ -93,13 +101,13 @@ function mcwwsDoubleClickWouldStealLocker(p: player, inv: object, sample: ItemSt
     if {_inv} is not set:
         return false
     set {_type} to {_sample}.getType()
-    set {_info} to {_inv}.getItem(4)
+    set {_info} to {_inv}.getItem(49)
     if {_info} is set:
         if {_info}.getType() is {_type}:
             if mcwwsIsLockerGuiItem({_info}) is true:
                 return true
-    loop 36 times:
-        set {_s} to loop-number + 8
+    loop 45 times:
+        set {_s} to loop-number - 1
         set {_it} to {_inv}.getItem({_s})
         if {_it} is not set:
             continue
@@ -115,14 +123,10 @@ function mcwwsDoubleClickWouldStealLocker(p: player, inv: object, sample: ItemSt
     return false
 
 function mcwwsInitDeliveryLockers():
-    load yaml mcwwsLockerYamlPath() as "dlockers"
-    if yaml value "version" from "dlockers" is not set:
-        set yaml value "version" from "dlockers" to 1
-        save yaml "dlockers"
-        send "§a[MCWWS] 已创建外卖柜注册表 YAML。" to console
-    else:
-        send "§a[MCWWS] 外卖柜编号与分货已启用。" to console
-    unload yaml "dlockers"
+    mcwwsLoadLockerYaml()
+    save yaml "dlockers"
+    send "§a[MCWWS] 外卖柜编号与分货已启用。" to console
+    mcwwsUnloadLockerYaml()
 
 function mcwwsLockerLocKey(loc: location) :: text:
     set {_b} to block at {_loc}
@@ -160,7 +164,7 @@ function mcwwsGeneratePickupCode() :: text:
     return {_out}
 
 function mcwwsLockerPairTaken(major: text, minor: text, exceptKey: text) :: boolean:
-    load yaml mcwwsLockerYamlPath() as "dlockers"
+    mcwwsLoadLockerYaml()
     loop yaml node keys "lockers" from "dlockers":
         set {_k} to loop-value
         if {_k} is {_exceptKey}:
@@ -169,15 +173,15 @@ function mcwwsLockerPairTaken(major: text, minor: text, exceptKey: text) :: bool
         set {_mn} to yaml value "lockers.%{_k}%.minor" from "dlockers"
         if "%{_mj}%" is {_major}:
             if "%{_mn}%" is {_minor}:
-                unload yaml "dlockers"
+                mcwwsUnloadLockerYaml()
                 return true
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
     return false
 
 function mcwwsSaveLockerRegistration(loc: location, major: text, minor: text, p: player):
     set {_key} to mcwwsLockerLocKey({_loc})
     set {_b} to block at {_loc}
-    load yaml mcwwsLockerYamlPath() as "dlockers"
+    mcwwsLoadLockerYaml()
     set yaml value "lockers.%{_key}%.world" from "dlockers" to "%world of {_b}%"
     set yaml value "lockers.%{_key}%.x" from "dlockers" to x-coordinate of {_b}
     set yaml value "lockers.%{_key}%.y" from "dlockers" to y-coordinate of {_b}
@@ -188,31 +192,31 @@ function mcwwsSaveLockerRegistration(loc: location, major: text, minor: text, p:
     set yaml value "lockers.%{_key}%.ownerName" from "dlockers" to name of {_p}
     set yaml value "lockers.%{_key}%.updatedAt" from "dlockers" to now formatted as "yyyy-MM-dd HH:mm:ss"
     save yaml "dlockers"
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
     StorageCacheUtils.setData({_loc}, "mcwws_major", {_major})
     StorageCacheUtils.setData({_loc}, "mcwws_minor", {_minor})
 
 function mcwwsUnregisterLocker(loc: location):
     set {_key} to mcwwsLockerLocKey({_loc})
-    load yaml mcwwsLockerYamlPath() as "dlockers"
-    delete yaml node "lockers.%{_key}%" from "dlockers"
+    mcwwsLoadLockerYaml()
+    delete yaml value "lockers.%{_key}%" in "dlockers"
     save yaml "dlockers"
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
 
 function mcwwsGetLockerMajor(loc: location) :: text:
     set {_key} to mcwwsLockerLocKey({_loc})
-    load yaml mcwwsLockerYamlPath() as "dlockers"
+    mcwwsLoadLockerYaml()
     set {_mj} to yaml value "lockers.%{_key}%.major" from "dlockers"
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
     if {_mj} is not set:
         return ""
     return "%{_mj}%"
 
 function mcwwsGetLockerMinor(loc: location) :: text:
     set {_key} to mcwwsLockerLocKey({_loc})
-    load yaml mcwwsLockerYamlPath() as "dlockers"
+    mcwwsLoadLockerYaml()
     set {_mn} to yaml value "lockers.%{_key}%.minor" from "dlockers"
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
     if {_mn} is not set:
         return ""
     return "%{_mn}%"
@@ -304,7 +308,7 @@ function mcwwsFindOrderByPickupCode(code: text, playerUuid: text) :: text:
     set {_uuid} to mcwwsLockerUuidKey({_playerUuid})
     if {_want} is "":
         return ""
-    load yaml mcwwsOrdersYamlPath() as "weborders_find"
+    load yaml "{@orders_yaml}" as "weborders_find"
     set {_max} to yaml value "next_id" from "weborders_find"
     if {_max} is not set:
         unload yaml "weborders_find"
@@ -349,7 +353,7 @@ function mcwwsApplyPickupUnlock(p: player, raw: text):
     set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
     if {_loc} is set:
         set {_major} to mcwwsGetLockerMajor({_loc})
-        load yaml mcwwsOrdersYamlPath() as "weborders_find"
+        load yaml "{@orders_yaml}" as "weborders_find"
         set {_omajor} to yaml value "orders.%{_oid}%.deliveryMajor" from "weborders_find"
         unload yaml "weborders_find"
         if {_major} is not "":
@@ -375,13 +379,9 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
         mcwwsClearLockerPrompt({_p})
         send "§c[外卖柜] §f目标柜已失效，请重新打开或放置。" to {_p}
         stop
-    if block at {_loc} is not barrel:
-        mcwwsClearLockerPrompt({_p})
-        send "§c[外卖柜] §f目标方块已不存在。" to {_p}
-        stop
     if mcwwsIsDeliveryLocker({_loc}) is false:
         mcwwsClearLockerPrompt({_p})
-        send "§c[外卖柜] §f目标不是外卖柜。" to {_p}
+        send "§c[外卖柜] §f目标方块已不存在或不是外卖柜。" to {_p}
         stop
     set {_low} to "%{_raw}%"
     set {_low} to {_low} in lower case
@@ -430,12 +430,43 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
         send "§a[外卖柜] §f编号完成：收货地址 §e%{_major}%§f / 柜位 §e%{_code}%§f。" to {_p}
         send "§7网页下单时在「收货地址」填写大编号 §e%{_major}% §7即可自动分货到本址各柜。" to {_p}
 
-function mcwwsRefreshLockerMenu(p: player, loc: location):
-    set {_inv} to current inventory of {_p}
+function mcwwsLockerGuiTitle(major: text, minor: text) :: text:
+    if {_major} is "":
+        set {_major} to "未设置"
+    if {_minor} is "":
+        set {_minor} to "未设置"
+    return "§6外卖柜 §8| §e%{_major}% §7/ §e%{_minor}%"
+
+function mcwwsIsLockerGuiInventory(inv: object) :: boolean:
     if {_inv} is not set:
-        stop
-    set {_title} to "%name of {_inv}%"
-    if {_title} does not contain "外卖柜":
+        return false
+    if {mcwws.locker.guiInvs::*} contains {_inv}:
+        return true
+    return false
+
+function mcwwsLockerGuiLoc(inv: object) :: location:
+    return {mcwws.locker.guiLocByInv::%{_inv}%}
+
+function mcwwsGetBlockMenuAt(loc: location) :: object:
+    mcwwsEnsureChunkLoaded({_loc})
+    set {_data} to StorageCacheUtils.getBlock({_loc})
+    if {_data} is not set:
+        return null
+    if {_data}.isDataLoaded() is false:
+        return null
+    return {_data}.getBlockMenu()
+
+function mcwwsLockerChromePane() :: ItemStack:
+    set {_it} to orange stained glass pane named "§7"
+    return mcwwsTagLockerGuiItem({_it})
+
+function mcwwsLockerCabinetIcon(major: text, minor: text, unlock: text) :: ItemStack:
+    set {_it} to player head named "§6外卖柜"
+    set lore of {_it} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件: §f%{_unlock}%" and "§7网页包裹需下单者输入取件码" and "§8底部按钮改号/取件"
+    return mcwwsTagLockerGuiItem({_it})
+
+function mcwwsPaintLockerChrome(inv: object, loc: location, p: player):
+    if {_inv} is not set:
         stop
     set {_major} to mcwwsGetLockerMajor({_loc})
     set {_minor} to mcwwsGetLockerMinor({_loc})
@@ -446,20 +477,74 @@ function mcwwsRefreshLockerMenu(p: player, loc: location):
     set {_unlock} to "未解锁"
     if mcwwsPickupUnlockValid({_p}) is true:
         set {_unlock} to "已解锁 %{mcwws.locker.unlockCode::%uuid of {_p}%}%"
-    set {_item} to barrel named "§6外卖柜"
-    set lore of {_item} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件状态: §f%{_unlock}%" and "§7网页包裹需下单者输入取件码" and "§8两侧木牌改编号 · 纸张取件" and "§8界面装饰，不可取出"
-    set {_item} to mcwwsTagLockerGuiItem({_item})
-    set {_data} to StorageCacheUtils.getBlock({_loc})
-    if {_data} is set:
-        if {_data}.isDataLoaded() is true:
-            set {_menu} to {_data}.getBlockMenu()
-            if {_menu} is set:
-                {_menu}.replaceExistingItem(4, {_item})
-                stop
-    set slot 4 of {_inv} to {_item}
+    set {_pane} to mcwwsLockerChromePane()
+    loop 3 times:
+        set {_s} to loop-number + 44
+        {_inv}.setItem({_s}, {_pane})
+    loop 2 times:
+        set {_s} to loop-number + 51
+        {_inv}.setItem({_s}, {_pane})
+    set {_signMajor} to oak sign named "§e改大编号"
+    set lore of {_signMajor} to "§7收货地址（网页下单填写）" and "§e点击后在聊天输入"
+    set {_signMajor} to mcwwsTagLockerGuiItem({_signMajor})
+    {_inv}.setItem(48, {_signMajor})
+    set {_signMinor} to birch sign named "§e改小编号"
+    set lore of {_signMinor} to "§7同址下的柜位序号" and "§e点击后在聊天输入"
+    set {_signMinor} to mcwwsTagLockerGuiItem({_signMinor})
+    {_inv}.setItem(50, {_signMinor})
+    set {_paper} to paper named "§a输入取件码"
+    set lore of {_paper} to "§7仅订单绑定账号可取件" and "§e点击后在聊天输入取件码" and "§7解锁后 {@pickup_unlock_minutes} 分钟内可取"
+    set {_paper} to mcwwsTagLockerGuiItem({_paper})
+    {_inv}.setItem(51, {_paper})
+    set {_icon} to mcwwsLockerCabinetIcon({_major}, {_minor}, {_unlock})
+    {_inv}.setItem(49, {_icon})
+
+function mcwwsLoadLockerGuiFromBlock(inv: object, loc: location):
+    set {_menu} to mcwwsGetBlockMenuAt({_loc})
+    if {_menu} is not set:
+        stop
+    loop 45 times:
+        set {_s} to loop-number - 1
+        set {_it} to {_menu}.getItemInSlot({_s})
+        {_inv}.setItem({_s}, {_it})
+
+function mcwwsSaveLockerGuiToBlock(inv: object, loc: location):
+    set {_menu} to mcwwsGetBlockMenuAt({_loc})
+    if {_menu} is not set:
+        stop
+    loop 45 times:
+        set {_s} to loop-number - 1
+        set {_it} to {_inv}.getItem({_s})
+        {_menu}.replaceExistingItem({_s}, {_it})
+
+function mcwwsOpenLockerGui(p: player, loc: location):
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    set {_major} to mcwwsGetLockerMajor({_loc})
+    set {_minor} to mcwwsGetLockerMinor({_loc})
+    set {_title} to mcwwsLockerGuiTitle({_major}, {_minor})
+    set {_inv} to a new chest inventory with 6 rows named {_title}
+    mcwwsLoadLockerGuiFromBlock({_inv}, {_loc})
+    mcwwsPaintLockerChrome({_inv}, {_loc}, {_p})
+    add {_inv} to {mcwws.locker.guiInvs::*}
+    set {mcwws.locker.guiLocByInv::%{_inv}%} to {_loc}
+    set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
+    open {_inv} to {_p}
+
+function mcwwsCloseLockerGui(p: player):
+    set {_inv} to current inventory of {_p}
+    if mcwwsIsLockerGuiInventory({_inv}) is false:
+        stop
+    set {_loc} to mcwwsLockerGuiLoc({_inv})
+    if {_loc} is set:
+        mcwwsSaveLockerGuiToBlock({_inv}, {_loc})
+    remove {_inv} from {mcwws.locker.guiInvs::*}
+    delete {mcwws.locker.guiLocByInv::%{_inv}%}
 
 function mcwwsEnsureChunkLoaded(loc: location):
-    load chunk at {_loc}
+    set {_chunk} to {_loc}.getChunk()
+    if {_chunk}.isLoaded() is false:
+        {_chunk}.load(true)
 
 function mcwwsPushStackToLocker(loc: location, stack: ItemStack) :: ItemStack:
     mcwwsEnsureChunkLoaded({_loc})
@@ -471,7 +556,7 @@ function mcwwsPushStackToLocker(loc: location, stack: ItemStack) :: ItemStack:
     set {_menu} to {_data}.getBlockMenu()
     if {_menu} is not set:
         return {_stack}
-    set {_left} to {_menu}.pushItem({_stack}, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44)
+    set {_left} to {_menu}.pushItem({_stack}, 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44)
     if {_left} is not set:
         return new ItemStack(Material.AIR, 1)
     return {_left}
@@ -502,7 +587,7 @@ function mcwwsDeliverMaterialToMajor(major: text, material: text, amount: number
     if {_name} is "":
         set {_name} to "未知"
     delete {_rows::*}
-    load yaml mcwwsLockerYamlPath() as "dlockers"
+    mcwwsLoadLockerYaml()
     loop yaml node keys "lockers" from "dlockers":
         set {_k} to loop-value
         set {_mj} to yaml value "lockers.%{_k}%.major" from "dlockers"
@@ -511,7 +596,7 @@ function mcwwsDeliverMaterialToMajor(major: text, material: text, amount: number
         set {_mn} to yaml value "lockers.%{_k}%.minor" from "dlockers"
         add "%{_mn}%	%{_k}%" to {_rows::*}
     if size of {_rows::*} is 0:
-        unload yaml "dlockers"
+        mcwwsUnloadLockerYaml()
         set {mcwws.locker.deliverFail} to "收货地址 %{_major}% 下没有外卖柜"
         return ""
     set {_rows::*} to sorted {_rows::*}
@@ -551,7 +636,7 @@ function mcwwsDeliverMaterialToMajor(major: text, material: text, amount: number
                 add {_label} to {_used::*}
             if {_leftAmt} > 0:
                 exit loop
-    unload yaml "dlockers"
+    mcwwsUnloadLockerYaml()
     if {_remain} > 0:
         set {mcwws.locker.deliverFail} to "收货地址 %{_major}% 柜位空间不足（仍余 %{_remain}%）"
         return ""
@@ -569,6 +654,15 @@ on place of barrel:
     set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
     mcwwsStartLockerNumbering({_p}, {_loc}, "full")
 
+on place of player head:
+    set {_p} to player
+    set {_loc} to location of event-block
+    wait 2 ticks
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
+    mcwwsStartLockerNumbering({_p}, {_loc}, "full")
+
 on break of barrel:
     set {_loc} to location of event-block
     if mcwwsIsDeliveryLocker({_loc}) is false:
@@ -578,14 +672,45 @@ on break of barrel:
         if {mcwws.locker.focus::%uuid of player%} is {_loc}:
             mcwwsClearLockerPrompt(player)
 
+on break of player head:
+    set {_loc} to location of event-block
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    mcwwsUnregisterLocker({_loc})
+    if {mcwws.locker.focus::%uuid of player%} is set:
+        if {mcwws.locker.focus::%uuid of player%} is {_loc}:
+            mcwwsClearLockerPrompt(player)
+
 on right click on barrel:
+    cancel event
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
-    set {mcwws.locker.focus::%uuid of player%} to {_loc}
-    wait 2 ticks
+    wait 1 tick
     if player is online:
-        mcwwsRefreshLockerMenu(player, {_loc})
+        mcwwsOpenLockerGui(player, {_loc})
+
+on right click on player head:
+    cancel event
+    set {_loc} to location of clicked block
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    wait 1 tick
+    if player is online:
+        mcwwsOpenLockerGui(player, {_loc})
+
+on inventory open:
+    set {_inv} to event-inventory
+    if {_inv} is not set:
+        stop
+    set {_title} to "%name of {_inv}%"
+    if {_title} is "§6外卖柜":
+        close player's inventory
+        wait 1 tick
+        set {_loc} to {mcwws.locker.focus::%uuid of player%}
+        if {_loc} is set:
+            if mcwwsIsDeliveryLocker({_loc}) is true:
+                mcwwsOpenLockerGui(player, {_loc})
 
 on inventory click:
     set {_p} to player
@@ -593,28 +718,29 @@ on inventory click:
         stop
     mcwwsStripLockerGuiCursor({_p})
     set {_top} to current inventory of {_p}
-    if {_top} is not set:
-        stop
-    set {_title} to "%name of {_top}%"
-    if {_title} does not contain "外卖柜":
+    if mcwwsIsLockerGuiInventory({_top}) is false:
         stop
     set {_raw} to event.getRawSlot()
     if {_raw} is not set:
         stop
     if mcwwsLockerIsChromeRaw({_raw}) is true:
         cancel event
-        set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
-        if {_raw} is 3:
+        set {_loc} to mcwwsLockerGuiLoc({_top})
+        if {_loc} is not set:
+            set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
+        if {_raw} is 48:
             if {_loc} is not set:
                 send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
                 stop
+            mcwwsSaveLockerGuiToBlock({_top}, {_loc})
             close {_p}'s inventory
             mcwwsStartLockerNumbering({_p}, {_loc}, "major")
             stop
-        if {_raw} is 5:
+        if {_raw} is 50:
             if {_loc} is not set:
                 send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
                 stop
+            mcwwsSaveLockerGuiToBlock({_top}, {_loc})
             close {_p}'s inventory
             set {_major} to mcwwsGetLockerMajor({_loc})
             if {_major} is "":
@@ -623,35 +749,32 @@ on inventory click:
                 set {mcwws.locker.draftMajor::%uuid of {_p}%} to {_major}
                 mcwwsStartLockerNumbering({_p}, {_loc}, "minor")
             stop
-        if {_raw} is 6:
+        if {_raw} is 51:
             if {_loc} is not set:
                 send "§c[外卖柜] §f请先右键打开柜子。" to {_p}
                 stop
+            mcwwsSaveLockerGuiToBlock({_top}, {_loc})
             close {_p}'s inventory
             mcwwsStartLockerNumbering({_p}, {_loc}, "pickup")
             stop
-        if {_raw} is 4:
-            if {_loc} is set:
-                mcwwsRefreshLockerMenu({_p}, {_loc})
         stop
-    if {_raw} >= 9:
-        if {_raw} <= 44:
-            set {_item} to event.getCurrentItem()
-            if {_item} is not set:
-                stop
-            if mcwwsIsLockerGuiItem({_item}) is true:
-                cancel event
-                stop
-            if mcwwsIsPickupLockedItem({_item}) is false:
-                stop
-            if mcwwsCanTakePickupItem({_p}, {_item}) is true:
-                stop
-            cancel event
-            if mcwwsPickupUnlockValid({_p}) is false:
-                send "§c[外卖柜] §f这是网页订单包裹。请点 §e输入取件码§f，用下单账号输入后才能取。" to {_p}
-            else:
-                send "§c[外卖柜] §f这不是你的包裹，或取件码不匹配。" to {_p}
+    if mcwwsLockerIsStorageRaw({_raw}) is true:
+        set {_item} to event.getCurrentItem()
+        if {_item} is not set:
             stop
+        if mcwwsIsLockerGuiItem({_item}) is true:
+            cancel event
+            stop
+        if mcwwsIsPickupLockedItem({_item}) is false:
+            stop
+        if mcwwsCanTakePickupItem({_p}, {_item}) is true:
+            stop
+        cancel event
+        if mcwwsPickupUnlockValid({_p}) is false:
+            send "§c[外卖柜] §f这是网页订单包裹。请点 §e输入取件码§f，用下单账号输入后才能取。" to {_p}
+        else:
+            send "§c[外卖柜] §f这不是你的包裹，或取件码不匹配。" to {_p}
+        stop
     set {_click} to "%event.getClick()%"
     if {_click} is "DOUBLE_CLICK":
         set {_sample} to event.getCursor()
@@ -667,10 +790,7 @@ on inventory drag:
         stop
     mcwwsStripLockerGuiCursor({_p})
     set {_top} to current inventory of {_p}
-    if {_top} is not set:
-        stop
-    set {_title} to "%name of {_top}%"
-    if {_title} does not contain "外卖柜":
+    if mcwwsIsLockerGuiInventory({_top}) is false:
         stop
     set {_raws} to event.getRawSlots()
     if {_raws} is not set:
@@ -681,19 +801,26 @@ on inventory drag:
         if mcwwsLockerIsChromeRaw({_s}) is true:
             cancel event
             stop
-        if {_s} >= 9:
-            if {_s} <= 44:
-                set {_item} to {_top}.getItem({_s})
-                if mcwwsIsLockerGuiItem({_item}) is true:
+        if mcwwsLockerIsStorageRaw({_s}) is true:
+            set {_item} to {_top}.getItem({_s})
+            if mcwwsIsLockerGuiItem({_item}) is true:
+                cancel event
+                stop
+            if mcwwsIsPickupLockedItem({_item}) is true:
+                if mcwwsCanTakePickupItem({_p}, {_item}) is false:
                     cancel event
                     stop
-                if mcwwsIsPickupLockedItem({_item}) is true:
-                    if mcwwsCanTakePickupItem({_p}, {_item}) is false:
-                        cancel event
-                        stop
 
 on inventory close:
-    mcwwsStripLockerGuiFromPlayer(player)
+    set {_p} to player
+    set {_inv} to event-inventory
+    if mcwwsIsLockerGuiInventory({_inv}) is true:
+        set {_loc} to mcwwsLockerGuiLoc({_inv})
+        if {_loc} is set:
+            mcwwsSaveLockerGuiToBlock({_inv}, {_loc})
+        remove {_inv} from {mcwws.locker.guiInvs::*}
+        delete {mcwws.locker.guiLocByInv::%{_inv}%}
+    mcwwsStripLockerGuiFromPlayer({_p})
 
 on drop:
     if mcwwsIsLockerGuiItem(event-item) is true:

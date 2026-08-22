@@ -1,15 +1,16 @@
-# 外卖柜：无电容器机。9–44 仅 GUI 内存取；input/output 留空，避免漏斗/货运绕过取件码。
-# 大编号=收货地址；小编号=同址下的柜位号。编号由 Skript 在放置/改号时写入。
+# 外卖柜：Cabinet 头颅方块；Skript 背包式 GUI（标题含大/小编号）；块内 0–44 存物。
+# input/output 留空，避免漏斗/货运绕过取件码。
 MCWWS_DELIVERY_LOCKER:
   item_group: MCWWS_MACHINES
   item:
     name: "&6外卖柜"
-    material: BARREL
+    material_type: saveditem
+    material: MCWWS_DELIVERY_LOCKER_HEAD
     lore:
     - "&7放置后聊天输入大/小编号"
     - "&7网页下单填大编号，获随机取件码"
     - "&7仅下单者输入取件码后可取包裹"
-    - "&8破坏时内容物会掉落"
+    - "&8右键打开独立储物界面"
   recipe_type: ENHANCED_CRAFTING_TABLE
   recipe:
     1:

@@ -9,5 +9,10 @@ function onBreak(event, itemStack, drops) {
     sendMessage(player, "&e外卖柜已拆除，柜内物品将掉落，编号一并注销。");
 }
 
+function onUse(event) {
+    // 阻止 Slimefun 默认机器界面；由 Skript 打开背包式 GUI
+    event.setCancelled(true);
+}
+
 function tick(info) {
 }
