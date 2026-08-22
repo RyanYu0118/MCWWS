@@ -1,4 +1,4 @@
-# 外卖柜：无电容器机，input/output 槽可自由放取物品
+# 外卖柜：无电容器机。9–44 仅 GUI 内存取；input/output 留空，避免漏斗/货运绕过取件码。
 # 大编号=收货地址；小编号=同址下的柜位号。编号由 Skript 在放置/改号时写入。
 MCWWS_DELIVERY_LOCKER:
   item_group: MCWWS_MACHINES
@@ -22,7 +22,7 @@ MCWWS_DELIVERY_LOCKER:
       material: IRON_INGOT
     7:
       material: IRON_INGOT
-  input: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
-  output: [9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24, 25, 26, 27, 28, 29, 30, 31, 32, 33, 34, 35, 36, 37, 38, 39, 40, 41, 42, 43, 44]
+  input: []
+  output: []
   script: MCWWS_DELIVERY_LOCKER
   work: -1

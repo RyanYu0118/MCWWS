@@ -34,6 +34,86 @@ function mcwwsPickupOrderKey() :: object:
 function mcwwsPickupOwnerKey() :: object:
     return new NamespacedKey("mcwws", "order_uuid")
 
+function mcwwsLockerGuiKey() :: object:
+    return new NamespacedKey("mcwws", "locker_gui")
+
+function mcwwsIsLockerGuiItem(stack: ItemStack) :: boolean:
+    if mcwwsReadPickupPdc({_stack}, mcwwsLockerGuiKey()) is "1":
+        return true
+    return false
+
+function mcwwsTagLockerGuiItem(stack: ItemStack) :: ItemStack:
+    if {_stack} is not set:
+        return {_stack}
+    if {_stack}.getType() is Material.AIR:
+        return {_stack}
+    set {_meta} to {_stack}.getItemMeta()
+    if {_meta} is not set:
+        return {_stack}
+    {_meta}.getPersistentDataContainer().set(mcwwsLockerGuiKey(), PersistentDataType.STRING, "1")
+    {_stack}.setItemMeta({_meta})
+    return {_stack}
+
+function mcwwsLockerIsChromeRaw(raw: number) :: boolean:
+    if {_raw} < 0:
+        return false
+    if {_raw} < 9:
+        return true
+    if {_raw} > 44:
+        if {_raw} < 54:
+            return true
+    return false
+
+function mcwwsStripLockerGuiCursor(p: player):
+    if {_p} is not set:
+        stop
+    if mcwwsIsLockerGuiItem({_p}.getItemOnCursor()) is true:
+        {_p}.setItemOnCursor(null)
+
+function mcwwsStripLockerGuiFromPlayer(p: player):
+    if {_p} is not set:
+        stop
+    mcwwsStripLockerGuiCursor({_p})
+    set {_inv} to {_p}.getInventory()
+    if {_inv} is not set:
+        stop
+    loop 41 times:
+        set {_s} to loop-number - 1
+        set {_it} to {_inv}.getItem({_s})
+        if mcwwsIsLockerGuiItem({_it}) is true:
+            {_inv}.setItem({_s}, null)
+
+function mcwwsDoubleClickWouldStealLocker(p: player, inv: object, sample: ItemStack) :: boolean:
+    if {_sample} is not set:
+        return false
+    if {_sample}.getType() is Material.AIR:
+        return false
+    if mcwwsIsLockerGuiItem({_sample}) is true:
+        return true
+    if {_inv} is not set:
+        return false
+    set {_type} to {_sample}.getType()
+    set {_info} to {_inv}.getItem(4)
+    if {_info} is set:
+        if {_info}.getType() is {_type}:
+            if mcwwsIsLockerGuiItem({_info}) is true:
+                return true
+    loop 36 times:
+        set {_s} to loop-number + 8
+        set {_it} to {_inv}.getItem({_s})
+        if {_it} is not set:
+            continue
+        if {_it}.getType() is not {_type}:
+            continue
+        if mcwwsIsLockerGuiItem({_it}) is true:
+            return true
+        if mcwwsIsPickupLockedItem({_it}) is false:
+            continue
+        if mcwwsCanTakePickupItem({_p}, {_it}) is true:
+            continue
+        return true
+    return false
+
 function mcwwsInitDeliveryLockers():
     load yaml mcwwsLockerYamlPath() as "dlockers"
     if yaml value "version" from "dlockers" is not set:
@@ -367,7 +447,15 @@ function mcwwsRefreshLockerMenu(p: player, loc: location):
     if mcwwsPickupUnlockValid({_p}) is true:
         set {_unlock} to "已解锁 %{mcwws.locker.unlockCode::%uuid of {_p}%}%"
     set {_item} to barrel named "§6外卖柜"
-    set lore of {_item} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件状态: §f%{_unlock}%" and "§7网页包裹需下单者输入取件码" and "§8两侧木牌改编号 · 纸张取件"
+    set lore of {_item} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件状态: §f%{_unlock}%" and "§7网页包裹需下单者输入取件码" and "§8两侧木牌改编号 · 纸张取件" and "§8界面装饰，不可取出"
+    set {_item} to mcwwsTagLockerGuiItem({_item})
+    set {_data} to StorageCacheUtils.getBlock({_loc})
+    if {_data} is set:
+        if {_data}.isDataLoaded() is true:
+            set {_menu} to {_data}.getBlockMenu()
+            if {_menu} is set:
+                {_menu}.replaceExistingItem(4, {_item})
+                stop
     set slot 4 of {_inv} to {_item}
 
 function mcwwsEnsureChunkLoaded(loc: location):
@@ -500,61 +588,121 @@ on right click on barrel:
         mcwwsRefreshLockerMenu(player, {_loc})
 
 on inventory click:
-    if event-inventory is not set:
+    set {_p} to player
+    if {_p} is not set:
         stop
-    set {_title} to "%name of event-inventory%"
+    mcwwsStripLockerGuiCursor({_p})
+    set {_top} to current inventory of {_p}
+    if {_top} is not set:
+        stop
+    set {_title} to "%name of {_top}%"
     if {_title} does not contain "外卖柜":
         stop
+    set {_raw} to event.getRawSlot()
+    if {_raw} is not set:
+        stop
+    if mcwwsLockerIsChromeRaw({_raw}) is true:
+        cancel event
+        set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
+        if {_raw} is 3:
+            if {_loc} is not set:
+                send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
+                stop
+            close {_p}'s inventory
+            mcwwsStartLockerNumbering({_p}, {_loc}, "major")
+            stop
+        if {_raw} is 5:
+            if {_loc} is not set:
+                send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
+                stop
+            close {_p}'s inventory
+            set {_major} to mcwwsGetLockerMajor({_loc})
+            if {_major} is "":
+                mcwwsStartLockerNumbering({_p}, {_loc}, "full")
+            else:
+                set {mcwws.locker.draftMajor::%uuid of {_p}%} to {_major}
+                mcwwsStartLockerNumbering({_p}, {_loc}, "minor")
+            stop
+        if {_raw} is 6:
+            if {_loc} is not set:
+                send "§c[外卖柜] §f请先右键打开柜子。" to {_p}
+                stop
+            close {_p}'s inventory
+            mcwwsStartLockerNumbering({_p}, {_loc}, "pickup")
+            stop
+        if {_raw} is 4:
+            if {_loc} is set:
+                mcwwsRefreshLockerMenu({_p}, {_loc})
+        stop
+    if {_raw} >= 9:
+        if {_raw} <= 44:
+            set {_item} to event.getCurrentItem()
+            if {_item} is not set:
+                stop
+            if mcwwsIsLockerGuiItem({_item}) is true:
+                cancel event
+                stop
+            if mcwwsIsPickupLockedItem({_item}) is false:
+                stop
+            if mcwwsCanTakePickupItem({_p}, {_item}) is true:
+                stop
+            cancel event
+            if mcwwsPickupUnlockValid({_p}) is false:
+                send "§c[外卖柜] §f这是网页订单包裹。请点 §e输入取件码§f，用下单账号输入后才能取。" to {_p}
+            else:
+                send "§c[外卖柜] §f这不是你的包裹，或取件码不匹配。" to {_p}
+            stop
+    set {_click} to "%event.getClick()%"
+    if {_click} is "DOUBLE_CLICK":
+        set {_sample} to event.getCursor()
+        if {_sample} is not set:
+            set {_sample} to event.getCurrentItem()
+        if mcwwsDoubleClickWouldStealLocker({_p}, {_top}, {_sample}) is true:
+            cancel event
+            send "§c[外卖柜] §f不能用双击收起界面装饰或未解锁的网页包裹。" to {_p}
+
+on inventory drag:
     set {_p} to player
-    set {_slot} to index of event-slot
-    if {_slot} is 3:
-        cancel event
-        set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
-        if {_loc} is not set:
-            send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
+    if {_p} is not set:
+        stop
+    mcwwsStripLockerGuiCursor({_p})
+    set {_top} to current inventory of {_p}
+    if {_top} is not set:
+        stop
+    set {_title} to "%name of {_top}%"
+    if {_title} does not contain "外卖柜":
+        stop
+    set {_raws} to event.getRawSlots()
+    if {_raws} is not set:
+        stop
+    set {_iter} to {_raws}.iterator()
+    while {_iter}.hasNext() is true:
+        set {_s} to {_iter}.next()
+        if mcwwsLockerIsChromeRaw({_s}) is true:
+            cancel event
             stop
-        close {_p}'s inventory
-        mcwwsStartLockerNumbering({_p}, {_loc}, "major")
-        stop
-    if {_slot} is 5:
+        if {_s} >= 9:
+            if {_s} <= 44:
+                set {_item} to {_top}.getItem({_s})
+                if mcwwsIsLockerGuiItem({_item}) is true:
+                    cancel event
+                    stop
+                if mcwwsIsPickupLockedItem({_item}) is true:
+                    if mcwwsCanTakePickupItem({_p}, {_item}) is false:
+                        cancel event
+                        stop
+
+on inventory close:
+    mcwwsStripLockerGuiFromPlayer(player)
+
+on drop:
+    if mcwwsIsLockerGuiItem(event-item) is true:
         cancel event
-        set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
-        if {_loc} is not set:
-            send "§c[外卖柜] §f请先右键打开柜子再改编号。" to {_p}
-            stop
-        close {_p}'s inventory
-        set {_major} to mcwwsGetLockerMajor({_loc})
-        if {_major} is "":
-            mcwwsStartLockerNumbering({_p}, {_loc}, "full")
-        else:
-            set {mcwws.locker.draftMajor::%uuid of {_p}%} to {_major}
-            mcwwsStartLockerNumbering({_p}, {_loc}, "minor")
-        stop
-    if {_slot} is 6:
+        mcwwsStripLockerGuiFromPlayer(player)
+
+on pickup:
+    if mcwwsIsLockerGuiItem(event-item) is true:
         cancel event
-        set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
-        if {_loc} is not set:
-            send "§c[外卖柜] §f请先右键打开柜子。" to {_p}
-            stop
-        close {_p}'s inventory
-        mcwwsStartLockerNumbering({_p}, {_loc}, "pickup")
-        stop
-    if {_slot} < 9:
-        stop
-    if {_slot} > 44:
-        stop
-    set {_item} to event.getCurrentItem()
-    if {_item} is not set:
-        stop
-    if mcwwsIsPickupLockedItem({_item}) is false:
-        stop
-    if mcwwsCanTakePickupItem({_p}, {_item}) is true:
-        stop
-    cancel event
-    if mcwwsPickupUnlockValid({_p}) is false:
-        send "§c[外卖柜] §f这是网页订单包裹。请点 §e输入取件码§f，用下单账号输入后才能取。" to {_p}
-    else:
-        send "§c[外卖柜] §f这不是你的包裹，或取件码不匹配。" to {_p}
 
 on chat:
     if {mcwws.locker.wait::%uuid of player%} is not set:
