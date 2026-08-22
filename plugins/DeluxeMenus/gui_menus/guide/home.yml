@@ -292,21 +292,6 @@ items:
       - '[close]'
       - '[player] mcwws-guide-tp-player here <p:请选择要传送到你的玩家><delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
-  'we':
-    material: WOODEN_AXE
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 23
-    priority: 1
-    update: true
-    hide_attributes: true
-    display_name: '&b创世神工具'
-    lore:
-      - '&f点击选择创世神功能'
-    left_click_commands:
-      - '[player] give <1> <2> <3>'
-      - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'money':
     material: GOLD_NUGGET
     enchantments:
@@ -451,21 +436,6 @@ items:
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
     right_click_commands:
       - '[console] gamemode creative %player_name%'
-      - '[sound] BLOCK_NOTE_BLOCK_HAT'
-  'depository':
-    material: CHEST
-    enchantments:
-      - ARROW_DAMAGE;1
-    hide_enchantments: true
-    slot: 34
-    priority: 1
-    update: true
-    hide_attributes: true
-    display_name: '&e我的仓库'
-    lore:
-      - '&f点击管理你的仓库'
-    left_click_commands:
-      - '[openguimenu] depository'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'server_management':
     material: END_CRYSTAL
