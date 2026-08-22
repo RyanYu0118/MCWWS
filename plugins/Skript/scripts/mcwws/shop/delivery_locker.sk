@@ -18,9 +18,6 @@ function mcwwsLoadLockerYaml():
     load yaml "{@locker_yaml}" as "dlockers"
     if yaml value "version" from "dlockers" is not set:
         set yaml value "version" from "dlockers" to 1
-    if yaml value "lockers" from "dlockers" is not set:
-        set yaml value "lockers.__init__" from "dlockers" to 1
-        delete yaml value "lockers.__init__" in "dlockers"
 
 function mcwwsUnloadLockerYaml():
     unload yaml "dlockers"
@@ -124,8 +121,12 @@ function mcwwsDoubleClickWouldStealLocker(p: player, inv: object, sample: ItemSt
 
 function mcwwsInitDeliveryLockers():
     mcwwsLoadLockerYaml()
-    save yaml "dlockers"
-    send "§a[MCWWS] 外卖柜编号与分货已启用。" to console
+    if yaml value "version" from "dlockers" is not set:
+        set yaml value "version" from "dlockers" to 1
+        save yaml "dlockers"
+        send "§a[MCWWS] 已创建外卖柜注册表 YAML。" to console
+    else:
+        send "§a[MCWWS] 外卖柜编号与分货已启用。" to console
     mcwwsUnloadLockerYaml()
 
 function mcwwsLockerLocKey(loc: location) :: text:
@@ -178,23 +179,36 @@ function mcwwsLockerPairTaken(major: text, minor: text, exceptKey: text) :: bool
     mcwwsUnloadLockerYaml()
     return false
 
-function mcwwsSaveLockerRegistration(loc: location, major: text, minor: text, p: player):
+function mcwwsSaveLockerRegistration(loc: location, major: text, minor: text, p: player) :: boolean:
     set {_key} to mcwwsLockerLocKey({_loc})
     set {_b} to block at {_loc}
+    set {_wx} to "%floor(x-coordinate of {_b})%"
+    set {_wy} to "%floor(y-coordinate of {_b})%"
+    set {_wz} to "%floor(z-coordinate of {_b})%"
+    set {_world} to "%world of {_b}%"
+    set {_ownerUuid} to "%uuid of {_p}%"
+    set {_ownerName} to "%name of {_p}%"
+    set {_updatedAt} to now formatted as "yyyy-MM-dd HH:mm:ss"
     mcwwsLoadLockerYaml()
-    set yaml value "lockers.%{_key}%.world" from "dlockers" to "%world of {_b}%"
-    set yaml value "lockers.%{_key}%.x" from "dlockers" to x-coordinate of {_b}
-    set yaml value "lockers.%{_key}%.y" from "dlockers" to y-coordinate of {_b}
-    set yaml value "lockers.%{_key}%.z" from "dlockers" to z-coordinate of {_b}
-    set yaml value "lockers.%{_key}%.major" from "dlockers" to {_major}
-    set yaml value "lockers.%{_key}%.minor" from "dlockers" to {_minor}
-    set yaml value "lockers.%{_key}%.ownerUuid" from "dlockers" to "%uuid of {_p}%"
-    set yaml value "lockers.%{_key}%.ownerName" from "dlockers" to name of {_p}
-    set yaml value "lockers.%{_key}%.updatedAt" from "dlockers" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    set yaml value "lockers.%{_key}%.world" from "dlockers" to {_world}
+    set yaml value "lockers.%{_key}%.x" from "dlockers" to {_wx}
+    set yaml value "lockers.%{_key}%.y" from "dlockers" to {_wy}
+    set yaml value "lockers.%{_key}%.z" from "dlockers" to {_wz}
+    set yaml value "lockers.%{_key}%.major" from "dlockers" to "%{_major}%"
+    set yaml value "lockers.%{_key}%.minor" from "dlockers" to "%{_minor}%"
+    set yaml value "lockers.%{_key}%.ownerUuid" from "dlockers" to {_ownerUuid}
+    set yaml value "lockers.%{_key}%.ownerName" from "dlockers" to {_ownerName}
+    set yaml value "lockers.%{_key}%.updatedAt" from "dlockers" to {_updatedAt}
     save yaml "dlockers"
     mcwwsUnloadLockerYaml()
+    mcwwsLoadLockerYaml()
+    set {_check} to yaml value "lockers.%{_key}%.major" from "dlockers"
+    mcwwsUnloadLockerYaml()
+    if "%{_check}%" is not {_major}:
+        return false
     StorageCacheUtils.setData({_loc}, "mcwws_major", {_major})
     StorageCacheUtils.setData({_loc}, "mcwws_minor", {_minor})
+    return true
 
 function mcwwsUnregisterLocker(loc: location):
     set {_key} to mcwwsLockerLocKey({_loc})
@@ -406,7 +420,9 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
             if mcwwsLockerPairTaken({_code}, {_minor}, mcwwsLockerLocKey({_loc})) is true:
                 send "§c[外卖柜] §f大编号 §e%{_code}% §f+ 小编号 §e%{_minor}% §f已被占用。" to {_p}
                 stop
-            mcwwsSaveLockerRegistration({_loc}, {_code}, {_minor}, {_p})
+            if mcwwsSaveLockerRegistration({_loc}, {_code}, {_minor}, {_p}) is false:
+                send "§c[外卖柜] §f编号未能写入注册表（skript-yaml 保存失败），请重试或联系管理员。" to {_p}
+                stop
             mcwwsClearLockerPrompt({_p})
             send "§a[外卖柜] §f大编号已设为 §e%{_code}%§f，小编号保持 §e%{_minor}%§f。" to {_p}
             stop
@@ -425,7 +441,9 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
         if mcwwsLockerPairTaken("%{_major}%", {_code}, mcwwsLockerLocKey({_loc})) is true:
             send "§c[外卖柜] §f大编号 §e%{_major}% §f+ 小编号 §e%{_code}% §f已被占用。" to {_p}
             stop
-        mcwwsSaveLockerRegistration({_loc}, "%{_major}%", {_code}, {_p})
+        if mcwwsSaveLockerRegistration({_loc}, "%{_major}%", {_code}, {_p}) is false:
+            send "§c[外卖柜] §f编号未能写入注册表（skript-yaml 保存失败），请重试或联系管理员。" to {_p}
+            stop
         mcwwsClearLockerPrompt({_p})
         send "§a[外卖柜] §f编号完成：收货地址 §e%{_major}%§f / 柜位 §e%{_code}%§f。" to {_p}
         send "§7网页下单时在「收货地址」填写大编号 §e%{_major}% §7即可自动分货到本址各柜。" to {_p}
@@ -615,7 +633,7 @@ function mcwwsDeliverMaterialToMajor(major: text, material: text, amount: number
         set {_world} to world "%{_w}%"
         if {_world} is not set:
             continue
-        set {_loc} to location({_x}, {_y}, {_z}, {_world})
+        set {_loc} to location({_x} parsed as number, {_y} parsed as number, {_z} parsed as number, {_world})
         while {_remain} > 0:
             set {_batch} to {_remain}
             if {_batch} > 64:

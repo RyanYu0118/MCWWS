@@ -9,6 +9,7 @@ import:
     org.bukkit.util.BlockIterator
     org.bukkit.util.Transformation
     org.bukkit.event.block.BlockBreakEvent
+    org.bukkit.event.block.BlockPlaceEvent
     org.bukkit.inventory.ItemStack
     org.bukkit.inventory.ItemFlag
     org.bukkit.entity.ItemDisplay
@@ -249,11 +250,12 @@ on place:
     set {mcwws.recentPlace::%uuid of player%} to 8
     if gamemode of player is not creative:
         if gamemode of player is not spectator:
-            set {_replaced} to event.getBlockReplacedState().getType()
-            if {_replaced} is Material.LIGHT:
-                if event-block is not light:
-                    set {_loc} to event-block.getLocation().add(0.5, 0.5, 0.5)
-                    event-block.getWorld().dropItemNaturally({_loc}, new ItemStack(Material.LIGHT, 1))
+            if event is instance of BlockPlaceEvent:
+                set {_replaced} to event.getBlockReplacedState().getType()
+                if {_replaced} is Material.LIGHT:
+                    if event-block is not light:
+                        set {_loc} to event-block.getLocation().add(0.5, 0.5, 0.5)
+                        event-block.getWorld().dropItemNaturally({_loc}, new ItemStack(Material.LIGHT, 1))
     if event-block is light:
         set {_key} to mcwwsLightBlockKey(event-block)
         set {mcwws.lightProtect::%{_key}%} to 10
