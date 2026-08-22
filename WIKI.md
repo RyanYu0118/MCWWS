@@ -195,6 +195,10 @@
 /bags open
 ```
 
+**外卖柜（Slimefun / RSC）：** 增强型合成台用铁锭与箱子合成「外卖柜」，放置后在聊天依次输入**大编号**、**小编号**（可自定义，最长 24 字）。大编号即网页下单的收货地址；同址可放多台柜，小编号在该址内必须唯一。GUI 两侧木牌可改号；纸张按钮用于输入取件码。拆除时内容物掉落并注销编号。
+
+网页下单必须填写已存在的大编号，并会**随机生成 6 位取件码**（结账弹窗与待领取列表可见）。物品按小编号顺序自动塞进该址各柜。柜内网页包裹带订单标记：**仅下单账号**在对应收货地址的柜子输入正确取件码后，**10 分钟内**可取走该码对应包裹；他人或未解锁时无法取出。柜满则订单失败并重试。未编号的柜不接收网页订单。旧的无地址订单仍发到随身行囊。手工放入的无标记物品仍可自由存取。
+
 ---
 
 # 二、社会科学
@@ -254,7 +258,9 @@
 #### 网页贸易
 
 - 购物车可手输数量，单件上限 **10000**
-- 下单生成待领取订单，上线后写入随身行囊（不撒落地面）
+- 下单须填写**收货地址**（外卖柜大编号），并获得随机**取件码**；物品按该址小编号自动分柜
+- 取件：下单游戏账号到对应柜子输入取件码（约 10 分钟有效）后可取自己的包裹
+- 无地址的旧订单仍在上线后写入随身行囊
 - 记入网页日志与零钱明细；可嵌入公开 Wiki 页浏览
 
 网页侧建造下单已废止；实装请回游戏内可视化编辑。
@@ -467,7 +473,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
-| 网页服务 | `tools/mcwws-web-host/` |
+| 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
+| 外卖柜编号 / 分货 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |

@@ -3448,6 +3448,31 @@ input.cart-qty-input {
     line-height: 1.45;
 }
 
+.cart-delivery-label {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin: 0 0 12px;
+    font-size: 0.82rem;
+    color: var(--text-secondary);
+}
+
+.cart-delivery-input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 8px 10px;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    background: rgba(8, 8, 8, 0.35);
+    color: var(--text-primary, #f8fafc);
+    font-size: 0.9rem;
+}
+
+.cart-delivery-input:focus {
+    outline: 2px solid rgba(251, 191, 36, 0.45);
+    outline-offset: 1px;
+}
+
 .cart-drawer-actions {
     display: flex;
     flex-direction: column;
@@ -3522,9 +3547,17 @@ input.cart-qty-input {
     color: #fbbf24;
 }
 
-.cart-pending-total {
+.cart-pending-addr {
+    color: #fdba74;
+    font-size: 0.75rem;
+}
+
+.cart-pending-code {
     margin-left: auto;
-    color: #fde047;
+    color: #86efac;
+    font-weight: 700;
+    font-family: ui-monospace, monospace;
+    letter-spacing: 0.04em;
 }
 
 .cart-drawer-btn--primary:disabled {

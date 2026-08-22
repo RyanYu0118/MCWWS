@@ -1,0 +1,41 @@
+# 菜单 ID 必须与机器 ID 一致；input/output 槽不要放物品
+# 3/5 改编号；6 输入取件码；4 显示地址
+MCWWS_DELIVERY_LOCKER:
+  title: "&6外卖柜"
+  script: MCWWS_DELIVERY_LOCKER_MENU
+  slots:
+    0-2:
+      name: "&7"
+      material: ORANGE_STAINED_GLASS_PANE
+    3:
+      name: "&e改大编号"
+      material: OAK_SIGN
+      lore:
+      - "&7收货地址（网页下单填写）"
+      - "&e点击后在聊天输入新大编号"
+    4:
+      name: "&6外卖柜"
+      material: BARREL
+      lore:
+      - "&7大编号: &f未设置"
+      - "&7小编号: &f未设置"
+      - "&7网页订单需下单者输入取件码后才能取"
+    5:
+      name: "&e改小编号"
+      material: BIRCH_SIGN
+      lore:
+      - "&7同址下的柜位序号"
+      - "&e点击后在聊天输入新小编号"
+    6:
+      name: "&a输入取件码"
+      material: PAPER
+      lore:
+      - "&7仅订单绑定账号可取件"
+      - "&e点击后在聊天输入网页显示的取件码"
+      - "&7解锁后 10 分钟内可取走对应包裹"
+    7-8:
+      name: "&7"
+      material: ORANGE_STAINED_GLASS_PANE
+    45-53:
+      name: "&7"
+      material: ORANGE_STAINED_GLASS_PANE

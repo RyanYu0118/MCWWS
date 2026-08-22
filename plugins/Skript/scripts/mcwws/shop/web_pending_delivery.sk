@@ -1,4 +1,6 @@
-# MCWWS 网页商城：待领取订单 → 直接写入 BetterBags（需 skript-yaml + skript-reflect + BetterBags）
+# MCWWS 网页商城：待领取订单
+# - 有 deliveryMajor → 按大编号自动分入外卖柜（可离线发放）
+# - 无 deliveryMajor → 写入 BetterBags（需玩家在线；旧订单兼容）
 import:
     org.bukkit.Material
     org.bukkit.inventory.ItemStack
@@ -202,7 +204,216 @@ function mcwwsResetStaleDelivering():
     save yaml "weborders"
     unload yaml "weborders"
 
+function mcwwsOrderDeliveryMajor(oid: text) :: text:
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_m} to yaml value "orders.%{_oid}%.deliveryMajor" from "weborders"
+    unload yaml "weborders"
+    if {_m} is not set:
+        return ""
+    return "%{_m}%"
+
+function mcwwsNotifyOrderPlayer(oid: text, msg: text):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_uuid} to yaml value "orders.%{_oid}%.playerUuid" from "weborders"
+    unload yaml "weborders"
+    if {_uuid} is not set:
+        stop
+    set {_want} to mcwwsUuidKey("%{_uuid}%")
+    loop all players:
+        if mcwwsUuidKey("%uuid of loop-player%") is {_want}:
+            send {_msg} to loop-player
+            stop
+
+function mcwwsFailLockerOrderDelivery(oid: text, reason: text):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set yaml value "orders.%{_oid}%.status" from "weborders" to "pending"
+    set yaml value "orders.%{_oid}%.failureReason" from "weborders" to {_reason}
+    set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
+    unload yaml "weborders"
+    delete {mcwws.webdeliver.lockerActive::%{_oid}%}
+    delete {mcwws.webdeliver.lockerLine::%{_oid}%}
+    delete {mcwws.webdeliver.lockerBusy}
+    mcwwsNotifyOrderPlayer({_oid}, "§c[MCWWS] §f网页订单 §e#%{_oid}% §f发放失败：%{_reason}%")
+
+function mcwwsEnsureLockerOrderEconomyCharged(oid: text):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_chargedRaw} to yaml value "orders.%{_oid}%.economyChargedInGame" from "weborders"
+    set {_total} to yaml value "orders.%{_oid}%.total" from "weborders"
+    set {_pname} to yaml value "orders.%{_oid}%.playerId" from "weborders"
+    unload yaml "weborders"
+    set {_chargedText} to "%{_chargedRaw}%"
+    if {_chargedRaw} is true:
+        stop
+    if {_chargedText} is "true":
+        stop
+    set {_totalNum} to {_total} parsed as number
+    if {_totalNum} is not set:
+        set {_totalNum} to 0
+    if {_totalNum} <= 0:
+        stop
+    loop 8 times:
+        if mcwwsIsEcoTakeDoneForOrder({_oid}) is true:
+            stop
+        wait 1 second
+    mcwwsRunEcoTakeCommand("%{_pname}%", {_totalNum})
+    wait 10 ticks
+    if yaml file "plugins/Skript/scripts/web/data/pending_orders.yml" exists:
+        load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+        set yaml value "orders.%{_oid}%.economyChargedInGame" from "weborders" to true
+        set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        save yaml "weborders"
+        unload yaml "weborders"
+    set {_path} to "plugins/Skript/scripts/web/data/economy_deductions.yml"
+    if yaml file {_path} exists:
+        reload yaml {_path} as "econq"
+        set {_max} to yaml value "next_id" from "econq"
+        if {_max} is set:
+            set {_limit} to {_max} - 1
+            loop {_limit} times:
+                set {_eid} to loop-number
+                set {_ek} to "%{_eid}%"
+                set {_eoid} to yaml value "pending.%{_ek}%.orderId" from "econq"
+                if "%{_eoid}%" is not "%{_oid}%":
+                    continue
+                set yaml value "pending.%{_ek}%.status" from "econq" to "done"
+                set yaml value "pending.%{_ek}%.mode" from "econq" to "eco-take"
+                set yaml value "pending.%{_ek}%.processedAt" from "econq" to now formatted as "yyyy-MM-dd HH:mm:ss"
+            save yaml "econq"
+        unload yaml "econq"
+
+function mcwwsDeliverLockerOrderLine(oid: text, lineIdx: number):
+    set {_major} to mcwwsOrderDeliveryMajor({_oid})
+    if {_major} is "":
+        mcwwsFailLockerOrderDelivery({_oid}, "订单缺少收货地址（大编号）")
+        stop
+    reload yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_material} to mcwwsReadLineValue({_oid}, {_lineIdx}, "material")
+    if {_material} is "":
+        set {_material} to mcwwsReadLineValue({_oid}, {_lineIdx}, "itemId")
+    if {_material} is "":
+        mcwwsFailLockerOrderDelivery({_oid}, "无法读取物品 ID（YAML 行 %{_lineIdx}%）")
+        unload yaml "weborders"
+        stop
+    set {_qty} to mcwwsParseLineNumber(mcwwsReadLineValue({_oid}, {_lineIdx}, "quantity"), 1)
+    set {_per} to mcwwsParseLineNumber(mcwwsReadLineValue({_oid}, {_lineIdx}, "productAmount"), 1)
+    set {_total} to {_qty} * {_per}
+    set {_code} to yaml value "orders.%{_oid}%.pickupCode" from "weborders"
+    set {_ouuid} to yaml value "orders.%{_oid}%.playerUuid" from "weborders"
+    set {_oname} to yaml value "orders.%{_oid}%.playerId" from "weborders"
+    if {_oname} is not set:
+        set {_oname} to yaml value "orders.%{_oid}%.username" from "weborders"
+    if {_code} is not set:
+        set {_code} to ""
+    if "%{_code}%" is "":
+        set {_code} to mcwwsGeneratePickupCode()
+        set yaml value "orders.%{_oid}%.pickupCode" from "weborders" to {_code}
+        save yaml "weborders"
+    unload yaml "weborders"
+    set {_where} to mcwwsDeliverMaterialToMajor({_major}, {_material}, {_total}, {_oid}, "%{_code}%", "%{_ouuid}%", "%{_oname}%")
+    if {_where} is "":
+        set {_reason} to {mcwws.locker.deliverFail}
+        if {_reason} is not set:
+            set {_reason} to "外卖柜分货失败"
+        mcwwsFailLockerOrderDelivery({_oid}, "%{_reason}%")
+        stop
+    mcwwsRecordMarketTrade({_material}, {_total}, true)
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_lineKey} to mcwwsLineYamlIndex({_lineIdx})
+    set yaml value "orders.%{_oid}%.lines.%{_lineKey}%.status" from "weborders" to "delivered"
+    set yaml value "orders.%{_oid}%.lines.%{_lineKey}%.deliveredTo" from "weborders" to {_where}
+    set {_prev} to yaml value "orders.%{_oid}%.deliveredTo" from "weborders"
+    if {_prev} is set:
+        if "%{_prev}%" does not contain {_where}:
+            set yaml value "orders.%{_oid}%.deliveredTo" from "weborders" to "%{_prev}%；%{_where}%"
+    else:
+        set yaml value "orders.%{_oid}%.deliveredTo" from "weborders" to {_where}
+    set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders"
+    unload yaml "weborders"
+    add 1 to {_lineIdx}
+    wait 3 ticks
+    mcwwsAdvanceLockerDelivery({_oid}, {_lineIdx})
+
+function mcwwsAdvanceLockerDelivery(oid: text, nextLineIdx: number):
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_lineCount} to yaml value "orders.%{_oid}%.lineCount" from "weborders"
+    if {_lineCount} is not set:
+        set {_lineCount} to 1
+    if {_nextLineIdx} >= {_lineCount}:
+        set {_where} to yaml value "orders.%{_oid}%.deliveredTo" from "weborders"
+        set {_pcode} to yaml value "orders.%{_oid}%.pickupCode" from "weborders"
+        set yaml value "orders.%{_oid}%.status" from "weborders" to "delivered"
+        set yaml value "orders.%{_oid}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+        set yaml value "orders.%{_oid}%.failureReason" from "weborders" to ""
+        save yaml "weborders"
+        unload yaml "weborders"
+        delete {mcwws.webdeliver.lockerActive::%{_oid}%}
+        delete {mcwws.webdeliver.lockerLine::%{_oid}%}
+        delete {mcwws.webdeliver.lockerBusy}
+        if {_where} is set:
+            mcwwsNotifyOrderPlayer({_oid}, "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已放入外卖柜：§e%{_where}%§f。取件码 §e%{_pcode}%§f（仅你可取）。")
+        else:
+            mcwwsNotifyOrderPlayer({_oid}, "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已放入外卖柜。取件码 §e%{_pcode}%§f。")
+        wait 5 ticks
+        mcwwsTryStartNextLockerOrder()
+        stop
+    set {mcwws.webdeliver.lockerLine::%{_oid}%} to {_nextLineIdx}
+    set yaml value "orders.%{_oid}%.deliveringLine" from "weborders" to {_nextLineIdx}
+    save yaml "weborders"
+    unload yaml "weborders"
+    wait 10 ticks
+    mcwwsDeliverLockerOrderLine({_oid}, {_nextLineIdx})
+
+function mcwwsTryStartNextLockerOrder():
+    if {mcwws.webdeliver.lockerBusy} is set:
+        stop
+    set {_limit} to mcwwsWebOrdersMaxId()
+    if {_limit} <= 0:
+        stop
+    load yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
+    set {_target} to ""
+    loop {_limit} times:
+        set {_oid} to loop-number
+        set {_status} to yaml value "orders.%{_oid}%.status" from "weborders"
+        set {_major} to yaml value "orders.%{_oid}%.deliveryMajor" from "weborders"
+        if {_major} is not set:
+            continue
+        if "%{_major}%" is "":
+            continue
+        if "%{_status}%" is "delivering":
+            if {mcwws.webdeliver.lockerActive::%{_oid}%} is not set:
+                set yaml value "orders.%{_oid}%.status" from "weborders" to "pending"
+                set yaml value "orders.%{_oid}%.failureReason" from "weborders" to "上次外卖柜发放中断，正在重试"
+            continue
+        if "%{_status}%" is not "pending":
+            continue
+        set {_target} to "%{_oid}%"
+        exit loop
+    if {_target} is "":
+        unload yaml "weborders"
+        stop
+    set yaml value "orders.%{_target}%.status" from "weborders" to "delivering"
+    set yaml value "orders.%{_target}%.deliveringLine" from "weborders" to 0
+    set yaml value "orders.%{_target}%.deliveringStartedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    set yaml value "orders.%{_target}%.updatedAt" from "weborders" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    set yaml value "orders.%{_target}%.failureReason" from "weborders" to ""
+    save yaml "weborders"
+    unload yaml "weborders"
+    set {mcwws.webdeliver.lockerBusy} to true
+    set {mcwws.webdeliver.lockerActive::%{_target}%} to true
+    set {mcwws.webdeliver.lockerLine::%{_target}%} to 0
+    mcwwsEnsureLockerOrderEconomyCharged({_target})
+    set {_major} to mcwwsOrderDeliveryMajor({_target})
+    mcwwsNotifyOrderPlayer({_target}, "§a[MCWWS] §f正在将网页订单 §e#%{_target}% §f分货至收货地址 §e%{_major}%§f...")
+    wait 5 ticks
+    mcwwsDeliverLockerOrderLine({_target}, 0)
+
 function mcwwsDeliverOrderLine(p: player, oid: text, lineIdx: number):
+    set {_major} to mcwwsOrderDeliveryMajor({_oid})
+    if {_major} is not "":
+        # 有地址的订单走外卖柜通道（避免与 BetterBags 双发）
+        stop
     reload yaml "plugins/Skript/scripts/web/data/pending_orders.yml" as "weborders"
     set {_material} to mcwwsReadLineValue({_oid}, {_lineIdx}, "material")
     if {_material} is "":
@@ -269,6 +480,11 @@ function mcwwsTryStartNextOrder(p: player):
     loop {_limit} times:
         set {_oid} to loop-number
         set {_status} to yaml value "orders.%{_oid}%.status" from "weborders"
+        set {_major} to yaml value "orders.%{_oid}%.deliveryMajor" from "weborders"
+        # 有收货地址的走外卖柜通道
+        if {_major} is set:
+            if "%{_major}%" is not "":
+                continue
         if "%{_status}%" is "delivering":
             set {_ouuid} to yaml value "orders.%{_oid}%.playerUuid" from "weborders"
             if mcwwsUuidKey({_ouuid}) is {_uuid}:
@@ -316,9 +532,11 @@ on load:
 on join:
     wait 3 seconds
     mcwwsDeliverPendingFor(player)
+    mcwwsTryStartNextLockerOrder()
 
 every 15 seconds:
     mcwwsResetStaleDelivering()
+    mcwwsTryStartNextLockerOrder()
     loop all players:
         mcwwsDeliverPendingFor(loop-player)
 

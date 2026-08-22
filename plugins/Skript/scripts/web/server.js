@@ -201,6 +201,7 @@ const TRANSACTIONS_CSV = path.join(DB_DIR, 'transactions.csv');
 const TRANSACTIONS_YAML = path.join(DB_DIR, 'transactions_store.yml');
 const PRICE_HISTORY_CSV = path.join(DB_DIR, 'price_history.csv');
 const PENDING_ORDERS_PATH = path.join(DB_DIR, 'pending_orders.yml');
+const DELIVERY_LOCKERS_PATH = path.join(DB_DIR, 'delivery_lockers.yml');
 const ECONOMY_DEDUCTIONS_PATH = path.join(DB_DIR, 'economy_deductions.yml');
 const ECO_TAKE_QUEUE_PATH = path.join(DB_DIR, 'eco_take_queue.txt');
 const ONLINE_PLAYERS_PATH = path.join(DB_DIR, 'online_players.txt');
@@ -1506,6 +1507,37 @@ function loadPendingOrdersStore() {
 
 function savePendingOrdersStore(data) {
     saveYamlFile(PENDING_ORDERS_PATH, data);
+}
+
+function normalizeDeliveryCode(raw) {
+    return String(raw || '').trim().replace(/§./g, '').slice(0, 24);
+}
+
+function listDeliveryMajors() {
+    const data = loadYamlFile(DELIVERY_LOCKERS_PATH);
+    const lockers = data && data.lockers && typeof data.lockers === 'object' ? data.lockers : {};
+    const majors = new Set();
+    for (const entry of Object.values(lockers)) {
+        if (!entry || typeof entry !== 'object') continue;
+        const major = normalizeDeliveryCode(entry.major);
+        if (major) majors.add(major);
+    }
+    return [...majors].sort((a, b) => a.localeCompare(b, 'zh-CN'));
+}
+
+function hasDeliveryMajor(major) {
+    const wanted = normalizeDeliveryCode(major);
+    if (!wanted) return false;
+    return listDeliveryMajors().includes(wanted);
+}
+
+function generatePickupCode(length = 6) {
+    const alphabet = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+    let code = '';
+    for (let i = 0; i < length; i += 1) {
+        code += alphabet[crypto.randomInt(alphabet.length)];
+    }
+    return code;
 }
 
 function getShopProductDetails(shopId, slot) {
@@ -3105,6 +3137,16 @@ app.get('/api/shop/item-snapshot/:item', (req, res) => {
     }
 });
 
+app.get('/api/shop/delivery-addresses', (req, res) => {
+    try {
+        const majors = listDeliveryMajors();
+        res.json({ majors, updatedAt: new Date().toISOString() });
+    } catch (error) {
+        console.error('读取外卖柜收货地址失败:', error);
+        res.status(500).json({ error: '读取收货地址失败。' });
+    }
+});
+
 app.post('/api/shop/checkout', (req, res) => {
     try {
         const user = authenticate(req);
@@ -3159,9 +3201,21 @@ app.post('/api/shop/checkout', (req, res) => {
         const balanceAfter = Math.round((fileBalance - total) * 100) / 100;
         // 结账响应中的余额与游戏内一致（已扣款后由 eco take 更新 userdata）
 
+        const deliveryMajor = normalizeDeliveryCode(req.body && req.body.deliveryMajor);
+        if (!deliveryMajor) {
+            return res.status(400).json({ error: '请填写收货地址（外卖柜大编号）。' });
+        }
+        if (!hasDeliveryMajor(deliveryMajor)) {
+            return res.status(422).json({
+                error: `收货地址「${deliveryMajor}」没有已编号的外卖柜。请先在游戏内放置外卖柜并设置大编号。`,
+                deliveryMajors: listDeliveryMajors()
+            });
+        }
+
         const store = loadPendingOrdersStore();
         const numericId = Number(store.next_id) || 1;
         const orderId = crypto.randomUUID();
+        const pickupCode = generatePickupCode(6);
         const now = new Date().toISOString();
         store.orders[String(numericId)] = {
             id: orderId,
@@ -3178,6 +3232,9 @@ app.post('/api/shop/checkout', (req, res) => {
             failureReason: '',
             deliveringLine: 0,
             deliveringStartedAt: '',
+            deliveryMajor,
+            deliveredTo: '',
+            pickupCode,
             lineCount: resolvedLines.length,
             lines: linesToSkriptMap(resolvedLines)
         };
@@ -3214,7 +3271,9 @@ app.post('/api/shop/checkout', (req, res) => {
             balanceFormatted: formatEssentialsBalance(balanceAfter),
             lineCount: resolvedLines.length,
             deductionMode: 'eco-take',
-            message: '订单已提交，服务器将执行 eco take 扣款；进游戏后物品将发放至 BetterBags。',
+            deliveryMajor,
+            pickupCode,
+            message: `订单 #${numericId} 已提交。收货地址「${deliveryMajor}」，取件码 ${pickupCode}（仅下单账号在柜内输入后可取）。`,
             createdAt: now
         });
     } catch (error) {
@@ -3236,6 +3295,9 @@ app.get('/api/shop/orders', (req, res) => {
             status: order.status,
             total: order.total,
             totalFormatted: formatEssentialsBalance(order.total),
+            deliveryMajor: order.deliveryMajor || '',
+            deliveredTo: order.deliveredTo || '',
+            pickupCode: order.pickupCode || '',
             createdAt: order.createdAt,
             updatedAt: order.updatedAt,
             failureReason: order.failureReason || '',

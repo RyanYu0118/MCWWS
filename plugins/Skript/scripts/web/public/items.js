@@ -57,6 +57,7 @@ const STATIC_ITEM_SCOPES = new Set(['all', 'in_shop', 'custom']);
 const ITEM_SCOPE_VALUES = new Set(['all', 'in_shop', 'custom']);
 let shopCategoryList = [];
 const CART_STORAGE_KEY = 'mcwws_shop_cart';
+const ADDRESS_STORAGE_KEY = 'mcwws_shop_delivery_major';
 const MAX_CART_QTY = 10000;
 let shopCart = [];
 let cartDrawerOpen = false;
@@ -484,6 +485,53 @@ function saveShopCart() {
     }
 }
 
+function readSavedDeliveryMajor() {
+    try {
+        return String(localStorage.getItem(ADDRESS_STORAGE_KEY) || '').trim();
+    } catch {
+        return '';
+    }
+}
+
+function persistDeliveryMajor(value) {
+    const major = String(value || '').trim().slice(0, 24);
+    try {
+        if (major) localStorage.setItem(ADDRESS_STORAGE_KEY, major);
+        else localStorage.removeItem(ADDRESS_STORAGE_KEY);
+    } catch {
+        /* ignore */
+    }
+    return major;
+}
+
+function getCheckoutDeliveryMajor() {
+    const input = document.getElementById('cartDeliveryMajor');
+    const typed = String(input?.value || '').trim();
+    if (typed) return persistDeliveryMajor(typed);
+    return readSavedDeliveryMajor();
+}
+
+async function loadDeliveryAddressOptions() {
+    const input = document.getElementById('cartDeliveryMajor');
+    const list = document.getElementById('cartDeliveryMajorList');
+    if (!input) return;
+    if (!input.value) input.value = readSavedDeliveryMajor();
+    try {
+        const res = await fetch('/api/shop/delivery-addresses', { cache: 'no-store' });
+        if (!res.ok) return;
+        const data = await res.json();
+        const majors = Array.isArray(data.majors) ? data.majors : [];
+        if (list) {
+            list.innerHTML = majors.map((major) => `<option value="${escapeHtml(String(major))}"></option>`).join('');
+        }
+        if (!input.value && majors.length === 1) {
+            input.value = majors[0];
+        }
+    } catch {
+        /* ignore */
+    }
+}
+
 function getCartTotalQuantity() {
     return shopCart.reduce((sum, e) => sum + (Number(e.quantity) || 0), 0);
 }
@@ -699,13 +747,15 @@ async function loadPendingOrdersUi() {
         box.innerHTML = `
             <p class="cart-pending-title">待领取订单</p>
             <ul class="cart-pending-list">
-                ${active.map((order) => `
-                    <li>
-                        <span class="cart-pending-id">#${escapeHtml(String(order.orderId))}</span>
-                        <span class="cart-pending-status">${escapeHtml(formatOrderStatus(order.status))}</span>
-                        <span class="cart-pending-total">${escapeHtml(order.totalFormatted || '')}</span>
-                    </li>
-                `).join('')}
+                    ${active.map((order) => `
+                        <li>
+                            <span class="cart-pending-id">#${escapeHtml(String(order.orderId))}</span>
+                            <span class="cart-pending-status">${escapeHtml(formatOrderStatus(order.status))}</span>
+                            <span class="cart-pending-total">${escapeHtml(order.totalFormatted || '')}</span>
+                            ${order.deliveryMajor ? `<span class="cart-pending-addr">${escapeHtml(String(order.deliveryMajor))}</span>` : ''}
+                            ${order.pickupCode ? `<span class="cart-pending-code">码 ${escapeHtml(String(order.pickupCode))}</span>` : ''}
+                        </li>
+                    `).join('')}
             </ul>
         `;
     } catch {
@@ -733,6 +783,12 @@ async function submitCartCheckout() {
     }
     const checkoutBtn = document.getElementById('cartCheckoutBtn');
     if (checkoutBtn) checkoutBtn.disabled = true;
+    const deliveryMajor = getCheckoutDeliveryMajor();
+    if (!deliveryMajor) {
+        showToast('请填写收货地址（外卖柜大编号）。', false);
+        if (checkoutBtn) checkoutBtn.disabled = false;
+        return;
+    }
     const lines = shopCart.map((entry) => ({
         itemId: entry.itemId,
         shopId: entry.shopId,
@@ -746,7 +802,7 @@ async function submitCartCheckout() {
                 'Content-Type': 'application/json',
                 ...auth.headers()
             },
-            body: JSON.stringify({ lines })
+            body: JSON.stringify({ lines, deliveryMajor })
         });
         const data = await res.json();
         if (!res.ok) {
@@ -761,9 +817,13 @@ async function submitCartCheckout() {
         } else {
             void auth.refreshEconomy?.(true);
         }
-        const msg = data.message
-            || `订单 #${data.orderId} 已提交，零钱已扣除，物品将发放至 BetterBags。`;
-        showToast(msg, true);
+            const msg = data.pickupCode
+                ? `订单 #${data.orderId} 已提交。取件码：${data.pickupCode}（请保存；仅下单账号可在对应外卖柜取件）`
+                : (data.message || `订单 #${data.orderId} 已提交，物品将发往外卖柜。`);
+            showToast(msg, true);
+            if (data.pickupCode) {
+                window.alert(`取件码：${data.pickupCode}\n收货地址：${data.deliveryMajor || ''}\n请用下单游戏账号到外卖柜点「输入取件码」后取件。`);
+            }
         await loadPendingOrdersUi();
         closeCartDrawer();
     } catch (error) {
@@ -794,6 +854,7 @@ function openCartDrawer() {
     syncPageScrollLock();
     renderCartDrawer();
     void loadPendingOrdersUi();
+    void loadDeliveryAddressOptions();
     syncItemsStateToUrl();
 }
 
@@ -2448,6 +2509,9 @@ function setupEventListeners() {
     document.getElementById('cartMapBtn')?.addEventListener('click', openCartOnMap);
     document.getElementById('cartCheckoutBtn')?.addEventListener('click', () => {
         void submitCartCheckout();
+    });
+    document.getElementById('cartDeliveryMajor')?.addEventListener('change', (e) => {
+        persistDeliveryMajor(e.target.value);
     });
 
     const cartDrawerBody = document.getElementById('cartDrawerBody');

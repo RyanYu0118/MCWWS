@@ -22,6 +22,14 @@ MCWWS_MERCHANDISE:
     material_type: skull_hash
     material: c73fd868fa8769fb39b40957f21c2e2d7d3e00288171fc9c4676b96df8240d88
 
+MCWWS_MACHINES:
+  type: sub
+  lateInit: false
+  parent: mcwws_main
+  item:
+    name: "&e机器"
+    material: BARREL
+
 mcwws_props:
   type: sub
   parent: mcwws_main

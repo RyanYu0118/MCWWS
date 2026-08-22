@@ -199,7 +199,11 @@
                 <span>合计（系统买入价）</span>
                 <strong id="cartTotalPrice">￥0.00</strong>
             </div>
-            <p class="cart-drawer-hint" id="cartDrawerHint">登录后可提交订单；扣款与发放在你上线时由 UltimateShop 自动完成。</p>
+            <p class="cart-drawer-hint" id="cartDrawerHint">登录后填写收货地址再提交。系统会随机生成取件码；到柜后须用下单账号输入取件码才能取走包裹。</p>
+            <label class="cart-delivery-label" for="cartDeliveryMajor">收货地址（大编号）
+                <input id="cartDeliveryMajor" class="cart-delivery-input" type="text" maxlength="24" placeholder="例如 A1 / 主城东" list="cartDeliveryMajorList" autocomplete="off">
+                <datalist id="cartDeliveryMajorList"></datalist>
+            </label>
             <div id="cartPendingOrders" class="cart-pending-orders" hidden></div>
             <div class="cart-drawer-actions">
                 <button type="button" id="cartClearBtn" class="cart-drawer-btn cart-drawer-btn--ghost">清空</button>
@@ -261,7 +265,7 @@
     <script src="item-model-renderer.js?v=2.5.72" defer></script>
     <script src="price-history-chart.js?v=7"></script>
     <script src="cart-fly-animation.js?v=1" defer></script>
-    <script src="items.js?v=2.5.83" defer></script>
+    <script src="items.js?v=2.5.85" defer></script>
 </body>
 
 </html>
