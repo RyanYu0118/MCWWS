@@ -1,0 +1,15 @@
+{
+  "name": "RYAN STUDIO 流浪世界 (Paper 26.2)",
+  "user": "ubuntu",
+  "install": "bash .cursor/install.sh",
+  "terminals": [
+    {
+      "name": "paper-server",
+      "command": "bash .cursor/run-server.sh"
+    }
+  ],
+  "ports": [
+    { "name": "minecraft", "port": 25565 },
+    { "name": "web-shop", "port": 8002 }
+  ]
+}
