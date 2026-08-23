@@ -10,7 +10,11 @@ function onBreak(event, itemStack, drops) {
 }
 
 function onUse(event) {
-    // 阻止 Slimefun 默认机器界面；由 Skript 打开背包式 GUI
+    // 仅拦截已放置方块的右键；取消「放置新方块」会导致外卖柜放不下来
+    var clicked = event.getClickedBlock();
+    if (clicked == null) {
+        return;
+    }
     event.setCancelled(true);
 }
 

@@ -742,19 +742,19 @@ on break of player head:
             mcwwsClearLockerPrompt(player)
 
 on right click on barrel:
-    cancel event
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
+    cancel event
     wait 1 tick
     if player is online:
         mcwwsOpenLockerGui(player, {_loc})
 
 on right click on player head:
-    cancel event
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
+    cancel event
     wait 1 tick
     if player is online:
         mcwwsOpenLockerGui(player, {_loc})

@@ -22,6 +22,7 @@ public final class StashStorage {
     private final McwwsUltimateShopStashPlugin plugin;
     private final File dataDir;
     private final Map<UUID, PlayerStash> cache = new ConcurrentHashMap<>();
+    private final Map<UUID, Object> saveLocks = new ConcurrentHashMap<>();
 
     public StashStorage(McwwsUltimateShopStashPlugin plugin) {
         this.plugin = plugin;
@@ -155,14 +156,28 @@ public final class StashStorage {
                 }
             }
         }
-        if (last != null) {
-            throw last;
+        // Windows 上目标 yml 常被编辑器/杀软占用内存映射，rename 会失败；退回原地覆盖。
+        try {
+            yaml.save(file);
+            if (tmp.exists()) {
+                tmp.delete();
+            }
+            return;
+        } catch (IOException directEx) {
+            if (last != null) {
+                directEx.addSuppressed(last);
+            }
+            throw directEx;
         }
-        throw new IOException("无法写入 " + file.getName());
     }
 
     private void saveAsync(UUID uuid) {
-        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> save(uuid));
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            Object lock = saveLocks.computeIfAbsent(uuid, ignored -> new Object());
+            synchronized (lock) {
+                save(uuid);
+            }
+        });
     }
 
     public void saveAll() {
