@@ -10,12 +10,8 @@ function onBreak(event, itemStack, drops) {
 }
 
 function onUse(event) {
-    // 仅拦截已放置方块的右键；取消「放置新方块」会导致外卖柜放不下来
-    var clicked = event.getClickedBlock();
-    if (clicked == null) {
-        return;
-    }
-    event.setCancelled(true);
+    // 不要 event.cancel()：会连带取消 Bukkit 右键，Skript 无法打开背包式 GUI。
+    // 让 Slimefun 打开隐藏后端菜单（标题 §6外卖柜），由 delivery_locker.sk 在 inventory open 时接管。
 }
 
 function tick(info) {

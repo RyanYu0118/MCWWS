@@ -745,6 +745,7 @@ on right click on barrel:
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
+    set {mcwws.locker.focus::%uuid of player%} to {_loc}
     cancel event
     wait 1 tick
     if player is online:
@@ -754,6 +755,7 @@ on right click on player head:
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
+    set {mcwws.locker.focus::%uuid of player%} to {_loc}
     cancel event
     wait 1 tick
     if player is online:
@@ -763,14 +765,26 @@ on inventory open:
     set {_inv} to event-inventory
     if {_inv} is not set:
         stop
+    if mcwwsIsLockerGuiInventory({_inv}) is true:
+        stop
     set {_title} to "%name of {_inv}%"
-    if {_title} is "§6外卖柜":
-        close player's inventory
-        wait 1 tick
-        set {_loc} to {mcwws.locker.focus::%uuid of player%}
-        if {_loc} is set:
-            if mcwwsIsDeliveryLocker({_loc}) is true:
-                mcwwsOpenLockerGui(player, {_loc})
+    if {_title} is not "§6外卖柜":
+        stop
+    set {_p} to player
+    set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}
+    if {_loc} is not set:
+        set {_target} to targeted block of {_p}
+        if {_target} is set:
+            set {_loc} to location of {_target}
+    if {_loc} is not set:
+        stop
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
+    close {_p}'s inventory
+    wait 1 tick
+    if {_p} is online:
+        mcwwsOpenLockerGui({_p}, {_loc})
 
 on inventory click:
     set {_p} to player
