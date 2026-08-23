@@ -1,26 +1,42 @@
-# 便携式工作台：禁止放下。放下后史莱姆身份会丢，拆下来变成普通头颅/工作台。
-# BanItem 3.7 在 Paper 26.2 会把版本误判成 <1.14，modeldata-equals 无法使用，因此改用史莱姆 PDC。
+# Slimefun 手持物品防放置：NotPlaceable 及 PORTABLE_* 物品放下后史莱姆身份会丢，拆下来变成普通方块/头颅。
+# 机器类（货运管理器、太阳能板、电力冶炼炉等）可正常放置，不受影响。
+# 依赖 skript-reflect、Slimefun
 
 import:
-    org.bukkit.NamespacedKey
-    org.bukkit.persistence.PersistentDataType
+    io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
+    io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable
     org.bukkit.event.block.BlockPlaceEvent
 
-function mcwwsIsPortableCrafter(it: object) :: boolean:
+function mcwwsSlimefunItemFromStack(it: object) :: object:
     if {_it} is not set:
-        return false
+        return null
     if {_it} is air:
+        return null
+    set {_opt} to SlimefunItem.getByItem({_it})
+    if {_opt}.isPresent() is not true:
+        return null
+    return {_opt}.get()
+
+function mcwwsShouldBlockSlimefunPlacement(it: object) :: boolean:
+    set {_sf} to mcwwsSlimefunItemFromStack({_it})
+    if {_sf} is not set:
         return false
-    set {_meta} to {_it}.getItemMeta()
-    if {_meta} is not set:
-        return false
-    set {_key} to new NamespacedKey("slimefun", "slimefun_item")
-    set {_id} to {_meta}.getPersistentDataContainer().get({_key}, PersistentDataType.STRING)
-    if {_id} is "PORTABLE_CRAFTER":
+    if {_sf} is instance of NotPlaceable:
+        return true
+    set {_id} to {_sf}.getId()
+    if {_id} starts with "PORTABLE_":
         return true
     return false
 
+function mcwwsSlimefunPlacementBlockedMessage(sf: object) :: text:
+    if {_sf} is not set:
+        return "§c该 Slimefun 物品只能手持使用，不能放置；放下再拆会失去特殊功能。"
+    set {_name} to "%{_sf}.getItemName()%"
+    return "§c%{_name}% §c只能手持使用，不能放置；放下再拆会失去特殊功能。"
+
 on BlockPlaceEvent with priority lowest:
-    if mcwwsIsPortableCrafter(event.getItemInHand()) is true:
-        event.setCancelled(true)
-        send "§c便携式工作台不能放下，请手持右键打开合成界面。" to event.getPlayer()
+    set {_hand} to event.getItemInHand()
+    if mcwwsShouldBlockSlimefunPlacement({_hand}) is not true:
+        stop
+    event.setCancelled(true)
+    send mcwwsSlimefunPlacementBlockedMessage(mcwwsSlimefunItemFromStack({_hand})) to event.getPlayer()

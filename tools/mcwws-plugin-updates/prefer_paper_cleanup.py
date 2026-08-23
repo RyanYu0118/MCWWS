@@ -13,14 +13,13 @@ OUT = REPO / "plugins" / "待更新"
 # (filename, url) — Paper or Paper-compatible official builds
 PAPER_DOWNLOADS = [
     (
-        "bluemap-5.23-paper.jar",
-        "https://cdn.modrinth.com/data/swbUV1cr/versions/K5U1ASjn/bluemap-5.23-paper.jar",
+        "bluemap-5.16-paper.jar",
+        "https://cdn.modrinth.com/data/swbUV1cr/versions/Vb2ZE8bR/bluemap-5.16-paper.jar",
     ),
 ]
 
 # Old artifacts superseded by Paper builds above or re-download
 OBSOLETE = [
-    "bluemap-5.16-paper.jar",
     "bluemap-5.16-spigot.jar",
     "CommandAPI-12.0.0-Spigot.jar",
     "FastAsyncWorldEdit-Bukkit-2.15.3.jar",

@@ -117,12 +117,12 @@ npc:
           command: npc speak &r与商品/道具类的物品命名时务必遵循文本规范哦~
           hand: RIGHT
       location:
-        bodyYaw: -14.125145
+        bodyYaw: -154.95425
         x: -465.6697
         y: 65.0
         z: 220.6424
-        yaw: -14.1251
-        pitch: -10.9634
+        yaw: -154.9543
+        pitch: 0.0
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
       skinlayers: {
@@ -1446,7 +1446,7 @@ npc:
         x: -413.45
         y: 95.0
         z: -496.4887
-        yaw: -90.3313
+        yaw: -90.3318
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
@@ -1631,7 +1631,7 @@ npc:
       attributetrait:
         attributes:
           minecraft:waypoint_transmit_range: 0.0
-    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,mounttrait,skintrait,lookclose,equipment,type,inventory,attributetrait,gravity,leashedtrait,location,chunktickettrait
+    traitnames: scoreboardtrait,spawned,owner,rotationtrait,skinlayers,mounttrait,skintrait,lookclose,equipment,type,inventory,attributetrait,targetable,gravity,leashedtrait,location,chunktickettrait
     navigator:
       speedmodifier: 1.0
       avoidwater: false
