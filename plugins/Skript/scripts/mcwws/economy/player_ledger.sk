@@ -20,6 +20,26 @@ function mcwwsLedgerSanitize(text: text) :: text:
 function mcwwsLedgerNowIso() :: text:
     return Instant.now().toString()
 
+function mcwwsIdeaAchMoneyCmd(uuid: text, amount: number, dir: text):
+    execute console command "mcwws-ideaach money %{_uuid}% %{_amount}% %{_dir}%"
+
+function mcwwsScheduleIdeaAchMoney(uuid: text, amount: number, dir: text):
+    # FlyWithFood 的 EnergyCostEvent 在异步线程触发，不能直接 dispatchCommand；入队后由 every 1 tick 在主线程执行
+    add "%{_uuid}%|%{_amount}%|%{_dir}%" to {mcwws.ideaach.pending::*}
+
+every 1 tick:
+    loop {mcwws.ideaach.pending::*}:
+        set {_line} to loop-value
+        delete {mcwws.ideaach.pending::%loop-index%}
+        set {_parts::*} to {_line} split at "|"
+        if size of {_parts::*} < 3:
+            continue
+        set {_uuid} to {_parts::1}
+        set {_amount} to {_parts::2} parsed as number
+        set {_dir} to {_parts::3}
+        mcwwsIdeaAchMoneyCmd({_uuid}, {_amount}, {_dir})
+        exit loop
+
 function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text, category: text, amount: number, description: text, refId: text):
     set {_uuid} to mcwwsLedgerSanitize({_uuid})
     set {_pid} to mcwwsLedgerSanitize({_playerId})
@@ -37,7 +57,7 @@ function mcwwsAppendLedgerQueueLine(uuid: text, playerId: text, direction: text,
     Files.write({_file}.toPath(), {_bytes}, StandardOpenOption.CREATE, StandardOpenOption.APPEND)
     # 本服特色成就：流水注入（亿万富翁 / 日活王）
     if {_amount} > 0:
-        execute console command "mcwws-ideaach money %{_uuid}% %{_amount}% %{_dir}%"
+        mcwwsScheduleIdeaAchMoney({_uuid}, {_amount}, {_dir})
 
 function mcwwsLedgerPriceForMaterial(material: text, buyOrSell: text) :: number:
     set {_id} to "%{_material}%"

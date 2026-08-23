@@ -139,10 +139,18 @@ function mcwwsLockerLocKey(loc: location) :: text:
     return "%{_w}%_%{_x}%_%{_y}%_%{_z}%"
 
 function mcwwsIsDeliveryLocker(loc: location) :: boolean:
+    if StorageCacheUtils.hasSlimefunBlock({_loc}) is not true:
+        return false
     set {_item} to StorageCacheUtils.getSlimefunItem({_loc})
     if {_item} is not set:
         return false
-    if "%{_item}.getId()%" is "{@locker_id}":
+    set {_id} to {_item}.getId()
+    if {_id} is not set:
+        return false
+    set {_key} to {_id}.getKey()
+    if {_key} is "{@locker_id}":
+        return true
+    if "%{_id}%" is "{@locker_id}":
         return true
     return false
 
@@ -723,6 +731,15 @@ on place of player head:
     set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
     mcwwsStartLockerNumbering({_p}, {_loc}, "full")
 
+on place of player wall head:
+    set {_p} to player
+    set {_loc} to location of event-block
+    wait 2 ticks
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
+    mcwwsStartLockerNumbering({_p}, {_loc}, "full")
+
 on break of barrel:
     set {_loc} to location of event-block
     if mcwwsIsDeliveryLocker({_loc}) is false:
@@ -733,6 +750,15 @@ on break of barrel:
             mcwwsClearLockerPrompt(player)
 
 on break of player head:
+    set {_loc} to location of event-block
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    mcwwsUnregisterLocker({_loc})
+    if {mcwws.locker.focus::%uuid of player%} is set:
+        if {mcwws.locker.focus::%uuid of player%} is {_loc}:
+            mcwwsClearLockerPrompt(player)
+
+on break of player wall head:
     set {_loc} to location of event-block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop
@@ -752,6 +778,16 @@ on right click on barrel:
         mcwwsOpenLockerGui(player, {_loc})
 
 on right click on player head:
+    set {_loc} to location of clicked block
+    if mcwwsIsDeliveryLocker({_loc}) is false:
+        stop
+    set {mcwws.locker.focus::%uuid of player%} to {_loc}
+    cancel event
+    wait 1 tick
+    if player is online:
+        mcwwsOpenLockerGui(player, {_loc})
+
+on right click on player wall head:
     set {_loc} to location of clicked block
     if mcwwsIsDeliveryLocker({_loc}) is false:
         stop

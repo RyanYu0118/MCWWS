@@ -167,7 +167,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:gold_ingot
-  count: 6
+  count: 12
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:fishing_rod
@@ -878,7 +878,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:diamond
-  count: 7
+  count: 9
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:gunpowder
@@ -1304,7 +1304,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 3
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -1944,6 +1944,22 @@ items:
   components:
     minecraft:enchantments: '{"minecraft:blast_protection":1}'
     minecraft:damage: '48'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:golden_apple
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:redstone
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom
+  count: 2
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203095.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_ENOKI_MUSHROOMS"}}'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
