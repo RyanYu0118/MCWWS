@@ -3,6 +3,7 @@
 import:
     org.bukkit.Material
     org.bukkit.NamespacedKey
+    org.bukkit.block.Barrel
     org.bukkit.inventory.ItemStack
     org.bukkit.persistence.PersistentDataType
     com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
@@ -226,26 +227,32 @@ function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
         stop
     set {_code} to mcwwsNormalizeLockerCode({_raw})
     if {_code} is "":
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[NFC] §f编号无效（1–24 字）。请重新输入。" to {_p}
         stop
     if {_kind} is "minor":
         set {_n} to {_code} parsed as number
         if {_n} is not set:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f小编号须为数字（如 1 或 01）。" to {_p}
             stop
         if {_n} < 1:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f小编号须 ≥ 1。" to {_p}
             stop
         set {_code} to mcwwsNfcPadMinor({_n}, length of {_code})
     if mcwwsHeldIsNfc({_p}) is false:
         mcwwsClearLockerPrompt({_p})
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[NFC] §f请手持对应 NFC 修改器再输入。" to {_p}
         stop
     mcwwsWriteNfcToHeld({_p}, {_code}, {_kind})
     mcwwsClearLockerPrompt({_p})
     if {_kind} is "major":
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[NFC] §f大编号 §e%{_code}% §f已写入修改器。潜行+右键分配器或外卖柜即可写入。" to {_p}
     else:
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[NFC] §f下次将写入小编号 §e%{_code}%§f，每用一次自动 +1。" to {_p}
 
 function mcwwsApplyNfcToTarget(p: player, loc: location):
@@ -253,12 +260,15 @@ function mcwwsApplyNfcToTarget(p: player, loc: location):
     if mcwwsIsNfcMajorId({_id}) is true:
         set {_code} to mcwwsReadNfcCode(tool of {_p})
         if {_code} is "":
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f修改器尚未写入编号。请先普通右键在聊天输入。" to {_p}
             stop
         if mcwwsIsDispatcher({_loc}) is true:
             if mcwwsSaveDispatcherRegistration({_loc}, {_code}, {_p}) is false:
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[NFC] §f写入分配器失败，请重试。" to {_p}
                 stop
+            mcwwsLockerResultSfx("ok", {_p})
             send "§a[NFC] §f已将大编号 §e%{_code}% §f写入外卖分配器。" to {_p}
             stop
         if mcwwsIsCabinet({_loc}) is true:
@@ -266,6 +276,7 @@ function mcwwsApplyNfcToTarget(p: player, loc: location):
             mcwwsLoadLockerYaml()
             if mcwwsCabinetOccupied({_key}) is true:
                 mcwwsUnloadLockerYaml()
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[NFC] §f该柜仍有占用订单，取空前不能改编号。" to {_p}
                 stop
             mcwwsUnloadLockerYaml()
@@ -273,39 +284,49 @@ function mcwwsApplyNfcToTarget(p: player, loc: location):
             if {_minor} is "":
                 set {_minor} to "01"
             if mcwwsCabinetPairTaken({_code}, {_minor}, {_key}) is true:
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[NFC] §f大编号 §e%{_code}% §f+ 小编号 §e%{_minor}% §f已被占用。" to {_p}
                 stop
             if mcwwsSaveCabinetRegistration({_loc}, {_code}, {_minor}, {_p}) is false:
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[NFC] §f写入外卖柜失败，请重试。" to {_p}
                 stop
+            mcwwsLockerResultSfx("ok", {_p})
             send "§a[NFC] §f已将大编号 §e%{_code}% §f写入外卖柜（小编号 §e%{_minor}%§f）。" to {_p}
             stop
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[NFC] §f请潜行对着 §e外卖分配器 §f或 §e外卖柜 §f右键。" to {_p}
         stop
     if mcwwsIsNfcMinorId({_id}) is true:
         if mcwwsIsCabinet({_loc}) is false:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f小编号只能写入 §e外卖柜§f（木桶）。" to {_p}
             stop
         set {_key} to mcwwsLockerLocKey({_loc})
         mcwwsLoadLockerYaml()
         if mcwwsCabinetOccupied({_key}) is true:
             mcwwsUnloadLockerYaml()
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f该柜仍有占用订单，取空前不能改编号。" to {_p}
             stop
         mcwwsUnloadLockerYaml()
         set {_major} to mcwwsGetLockerMajor({_loc})
         if {_major} is "":
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f请先设置大编号，再写小编号。" to {_p}
             stop
         set {_code} to mcwwsNfcCurrentMinor(tool of {_p})
         if mcwwsCabinetPairTaken({_major}, {_code}, {_key}) is true:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f大编号 §e%{_major}% §f+ 小编号 §e%{_code}% §f已被占用。" to {_p}
             stop
         if mcwwsSaveCabinetRegistration({_loc}, {_major}, {_code}, {_p}) is false:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[NFC] §f写入外卖柜失败，请重试。" to {_p}
             stop
         set {_next} to mcwwsNfcNextMinor({_code})
         mcwwsWriteNfcToHeld({_p}, {_next}, "minor")
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[NFC] §f已将小编号 §e%{_code}% §f写入外卖柜（大编号 §e%{_major}%§f）。下次：§e%{_next}%§f。" to {_p}
         stop
 
@@ -610,16 +631,81 @@ function mcwwsCabinetStorageEmpty(loc: location) :: boolean:
         return false
     return true
 
+# kind: open/close（原版木桶）、lock/unlock（容器上锁系）——在方块处播放，附近可听见
+function mcwwsLockerSfx(kind: text, loc: location):
+    if {_loc} is not set:
+        stop
+    set {_snd} to ""
+    set {_vol} to 0.85
+    set {_pitch} to 1
+    if {_kind} is "open":
+        set {_snd} to "block.barrel.open"
+    else if {_kind} is "close":
+        set {_snd} to "block.barrel.close"
+    else if {_kind} is "lock":
+        set {_snd} to "block.chest.locked"
+        set {_vol} to 0.9
+        set {_pitch} to 0.8
+    else if {_kind} is "unlock":
+        set {_snd} to "block.chest.locked"
+        set {_vol} to 0.9
+        set {_pitch} to 1.35
+    else:
+        stop
+    play sound {_snd} with volume {_vol} and pitch {_pitch} at {_loc}
+
+# kind: ok/fail ——仅操作玩家听见
+function mcwwsLockerResultSfx(kind: text, p: player):
+    if {_p} is not set:
+        stop
+    set {_snd} to ""
+    set {_vol} to 0.7
+    set {_pitch} to 1
+    if {_kind} is "ok":
+        set {_snd} to "entity.experience_orb.pickup"
+        set {_pitch} to 1.2
+    else if {_kind} is "fail":
+        set {_snd} to "entity.villager.no"
+        set {_vol} to 0.75
+        set {_pitch} to 0.95
+    else:
+        stop
+    play sound {_snd} with volume {_vol} and pitch {_pitch} to {_p}
+
 function mcwwsSetBarrelLid(loc: location, openIt: boolean):
     set {_b} to block at {_loc}
     if {_b} is not set:
         stop
-    if mcwwsBlockTypeName({_loc}) does not contain "barrel":
-        stop
+    if {_b}.getType() is not Material.BARREL:
+        if mcwwsBlockTypeName({_loc}) does not contain "barrel":
+            stop
+    # Paper：木桶开合写在 BlockState，Skript 的 close the lid 对 SF 木桶经常不刷新客户端
+    set {_state} to {_b}.getState()
+    if {_state} is instance of Barrel:
+        set {_barrel} to {_state}
+        {_barrel}.setOpen({_openIt})
+        {_barrel}.update(true, false)
     if {_openIt} is true:
         open the lid of {_b}
     else:
         close the lid of {_b}
+
+# 按解锁状态同步盖子：已解锁保持开盖，已上锁强制关盖重渲
+function mcwwsSyncCabinetLid(loc: location):
+    if mcwwsIsCabinet({_loc}) is false:
+        stop
+    set {_sfUn} to StorageCacheUtils.getData({_loc}, "mcwws_unlocked")
+    if "%{_sfUn}%" is "1":
+        mcwwsSetBarrelLid({_loc}, true)
+        stop
+    set {_key} to mcwwsLockerLocKey({_loc})
+    mcwwsLoadLockerYaml()
+    set {_un} to yaml value "lockers.%{_key}%.unlocked" from "dlockers"
+    mcwwsUnloadLockerYaml()
+    if "%{_un}%" is "1":
+        mcwwsSetBarrelLid({_loc}, true)
+        stop
+    mcwwsSetBarrelLid({_loc}, false)
 
 function mcwwsCabinetOccupied(key: text) :: boolean:
     set {_occ} to yaml value "lockers.%{_key}%.occupied" from "dlockers"
@@ -682,6 +768,11 @@ function mcwwsReleaseCabinet(loc: location):
     StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "0")
     StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "")
     mcwwsSetBarrelLid({_loc}, false)
+    mcwwsLockerSfx("lock", {_loc})
+    # 关 GUI 同一 tick 里客户端常仍显示开盖，延迟再强制关一次
+    set {_lidLoc} to {_loc}
+    wait 2 ticks
+    mcwwsSyncCabinetLid({_lidLoc})
 
 function mcwwsMaybeReleaseEmptyCabinet(loc: location):
     if mcwwsIsCabinet({_loc}) is false:
@@ -709,6 +800,10 @@ function mcwwsOccupyCabinet(loc: location, oid: text, code: text):
     StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "0")
     StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "")
     mcwwsSetBarrelLid({_loc}, false)
+    mcwwsLockerSfx("lock", {_loc})
+    set {_lidLoc} to {_loc}
+    wait 2 ticks
+    mcwwsSyncCabinetLid({_lidLoc})
 
 function mcwwsUnlockCabinet(loc: location, p: player):
     set {_key} to mcwwsLockerLocKey({_loc})
@@ -722,6 +817,10 @@ function mcwwsUnlockCabinet(loc: location, p: player):
     StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "1")
     StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", {_uuid})
     mcwwsSetBarrelLid({_loc}, true)
+    mcwwsLockerSfx("unlock", {_loc})
+    set {_lidLoc} to {_loc}
+    wait 2 ticks
+    mcwwsSyncCabinetLid({_lidLoc})
 
 function mcwwsFindCabinetLocForOrder(oid: text) :: location:
     set {_want} to {_oid}
@@ -880,10 +979,12 @@ function mcwwsApplyPickupUnlock(p: player, raw: text):
         stop
     set {_code} to mcwwsNormalizePickupCode({_raw})
     if {_code} is "":
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖分配器] §f取件码无效，请重新输入。" to {_p}
         stop
     set {_oid} to mcwwsFindOrderByPickupCode({_code}, "%uuid of {_p}%")
     if {_oid} is "":
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖分配器] §f取件码无效，或不是你的订单。" to {_p}
         stop
     set {_disp} to {mcwws.locker.focus::%uuid of {_p}%}
@@ -895,16 +996,19 @@ function mcwwsApplyPickupUnlock(p: player, raw: text):
     unload yaml "weborders_find"
     if {_wantMajor} is not "":
         if "%{_omajor}%" is not {_wantMajor}:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖分配器] §f该取件码对应地址 §e%{_omajor}%§f，请到正确收货地址的分配器取件。" to {_p}
             mcwwsClearLockerPrompt({_p})
             stop
     set {_loc} to mcwwsFindCabinetLocForOrder({_oid})
     if {_loc} is not set:
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖分配器] §f订单尚未分入外卖柜，请稍后再试。" to {_p}
         stop
     set {_minor} to mcwwsGetLockerMinor({_loc})
     mcwwsUnlockCabinet({_loc}, {_p})
     mcwwsClearLockerPrompt({_p})
+    mcwwsLockerResultSfx("ok", {_p})
     send "§a[外卖分配器] §f取件码 §e%{_code}% §f有效。请到小编号 §e%{_minor}% §f的木桶柜取件（已开盖，取空前可反复打开）。" to {_p}
 
 function mcwwsApplyLockerNumbering(p: player, raw: text):
@@ -924,6 +1028,7 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
     set {_loc} to {mcwws.locker.focus::%{_uuid}%}
     if {_loc} is not set:
         mcwwsClearLockerPrompt({_p})
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖] §f目标已失效，请重新打开或放置。" to {_p}
         stop
     set {_low} to "%{_raw}%"
@@ -938,18 +1043,22 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
         stop
     set {_code} to mcwwsNormalizeLockerCode({_raw})
     if {_code} is "":
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖] §f编号无效（1–24 字）。请重新输入。" to {_p}
         stop
     set {_mode} to {mcwws.locker.mode::%{_uuid}%}
     if mcwwsIsDispatcher({_loc}) is true:
         if mcwwsSaveDispatcherRegistration({_loc}, {_code}, {_p}) is false:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖分配器] §f编号未能写入注册表，请重试。" to {_p}
             stop
         mcwwsClearLockerPrompt({_p})
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[外卖分配器] §f大编号已设为 §e%{_code}%§f。网页下单请选此收货地址。" to {_p}
         stop
     if mcwwsIsCabinet({_loc}) is false:
         mcwwsClearLockerPrompt({_p})
+        mcwwsLockerResultSfx("fail", {_p})
         send "§c[外卖] §f目标方块已不是分配器或外卖柜。" to {_p}
         stop
     if {_wait} is "major":
@@ -958,16 +1067,20 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
             if {_minor} is "":
                 set {_minor} to "01"
             if mcwwsCabinetPairTaken({_code}, {_minor}, mcwwsLockerLocKey({_loc})) is true:
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[外卖柜] §f大编号 §e%{_code}% §f+ 小编号 §e%{_minor}% §f已被占用。" to {_p}
                 stop
             if mcwwsSaveCabinetRegistration({_loc}, {_code}, {_minor}, {_p}) is false:
+                mcwwsLockerResultSfx("fail", {_p})
                 send "§c[外卖柜] §f编号未能写入注册表，请重试。" to {_p}
                 stop
             mcwwsClearLockerPrompt({_p})
+            mcwwsLockerResultSfx("ok", {_p})
             send "§a[外卖柜] §f大编号已设为 §e%{_code}%§f，小编号保持 §e%{_minor}%§f。" to {_p}
             stop
         set {mcwws.locker.draftMajor::%{_uuid}%} to {_code}
         set {mcwws.locker.wait::%{_uuid}%} to "minor"
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[外卖柜] §f大编号 §e%{_code}% §f已记下。请输入 §e小编号§f。" to {_p}
         stop
     if {_wait} is "minor":
@@ -975,16 +1088,20 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
         if {_major} is not set:
             set {_major} to mcwwsGetLockerMajor({_loc})
         if {_major} is "":
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖柜] §f请先设置大编号。" to {_p}
             set {mcwws.locker.wait::%{_uuid}%} to "major"
             stop
         if mcwwsCabinetPairTaken("%{_major}%", {_code}, mcwwsLockerLocKey({_loc})) is true:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖柜] §f大编号 §e%{_major}% §f+ 小编号 §e%{_code}% §f已被占用。" to {_p}
             stop
         if mcwwsSaveCabinetRegistration({_loc}, "%{_major}%", {_code}, {_p}) is false:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖柜] §f编号未能写入注册表，请重试。" to {_p}
             stop
         mcwwsClearLockerPrompt({_p})
+        mcwwsLockerResultSfx("ok", {_p})
         send "§a[外卖柜] §f编号完成：地址 §e%{_major}%§f / 柜位 §e%{_code}%§f。" to {_p}
         if mcwwsHasDispatcherMajor("%{_major}%") is false:
             send "§e[外卖柜] §f尚未有大编号 §e%{_major}% §f的分配器，网页暂不可选此地址。" to {_p}
@@ -1100,6 +1217,7 @@ function mcwwsOpenCabinetGui(p: player, loc: location):
     add {_inv} to {mcwws.locker.guiInvs::*}
     set {mcwws.locker.guiLocByInv::%{_inv}%} to {_loc}
     set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
+    mcwwsLockerSfx("open", {_loc})
     open {_inv} to {_p}
 
 function mcwwsOpenDispGui(p: player, loc: location):
@@ -1178,10 +1296,12 @@ on right click on barrel:
         stop
     cancel event
     if mcwwsGetLockerMajor({_loc}) is "":
+        mcwwsLockerResultSfx("fail", player)
         send "§c[外卖柜] §f请先设置大/小编号。" to player
         mcwwsStartLockerNumbering(player, {_loc}, "full")
         stop
     if mcwwsCabinetUnlockedFor({_loc}, player) is false:
+        mcwwsLockerResultSfx("fail", player)
         send "§c[外卖柜] §f已上锁。请到 §e外卖分配器 §f输入取件码。" to player
         stop
     wait 1 tick
@@ -1223,6 +1343,7 @@ on right click:
     if player is sneaking:
         set {_block} to clicked block
         if {_block} is not set:
+            mcwwsLockerResultSfx("fail", player)
             send "§c[NFC] §f请潜行对着分配器或外卖柜右键写入。" to player
             stop
         mcwwsApplyNfcToTarget(player, location of {_block})
@@ -1279,6 +1400,7 @@ on inventory open:
             stop
         close {_p}'s inventory
         if mcwwsCabinetUnlockedFor({_loc}, {_p}) is false:
+            mcwwsLockerResultSfx("fail", {_p})
             send "§c[外卖柜] §f已上锁。请到外卖分配器输入取件码。" to {_p}
             stop
         wait 1 tick
@@ -1380,7 +1502,13 @@ on inventory close:
         set {_loc} to mcwwsLockerGuiLoc({_inv})
         if {_loc} is set:
             mcwwsSaveLockerGuiToBlock({_inv}, {_loc})
+            mcwwsLockerSfx("close", {_loc})
             mcwwsMaybeReleaseEmptyCabinet({_loc})
+            # 无论是否取空上锁，都按解锁状态重渲盖子（上锁→关盖）
+            mcwwsSyncCabinetLid({_loc})
+            set {_syncLoc} to {_loc}
+            wait 2 ticks
+            mcwwsSyncCabinetLid({_syncLoc})
         remove {_inv} from {mcwws.locker.guiInvs::*}
         delete {mcwws.locker.guiLocByInv::%{_inv}%}
     mcwwsStripLockerGuiFromPlayer({_p})
@@ -1405,10 +1533,10 @@ every 10 seconds:
     delete {_keys::*}
     loop yaml node keys "lockers" from "dlockers":
         if mcwwsYamlKind(loop-value) is "cabinet":
-            if mcwwsCabinetOccupied(loop-value) is true:
-                add loop-value to {_keys::*}
+            add loop-value to {_keys::*}
     mcwwsUnloadLockerYaml()
     loop {_keys::*}:
         set {_loc} to mcwwsLocFromKey(loop-value)
         if {_loc} is set:
             mcwwsMaybeReleaseEmptyCabinet({_loc})
+            mcwwsSyncCabinetLid({_loc})
