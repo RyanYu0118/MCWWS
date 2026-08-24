@@ -1552,13 +1552,21 @@ function flattenDeliveryLockersData(data) {
     for (const entry of entries) {
         const key = lockerEntryStorageKey(entry);
         if (!key) continue;
+        const kindRaw = String(entry.kind || '').trim().toLowerCase();
+        const kind = kindRaw === 'cabinet' ? 'cabinet' : 'dispatcher';
         lockers[key] = {
             world: String(entry.world || 'world'),
             x: String(Math.floor(Number(entry.x))),
             y: String(Math.floor(Number(entry.y))),
             z: String(Math.floor(Number(entry.z))),
+            kind,
             major: normalizeDeliveryCode(entry.major),
-            minor: normalizeDeliveryCode(entry.minor) || '01',
+            minor: kind === 'cabinet' ? (normalizeDeliveryCode(entry.minor) || '01') : '',
+            occupied: String(entry.occupied || '0'),
+            unlocked: String(entry.unlocked || '0'),
+            unlockUuid: entry.unlockUuid != null ? String(entry.unlockUuid) : '',
+            orderId: entry.orderId != null ? String(entry.orderId) : '',
+            pickupCode: entry.pickupCode != null ? String(entry.pickupCode) : '',
             ownerUuid: entry.ownerUuid != null ? String(entry.ownerUuid) : '',
             ownerName: entry.ownerName != null ? String(entry.ownerName) : '',
             updatedAt: entry.updatedAt != null ? String(entry.updatedAt) : ''
@@ -1591,6 +1599,8 @@ function listDeliveryMajors() {
     const majors = new Set();
     for (const entry of Object.values(lockers)) {
         if (!entry || typeof entry !== 'object') continue;
+        const kind = String(entry.kind || 'dispatcher').toLowerCase();
+        if (kind !== 'dispatcher') continue;
         const major = normalizeDeliveryCode(entry.major);
         if (major) majors.add(major);
     }
@@ -3275,11 +3285,11 @@ app.post('/api/shop/checkout', (req, res) => {
 
         const deliveryMajor = normalizeDeliveryCode(req.body && req.body.deliveryMajor);
         if (!deliveryMajor) {
-            return res.status(400).json({ error: '请填写收货地址（外卖柜大编号）。' });
+            return res.status(400).json({ error: '请填写收货地址（外卖分配器大编号）。' });
         }
         if (!hasDeliveryMajor(deliveryMajor)) {
             return res.status(422).json({
-                error: `收货地址「${deliveryMajor}」没有已编号的外卖柜。请先在游戏内放置外卖柜并设置大编号。`,
+                error: `收货地址「${deliveryMajor}」没有已编号的外卖分配器。请先放置分配器并设置大编号。`,
                 deliveryMajors: listDeliveryMajors()
             });
         }
@@ -3345,7 +3355,7 @@ app.post('/api/shop/checkout', (req, res) => {
             deductionMode: 'eco-take',
             deliveryMajor,
             pickupCode,
-            message: `订单 #${numericId} 已提交。收货地址「${deliveryMajor}」，取件码 ${pickupCode}（仅下单账号在柜内输入后可取）。`,
+            message: `订单 #${numericId} 已提交。收货地址「${deliveryMajor}」，取件码 ${pickupCode}（到外卖分配器输入后，对应木桶柜会开盖）。`,
             createdAt: now
         });
     } catch (error) {

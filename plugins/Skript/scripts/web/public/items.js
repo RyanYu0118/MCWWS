@@ -951,11 +951,11 @@ async function submitCartCheckout() {
             void auth.refreshEconomy?.(true);
         }
             const msg = data.pickupCode
-                ? `订单 #${data.orderId} 已提交。取件码：${data.pickupCode}（请保存；仅下单账号可在对应外卖柜取件）`
+                ? `订单 #${data.orderId} 已提交。取件码：${data.pickupCode}（请保存；到外卖分配器输入后，对应木桶柜会开盖）`
                 : (data.message || `订单 #${data.orderId} 已提交，物品将发往外卖柜。`);
             showToast(msg, true);
             if (data.pickupCode) {
-                window.alert(`取件码：${data.pickupCode}\n收货地址：${data.deliveryMajor || ''}\n请用下单游戏账号到外卖柜点「输入取件码」后取件。`);
+                window.alert(`取件码：${data.pickupCode}\n收货地址：${data.deliveryMajor || ''}\n请用下单游戏账号到外卖分配器输入取件码；对应小编号的木桶柜会开盖，取空前可反复打开。`);
             }
         await loadPendingOrdersUi();
         closeCartDrawer();

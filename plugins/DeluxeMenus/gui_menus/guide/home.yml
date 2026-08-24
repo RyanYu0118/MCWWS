@@ -91,6 +91,26 @@ items:
       - '[player] ca gui'
       - '[close]'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+  'news':
+    material: WRITTEN_BOOK
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 3
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&b>>> 服务器告示 <<<'
+    lore:
+      - ''
+      - '&f查看最新功能与修复资讯'
+      - '&7进服有新内容时也会自动弹出'
+      - '&7指令：/news'
+    left_click_commands:
+      - '[console] lp user %player_uuid% permission set booknews.news true'
+      - '[close]'
+      - '[player] news'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
   'shop':
     material: EMERALD
     enchantments:

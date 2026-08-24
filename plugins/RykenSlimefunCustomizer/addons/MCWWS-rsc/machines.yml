@@ -1,16 +1,16 @@
-# 外卖柜：Cabinet 头颅方块；Skript 背包式 GUI（标题含大/小编号）；块内 0–44 存物。
-# input/output 留空，避免漏斗/货运绕过取件码。
+# 外卖分配器：Cabinet 头颅；仅大编号；无存储。旧版一体机 ID 沿用，已放置头颅自动当分配器。
+# 外卖柜：木桶；大编号+小编号；Skript 背包式 GUI 存物。input/output 留空，避免漏斗绕过上锁。
 MCWWS_DELIVERY_LOCKER:
   item_group: MCWWS_MACHINES
   item:
-    name: "&6外卖柜"
+    name: "&6外卖分配器"
     material_type: saveditem
     material: MCWWS_DELIVERY_LOCKER_HEAD
     lore:
-    - "&7放置后聊天输入大/小编号"
-    - "&7网页下单填大编号，获随机取件码"
-    - "&7仅下单者输入取件码后可取包裹"
-    - "&8右键打开独立储物界面"
+    - "&7放置后聊天输入大编号（收货地址）"
+    - "&7右键输入取件码，查看分配到的小编号"
+    - "&7无存储；包裹在对应外卖柜"
+    - "&8与同址木桶外卖柜互联"
   recipe_type: ENHANCED_CRAFTING_TABLE
   recipe:
     1:
@@ -26,4 +26,31 @@ MCWWS_DELIVERY_LOCKER:
   input: []
   output: []
   script: MCWWS_DELIVERY_LOCKER
+  work: -1
+
+MCWWS_DELIVERY_CABINET:
+  item_group: MCWWS_MACHINES
+  item:
+    name: "&6外卖柜"
+    material: BARREL
+    lore:
+    - "&7放置后输入大编号（与分配器相同）"
+    - "&7再输入小编号（同址唯一）"
+    - "&7空闲且取空后才可再分配"
+    - "&8默认上锁；开盖后可开直到取空"
+  recipe_type: ENHANCED_CRAFTING_TABLE
+  recipe:
+    1:
+      material: IRON_INGOT
+    3:
+      material: IRON_INGOT
+    4:
+      material: BARREL
+    5:
+      material: IRON_INGOT
+    7:
+      material: IRON_INGOT
+  input: []
+  output: []
+  script: MCWWS_DELIVERY_CABINET
   work: -1

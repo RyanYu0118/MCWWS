@@ -474,6 +474,36 @@ items:
       - '[close]'
       - '[player] eco-market-reload<delay=2>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+  'booknews_reload':
+    material: WRITTEN_BOOK
+    enchantments:
+      - ARROW_DAMAGE;1
+    hide_enchantments: true
+    slot: 34
+    priority: 1
+    update: true
+    hide_attributes: true
+    display_name: '&e重载服务器告示'
+    lore:
+      - ''
+      - '&a左键 &7执行 &a/booknews reload'
+      - '&e右键 &7执行 &e/booknews clear'
+      - '&7改完 config 后左键重载'
+      - '&7发布新内容后右键清已读'
+      - '&7（下次进服会再弹书）'
+      - '&7重载后会自动恢复本界面'
+    left_click_commands:
+      - '[console] lp user %player_name% permission settemp booknews.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] booknews reload<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
+    right_click_commands:
+      - '[console] lp user %player_name% permission settemp booknews.admin true 30s'
+      - '[console] mcwws_queue_reopen_server %player_name%'
+      - '[close]'
+      - '[player] booknews clear<delay=2>'
+      - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
   'back':
     material: ARROW
     slot: 49
@@ -503,7 +533,6 @@ items:
       - 18
       - 26
       - 27
-      - 34
       - 35
       - 36
       - 37

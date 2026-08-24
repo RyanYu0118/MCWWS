@@ -335,10 +335,8 @@ items:
   count: 1
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:iron_axe
-  count: 1
-  components:
-    minecraft:damage: '149'
+  id: minecraft:nether_wart
+  count: 3
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:crossbow
@@ -1201,7 +1199,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
-  count: 39
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:enchanted_book
@@ -1296,7 +1294,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 4
+  count: 15
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -1504,7 +1502,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:rotten_flesh
-  count: 1
+  count: 3
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:netherite_sword
@@ -1518,7 +1516,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:poppy
-  count: 17
+  count: 15
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:oak_sapling
@@ -1947,7 +1945,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 2
+  count: 15
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -2016,6 +2014,40 @@ items:
   count: 1
   components:
     minecraft:damage: '431'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:brown_mushroom
+  count: 18
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203097.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_BUTTON_MUSHROOM"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:stone
+  count: 5
+  components:
+    minecraft:custom_name: '{italic:0b,text:"Tombstone"}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:golden_carrot
+  count: 6
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:glass_bottle
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:firework_rocket
+  count: 61
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:emerald
+  count: 2
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:allium
+  count: 1
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

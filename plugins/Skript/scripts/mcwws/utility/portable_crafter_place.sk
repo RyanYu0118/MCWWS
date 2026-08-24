@@ -1,42 +1,39 @@
-# Slimefun 手持物品防放置：NotPlaceable 及 PORTABLE_* 物品放下后史莱姆身份会丢，拆下来变成普通方块/头颅。
-# 机器类（货运管理器、太阳能板、电力冶炼炉等）可正常放置，不受影响。
+# Slimefun 手持物品防放置。
+# 原理：Slimefun 只有在 !(item instanceof NotPlaceable) 时才会把方块登记进 BlockStorage。
+# 因此 NotPlaceable 物品一旦被当成原版方块放下，拆掉就只剩普通头颅/方块，特殊功能全丢。
+#
+# 例外：MultiBlockMachine（增强型合成台、磨石、矿石粉碎机、压缩机、装甲台、魔法工作台等）
+# 同样是 NotPlaceable，但它们本来就要以原版方块形态摆出来、由 Slimefun 按结构识别，必须放行。
+#
+# 普通机器（货运管理器、太阳能板、电力冶炼炉、外卖柜等）不是 NotPlaceable，不受影响。
 # 依赖 skript-reflect、Slimefun
 
 import:
     io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
     io.github.thebusybiscuit.slimefun4.core.attributes.NotPlaceable
+    io.github.thebusybiscuit.slimefun4.core.multiblocks.MultiBlockMachine
     org.bukkit.event.block.BlockPlaceEvent
 
-function mcwwsSlimefunItemFromStack(it: object) :: object:
+# 需要拦截时返回物品显示名，否则返回空文本
+function mcwwsHandheldSlimefunName(it: object) :: text:
     if {_it} is not set:
-        return null
-    if {_it} is air:
-        return null
-    set {_opt} to SlimefunItem.getByItem({_it})
-    if {_opt}.isPresent() is not true:
-        return null
-    return {_opt}.get()
-
-function mcwwsShouldBlockSlimefunPlacement(it: object) :: boolean:
-    set {_sf} to mcwwsSlimefunItemFromStack({_it})
+        return ""
+    set {_sf} to SlimefunItem.getByItem({_it})
     if {_sf} is not set:
-        return false
+        return ""
+    if {_sf} is instance of MultiBlockMachine:
+        return ""
+    set {_label} to {_sf}.getItemName()
     if {_sf} is instance of NotPlaceable:
-        return true
+        return "%{_label}%"
     set {_id} to {_sf}.getId()
-    if {_id} starts with "PORTABLE_":
-        return true
-    return false
-
-function mcwwsSlimefunPlacementBlockedMessage(sf: object) :: text:
-    if {_sf} is not set:
-        return "§c该 Slimefun 物品只能手持使用，不能放置；放下再拆会失去特殊功能。"
-    set {_name} to "%{_sf}.getItemName()%"
-    return "§c%{_name}% §c只能手持使用，不能放置；放下再拆会失去特殊功能。"
+    if "%{_id}%" starts with "PORTABLE_":
+        return "%{_label}%"
+    return ""
 
 on BlockPlaceEvent with priority lowest:
-    set {_hand} to event.getItemInHand()
-    if mcwwsShouldBlockSlimefunPlacement({_hand}) is not true:
+    set {_name} to mcwwsHandheldSlimefunName(event.getItemInHand())
+    if {_name} is "":
         stop
     event.setCancelled(true)
-    send mcwwsSlimefunPlacementBlockedMessage(mcwwsSlimefunItemFromStack({_hand})) to event.getPlayer()
+    send "§c%{_name}%§c 只能手持使用；放下再拆会丢失粘液科技功能，因此禁止放置。" to event.getPlayer()

@@ -352,7 +352,7 @@ function mcwwsAdvanceLockerDelivery(oid: text, nextLineIdx: number):
         delete {mcwws.webdeliver.lockerLine::%{_oid}%}
         delete {mcwws.webdeliver.lockerBusy}
         if {_where} is set:
-            mcwwsNotifyOrderPlayer({_oid}, "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已放入外卖柜：§e%{_where}%§f。取件码 §e%{_pcode}%§f（仅你可取）。")
+            mcwwsNotifyOrderPlayer({_oid}, "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已放入外卖柜：§e%{_where}%§f。取件码 §e%{_pcode}%§f（到分配器输入后开盖取件）。")
         else:
             mcwwsNotifyOrderPlayer({_oid}, "§a[MCWWS] §f网页订单 §e#%{_oid}% §f已放入外卖柜。取件码 §e%{_pcode}%§f。")
         wait 5 ticks
@@ -405,7 +405,7 @@ function mcwwsTryStartNextLockerOrder():
     set {mcwws.webdeliver.lockerLine::%{_target}%} to 0
     mcwwsEnsureLockerOrderEconomyCharged({_target})
     set {_major} to mcwwsOrderDeliveryMajor({_target})
-    mcwwsNotifyOrderPlayer({_target}, "§a[MCWWS] §f正在将网页订单 §e#%{_target}% §f分货至收货地址 §e%{_major}%§f...")
+    mcwwsNotifyOrderPlayer({_target}, "§a[MCWWS] §f正在将网页订单 §e#%{_target}% §f分配至收货地址 §e%{_major}% §f的空闲外卖柜...")
     wait 5 ticks
     mcwwsDeliverLockerOrderLine({_target}, 0)
 

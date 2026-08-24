@@ -1,0 +1,142 @@
+version: "2.0"
+
+check-update: false
+
+Prefix: '&8[&b服务器告示&8]&f '
+
+OpenBookDelaySecond: 5
+
+OpenBookSoundEffect:
+  enable: true
+  sound-effect: ENTITY_PLAYER_LEVELUP
+
+Open-Book-Onjoin:
+  enable: true
+  # true = 每次进服都弹书；false = 仅在管理员执行 /booknews clear 之后、玩家尚未读过时弹
+  always: false
+
+KeepBook: false
+
+Message:
+  No-Permission: '&c你没有权限查看服务器告示。'
+
+Interactive-Word:
+  1:
+    word: "下一页 ▶"
+    placeholder: "gotopage2"
+    bold: true
+    color: gold
+    italic: false
+    underlined: false
+    obfuscated: false
+    clickevent:
+      enable: true
+      action: CHANGE_PAGE
+      value: '2'
+    hoverevent:
+      enable: true
+      text: '翻到第 2 页'
+  2:
+    word: "下一页 ▶"
+    placeholder: "gotopage3"
+    bold: true
+    color: gold
+    italic: false
+    underlined: false
+    obfuscated: false
+    clickevent:
+      enable: true
+      action: CHANGE_PAGE
+      value: '3'
+    hoverevent:
+      enable: true
+      text: '翻到第 3 页'
+  3:
+    word: "◀ 返回首页"
+    placeholder: "gobackfirstpage"
+    bold: true
+    color: gold
+    italic: false
+    underlined: false
+    obfuscated: false
+    clickevent:
+      enable: true
+      action: CHANGE_PAGE
+      value: '1'
+    hoverevent:
+      enable: true
+      text: '回到第 1 页'
+  4:
+    word: "打开公共指南"
+    placeholder: "opencompass"
+    bold: true
+    color: aqua
+    italic: false
+    underlined: false
+    obfuscated: false
+    clickevent:
+      enable: true
+      action: RUN_COMMAND
+      value: '/compass'
+    hoverevent:
+      enable: true
+      text: '打开指南针菜单'
+  5:
+    word: "打开商店"
+    placeholder: "openshop"
+    bold: true
+    color: green
+    italic: false
+    underlined: false
+    obfuscated: false
+    clickevent:
+      enable: true
+      action: RUN_COMMAND
+      value: '/shop menu main'
+    hoverevent:
+      enable: true
+      text: '打开物品买卖商店'
+
+book:
+  "1":
+    |-
+      &0&l流浪世界 · 服务器告示
+      &8────────────────
+      &0你好，&l%player_name%&0！
+
+      &0本服用&l书本&0发布更新：
+      &0新功能、修复与重要通知
+      &0都会写在这里。
+
+      &0随时可再读：
+      &0· 指南针首页「服务器告示」
+      &0· 指令 &b/news
+
+      %booknews_gotopage2%
+  "2":
+    |-
+      &0&l本期 · 告示系统上线
+      &8────────────────
+      &a✔ &0启用 BookNews 书本告示
+      &a✔ &0进服有新内容时自动弹出
+      &a✔ &0指南针首页可随时查阅
+
+      &0以后研发发布功能或修
+      &0复问题，会直接更新本书。
+
+      &0已读过且内容未变时，
+      &0进服&l不会&0反复打扰。
+
+      %booknews_gotopage3%
+  "3":
+    |-
+      &0&l快捷入口
+      &8────────────────
+      &0%booknews_opencompass%
+      &0%booknews_openshop%
+
+      &8────────────────
+      &7制作组 RYAN STUDIO
+      &7Paper 26.2 · MCWWS
+
+      %booknews_gobackfirstpage%

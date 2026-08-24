@@ -1,6 +1,12 @@
-# 后端隐藏菜单：玩家只见 Skript 打开的背包式界面
-# 0–44 必须留空，否则玻璃占位会塞满 BlockMenu，网页分货 pushItem 失败
+# 分配器：无储物格。柜：0–44 必须留空，否则玻璃占位会塞满 BlockMenu。
 MCWWS_DELIVERY_LOCKER:
+  title: "&6外卖分配器"
+  slots:
+    0-8:
+      name: "&7"
+      material: GRAY_STAINED_GLASS_PANE
+
+MCWWS_DELIVERY_CABINET:
   title: "&6外卖柜"
   slots:
     45-53:
