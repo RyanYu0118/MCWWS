@@ -3626,12 +3626,141 @@ input.cart-qty-input {
     font-size: 0.75rem;
 }
 
-.cart-pending-code {
+.cart-pending-code-wrap {
     margin-left: auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    max-width: 100%;
+}
+
+.cart-pending-code {
     color: #86efac;
     font-weight: 700;
-    font-family: ui-monospace, monospace;
-    letter-spacing: 0.04em;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.06em;
+    user-select: text;
+    -webkit-user-select: text;
+    cursor: text;
+    padding: 2px 6px;
+    border-radius: 6px;
+    background: rgba(134, 239, 172, 0.12);
+    border: 1px solid rgba(134, 239, 172, 0.28);
+}
+
+.cart-pending-copy-btn {
+    flex: 0 0 auto;
+    padding: 2px 8px;
+    border-radius: 6px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    background: rgba(15, 23, 42, 0.55);
+    color: #e2e8f0;
+    font-size: 0.72rem;
+    cursor: pointer;
+    user-select: none;
+}
+
+.cart-pending-copy-btn:hover {
+    border-color: rgba(134, 239, 172, 0.55);
+    color: #86efac;
+}
+
+.pickup-code-dialog-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 10200;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    background: rgba(2, 6, 23, 0.72);
+}
+
+.pickup-code-dialog {
+    width: min(420px, 100%);
+    padding: 20px 18px 16px;
+    border-radius: 14px;
+    background: #0f172a;
+    border: 1px solid rgba(148, 163, 184, 0.28);
+    box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
+    color: #e2e8f0;
+}
+
+.pickup-code-dialog h3 {
+    margin: 0 0 10px;
+    font-size: 1.05rem;
+    color: #f8fafc;
+}
+
+.pickup-code-dialog-hint,
+.pickup-code-dialog-addr {
+    margin: 0 0 10px;
+    font-size: 0.86rem;
+    color: #94a3b8;
+    line-height: 1.45;
+}
+
+.pickup-code-dialog-addr strong {
+    color: #fdba74;
+    font-weight: 600;
+}
+
+.pickup-code-dialog-label {
+    display: block;
+    margin-bottom: 6px;
+    font-size: 0.78rem;
+    color: #67e8f9;
+}
+
+.pickup-code-dialog-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 14px;
+}
+
+.pickup-code-dialog-input {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding: 10px 12px;
+    border-radius: 10px;
+    border: 1px solid rgba(134, 239, 172, 0.35);
+    background: rgba(15, 23, 42, 0.9);
+    color: #86efac;
+    font-size: 1.15rem;
+    font-weight: 700;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+    letter-spacing: 0.12em;
+    text-align: center;
+    user-select: text;
+    -webkit-user-select: text;
+}
+
+.pickup-code-dialog-copy,
+.pickup-code-dialog-close {
+    border-radius: 10px;
+    border: 1px solid rgba(148, 163, 184, 0.35);
+    cursor: pointer;
+    font-size: 0.9rem;
+}
+
+.pickup-code-dialog-copy {
+    flex: 0 0 auto;
+    padding: 0 14px;
+    background: rgba(34, 197, 94, 0.2);
+    color: #86efac;
+    border-color: rgba(134, 239, 172, 0.45);
+}
+
+.pickup-code-dialog-close {
+    width: 100%;
+    padding: 10px 12px;
+    background: rgba(148, 163, 184, 0.12);
+    color: #e2e8f0;
+}
+
+.pickup-code-dialog-copy:hover,
+.pickup-code-dialog-close:hover {
+    filter: brightness(1.08);
 }
 
 .cart-drawer-btn--primary:disabled {

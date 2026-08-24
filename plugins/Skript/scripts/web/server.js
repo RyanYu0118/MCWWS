@@ -1578,11 +1578,13 @@ function flattenDeliveryLockersData(data) {
     };
 }
 
-function loadDeliveryLockersStore({ rewrite = true } = {}) {
+function loadDeliveryLockersStore({ rewrite = false } = {}) {
     const raw = loadYamlFile(DELIVERY_LOCKERS_PATH) || { version: 1 };
     const flat = flattenDeliveryLockersData(raw);
     const before = JSON.stringify(raw.lockers || {});
     const after = JSON.stringify(flat.lockers || {});
+    // 默认不回写：网页只读注册表。回写会与 Skript 争用同一 YAML，
+    // 常把刚写入的 unlocked=1 冲掉，表现为木桶已开盖却仍判定上锁。
     if (rewrite && before !== after) {
         try {
             saveYamlFile(DELIVERY_LOCKERS_PATH, flat);
@@ -1594,7 +1596,7 @@ function loadDeliveryLockersStore({ rewrite = true } = {}) {
 }
 
 function listDeliveryMajors() {
-    const data = loadDeliveryLockersStore({ rewrite: true });
+    const data = loadDeliveryLockersStore({ rewrite: false });
     const lockers = data && data.lockers && typeof data.lockers === 'object' ? data.lockers : {};
     const majors = new Set();
     for (const entry of Object.values(lockers)) {

@@ -23,7 +23,7 @@ alwaysApply: true
 
 ## BookNews 同步（仅 `y` / 提交并推送）
 
-用户约定：**`y` = 提交 + 推送**；若本次推送内容**与服务器玩法/配置相关**（玩家或管理员能感知），还必须把变更写进 BookNews，让玩家**下次进服**收到书本告知。
+用户约定：**`y` = 提交 + 推送**；若本次推送内容**与服务器玩法/配置相关**（玩家或管理员能感知），还必须把变更写进 BookNews。配置为 **`Open-Book-Onjoin.always: true`**，玩家**每次进服**都会打开告示书。
 
 ### 何时写入
 
@@ -43,22 +43,26 @@ alwaysApply: true
 ### 怎么写
 
 1. **改** `plugins/BookNews/config.yml` 的 `book:` 正文（中文、书本页格式；保留翻页占位符如 `%booknews_gotopage2%`）。
-2. **首页写清本期要点**（新功能 / 修复 / 注意），篇幅控制在玩家能翻完；细节可指向指南针或 Wiki。
-3. 将 `config.yml`（及必要的 BookNews 相关文件）**纳入同一次** `git add` / commit。
-4. 推送成功后，若服在运行且 BookNews 已加载，在控制台或请用户执行（有管理页时可点「重载服务器告示」）：
+2. **首页第一行必须写发布时间**，精确到秒，格式固定为：
+
+```text
+发布：yyyy年MM月dd日 HH:mm:ss
+```
+
+示例：`发布：2026年08月24日 23:12:54`。时间为**写入告示当下**的本地时间（北京时间），不要用模糊日期或省略秒。
+3. **首页紧接发布时间后写清本期要点**（新功能 / 修复 / 注意），篇幅控制在玩家能翻完；细节可指向指南针或 Wiki。
+4. 保持 `Open-Book-Onjoin.enable: true` 与 **`always: true`**（每次进服弹书）；不要改回 `always: false`，除非用户明确要求。
+5. 将 `config.yml`（及必要的 BookNews 相关文件）**纳入同一次** `git add` / commit。
+6. 推送成功后，若服在运行且 BookNews 已加载，执行（或请用户执行；管理页可点「重载服务器告示」）：
 
 ```text
 /booknews reload
 ```
 
-```text
-/booknews clear
-```
+`always: true` 时一般**不必**再 `/booknews clear`（每次进服都会弹）；仅当需要强制刷新已读状态或排查问题时才清。
 
-含义：`reload` 加载新正文；`clear` 清空已读，使玩家**下次进服**再弹书（配置保持 `Open-Book-Onjoin.always: false`，**不要**改成每次进服都弹）。
-
-5. 若当时无法执行控制台命令（服已停、无权限等），在回复里用 plaintext 指令块写明上述两条，提醒用户开服后执行。
-6. 提交说明正文可带一句「同步 BookNews 玩家告示」，但告示正文以 `config.yml` 为准，不要把整本书粘进 commit message。
+7. 若当时无法执行控制台命令（服已停、无权限等），在回复里用 plaintext 指令块写明 `/booknews reload`，提醒用户开服后执行。
+8. 提交说明正文可带一句「同步 BookNews 玩家告示」，但告示正文以 `config.yml` 为准，不要把整本书粘进 commit message。
 
 ### 与 Wiki 的关系
 
@@ -118,4 +122,4 @@ alwaysApply: true
 4. 用 HEREDOC / 临时 UTF-8 文件写入双语 commit message（噪声放末尾一条）
 5. `git commit` 后 `git status` 验证
 6. 用户选「提交并推送」或回复 `y` 时再 `git push`
-7. 推送后对运行中的服执行 `/booknews reload` 与 `/booknews clear`（或提示用户执行）
+7. 推送后对运行中的服执行 `/booknews reload`（或提示用户执行）；首页须含 `发布：yyyy年MM月dd日 HH:mm:ss`

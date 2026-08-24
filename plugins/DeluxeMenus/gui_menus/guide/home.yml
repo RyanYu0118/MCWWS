@@ -104,7 +104,7 @@ items:
     lore:
       - ''
       - '&f查看最新功能与修复资讯'
-      - '&7进服有新内容时也会自动弹出'
+      - '&7每次进服都会自动弹出'
       - '&7指令：/news'
     left_click_commands:
       - '[console] lp user %player_uuid% permission set booknews.news true'

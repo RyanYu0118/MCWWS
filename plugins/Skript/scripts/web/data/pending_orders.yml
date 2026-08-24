@@ -1181,8 +1181,37 @@ orders:
                 status: delivered
                 deliveredTo: A01/1
     '44':
+        id: f6f29757-6275-452d-91e8-15a1a0da6628
+        numericId: 44
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 481.68
+        balanceAfter: 1.6520584355E8
         economyChargedInGame: true
-        updatedAt: '2026-07-11 23:28:05'
+        createdAt: '2026-08-24T15:06:46.603Z'
+        updatedAt: '2026-08-24 23:06:48'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-08-24 23:06:47'
+        deliveryMajor: A01
+        deliveredTo: ；A01/1
+        pickupCode: 5RF585
+        lineCount: 1
+        lines:
+            '1':
+                itemId: dark_prismarine
+                shopId: building__p7
+                slot: I
+                quantity: 2
+                unitBuyPrice: 240.84
+                lineTotal: 481.68
+                productAmount: 1
+                material: dark_prismarine
+                shopTitle: 建筑方块 (7/10)
+                status: delivered
+                deliveredTo: A01/1
     '45':
         economyChargedInGame: true
         updatedAt: '2026-07-13 23:23:15'
@@ -1214,4 +1243,4 @@ orders:
         economyChargedInGame: true
         updatedAt: '2026-08-07 15:06:18'
 
-next_id: 44
+next_id: 45

@@ -489,8 +489,8 @@ items:
       - '&a左键 &7执行 &a/booknews reload'
       - '&e右键 &7执行 &e/booknews clear'
       - '&7改完 config 后左键重载'
-      - '&7发布新内容后右键清已读'
-      - '&7（下次进服会再弹书）'
+      - '&7每次进服都会弹书（always）'
+      - '&7右键清已读仅作排查用'
       - '&7重载后会自动恢复本界面'
     left_click_commands:
       - '[console] lp user %player_name% permission settemp booknews.admin true 30s'

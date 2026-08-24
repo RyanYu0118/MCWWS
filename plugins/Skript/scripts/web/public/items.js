@@ -870,7 +870,11 @@ async function loadPendingOrdersUi() {
             return;
         }
         const data = await res.json();
-        const active = (data.orders || []).filter((o) => o.status === 'pending' || o.status === 'delivering');
+        const active = (data.orders || []).filter((o) => {
+            if (o.status === 'pending' || o.status === 'delivering') return true;
+            // 已放入柜仍待取件：保留取件码展示以便复制
+            return o.status === 'delivered' && Boolean(o.pickupCode);
+        }).slice(0, 5);
         if (!active.length) {
             box.hidden = true;
             box.innerHTML = '';
@@ -886,19 +890,73 @@ async function loadPendingOrdersUi() {
                             <span class="cart-pending-status">${escapeHtml(formatOrderStatus(order.status))}</span>
                             <span class="cart-pending-total">${escapeHtml(order.totalFormatted || '')}</span>
                             ${order.deliveryMajor ? `<span class="cart-pending-addr">${escapeHtml(String(order.deliveryMajor))}</span>` : ''}
-                            ${order.pickupCode ? `<span class="cart-pending-code">码 ${escapeHtml(String(order.pickupCode))}</span>` : ''}
+                            ${order.pickupCode ? `
+                                <span class="cart-pending-code-wrap">
+                                    <span class="cart-pending-code" title="可拖选复制">${escapeHtml(String(order.pickupCode))}</span>
+                                    <button type="button" class="cart-pending-copy-btn" data-pickup-code="${escapeHtml(String(order.pickupCode))}">复制</button>
+                                </span>
+                            ` : ''}
                         </li>
                     `).join('')}
             </ul>
         `;
+        box.querySelectorAll('.cart-pending-copy-btn').forEach((btn) => {
+            btn.addEventListener('click', () => {
+                void copyPickupCode(btn.getAttribute('data-pickup-code') || '', btn);
+            });
+        });
     } catch {
         box.hidden = true;
     }
 }
 
+async function copyPickupCode(code, button) {
+    const text = String(code || '').trim();
+    if (!text) {
+        showToast('没有可复制的取件码。', false);
+        return;
+    }
+    let ok = false;
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(text);
+            ok = true;
+        }
+    } catch {
+        ok = false;
+    }
+    if (!ok) {
+        try {
+            const ta = document.createElement('textarea');
+            ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.left = '-9999px';
+            document.body.appendChild(ta);
+            ta.select();
+            ok = document.execCommand('copy');
+            ta.remove();
+        } catch {
+            ok = false;
+        }
+    }
+    if (ok) {
+        showToast(`取件码已复制：${text}`, true);
+        if (button) {
+            const prev = button.textContent;
+            button.textContent = '已复制';
+            setTimeout(() => {
+                button.textContent = prev || '复制';
+            }, 1500);
+        }
+    } else {
+        showToast(`请手动选中复制：${text}`, false);
+    }
+}
+
 function formatOrderStatus(status) {
     if (status === 'delivering') return '发放中';
-    if (status === 'delivered') return '已完成';
+    if (status === 'delivered') return '待取件';
     if (status === 'failed') return '失败';
     return '待领取';
 }
@@ -951,11 +1009,15 @@ async function submitCartCheckout() {
             void auth.refreshEconomy?.(true);
         }
             const msg = data.pickupCode
-                ? `订单 #${data.orderId} 已提交。取件码：${data.pickupCode}（请保存；到外卖分配器输入后，对应木桶柜会开盖）`
+                ? `订单 #${data.orderId} 已提交。取件码：${data.pickupCode}（可复制；到外卖分配器输入后，对应木桶柜会开盖）`
                 : (data.message || `订单 #${data.orderId} 已提交，物品将发往外卖柜。`);
             showToast(msg, true);
             if (data.pickupCode) {
-                window.alert(`取件码：${data.pickupCode}\n收货地址：${data.deliveryMajor || ''}\n请用下单游戏账号到外卖分配器输入取件码；对应小编号的木桶柜会开盖，取空前可反复打开。`);
+                showPickupCodeDialog({
+                    orderId: data.orderId,
+                    pickupCode: data.pickupCode,
+                    deliveryMajor: data.deliveryMajor || ''
+                });
             }
         await loadPendingOrdersUi();
         closeCartDrawer();
@@ -1901,6 +1963,45 @@ function showToast(message, success = true) {
         toast.style.opacity = '0';
         setTimeout(() => toast.remove(), 250);
     }, 3200);
+}
+
+function showPickupCodeDialog({ orderId, pickupCode, deliveryMajor }) {
+    const existing = document.getElementById('pickupCodeDialog');
+    if (existing) existing.remove();
+    const code = String(pickupCode || '').trim();
+    const overlay = document.createElement('div');
+    overlay.id = 'pickupCodeDialog';
+    overlay.className = 'pickup-code-dialog-overlay';
+    overlay.innerHTML = `
+        <div class="pickup-code-dialog" role="dialog" aria-modal="true" aria-labelledby="pickupCodeDialogTitle">
+            <h3 id="pickupCodeDialogTitle">订单 #${escapeHtml(String(orderId))} 已提交</h3>
+            <p class="pickup-code-dialog-hint">请保存取件码，用下单游戏账号到外卖分配器输入。对应木桶柜开盖后可反复打开，直到取空。</p>
+            ${deliveryMajor ? `<p class="pickup-code-dialog-addr">收货地址：<strong>${escapeHtml(String(deliveryMajor))}</strong></p>` : ''}
+            <label class="pickup-code-dialog-label" for="pickupCodeDialogInput">取件码</label>
+            <div class="pickup-code-dialog-row">
+                <input id="pickupCodeDialogInput" class="pickup-code-dialog-input" type="text" readonly value="${escapeHtml(code)}" />
+                <button type="button" class="pickup-code-dialog-copy" id="pickupCodeDialogCopy">复制</button>
+            </div>
+            <button type="button" class="pickup-code-dialog-close" id="pickupCodeDialogClose">知道了</button>
+        </div>
+    `;
+    document.body.appendChild(overlay);
+    const input = overlay.querySelector('#pickupCodeDialogInput');
+    const copyBtn = overlay.querySelector('#pickupCodeDialogCopy');
+    const closeBtn = overlay.querySelector('#pickupCodeDialogClose');
+    const close = () => overlay.remove();
+    copyBtn?.addEventListener('click', () => {
+        void copyPickupCode(code, copyBtn);
+        input?.select();
+    });
+    closeBtn?.addEventListener('click', close);
+    overlay.addEventListener('click', (ev) => {
+        if (ev.target === overlay) close();
+    });
+    requestAnimationFrame(() => {
+        input?.focus();
+        input?.select();
+    });
 }
 
 // 搜索过滤与排序逻辑（新增逆序处理和拼音搜索支持）

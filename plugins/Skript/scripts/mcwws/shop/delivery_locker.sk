@@ -595,8 +595,9 @@ function mcwwsPurgeLockerStoragePlaceholders(loc: location):
 function mcwwsCabinetStorageEmpty(loc: location) :: boolean:
     mcwwsPurgeLockerStoragePlaceholders({_loc})
     set {_menu} to mcwwsGetBlockMenuAt({_loc})
+    # 菜单未加载时不能当空柜释放，否则会误清占用并把 unlocked 冲掉
     if {_menu} is not set:
-        return true
+        return false
     loop 45 times:
         set {_s} to loop-number - 1
         set {_it} to {_menu}.getItemInSlot({_s})
@@ -628,16 +629,44 @@ function mcwwsCabinetOccupied(key: text) :: boolean:
         return true
     return false
 
+function mcwwsOrderOwnedByPlayer(oid: text, p: player) :: boolean:
+    if {_oid} is "":
+        return false
+    if {_p} is not set:
+        return false
+    load yaml "{@orders_yaml}" as "weborders_own"
+    set {_ou} to yaml value "orders.%{_oid}%.playerUuid" from "weborders_own"
+    unload yaml "weborders_own"
+    if {_ou} is not set:
+        return false
+    if mcwwsLockerUuidKey("%{_ou}%") is mcwwsLockerUuidKey("%uuid of {_p}%"):
+        return true
+    return false
+
 function mcwwsCabinetUnlockedFor(loc: location, p: player) :: boolean:
+    if {_p} is not set:
+        return false
+    set {_pu} to mcwwsLockerUuidKey("%uuid of {_p}%")
+    set {_sfUn} to StorageCacheUtils.getData({_loc}, "mcwws_unlocked")
+    set {_sfWho} to StorageCacheUtils.getData({_loc}, "mcwws_unlock_uuid")
+    if "%{_sfUn}%" is "1":
+        if mcwwsLockerUuidKey("%{_sfWho}%") is {_pu}:
+            return true
     set {_key} to mcwwsLockerLocKey({_loc})
     mcwwsLoadLockerYaml()
     set {_un} to yaml value "lockers.%{_key}%.unlocked" from "dlockers"
     set {_who} to yaml value "lockers.%{_key}%.unlockUuid" from "dlockers"
+    set {_oid} to yaml value "lockers.%{_key}%.orderId" from "dlockers"
+    set {_occ} to mcwwsCabinetOccupied({_key})
     mcwwsUnloadLockerYaml()
-    if "%{_un}%" is not "1":
-        return false
-    if mcwwsLockerUuidKey("%{_who}%") is mcwwsLockerUuidKey("%uuid of {_p}%"):
-        return true
+    if "%{_un}%" is "1":
+        if mcwwsLockerUuidKey("%{_who}%") is {_pu}:
+            return true
+    # 网页曾误回写 YAML 冲掉 unlocked，但柜仍占用且订单属于该玩家：允许打开并回写解锁状态
+    if {_occ} is true:
+        if mcwwsOrderOwnedByPlayer("%{_oid}%", {_p}) is true:
+            mcwwsUnlockCabinet({_loc}, {_p})
+            return true
     return false
 
 function mcwwsReleaseCabinet(loc: location):
@@ -650,6 +679,8 @@ function mcwwsReleaseCabinet(loc: location):
     set yaml value "lockers.%{_key}%.pickupCode" from "dlockers" to ""
     save yaml "dlockers"
     mcwwsUnloadLockerYaml()
+    StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "0")
+    StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "")
     mcwwsSetBarrelLid({_loc}, false)
 
 function mcwwsMaybeReleaseEmptyCabinet(loc: location):
@@ -675,15 +706,21 @@ function mcwwsOccupyCabinet(loc: location, oid: text, code: text):
     set yaml value "lockers.%{_key}%.pickupCode" from "dlockers" to {_code}
     save yaml "dlockers"
     mcwwsUnloadLockerYaml()
+    StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "0")
+    StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "")
     mcwwsSetBarrelLid({_loc}, false)
 
 function mcwwsUnlockCabinet(loc: location, p: player):
     set {_key} to mcwwsLockerLocKey({_loc})
+    set {_uuid} to "%uuid of {_p}%"
     mcwwsLoadLockerYaml()
     set yaml value "lockers.%{_key}%.unlocked" from "dlockers" to "1"
-    set yaml value "lockers.%{_key}%.unlockUuid" from "dlockers" to "%uuid of {_p}%"
+    set yaml value "lockers.%{_key}%.unlockUuid" from "dlockers" to {_uuid}
     save yaml "dlockers"
     mcwwsUnloadLockerYaml()
+    # 方块数据作主判据，避免网页误回写 YAML 后仍判定上锁
+    StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "1")
+    StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", {_uuid})
     mcwwsSetBarrelLid({_loc}, true)
 
 function mcwwsFindCabinetLocForOrder(oid: text) :: location:
