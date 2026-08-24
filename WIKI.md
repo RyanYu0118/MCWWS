@@ -87,10 +87,10 @@
 
 传送至玩家：点选头颅后约 **2 tick** 弹出列表，弹出前勿重复打开指南。由**发起者**付费；选人前金额未定，零钱不足则取消。
 
-打开指南：右键服务器指南针，或
+打开指南：右键服务器指南针，或在聊天栏只输入斜杠并发送（无子命令）：
 
 ```text
-/compass
+/
 ```
 
 ---
@@ -543,7 +543,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 ### 3.3 公共指南与协作
 
 右键服务器指南针进入**公共指南**：贸易、传送、功能购买、服务管理等入口集中于此。  
-首页有**服务器告示**（书本）：可随时查看最新功能与修复资讯；有新内容时进服也会自动弹出一次。也可直接：
+首页有**服务器告示**（书本）：首页写明发布时间（精确到秒）；**每次进服**都会自动打开。也可随时：
 
 ```text
 /news
@@ -568,8 +568,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 ## 附录 A：玩家常用命令
 
+打开指南针公共指南（无子命令，仅斜杠）：
+
 ```text
-/compass
+/
 ```
 
 ```text
@@ -690,14 +692,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /battlepass reload
 ```
 
-服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载；发布新内容后清已读，让玩家下次进服再弹书：
+服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载即可（`always: true`，玩家每次进服都会弹书）。首页第一行须为 `发布：yyyy年MM月dd日 HH:mm:ss`。
 
 ```text
 /booknews reload
-```
-
-```text
-/booknews clear
 ```
 
 授予实体小方块权限：
@@ -879,7 +877,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
 | DeluxeMenus | 1.14.1 DEV | **指南针公共指南** |
-| BookNews | 6.26 | **服务器告示书本**；进服有新内容弹出；`/news` |
+| BookNews | 6.26 | **服务器告示书本**；每次进服弹出；首页含发布时间；`/news` |
 | BlueMap | 5.23 | 三维网页地图 + mcwws-gis.js |
 | DecentHolograms | 2.10.1 | 全息文字 |
 | TitleManager | — | 标题/Tab 动画 |

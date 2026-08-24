@@ -37,9 +37,10 @@ crash-reports/
 *.jar
 bluemap.zip
 
-# BookNews 26.2 补丁：只跟踪源码与 build.ps1
+# BookNews 26.2 补丁：只跟踪源码、plugin.yml 与 build.ps1
 tools/booknews-patch/extracted/
 tools/booknews-patch/build/
+tools/booknews-patch/jarwork/
 
 # Wiki 与 Halo 发布工具已迁至 RYAN-STUDIO（https://github.com/RyanYu0118/RYAN-STUDIO）
 wiki/

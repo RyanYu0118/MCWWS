@@ -1,0 +1,29 @@
+name: BookNews
+main: com.gmail.legamemc.booknews.Main
+author: LegameMc
+version: '6.26'
+api-version: 1.13
+softdepend: [PlaceholderAPI]
+commands:
+    booknews:
+        description: Admin Command
+        usage: /<command> [reload|news]
+    news:
+        description: Check News
+        usage: /<command>
+permissions:
+    booknews.news:
+        description: Open the server news book with /news
+        default: true
+    booknews.skip:
+        description: Skip automatic book open on join
+        default: false
+    booknews.admin:
+        description: BookNews admin commands (reload/clear)
+        default: op
+    booknews.admin.reload:
+        description: Reload BookNews config
+        default: op
+    booknews.admin.clear:
+        description: Clear BookNews read list
+        default: op
