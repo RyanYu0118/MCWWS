@@ -32,6 +32,17 @@ try {
     Pop-Location
 }
 
+$PluginYml = Join-Path $Here "plugin.yml"
+if (Test-Path $PluginYml) {
+    Push-Location $Here
+    try {
+        & $JarExe uf $PatchedJar plugin.yml
+        if ($LASTEXITCODE -ne 0) { throw "jar uf plugin.yml failed" }
+    } finally {
+        Pop-Location
+    }
+}
+
 $Live = Join-Path $Root "plugins/BookNews.jar"
 try {
     Copy-Item $PatchedJar $Live -Force
