@@ -64,9 +64,9 @@ MCWWS_NFC_MINOR:
     name: "&6小编号 NFC 修改器"
     material: OMINOUS_TRIAL_KEY
     lore:
-    - "&7右键：在聊天写入小编号"
-    - "&7潜行+右键外卖柜：写入小编号"
-    - "&8当前：&f未写入"
+    - "&7右键：设定下次写入的起始小编号"
+    - "&7潜行+右键外卖柜：写入后自动 +1"
+    - "&8下次：&f1"
   recipe:
     4:
       material: NAME_TAG

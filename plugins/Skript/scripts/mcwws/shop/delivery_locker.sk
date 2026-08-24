@@ -154,6 +154,39 @@ function mcwwsHeldIsNfc(p: player) :: boolean:
 function mcwwsReadNfcCode(stack: ItemStack) :: text:
     return mcwwsReadPickupPdc({_stack}, mcwwsNfcCodeKey())
 
+function mcwwsNfcPadMinor(n: number, width: number) :: text:
+    set {_s} to "%floor({_n})%"
+    if {_width} < 1:
+        return {_s}
+    loop 8 times:
+        if length of {_s} >= {_width}:
+            exit loop
+        set {_s} to "0%{_s}%"
+    return {_s}
+
+function mcwwsNfcCurrentMinor(stack: ItemStack) :: text:
+    set {_raw} to mcwwsReadNfcCode({_stack})
+    if {_raw} is "":
+        return "1"
+    set {_n} to {_raw} parsed as number
+    if {_n} is not set:
+        return "1"
+    if {_n} < 1:
+        return "1"
+    return mcwwsNfcPadMinor({_n}, length of {_raw})
+
+function mcwwsNfcNextMinor(code: text) :: text:
+    set {_raw} to "%{_code}%"
+    if {_raw} is "":
+        return "2"
+    set {_n} to {_raw} parsed as number
+    if {_n} is not set:
+        return "2"
+    set {_next} to floor({_n}) + 1
+    if {_next} < 1:
+        set {_next} to 1
+    return mcwwsNfcPadMinor({_next}, length of {_raw})
+
 function mcwwsWriteNfcToHeld(p: player, code: text, kind: text):
     set {_stack} to tool of {_p}
     if {_stack} is not set:
@@ -168,7 +201,7 @@ function mcwwsWriteNfcToHeld(p: player, code: text, kind: text):
     if {_kind} is "major":
         set lore of {_stack} to "§7右键：在聊天写入大编号" and "§7潜行+右键分配器/外卖柜：写入大编号" and "§8当前：§e%{_code}%"
     else:
-        set lore of {_stack} to "§7右键：在聊天写入小编号" and "§7潜行+右键外卖柜：写入小编号" and "§8当前：§e%{_code}%"
+        set lore of {_stack} to "§7右键：设定下次写入的起始小编号" and "§7潜行+右键外卖柜：写入后自动 +1" and "§8下次：§e%{_code}%"
     set tool of {_p} to {_stack}
 
 function mcwwsStartNfcWrite(p: player, kind: text):
@@ -178,7 +211,7 @@ function mcwwsStartNfcWrite(p: player, kind: text):
         send "§6[NFC] §f请在聊天输入要写入的 §e大编号§f（cancel 取消）。" to {_p}
     else:
         set {mcwws.locker.wait::%uuid of {_p}%} to "nfc_minor"
-        send "§6[NFC] §f请在聊天输入要写入的 §e小编号§f（cancel 取消）。" to {_p}
+        send "§6[NFC] §f请输入下次写入的起始 §e小编号§f（数字，默认 1，用一次 +1；cancel 取消）。" to {_p}
 
 function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
     set {_low} to "%{_raw}%"
@@ -195,6 +228,15 @@ function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
     if {_code} is "":
         send "§c[NFC] §f编号无效（1–24 字）。请重新输入。" to {_p}
         stop
+    if {_kind} is "minor":
+        set {_n} to {_code} parsed as number
+        if {_n} is not set:
+            send "§c[NFC] §f小编号须为数字（如 1 或 01）。" to {_p}
+            stop
+        if {_n} < 1:
+            send "§c[NFC] §f小编号须 ≥ 1。" to {_p}
+            stop
+        set {_code} to mcwwsNfcPadMinor({_n}, length of {_code})
     if mcwwsHeldIsNfc({_p}) is false:
         mcwwsClearLockerPrompt({_p})
         send "§c[NFC] §f请手持对应 NFC 修改器再输入。" to {_p}
@@ -204,15 +246,15 @@ function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
     if {_kind} is "major":
         send "§a[NFC] §f大编号 §e%{_code}% §f已写入修改器。潜行+右键分配器或外卖柜即可写入。" to {_p}
     else:
-        send "§a[NFC] §f小编号 §e%{_code}% §f已写入修改器。潜行+右键外卖柜即可写入。" to {_p}
+        send "§a[NFC] §f下次将写入小编号 §e%{_code}%§f，每用一次自动 +1。" to {_p}
 
 function mcwwsApplyNfcToTarget(p: player, loc: location):
     set {_id} to mcwwsHeldSfId({_p})
-    set {_code} to mcwwsReadNfcCode(tool of {_p})
-    if {_code} is "":
-        send "§c[NFC] §f修改器尚未写入编号。请先普通右键在聊天输入。" to {_p}
-        stop
     if mcwwsIsNfcMajorId({_id}) is true:
+        set {_code} to mcwwsReadNfcCode(tool of {_p})
+        if {_code} is "":
+            send "§c[NFC] §f修改器尚未写入编号。请先普通右键在聊天输入。" to {_p}
+            stop
         if mcwwsIsDispatcher({_loc}) is true:
             if mcwwsSaveDispatcherRegistration({_loc}, {_code}, {_p}) is false:
                 send "§c[NFC] §f写入分配器失败，请重试。" to {_p}
@@ -255,13 +297,16 @@ function mcwwsApplyNfcToTarget(p: player, loc: location):
         if {_major} is "":
             send "§c[NFC] §f请先设置大编号，再写小编号。" to {_p}
             stop
+        set {_code} to mcwwsNfcCurrentMinor(tool of {_p})
         if mcwwsCabinetPairTaken({_major}, {_code}, {_key}) is true:
             send "§c[NFC] §f大编号 §e%{_major}% §f+ 小编号 §e%{_code}% §f已被占用。" to {_p}
             stop
         if mcwwsSaveCabinetRegistration({_loc}, {_major}, {_code}, {_p}) is false:
             send "§c[NFC] §f写入外卖柜失败，请重试。" to {_p}
             stop
-        send "§a[NFC] §f已将小编号 §e%{_code}% §f写入外卖柜（大编号 §e%{_major}%§f）。" to {_p}
+        set {_next} to mcwwsNfcNextMinor({_code})
+        mcwwsWriteNfcToHeld({_p}, {_next}, "minor")
+        send "§a[NFC] §f已将小编号 §e%{_code}% §f写入外卖柜（大编号 §e%{_major}%§f）。下次：§e%{_next}%§f。" to {_p}
         stop
 
 function mcwwsInitDeliveryLockers():
