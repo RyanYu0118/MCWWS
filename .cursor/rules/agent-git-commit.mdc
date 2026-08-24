@@ -1,5 +1,5 @@
 ---
-description: Agent 提交 Git 时以开发改动为主，运行时噪声文件一并推送但在提交说明中次要带过
+description: Agent 提交 Git 时以开发改动为主，运行时噪声一并推送；y 时若涉及服内玩法则同步写入 BookNews
 alwaysApply: true
 ---
 
@@ -11,15 +11,59 @@ alwaysApply: true
 
 - **仅当用户明确同意**才执行 git commit / push；不要静默自动 push。
 - 完成一轮**代码/配置开发**后，必须用 **AskQuestion** 弹出可点击选项（不要只让用户打字）：
-  - **提交并推送 (y)**（Recommended）→ `git commit` + `git push`
-  - **只提交 (c)** → 仅 `git commit`
+  - **提交并推送 (y)**（Recommended）→ `git commit` + `git push`，并按下方「BookNews 同步」处理
+  - **只提交 (c)** → 仅 `git commit`（**不**改 BookNews，除非用户另说）
   - **暂不提交 (n)** → 跳过
 - 用户若已回复，以下**单行简写视为等同点击**（不区分大小写）：
-  - `y` / `yes` / `提交并推送` → 提交并推送
+  - `y` / `yes` / `提交并推送` → **等同「提交并推送 (y)」**（含 BookNews 同步）
   - `c` / `commit` / `只提交` → 只提交
   - `n` / `no` / `跳过` → 不提交
 
 **说明：** Cursor 聊天无法提供常驻自定义按钮；AskQuestion 选项卡即「可点击按钮」。用户随时发 `y` 即可触发提交并推送，无需打完整句子。
+
+## BookNews 同步（仅 `y` / 提交并推送）
+
+用户约定：**`y` = 提交 + 推送**；若本次推送内容**与服务器玩法/配置相关**（玩家或管理员能感知），还必须把变更写进 BookNews，让玩家**下次进服**收到书本告知。
+
+### 何时写入
+
+**要写**（任一命中即可）：
+
+- 自研插件、Skript、DeluxeMenus、商店/经济/领地/传送/指南针等服内行为变更
+- 玩家可见的命令、权限默认值、扣费、限额、交互步骤
+- 已同步进 `WIKI.md` 的玩家向说明
+- 新功能上线、bug 修复、重要运维公告（白名单、活动等）
+
+**不要写**：
+
+- 纯运行时噪声（物价快照、玩家数据、日志、区块、DB）
+- 仅 Cursor 规则 / 构建脚本 / 与服内体验无关的仓库杂项
+- 用户明确说「不要发告示」时
+
+### 怎么写
+
+1. **改** `plugins/BookNews/config.yml` 的 `book:` 正文（中文、书本页格式；保留翻页占位符如 `%booknews_gotopage2%`）。
+2. **首页写清本期要点**（新功能 / 修复 / 注意），篇幅控制在玩家能翻完；细节可指向指南针或 Wiki。
+3. 将 `config.yml`（及必要的 BookNews 相关文件）**纳入同一次** `git add` / commit。
+4. 推送成功后，若服在运行且 BookNews 已加载，在控制台或请用户执行（有管理页时可点「重载服务器告示」）：
+
+```text
+/booknews reload
+```
+
+```text
+/booknews clear
+```
+
+含义：`reload` 加载新正文；`clear` 清空已读，使玩家**下次进服**再弹书（配置保持 `Open-Book-Onjoin.always: false`，**不要**改成每次进服都弹）。
+
+5. 若当时无法执行控制台命令（服已停、无权限等），在回复里用 plaintext 指令块写明上述两条，提醒用户开服后执行。
+6. 提交说明正文可带一句「同步 BookNews 玩家告示」，但告示正文以 `config.yml` 为准，不要把整本书粘进 commit message。
+
+### 与 Wiki 的关系
+
+- 玩家向规则仍优先改 `WIKI.md`（见 `wiki-sync.mdc`）。
+- BookNews 是**短讯入口**：写「发生了什么 / 怎么用一句话」，详细步骤仍以 Wiki / 指南针为准。
 
 ## 暂存范围
 
@@ -32,6 +76,7 @@ alwaysApply: true
 - `tools/**` 源码与 build 脚本
 - `plugins/Skript/scripts/**`
 - 自研插件源码与 `plugin.yml`（`tools/mcwws-*`、`MCWWS_*`）
+- `plugins/BookNews/config.yml`（当本轮按「BookNews 同步」写入时）
 - 用户点名要纳入的配置
 
 ### 2. 运行时噪声（一并推送，提交说明次要带过）
@@ -68,7 +113,9 @@ alwaysApply: true
 ## 推荐流程
 
 1. `git status` / `git diff -- <核心路径>` 核对开发改动
-2. `git add` 核心路径，再 `git add -A` 纳入噪声与未跟踪文件；`git status` 确认工作区干净
-3. 用 HEREDOC 写入双语 commit message（噪声放末尾一条）
-4. `git commit` 后 `git status` 验证
-5. 用户选「提交并推送」或回复 `y` 时再 `git push`
+2. 若走 **`y`** 且改动与服内玩法相关：先更新 `plugins/BookNews/config.yml` 告示正文
+3. `git add` 核心路径（含 BookNews），再 `git add -A` 纳入噪声与未跟踪文件；`git status` 确认工作区干净
+4. 用 HEREDOC / 临时 UTF-8 文件写入双语 commit message（噪声放末尾一条）
+5. `git commit` 后 `git status` 验证
+6. 用户选「提交并推送」或回复 `y` 时再 `git push`
+7. 推送后对运行中的服执行 `/booknews reload` 与 `/booknews clear`（或提示用户执行）

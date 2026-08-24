@@ -108,5 +108,90 @@ items:
   id: minecraft:pearlescent_froglight
   count: 15
   schema_version: 1
+- DataVersion: 4903
+  id: minecraft:white_banner
+  count: 1
+  components:
+    minecraft:banner_patterns: '[{color:"cyan",pattern:"minecraft:rhombus"},{color:"light_gray",pattern:"minecraft:stripe_bottom"},{color:"gray",pattern:"minecraft:stripe_center"},{color:"light_gray",pattern:"minecraft:border"},{color:"black",pattern:"minecraft:stripe_middle"},{color:"light_gray",pattern:"minecraft:half_horizontal"},{color:"light_gray",pattern:"minecraft:circle"},{color:"black",pattern:"minecraft:border"}]'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
+    minecraft:rarity: '"uncommon"'
+    minecraft:item_name: '{translate:"block.minecraft.ominous_banner"}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;2110903505,-1856425464,-2073874132,-1728253291],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMmM1MGUzZTYxNTBkMDdjY2EwOWVkNzA3YjI0NDA0M2M5NDM3ZGJkMWJlOThlZTA4YWUwMzQwY2NiNmQ1OGM4OSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"死灰无法复燃",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"碳化的心脏",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CREEPER_COAL_HEART"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pumpkin_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"芝麻籽",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203086.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_SESAME_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:crossbow
+  count: 1
+  components:
+    minecraft:damage: '409'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-752970439,1500527458,-1853160468,1450518680],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQyMGM5YzQzZTA5NTg4MGRjZDJlMjgxYzgxZjQ3YjE2M2I0NzhmNThhNTg0YmI2MWY5M2U2ZTEwYTE1NWYzMSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"<未知>",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Meadows雌蜂",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"MEADOWS_PRINCESS","slimybees:bee_type":"species:meadows;species:meadows|productivity:normal;productivity:normal|fertility:normal;fertility:normal|lifespan:long;lifespan:long|range:very_long;range:very_long|plant:none;plant:none|effect:none;effect:none"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 2
+  components:
+    minecraft:profile: '{id:[I;-752970439,1500527458,-1853160468,1450518680],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNDQyMGM5YzQzZTA5NTg4MGRjZDJlMjgxYzgxZjQ3YjE2M2I0NzhmNThhNTg0YmI2MWY5M2U2ZTEwYTE1NWYzMSJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"<未知>",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_green",italic:0b,obfuscated:0b,strikethrough:0b,text:"Meadows雄蜂",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"MEADOWS_DRONE","slimybees:bee_type":"species:meadows;species:meadows|productivity:normal;productivity:normal|fertility:normal;fertility:normal|lifespan:long;lifespan:long|range:very_long;range:very_long|plant:none;plant:none|effect:none;effect:none"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:honeycomb
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"蜂蜜蜂蜡",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HONEY_COMB"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;513989614,-308789711,-1654726514,-208727265],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViOTJhMTNmMDFiYWVjZTU2NjU0ZTgxNzgzM2Y5ODI5YmMwMjVhZDczMzYwOWMwYmRkMGQzYTM1OWM5ZDk0MyJ9fX0="}]}'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种能填充周围世界的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#A241BF",italic:0b,obfuscated:0b,strikethrough:0b,text:"农耕工艺
+      - 原始植物: 大地",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PLANT_EARTH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1015916662,-463063467,-1197367117,767056656],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDIwOWQzZDBkOGRhYTQ2MjhiOWIzZTEwYTIzNWUyMjA4OWQ3NmJmZmUxNTZkZGM1ODUyZTVmZGMxMmEzZDEyYyJ9fX0="}]}'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"比盐辣一点。",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"产品",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#CCD123",italic:0b,obfuscated:0b,strikethrough:0b,text:"黑胡椒",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2300096.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PEPPER"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:dark_oak_button
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"牛油果核",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203078.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_AVOCADO_PIT"}}'
+  schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
