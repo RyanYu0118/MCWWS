@@ -6,12 +6,15 @@ import:
     org.bukkit.inventory.ItemStack
     org.bukkit.persistence.PersistentDataType
     com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
+    io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem
 
 options:
     locker_yaml: plugins/Skript/scripts/web/data/delivery_lockers.yml
     orders_yaml: plugins/Skript/scripts/web/data/pending_orders.yml
     dispatcher_id: MCWWS_DELIVERY_LOCKER
     cabinet_id: MCWWS_DELIVERY_CABINET
+    nfc_major_id: MCWWS_NFC_MAJOR
+    nfc_minor_id: MCWWS_NFC_MINOR
 
 function mcwwsLoadLockerYaml():
     load yaml "{@locker_yaml}" as "dlockers"
@@ -106,6 +109,160 @@ function mcwwsStripLockerGuiFromPlayer(p: player):
         set {_it} to {_inv}.getItem({_s})
         if mcwwsIsLockerGuiItem({_it}) is true:
             {_inv}.setItem({_s}, null)
+
+function mcwwsNfcCodeKey() :: object:
+    return new NamespacedKey("mcwws", "nfc_code")
+
+function mcwwsHeldSfId(p: player) :: text:
+    if {_p} is not set:
+        return ""
+    set {_tool} to tool of {_p}
+    if {_tool} is not set:
+        return ""
+    if {_tool} is air:
+        return ""
+    set {_sf} to SlimefunItem.getByItem({_tool})
+    if {_sf} is not set:
+        return ""
+    set {_id} to {_sf}.getId()
+    if {_id} is not set:
+        return ""
+    set {_key} to {_id}.getKey()
+    if {_key} is set:
+        if "%{_key}%" is not "":
+            return "%{_key}%"
+    return "%{_id}%"
+
+function mcwwsIsNfcMajorId(id: text) :: boolean:
+    if {_id} is "{@nfc_major_id}":
+        return true
+    return false
+
+function mcwwsIsNfcMinorId(id: text) :: boolean:
+    if {_id} is "{@nfc_minor_id}":
+        return true
+    return false
+
+function mcwwsHeldIsNfc(p: player) :: boolean:
+    set {_id} to mcwwsHeldSfId({_p})
+    if mcwwsIsNfcMajorId({_id}) is true:
+        return true
+    if mcwwsIsNfcMinorId({_id}) is true:
+        return true
+    return false
+
+function mcwwsReadNfcCode(stack: ItemStack) :: text:
+    return mcwwsReadPickupPdc({_stack}, mcwwsNfcCodeKey())
+
+function mcwwsWriteNfcToHeld(p: player, code: text, kind: text):
+    set {_stack} to tool of {_p}
+    if {_stack} is not set:
+        stop
+    if {_stack} is air:
+        stop
+    set {_meta} to {_stack}.getItemMeta()
+    if {_meta} is not set:
+        stop
+    {_meta}.getPersistentDataContainer().set(mcwwsNfcCodeKey(), PersistentDataType.STRING, {_code})
+    {_stack}.setItemMeta({_meta})
+    if {_kind} is "major":
+        set lore of {_stack} to "§7右键：在聊天写入大编号" and "§7潜行+右键分配器/外卖柜：写入大编号" and "§8当前：§e%{_code}%"
+    else:
+        set lore of {_stack} to "§7右键：在聊天写入小编号" and "§7潜行+右键外卖柜：写入小编号" and "§8当前：§e%{_code}%"
+    set tool of {_p} to {_stack}
+
+function mcwwsStartNfcWrite(p: player, kind: text):
+    mcwwsClearLockerPrompt({_p})
+    if {_kind} is "major":
+        set {mcwws.locker.wait::%uuid of {_p}%} to "nfc_major"
+        send "§6[NFC] §f请在聊天输入要写入的 §e大编号§f（cancel 取消）。" to {_p}
+    else:
+        set {mcwws.locker.wait::%uuid of {_p}%} to "nfc_minor"
+        send "§6[NFC] §f请在聊天输入要写入的 §e小编号§f（cancel 取消）。" to {_p}
+
+function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
+    set {_low} to "%{_raw}%"
+    set {_low} to {_low} in lower case
+    if {_low} is "cancel":
+        mcwwsClearLockerPrompt({_p})
+        send "§e[NFC] §f已取消写入。" to {_p}
+        stop
+    if {_raw} is "取消":
+        mcwwsClearLockerPrompt({_p})
+        send "§e[NFC] §f已取消写入。" to {_p}
+        stop
+    set {_code} to mcwwsNormalizeLockerCode({_raw})
+    if {_code} is "":
+        send "§c[NFC] §f编号无效（1–24 字）。请重新输入。" to {_p}
+        stop
+    if mcwwsHeldIsNfc({_p}) is false:
+        mcwwsClearLockerPrompt({_p})
+        send "§c[NFC] §f请手持对应 NFC 修改器再输入。" to {_p}
+        stop
+    mcwwsWriteNfcToHeld({_p}, {_code}, {_kind})
+    mcwwsClearLockerPrompt({_p})
+    if {_kind} is "major":
+        send "§a[NFC] §f大编号 §e%{_code}% §f已写入修改器。潜行+右键分配器或外卖柜即可写入。" to {_p}
+    else:
+        send "§a[NFC] §f小编号 §e%{_code}% §f已写入修改器。潜行+右键外卖柜即可写入。" to {_p}
+
+function mcwwsApplyNfcToTarget(p: player, loc: location):
+    set {_id} to mcwwsHeldSfId({_p})
+    set {_code} to mcwwsReadNfcCode(tool of {_p})
+    if {_code} is "":
+        send "§c[NFC] §f修改器尚未写入编号。请先普通右键在聊天输入。" to {_p}
+        stop
+    if mcwwsIsNfcMajorId({_id}) is true:
+        if mcwwsIsDispatcher({_loc}) is true:
+            if mcwwsSaveDispatcherRegistration({_loc}, {_code}, {_p}) is false:
+                send "§c[NFC] §f写入分配器失败，请重试。" to {_p}
+                stop
+            send "§a[NFC] §f已将大编号 §e%{_code}% §f写入外卖分配器。" to {_p}
+            stop
+        if mcwwsIsCabinet({_loc}) is true:
+            set {_key} to mcwwsLockerLocKey({_loc})
+            mcwwsLoadLockerYaml()
+            if mcwwsCabinetOccupied({_key}) is true:
+                mcwwsUnloadLockerYaml()
+                send "§c[NFC] §f该柜仍有占用订单，取空前不能改编号。" to {_p}
+                stop
+            mcwwsUnloadLockerYaml()
+            set {_minor} to mcwwsGetLockerMinor({_loc})
+            if {_minor} is "":
+                set {_minor} to "01"
+            if mcwwsCabinetPairTaken({_code}, {_minor}, {_key}) is true:
+                send "§c[NFC] §f大编号 §e%{_code}% §f+ 小编号 §e%{_minor}% §f已被占用。" to {_p}
+                stop
+            if mcwwsSaveCabinetRegistration({_loc}, {_code}, {_minor}, {_p}) is false:
+                send "§c[NFC] §f写入外卖柜失败，请重试。" to {_p}
+                stop
+            send "§a[NFC] §f已将大编号 §e%{_code}% §f写入外卖柜（小编号 §e%{_minor}%§f）。" to {_p}
+            stop
+        send "§c[NFC] §f请潜行对着 §e外卖分配器 §f或 §e外卖柜 §f右键。" to {_p}
+        stop
+    if mcwwsIsNfcMinorId({_id}) is true:
+        if mcwwsIsCabinet({_loc}) is false:
+            send "§c[NFC] §f小编号只能写入 §e外卖柜§f（木桶）。" to {_p}
+            stop
+        set {_key} to mcwwsLockerLocKey({_loc})
+        mcwwsLoadLockerYaml()
+        if mcwwsCabinetOccupied({_key}) is true:
+            mcwwsUnloadLockerYaml()
+            send "§c[NFC] §f该柜仍有占用订单，取空前不能改编号。" to {_p}
+            stop
+        mcwwsUnloadLockerYaml()
+        set {_major} to mcwwsGetLockerMajor({_loc})
+        if {_major} is "":
+            send "§c[NFC] §f请先设置大编号，再写小编号。" to {_p}
+            stop
+        if mcwwsCabinetPairTaken({_major}, {_code}, {_key}) is true:
+            send "§c[NFC] §f大编号 §e%{_major}% §f+ 小编号 §e%{_code}% §f已被占用。" to {_p}
+            stop
+        if mcwwsSaveCabinetRegistration({_loc}, {_major}, {_code}, {_p}) is false:
+            send "§c[NFC] §f写入外卖柜失败，请重试。" to {_p}
+            stop
+        send "§a[NFC] §f已将小编号 §e%{_code}% §f写入外卖柜（大编号 §e%{_major}%§f）。" to {_p}
+        stop
 
 function mcwwsInitDeliveryLockers():
     mcwwsLoadLockerYaml()
@@ -676,6 +833,12 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
     if {_wait} is "pickup":
         mcwwsApplyPickupUnlock({_p}, {_raw})
         stop
+    if {_wait} is "nfc_major":
+        mcwwsApplyNfcWriteChat({_p}, {_raw}, "major")
+        stop
+    if {_wait} is "nfc_minor":
+        mcwwsApplyNfcWriteChat({_p}, {_raw}, "minor")
+        stop
     set {_loc} to {mcwws.locker.focus::%{_uuid}%}
     if {_loc} is not set:
         mcwwsClearLockerPrompt({_p})
@@ -924,6 +1087,10 @@ on break of player wall head:
         mcwwsClearLockerPrompt(player)
 
 on right click on barrel:
+    if mcwwsHeldIsNfc(player) is true:
+        stop
+    if player is sneaking:
+        stop
     set {_loc} to location of clicked block
     if mcwwsIsCabinet({_loc}) is false:
         stop
@@ -940,6 +1107,10 @@ on right click on barrel:
         mcwwsOpenCabinetGui(player, {_loc})
 
 on right click on player head:
+    if mcwwsHeldIsNfc(player) is true:
+        stop
+    if player is sneaking:
+        stop
     set {_loc} to location of clicked block
     if mcwwsIsDispatcher({_loc}) is false:
         stop
@@ -950,6 +1121,10 @@ on right click on player head:
         mcwwsOpenDispGui(player, {_loc})
 
 on right click on player wall head:
+    if mcwwsHeldIsNfc(player) is true:
+        stop
+    if player is sneaking:
+        stop
     set {_loc} to location of clicked block
     if mcwwsIsDispatcher({_loc}) is false:
         stop
@@ -958,6 +1133,25 @@ on right click on player wall head:
     wait 1 tick
     if player is online:
         mcwwsOpenDispGui(player, {_loc})
+
+on right click:
+    if mcwwsHeldIsNfc(player) is false:
+        stop
+    cancel event
+    if player is sneaking:
+        set {_block} to clicked block
+        if {_block} is not set:
+            send "§c[NFC] §f请潜行对着分配器或外卖柜右键写入。" to player
+            stop
+        mcwwsApplyNfcToTarget(player, location of {_block})
+        stop
+    set {_id} to mcwwsHeldSfId(player)
+    if mcwwsIsNfcMajorId({_id}) is true:
+        mcwwsStartNfcWrite(player, "major")
+        stop
+    if mcwwsIsNfcMinorId({_id}) is true:
+        mcwwsStartNfcWrite(player, "minor")
+        stop
 
 on inventory open:
     set {_inv} to event-inventory
@@ -968,6 +1162,13 @@ on inventory open:
     if mcwwsIsDispGuiInventory({_inv}) is true:
         stop
     set {_title} to "%name of {_inv}%"
+    if player is sneaking:
+        if {_title} is "§6外卖分配器":
+            cancel event
+            stop
+        if {_title} is "§6外卖柜":
+            cancel event
+            stop
     set {_p} to player
     if {_title} is "§6外卖分配器":
         set {_loc} to {mcwws.locker.focus::%uuid of {_p}%}

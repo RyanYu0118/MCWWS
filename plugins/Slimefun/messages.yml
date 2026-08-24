@@ -5,6 +5,8 @@ sf-cn:
     stopped: '&a性能分析器已停止, 请在此处查看报告: &f{0}'
     warning: '&c在生成性能报告时出现问题! 请查看后台报错了解更多详情.'
 commands:
+  tick:
+    description: 操作粘液刻断点
   blockdata:
     description: 操作粘液方块数据
   help: 显示帮助文本
@@ -163,6 +165,15 @@ guide:
 actionbar:
   radiation: '&6辐射暴露等级：&c%level%&7/&e100'
 messages:
+  tick-rate: 'Tick rate: %tick-rate%'
+  tick-query: 'Tick Freeze: %mode%, Tick rate: %tick-rate%'
+  tick-mode: '&eTick Freeze: %mode%'
+  not-found: '&c无效的参数'
+  not-a-number: '&c请输入一个数字'
+  tick-freeze-predicate-reset: '&e已重置 Tick Freeze 自定义检测'
+  tick-freeze-on: 开启
+  tick-freeze-off: 关闭
+  wrong-world: 不在同一世界！无法高亮方块！
   android-no-permission: '&c你的机器人在某个你没有权限的领地/地皮中无法工作, 机器人已自动暂停运行.'
   not-researched: '&4你的知识还不足以理解这个物品. &c你需要先解锁 &f"%item%"&f'
   not-enough-xp: '&4你没有足够的经验来解锁这个研究'

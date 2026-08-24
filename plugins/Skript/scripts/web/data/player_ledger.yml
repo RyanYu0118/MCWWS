@@ -1,4 +1,4 @@
-next_id: 3859
+next_id: 3903
 entries:
   '1':
     id: 1
@@ -41121,3 +41121,487 @@ entries:
     refId: axiom-070aca08-b0fc-42ef-9f73-9a22a9a91f77
     createdAt: '2026-08-24T12:33:19.690401500Z'
     balanceAfter: 883203.86
+  '3859':
+    id: 3859
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: flight
+    amount: 188
+    description: 飞行消耗
+    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/24 20:35
+    createdAt: '2026-08-24T12:35:05.602610800Z'
+    updatedAt: '2026-08-24T12:35:54.605703900Z'
+  '3860':
+    id: 3860
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 31.12
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-176c0524-4aec-4b2c-b594-dd4c115717a3
+    createdAt: '2026-08-24T12:35:15.995151100Z'
+    balanceAfter: 883128.74
+  '3861':
+    id: 3861
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 31.24
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-09068290-f751-444a-baeb-7bd50ab433ac
+    createdAt: '2026-08-24T12:35:26.290254800Z'
+    balanceAfter: 883057.5
+  '3862':
+    id: 3862
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 15.1
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-26a6ef19-4650-4d1d-b9e4-96d29bbdb46e
+    createdAt: '2026-08-24T12:35:48.391707500Z'
+    balanceAfter: 882966.4
+  '3863':
+    id: 3863
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 15.2
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-0066d4da-e9ed-4ccd-86b9-e72ef5167c0c
+    createdAt: '2026-08-24T12:35:53.199305300Z'
+    balanceAfter: 882931.2
+  '3864':
+    id: 3864
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575034122-43291555014400
+    createdAt: '2026-08-24T12:37:14.124115100Z'
+    balanceAfter: 882859.2
+  '3865':
+    id: 3865
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 320
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575049079-43306510867000
+    createdAt: '2026-08-24T12:37:29.079201400Z'
+    balanceAfter: 882539.2
+  '3866':
+    id: 3866
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 65.28
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575079016-43336447570100
+    createdAt: '2026-08-24T12:37:59.016339900Z'
+    balanceAfter: 882473.92
+  '3867':
+    id: 3867
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 34
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575259828-43517261495100
+    createdAt: '2026-08-24T12:40:59.830487100Z'
+    balanceAfter: 882439.92
+  '3868':
+    id: 3868
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 34.07
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575260208-43517641248300
+    createdAt: '2026-08-24T12:41:00.208882300Z'
+    balanceAfter: 882405.85
+  '3869':
+    id: 3869
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 27
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575315357-43572788776600
+    createdAt: '2026-08-24T12:41:55.357100900Z'
+    balanceAfter: 882378.85
+  '3870':
+    id: 3870
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 27.05
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575315956-43573387456800
+    createdAt: '2026-08-24T12:41:55.956136700Z'
+    balanceAfter: 882351.8
+  '3871':
+    id: 3871
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 2
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575418490-43675922265000
+    createdAt: '2026-08-24T12:43:38.490646100Z'
+    balanceAfter: 882349.8
+  '3872':
+    id: 3872
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 2
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575418740-43676172314200
+    createdAt: '2026-08-24T12:43:38.742710300Z'
+    balanceAfter: 882347.8
+  '3873':
+    id: 3873
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: flight
+    amount: 92
+    description: 飞行消耗
+    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/24 20:45
+    createdAt: '2026-08-24T12:45:37.608382500Z'
+    updatedAt: '2026-08-24T12:46:01.599812900Z'
+  '3874':
+    id: 3874
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 31.16
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-9a8a7619-b9fb-49ce-b189-f02f38ad2110
+    createdAt: '2026-08-24T12:45:49.958068700Z'
+    balanceAfter: 882272.64
+  '3875':
+    id: 3875
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 31.28
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-5e21bcb9-cd46-4367-aeba-81ab6beb751b
+    createdAt: '2026-08-24T12:45:53.917200600Z'
+    balanceAfter: 882225.36
+  '3876':
+    id: 3876
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 29.02
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-4293ffec-dc29-45b7-9feb-fd71bf3df7ce
+    createdAt: '2026-08-24T12:46:10.288555600Z'
+    balanceAfter: 882164.34
+  '3877':
+    id: 3877
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575686004-43943436435900
+    createdAt: '2026-08-24T12:48:06.005231900Z'
+    balanceAfter: 882163.34
+  '3878':
+    id: 3878
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575686358-43943790887800
+    createdAt: '2026-08-24T12:48:06.358649600Z'
+    balanceAfter: 882162.34
+  '3879':
+    id: 3879
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575687197-43944629449000
+    createdAt: '2026-08-24T12:48:07.197645500Z'
+    balanceAfter: 882161.34
+  '3880':
+    id: 3880
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575687822-43945255015600
+    createdAt: '2026-08-24T12:48:07.823863600Z'
+    balanceAfter: 882160.34
+  '3881':
+    id: 3881
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: flight
+    amount: 144
+    description: 飞行消耗
+    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/24 20:48
+    createdAt: '2026-08-24T12:48:09.601245500Z'
+    updatedAt: '2026-08-24T12:48:44.600199600Z'
+  '3882':
+    id: 3882
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: flight
+    amount: 72
+    description: 飞行消耗
+    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/24 20:49
+    createdAt: '2026-08-24T12:49:19.606243400Z'
+    updatedAt: '2026-08-24T12:49:36.604482500Z'
+  '3883':
+    id: 3883
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575807889-44065321157000
+    createdAt: '2026-08-24T12:50:07.889831900Z'
+    balanceAfter: 881943.34
+  '3884':
+    id: 3884
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575808271-44065703383300
+    createdAt: '2026-08-24T12:50:08.271637400Z'
+    balanceAfter: 881942.34
+  '3885':
+    id: 3885
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575808771-44066203388400
+    createdAt: '2026-08-24T12:50:08.771780100Z'
+    balanceAfter: 881941.34
+  '3886':
+    id: 3886
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 1
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787575808990-44066423125300
+    createdAt: '2026-08-24T12:50:08.991992Z'
+    balanceAfter: 881940.34
+  '3887':
+    id: 3887
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 16.8
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-7be3794d-c4d6-45a0-adb6-3da1ce078638
+    createdAt: '2026-08-24T12:50:47.596063600Z'
+    balanceAfter: 881923.54
+  '3888':
+    id: 3888
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 7.05
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-43eba6fc-4970-496f-a3e1-30160e321a2d
+    createdAt: '2026-08-24T12:52:09.795639500Z'
+    balanceAfter: 881916.49
+  '3889':
+    id: 3889
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 7.05
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-c49f4a35-dac5-42a7-b65e-97b8a9a10034
+    createdAt: '2026-08-24T12:52:19.041438600Z'
+    balanceAfter: 881909.44
+  '3890':
+    id: 3890
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 29.06
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-e289e8cc-4f27-4446-bcd0-35d24091b361
+    createdAt: '2026-08-24T12:54:05.194529100Z'
+    balanceAfter: 881880.38
+  '3891':
+    id: 3891
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 7.2
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-db495ca9-d554-469d-b555-206980c61c1a
+    createdAt: '2026-08-24T12:55:31.642833500Z'
+    balanceAfter: 881873.18
+  '3892':
+    id: 3892
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 2.4
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-016721c4-cac1-4483-97ad-53764c6ce8ea
+    createdAt: '2026-08-24T12:55:34.511281900Z'
+    balanceAfter: 881870.78
+  '3893':
+    id: 3893
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 9.6
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-364892f0-31ce-4a68-9e66-caf88b74d78a
+    createdAt: '2026-08-24T12:55:38.391317400Z'
+    balanceAfter: 881861.18
+  '3894':
+    id: 3894
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 6.04
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-ca5a9085-7cb4-43ba-8e89-a3b4266c4730
+    createdAt: '2026-08-24T12:55:41.504624800Z'
+    balanceAfter: 881855.14
+  '3895':
+    id: 3895
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 6.08
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-a3854ed3-527c-4579-9a77-64a19bfb8291
+    createdAt: '2026-08-24T12:55:45.192494Z'
+    balanceAfter: 881849.06
+  '3896':
+    id: 3896
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 18.24
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-a5fa07df-da1a-49f1-bd5e-0e9b36008b94
+    createdAt: '2026-08-24T12:56:52.700320600Z'
+    balanceAfter: 881830.82
+  '3897':
+    id: 3897
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: credit
+    category: axiom_undo
+    amount: 17.33
+    description: 'Axiom 撤销退款: set_buffer (原扣 18.24 手续费 0.91)'
+    refId: axiom-undo-de3b5015-ca89-4e81-a72b-0a80ac73201c
+    createdAt: '2026-08-24T12:56:56.118954700Z'
+    balanceAfter: 881848.15
+  '3898':
+    id: 3898
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 8.6
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-828730d1-f169-4dcc-ac66-8ee2e4075264
+    createdAt: '2026-08-24T13:32:47.352487100Z'
+    balanceAfter: 881839.55
+  '3899':
+    id: 3899
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 18.96
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-d1896ab5-db35-4ee8-badb-d5ba2a9d345a
+    createdAt: '2026-08-24T13:32:52.887932500Z'
+    balanceAfter: 881820.59
+  '3900':
+    id: 3900
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: axiom
+    amount: 2.56
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-2af3f1d2-ca92-47d1-9c74-d44953525b80
+    createdAt: '2026-08-24T13:32:58.977929200Z'
+    balanceAfter: 881818.03
+  '3901':
+    id: 3901
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: credit
+    category: axiom_undo
+    amount: 2.43
+    description: 'Axiom 撤销退款: set_buffer (原扣 2.56 手续费 0.13)'
+    refId: axiom-undo-ef00034f-f85d-4b98-a851-335c0527f475
+    createdAt: '2026-08-24T13:33:01.878781100Z'
+    balanceAfter: 881820.46
+  '3902':
+    id: 3902
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787578579982-46837414407300
+    createdAt: '2026-08-24T13:36:19.982922600Z'
+    balanceAfter: 165206331.03
