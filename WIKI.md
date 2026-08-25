@@ -9,7 +9,7 @@
 ## 阅读说明
 
 - **两大篇**：**自然科学**描述空间、物质、生命及其规律；**社会科学**描述交换、制度、人与人的协作。
-- **自然科学学科**（按篇内顺序）：地理学、物理学、生物学、化学、**合成学**、**计算机学**、**建筑学**、承载学。
+- **自然科学学科**（按篇内顺序）：地理学、物理学、生物学、化学、**魔法学**、**合成学**、**计算机学**、**建筑学**、承载学。
 - **层级**：篇 → 学科 → 主题 → 正文中的具体玩法。插件名、指令名只出现在需要操作的地方，不作为章节标题。
 - **速览**在篇首；全服插件与数据包逐项说明见**附录 E、F**。
 
@@ -25,6 +25,7 @@
 | 光源须手持才能拆改；砍树可连根放倒并补种；潜行连锁采矿最多 64 格 | 与 NPC 对话完成新手引导；L 键仅「流浪世界」一页；成就用 `/aach list` |
 | 大规模改造分「指令批量」与「可视化编辑」两种方式，规则一致 | 撤销退 95%；同次编辑内搬运同种方块只收劳务 |
 | 粘液科技指南首次进服赠送；配方书与自定义合成 GUI 全员可浏览 | 每日签到 `/signin gui`；服务器告示 `/news`；基岩版经 Geyser 同端口进服 |
+| 护符、炼金注入与末地奇术等魔法向内容分散在 Slimefun 附属中 | 商店附魔分类与动态物价联动；领地可限制负面药水 PvP 效果 |
 
 ---
 
@@ -155,30 +156,72 @@
 - 穿着放射性护甲或持有辐射相关物品时，护甲效果按配置周期刷新
 - 核反应堆、辐射矿石等高风险设施须按指南搭建屏蔽层；**WorldEditSlimefun** 允许在选区改造时识别 Slimefun 特殊方块
 
-### 4.2 炼金、酿造与药剂
+### 4.2 工艺流程与酿造
 
 | 附属 / 插件 | 侧重 |
 | ----------- | ---- |
-| AlchimiaVitae | 生命炼金、药剂与魔法材料 |
-| Alchema | 炼金台与转化配方 |
-| PotionExpansion | 扩展药水效果 |
-| UltimateFoods | 高级食物与营养向物品 |
 | Slimefun 本体 | 电力冶炼、矿石洗炼、粉尘/宝石加工等**工艺流程**（非工作台配方，见合成学） |
+| UltimateFoods | 高级营养向食品（亦见生物学 · 养殖与作物） |
 
-酿造台、炼药锅与商店「酿造 / 附魔」分类仍按原版与 UltimateShop 定价流通。
+酿造台、炼药锅与商店「酿造」分类仍按原版与 UltimateShop 定价流通。**附魔、护符、炼金注入与奇术物品**见**魔法学**。
 
 ### 4.3 能源化工
 
-**EcoPower**、**DynaTech**、**BedrockTechnology** 等提供太阳能、地热、燃油与高级发电机；电力网络与物流接口见**计算机学**。  
-**DracFun**、**SlimefunWarfare**、**FNAmplifications** 等偏战斗化学与装备增幅，成品多在商店「服内特有」或指南分类中流通。
+**EcoPower**、**DynaTech**、**BedrockTechnology** 等提供太阳能、地热、燃油与高级发电机；电力网络与物流接口见**计算机学**。
 
 ---
 
-## 5. 合成学
+## 5. 魔法学
+
+研究**超自然力量如何附着于物品、生物与空间**——附魔、炼金注入、护符、灵魂容器与末地奇术等。
+
+### 5.1 附魔与咒语
+
+- **UltimateShop**「附魔」分类：按效果与等级定价，与动态市场联动
+- **Slimefun** 魔法工作台、自动魔法工作台：高级魔法物品的合成入口（具体配方见**合成学**）
+- **InfinityExpansion** 高级铁砧 / 无尽套装：附魔等级上限可在配置中调整（`plugins/InfinityExpansion/config.yml`）
+- **Supreme**「magic」系列武器与防具附魔（`plugins/Supreme/config.yml` · `supreme-enchant`）
+- 巫师护符、魔法尘、魔法奇点等 Slimefun 本体物品按指南分类解锁
+
+### 5.2 炼金、注入与演变
+
+**AlchimiaVitae**（生命炼金）本服启用注入、演变与仁慈酿造，例如：
+
+| 类型 | 示例 |
+| ---- | ---- |
+| 注入（Infusion） | 毁灭/幻影暴击、自瞄、强力、挥发、治疗、自动补种、图腾电池、击退等 |
+| 演变（Transmutation） | 强化合金、硬化金属、钢锭、大马士革钢、压缩碳等 |
+| 仁慈酿造 | 可配置时长与等级的抗性提升、急迫等药水 |
+
+**Alchema** 提供炼金台与转化配方；**PotionExpansion** 扩展原版药水效果池。
+
+### 5.3 护符、灵魂与召唤
+
+- **Slimefun 护符（Talismans）**： magician / ender magician 等；触发时以 ActionBar 提示（`use-actionbar: true`）
+- **SoulJars** + **MobCapturer**：捕获生物灵魂入库，用于特定配方或玩法
+- **SlimefunLuckyBlocks**：幸运 / 不幸药水方块（配置可单独开关）
+- **FlowerPower** 等花卉系道具偏魔法辅助与资源产出
+
+### 5.4 奇术与不稳定力量
+
+**TranscEndence**（超恒 / 末地奇术）：
+
+- 首次进服可获专属指南
+- **不稳定锭** 默认不可丢弃；相关死亡有专属提示文案
+- **Daxi 核心** 提供力量、吸收、坚韧、饱和、再生等超能力（等级见 `plugins/TranscEndence/config.yml`）
+- 极化器亲和概率 **40%**；ZOT 需 **1000** 电荷
+
+**DracFun**、**Bump**（鉴定 / 增幅）、**SlimefunWarfare**、**FNAmplifications** 等偏战斗魔法与装备成长，成品多在商店「服内特有」或指南分类中流通。
+
+**领地规则：** **Residence** 可按 flag 限制负面药水在 PvP 场景生效（见 `NegativePotionEffects` 配置）。
+
+---
+
+## 6. 合成学
 
 研究**如何把原材料组合成可用物品**——工作台配方、粘液科技合成台、自定义 GUI 配方与本服合成规则。
 
-### 5.1 配方查阅
+### 6.1 配方查阅
 
 | 途径 | 说明 |
 | ---- | ---- |
@@ -187,18 +230,18 @@
 | SFCalc | 游戏内 `/sfcalc` 类计算器（Slimefun 配方反查，见附录 E） |
 | UltimateShop | 店内物品即物价与流通入口，不替代配方书 |
 
-### 5.2 手持工具与放置规则
+### 6.2 手持工具与放置规则
 
 Slimefun **手持类物品**（便携式工作台/垃圾桶、各类背包、GPS 标记器、卷尺等，以及所有 `PORTABLE_*` 物品）只能手持右键使用，**不能放置**；放下再拆会失去粘液科技功能，变成普通方块或头颅。
 
 以下两类**均可正常放置**，不受拦截：
 
 - **普通机器**：货运管理器、太阳能板、电力冶炼炉、外卖分配器、外卖柜等
-- **多方块机器**：增强型合成台、磨石、矿石粉碎机、压缩机、装甲台、魔法工作台等（这类机器本就要摆成原版方块，由 Slimefun 按结构识别）
+- **多方块机器**：增强型合成台、磨石、矿石粉碎机、压缩机、装甲台、魔法工作台等（魔法向机器亦见**魔法学**）
 
 Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
-### 5.3 大型合成附属（选读）
+### 6.3 大型合成附属（选读）
 
 | 附属 | 内容概要 |
 | ---- | -------- |
@@ -212,11 +255,11 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 ---
 
-## 6. 计算机学
+## 7. 计算机学
 
 研究**信息、物流与自动执行**——粘液科技的货运网络、GPS、可编程机器，以及本服脚本与 NPC 自动化。
 
-### 6.1 电力与物流
+### 7.1 电力与物流
 
 | 系统 | 要点 |
 | ---- | ---- |
@@ -227,7 +270,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 **WorldEditSlimefun** 与领地插件会保护已登记的 Slimefun 方块，避免误改选区时破坏机器 NBT。
 
-### 6.2 计算与脚本层（服内）
+### 7.2 计算与脚本层（服内）
 
 | 组件 | 作用 |
 | ---- | ---- |
@@ -240,7 +283,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 玩家日常只需与 NPC 和指南菜单交互；上表供想深入 Redstone 式自动化的玩家理解「谁在后台算账」。
 
-### 6.3 终端与界面
+### 7.3 终端与界面
 
 - **ScreenInMC**：游戏内嵌网页屏幕（需客户端资源，配置见 `plugins/ScreenInMC/`）
 - **BlueMap + MCWWS WebHost**：浏览器端地图与商城、账本（见地理学 · 测绘）
@@ -248,11 +291,11 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 ---
 
-## 7. 建筑学
+## 8. 建筑学
 
 研究**人造空间的形式、尺度与交通**；本服允许在生存状态下进行**创造级规模**改造，并辅以曲线建造、轨道交通与装饰工具。
 
-### 7.1 物质的改造（生存计费）
+### 8.1 物质的改造（生存计费）
 
 主要有两条路径，**计费通则相同**（详见社会科学 · 经济学 · 改造与市场的关系）：
 
@@ -319,11 +362,11 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /axiomcheck
 ```
 
-### 7.2 曲线与曲面
+### 8.2 曲线与曲面
 
 **CurveBuilding** 提供曲线/曲面选区与放置辅助，适合道路、拱券、穹顶等自由形态；与 WorldEdit 选区配合使用，改造方块仍走**建筑学 · 物质的改造**计费。
 
-### 7.3 轨道交通
+### 8.3 轨道交通
 
 **TrainCarts** + **TCCoasters** 实现自定义矿车列车与过山车：
 
@@ -331,7 +374,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - 车厢间距、动力铁轨加速、最大速度等见 `plugins/Train_Carts/config.yml`
 - 领地内铺设轨道须自有放置权限；高速列车请避开他人未授权区域
 
-### 7.4 装饰与展示
+### 8.4 装饰与展示
 
 | 工具 | 用途 |
 | ---- | ---- |
@@ -347,11 +390,11 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 ---
 
-## 8. 承载学（物质的空间占有）
+## 9. 承载学（物质的空间占有）
 
 研究**物品如何随身存放**——本服对默认行囊行为做了调整。
 
-### 8.1 随身行囊与拾取策略
+### 9.1 随身行囊与拾取策略
 
 - **不发放**头颅形态的扩展背包物品；已有的会被收回，不可放置、不可捡起
 - **关闭**自动拾取进扩展背包：地上物品不会自动转入
@@ -365,12 +408,12 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 **外卖分配器 + 外卖柜（Slimefun / RSC）：** 两台机器配合，**一码一柜**。
 
 - **外卖分配器**（增强型合成台：铁锭 + 箱子）：**Cabinet 玩家头颅**外观（[Minecraft-Heads #3614](https://minecraft-heads.com/custom-heads/head/3614-cabinet)）。放置后聊天输入**大编号**（网页收货地址，最长 24 字）。**无存储**。右键界面可改大编号，或输入一次性**取件码**；成功后提示分配到的**小编号**，对应木桶**开盖**。已放置的旧版一体头颅机自动当作分配器。
-- **外卖柜**（增强型合成台：铁锭 + 木桶）：**木桶**外观。放置后输入与分配器相同的**大编号**，再输入该址内唯一的**小编号**。默认**上锁**打不开；分配器输码后该柜开盖，**直到柜内取空**都可反复打开。取空后关盖上锁，可再次接收网页订单。柜内还有东西时**不可再分配**。**潜行右键**不打开界面，可在已有柜上继续叠放。解锁状态同时写在柜体方块数据上，避免网页误回写注册表后「盖已开却仍上锁」。
+- **外卖柜**（增强型合成台：铁锭 + 木桶）：**木桶**外观。放置后输入与分配器相同的**大编号**，再输入该址内唯一的**小编号**。默认**上锁**打不开；分配器输码后该柜开盖，**直到柜内取空**都可反复打开。取空后关盖上锁，可再次接收网页订单。柜内还有东西时**不可再分配**。**潜行右键**不打开界面，可在已有柜上继续叠放。解锁状态同时写在柜体方块数据上，避免网页误回写注册表后「盖已开却仍上锁」。开/关柜用原版木桶音效，上锁/解锁用容器上锁音效，操作成功/失败另有提示音。
 - **NFC 修改器**（增强型合成台）：**大编号**用试炼钥匙外观，右键聊天写入后潜行右键分配器/柜。**小编号**用不祥试炼钥匙外观，默认从 **1** 起，每对柜使用一次自动 **+1**；右键可把下次起始值改成任意数字 n。柜被订单占用时不可改号。
 
 网页下单须选择已有**分配器大编号**，生成 6 位取件码（下单成功弹窗与购物车待领取列表均可**选中或一键复制**）。整单只进入该址下一台**空闲木桶柜**（空且未占用）。无空闲柜则订单失败并重试。漏斗与货运节点不能抽放。拆除时内容物掉落并注销编号。未编号的分配器不会出现在网页地址列表。旧的无地址订单仍发到随身行囊。手工放入的物品在柜已解锁时也可存取。
 
-### 8.2 粘液科技储物
+### 9.2 粘液科技储物
 
 | 附属 | 说明 |
 | ---- | ---- |
@@ -711,7 +754,8 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
    - 地理学（空间、测绘、位移、地貌数据包）
    - 物理学（光、采矿力学、飞行）
    - 生物学（采伐、养殖与作物）
-   - 化学（辐射、炼金、能源化工）
+   - 化学（辐射、工艺流程、能源化工）
+   - 魔法学（附魔、炼金注入、护符、奇术）
    - 合成学（配方、手持规则、大型合成链）
    - 计算机学（电力物流、脚本自动化、终端）
    - 建筑学（生存改造、曲线、轨道交通、装饰）
@@ -748,6 +792,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js` |
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
 | 连锁采矿 | `plugins/VeinMiner/` |
+| 魔法 / 炼金附属 | `plugins/AlchimiaVitae/`、`plugins/Alchema/`、`plugins/TranscEndence/` |
 | 每日签到 | `plugins/LiteSignIn/` |
 | 基岩桥接 | `plugins/Geyser-Spigot/`、`plugins/floodgate/` |
 | 轨道交通 | `plugins/Train_Carts/`、`plugins/TCCoasters/` |
@@ -838,7 +883,9 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 **生命 / 农业 / 食物：** Cultivation Build 6 · ExoticGarden Build 17 · GeneticChickengineering Build 8 · SlimyBees Build 1 · Gastronomicon Build 20 · UltimateFoods 1.5.0 · HotbarPets Build 3 · FlowerPower Build 5 · MobCapturer Build 15 · ElectricSpawners Build 5
 
-**化学 / 战斗 / 装备：** AlchimiaVitae Build 9 · Alchema · PotionExpansion Build 2 · SlimefunWarfare Build 10 · FN-FAL-s-Amplifications Build 14 · Bump Build 40 · DracFun v2.0.10 · DefensiveTurrets
+**化学 / 工艺：** Slimefun 本体 · EcoPower · DynaTech · BedrockTechnology · UltimateFoods · DefensiveTurrets
+
+**魔法 / 战斗 / 装备：** AlchimiaVitae Build 9 · Alchema · PotionExpansion Build 2 · TranscEndence Build 11 · SoulJars Build 9 · SlimefunLuckyBlocks Build 2 · SlimefunWarfare Build 10 · FN-FAL-s-Amplifications Build 14 · Bump Build 40 · DracFun v2.0.10 · FlowerPower Build 5 · InfinityExpansion Build 15 · Supreme Build 21
 
 **工具 / 合成 / 杂项：** SlimeTinker Build 49 · ExtraGear/Tools/Heads · SlimyRepair Build 1 · SlimyTreeTaps Build 2 · ExtraTools Build 6 · Cakecraft Build 1 · SlimefunOreChunks Build 1 · SlimefunVoid Build 1 · SlimefunLuckyBlocks Build 2 · BedrockTechnology · EcoPower Build 1 · PrivateStorage Build 1
 
