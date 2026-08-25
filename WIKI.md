@@ -88,6 +88,16 @@
 
 传送至玩家：点选头颅后约 **2 tick** 弹出列表，弹出前勿重复打开指南。由**发起者**付费；选人前金额未定，零钱不足则取消。
 
+指南首页另有三类**标记 / 回溯**（全体玩家默认可用，经菜单扣费）：
+
+| 功能 | 操作 | 费用 |
+| ---- | ---- | ---- |
+| 个人标记点 | 左/右键设 1/2 号；Shift+左/右键传送 | 设置或传送各 **¥64**/次 |
+| 公共标记点 | 左键设置；Shift+左键传送 | 设置 **¥128**/次，传送 **¥48**/次 |
+| 返回上一记录点 | 点选返回 Essentials 上一位置 | **¥64**/次 |
+
+个人标记命名为「玩家名1/2」；公共标记与床重生点无关。
+
 打开指南：右键服务器指南针，或在聊天栏只输入斜杠并发送（无子命令）：
 
 ```text
@@ -554,6 +564,9 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 跳过指令批量扣费 | **关** | 不能绕过领地 |
 | 指令批量常用能力 | 开 | 不含笔刷、填洞工具等 |
 | 连根砍树 | 开 | 无需额外权限 |
+| 返回上一记录点 | 开 | `essentials.back`；指南菜单扣费 |
+| 个人标记点（设/传） | 开 | `essentials.warp` / `setwarp` / `delwarp` / `warp.overwrite.*` |
+| 公共标记点（设） | 开 | `spawn.set`；传送 `/spawn` 本身无权限节点 |
 
 ---
 
@@ -785,7 +798,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 外卖分配器 / 外卖柜 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
-| 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/` |
+| 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |

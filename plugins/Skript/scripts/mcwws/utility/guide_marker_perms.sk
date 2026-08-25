@@ -1,0 +1,22 @@
+# 指南：返回上一记录点、个人/公共标记点 — 全体玩家可用
+# 对应菜单：DeluxeMenus guide/home.yml（返回 / 个人 warp / 公共 SetSpawn）
+
+function mcwwsGrantGuideMarkerPerms():
+    if plugin "LuckPerms" is enabled:
+        # Essentials：/back、个人标记点（esetwarp / ewarp）
+        execute console command "lp group default permission set essentials.back true"
+        execute console command "lp group default permission set essentials.warp true"
+        execute console command "lp group default permission set essentials.setwarp true"
+        execute console command "lp group default permission set essentials.delwarp true"
+        execute console command "lp group default permission set essentials.warp.overwrite.* true"
+        # SetSpawn：设置公共标记点（/spawn 传送本身无权限节点，默认全员可用）
+        execute console command "lp group default permission set spawn.set true"
+        log "[MCWWS] 已为 default 组授予指南标记点与返回上一记录点权限"
+
+on Skript start:
+    wait 5 seconds
+    mcwwsGrantGuideMarkerPerms()
+
+on script load:
+    wait 2 seconds
+    mcwwsGrantGuideMarkerPerms()

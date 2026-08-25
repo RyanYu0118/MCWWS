@@ -162,8 +162,8 @@ items:
     minecraft:enchantments: '{"minecraft:protection":3}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:light
-  count: 64
+  id: minecraft:golden_carrot
+  count: 5
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:gold_ingot
@@ -174,10 +174,6 @@ items:
   count: 1
   components:
     minecraft:enchantments: '{"minecraft:unbreaking":1}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:firework_rocket
-  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
@@ -539,13 +535,6 @@ items:
     minecraft:damage: '322'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:potion
-  count: 1
-  components:
-    minecraft:potion_contents: '{custom_color:16711935,custom_effects:[{ambient:1b,duration:45,id:"minecraft:regeneration",show_icon:1b}]}'
-    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:diamond_helmet
   count: 1
   components:
@@ -611,12 +600,6 @@ items:
   count: 1
   components:
     minecraft:enchantments: '{"minecraft:unbreaking":2}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:splash_potion
-  count: 1
-  components:
-    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:crossbow
@@ -1509,10 +1492,6 @@ items:
     minecraft:damage: '24'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:poppy
-  count: 15
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:oak_sapling
   count: 2
   components:
@@ -1934,10 +1913,6 @@ items:
   count: 1
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:redstone
-  count: 1
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:brown_mushroom
   count: 15
   components:
@@ -2022,14 +1997,6 @@ items:
   count: 5
   components:
     minecraft:custom_name: '{italic:0b,text:"Tombstone"}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:golden_carrot
-  count: 6
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:glass_bottle
-  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
