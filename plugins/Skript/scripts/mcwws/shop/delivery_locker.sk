@@ -200,12 +200,15 @@ function mcwwsWriteNfcToHeld(p: player, code: text, kind: text):
     {_meta}.getPersistentDataContainer().set(mcwwsNfcCodeKey(), PersistentDataType.STRING, {_code})
     {_stack}.setItemMeta({_meta})
     if {_kind} is "major":
-        set lore of {_stack} to "§7右键：在聊天写入大编号" and "§7潜行+右键分配器/外卖柜：写入大编号" and "§8当前：§e%{_code}%"
+        set lore of {_stack} to "§7右键：在聊天写入大编号" and "§7潜行+右键分配器/外卖柜：写入大编号" and "§c仅管理员可用" and "§8当前：§e%{_code}%"
     else:
-        set lore of {_stack} to "§7右键：设定下次写入的起始小编号" and "§7潜行+右键外卖柜：写入后自动 +1" and "§8下次：§e%{_code}%"
+        set lore of {_stack} to "§7右键：设定下次写入的起始小编号" and "§7潜行+右键外卖柜：写入后自动 +1" and "§c仅管理员可用" and "§8下次：§e%{_code}%"
     set tool of {_p} to {_stack}
 
 function mcwwsStartNfcWrite(p: player, kind: text):
+    if mcwwsIsDeliveryAdmin({_p}) is false:
+        mcwwsDenyDeliveryNumbering({_p})
+        stop
     mcwwsClearLockerPrompt({_p})
     if {_kind} is "major":
         set {mcwws.locker.wait::%uuid of {_p}%} to "nfc_major"
@@ -215,6 +218,10 @@ function mcwwsStartNfcWrite(p: player, kind: text):
         send "§6[NFC] §f请输入下次写入的起始 §e小编号§f（数字，默认 1，用一次 +1；cancel 取消）。" to {_p}
 
 function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
+    if mcwwsIsDeliveryAdmin({_p}) is false:
+        mcwwsClearLockerPrompt({_p})
+        mcwwsDenyDeliveryNumbering({_p})
+        stop
     set {_low} to "%{_raw}%"
     set {_low} to {_low} in lower case
     if {_low} is "cancel":
@@ -256,6 +263,9 @@ function mcwwsApplyNfcWriteChat(p: player, raw: text, kind: text):
         send "§a[NFC] §f下次将写入小编号 §e%{_code}%§f，每用一次自动 +1。" to {_p}
 
 function mcwwsApplyNfcToTarget(p: player, loc: location):
+    if mcwwsIsDeliveryAdmin({_p}) is false:
+        mcwwsDenyDeliveryNumbering({_p})
+        stop
     set {_id} to mcwwsHeldSfId({_p})
     if mcwwsIsNfcMajorId({_id}) is true:
         set {_code} to mcwwsReadNfcCode(tool of {_p})
@@ -543,7 +553,26 @@ function mcwwsClearLockerPrompt(p: player):
     delete {mcwws.locker.focus::%uuid of {_p}%}
     delete {mcwws.locker.mode::%uuid of {_p}%}
 
+# 改大/小编号：OP 或 mcwws.delivery.admin
+function mcwwsIsDeliveryAdmin(p: player) :: boolean:
+    if {_p} is not set:
+        return false
+    if {_p} is op:
+        return true
+    if {_p} has permission "mcwws.delivery.admin":
+        return true
+    return false
+
+function mcwwsDenyDeliveryNumbering(p: player):
+    mcwwsLockerResultSfx("fail", {_p})
+    send "§c[外卖] §f只有管理员才能修改大编号/小编号。" to {_p}
+
 function mcwwsStartLockerNumbering(p: player, loc: location, mode: text):
+    # 取件码任意玩家；改编号仅管理员
+    if {_mode} is not "pickup":
+        if mcwwsIsDeliveryAdmin({_p}) is false:
+            mcwwsDenyDeliveryNumbering({_p})
+            stop
     set {mcwws.locker.focus::%uuid of {_p}%} to {_loc}
     set {mcwws.locker.mode::%uuid of {_p}%} to {_mode}
     if {_mode} is "full":
@@ -1056,6 +1085,16 @@ function mcwwsApplyLockerNumbering(p: player, raw: text):
     if {_wait} is "nfc_minor":
         mcwwsApplyNfcWriteChat({_p}, {_raw}, "minor")
         stop
+    if {_wait} is "major":
+        if mcwwsIsDeliveryAdmin({_p}) is false:
+            mcwwsClearLockerPrompt({_p})
+            mcwwsDenyDeliveryNumbering({_p})
+            stop
+    if {_wait} is "minor":
+        if mcwwsIsDeliveryAdmin({_p}) is false:
+            mcwwsClearLockerPrompt({_p})
+            mcwwsDenyDeliveryNumbering({_p})
+            stop
     set {_loc} to {mcwws.locker.focus::%{_uuid}%}
     if {_loc} is not set:
         mcwwsClearLockerPrompt({_p})
@@ -1185,10 +1224,10 @@ function mcwwsPaintCabinetChrome(inv: object, loc: location):
         set {_s} to loop-number + 44
         {_inv}.setItem({_s}, {_pane})
     set {_signMajor} to oak sign named "§e改大编号"
-    set lore of {_signMajor} to "§7须与分配器大编号一致" and "§e点击后在聊天输入"
+    set lore of {_signMajor} to "§7须与分配器大编号一致" and "§c仅管理员" and "§e点击后在聊天输入"
     {_inv}.setItem(48, mcwwsTagLockerGuiItem({_signMajor}))
     set {_signMinor} to birch sign named "§e改小编号"
-    set lore of {_signMinor} to "§7同址下的柜位序号" and "§e点击后在聊天输入"
+    set lore of {_signMinor} to "§7同址下的柜位序号" and "§c仅管理员" and "§e点击后在聊天输入"
     {_inv}.setItem(50, mcwwsTagLockerGuiItem({_signMinor}))
     set {_icon} to barrel named "§6外卖柜"
     set lore of {_icon} to "§7大编号: §f%{_major}%" and "§7小编号: §f%{_minor}%" and "§7取件请到分配器输入取件码"
@@ -1203,7 +1242,7 @@ function mcwwsPaintDispChrome(inv: object, loc: location):
         set {_s} to loop-number - 1
         {_inv}.setItem({_s}, {_pane})
     set {_sign} to oak sign named "§e改大编号"
-    set lore of {_sign} to "§7网页下单的收货地址" and "§e点击后在聊天输入"
+    set lore of {_sign} to "§7网页下单的收货地址" and "§c仅管理员" and "§e点击后在聊天输入"
     {_inv}.setItem(3, mcwwsTagLockerGuiItem({_sign}))
     set {_icon} to player head named "§6外卖分配器"
     set lore of {_icon} to "§7大编号: §f%{_major}%" and "§7无存储" and "§7输入取件码后对应木桶会开盖"
@@ -1449,6 +1488,9 @@ on inventory click:
         set {_raw} to event.getRawSlot()
         set {_loc} to mcwwsDispGuiLoc({_top})
         if {_raw} is 3:
+            if mcwwsIsDeliveryAdmin({_p}) is false:
+                mcwwsDenyDeliveryNumbering({_p})
+                stop
             close {_p}'s inventory
             mcwwsStartLockerNumbering({_p}, {_loc}, "major")
             stop
@@ -1466,11 +1508,17 @@ on inventory click:
         cancel event
         set {_loc} to mcwwsLockerGuiLoc({_top})
         if {_raw} is 48:
+            if mcwwsIsDeliveryAdmin({_p}) is false:
+                mcwwsDenyDeliveryNumbering({_p})
+                stop
             mcwwsSaveLockerGuiToBlock({_top}, {_loc})
             close {_p}'s inventory
             mcwwsStartLockerNumbering({_p}, {_loc}, "major")
             stop
         if {_raw} is 50:
+            if mcwwsIsDeliveryAdmin({_p}) is false:
+                mcwwsDenyDeliveryNumbering({_p})
+                stop
             mcwwsSaveLockerGuiToBlock({_top}, {_loc})
             close {_p}'s inventory
             set {_major} to mcwwsGetLockerMajor({_loc})
