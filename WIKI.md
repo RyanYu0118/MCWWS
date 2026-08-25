@@ -535,7 +535,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - 无权限时**真正无法**开箱、开门、扳拉杆等；放置/破坏仍按旗标判定
 - 潜行 + 手持物品右键视为放置尝试
 
-**GriefPrevention** 在 **`world`** 与 **`dimensionalhome`** 可作为**第二套**圈地工具（金锹/木棍），下界与末地默认关闭；与 Residence 重叠时，**更严**的一方生效——建议只维护一套主领地以免混淆。
+**GriefPrevention** 在 **`world`** 与 **`dimensionalhome`** 可作为**第二套**圈地工具（金锹/木棍），下界与末地默认关闭；与 Residence 重叠时，**更严**的一方生效——建议只维护一套主领地以免混淆。断线后可立即重连，无登录冷却（`LoginCooldownSeconds: 0`）。
 
 **WorldGuard** 提供区域 flag，多用于 spawn、活动场与特殊保护，与 Residence 互补。
 
@@ -799,6 +799,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 外卖分配器 / 外卖柜 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
+| 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
@@ -873,7 +874,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | ---- | ---- | -------- |
 | Residence | 6.0.2.4 | 主领地系统；中文 locale |
 | MCWWS_ResidenceQuiet | — | 见 E.1 |
-| GriefPrevention | — | 副圈地（world + dimensionalhome） |
+| GriefPrevention | — | 副圈地（world + dimensionalhome）；进服无登录冷却 |
 | WorldGuard | 7.0.17 | 区域 flag、spawn 保护 |
 | CoreProtect | — | 方块日志与回档（管理） |
 | InventoryRollbackPlus | 1.8.4 | 死亡背包回档 |
