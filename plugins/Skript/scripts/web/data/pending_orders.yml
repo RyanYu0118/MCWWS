@@ -1154,12 +1154,13 @@ orders:
         playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
         playerId: Ryan_yu__
         username: Ryan Yu
-        status: delivered
+        status: picked_up
+        pickedUpAt: '2026-08-25 20:10:05'
         total: 1.5
         balanceAfter: 1.6525864431E8
         economyChargedInGame: true
         createdAt: '2026-08-22T17:10:53.720Z'
-        updatedAt: '2026-08-23 01:11:36'
+        updatedAt: '2026-08-25 20:10:05'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-08-23 01:11:35'
@@ -1186,12 +1187,13 @@ orders:
         playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
         playerId: Ryan_yu__
         username: Ryan Yu
-        status: delivered
+        status: picked_up
+        pickedUpAt: '2026-08-25 20:10:05'
         total: 481.68
         balanceAfter: 1.6520584355E8
         economyChargedInGame: true
         createdAt: '2026-08-24T15:06:46.603Z'
-        updatedAt: '2026-08-24 23:06:48'
+        updatedAt: '2026-08-25 20:10:05'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-08-24 23:06:47'
@@ -1213,8 +1215,38 @@ orders:
                 status: delivered
                 deliveredTo: A01/1
     '45':
+        id: 54b6bd0a-6cb2-4620-b24f-f88cb9f514ce
+        numericId: 45
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: picked_up
+        total: 1
+        balanceAfter: 1.6520438713E8
         economyChargedInGame: true
-        updatedAt: '2026-07-13 23:23:15'
+        createdAt: '2026-08-25T12:24:17.588Z'
+        updatedAt: '2026-08-25 20:26:39'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-08-25 20:24:34'
+        deliveryMajor: A01
+        deliveredTo: ；A01/10
+        pickupCode: HCCPWT
+        lineCount: 1
+        lines:
+            '1':
+                itemId: andesite_slab
+                shopId: building__p5
+                slot: S
+                quantity: 2
+                unitBuyPrice: 0.5
+                lineTotal: 1
+                productAmount: 1
+                material: andesite_slab
+                shopTitle: 建筑方块 (5/10)
+                status: delivered
+                deliveredTo: A01/10
+        pickedUpAt: '2026-08-25 20:26:39'
     '46':
         economyChargedInGame: true
         updatedAt: '2026-07-13 23:29:41'
@@ -1243,4 +1275,4 @@ orders:
         economyChargedInGame: true
         updatedAt: '2026-08-07 15:06:18'
 
-next_id: 45
+next_id: 46

@@ -755,9 +755,31 @@ function mcwwsCabinetUnlockedFor(loc: location, p: player) :: boolean:
             return true
     return false
 
+function mcwwsMarkOrderPickedUp(oid: text):
+    if {_oid} is "":
+        stop
+    if "%{_oid}%" is "<none>":
+        stop
+    load yaml "{@orders_yaml}" as "weborders_pickup"
+    set {_st} to yaml value "orders.%{_oid}%.status" from "weborders_pickup"
+    if {_st} is not set:
+        unload yaml "weborders_pickup"
+        stop
+    # 仅把「已入柜待取」收成已取件；失败/发放中不要误改
+    if "%{_st}%" is not "delivered":
+        if "%{_st}%" is not "delivering":
+            unload yaml "weborders_pickup"
+            stop
+    set yaml value "orders.%{_oid}%.status" from "weborders_pickup" to "picked_up"
+    set yaml value "orders.%{_oid}%.updatedAt" from "weborders_pickup" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    set yaml value "orders.%{_oid}%.pickedUpAt" from "weborders_pickup" to now formatted as "yyyy-MM-dd HH:mm:ss"
+    save yaml "weborders_pickup"
+    unload yaml "weborders_pickup"
+
 function mcwwsReleaseCabinet(loc: location):
     set {_key} to mcwwsLockerLocKey({_loc})
     mcwwsLoadLockerYaml()
+    set {_oid} to yaml value "lockers.%{_key}%.orderId" from "dlockers"
     set yaml value "lockers.%{_key}%.occupied" from "dlockers" to "0"
     set yaml value "lockers.%{_key}%.unlocked" from "dlockers" to "0"
     set yaml value "lockers.%{_key}%.unlockUuid" from "dlockers" to ""
@@ -767,6 +789,10 @@ function mcwwsReleaseCabinet(loc: location):
     mcwwsUnloadLockerYaml()
     StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "0")
     StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "")
+    # 柜内取空 → 网页订单从「待取件」变为「已取件」
+    if {_oid} is set:
+        if "%{_oid}%" is not "":
+            mcwwsMarkOrderPickedUp("%{_oid}%")
     mcwwsSetBarrelLid({_loc}, false)
     mcwwsLockerSfx("lock", {_loc})
     # 关 GUI 同一 tick 里客户端常仍显示开盖，延迟再强制关一次
@@ -955,6 +981,11 @@ function mcwwsFindOrderByPickupCode(code: text, playerUuid: text) :: text:
     set {_found} to ""
     loop {_limit} times:
         set {_oid} to "%loop-number%"
+        set {_st} to yaml value "orders.%{_oid}%.status" from "weborders_find"
+        if "%{_st}%" is "picked_up":
+            continue
+        if "%{_st}%" is "failed":
+            continue
         set {_pc} to yaml value "orders.%{_oid}%.pickupCode" from "weborders_find"
         if mcwwsNormalizePickupCode("%{_pc}%") is not {_want}:
             continue

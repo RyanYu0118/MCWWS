@@ -957,6 +957,7 @@ async function copyPickupCode(code, button) {
 function formatOrderStatus(status) {
     if (status === 'delivering') return '发放中';
     if (status === 'delivered') return '待取件';
+    if (status === 'picked_up') return '已取件';
     if (status === 'failed') return '失败';
     return '待领取';
 }
