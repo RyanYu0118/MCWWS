@@ -373,8 +373,11 @@ useTimes:
       lastSellTime: '2026-08-02 16:00:55'
   building:
     A:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
       sellUseTimes: 2
       totalSellUseTimes: 2
+      lastBuyTime: '2026-08-25 20:43:44'
       lastSellTime: '2026-08-20 20:07:36'
     N:
       sellUseTimes: 392
@@ -673,6 +676,10 @@ useTimes:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-08-25 19:05:23'
+    t:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-08-25 20:56:20'
     i:
       buyUseTimes: 2
       totalBuyUseTimes: 2
@@ -991,6 +998,18 @@ useTimes:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-08-25 19:12:52'
+    G:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      lastBuyTime: '2026-08-25 20:51:20'
+    E:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      lastBuyTime: '2026-08-25 20:51:10'
+    F:
+      buyUseTimes: 4
+      totalBuyUseTimes: 4
+      lastBuyTime: '2026-08-25 20:51:14'
     R:
       buyUseTimes: 1
       totalBuyUseTimes: 1
@@ -1054,6 +1073,11 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-07-19 21:14:58'
+  functional__p3:
+    K:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-08-25 20:31:50'
   food:
     j:
       sellUseTimes: 14

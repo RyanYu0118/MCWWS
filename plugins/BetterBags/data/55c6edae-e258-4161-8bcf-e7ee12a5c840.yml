@@ -56,14 +56,6 @@ items:
     minecraft:item_name: '{translate:"block.minecraft.ominous_banner"}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:beef
-  count: 1
-  components:
-    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"你真的忍心这样对待你的坐骑吗？",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"马肉",underlined:0b}],text:""}'
-    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HORSE_ROU"}}'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:golden_pickaxe
   count: 1
   components:
@@ -877,15 +869,6 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CARBON"}}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:beef
-  count: 1
-  components:
-    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"“村
-      庄 英 雄”",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"人肉",underlined:0b}],text:""}'
-    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"VILLAGER_ROU"}}'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:netherite_ingot
   count: 3
   schema_version: 1
@@ -1328,14 +1311,6 @@ items:
     minecraft:profile: '{id:[I;-1323517854,-134467287,-1394606051,451284190],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYzg0ZGY3OWM0OTEwNGIxOThjZGFkNmQ5OWZkMGQwYmNmMTUzMWM5MmQ0YWI2MjY5ZTQwYjdkM2NiYmI4ZTk4YyJ9fX0="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"溺尸头",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"DROWNED_HEAD"}}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:porkchop
-  count: 7
-  components:
-    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"惨！",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"海龟肉",underlined:0b}],text:""}'
-    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"TURTLE_ROU"}}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:chainmail_leggings

@@ -4,6 +4,8 @@ import:
     org.bukkit.Material
     org.bukkit.NamespacedKey
     org.bukkit.block.Barrel
+    org.bukkit.block.Lidded
+    org.bukkit.block.data.Openable
     org.bukkit.inventory.ItemStack
     org.bukkit.persistence.PersistentDataType
     com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils
@@ -125,13 +127,10 @@ function mcwwsHeldSfId(p: player) :: text:
     set {_sf} to SlimefunItem.getByItem({_tool})
     if {_sf} is not set:
         return ""
+    # Guizhan SF：getId() 已是 String，不要再 .getKey()
     set {_id} to {_sf}.getId()
     if {_id} is not set:
         return ""
-    set {_key} to {_id}.getKey()
-    if {_key} is set:
-        if "%{_key}%" is not "":
-            return "%{_key}%"
     return "%{_id}%"
 
 function mcwwsIsNfcMajorId(id: text) :: boolean:
@@ -364,13 +363,10 @@ function mcwwsSfItemId(loc: location) :: text:
     set {_item} to StorageCacheUtils.getSlimefunItem({_loc})
     if {_item} is not set:
         return ""
+    # Guizhan SF：getId() 已是 String，不要再 .getKey()
     set {_id} to {_item}.getId()
     if {_id} is not set:
         return ""
-    set {_key} to {_id}.getKey()
-    if {_key} is set:
-        if "%{_key}%" is not "":
-            return "%{_key}%"
     return "%{_id}%"
 
 function mcwwsBlockTypeName(loc: location) :: text:
@@ -708,12 +704,25 @@ function mcwwsSetBarrelLid(loc: location, openIt: boolean):
     if {_b}.getType() is not Material.BARREL:
         if mcwwsBlockTypeName({_loc}) does not contain "barrel":
             stop
-    # Paper：木桶开合写在 BlockState，Skript 的 close the lid 对 SF 木桶经常不刷新客户端
+    # 1) BlockData.open（客户端开合主要看这个）
+    set {_data} to {_b}.getBlockData()
+    if {_data} is instance of Openable:
+        {_data}.setOpen({_openIt})
+        {_b}.setBlockData({_data}, false)
+    # 2) Lidded 动画状态（防止自动合上）
     set {_state} to {_b}.getState()
-    if {_state} is instance of Barrel:
-        set {_barrel} to {_state}
-        {_barrel}.setOpen({_openIt})
-        {_barrel}.update(true, false)
+    if {_state} is instance of Lidded:
+        if {_openIt} is true:
+            {_state}.open()
+        else:
+            {_state}.close()
+        {_state}.update(true, true)
+    else if {_state} is instance of Barrel:
+        if {_openIt} is true:
+            {_state}.open()
+        else:
+            {_state}.close()
+        {_state}.update(true, true)
     if {_openIt} is true:
         open the lid of {_b}
     else:
@@ -771,17 +780,14 @@ function mcwwsCabinetUnlockedFor(loc: location, p: player) :: boolean:
     mcwwsLoadLockerYaml()
     set {_un} to yaml value "lockers.%{_key}%.unlocked" from "dlockers"
     set {_who} to yaml value "lockers.%{_key}%.unlockUuid" from "dlockers"
-    set {_oid} to yaml value "lockers.%{_key}%.orderId" from "dlockers"
-    set {_occ} to mcwwsCabinetOccupied({_key})
     mcwwsUnloadLockerYaml()
     if "%{_un}%" is "1":
         if mcwwsLockerUuidKey("%{_who}%") is {_pu}:
+            # YAML 仍有解锁时补回方块数据
+            StorageCacheUtils.setData({_loc}, "mcwws_unlocked", "1")
+            StorageCacheUtils.setData({_loc}, "mcwws_unlock_uuid", "%uuid of {_p}%")
             return true
-    # 网页曾误回写 YAML 冲掉 unlocked，但柜仍占用且订单属于该玩家：允许打开并回写解锁状态
-    if {_occ} is true:
-        if mcwwsOrderOwnedByPlayer("%{_oid}%", {_p}) is true:
-            mcwwsUnlockCabinet({_loc}, {_p})
-            return true
+    # 须先在分配器输入属于自己的取件码
     return false
 
 function mcwwsMarkOrderPickedUp(oid: text):
@@ -874,8 +880,10 @@ function mcwwsUnlockCabinet(loc: location, p: player):
     mcwwsSetBarrelLid({_loc}, true)
     mcwwsLockerSfx("unlock", {_loc})
     set {_lidLoc} to {_loc}
+    wait 1 tick
+    mcwwsSetBarrelLid({_lidLoc}, true)
     wait 2 ticks
-    mcwwsSyncCabinetLid({_lidLoc})
+    mcwwsSetBarrelLid({_lidLoc}, true)
 
 function mcwwsFindCabinetLocForOrder(oid: text) :: location:
     set {_want} to {_oid}
@@ -1372,7 +1380,13 @@ on right click on barrel:
         stop
     if mcwwsCabinetUnlockedFor({_loc}, player) is false:
         mcwwsLockerResultSfx("fail", player)
-        send "§c[外卖柜] §f已上锁。请到 §e外卖分配器 §f输入取件码。" to player
+        set {_mj} to mcwwsGetLockerMajor({_loc})
+        set {_mn} to mcwwsGetLockerMinor({_loc})
+        if {_mj} is "":
+            set {_mj} to "未设置"
+        if {_mn} is "":
+            set {_mn} to "未设置"
+        send "§c[外卖柜] §f已上锁（§e%{_mj}%§f / §e%{_mn}%§f）。请到 §e外卖分配器 §f输入取件码。" to player
         stop
     wait 1 tick
     if player is online:
@@ -1471,7 +1485,13 @@ on inventory open:
         close {_p}'s inventory
         if mcwwsCabinetUnlockedFor({_loc}, {_p}) is false:
             mcwwsLockerResultSfx("fail", {_p})
-            send "§c[外卖柜] §f已上锁。请到外卖分配器输入取件码。" to {_p}
+            set {_mj} to mcwwsGetLockerMajor({_loc})
+            set {_mn} to mcwwsGetLockerMinor({_loc})
+            if {_mj} is "":
+                set {_mj} to "未设置"
+            if {_mn} is "":
+                set {_mn} to "未设置"
+            send "§c[外卖柜] §f已上锁（§e%{_mj}%§f / §e%{_mn}%§f）。请到 §e外卖分配器 §f输入取件码。" to {_p}
             stop
         wait 1 tick
         if {_p} is online:
@@ -1606,6 +1626,23 @@ on chat:
         stop
     cancel event
     mcwwsApplyLockerNumbering(player, message)
+
+every 2 seconds:
+    # 对抗粘液覆盖方块状态：已解锁柜保持开盖渲染
+    mcwwsLoadLockerYaml()
+    delete {_openKeys::*}
+    loop yaml node keys "lockers" from "dlockers":
+        if mcwwsYamlKind(loop-value) is not "cabinet":
+            continue
+        set {_k} to loop-value
+        set {_un} to yaml value "lockers.%{_k}%.unlocked" from "dlockers"
+        if "%{_un}%" is "1":
+            add {_k} to {_openKeys::*}
+    mcwwsUnloadLockerYaml()
+    loop {_openKeys::*}:
+        set {_loc} to mcwwsLocFromKey(loop-value)
+        if {_loc} is set:
+            mcwwsSetBarrelLid({_loc}, true)
 
 every 10 seconds:
     mcwwsLoadLockerYaml()

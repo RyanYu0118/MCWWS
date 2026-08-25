@@ -1248,11 +1248,70 @@ orders:
                 deliveredTo: A01/10
         pickedUpAt: '2026-08-25 20:26:39'
     '46':
+        id: 9d32a933-02e2-4e29-a5b6-9f999b1a70b7
+        numericId: 46
+        playerUuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+        playerId: GuuuuuLei
+        username: Gu Lei
+        status: picked_up
+        total: 15
+        balanceAfter: 872482.05
         economyChargedInGame: true
-        updatedAt: '2026-07-13 23:29:41'
+        createdAt: '2026-08-25T13:38:37.121Z'
+        updatedAt: '2026-08-25 21:39:14'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-08-25 21:38:49'
+        deliveryMajor: A01
+        deliveredTo: ；A01/10
+        pickupCode: PVGHNC
+        lineCount: 1
+        lines:
+            '1':
+                itemId: light
+                shopId: mcwws
+                slot: A
+                quantity: 15
+                unitBuyPrice: 1
+                lineTotal: 15
+                productAmount: 1
+                material: light
+                shopTitle: MCWWS 商店
+                status: delivered
+                deliveredTo: A01/10
+        pickedUpAt: '2026-08-25 21:39:14'
     '47':
+        id: 3d026431-5557-4244-ac2c-5bc890d301f6
+        numericId: 47
+        playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
+        playerId: Ryan_yu__
+        username: Ryan Yu
+        status: delivered
+        total: 2
+        balanceAfter: 1.6520037999E8
         economyChargedInGame: true
-        updatedAt: '2026-07-13 23:31:05'
+        createdAt: '2026-08-25T13:40:25.434Z'
+        updatedAt: '2026-08-25 21:40:50'
+        failureReason: ''
+        deliveringLine: 0
+        deliveringStartedAt: '2026-08-25 21:40:49'
+        deliveryMajor: A01
+        deliveredTo: ；A01/10
+        pickupCode: 72DNR5
+        lineCount: 1
+        lines:
+            '1':
+                itemId: andesite
+                shopId: building__p5
+                slot: Q
+                quantity: 2
+                unitBuyPrice: 1
+                lineTotal: 2
+                productAmount: 1
+                material: andesite
+                shopTitle: 建筑方块 (5/10)
+                status: delivered
+                deliveredTo: A01/10
     '48':
         economyChargedInGame: true
         updatedAt: '2026-07-14 01:04:36'
@@ -1275,4 +1334,4 @@ orders:
         economyChargedInGame: true
         updatedAt: '2026-08-07 15:06:18'
 
-next_id: 46
+next_id: 48
