@@ -1,4 +1,4 @@
-next_id: 4162
+next_id: 4168
 entries:
   '1':
     id: 1
@@ -44432,3 +44432,69 @@ entries:
     refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/25 21:49
     createdAt: '2026-08-25T13:49:40.127199700Z'
     updatedAt: '2026-08-25T13:50:11.122546300Z'
+  '4162':
+    id: 4162
+    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
+    playerId: GuuuuuLei
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787666542392-37407855748700
+    createdAt: '2026-08-25T14:02:22.393472200Z'
+    balanceAfter: 871858.05
+  '4163':
+    id: 4163
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/25 22:44
+    createdAt: '2026-08-25T14:44:19.635109Z'
+    updatedAt: '2026-08-25T14:44:20.635007200Z'
+  '4164':
+    id: 4164
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787670685290-41550752810900
+    createdAt: '2026-08-25T15:11:25.290609100Z'
+    balanceAfter: 165200307.99
+  '4165':
+    id: 4165
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787670754650-41620113767200
+    createdAt: '2026-08-25T15:12:34.651131900Z'
+    balanceAfter: 165200243.99
+  '4166':
+    id: 4166
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 652
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/25 23:12
+    createdAt: '2026-08-25T15:12:41.643447600Z'
+    updatedAt: '2026-08-25T15:15:35.634434Z'
+  '4167':
+    id: 4167
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 20
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/25 23:17
+    createdAt: '2026-08-25T15:17:12.635269300Z'
+    updatedAt: '2026-08-25T15:17:24.631442600Z'

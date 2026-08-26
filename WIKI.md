@@ -959,7 +959,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
-| UltimateTimber | 4.10.0 | 连根砍树 150 上限（果树见 MCWWS_UltimateTimberFix） |
+| UltimateTimber | 4.10.0 | 连根砍树 150 上限（果树掉落/补种见 MCWWS_UltimateTimberFix） |
 | VeinMiner | 2.11.2 | 潜行连锁采 64 格，¥16/次 |
 | ChestSort | 14.2.0 | `/sort` `/isort` 整理 |
 | BetterBags | — | 扩展背包（本服禁用发放） |
