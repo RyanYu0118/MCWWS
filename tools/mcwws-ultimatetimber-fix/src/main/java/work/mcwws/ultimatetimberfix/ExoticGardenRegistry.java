@@ -30,7 +30,7 @@ public final class ExoticGardenRegistry {
 
         for (Tree tree : exoticGarden.getTrees()) {
             String sapling = normalize(tree.getSapling());
-            String fruit = normalize(tree.getFruit());
+            String fruit = normalize(tree.getFruitID());
             if (sapling == null) {
                 continue;
             }

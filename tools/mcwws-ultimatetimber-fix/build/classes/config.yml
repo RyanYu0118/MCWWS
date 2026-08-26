@@ -1,0 +1,24 @@
+# 拥有此权限的玩家对果树使用原版 UltimateTimber 行为（不替换树苗/掉落）
+bypass-permission: mcwws.ultimatetimberfix.bypass
+
+# ExoticGarden 树苗长成后，延迟多少 tick 再扫描并登记果树占地（等待 schematic 粘贴完成）
+footprint-scan-delay-ticks: 5
+
+# 单次扫描最多登记的方块数（防止异常结构撑爆内存）
+footprint-max-blocks: 200
+
+# 每片树叶额外掉落果树苗的概率（百分比，对齐 UltimateTimber 原版橡树树叶 5% 树苗概率）
+sapling-drop-chance-per-leaf: 5.0
+
+# UltimateTimber 补种原版树苗后，在哪些 tick 尝试替换为 ExoticGarden 果树苗
+replant-delays-ticks:
+  - 2
+  - 4
+  - 8
+  - 16
+
+# 一次连根砍树会话的最长持续时间（秒）
+session-timeout-seconds: 20
+
+# 砍树结束后仍拦截树叶/原版树苗掉落的延迟（tick）
+session-cleanup-delay-ticks: 40

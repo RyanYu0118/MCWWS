@@ -437,11 +437,11 @@ useTimes:
       lastSellTime: '2026-08-02 16:00:55'
   building:
     A:
-      buyUseTimes: 133
-      totalBuyUseTimes: 133
+      buyUseTimes: 197
+      totalBuyUseTimes: 197
       sellUseTimes: 100
       totalSellUseTimes: 100
-      lastBuyTime: '2026-08-25 20:43:44'
+      lastBuyTime: '2026-08-26 12:49:00'
       lastSellTime: '2026-08-22 23:44:34'
     B:
       sellUseTimes: 15
@@ -459,6 +459,10 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-08-20 20:06:49'
+    T:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-08-26 12:55:48'
     Y:
       sellUseTimes: 7
       totalSellUseTimes: 7
@@ -743,9 +747,9 @@ useTimes:
       lastBuyTime: '2026-06-24 20:14:09'
   functional:
     u:
-      buyUseTimes: 1
-      totalBuyUseTimes: 1
-      lastBuyTime: '2026-08-25 19:05:23'
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      lastBuyTime: '2026-08-26 12:49:33'
     t:
       buyUseTimes: 1
       totalBuyUseTimes: 1
@@ -1134,9 +1138,13 @@ useTimes:
       totalBuyUseTimes: 4
       lastBuyTime: '2026-08-25 20:51:14'
     R:
+      buyUseTimes: 2
+      totalBuyUseTimes: 2
+      lastBuyTime: '2026-08-26 12:54:38'
+    O:
       buyUseTimes: 1
       totalBuyUseTimes: 1
-      lastBuyTime: '2026-08-25 19:05:36'
+      lastBuyTime: '2026-08-26 12:52:56'
     P:
       buyUseTimes: 1
       totalBuyUseTimes: 1
@@ -1146,9 +1154,13 @@ useTimes:
       totalSellUseTimes: 1
       lastSellTime: '2026-08-17 22:01:20'
     C:
-      buyUseTimes: 2
-      totalBuyUseTimes: 2
-      lastBuyTime: '2026-08-25 19:36:57'
+      buyUseTimes: 3
+      totalBuyUseTimes: 3
+      lastBuyTime: '2026-08-26 12:57:12'
+    D:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-08-26 12:52:56'
     A:
       buyUseTimes: 1
       totalBuyUseTimes: 1
@@ -1168,11 +1180,11 @@ useTimes:
       lastBuyTime: '2026-08-25 20:31:50'
   functional__p4:
     A:
-      buyUseTimes: 5
-      totalBuyUseTimes: 5
+      buyUseTimes: 69
+      totalBuyUseTimes: 69
       sellUseTimes: 54
       totalSellUseTimes: 54
-      lastBuyTime: '2026-08-23 20:40:09'
+      lastBuyTime: '2026-08-26 13:00:48'
       lastSellTime: '2026-08-25 20:06:34'
   food:
     j:
@@ -1477,6 +1489,10 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-08-17 21:59:37'
+    X:
+      buyUseTimes: 67
+      totalBuyUseTimes: 67
+      lastBuyTime: '2026-08-26 23:52:13'
     U:
       sellUseTimes: 1
       totalSellUseTimes: 1
@@ -2044,6 +2060,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;C;;E;;G
-    refreshDoneTime: '2026-08-26 00:00:00'
+    nowValue: A;;C;;D;;F;;G
+    refreshDoneTime: '2026-08-28 00:00:00'
 customPlaceholder: {}
