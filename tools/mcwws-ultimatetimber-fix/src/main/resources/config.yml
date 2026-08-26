@@ -1,0 +1,8 @@
+# 拥有此权限的玩家仍可对 ExoticGarden 果树使用连根砍树（默认关闭，一般无需授予）
+bypass-permission: mcwws.ultimatetimberfix.bypass
+
+# ExoticGarden 树苗长成后，延迟多少 tick 再扫描并登记果树占地（等待 schematic 粘贴完成）
+footprint-scan-delay-ticks: 5
+
+# 单次扫描最多登记的方块数（防止异常结构撑爆内存）
+footprint-max-blocks: 200

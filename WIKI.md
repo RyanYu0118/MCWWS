@@ -136,6 +136,8 @@
 
 持斧砍树可一次放倒整棵，单次最多 **150** 根原木，耐久按数量扣除；默认整树旋转倒地动画。树干基座自动补种树苗，树叶落地 **1%** 概率补种。全员默认可用；潜行不关闭。倒下方块砸中你造成 **1** 点伤害。
 
+**ExoticGarden 果树**（橙子、椰子、荔枝等 Slimefun 树苗长成的树）**不会**触发连根砍树，也不会被补种成原版树苗；请继续用右键收果实，需要移除整棵时仍可按格手动砍伐。
+
 ### 3.2 养殖与作物（粘液科技扩展）
 
 以下 Slimefun 附属侧重**生命资源的培育与取用**（配方见合成学 · 粘液科技指南）：
@@ -807,6 +809,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js` |
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
 | 连锁采矿 | `plugins/VeinMiner/` |
+| UltimateTimber × ExoticGarden 果树保护 | `tools/mcwws-ultimatetimber-fix/` |
 | 魔法 / 炼金附属 | `plugins/AlchimiaVitae/`、`plugins/Alchema/`、`plugins/TranscEndence/` |
 | 每日签到 | `plugins/LiteSignIn/` |
 | 基岩桥接 | `plugins/Geyser-Spigot/`、`plugins/floodgate/` |
@@ -832,6 +835,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_IdeaAchievements | — | 本服特色成就逻辑 |
 | MCWWS_UltimateAdvancements | — | L 键仅「流浪世界」单页进度 |
 | MCWWS_SFurnaceFix | 1.0.0 | Slimefun 熔炉界面修复 |
+| MCWWS_UltimateTimberFix | 1.0.0 | 防止连根砍树误伤 ExoticGarden 果树 |
 | MCWWS-rsc（RSC 附属） | — | 外卖分配器、外卖柜、服内定制 Slimefun 物品 |
 | Skript `scripts/mcwws/` | — | 动态经济、传送、光源、便携台拦截等核心脚本 |
 | Skript `scripts/web/` | — | 网页商城、账本、物价导出 |
@@ -955,7 +959,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
-| UltimateTimber | 4.10.0 | 连根砍树 150 上限 |
+| UltimateTimber | 4.10.0 | 连根砍树 150 上限（果树见 MCWWS_UltimateTimberFix） |
 | VeinMiner | 2.11.2 | 潜行连锁采 64 格，¥16/次 |
 | ChestSort | 14.2.0 | `/sort` `/isort` 整理 |
 | BetterBags | — | 扩展背包（本服禁用发放） |

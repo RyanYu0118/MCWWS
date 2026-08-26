@@ -1,0 +1,6 @@
+name: MCWWS_UltimateTimberFix
+main: work.mcwws.ultimatetimberfix.McwwsUltimateTimberFixPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [UltimateTimber, Slimefun]
+description: 防止 UltimateTimber 误伤 ExoticGarden 果树（整树砍伐与补种原版树苗）
