@@ -20,21 +20,21 @@ public final class TreeFootprintListener implements Listener {
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onStructureGrow(StructureGrowEvent event) {
         Location location = event.getLocation();
-        String id = SlimefunTreeDetector.slimefunIdAt(location.getBlock());
-        if (!SlimefunTreeDetector.isExoticGardenSaplingId(id)) {
+        String saplingId = SlimefunTreeDetector.resolveSaplingId(location.getBlock());
+        if (!SlimefunTreeDetector.isFruitTreeSaplingId(saplingId)) {
             return;
         }
-        scheduleFootprintScan(location);
+        scheduleFootprintScan(location, saplingId);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
     public void onSaplingPlace(BlockPlaceEvent event) {
         Block block = event.getBlockPlaced();
-        String id = SlimefunTreeDetector.slimefunIdAt(block);
-        if (!SlimefunTreeDetector.isExoticGardenSaplingId(id)) {
+        String saplingId = SlimefunTreeDetector.resolveSaplingId(block);
+        if (!SlimefunTreeDetector.isFruitTreeSaplingId(saplingId)) {
             return;
         }
-        plugin.getFootprintStore().registerFromOrigin(block.getLocation());
+        plugin.getFootprintStore().registerFromOrigin(block.getLocation(), saplingId);
     }
 
     @EventHandler(priority = EventPriority.MONITOR, ignoreCancelled = true)
@@ -47,10 +47,10 @@ public final class TreeFootprintListener implements Listener {
         store.removeFootprint(block.getLocation());
     }
 
-    private void scheduleFootprintScan(Location origin) {
+    private void scheduleFootprintScan(Location origin, String saplingId) {
         long delay = plugin.footprintScanDelayTicks();
         plugin.getServer().getScheduler().runTaskLater(plugin, () -> {
-            plugin.getFootprintStore().registerFromOrigin(origin);
+            plugin.getFootprintStore().registerFromOrigin(origin, saplingId);
         }, delay);
     }
 }

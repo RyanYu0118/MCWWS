@@ -26,8 +26,13 @@ $UltimateTimber = Get-ChildItem (Join-Path $Root "plugins") -Filter "UltimateTim
 $Slimefun = Get-ChildItem (Join-Path $Root "plugins") -Filter "Slimefun-*.jar" |
     Where-Object { $_.Name -notlike "*.new" } |
     Select-Object -First 1 -ExpandProperty FullName
+$ExoticGarden = Get-ChildItem (Join-Path $Root "plugins") -Filter "ExoticGarden*.jar" |
+    Where-Object { $_.Name -notlike "*.new" } |
+    Sort-Object Name -Descending |
+    Select-Object -First 1 -ExpandProperty FullName
 if (-not $UltimateTimber) { throw "Missing UltimateTimber jar in plugins/" }
 if (-not $Slimefun) { throw "Missing Slimefun jar in plugins/" }
+if (-not $ExoticGarden) { throw "Missing ExoticGarden jar in plugins/" }
 
 $Libs = @(
     (Find-Newest "libraries/com/google/guava/guava" "guava-*.jar"),
@@ -37,7 +42,7 @@ $Libs = @(
     (Find-Newest "libraries/org/jetbrains/annotations" "annotations-*.jar")
 )
 
-$CpParts = @($PaperApi, $UltimateTimber, $Slimefun) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$CpParts = @($PaperApi, $UltimateTimber, $Slimefun, $ExoticGarden) + $Libs | Where-Object { $_ -and (Test-Path $_) }
 $Cp = ($CpParts | Select-Object -Unique) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 

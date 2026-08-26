@@ -2,6 +2,7 @@ package work.mcwws.ultimatetimberfix;
 
 import com.songoda.ultimatetimber.tree.DetectedTree;
 import com.songoda.ultimatetimber.tree.ITreeBlock;
+import com.songoda.ultimatetimber.tree.TreeBlockType;
 import com.xzavier0722.mc.plugin.slimefun4.storage.util.StorageCacheUtils;
 import io.github.thebusybiscuit.slimefun4.api.items.SlimefunItem;
 import me.mrCookieSlime.Slimefun.api.BlockStorage;
@@ -11,40 +12,57 @@ import org.bukkit.block.Block;
 
 public final class SlimefunTreeDetector {
 
-    private static final String EXOTIC_GARDEN_PREFIX = "EXOTIC_GARDEN_";
-
     private SlimefunTreeDetector() {
     }
 
-    public static boolean isProtectedTree(DetectedTree tree) {
+    public static boolean isFruitTree(DetectedTree tree) {
+        return resolveSaplingId(tree) != null;
+    }
+
+    public static String resolveSaplingId(DetectedTree tree) {
         if (tree == null) {
-            return false;
+            return null;
         }
         var blocks = tree.getDetectedTreeBlocks();
         if (blocks == null) {
-            return false;
+            return null;
         }
+
         for (ITreeBlock<?> treeBlock : blocks.getAllTreeBlocks()) {
             Object raw = treeBlock.getBlock();
-            if (raw instanceof Block block && isProtectedBlock(block)) {
-                return true;
+            if (!(raw instanceof Block block)) {
+                continue;
+            }
+            String saplingId = resolveSaplingId(block);
+            if (saplingId != null) {
+                return saplingId;
             }
         }
-        return false;
+        return null;
     }
 
-    public static boolean isProtectedBlock(Block block) {
+    public static String resolveSaplingId(Block block) {
         if (block == null) {
-            return false;
+            return null;
         }
-        if (isExoticGardenId(slimefunIdAt(block))) {
-            return true;
+        String slimefunId = slimefunIdAt(block);
+        String mapped = ExoticGardenRegistry.toSaplingId(slimefunId);
+        if (mapped != null) {
+            return mapped;
         }
         Material type = block.getType();
         if ((type == Material.PLAYER_HEAD || type == Material.PLAYER_WALL_HEAD) && BlockStorage.hasBlockInfo(block)) {
-            return isExoticGardenId(BlockStorage.checkID(block));
+            return ExoticGardenRegistry.toSaplingId(BlockStorage.checkID(block));
         }
-        return false;
+        return null;
+    }
+
+    public static boolean isFruitTreeBlock(Block block) {
+        return resolveSaplingId(block) != null;
+    }
+
+    public static boolean isFruitTreeSaplingId(String id) {
+        return ExoticGardenRegistry.isSaplingId(id);
     }
 
     public static boolean isTreePart(Material type) {
@@ -56,6 +74,10 @@ public final class SlimefunTreeDetector {
                 || type == Material.PLAYER_HEAD
                 || type == Material.PLAYER_WALL_HEAD
                 || Tag.SAPLINGS.isTagged(type);
+    }
+
+    public static boolean isLeafBlock(ITreeBlock<?> treeBlock) {
+        return treeBlock != null && treeBlock.getTreeBlockType() == TreeBlockType.LEAF;
     }
 
     public static String slimefunIdAt(Block block) {
@@ -77,13 +99,5 @@ public final class SlimefunTreeDetector {
         } catch (Throwable ignored) {
             return null;
         }
-    }
-
-    public static boolean isExoticGardenSaplingId(String id) {
-        return isExoticGardenId(id) && id.contains("SAPLING");
-    }
-
-    public static boolean isExoticGardenId(String id) {
-        return id != null && id.startsWith(EXOTIC_GARDEN_PREFIX);
     }
 }

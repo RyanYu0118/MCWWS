@@ -1,5 +1,7 @@
 package work.mcwws.ultimatetimberfix;
 
+import com.songoda.ultimatetimber.tree.DetectedTree;
+import com.songoda.ultimatetimber.tree.ITreeBlock;
 import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -9,9 +11,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Queue;
 import java.util.Set;
 import java.util.UUID;
@@ -27,6 +32,7 @@ public final class TreeFootprintStore {
     private final McwwsUltimateTimberFixPlugin plugin;
     private final File file;
     private final Set<String> protectedBlocks = new LinkedHashSet<>();
+    private final Map<String, String> saplingByBlock = new HashMap<>();
 
     public TreeFootprintStore(McwwsUltimateTimberFixPlugin plugin) {
         this.plugin = plugin;
@@ -35,21 +41,31 @@ public final class TreeFootprintStore {
 
     public void load() {
         protectedBlocks.clear();
+        saplingByBlock.clear();
         if (!file.exists()) {
             return;
         }
         FileConfiguration config = YamlConfiguration.loadConfiguration(file);
         List<String> entries = config.getStringList("blocks");
-        if (entries == null) {
-            return;
-        }
-        for (String entry : entries) {
-            if (entry != null && !entry.isBlank()) {
-                protectedBlocks.add(entry);
+        if (entries != null) {
+            for (String entry : entries) {
+                if (entry != null && !entry.isBlank()) {
+                    protectedBlocks.add(entry);
+                }
             }
         }
+
+        if (config.isConfigurationSection("saplings")) {
+            for (String blockKey : config.getConfigurationSection("saplings").getKeys(false)) {
+                String saplingId = config.getString("saplings." + blockKey);
+                if (saplingId != null && !saplingId.isBlank()) {
+                    saplingByBlock.put(blockKey, saplingId);
+                }
+            }
+        }
+
         pruneInvalid();
-        plugin.getLogger().info("已加载 " + protectedBlocks.size() + " 个 ExoticGarden 果树保护坐标。");
+        plugin.getLogger().info("已加载 " + protectedBlocks.size() + " 个 ExoticGarden 果树坐标。");
     }
 
     public void save() {
@@ -59,10 +75,13 @@ public final class TreeFootprintStore {
         }
         FileConfiguration config = new YamlConfiguration();
         config.set("blocks", new ArrayList<>(protectedBlocks));
+        for (Map.Entry<String, String> entry : saplingByBlock.entrySet()) {
+            config.set("saplings." + entry.getKey(), entry.getValue());
+        }
         try {
             config.save(file);
         } catch (IOException e) {
-            plugin.getLogger().warning("保存果树保护坐标失败：" + e.getMessage());
+            plugin.getLogger().warning("保存果树坐标失败：" + e.getMessage());
         }
     }
 
@@ -70,8 +89,37 @@ public final class TreeFootprintStore {
         return protectedBlocks.contains(key(location));
     }
 
+    public String getSaplingId(Location location) {
+        return saplingByBlock.get(key(location));
+    }
+
+    public String resolveSaplingId(DetectedTree tree) {
+        if (tree == null) {
+            return null;
+        }
+        var blocks = tree.getDetectedTreeBlocks();
+        if (blocks == null) {
+            return null;
+        }
+        for (ITreeBlock<?> treeBlock : blocks.getAllTreeBlocks()) {
+            Object raw = treeBlock.getBlock();
+            if (!(raw instanceof Block block)) {
+                continue;
+            }
+            String saplingId = getSaplingId(block.getLocation());
+            if (saplingId != null) {
+                return saplingId;
+            }
+        }
+        return null;
+    }
+
     public void registerFromOrigin(Location origin) {
-        if (origin == null || origin.getWorld() == null) {
+        registerFromOrigin(origin, SlimefunTreeDetector.resolveSaplingId(origin.getBlock()));
+    }
+
+    public void registerFromOrigin(Location origin, String saplingId) {
+        if (origin == null || origin.getWorld() == null || saplingId == null) {
             return;
         }
         Set<String> discovered = scanFootprint(origin);
@@ -83,6 +131,7 @@ public final class TreeFootprintStore {
             if (protectedBlocks.add(entry)) {
                 added++;
             }
+            saplingByBlock.put(entry, saplingId);
         }
         if (added > 0) {
             save();
@@ -103,6 +152,7 @@ public final class TreeFootprintStore {
             if (protectedBlocks.remove(entry)) {
                 removed++;
             }
+            saplingByBlock.remove(entry);
         }
         if (removed > 0) {
             save();
@@ -137,11 +187,16 @@ public final class TreeFootprintStore {
     private void pruneInvalid() {
         int before = protectedBlocks.size();
         protectedBlocks.removeIf(entry -> {
-            Location location = parse(entry);
+            Location location = parseKey(entry);
             if (location == null || location.getWorld() == null) {
+                saplingByBlock.remove(entry);
                 return true;
             }
-            return !SlimefunTreeDetector.isTreePart(location.getBlock().getType());
+            if (!SlimefunTreeDetector.isTreePart(location.getBlock().getType())) {
+                saplingByBlock.remove(entry);
+                return true;
+            }
+            return false;
         });
         int removed = before - protectedBlocks.size();
         if (removed > 0) {
@@ -150,14 +205,14 @@ public final class TreeFootprintStore {
         }
     }
 
-    static String key(Location location) {
+    public static String key(Location location) {
         return location.getWorld().getUID()
                 + ":" + location.getBlockX()
                 + ":" + location.getBlockY()
                 + ":" + location.getBlockZ();
     }
 
-    private static Location parse(String entry) {
+    public static Location parseKey(String entry) {
         String[] parts = entry.split(":");
         if (parts.length != 4) {
             return null;

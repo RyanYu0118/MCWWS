@@ -2,10 +2,13 @@ package work.mcwws.ultimatetimberfix;
 
 import org.bukkit.plugin.java.JavaPlugin;
 
+import java.util.List;
+
 public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
 
     private static McwwsUltimateTimberFixPlugin instance;
     private TreeFootprintStore footprintStore;
+    private FellSessionManager sessionManager;
 
     public static McwwsUltimateTimberFixPlugin getInstance() {
         return instance;
@@ -13,6 +16,10 @@ public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
 
     public TreeFootprintStore getFootprintStore() {
         return footprintStore;
+    }
+
+    public FellSessionManager getSessionManager() {
+        return sessionManager;
     }
 
     public String bypassPermission() {
@@ -25,6 +32,26 @@ public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
 
     public int footprintMaxBlocks() {
         return Math.max(16, getConfig().getInt("footprint-max-blocks", 200));
+    }
+
+    public double saplingDropChancePerLeaf() {
+        return Math.max(0.0D, getConfig().getDouble("sapling-drop-chance-per-leaf", 5.0D));
+    }
+
+    public List<Integer> replantDelaysTicks() {
+        List<Integer> delays = getConfig().getIntegerList("replant-delays-ticks");
+        if (delays == null || delays.isEmpty()) {
+            return List.of(2, 4, 8, 16);
+        }
+        return delays;
+    }
+
+    public long sessionTimeoutMs() {
+        return Math.max(1000L, getConfig().getLong("session-timeout-seconds", 20) * 1000L);
+    }
+
+    public long sessionCleanupDelayTicks() {
+        return Math.max(20L, getConfig().getLong("session-cleanup-delay-ticks", 40));
     }
 
     @Override
@@ -42,14 +69,21 @@ public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
             getServer().getPluginManager().disablePlugin(this);
             return;
         }
+        if (getServer().getPluginManager().getPlugin("ExoticGarden") == null) {
+            getLogger().severe("未找到 ExoticGarden，插件已禁用。");
+            getServer().getPluginManager().disablePlugin(this);
+            return;
+        }
 
+        ExoticGardenRegistry.reload();
         footprintStore = new TreeFootprintStore(this);
         footprintStore.load();
+        sessionManager = new FellSessionManager();
 
-        getServer().getPluginManager().registerEvents(new UltimateTimberGuardListener(this), this);
+        getServer().getPluginManager().registerEvents(new ExoticGardenTimberListener(this), this);
         getServer().getPluginManager().registerEvents(new TreeFootprintListener(this), this);
 
-        getLogger().info("已启用 UltimateTimber × ExoticGarden 果树保护。");
+        getLogger().info("已启用 UltimateTimber × ExoticGarden 果树兼容（连根砍、补种果树苗）。");
     }
 
     @Override

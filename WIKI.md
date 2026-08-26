@@ -136,7 +136,7 @@
 
 持斧砍树可一次放倒整棵，单次最多 **150** 根原木，耐久按数量扣除；默认整树旋转倒地动画。树干基座自动补种树苗，树叶落地 **1%** 概率补种。全员默认可用；潜行不关闭。倒下方块砸中你造成 **1** 点伤害。
 
-**ExoticGarden 果树**（橙子、椰子、荔枝等 Slimefun 树苗长成的树）**不会**触发连根砍树，也不会被补种成原版树苗；请继续用右键收果实，需要移除整棵时仍可按格手动砍伐。
+**ExoticGarden 果树**（橙子、椰子、荔枝等 Slimefun 树苗长成的树）同样支持连根砍；树桩会自动补种对应的**果树苗**（不是原版树苗），树叶**不掉落树叶方块**，而是按 **5%**/片概率额外掉落果树苗（可在 `MCWWS_UltimateTimberFix` 配置中调整）。果实仍建议右键采摘。
 
 ### 3.2 养殖与作物（粘液科技扩展）
 
@@ -835,7 +835,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_IdeaAchievements | — | 本服特色成就逻辑 |
 | MCWWS_UltimateAdvancements | — | L 键仅「流浪世界」单页进度 |
 | MCWWS_SFurnaceFix | 1.0.0 | Slimefun 熔炉界面修复 |
-| MCWWS_UltimateTimberFix | 1.0.0 | 防止连根砍树误伤 ExoticGarden 果树 |
+| MCWWS_UltimateTimberFix | 1.1.0 | ExoticGarden 果树连根砍兼容（补种果树苗、树叶改掉落） |
 | MCWWS-rsc（RSC 附属） | — | 外卖分配器、外卖柜、服内定制 Slimefun 物品 |
 | Skript `scripts/mcwws/` | — | 动态经济、传送、光源、便携台拦截等核心脚本 |
 | Skript `scripts/web/` | — | 网页商城、账本、物价导出 |
