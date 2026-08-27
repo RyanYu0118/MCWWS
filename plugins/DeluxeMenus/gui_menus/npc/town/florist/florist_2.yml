@@ -10,12 +10,13 @@ items:
     material: writable_book
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改商品预设数量'
     lore: 
     - '&e当前您的预设数量：%objective_score_number%件'
@@ -38,7 +39,8 @@ items:
     update: true
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a上一页'
     left_click_commands:
       - '[sound] entity_snow_golem_death 1 1'
@@ -50,7 +52,8 @@ items:
     update: true
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7下一页'
     left_click_commands:
       - '[sound] entity_snow_golem_death 1 1'
@@ -60,11 +63,12 @@ items:
     material: vine
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -133,11 +137,12 @@ items:
     material: tall_grass
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -206,11 +211,12 @@ items:
     material: large_fern
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -279,11 +285,12 @@ items:
     material: peony
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -352,11 +359,12 @@ items:
     material: lilac
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -425,11 +433,12 @@ items:
     material: rose_bush
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -498,11 +507,12 @@ items:
     material: sunflower
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -571,11 +581,12 @@ items:
     material: hanging_roots
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -644,11 +655,12 @@ items:
     material: big_dripleaf
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -717,11 +729,12 @@ items:
     material: small_dripleaf
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 9
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -790,11 +803,12 @@ items:
     material: spore_blossom
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -863,11 +877,12 @@ items:
     material: pink_petals
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -936,11 +951,12 @@ items:
     material: torchflower_seeds
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1009,11 +1025,12 @@ items:
     material: pitcher_plant
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 13
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1082,11 +1099,12 @@ items:
     material: lily_pad
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 14
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1155,11 +1173,12 @@ items:
     material: seagrass
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 15
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1228,11 +1247,12 @@ items:
     material: sea_pickle
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 16
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1301,11 +1321,12 @@ items:
     material: nether_sprouts
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 17
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1374,11 +1395,12 @@ items:
     material: twisting_vines
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 18
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1447,11 +1469,12 @@ items:
     material: weeping_vines
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1520,11 +1543,12 @@ items:
     material: chorus_flower
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1593,11 +1617,12 @@ items:
     material: chorus_plant
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1671,4 +1696,5 @@ items:
     display_name: ' '
     priority: 10
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES

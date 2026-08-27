@@ -12,7 +12,8 @@ items:
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7上一页'
   'next page':
     material: LIME_STAINED_GLASS_PANE
@@ -20,17 +21,19 @@ items:
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a下一页'
   'back':
     material: COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回主页'
     left_click_commands:
       - '[openguimenu] home'
@@ -39,11 +42,12 @@ items:
     material: ENDER_EYE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 53
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&d▶ 切换维度'
     lore:
       - ''
@@ -60,11 +64,12 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&eMinecraft Mansion'
     lore:
       - '&a服务器行政大厦'
@@ -90,11 +95,12 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bOrigin'
     lore:
       - '&a梦开始的地方'
@@ -120,10 +126,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
-    hide_attributes: true
     display_name: '&bAutomatic Crop Base'
     lore:
       - '&a自动化作物种植业基地'
@@ -149,10 +156,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     priority: 1
-    hide_attributes: true
     display_name: '&bQiMeng Concert Hall'
     lore:
       - '&a启梦音乐厅'
@@ -178,10 +186,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     priority: 1
-    hide_attributes: true
     display_name: '&bPixel Center'
     lore:
       - '&a匹克赛尔中心'
@@ -207,10 +216,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     priority: 1
-    hide_attributes: true
     display_name: '&bTechnology Mansion'
     lore:
       - '&a科技大厦'
@@ -236,10 +246,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     priority: 1
-    hide_attributes: true
     display_name: '&eISEC (Item Storage&Exchange Centre)'
     lore:
       - '&a物品存储及交换中心'
@@ -265,10 +276,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     priority: 1
-    hide_attributes: true
     display_name: '&eTree House'
     lore:
       - '&a树屋'
@@ -294,10 +306,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     priority: 1
-    hide_attributes: true
     display_name: '&eThe Stable (QiMeng Dist.)'
     lore:
       - '&a马厩（启梦区）'
@@ -323,10 +336,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 9
     priority: 1
-    hide_attributes: true
     display_name: '&eJapanese Zephyre Cottage'
     lore:
       - '&a日系和风小屋'
@@ -352,10 +366,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     priority: 1
-    hide_attributes: true
     display_name: '&ePlant Processing & Dye Technology Base'
     lore:
       - '&a植物加工与染料工艺基地'
@@ -382,10 +397,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     priority: 1
-    hide_attributes: true
     display_name: "&bMisaka&e's Warm Hut"
     lore:
       - '&aMisakaの小屋'
@@ -412,10 +428,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     priority: 1
-    hide_attributes: true
     display_name: '&bLake Bank'
     lore:
       - '&a湖·银行'
@@ -442,10 +459,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 13
     priority: 1
-    hide_attributes: true
     display_name: '&bShopping Mall'
     lore:
       - '&a商业广场'
@@ -472,10 +490,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 14
     priority: 1
-    hide_attributes: true
     display_name: '&bMinecraft University'
     lore:
       - '&aMC大学'
@@ -502,10 +521,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 15
     priority: 1
-    hide_attributes: true
     display_name: '&bFarmland'
     lore:
       - '&a农业区'
@@ -532,10 +552,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 16
     priority: 1
-    hide_attributes: true
     display_name: '&bTrial Area'
     lore:
       - '&a试验田 &c注意危险！'
@@ -562,10 +583,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 17
     priority: 1
-    hide_attributes: true
     display_name: '&bHall&k~&rween Isl&k~&rnd&k'
     lore:
       - '&a万&k~&r&a圣节岛&k~'
@@ -592,10 +614,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 18
     priority: 1
-    hide_attributes: true
     display_name: '&bSky City'
     lore:
       - '&a天空之城'
@@ -622,10 +645,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     priority: 1
-    hide_attributes: true
     display_name: '&bCottage In Wild'
     lore:
       - '&a远郊别墅'
@@ -652,10 +676,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     priority: 1
-    hide_attributes: true
     display_name: '&bTree Farm'
     lore:
       - '&a树场'
@@ -682,10 +707,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     priority: 1
-    hide_attributes: true
     display_name: '&eMining Area'
     lore:
       - '&a矿区'
@@ -712,10 +738,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
-    hide_attributes: true
     display_name: '&eLibrary Garden'
     lore:
       - '&a图书馆花园'

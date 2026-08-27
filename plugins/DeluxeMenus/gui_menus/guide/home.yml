@@ -20,7 +20,8 @@ items:
     slot: 4
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b>>> 个人档案 <<<'
     lore:
       - ''
@@ -47,11 +48,12 @@ items:
     material: BAMBOO_HANGING_SIGN
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&a>>> 每日签到 <<<'
     lore:
       - '&f点击此处完成签到'
@@ -63,11 +65,12 @@ items:
     material:   NAME_TAG
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e>>> 许可证 <<<'
     lore:
       - ''
@@ -79,11 +82,12 @@ items:
     material: TOTEM_OF_UNDYING
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e>>> 成就系统 <<<'
     lore:
       - '&f点击查看所有成就'
@@ -95,11 +99,12 @@ items:
     material: WRITTEN_BOOK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b>>> 服务器告示 <<<'
     lore:
       - ''
@@ -115,11 +120,12 @@ items:
     material: EMERALD
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 32
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b>>> 商店系统 <<<'
     lore:
       - ''
@@ -134,11 +140,12 @@ items:
     model_data: 2200464
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b▶ 设置个人标记点'
     lore:
       - ''
@@ -209,11 +216,12 @@ items:
     model_data: 2200463
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b▶ 设置公共标记点'
     lore:
       - ''
@@ -255,11 +263,12 @@ items:
     material: ENDER_PEARL
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b▶ 传送至服务器固定地点'
     lore:
       - ''
@@ -272,11 +281,12 @@ items:
     material: PLAYER_HEAD
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b▶ 传送玩家'
     lore:
       - ''
@@ -300,12 +310,13 @@ items:
     material: GOLD_NUGGET
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     model_data: 10001
     slot: 6
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e金钱管理'
     lore:
       - '&f点击选择要办理的业务'
@@ -316,11 +327,12 @@ items:
     material: LEATHER_CHESTPLATE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e装扮管理'
     lore:
       - '&f点击管理你的装扮效果'
@@ -332,7 +344,8 @@ items:
     slot: 25
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&f背包'
     lore:
       - '&f背包内物品数：打开后查看'
@@ -348,11 +361,12 @@ items:
     material: RECOVERY_COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 28
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回上一记录点'
     lore:
       - '&f点击返回 Essentials 记录的上一位置'
@@ -375,11 +389,12 @@ items:
     material: ELYTRA
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 24
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&a开启 &b飞行模式'
     lore:
       - '&f点击打开飞行状态'
@@ -400,11 +415,12 @@ items:
     material: ELYTRA
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 24
     priority: 2
     update: true
-    hide_attributes: true
     display_name: '&c关闭 &b飞行模式'
     lore:
       - '&f点击打开飞行状态'
@@ -425,11 +441,12 @@ items:
     material: grass_block
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 33
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e切换游戏模式'
     lore:
       - '&f左键：切换至生存模式'
@@ -444,11 +461,12 @@ items:
     material: END_CRYSTAL
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e服务器管理'
     lore:
       - '&f点击管理服务器'
@@ -473,11 +491,12 @@ items:
     material: COMMAND_BLOCK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e更多命令'
     lore:
       - '&f点击打开更多命令'
@@ -488,11 +507,12 @@ items:
     material: COMMAND_BLOCK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 45
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e打开管理员身份'
     left_click_commands:
       - '[console] op %player_name%'
@@ -517,11 +537,12 @@ items:
     material: CHAIN_COMMAND_BLOCK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 45
     priority: 2
     update: true
-    hide_attributes: true
     display_name: '&e关闭管理员身份'
     left_click_commands:
       - '[console] deop %player_name%'
@@ -547,7 +568,8 @@ items:
     slot: 53
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b>>> 功能商店 <<<'
     lore:
       - ''

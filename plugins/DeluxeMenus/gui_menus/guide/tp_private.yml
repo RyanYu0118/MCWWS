@@ -15,8 +15,9 @@ items:
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     display_name: '&b已授权物品修改许可证'
     lore:
       - ''
@@ -76,8 +77,9 @@ items:
     slot: 2
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     display_name: '&b进货许可证'
     lore:
       - ''

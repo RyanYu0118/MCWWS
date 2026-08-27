@@ -10,12 +10,13 @@ items:
     material: writable_book
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改商品预设数量'
     lore: 
     - '&e当前您的预设数量：%objective_score_number%件'
@@ -38,7 +39,8 @@ items:
     update: true
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7上一页'
     left_click_commands:
       - '[sound] entity_snow_golem_death 1 1'
@@ -49,7 +51,8 @@ items:
     update: true
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a下一页'
     left_click_commands:
       - '[sound] entity_snow_golem_death 1 1'
@@ -60,11 +63,12 @@ items:
     material: acacia_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -133,11 +137,12 @@ items:
     material: birch_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -206,11 +211,12 @@ items:
     material: dark_oak_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -279,11 +285,12 @@ items:
     material: jungle_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -352,11 +359,12 @@ items:
     material: oak_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -425,11 +433,12 @@ items:
     material: spruce_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -498,11 +507,12 @@ items:
     material: cherry_sapling
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -571,11 +581,12 @@ items:
     material: mangrove_propagule
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -644,11 +655,12 @@ items:
     material: azalea
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -717,11 +729,12 @@ items:
     material: flowering_azalea
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 9
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -790,11 +803,12 @@ items:
     material: dead_bush
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -864,11 +878,12 @@ items:
     material: bamboo
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -937,11 +952,12 @@ items:
     material: cactus
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1010,11 +1026,12 @@ items:
     material: fern
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 13
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1083,11 +1100,12 @@ items:
     material: torchflower
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 14
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1156,11 +1174,12 @@ items:
     material: allium
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 15
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1229,11 +1248,12 @@ items:
     material: oxeye_daisy
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 16
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1302,11 +1322,12 @@ items:
     material: cornflower
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 17
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1375,11 +1396,12 @@ items:
     material: lily_of_the_valley
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 18
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1448,11 +1470,12 @@ items:
     material: blue_orchid
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1521,11 +1544,12 @@ items:
     material: poppy
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1594,11 +1618,12 @@ items:
     material: azure_bluet
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1667,11 +1692,12 @@ items:
     material: dandelion
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1740,11 +1766,12 @@ items:
     material: white_tulip
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 23
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1813,11 +1840,12 @@ items:
     material: red_tulip
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 24
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1886,11 +1914,12 @@ items:
     material: orange_tulip
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 25
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -1959,11 +1988,12 @@ items:
     material: pink_tulip
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 26
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2032,11 +2062,12 @@ items:
     material: wither_rose
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 27
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2106,11 +2137,12 @@ items:
     material: brown_mushroom
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 28
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2179,11 +2211,12 @@ items:
     material: red_mushroom
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 29
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2252,11 +2285,12 @@ items:
     material: crimson_fungus
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 30
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2325,11 +2359,12 @@ items:
     material: warped_fungus
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 31
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2398,11 +2433,12 @@ items:
     material: crimson_roots
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 32
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2471,11 +2507,12 @@ items:
     material: warped_roots
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 33
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -2550,4 +2587,5 @@ items:
     display_name: ' '
     priority: 10
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES

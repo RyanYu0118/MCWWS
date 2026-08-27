@@ -19,7 +19,8 @@ items:
     slot: 4
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b>>> 个人档案 <<<'
     lore:
       - ''
@@ -38,11 +39,12 @@ items:
     material: BAMBOO_HANGING_SIGN
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&6>>> 每日签到 <<<'
     lore:
       - '&f点击此处完成签到'
@@ -53,11 +55,12 @@ items:
     material: TOTEM_OF_UNDYING
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e>>> 每日任务 <<<'
     lore:
       - '&f点击此处领取/查看任务情况'
@@ -69,11 +72,12 @@ items:
     material: NETHER_STAR
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b设置标记点'
     lore:
       - '&f将您当前的位置设为标记点 &c与重生点无关！'
@@ -98,11 +102,12 @@ items:
     material: ENDER_EYE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b传送至标记点'
     lore:
       - '&f点击传送至已设标记点'
@@ -127,11 +132,12 @@ items:
     material: WOODEN_AXE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b创世神懒人工具'
     lore:
       - '&f点击选择想要传送的固定地点'

@@ -10,12 +10,13 @@ items:
     material: writable_book
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改商品预设数量'
     lore: 
     - '&e当前您的预设数量：%objective_score_number%件'
@@ -35,11 +36,12 @@ items:
     material: orange_wool
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''

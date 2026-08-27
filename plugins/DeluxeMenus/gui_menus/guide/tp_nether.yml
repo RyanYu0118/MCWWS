@@ -11,7 +11,8 @@ items:
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7上一页'
   'next page':
     material: LIME_STAINED_GLASS_PANE
@@ -19,17 +20,19 @@ items:
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a下一页'
   'back':
     material: COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回主页'
     left_click_commands:
       - '[openguimenu] home'
@@ -38,11 +41,12 @@ items:
     material: ENDER_EYE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 53
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&d▶ 切换维度'
     lore:
       - ''
@@ -59,10 +63,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
-    hide_attributes: true
     display_name: '&cGhast Farm'
     lore:
       - '&a恶魂农场'
@@ -89,10 +94,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     priority: 1
-    hide_attributes: true
     display_name: '&cGuardian Farm (Nether)'
     lore:
       - '&a守卫者农场（下界）'
@@ -119,10 +125,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
-    hide_attributes: true
     display_name: '&cIndustrial Base'
     lore:
       - '&a工业基地'
@@ -149,10 +156,11 @@ items:
     update: true
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     priority: 1
-    hide_attributes: true
     display_name: '&cWither Skeleton Farm'
     lore:
       - '&a凋灵骷髅农场'

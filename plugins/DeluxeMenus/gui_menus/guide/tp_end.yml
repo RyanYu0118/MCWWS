@@ -11,7 +11,8 @@ items:
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7上一页'
   'next page':
     material: LIME_STAINED_GLASS_PANE
@@ -19,17 +20,19 @@ items:
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a下一页'
   'back':
     material: COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回主页'
     left_click_commands:
       - '[openguimenu] home'
@@ -38,11 +41,12 @@ items:
     material: ENDER_EYE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 53
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&d▶ 切换维度'
     lore:
       - ''
@@ -58,11 +62,12 @@ items:
     material: END_STONE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&d末地固定地点'
     lore:
       - ''

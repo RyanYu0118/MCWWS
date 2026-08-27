@@ -10,11 +10,12 @@ items:
     material: name_tag
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改手持物品信息'
     lore:
       - ''

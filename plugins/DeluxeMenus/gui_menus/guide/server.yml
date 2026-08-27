@@ -17,11 +17,12 @@ items:
     material: BOOK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 Skript（全部）'
     lore:
       - ''
@@ -40,11 +41,12 @@ items:
     material: WRITABLE_BOOK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 Skript（mcwws）'
     lore:
       - ''
@@ -64,11 +66,12 @@ items:
     material: NETHER_STAR
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 DeluxeMenus'
     lore:
       - ''
@@ -87,11 +90,12 @@ items:
     material: EMERALD
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 13
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 UltimateShop'
     lore:
       - ''
@@ -110,11 +114,12 @@ items:
     material: CRAFTING_TABLE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 14
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 CustomCrafting'
     lore:
       - ''
@@ -134,11 +139,12 @@ items:
     material: NAME_TAG
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 15
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 PlaceholderAPI'
     lore:
       - ''
@@ -157,11 +163,12 @@ items:
     material: LIGHT
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 16
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 LuckPerms'
     lore:
       - ''
@@ -180,11 +187,12 @@ items:
     material: ENDER_CHEST
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载网页服务'
     lore:
       - ''
@@ -204,11 +212,12 @@ items:
     material: CLOCK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e网页服务状态'
     lore:
       - ''
@@ -224,11 +233,12 @@ items:
     material: AMETHYST_SHARD
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 Axiom 生存扣费'
     lore:
       - ''
@@ -247,11 +257,12 @@ items:
     material: WOODEN_AXE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载创世神生存扣费'
     lore:
       - ''
@@ -270,11 +281,12 @@ items:
     material: GOLD_INGOT
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 23
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载零钱明细插件'
     lore:
       - ''
@@ -293,11 +305,12 @@ items:
     material: SHIELD
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 24
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载领地拒绝提示'
     lore:
       - ''
@@ -316,11 +329,12 @@ items:
     material: BARRIER
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 25
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 BanItem'
     lore:
       - ''
@@ -339,11 +353,12 @@ items:
     material: OAK_SIGN
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 28
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 CommandPrompter'
     lore:
       - ''
@@ -362,11 +377,12 @@ items:
     material: BRUSH
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 29
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 FAWE'
     lore:
       - ''
@@ -386,11 +402,12 @@ items:
     material: COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 30
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 Essentials'
     lore:
       - ''
@@ -409,11 +426,12 @@ items:
     material: BUNDLE
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 31
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载 BetterBags'
     lore:
       - ''
@@ -432,11 +450,12 @@ items:
     material: SUNFLOWER
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 32
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载经济脚本'
     lore:
       - ''
@@ -455,11 +474,12 @@ items:
     material: HOPPER
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 33
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载动态市场'
     lore:
       - ''
@@ -478,11 +498,12 @@ items:
     material: WRITTEN_BOOK
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 34
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e重载服务器告示'
     lore:
       - ''
@@ -509,7 +530,8 @@ items:
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7返回指南主页'
     lore:
       - '&f点击返回'

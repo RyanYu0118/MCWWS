@@ -27,7 +27,8 @@ items:
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b返回主页'
     left_click_commands:
       - '[player] menuhome'

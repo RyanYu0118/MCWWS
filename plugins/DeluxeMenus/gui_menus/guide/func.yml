@@ -10,7 +10,8 @@ items:
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b▶ 一键整理背包/物品栏/箱子'
     lore:
       - ''
@@ -26,8 +27,9 @@ items:
     slot: 9
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -61,8 +63,9 @@ items:
     slot: 18
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -96,8 +99,9 @@ items:
     slot: 27
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -133,8 +137,9 @@ items:
     slot: 36
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -147,8 +152,9 @@ items:
     slot: 36
     priority: 2
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -162,7 +168,8 @@ items:
     slot: 1
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&b▶ 自动化收集与出售仓库'
     lore:
       - ''
@@ -178,8 +185,9 @@ items:
     slot: 10
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -214,8 +222,9 @@ items:
     slot: 19
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -250,8 +259,9 @@ items:
     slot: 28
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -288,8 +298,9 @@ items:
     slot: 37
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -302,8 +313,9 @@ items:
     slot: 37
     priority: 2
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     view_requirement:
       requirements:
         a:
@@ -334,8 +346,9 @@ items:
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     display_name: '&f◀ 上一页'
     left_click_commands:
       - '[message] &c啊哦，这已经是第一页了......'
@@ -346,8 +359,9 @@ items:
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     display_name: '&f下一页 ▶'
     left_click_commands:
       - '[openguimenu] func2'
@@ -359,8 +373,9 @@ items:
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
     display_name: '&f🧭 返回'
     left_click_commands:
       - '[openguimenu] home'

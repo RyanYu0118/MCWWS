@@ -10,11 +10,12 @@ items:
     material: NETHER_STAR
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b增加一行Lore描述至最后一行'
     lore:
       - '&7¥8/次'
@@ -40,11 +41,12 @@ items:
     material: gunpowder
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改某行Lore描述'
     lore:
       - '&e注意：只能更改已添加的行号，并用正整数表示。'
@@ -71,11 +73,12 @@ items:
     material: arrow
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b在某行前面插入一行Lore描述'
     lore:
       - '&e注意：只能更改已添加的行号，并用正整数表示。'
@@ -102,11 +105,12 @@ items:
     material: redstone
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&c删除某一行Lore描述'
     lore:
       - '&e注意：只能更改已添加的行号，并用正整数表示。'
@@ -133,11 +137,12 @@ items:
     material: name_tag
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&a重命名物品'
     lore:
       - '&7¥8/次'
@@ -163,11 +168,12 @@ items:
     material: yellow_concrete
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&a导入预设'
     lore:
       - '&7¥8/次'
@@ -193,11 +199,12 @@ items:
     material: light_blue_concrete
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&a导出预设'
     lore:
       - '&7¥8/次'
@@ -223,11 +230,12 @@ items:
     material: player_head
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&e更改头颅玩家'
     lore:
       - '&7¥8/次'
@@ -253,11 +261,12 @@ items:
     material: barrier
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&c删除所有Lore描述'
     lore:
       - '&7¥8/次'
@@ -284,11 +293,12 @@ items:
     material: barrier
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&c删除重命名'
     lore:
       - '&7¥8/次'
@@ -315,11 +325,12 @@ items:
     material: armor_stand
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&c暂不开放'
     lore:
       - '&7¥N.A./次'
@@ -331,7 +342,9 @@ items:
   'fill':
     material: lime_stained_glass_pane
     enchantments:
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slots: 
       - 9
       - 10
@@ -344,17 +357,17 @@ items:
       - 17
     priority: 1
     update: true
-    hide_attributes: true
     display_name: ' '
   'back':
     material: compass
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 26
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回'
     lore:
       - ''

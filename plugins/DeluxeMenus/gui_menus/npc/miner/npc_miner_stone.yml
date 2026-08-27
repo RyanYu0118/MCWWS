@@ -10,11 +10,12 @@ items:
     material: smooth_quartz
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     update: true
     priority: 1
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -83,12 +84,13 @@ items:
     material: smooth_quartz_stairs
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -157,12 +159,13 @@ items:
     material: smooth_quartz_slab
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -231,12 +234,13 @@ items:
     material: quartz_block
     #enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     #display_name: '&b更改手持物品信息'
     lore:
       - ''
@@ -305,11 +309,12 @@ items:
     material: chiseled_quartz_block
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -378,11 +383,12 @@ items:
     material: quartz_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -451,11 +457,12 @@ items:
     material: quartz_pillar
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -524,11 +531,12 @@ items:
     material: quartz_stairs
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -597,11 +605,12 @@ items:
     material: quartz_slab
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -670,11 +679,12 @@ items:
     material: stone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 9
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -743,11 +753,12 @@ items:
     material: smooth_stone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -816,11 +827,12 @@ items:
     material: cobblestone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -889,11 +901,12 @@ items:
     material: mossy_cobblestone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -962,11 +975,12 @@ items:
     material: mossy_stone_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 13
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1035,11 +1049,12 @@ items:
     material: cracked_stone_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 14
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1108,11 +1123,12 @@ items:
     material: granite
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 15
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1181,11 +1197,12 @@ items:
     material: diorite
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 16
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1254,11 +1271,12 @@ items:
     material: andesite
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 17
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1327,11 +1345,12 @@ items:
     material: tuff
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 18
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1400,11 +1419,12 @@ items:
     material: calcite
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 19
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1473,11 +1493,12 @@ items:
     material: sandstone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 20
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1546,11 +1567,12 @@ items:
     material: smooth_sandstone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 21
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1619,11 +1641,12 @@ items:
     material: red_sandstone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 22
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1692,11 +1715,12 @@ items:
     material: smooth_red_sandstone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 23
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1765,11 +1789,12 @@ items:
     material: bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 24
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1838,11 +1863,12 @@ items:
     material: dripstone_block
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 25
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1911,11 +1937,12 @@ items:
     material: deepslate
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 26
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -1984,11 +2011,12 @@ items:
     material: cobbled_deepslate
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 27
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2057,11 +2085,12 @@ items:
     material: cracked_deepslate_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 28
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2130,11 +2159,12 @@ items:
     material: cracked_deepslate_tiles
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 29
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2203,11 +2233,12 @@ items:
     material: reinforced_deepslate
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 30
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2276,11 +2307,12 @@ items:
     material: netherrack
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 31
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2349,11 +2381,12 @@ items:
     material: nether_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 32
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2422,11 +2455,12 @@ items:
     material: cracked_nether_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 33
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2495,11 +2529,12 @@ items:
     material: red_nether_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 34
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2568,11 +2603,12 @@ items:
     material: basalt
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 35
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2641,11 +2677,12 @@ items:
     material: smooth_basalt
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 36
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2714,11 +2751,12 @@ items:
     material: blackstone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 37
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2787,11 +2825,12 @@ items:
     material: cracked_polished_blackstone_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 38
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2860,11 +2899,12 @@ items:
     material: end_stone
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 42
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -2933,11 +2973,12 @@ items:
     material: purpur_block
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 43
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3006,11 +3047,12 @@ items:
     material: prismarine
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 44
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3079,11 +3121,12 @@ items:
     material: dark_prismarine
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 45
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3152,11 +3195,12 @@ items:
     material: prismarine_bricks
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 46
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3225,11 +3269,12 @@ items:
     material: obsidian
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3298,11 +3343,12 @@ items:
     material: crying_obsidian
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3371,11 +3417,12 @@ items:
     material: bedrock
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 53
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3444,11 +3491,12 @@ items:
     material: barrier
     # enchantments:
     #  - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 52
     priority: 1
     update: true
-    hide_attributes: true
     # display_name: '&b更改手持物品信息'
     lore:
     - ''
@@ -3532,12 +3580,13 @@ items:
     material: writable_book
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b更改商品预设数量'
     lore: 
     - '&e当前您的预设数量：%objective_score_number%件'
@@ -3557,7 +3606,9 @@ items:
       #- '[message] &c回复超时......<delay=200>'
   '00':
     material: gray_stained_glass_pane
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slots: 
       - 48
       - 50
@@ -3567,7 +3618,6 @@ items:
     update: true
     priority: 1
     update: true
-    hide_attributes: true
     display_name: ' '
 
 # <!title %player_name% title ["",{"text":"您已写下数字：","color":"gold"},{"score":{"name":"%player_name%","objective":"number"},"color":"gold"}]>

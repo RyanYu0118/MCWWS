@@ -12,7 +12,8 @@ items:
     slot: 47
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&7上一页'
   'next page':
     material: LIME_STAINED_GLASS_PANE
@@ -20,17 +21,19 @@ items:
     slot: 51
     priority: 1
     update: true
-    hide_attributes: true
+    item_flags:
+      - HIDE_ATTRIBUTES
     display_name: '&a下一页'
   'back':
     material: COMPASS
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 49
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&b返回主页'
     left_click_commands:
       - '[openguimenu] home'
@@ -39,11 +42,12 @@ items:
     material: dark_oak_wood
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 0
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&eMinecraft Mansion'
     lore:
       - '&a服务器行政大厦'
@@ -67,11 +71,12 @@ items:
     material: furnace
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 1
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bISEC (Items Storage and Exchange Centre)'
     lore:
       - '&a物品存储与交换中心'
@@ -93,11 +98,12 @@ items:
     material: gold_block
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 2
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bLake Bank'
     lore:
       - '&a湖·银行'
@@ -119,11 +125,12 @@ items:
     material: green_dye
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 3
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bPlant-processing-and-dye-technology Base'
     lore:
       - '&a植物加工与染料工艺基地'
@@ -145,11 +152,12 @@ items:
     material: beacon
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 4
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bShopping Mall'
     lore:
       - '&a商业广场'
@@ -171,11 +179,12 @@ items:
     material: white_stained_glass
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 5
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bPixel Centre'
     lore:
       - '&aPixel商业中心'
@@ -197,11 +206,12 @@ items:
     material: cyan_stained_glass
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 6
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bTechnology Mansion'
     lore:
       - '&a科技大厦'
@@ -223,11 +233,12 @@ items:
     material: bricks
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 7
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bMinecraft University'
     lore:
       - '&aMC大学'
@@ -249,11 +260,12 @@ items:
     material: farmland
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 9
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bFarmland'
     lore:
       - '&a农业区'
@@ -275,11 +287,12 @@ items:
     material: tnt
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 12
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bTrial Area'
     lore:
       - '&a试验田 &C注意危险！'
@@ -301,11 +314,12 @@ items:
     material: jack_o_lantern
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 18
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bHall&k~&rween Isl&k~&rnd&k'
     lore:
       - '&a万&k~&r&a圣节岛&k~'
@@ -327,11 +341,12 @@ items:
     material: elytra
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 27
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bSky City'
     lore:
       - '&a天空之城'
@@ -353,11 +368,12 @@ items:
     material: dark_oak_sapling
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 28
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bCottage In Wild'
     lore:
       - '&a远郊别墅'
@@ -379,11 +395,12 @@ items:
     material: cherry_sapling
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 10
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&bTree Farm'
     lore:
       - '&a树场'
@@ -405,11 +422,12 @@ items:
     material: iron_pickaxe
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 11
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&eMining Area'
     lore:
       - '&a矿区'
@@ -431,11 +449,12 @@ items:
     material: book
     enchantments:
       - ARROW_DAMAGE;1
-    hide_enchantments: true
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
     slot: 8
     priority: 1
     update: true
-    hide_attributes: true
     display_name: '&eLibrary Garden'
     lore:
       - '&a图书馆花园'
