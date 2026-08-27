@@ -1,6 +1,12 @@
 name: MCWWS_UltimateTimberFix
 main: work.mcwws.ultimatetimberfix.McwwsUltimateTimberFixPlugin
-version: 1.1.0
+version: 1.4.0
 api-version: '1.21'
 depend: [UltimateTimber, Slimefun, ExoticGarden]
-description: ExoticGarden 果树兼容 UltimateTimber：可连根砍、补种果树苗、树叶改掉果树苗
+description: ExoticGarden 果树兼容：UltimateTimber 检测失败时兜底连根砍、补种果树苗、树叶改掉果树苗
+
+permissions:
+  # 必须显式声明 default: false，否则 OP 会自动获得该权限而跳过整个果树逻辑
+  mcwws.ultimatetimberfix.bypass:
+    description: 对果树使用原版 UltimateTimber 行为（不兜底连根砍、不替换掉落）
+    default: false

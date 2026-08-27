@@ -26,6 +26,27 @@ public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
         return getConfig().getString("bypass-permission", "mcwws.ultimatetimberfix.bypass");
     }
 
+    public boolean debug() {
+        return getConfig().getBoolean("debug", false);
+    }
+
+    public void debug(String message) {
+        if (debug()) {
+            getLogger().info("[debug] " + message);
+        }
+    }
+
+    /**
+     * 只认显式授予的 bypass；未显式设置时 OP 会默认拥有任意权限，会误跳过整个果树逻辑。
+     */
+    public boolean isBypassed(org.bukkit.entity.Player player) {
+        if (player == null) {
+            return false;
+        }
+        String node = bypassPermission();
+        return player.isPermissionSet(node) && player.hasPermission(node);
+    }
+
     public int footprintScanDelayTicks() {
         return Math.max(1, getConfig().getInt("footprint-scan-delay-ticks", 5));
     }
@@ -82,8 +103,9 @@ public final class McwwsUltimateTimberFixPlugin extends JavaPlugin {
 
         getServer().getPluginManager().registerEvents(new ExoticGardenTimberListener(this), this);
         getServer().getPluginManager().registerEvents(new TreeFootprintListener(this), this);
+        getServer().getPluginManager().registerEvents(new FruitTreeChopListener(this), this);
 
-        getLogger().info("已启用 UltimateTimber × ExoticGarden 果树兼容（连根砍、补种果树苗）。");
+        getLogger().info("已启用 UltimateTimber × ExoticGarden 果树兼容（UT 检测失败时兜底连根砍 + 补种果树苗）。");
     }
 
     @Override

@@ -146,7 +146,7 @@ bonus-loot-multiplier: 2
 # Note: This only keeps track of blocks placed during the current server load
 #       If your server restarts, the placed tree blocks could be toppled again
 # Default: true
-ignore-placed-blocks: true
+ignore-placed-blocks: false
 
 # The maximum number of blocks to keep track of in memory at once
 # Use a lower number if this starts to take up too much memory or trees start taking too long to detect

@@ -1,8 +1,13 @@
 # 拥有此权限的玩家对果树使用原版 UltimateTimber 行为（不替换树苗/掉落）
+# 该权限在 plugin.yml 中声明为 default: false，OP 不会自动获得
 bypass-permission: mcwws.ultimatetimberfix.bypass
 
+# 输出果树砍伐的诊断日志（识别失败原因、扫描结果）
+debug: true
+
 # ExoticGarden 树苗长成后，延迟多少 tick 再扫描并登记果树占地（等待 schematic 粘贴完成）
-footprint-scan-delay-ticks: 5
+# EG 会取消 StructureGrowEvent，需足够延迟才能扫到粘贴后的原木/树叶
+footprint-scan-delay-ticks: 15
 
 # 单次扫描最多登记的方块数（防止异常结构撑爆内存）
 footprint-max-blocks: 200

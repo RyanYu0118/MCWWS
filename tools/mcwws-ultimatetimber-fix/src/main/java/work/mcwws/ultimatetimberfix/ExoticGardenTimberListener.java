@@ -32,7 +32,7 @@ public final class ExoticGardenTimberListener implements Listener {
     @EventHandler(priority = EventPriority.HIGH, ignoreCancelled = true)
     public void onTreeFall(TreeFallEvent event) {
         Player player = event.getPlayer();
-        if (player != null && player.hasPermission(plugin.bypassPermission())) {
+        if (plugin.isBypassed(player)) {
             return;
         }
 

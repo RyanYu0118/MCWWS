@@ -193,5 +193,55 @@ items:
     minecraft:custom_model_data: '{floats:[2203078.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_AVOCADO_PIT"}}'
   schema_version: 1
+- DataVersion: 4903
+  id: minecraft:leather_leggings
+  count: 1
+  components:
+    minecraft:damage: '67'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:saddle
+  count: 1
+  components:
+    minecraft:lore: '[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"MCWWS网页订单",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"#45"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"订单
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"white",text:"Ryan_yu__"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"下单者
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"SNRUQ2"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"取件码
+      ",underlined:0b}]'
+    minecraft:custom_data: '{PublicBukkitValues:{"mcwws:order_id":"45","mcwws:order_uuid":"d006ba70-4ddc-4b37-b13c-76f190815116","mcwws:pickup_code":"SNRUQ2"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:saddle
+  count: 1
+  components:
+    minecraft:lore: '[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"MCWWS网页订单",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"#45"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"订单
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"white",text:"Ryan_yu__"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"下单者
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"SNRUQ2"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"取件码
+      ",underlined:0b}]'
+    minecraft:custom_data: '{PublicBukkitValues:{"mcwws:order_id":"45","mcwws:order_uuid":"d006ba70-4ddc-4b37-b13c-76f190815116","mcwws:pickup_code":"SNRUQ2"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:saddle
+  count: 1
+  components:
+    minecraft:lore: '[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"MCWWS网页订单",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"#45"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"订单
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"white",text:"Ryan_yu__"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"下单者
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"SNRUQ2"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"取件码
+      ",underlined:0b}]'
+    minecraft:custom_data: '{PublicBukkitValues:{"mcwws:order_id":"45","mcwws:order_uuid":"d006ba70-4ddc-4b37-b13c-76f190815116","mcwws:pickup_code":"SNRUQ2"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:rotten_flesh
+  count: 6
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:iron_block
+  count: 64
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:copper_leggings
+  count: 1
+  components:
+    minecraft:damage: '125'
+  schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

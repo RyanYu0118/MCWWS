@@ -155,7 +155,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_carrot
-  count: 5
+  count: 9
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:gold_ingot
@@ -684,7 +684,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:wheat_seeds
-  count: 9
+  count: 10
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spider_eye
@@ -1155,7 +1155,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:light
-  count: 48
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
@@ -1238,7 +1238,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
-  count: 3
+  count: 34
   components:
     minecraft:profile: '{id:[I;732656920,-945013692,-1205893229,541355957],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvY2JiMzExZjNiYTFjMDdjM2QxMTQ3Y2QyMTBkODFmZTExZmQ4YWU5ZTNkYjIxMmEwZmE3NDg5NDZjMzYzMyJ9fX0="}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"石榴",underlined:0b}],text:""}'
@@ -1420,7 +1420,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spruce_log
-  count: 53
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:dark_oak_log
@@ -1488,7 +1488,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:porkchop
-  count: 4
+  count: 8
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:cocoa_beans
@@ -1577,7 +1577,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:chicken
-  count: 2
+  count: 6
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:orange_tulip
@@ -1613,7 +1613,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:pumpkin_seeds
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"哈密瓜种子",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203083.0f]}'
@@ -1621,7 +1621,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:dandelion
-  count: 3
+  count: 4
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:oak_sapling
@@ -1657,11 +1657,11 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:iron_ingot
-  count: 13
+  count: 32
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:mutton
-  count: 1
+  count: 5
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
@@ -1773,7 +1773,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:cobblestone
-  count: 1
+  count: 25
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:melon_seeds
@@ -1984,6 +1984,116 @@ items:
 - DataVersion: 4903
   id: minecraft:allium
   count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:acacia_sapling
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"地瓜植物",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201034.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SWEET_POTATO_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:light
+  count: 14
+  components:
+    minecraft:lore: '[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"MCWWS网页订单",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"#46"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"订单
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"white",text:"GuuuuuLei"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"下单者
+      ",underlined:0b},{bold:0b,color:"gray",extra:[{color:"yellow",text:"PVGHNC"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"取件码
+      ",underlined:0b}]'
+    minecraft:custom_data: '{PublicBukkitValues:{"mcwws:order_id":"46","mcwws:order_uuid":"55c6edae-e258-4161-8bcf-e7ee12a5c840","mcwws:pickup_code":"PVGHNC"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_trapdoor
+  count: 60
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:tropical_fish
+  count: 2
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:flower_pot
+  count: 28
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:potion
+  count: 1
+  components:
+    minecraft:potion_contents: '{potion:"minecraft:long_night_vision"}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:coal
+  count: 64
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:spruce_planks
+  count: 11
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:spruce_leaves
+  count: 24
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bone_meal
+  count: 3
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:compass
+  count: 1
+  components:
+    minecraft:dyed_color: '10511680'
+    minecraft:lore: '[{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"右键获得帮助",underlined:0b}],text:""},{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"左键查看粘液科技指南",underlined:0b}],text:""},{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"非消耗性道具",underlined:0b}],text:""}]'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:enchantments","minecraft:dyed_color"]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"服务器指南",underlined:0b}],text:""}'
+    minecraft:custom_data: '{LodestoneTracked:0b}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:dirt
+  count: 41
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:spruce_log
+  count: 53
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bread
+  count: 5
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:poppy
+  count: 11
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:salmon
+  count: 6
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:cod
+  count: 6
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pufferfish
+  count: 2
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:beef
+  count: 4
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:iron_nugget
+  count: 17
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:gold_nugget
+  count: 20
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:light
+  count: 47
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

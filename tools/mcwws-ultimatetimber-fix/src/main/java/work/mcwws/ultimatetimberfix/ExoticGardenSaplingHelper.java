@@ -76,7 +76,14 @@ public final class ExoticGardenSaplingHelper {
         }
 
         block.setType(saplingItem.getType(), false);
-        BlockStorage.store(block, saplingItem);
+        // 补种会按多个延迟重试，重复 store 会让 Slimefun 抛 "There already a block in this location"
+        try {
+            if (BlockStorage.hasBlockInfo(block)) {
+                BlockStorage.clearBlockInfo(block);
+            }
+            BlockStorage.store(block, saplingItem);
+        } catch (Throwable ignored) {
+        }
     }
 
     public static boolean isLeafOrVanillaSapling(Material material) {
