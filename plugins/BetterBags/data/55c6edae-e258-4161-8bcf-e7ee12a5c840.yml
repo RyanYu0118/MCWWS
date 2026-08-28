@@ -26,8 +26,8 @@ items:
     minecraft:banner_patterns: '[{color:"yellow",pattern:"minecraft:base"},{color:"black",pattern:"minecraft:half_horizontal_bottom"},{color:"yellow",pattern:"minecraft:triangle_bottom"},{color:"red",pattern:"minecraft:rhombus"},{color:"black",pattern:"minecraft:circle"},{color:"red",pattern:"minecraft:flower"},{color:"black",pattern:"minecraft:triangle_top"}]'
     minecraft:lore: '[{color:"#77CC00",fallback:"Releases radiation",italic:0b,translate:"incendium.item.radiation_shield.desc1"},{color:"#77CC00",fallback:"when
       blocking an attack",italic:0b,translate:"incendium.item.radiation_shield.desc2"},"",{color:"#FF8000",fallback:"Incendium",italic:1b,translate:"incendium"}]'
-    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
     minecraft:custom_name: '{color:"#44FF00",fallback:"Radiation Shield",italic:0b,translate:"incendium.item.radiation_shield.name"}'
+    minecraft:tooltip_display: '{hidden_components:["minecraft:banner_patterns"]}'
     minecraft:custom_model_data: '{floats:[1450302.0f]}'
     minecraft:custom_data: '{incendium:{item:"radiation_shield"}}'
     minecraft:damage: '77'
@@ -169,7 +169,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
-  count: 64
+  count: 54
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
@@ -231,8 +231,8 @@ items:
   id: minecraft:golden_sword
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:fire_aspect":5,"minecraft:looting":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运剑",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:fire_aspect":5,"minecraft:looting":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:damage: '27'
   schema_version: 1
 - DataVersion: 4903
@@ -395,8 +395,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:damage: '306'
   schema_version: 1
 - DataVersion: 4903
@@ -476,10 +476,8 @@ items:
     minecraft:stored_enchantments: '{"minecraft:sharpness":1}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:golden_hoe
+  id: minecraft:bone
   count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:unbreaking":1}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:enchanted_book
@@ -578,8 +576,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:ominous_bottle
@@ -615,8 +613,8 @@ items:
   id: minecraft:golden_axe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运斧",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:sharpness":10,"minecraft:unbreaking":10}'
     minecraft:damage: '6'
   schema_version: 1
 - DataVersion: 4903
@@ -684,7 +682,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:wheat_seeds
-  count: 10
+  count: 9
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spider_eye
@@ -730,8 +728,8 @@ items:
   id: minecraft:diamond_boots
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运靴",underlined:0b}],text:""}'
     minecraft:damage: '106'
   schema_version: 1
 - DataVersion: 4903
@@ -767,20 +765,16 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:netherite_upgrade_smithing_template
-  count: 1
+  id: minecraft:netherite_ingot
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:dirt
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:cooked_chicken
-  count: 6
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:raw_iron
-  count: 59
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:quartz
@@ -842,8 +836,8 @@ items:
     minecraft:instrument: '"minecraft:sing_goat_horn"'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:diamond
-  count: 11
+  id: minecraft:netherite_upgrade_smithing_template
+  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:gunpowder
@@ -869,8 +863,8 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CARBON"}}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:netherite_ingot
-  count: 3
+  id: minecraft:diamond
+  count: 4
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_axe
@@ -912,8 +906,8 @@ items:
   id: minecraft:golden_pickaxe
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运镐",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:efficiency":10,"minecraft:fortune":10,"minecraft:unbreaking":10}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glow_ink_sac
@@ -1104,8 +1098,8 @@ items:
   id: minecraft:stick
   count: 1
   components:
-    minecraft:custom_name: '{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"爷爷的拐杖",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:knockback":5}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"爷爷的拐杖",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2200012.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GRANDPAS_WALKING_STICK"}}'
   schema_version: 1
@@ -1254,7 +1248,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 15
+  count: 19
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -1461,8 +1455,8 @@ items:
   count: 1
   components:
     minecraft:lore: '[{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金制的剑",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"至尊武器",underlined:0b}],text:""},{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"灵魂绑定",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金剑",underlined:0b}],text:""}'
     minecraft:enchantments: '{"minecraft:fire_aspect":2,"minecraft:sharpness":8,"minecraft:unbreaking":8}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金剑",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SUPREME_TITANIUM_SWORD"}}'
     minecraft:damage: '24'
   schema_version: 1
@@ -1488,7 +1482,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:porkchop
-  count: 8
+  count: 12
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:cocoa_beans
@@ -1577,7 +1571,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:chicken
-  count: 6
+  count: 10
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:orange_tulip
@@ -1661,7 +1655,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:mutton
-  count: 5
+  count: 9
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
@@ -1889,7 +1883,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 15
+  count: 17
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -1961,7 +1955,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 18
+  count: 19
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -1975,7 +1969,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:firework_rocket
-  count: 61
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:emerald
@@ -2042,16 +2036,6 @@ items:
   count: 3
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:compass
-  count: 1
-  components:
-    minecraft:dyed_color: '10511680'
-    minecraft:lore: '[{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"右键获得帮助",underlined:0b}],text:""},{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"左键查看粘液科技指南",underlined:0b}],text:""},{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"非消耗性道具",underlined:0b}],text:""}]'
-    minecraft:tooltip_display: '{hidden_components:["minecraft:enchantments","minecraft:dyed_color"]}'
-    minecraft:custom_name: '{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"服务器指南",underlined:0b}],text:""}'
-    minecraft:custom_data: '{LodestoneTracked:0b}'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:dirt
   count: 41
   schema_version: 1
@@ -2069,11 +2053,11 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:salmon
-  count: 6
+  count: 10
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:cod
-  count: 6
+  count: 10
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:pufferfish
@@ -2081,7 +2065,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:beef
-  count: 4
+  count: 15
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:iron_nugget
@@ -2094,6 +2078,85 @@ items:
 - DataVersion: 4903
   id: minecraft:light
   count: 47
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:glowstone_dust
+  count: 2
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:raw_iron
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:sugar
+  count: 4
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:rabbit_foot
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:rabbit_hide
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:leather_boots
+  count: 1
+  components:
+    minecraft:damage: '14'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:netherite_chestplate
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运甲",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:mutton
+  count: 4
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"生山羊肉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203099.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_RAW_CHEVON"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 3
+  components:
+    minecraft:profile: '{id:[I;513989614,-308789711,-1654726514,-208727265],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViOTJhMTNmMDFiYWVjZTU2NjU0ZTgxNzgzM2Y5ODI5YmMwMjVhZDczMzYwOWMwYmRkMGQzYTM1OWM5ZDk0MyJ9fX0="}]}'
+    minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种能填充周围世界的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#A241BF",italic:0b,obfuscated:0b,strikethrough:0b,text:"农耕工艺
+      - 原始植物: 大地",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CLT_PLANT_EARTH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:coal
+  count: 26
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:cooked_porkchop
+  count: 7
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:crossbow
+  count: 1
+  components:
+    minecraft:charged_projectiles: '[{id:"minecraft:arrow"}]'
+    minecraft:damage: '380'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:firework_rocket
+  count: 10
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;608927098,-1508492291,-1830827403,-1629476902],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvZDNiYTQxZmU4Mjc1Nzg3MWU4Y2JlYzlkZWQ5YWNiZmQxOTkzMGQ5MzM0MWNmODEzOWQxZGZiZmFhM2VjMmE1In19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_purple",italic:0b,obfuscated:0b,strikethrough:0b,text:"桃子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201019.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PEACH"}}'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

@@ -501,6 +501,8 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 **快捷键**（以键位名为准，可在控制设置改绑定）：左/右键买卖 1 个；Shift+左键选购买量；Shift+右键选出售量；副手交换键收藏；丢弃键从本地仓库取回（最多 64，不扣钱）；Ctrl+丢弃键切换该物品是否自动吸取进仓库。
 
+**生存选块购买（建筑向）：** 对准世界里的方块按 **选块键**（默认鼠标中键）。若背包里**已有**该方块，行为与原版一致（切到快捷栏）；若**没有**且商店可买，第一次会提示「再中键一次购买一组（64 个）」并显示约价，**8 秒内**对同一方块再按选块键即走 `/shop quickbuy` 扣款发货（背包满时仍进本地仓库）。创造模式不受影响。
+
 购买 **`ultradepository.*` 时效权限**后，符合条件的拾取/掉落进入**本地统一仓库**；聊天提示可点「返回至背包」，空间不足则整单留存；返回后 **1 分钟内**该物不再自动入库。商店内对该商品按 **Ctrl+丢弃键** 可持久关闭或重新开启自动吸取。
 
 #### 网页贸易
@@ -579,6 +581,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 个人标记点（设/传） | 开 | `essentials.warp` / `setwarp` / `delwarp` / `warp.overwrite.*` |
 | 公共标记点（设） | 开 | `spawn.set`；传送 `/spawn` 本身无权限节点 |
 | 外卖大/小编号 | **关** | 仅 OP 或 `mcwws.delivery.admin`；取件码仍人人可用 |
+| 生存中键选块购买 | 开 | `mcwws.shop.pickbuy`；背包无货时二次中键买一组 |
 
 ---
 
@@ -806,6 +809,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 指令批量改造扣费 | `tools/mcwws-worldedit-survival/` |
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
+| 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy.jar` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 外卖分配器 / 外卖柜 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |

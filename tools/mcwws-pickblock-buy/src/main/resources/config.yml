@@ -1,0 +1,14 @@
+enabled: true
+require-survival: true
+confirm-timeout-seconds: 8
+buy-amount: 64
+mappings-file: plugins/Skript/scripts/web/mcwws/ultimateshop_mappings.yml
+prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+require-buy-price: true
+
+messages:
+  prefix: '&7[&e选块购买&7] '
+  prompt: '&e背包中没有该方块，再 &6中键 &e同一方块可快速购买 &f{amount} &e个（约 &a¥{price}&e）。'
+  purchased: '&a已购买 &f{amount} &e个该方块&a。'
+  not-buyable: '&c该方块无法在商店购买。'
+  confirm-expired: '&7确认已过期，请再次 &6中键 &7同一方块。'

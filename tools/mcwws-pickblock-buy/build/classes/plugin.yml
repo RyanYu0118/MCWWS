@@ -1,0 +1,21 @@
+name: MCWWS_PickBlockBuy
+main: work.mcwws.pickblockbuy.McwwsPickBlockBuyPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [UltimateShop]
+softdepend: [PlaceholderAPI]
+description: 生存模式中键选块快速购买（背包无货时二次中键买一组）
+
+commands:
+  mcwws-pickblock-reload:
+    description: 重载选块购买映射与配置
+    usage: /mcwws-pickblock-reload
+    permission: mcwws.shop.pickbuy.admin
+
+permissions:
+  mcwws.shop.pickbuy:
+    description: 生存模式中键对可购方块快速购买
+    default: true
+  mcwws.shop.pickbuy.admin:
+    description: 重载选块购买配置
+    default: op
