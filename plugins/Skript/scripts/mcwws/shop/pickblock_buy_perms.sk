@@ -1,0 +1,16 @@
+# 生存中键选块购买 — 全体玩家默认可用
+# 中键购买通过玩家执行 /shop quickbuy，需 ultimateshop.quickbuy（插件默认仅 OP）
+
+function mcwwsGrantPickBlockBuyPerms():
+    if plugin "LuckPerms" is enabled:
+        execute console command "lp group default permission set mcwws.shop.pickbuy true"
+        execute console command "lp group default permission set ultimateshop.quickbuy true"
+        log "[MCWWS] 已为 default 组授予选块购买权限 (mcwws.shop.pickbuy + ultimateshop.quickbuy)"
+
+on Skript start:
+    wait 5 seconds
+    mcwwsGrantPickBlockBuyPerms()
+
+on script load:
+    wait 2 seconds
+    mcwwsGrantPickBlockBuyPerms()

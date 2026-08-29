@@ -586,7 +586,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 个人标记点（设/传） | 开 | `essentials.warp` / `setwarp` / `delwarp` / `warp.overwrite.*` |
 | 公共标记点（设） | 开 | `spawn.set`；传送 `/spawn` 本身无权限节点 |
 | 外卖大/小编号 | **关** | 仅 OP 或 `mcwws.delivery.admin`；取件码仍人人可用 |
-| 生存中键选块购买 | 开 | `mcwws.shop.pickbuy`；背包无货时二次中键买一组 |
+| 生存中键选块购买 | 开 | `mcwws.shop.pickbuy` + `ultimateshop.quickbuy`（均写入 LuckPerms `default` 组；后者插件默认仅 OP，须显式放开）；背包无货时二次中键买一组 |
 
 ---
 
