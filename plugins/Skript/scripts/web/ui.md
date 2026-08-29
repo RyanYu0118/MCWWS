@@ -44,26 +44,21 @@
 
 ### 3.1 圆角（Border Radius）
 
-| Token | 深色/浅色（themes.css） | style.css 回退 | 典型用途 |
-| ----- | ---------------------- | -------------- | -------- |
-| `--radius-sm` | **12px** | 8px | 导航链接（非 pill）、输入次级、标签、排行榜项、洞察卡片 |
-| `--radius-md` | **18px** | 12px | 趋势项、排行榜头像、统计图标容器、物品价格条 |
-| `--radius-lg` | **24px** | 16px | 玻璃卡片、统计卡、模态内容（小屏）、时钟面板、零钱弹层 |
-| `--radius-xl` | **32px** | 24px | 服务模块大卡、模态默认外框、建造工具卡 |
-| **999px** | 固定 pill | 同左 | 主按钮、购物车按钮、主题切换、Tab、数量徽章、安装提示按钮 |
-| **10px** | 固定 | 同左 | 登录头像按钮、物品模态统计格 `.item-modal-stat` |
-| **14px** | 固定 | 同左 | 登录表单 `input` |
-| **16px** | 固定 | 同左 | 服务模块图标底 `.services-module-icon` |
-| **50%** | 圆形 | 同左 | 刷新按钮、关闭按钮、排名徽章、购物车角标按钮 |
+**统一规范：** 除 pill（`999px`）与正圆（`50%`）外，**全部 8px**。
 
-**硬编码圆角一览（未走 token 的组件）：**
+| Token / 值 | 像素 | 典型用途 |
+| ---------- | ---- | -------- |
+| `--radius-sm` | **8px** | 导航链接、输入、标签、排行榜项、洞察卡片、玻璃卡、模态等 |
+| `--radius-md` | **8px** | 同左（与 sm/lg/xl 统一，保留 token 名便于语义引用） |
+| `--radius-lg` | **8px** | 同左 |
+| `--radius-xl` | **8px** | 服务模块卡、模态外框、建造工具卡 |
+| **999px** | pill | 主按钮、购物车、主题切换、Tab、数量徽章、安装提示 |
+| **50%** | 圆形 | 刷新钮、关闭钮、排名徽章、头像圆钮、状态点 |
+| **0** | 直角 | 拼接边、全宽条、刻意去圆角覆盖 |
 
-| 像素 | 选择器 / 场景 |
-| ---- | ------------- |
-| 4px | 滚动条 thumb |
-| 8px | `.shop-item-card-prices`、`.mcwws-auth-popover-action`、管理页部分输入 |
-| 12px | `.shop-item-card`、`.mcwws-auth-popover-body` |
-| 3px | 物品卡顶部 accent 条高度（非圆角，高 3px） |
+> `themes.css` 与 `style.css` 的 `--radius-*` 均为 **8px**；历史大圆角（12/18/24/32px）已废弃。
+
+**例外（非圆角）：** 物品卡顶部 accent 条高度 **3px**（`border-radius` 无关，仅为装饰条厚度）。
 
 ### 3.2 间距（Spacing）
 
@@ -237,7 +232,7 @@ ui-monospace, monospace                   /* 模态统计数值 */
 
 - 尺寸：高 **64px**；左右 padding **32px**（`2rem`）
 - 背景：`--navbar-bg` + `blur(40px) saturate(120%)`（themes 增强）
-- 链接 `.nav-link`：padding `8px 16px`；圆角 **12px**（themes 下 **999px** pill）
+- 链接 `.nav-link`：padding `8px 16px`；圆角 **8px**（pill 变体 **999px**）
 - 激活：浅白底 `rgba(255,255,255,0.12)`
 - 刷新 `.refresh-btn`：**40×40px** 圆形
 
@@ -249,13 +244,13 @@ ui-monospace, monospace                   /* 模态统计数值 */
 
 ### 7.3 服务模块卡 `.services-module-card`
 
-- 圆角 **`--radius-xl`（32px）**
-- 内边距 **28px 24px**；图标区 **56×56px**，圆角 **16px**
+- 圆角 **`--radius-xl`（8px）**
+- 内边距 **28px 24px**；图标区 **56×56px**，圆角 **8px**
 - Hover：`translateY(-4px)` + `--shadow-glow`
 
 ### 7.4 商店物品卡 `.shop-item-card`
 
-- 圆角 **12px**；padding **20px**
+- 圆角 **8px**；padding **20px**
 - 顶条 accent：高 **3px**，水平渐变
 - 价格区：圆角 **8px**；padding **12px**
 
@@ -272,7 +267,7 @@ ui-monospace, monospace                   /* 模态统计数值 */
 ### 7.6 表单 `.form-field`
 
 - 标签：`0.9rem`，`--text-secondary`
-- 输入：padding **14.4px 16px**；圆角 **14px**；底 `rgba(14,14,14,0.9)`
+- 输入：padding **14.4px 16px**；圆角 **8px**；底 `rgba(14,14,14,0.9)`
 - Focus：边框 `rgba(255,255,255,0.45)` + 外发光 `0 0 0 3px rgba(255,255,255,0.1)`
 
 ### 7.7 模态框 `.modal`
@@ -283,8 +278,8 @@ ui-monospace, monospace                   /* 模态统计数值 */
 
 ### 7.8 登录 `.mcwws-auth-*`
 
-- 头像钮：**40×40px**；圆角 **10px**；边框 **2px**
-- Popover：min-width **220px** max **300px**；卡片圆角 **12px**；padding **12px 14px**
+- 头像钮：**40×40px**；圆角 **8px**；边框 **2px**
+- Popover：min-width **220px** max **300px**；卡片圆角 **8px**；padding **12px 14px**
 - 箭头：**10×10px** 旋转方块
 - 经济进度条：高 **5px**；圆角 **999px**
 
@@ -296,7 +291,7 @@ ui-monospace, monospace                   /* 模态统计数值 */
 ### 7.10 滚动条（WebKit）
 
 - 宽/高：**8px**
-- thumb 圆角：**4px**
+- thumb 圆角：**8px**
 
 ---
 

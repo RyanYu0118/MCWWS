@@ -1164,7 +1164,7 @@
                 : '';
             return `
             <div class="item-icon-3d" data-item-id="${safeId}" data-item-name="${safeName}"
-                 style="width:${ICON_PX}px;height:${ICON_PX}px;margin-right:${ICON_GAP_RIGHT}px;flex-shrink:0;position:relative;background:rgba(255,255,255,0.03);border-radius:4px;">
+                 style="width:${ICON_PX}px;height:${ICON_PX}px;margin-right:${ICON_GAP_RIGHT}px;flex-shrink:0;position:relative;background:rgba(255,255,255,0.03);border-radius:8px;">
                 <canvas width="${slotPx}" height="${slotPx}"
                     style="width:${ICON_PX}px;height:${ICON_PX}px;image-rendering:auto;opacity:0;transition:opacity 0.25s;display:block;"></canvas>
                 <div class="item-icon-fallback" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"></div>

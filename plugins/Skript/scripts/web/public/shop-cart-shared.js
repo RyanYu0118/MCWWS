@@ -46,7 +46,7 @@
         toast.textContent = message;
         toast.style.cssText = [
             'position:fixed', 'bottom:24px', 'left:50%', 'transform:translateX(-50%)',
-            'padding:14px 18px', 'border-radius:12px',
+            'padding:14px 18px', 'border-radius:8px',
             `background:${success ? 'rgba(34,197,94,0.95)' : 'rgba(239,68,68,0.95)'}`,
             'color:#fff', 'font-size:0.95rem', 'z-index:10100',
             'box-shadow:0 10px 30px rgba(0,0,0,0.2)',

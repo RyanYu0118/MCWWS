@@ -17,7 +17,12 @@
     const VIEW_RESTORE_TRANSITION_MS = 720;
     /** BlueMap setFlatView(durationMs, minDistance)：第二参数是最小缩放，不是俯仰角 */
     const FLAT_VIEW_MIN_DISTANCE = 5;
-    const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+    function apiBase() {
+        if (window.MCWWS_API && typeof window.MCWWS_API.getWebApiBase === 'function') {
+            return window.MCWWS_API.getWebApiBase();
+        }
+        return `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+    }
     let markers = [];
     let loading = true;
     let started = false;
@@ -182,7 +187,7 @@
     document.addEventListener('keyup', stopMapKeyboardBubble, true);
 
     function economyBaseUrl() {
-        return `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+        return apiBase();
     }
 
     function economyUrl(path, params) {
@@ -2343,7 +2348,7 @@
 
         if (mapAuthToken && !mapAuthUser) {
             try {
-                const res = await fetch(`${NODE_API}/api/profile`, {
+                const res = await fetch(`${apiBase()}/api/profile`, {
                     headers: authHeaders(),
                     cache: 'no-store'
                 });
@@ -2548,7 +2553,7 @@
             return cachedPlayerLoc;
         }
         try {
-            const res = await fetch(`${NODE_API}/api/player-location?t=${Date.now()}`, {
+            const res = await fetch(`${apiBase()}/api/player-location?t=${Date.now()}`, {
                 headers: authHeaders(),
                 cache: 'no-store'
             });
@@ -3780,7 +3785,7 @@
             return;
         }
         try {
-            const res = await fetch(`${NODE_API}/api/world-time?t=${Date.now()}`, { cache: 'no-store' });
+            const res = await fetch(`${apiBase()}/api/world-time?t=${Date.now()}`, { cache: 'no-store' });
             if (!res.ok) return;
             const data = await res.json();
             if (isDayNightLocked()) {
@@ -4345,7 +4350,7 @@
         loading = true;
         renderPanel();
         try {
-            const res = await fetch(`${NODE_API}/api/shop-map-markers?t=${Date.now()}`, { cache: 'no-store' });
+            const res = await fetch(`${apiBase()}/api/shop-map-markers?t=${Date.now()}`, { cache: 'no-store' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             markers = Array.isArray(data.markers) ? data.markers : [];

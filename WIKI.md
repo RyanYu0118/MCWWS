@@ -516,6 +516,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - 记入网页日志与零钱明细；可嵌入公开 Wiki 页浏览
 - **手机：** Chrome / Edge 打开上述地址后可「添加到主屏幕」或点首页「安装到桌面」；也可在首页下载 **Android APK**（文件名含版本号，如 `MCWWS-1.1.1.apk`；允许安装未知应用）。App 带底部导航：**商店 / 地图 / 管理 / 我的**（网页浏览器端布局不变；≥1.1.1 去掉 Material 组件以兼容鸿蒙）。App 与浏览器不共享登录态，首次打开需再登录一次。维护者构建：`tools/mcwws-web-android/build.ps1`
 - **HTTPS：** 若域名走樱花等内网穿透的**自签证书**，手机浏览器常显示空白或证书警告；请改为可信证书（Cloudflare / Let’s Encrypt），或使用已适配自签的 Android APK（≥ 1.0.1）
+- **地图外网：** 商店站 `https://mcs.ryanstudio.work/`（反代本机 `:8002`）的 `map.html` 内嵌 BlueMap；地图站为 `https://mcsmap.ryanstudio.work/`（反代本机 `:8100`）。外网勿依赖 `:8100` 端口直连；地图脚本向商店域的 `/api` 拉取标记与 GIS 数据
 
 网页侧建造下单已废止；实装请回游戏内可视化编辑。
 
@@ -825,7 +826,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
-| 测绘前端 | `bluemap/web/js/mcwws-gis.js` |
+| 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
+| 地图壳页配置 | `plugins/Skript/scripts/web/public/services-config.js`、`/api/services-config` |
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
 | 连锁采矿 | `plugins/VeinMiner/` |
 | UltimateTimber × ExoticGarden 果树保护 | `tools/mcwws-ultimatetimber-fix/` |
@@ -1096,19 +1098,16 @@ BKCommonLib 2.0.2 · CommandAPI 12.0.0 · ProtocolLib 5.4.1 · NBTAPI 2.16.0 · 
 
 ### G.3 圆角（px）
 
-| Token | themes 生效值 | 典型用途 |
-| ----- | ------------- | -------- |
-| `--radius-sm` | **12** | 次级输入、标签、洞察项 |
-| `--radius-md` | **18** | 趋势项、图标容器 |
-| `--radius-lg` | **24** | 玻璃卡、统计卡、时钟面板 |
-| `--radius-xl` | **32** | 服务模块卡、模态外框 |
+**统一规范：** 除 pill（`999`）与正圆（`50%`）外，**全部 8px**。
+
+| Token / 值 | 像素 | 典型用途 |
+| ---------- | ---- | -------- |
+| `--radius-sm` ~ `--radius-xl` | **8** | 卡片、输入、模态、导航、玻璃面板等 |
 | 固定 **999** | pill | 主按钮、购物车、Tab、主题切换 |
-| 固定 **10** | — | 登录头像按钮 |
-| 固定 **14** | — | 登录表单 input |
-| 固定 **16** | — | 服务模块图标底 |
-| 固定 **12** | — | 物品卡、Popover 卡片 |
-| 固定 **8** | — | 物品价格区、Popover 按钮 |
-| **50%** | 圆 | 刷新钮、关闭钮、排名圆 |
+| 固定 **50%** | 圆 | 刷新钮、关闭钮、排名圆、状态点 |
+| **0** | 直角 | 拼接边、全宽条 |
+
+> 历史大圆角（12/18/24/32px）已废弃；详见 `plugins/Skript/scripts/web/ui.md`。
 
 ### G.4 间距与布局（px / rem）
 
@@ -1168,8 +1167,8 @@ BKCommonLib 2.0.2 · CommandAPI 12.0.0 · ProtocolLib 5.4.1 · NBTAPI 2.16.0 · 
 | 组件 | 规格 |
 | ---- | ---- |
 | `.refresh-btn` | 40×40 圆 |
-| `.mcwws-auth-avatar-btn` | 40×40，圆角 10，边框 2px |
-| `.shop-item-card` | 圆角 12，padding 20，顶 accent 高 3 |
+| `.mcwws-auth-avatar-btn` | 40×40，圆角 8，边框 2px |
+| `.shop-item-card` | 圆角 8，padding 20，顶 accent 高 3 |
 | `.primary-btn` / `.cart-btn` | pill，padding约 10–14 × 16–20 |
 | `.modal-content` | max-width 800，max-height 90vh，圆角 `--radius-xl` |
 | `.mcwws-theme-toggle` | 高 36，内图标 28×28 |

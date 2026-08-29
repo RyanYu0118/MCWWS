@@ -12,7 +12,12 @@
     const GIS_VOLUME_FACE_MIN_SCREEN_AREA = 2.5;
     const GIS_VOLUME_LIGHT_DIR = Object.freeze({ x: 0.38, y: 0.9, z: 0.22 });
     const API_PORT = 8002;
-    const NODE_API = `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+    function apiBase() {
+        if (window.MCWWS_API && typeof window.MCWWS_API.getWebApiBase === 'function') {
+            return window.MCWWS_API.getWebApiBase();
+        }
+        return `${window.location.protocol}//${window.location.hostname}:${API_PORT}`;
+    }
     console.info('[mcwws-gis] loaded', { build: MCWWS_GIS_BUILD });
     window.mcwwsGisVolumeDiag = () => ({
         build: MCWWS_GIS_BUILD,
@@ -7668,7 +7673,7 @@
         mapAuthUser = payload.user || null;
         if (mapAuthToken && !mapAuthUser) {
             try {
-                const res = await fetch(`${NODE_API}/api/profile`, {
+                const res = await fetch(`${apiBase()}/api/profile`, {
                     headers: authHeaders(),
                     cache: 'no-store'
                 });
@@ -7695,7 +7700,7 @@
             return;
         }
         try {
-            const res = await fetch(`${NODE_API}/api/admin/access`, {
+            const res = await fetch(`${apiBase()}/api/admin/access`, {
                 headers: authHeaders(),
                 cache: 'no-store'
             });
@@ -7739,7 +7744,7 @@
 
     async function loadGisProject() {
         try {
-            const res = await fetch(`${NODE_API}/api/gis?t=${Date.now()}`, { cache: 'no-store' });
+            const res = await fetch(`${apiBase()}/api/gis?t=${Date.now()}`, { cache: 'no-store' });
             if (!res.ok) throw new Error(`HTTP ${res.status}`);
             const data = await res.json();
             project = data.project || data;
@@ -7761,7 +7766,7 @@
         saving = true;
         renderPanel();
         try {
-            const res = await fetch(`${NODE_API}/api/gis`, {
+            const res = await fetch(`${apiBase()}/api/gis`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',

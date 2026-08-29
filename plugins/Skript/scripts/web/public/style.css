@@ -1,4 +1,4 @@
-/* DS-WEB-VERSION: 2.5.78 */
+/* DS-WEB-VERSION: 2.5.92 */
 /* ═══════════════════════════════════════════════════════════════════════
    流浪世界服务器商店系统 PREMIUM DASHBOARD STYLES
    Modern dark theme with glassmorphism effects
@@ -78,9 +78,9 @@ body, h1, h2, h3, h4, h5, h6, p, span, div, input, button, select, strong, b, a 
 
     /* Border Radius */
     --radius-sm: 8px;
-    --radius-md: 12px;
-    --radius-lg: 16px;
-    --radius-xl: 24px;
+    --radius-md: 8px;
+    --radius-lg: 8px;
+    --radius-xl: 8px;
 }
 
 /* ═══ RESET & BASE ═══ */
@@ -116,7 +116,7 @@ body {
 
 /* 商店物品卡片：减轻 backdrop-filter 右侧 1px 合成闪线 */
 .shop-item-card {
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 20px;
     position: relative;
     overflow: hidden;
@@ -261,7 +261,7 @@ body {
     height: 40px;
     padding: 0;
     border: 2px solid rgba(255, 255, 255, 0.14);
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(14, 14, 14, 0.65);
     cursor: pointer;
     overflow: hidden;
@@ -345,7 +345,7 @@ body {
 .mcwws-auth-popover-body {
     position: relative;
     padding: 12px 14px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: rgba(14, 14, 14, 0.97);
     border: 1px solid rgba(255, 255, 255, 0.1);
     box-shadow: 0 12px 32px rgba(0, 0, 0, 0.45);
@@ -817,7 +817,7 @@ body.mcwws-ledger-open {
 .form-field input {
     width: 100%;
     padding: 0.9rem 1rem;
-    border-radius: 14px;
+    border-radius: 8px;
     border: 1px solid rgba(255,255,255,0.08);
     background: rgba(14, 14, 14, 0.9);
     color: var(--text-primary);
@@ -1213,7 +1213,7 @@ body.mcwws-ledger-open {
 .health-bar {
     height: 4px;
     background: var(--bg-secondary);
-    border-radius: 2px;
+    border-radius: 8px;
     margin-top: 0.5rem;
     overflow: hidden;
 }
@@ -1221,7 +1221,7 @@ body.mcwws-ledger-open {
 .health-bar-fill {
     height: 100%;
     background: var(--gradient-primary);
-    border-radius: 2px;
+    border-radius: 8px;
     transition: var(--transition-slow);
 }
 
@@ -1667,7 +1667,7 @@ body.mcwws-ledger-open {
     width: 20px;
     height: 20px;
     border: 2px solid var(--border);
-    border-radius: 4px;
+    border-radius: 8px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -1973,7 +1973,7 @@ body.mcwws-ledger-open {
 .item-modal-stat {
     background: var(--bg-tertiary);
     border: 1px solid rgba(255, 255, 255, 0.05);
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 0.9rem 1rem;
 }
 
@@ -2189,7 +2189,7 @@ body.mcwws-ledger-open {
 .item-modal-chart-wrap {
     height: 220px;
     padding: 0.75rem;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(14, 14, 14, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
     overscroll-behavior: contain;
@@ -2228,7 +2228,7 @@ body.mcwws-ledger-open {
     justify-content: space-between;
     gap: 1rem;
     padding: 0.85rem 0.95rem;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(14, 14, 14, 0.6);
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -2386,7 +2386,7 @@ body.mcwws-ledger-open {
 
 ::-webkit-scrollbar-thumb {
     background: var(--bg-tertiary);
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
@@ -2951,7 +2951,7 @@ body.mcwws-ledger-open {
 .trader-avatar {
     width: 24px;
     height: 24px;
-    border-radius: 4px;
+    border-radius: 8px;
 }
 
 .trader-name {
@@ -3175,7 +3175,7 @@ input.cart-qty-input {
     display: flex;
     align-items: center;
     justify-content: center;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(18, 18, 18, 0.88);
     border: 1px solid rgba(255, 255, 255, 0.12);
     box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
@@ -3294,7 +3294,7 @@ input.cart-qty-input {
     align-items: start;
     padding: 12px;
     margin-bottom: 8px;
-    border-radius: 12px;
+    border-radius: 8px;
     background: rgba(28, 28, 28, 0.65);
     border: 1px solid rgba(255, 255, 255, 0.05);
 }
@@ -3466,7 +3466,7 @@ input.cart-qty-input {
     width: 100%;
     box-sizing: border-box;
     padding: 8px 36px 8px 10px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(8, 8, 8, 0.35);
     color: var(--text-primary, #f8fafc);
@@ -3510,7 +3510,7 @@ input.cart-qty-input {
     max-height: 220px;
     overflow: auto;
     list-style: none;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.14);
     background: rgba(12, 14, 18, 0.96);
     box-shadow: 0 12px 28px rgba(0, 0, 0, 0.35);
@@ -3556,7 +3556,7 @@ input.cart-qty-input {
 .cart-drawer-btn {
     flex: 1;
     border: none;
-    border-radius: 10px;
+    border-radius: 8px;
     padding: 0.75rem 1rem;
     font-weight: 600;
     cursor: pointer;
@@ -3584,7 +3584,7 @@ input.cart-qty-input {
 .cart-pending-orders {
     margin-bottom: 12px;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.06);
     border: 1px solid rgba(255, 255, 255, 0.12);
 }
@@ -3643,7 +3643,7 @@ input.cart-qty-input {
     -webkit-user-select: text;
     cursor: text;
     padding: 2px 6px;
-    border-radius: 6px;
+    border-radius: 8px;
     background: rgba(134, 239, 172, 0.12);
     border: 1px solid rgba(134, 239, 172, 0.28);
 }
@@ -3651,7 +3651,7 @@ input.cart-qty-input {
 .cart-pending-copy-btn {
     flex: 0 0 auto;
     padding: 2px 8px;
-    border-radius: 6px;
+    border-radius: 8px;
     border: 1px solid rgba(148, 163, 184, 0.35);
     background: rgba(15, 23, 42, 0.55);
     color: #e2e8f0;
@@ -3679,7 +3679,7 @@ input.cart-qty-input {
 .pickup-code-dialog {
     width: min(420px, 100%);
     padding: 20px 18px 16px;
-    border-radius: 14px;
+    border-radius: 8px;
     background: #0f172a;
     border: 1px solid rgba(148, 163, 184, 0.28);
     box-shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
@@ -3722,7 +3722,7 @@ input.cart-qty-input {
     flex: 1 1 auto;
     min-width: 0;
     padding: 10px 12px;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(134, 239, 172, 0.35);
     background: rgba(15, 23, 42, 0.9);
     color: #86efac;
@@ -3737,7 +3737,7 @@ input.cart-qty-input {
 
 .pickup-code-dialog-copy,
 .pickup-code-dialog-close {
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid rgba(148, 163, 184, 0.35);
     cursor: pointer;
     font-size: 0.9rem;
@@ -4088,7 +4088,7 @@ input.cart-qty-input {
 
     .items-grid > .glass {
         padding: 14px !important;
-        border-radius: 10px !important;
+        border-radius: 8px !important;
     }
 
     .items-grid > .glass .trade-btn,
@@ -4234,7 +4234,7 @@ input.cart-qty-input {
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
-    border-radius: 16px;
+    border-radius: 8px;
     background: var(--gradient-card);
 }
 
@@ -4352,7 +4352,7 @@ input.cart-qty-input {
     align-items: center;
     justify-content: center;
     font-size: 1.75rem;
-    border-radius: 16px;
+    border-radius: 8px;
     background: linear-gradient(135deg, rgba(255, 255, 255, 0.12), rgba(255, 255, 255, 0.04));
 }
 
@@ -4397,7 +4397,7 @@ input.cart-qty-input {
 .build-tool-hints-list code {
     font-size: 0.85em;
     padding: 0.1em 0.35em;
-    border-radius: 4px;
+    border-radius: 8px;
     background: rgba(255, 255, 255, 0.06);
 }
 
@@ -4437,7 +4437,7 @@ input.cart-qty-input {
 .build-client-sync-unsupported {
     margin: 0 0 0.75rem;
     padding: 0.65rem 0.85rem;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(245, 158, 11, 0.12);
     color: #fbbf24;
     font-size: 0.88rem;
@@ -4475,7 +4475,7 @@ input.cart-qty-input {
     gap: 0.65rem;
     margin: -0.35rem 0 0.85rem;
     padding: 0.65rem 0.8rem;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid var(--border);
     background: var(--bg-tertiary);
     font-size: 0.85rem;
@@ -4566,7 +4566,7 @@ input.cart-qty-input {
 
 .build-client-sync-field select {
     padding: 0.45rem 0.65rem;
-    border-radius: 10px;
+    border-radius: 8px;
     border: 1px solid var(--border-subtle);
     background: rgba(14, 14, 14, 0.45);
     color: var(--text-primary);
@@ -4606,7 +4606,7 @@ input.cart-qty-input {
     align-items: center;
     padding: 0.75rem 1rem;
     margin-bottom: 0.85rem;
-    border-radius: 12px;
+    border-radius: 8px;
     font-size: 0.88rem;
 }
 
@@ -4618,7 +4618,7 @@ input.cart-qty-input {
 .build-paste-client-warn {
     margin: 0 0 0.85rem;
     padding: 0.65rem 0.85rem;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(245, 158, 11, 0.1);
     color: #fbbf24;
     font-size: 0.86rem;
@@ -4628,7 +4628,7 @@ input.cart-qty-input {
 .build-client-sync-table-wrap {
     overflow: auto;
     border: 1px solid var(--border-subtle);
-    border-radius: 12px;
+    border-radius: 8px;
     margin-bottom: 0.85rem;
 }
 
@@ -4689,7 +4689,7 @@ input.cart-qty-input {
 .build-client-sync-empty-help {
     margin: 0 0 0.85rem;
     padding: 0.85rem 1rem;
-    border-radius: 12px;
+    border-radius: 8px;
     background: rgba(148, 163, 184, 0.08);
     border: 1px solid var(--border-subtle);
     font-size: 0.86rem;
@@ -4715,7 +4715,7 @@ input.cart-qty-input {
 .build-paste-client-box {
     margin: 0.75rem 0 0.5rem;
     padding: 0.75rem 0.9rem;
-    border-radius: 12px;
+    border-radius: 8px;
     border: 1px solid rgba(255, 255, 255, 0.16);
     background: rgba(255, 255, 255, 0.06);
 }
@@ -4892,7 +4892,7 @@ body.services-map-clean .services-map-auth-float {
 .services-map-auth-float .mcwws-auth-avatar-btn {
     width: 48px;
     height: 48px;
-    border-radius: 12px;
+    border-radius: 8px;
     box-shadow: 0 4px 16px rgba(0, 0, 0, 0.28);
 }
 
@@ -5100,7 +5100,7 @@ body.services-map-clean .services-map-auth-float {
 
 .litematica-dropzone {
     border: 2px dashed rgba(148, 163, 184, 0.35);
-    border-radius: 12px;
+    border-radius: 8px;
     padding: 36px 20px;
     text-align: center;
     background: rgba(14, 14, 14, 0.45);
@@ -5134,7 +5134,7 @@ body.services-map-clean .services-map-auth-float {
 .litematica-import-error {
     color: #f87171;
     padding: 16px;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(239, 68, 68, 0.08);
 }
 
@@ -5157,7 +5157,7 @@ body.services-map-clean .services-map-auth-float {
 .litematica-quote-table-wrap {
     overflow: auto;
     border: 1px solid rgba(148, 163, 184, 0.18);
-    border-radius: 10px;
+    border-radius: 8px;
 }
 
 .litematica-quote-table {
@@ -5251,7 +5251,7 @@ body.services-map-clean .services-map-auth-float {
 .litematica-quote-summary {
     margin-top: 14px;
     padding: 12px 14px;
-    border-radius: 10px;
+    border-radius: 8px;
     background: rgba(14, 14, 14, 0.55);
     display: grid;
     gap: 8px;

@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -7,10 +7,10 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>地图系统 - 流浪世界服务</title>
     <meta name="description" content="流浪世界服务器 BlueMap 地图 — GIS 标注、商店标记与交易搜索">
-    <link rel="stylesheet" href="style.css?v=2.5.87">
+    <link rel="stylesheet" href="style.css?v=2.5.92">
     <script src="mcwws-theme.js?v=4"></script>
     <script src="mcwws-page-transition.js?v=3"></script>
-    <link rel="stylesheet" href="themes.css?v=20">
+    <link rel="stylesheet" href="themes.css?v=24">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -77,7 +77,7 @@
         </div>
     </div>
 
-    <script src="services-config.js?v=1"></script>
+    <script src="services-config.js?v=2"></script>
     <script src="mcwws-auth.js?v=14"></script>
     <script>
         (function () {
@@ -108,10 +108,12 @@
             function syncAuthToFrame() {
                 if (!frame?.contentWindow) return;
                 const auth = window.MCWWS_AUTH;
+                const services = window.MCWWS_SERVICES || {};
                 frame.contentWindow.postMessage({
                     type: 'mcwws-auth',
                     authToken: auth.getToken(),
-                    user: auth.getUser()
+                    user: auth.getUser(),
+                    webApiUrl: services.webApiUrl || window.location.origin
                 }, '*');
             }
 

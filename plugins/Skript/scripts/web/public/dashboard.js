@@ -731,7 +731,7 @@ async function showItemDetails(item) {
             <h3 style="margin-bottom: 1rem;">最近交易</h3>
             <div style="max-height: 200px; overflow-y: auto;">
                 ${recentTxs.slice(0, 10).map(tx => `
-                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 6px; margin-bottom: 0.5rem;">
+                    <div style="display: flex; justify-content: space-between; padding: 0.75rem; background: var(--bg-tertiary); border-radius: 8px; margin-bottom: 0.5rem;">
                         <span>${formatTime(tx.timestamp)}</span>
                         <span class="type-badge ${tx.type.toLowerCase()}">${txTypeLabel(tx.type)}</span>
                         <span>${tx.amount} 件 @ ${formatCurrency(tx.price)}</span>

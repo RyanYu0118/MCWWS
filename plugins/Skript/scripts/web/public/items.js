@@ -299,7 +299,7 @@ async function loadItems() {
         const grid = document.getElementById('itemsGrid');
         if (grid) {
             const msg = error?.message || '无法连接到后端数据库。';
-            grid.innerHTML = `<div style="color:#ef4444; text-align:center; grid-column:1/-1; padding: 40px; background: #1e293b; border-radius: 12px;">⚠️ ${escapeHtml(msg)}</div>`;
+            grid.innerHTML = `<div style="color:#ef4444; text-align:center; grid-column:1/-1; padding: 40px; background: #1e293b; border-radius: 8px;">⚠️ ${escapeHtml(msg)}</div>`;
         }
     }
 }

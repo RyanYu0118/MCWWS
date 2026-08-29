@@ -73,6 +73,7 @@ const { createPlayerLedgerService } = require('./player-ledger');
 const nbt = require('prismarine-nbt');
 
 const app = express();
+app.set('trust proxy', true);
 const PORT = Number(process.env.PORT || process.env.MCWWS_WEB_PORT) || 8002;
 const HOST = process.env.HOST || '0.0.0.0';
 const materialListParser = require('./public/material-list-parser');
@@ -82,6 +83,69 @@ app.use(express.json());
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const BLUEMAP_WEB_PORT = Number(process.env.BLUEMAP_PORT) || 8100;
+const PUBLIC_WEB_URL = String(process.env.MCWWS_PUBLIC_WEB_URL || '').replace(/\/$/, '');
+const PUBLIC_BLUEMAP_URL = String(process.env.MCWWS_PUBLIC_BLUEMAP_URL || '').replace(/\/$/, '');
+
+/** 外网 Host → BlueMap 公网根 URL（末尾带 /） */
+const PUBLIC_BLUEMAP_BY_WEB_HOST = {
+    'mcs.ryanstudio.work': 'https://mcsmap.ryanstudio.work/',
+    'www.mcs.ryanstudio.work': 'https://mcsmap.ryanstudio.work/'
+};
+
+function getRequestHost(req) {
+    const forwarded = req.get('x-forwarded-host');
+    if (forwarded) {
+        return String(forwarded).split(',')[0].trim().split(':')[0];
+    }
+    return req.hostname || '127.0.0.1';
+}
+
+function getRequestProtocol(req) {
+    const forwarded = req.get('x-forwarded-proto');
+    if (forwarded) {
+        return String(forwarded).split(',')[0].trim();
+    }
+    return req.protocol || 'http';
+}
+
+function isLocalHost(host) {
+    return host === '127.0.0.1' || host === 'localhost' || host === '::1';
+}
+
+function resolvePublicWebApiUrl(req) {
+    if (PUBLIC_WEB_URL) {
+        return PUBLIC_WEB_URL;
+    }
+    const host = getRequestHost(req);
+    const protocol = getRequestProtocol(req);
+    if (host === 'mcsmap.ryanstudio.work') {
+        return 'https://mcs.ryanstudio.work';
+    }
+    if (protocol === 'https:' && !isLocalHost(host)) {
+        return `${protocol}://${host}`;
+    }
+    if ((protocol === 'http:' && req.socket?.localPort === 80)
+        || (protocol === 'https:' && req.socket?.localPort === 443)) {
+        return `${protocol}://${host}`;
+    }
+    return `${protocol}://${host}:${PORT}`;
+}
+
+function resolvePublicBluemapUrl(req) {
+    if (PUBLIC_BLUEMAP_URL) {
+        return `${PUBLIC_BLUEMAP_URL}/`;
+    }
+    const host = getRequestHost(req);
+    if (PUBLIC_BLUEMAP_BY_WEB_HOST[host]) {
+        return PUBLIC_BLUEMAP_BY_WEB_HOST[host];
+    }
+    if (host === 'mcsmap.ryanstudio.work') {
+        const protocol = getRequestProtocol(req);
+        return `${protocol}://${host}/`;
+    }
+    const protocol = getRequestProtocol(req);
+    return `${protocol}://${host}:${BLUEMAP_WEB_PORT}/`;
+}
 const APP_DIR = path.join(PUBLIC_DIR, 'app');
 const APK_ALIAS_PATH = path.join(APP_DIR, 'MCWWS.apk');
 const ASSETLINKS_PATH = path.join(PUBLIC_DIR, '.well-known', 'assetlinks.json');
@@ -233,11 +297,10 @@ app.use((req, res, next) => {
 app.use(express.static(PUBLIC_DIR));
 
 app.get('/api/services-config', (req, res) => {
-    const host = req.hostname || '127.0.0.1';
-    const protocol = req.protocol || 'http';
     res.json({
         bluemapPort: BLUEMAP_WEB_PORT,
-        bluemapUrl: `${protocol}://${host}:${BLUEMAP_WEB_PORT}/`
+        bluemapUrl: resolvePublicBluemapUrl(req),
+        webApiUrl: resolvePublicWebApiUrl(req)
     });
 });
 

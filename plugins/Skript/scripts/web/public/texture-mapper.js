@@ -1180,7 +1180,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcBedItemId && window.isMcBedItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1191,7 +1191,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcBannerItemId && window.isMcBannerItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1202,7 +1202,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcCopperGolemStatueItemId && window.isMcCopperGolemStatueItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon item-copper-golem-statue-wiki" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1213,7 +1213,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcDecoratedPotItemId && window.isMcDecoratedPotItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1224,7 +1224,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcShulkerBoxItemId && window.isMcShulkerBoxItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1235,7 +1235,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcSporeBlossomItemId && window.isMcSporeBlossomItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1246,7 +1246,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcConduitItemId && window.isMcConduitItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1257,7 +1257,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcDriedGhastItemId && window.isMcDriedGhastItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon item-dried-ghast-wiki" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1268,7 +1268,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcHeavyCoreItemId && window.isMcHeavyCoreItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1279,7 +1279,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcHeadItemId && window.isMcHeadItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon item-head-wiki" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1290,7 +1290,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcShieldItemId && window.isMcShieldItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1301,7 +1301,7 @@ window.getTextureHtml = function(itemId, itemName) {
     if (window.isMcChestBlockItemId && window.isMcChestBlockItemId(itemId)) {
         return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <img class="item-mc-wiki-invicon item-chest-wiki" data-tex-urls="${texUrls}" data-item-id="${safeId}" alt=""
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; object-fit:contain; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}" referrerpolicy="no-referrer" />
@@ -1311,7 +1311,7 @@ window.getTextureHtml = function(itemId, itemName) {
     }
     return `
         <span class="item-icon-mount" data-item-id="${safeId}" data-item-name="${safeName}"
-            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:4px; flex-shrink: 0; position:relative;">
+            style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; margin-right:${cfg.ICON_GAP_RIGHT}px; display:inline-flex; align-items:center; justify-content:center; background: rgba(255,255,255,0.03); border-radius:8px; flex-shrink: 0; position:relative;">
             <canvas class="item-tex-anim" width="${cfg.RENDER_SIZE}" height="${cfg.RENDER_SIZE}" data-tex-urls="${texUrls}" data-item-id="${safeId}"
                 style="width:${cfg.ICON_PX}px; height:${cfg.ICON_PX}px; image-rendering:pixelated; opacity: ${initialOpacity}; transition: ${transitionStyle}; display:block;"
                 title="${safeName}"></canvas>
