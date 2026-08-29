@@ -798,7 +798,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
    - 社会学（引导、荣誉、公共指南、社交 QoL）
 4. **附录**
    - A 玩家命令 · B 管理员命令 · C 目录 · D 源码对照
-   - **E 全插件百科** · **F 全数据包百科**
+   - **E 全插件百科** · **F 全数据包百科** · **G 网页 UI 设计规范**
 
 Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
@@ -816,6 +816,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy.jar` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
+| 网页 UI 设计规范 | `plugins/Skript/scripts/web/ui.md`（同步 **附录 G**） |
 | 网页 Android 客户端 | `tools/mcwws-web-android/`（WebView 加载 `https://mcs.ryanstudio.work/`） |
 | 外卖分配器 / 外卖柜 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
@@ -1060,3 +1061,156 @@ BKCommonLib 2.0.2 · CommandAPI 12.0.0 · ProtocolLib 5.4.1 · NBTAPI 2.16.0 · 
 ### F.3 其他维度
 
 `world_nether`、`world_the_end`、`dimensionalhome` 目录下**无**独立 `datapacks/` 文件夹；维度差异由多世界配置与世界生成包共同决定。
+
+---
+
+## 附录 G：网页 UI 设计规范
+
+> **适用范围：** https://mcs.ryanstudio.work/ 网页服务（商店、地图壳页、零钱明细、管理、PWA、Android WebView）。  
+> **风格：** iOS 26 液态玻璃 + Minecraft 像素字体。  
+> **仓库底稿（与本文同步）：** `plugins/Skript/scripts/web/ui.md`
+
+改圆角、颜色、组件样式时，须**同时**改 CSS 实现、`ui.md` 与本附录。
+
+### G.1 设计原则
+
+| 原则 | 说明 |
+| ---- | ---- |
+| 玻璃拟态 | 半透明 + `backdrop-filter` 模糊 + 内描边高光 |
+| 灰阶主色 | 黑白灰渐变为主；成功/危险/警告仅表数据语义 |
+| 无粗体标题 | 全局 `font-weight: normal`；靠字号与渐变字分层 |
+| 深/浅双主题 | `data-color-scheme="dark\|light"`，默认深色 |
+| 动效克制 | 页面 280ms、主题 320ms；尊重 `prefers-reduced-motion` |
+
+### G.2 样式文件
+
+| 文件 | 职责 |
+| ---- | ---- |
+| `public/style.css` | 布局与业务组件（商店、仪表板、模态等） |
+| `public/themes.css` | **生效 token**、玻璃增强、噪点背景、主题切换 |
+| `public/mcwws-auth.css` | 登录头像与 Popover |
+| `public/mcwws-theme.js` | 主题持久化与切换动画 |
+| `public/mcwws-page-transition.js` | 站内页切换遮罩 |
+
+加载顺序：`style.css` → `mcwws-theme.js` → `themes.css`。
+
+### G.3 圆角（px）
+
+| Token | themes 生效值 | 典型用途 |
+| ----- | ------------- | -------- |
+| `--radius-sm` | **12** | 次级输入、标签、洞察项 |
+| `--radius-md` | **18** | 趋势项、图标容器 |
+| `--radius-lg` | **24** | 玻璃卡、统计卡、时钟面板 |
+| `--radius-xl` | **32** | 服务模块卡、模态外框 |
+| 固定 **999** | pill | 主按钮、购物车、Tab、主题切换 |
+| 固定 **10** | — | 登录头像按钮 |
+| 固定 **14** | — | 登录表单 input |
+| 固定 **16** | — | 服务模块图标底 |
+| 固定 **12** | — | 物品卡、Popover 卡片 |
+| 固定 **8** | — | 物品价格区、Popover 按钮 |
+| **50%** | 圆 | 刷新钮、关闭钮、排名圆 |
+
+### G.4 间距与布局（px / rem）
+
+| 场景 | 数值 |
+| ---- | ---- |
+| 顶栏高 | **64**（手机最小 **56**） |
+| 顶栏左右 padding | **32**（`2rem`） |
+| 主容器 padding | **32**；≤768px → **16** |
+| 服务 hub 最大宽 | **1100** |
+| 主内容最大宽 | **1400** |
+| 模块卡 padding | **28 × 24** |
+| 模块网格 gap | **20**（`1.25rem`） |
+| 模态 padding | 外 **16**；头/体 **24** |
+| Hero 顶距 | `margin-top: 64` + `padding-top: 64` |
+
+### G.5 颜色 Token（深色默认）
+
+| Token | 值 |
+| ----- | -- |
+| `--bg-primary` | `#050505` |
+| `--text-primary` | `rgba(255,255,255,0.96)` |
+| `--text-muted` | `rgba(255,255,255,0.52)` |
+| `--border` | `rgba(255,255,255,0.14)` |
+| `--success` / `--danger` / `--warning` | `#30D158` / `#FF453A` / `#FFD60A` |
+| `--glass-blur` | **32px** |
+| PWA `theme-color` | `#050505`（浅：`#ebedf2`） |
+
+浅色主题：`--bg-primary: #ebedf2`；正文/副文/弱文均为 `#000000`。
+
+### G.6 阴影与玻璃
+
+- `--shadow-md`（深）：`0 8px 28px rgba(0,0,0,0.32)`
+- `.glass`：`blur(32px) saturate(120%)` + 顶内高光 `inset 0 1px 0`
+- 顶栏额外：`blur(40px)` + `--navbar-shadow`
+
+### G.7 字体
+
+- 全局：`MinecraftFont`（`5_Minecraft AE.ttf`）→ `Segoe UI` → sans-serif
+- 时钟数字：`MinecraftAE`
+- 统计数值：`ui-monospace`
+- 英雄标题：**48px**（移动 **28px**）
+- 模态标题：**24px**
+- 正文辅助：**13.6px ~ 12px**
+
+### G.8 Z-index
+
+| 值 | 用途 |
+| -- | ---- |
+| 1000 | 顶栏 |
+| 2000 | 模态 |
+| 9999 | 浮动主题切换 |
+| 12000 | 登录 Popover / 零钱弹层 |
+| 2147483646 | 页面切换遮罩 |
+
+### G.9 核心组件尺寸
+
+| 组件 | 规格 |
+| ---- | ---- |
+| `.refresh-btn` | 40×40 圆 |
+| `.mcwws-auth-avatar-btn` | 40×40，圆角 10，边框 2px |
+| `.shop-item-card` | 圆角 12，padding 20，顶 accent 高 3 |
+| `.primary-btn` / `.cart-btn` | pill，padding约 10–14 × 16–20 |
+| `.modal-content` | max-width 800，max-height 90vh，圆角 `--radius-xl` |
+| `.mcwws-theme-toggle` | 高 36，内图标 28×28 |
+
+### G.10 动效
+
+| 场景 | 时长 |
+| ---- | ---- |
+| `--transition-fast` | 150ms |
+| `--transition-normal` | 300ms |
+| 主题切换 | 320ms |
+| 页面切换遮罩 | 280ms |
+| 模态入场 | 220ms 背景 + 280ms 卡片 |
+
+### G.11 响应式
+
+| 断点 | 行为 |
+| ---- | ---- |
+| ≤768px | 隐藏横排导航；hero/网格单列 |
+| ≤640px | 顶栏折行、底栏式三列导航；body 14px；搜索最小高 44px |
+| `prefers-reduced-motion` | 关闭过渡动画 |
+| `display-mode: standalone` | 隐藏 PWA 安装提示 |
+
+### G.12 页面与 Android 差异
+
+| 页面 | 文件 |
+| ---- | ---- |
+| 服务首页 | `home.html` |
+| 仪表板 | `index.html` |
+| 物品目录 | `items.html` |
+| 地图壳 | `map.html` |
+| 零钱 | `ledger.html` |
+| 管理 | `manage/shop-locations.html` |
+
+Android App 原生底栏高 **56dp**，强调色 `#3D7EFF`；WebView 内隐藏「更多服务」与 APK 安装提示。
+
+### G.13 开发约定
+
+1. 优先 CSS 变量；pill 统一 **999px**。
+2. 新页须引 `style.css` + `themes.css` + `mcwws-theme.js`。
+3. 勿对 `body` 加 `transform`（会破坏 fixed 顶栏）。
+4. 改 CSS 时递增 HTML 中 `?v=` 缓存参数。
+5. 完整表格与硬编码色清单见仓库 `plugins/Skript/scripts/web/ui.md`。
+
