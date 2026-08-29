@@ -4241,7 +4241,8 @@ input.cart-qty-input {
 .services-module-icon--shop,
 .services-module-icon--map,
 .services-module-icon--build,
-.services-module-icon--manage {
+.services-module-icon--manage,
+.services-module-icon--app {
     background: linear-gradient(145deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.03) 100%);
 }
 
@@ -4264,6 +4265,32 @@ input.cart-qty-input {
 .services-module-cta {
     font-size: 0.9rem;
     color: var(--primary-light);
+}
+
+.services-hub-install-hint {
+    margin: 1.5rem 0 0;
+    text-align: center;
+    color: var(--text-muted);
+    font-size: 0.88rem;
+    line-height: 1.6;
+}
+
+.services-hub-install-btn {
+    margin-left: 0.4rem;
+    border: 0;
+    border-radius: 999px;
+    padding: 0.25rem 0.85rem;
+    font-size: 0.82rem;
+    cursor: pointer;
+    color: #fff;
+    background: var(--primary, #3d7eff);
+}
+
+@media (display-mode: standalone) {
+    #mcwwsAppDownload,
+    .services-hub-install-hint {
+        display: none;
+    }
 }
 
 .services-hub-footer {

@@ -507,11 +507,14 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 #### 网页贸易
 
+公开地址：**https://mcs.ryanstudio.work/**
+
 - 购物车可手输数量，单件上限 **10000**
 - 下单须选择或填写**收货地址**（外卖分配器大编号，网页支持搜索下拉），并获得一次性**取件码**；整单只进入该址一台空闲木桶柜
 - 取件：下单游戏账号到**外卖分配器**输入**自己的**取件码，查看小编号；对应木桶**开盖**后仅该玩家可开，直到取空才关盖上锁；取空后网页订单变为**已取件**，不再显示在待取列表
 - 无地址的旧订单仍在上线后写入随身行囊
 - 记入网页日志与零钱明细；可嵌入公开 Wiki 页浏览
+- **手机：** Chrome / Edge 打开上述地址后可「添加到主屏幕」或点首页「安装到桌面」；也可在首页下载 **Android APK**（允许安装未知应用）。App 与浏览器不共享登录态，首次打开需再登录一次。维护者构建：`tools/mcwws-web-android/build.ps1`
 
 网页侧建造下单已废止；实装请回游戏内可视化编辑。
 
@@ -812,6 +815,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy.jar` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
+| 网页 Android 客户端 | `tools/mcwws-web-android/`（WebView 加载 `https://mcs.ryanstudio.work/`） |
 | 外卖分配器 / 外卖柜 | `plugins/RykenSlimefunCustomizer/addons/MCWWS-rsc/`、`plugins/Skript/scripts/mcwws/shop/delivery_locker.sk`、`web_pending_delivery.sk` |
 | 领地提示 | `tools/mcwws-residence-quiet/` |
 | 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |

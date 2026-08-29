@@ -1,0 +1,62 @@
+plugins {
+    id 'com.android.application'
+}
+
+def keystoreDir = rootProject.file('keystore')
+def keystoreFile = new File(keystoreDir, 'mcwws-release.jks')
+
+android {
+    namespace 'work.mcwws.webapp'
+    compileSdk 34
+
+    defaultConfig {
+        applicationId 'work.mcwws.webapp'
+        minSdk 24
+        targetSdk 34
+        versionCode 1
+        versionName '1.0.0'
+        resValue 'string', 'app_name', '流浪世界'
+    }
+
+    signingConfigs {
+        release {
+            storeFile keystoreFile
+            storePassword 'mcwws-web-app'
+            keyAlias 'mcwws'
+            keyPassword 'mcwws-web-app'
+        }
+    }
+
+    buildTypes {
+        debug {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+        }
+        release {
+            signingConfig signingConfigs.release
+            minifyEnabled false
+            shrinkResources false
+        }
+    }
+
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_17
+        targetCompatibility JavaVersion.VERSION_17
+    }
+
+    packaging {
+        resources {
+            excludes += ['META-INF/DEPENDENCIES']
+        }
+    }
+}
+
+dependencies {
+    implementation 'androidx.appcompat:appcompat:1.7.0'
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0'
+}
+
+configurations.configureEach {
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk7'
+    exclude group: 'org.jetbrains.kotlin', module: 'kotlin-stdlib-jdk8'
+}

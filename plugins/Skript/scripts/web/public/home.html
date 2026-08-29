@@ -7,7 +7,7 @@
     <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
     <title>流浪世界服务</title>
     <meta name="description" content="流浪世界服务器 — 商店系统、地图系统与管理">
-    <link rel="stylesheet" href="style.css?v=2.5.78">
+    <link rel="stylesheet" href="style.css?v=2.5.91">
     <script src="mcwws-theme.js?v=3"></script>
     <script src="mcwws-page-transition.js?v=2"></script>
     <link rel="stylesheet" href="themes.css?v=18">
@@ -44,7 +44,14 @@
                 <p class="services-module-desc">UltimateShop 商店 BlueMap 位置配置（需管理员权限）</p>
                 <span class="services-module-cta">进入管理 →</span>
             </a>
+            <a class="services-module-card glass" href="/app/MCWWS.apk" id="mcwwsAppDownload" hidden>
+                <span class="services-module-icon services-module-icon--app" aria-hidden="true">📱</span>
+                <h2 class="services-module-name">Android 客户端</h2>
+                <p class="services-module-desc">安装 APK 后在手机上打开本站（https://mcs.ryanstudio.work/）。首次需允许「安装未知应用」。</p>
+                <span class="services-module-cta">下载 APK →</span>
+            </a>
         </section>
+        <p class="services-hub-install-hint" id="mcwwsPwaHint">手机用 Chrome / Edge 打开本站，可把「流浪世界」添加到主屏幕，不必装 APK。</p>
     </main>
 
     <footer class="services-hub-footer">
@@ -52,5 +59,35 @@
     </footer>
 
     <script src="services-config.js?v=1"></script>
+    <script>
+        (function () {
+            const inApp = /MCWWSApp/i.test(navigator.userAgent)
+                || window.matchMedia('(display-mode: standalone)').matches
+                || window.navigator.standalone === true;
+            const apkCard = document.getElementById('mcwwsAppDownload');
+            const hint = document.getElementById('mcwwsPwaHint');
+            if (inApp) {
+                if (apkCard) apkCard.hidden = true;
+                if (hint) hint.hidden = true;
+                return;
+            }
+            if (apkCard) {
+                fetch('/app/MCWWS.apk', { method: 'HEAD', cache: 'no-store' })
+                    .then((res) => { apkCard.hidden = !res.ok; })
+                    .catch(() => { apkCard.hidden = true; });
+            }
+            window.addEventListener('mcwws-pwa-installable', () => {
+                if (!hint || !window.MCWWS_PWA) return;
+                hint.innerHTML = '可以把本站安装成手机应用。';
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'services-hub-install-btn';
+                btn.textContent = '安装到桌面';
+                btn.addEventListener('click', () => window.MCWWS_PWA.promptInstall());
+                hint.appendChild(document.createTextNode(' '));
+                hint.appendChild(btn);
+            });
+        })();
+    </script>
 </body>
 </html>

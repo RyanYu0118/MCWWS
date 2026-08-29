@@ -49,6 +49,13 @@ tools/mcwws-halo-preview/
 **/__pycache__/
 **/node_modules/
 
+# Android 网页客户端工具链与构建产物（APK 发布件在 web/public/app/）
+tools/mcwws-web-android/.toolchain/
+tools/mcwws-web-android/.gradle/
+tools/mcwws-web-android/build/
+tools/mcwws-web-android/app/build/
+tools/mcwws-web-android/local.properties
+
 # Paper / plugin local caches & update staging
 .paper/
 plugins/FakePlayerPlugin/performance-report/

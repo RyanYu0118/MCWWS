@@ -82,10 +82,89 @@ app.use(express.json());
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const BLUEMAP_WEB_PORT = Number(process.env.BLUEMAP_PORT) || 8100;
+const APK_PATH = path.join(PUBLIC_DIR, 'app', 'MCWWS.apk');
+const ASSETLINKS_PATH = path.join(PUBLIC_DIR, '.well-known', 'assetlinks.json');
+const PWA_HEAD_SNIPPET = [
+    '<link rel="manifest" href="/manifest.webmanifest">',
+    '<meta name="theme-color" content="#050505">',
+    '<meta name="mobile-web-app-capable" content="yes">',
+    '<meta name="apple-mobile-web-app-capable" content="yes">',
+    '<meta name="apple-mobile-web-app-title" content="流浪世界">',
+    '<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">',
+    '<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">',
+    '<script src="/mcwws-pwa.js?v=1" defer></script>'
+].join('\n    ');
+
+function injectPwaHead(html) {
+    if (!html || html.includes('manifest.webmanifest') || html.includes('mcwws-pwa.js')) {
+        return html;
+    }
+    if (html.includes('</head>')) {
+        return html.replace('</head>', `    ${PWA_HEAD_SNIPPET}\n</head>`);
+    }
+    return html;
+}
+
+function sendPublicHtml(relPath, res) {
+    const abs = path.normalize(path.join(PUBLIC_DIR, relPath));
+    if (!abs.startsWith(PUBLIC_DIR) || !fs.existsSync(abs) || !fs.statSync(abs).isFile()) {
+        return false;
+    }
+    const html = injectPwaHead(fs.readFileSync(abs, 'utf8'));
+    res.setHeader('Content-Type', 'text/html; charset=utf-8');
+    res.send(html);
+    return true;
+}
 
 // 须在 express.static 之前：否则 / 会先落到 public/index.html（经济仪表板）
 app.get('/', (req, res) => {
-    res.sendFile(path.join(PUBLIC_DIR, 'home.html'));
+    if (!sendPublicHtml('home.html', res)) {
+        res.status(404).send('home.html missing');
+    }
+});
+
+app.get('/manifest.webmanifest', (req, res) => {
+    res.setHeader('Content-Type', 'application/manifest+json; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(PUBLIC_DIR, 'manifest.webmanifest'));
+});
+
+app.get('/sw.js', (req, res) => {
+    res.setHeader('Content-Type', 'application/javascript; charset=utf-8');
+    res.setHeader('Cache-Control', 'no-cache');
+    res.sendFile(path.join(PUBLIC_DIR, 'sw.js'));
+});
+
+app.get('/.well-known/assetlinks.json', (req, res) => {
+    if (!fs.existsSync(ASSETLINKS_PATH)) {
+        return res.status(404).json([]);
+    }
+    res.setHeader('Content-Type', 'application/json; charset=utf-8');
+    res.sendFile(ASSETLINKS_PATH);
+});
+
+app.get('/app/MCWWS.apk', (req, res) => {
+    if (!fs.existsSync(APK_PATH)) {
+        return res.status(404).type('text/plain').send('APK 尚未构建，请在仓库运行 tools/mcwws-web-android/build.ps1');
+    }
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    res.setHeader('Content-Disposition', 'attachment; filename="MCWWS.apk"');
+    res.sendFile(APK_PATH);
+});
+
+app.use((req, res, next) => {
+    if (req.method !== 'GET' && req.method !== 'HEAD') {
+        return next();
+    }
+    const rawPath = decodeURIComponent(String(req.path || '/').split('?')[0]);
+    if (rawPath === '/' || !rawPath.toLowerCase().endsWith('.html')) {
+        return next();
+    }
+    const rel = rawPath.replace(/^\/+/, '');
+    if (sendPublicHtml(rel, res)) {
+        return;
+    }
+    next();
 });
 
 app.use(express.static(PUBLIC_DIR));
