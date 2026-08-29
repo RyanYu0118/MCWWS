@@ -1,0 +1,6 @@
+name: MCWWS_MultitoolFix
+main: work.mcwws.multitoolfix.McwwsMultitoolFixPlugin
+version: 1.0.0
+api-version: '1.21'
+depend: [MultitoolPlus]
+description: 修正 MultitoolPlus 把竹制品误切成剑，并按原版可挖掘标签补全工具映射

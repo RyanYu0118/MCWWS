@@ -124,6 +124,8 @@
 
 **连锁采矿（VeinMiner）：** 潜行状态下破坏矿石或同类方块，一次最多连锁 **64** 格，每次收费 **¥16**（插件 `Cost: 16.0`）。与连根砍树（生物学）独立，互不干扰。
 
+**多功能工具（MultitoolPlus）：** 左键方块时自动在剑 / 镐 / 斧 / 铲之间切换。竹活株、竹笋仍用剑；竹块、竹板、竹马赛克、竹门窗等制品按原版用斧（`MCWWS_MultitoolFix`）。
+
 **飞行耗能：** 生存飞行按段计费并记入网页零钱账本（`FlyWithFood` + `MCWWS_EconomyLedger`）；Essentials 自带飞行扣费由账本插件去重，避免双扣。
 
 ---
@@ -831,6 +833,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
 | 连锁采矿 | `plugins/VeinMiner/` |
 | UltimateTimber × ExoticGarden 果树保护 | `tools/mcwws-ultimatetimber-fix/` |
+| Multitool 竹制品切斧 | `tools/mcwws-multitool-fix/` |
 | 魔法 / 炼金附属 | `plugins/AlchimiaVitae/`、`plugins/Alchema/`、`plugins/TranscEndence/` |
 | 每日签到 | `plugins/LiteSignIn/` |
 | 基岩桥接 | `plugins/Geyser-Spigot/`、`plugins/floodgate/` |
@@ -838,7 +841,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 ## 附录 E：全插件百科
 
-> 下列为 `plugins/` 目录内**已加载 jar**（截至文档修订时约 **140** 个）及主要数据目录说明。  
+> 下列为 `plugins/` 目录内**已加载 jar**（截至文档修订时约 **141** 个）及主要数据目录说明。  
 > **MCWWS_*** 为制作组自研；其余为第三方。`plugins/屏蔽/` 内为**停用**备份，不列入下表。  
 > 版本号取自 jar 文件名；无版本号的以目录内 `plugin.yml` 或 jar 构建信息为准。
 
@@ -857,6 +860,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_UltimateAdvancements | — | L 键仅「流浪世界」单页进度 |
 | MCWWS_SFurnaceFix | 1.0.0 | Slimefun 熔炉界面修复 |
 | MCWWS_UltimateTimberFix | 1.4.0 | ExoticGarden 果树连根砍兼容（UT 检测失败时兜底连根砍、补种果树苗、树叶改掉落） |
+| MCWWS_MultitoolFix | 1.0.0 | 竹制品改切斧、按原版可挖掘标签补全 Multitool 映射 |
 | MCWWS-rsc（RSC 附属） | — | 外卖分配器、外卖柜、服内定制 Slimefun 物品 |
 | Skript `scripts/mcwws/` | — | 动态经济、传送、光源、便携台拦截等核心脚本 |
 | Skript `scripts/web/` | — | 网页商城、账本、物价导出 |
@@ -987,7 +991,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | BackpackPlus | 1.5.6 | 额外背包机制 |
 | GSit | 3.5.1 | 坐/躺/趴 |
 | FlyWithFood | 2.0.7 | 飞行耗能（账本挂钩） |
-| MultitoolPlus | 1.5.17 | 多功能工具 |
+| MultitoolPlus | 1.5.17 | 多功能工具（竹制品切斧见 MCWWS_MultitoolFix） |
 | CreeperConfettiPro | 2.2.0 | 苦力怕彩纸 |
 | One_day | 1.12-1.20 | 主世界天气同步 |
 | SaveItems | — | 指定物品死亡保留 |
