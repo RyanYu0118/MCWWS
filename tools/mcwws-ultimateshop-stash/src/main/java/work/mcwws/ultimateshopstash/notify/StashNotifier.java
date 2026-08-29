@@ -30,7 +30,7 @@ public final class StashNotifier {
         button.setBold(true);
         button.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/mcwwsstash return " + token));
         button.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-                new ComponentBuilder("按操作栏 → 背包栏 → BetterBags 的顺序返回本次物品")
+                new ComponentBuilder("一次返回最近一分钟内入库的该种物品（操作栏 → 背包栏 → BetterBags）")
                         .color(net.md_5.bungee.api.ChatColor.GRAY).create()));
         BaseComponent[] prefix = TextComponent.fromLegacyText(line);
         BaseComponent[] message = new BaseComponent[prefix.length + 1];

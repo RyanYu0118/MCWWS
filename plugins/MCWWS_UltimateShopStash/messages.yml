@@ -1,7 +1,7 @@
 prefix: '&#98FB98[仓库] &f'
 collect-message: '&7已收集 &f{item} ×{amount} &7并存入仓库 &8| '
 collect-exempt-active: '&7已开启返回背包：&f{item} &7在 {seconds} 秒内不再自动入库。'
-return-success: '&a已返回本次收集的 &f{item} ×{amount}&a（操作栏 {hotbar}、背包栏 {inventory}、BetterBags {betterbags}）；该物品 {seconds} 秒内不再自动入库。'
+return-success: '&a已返回最近一分钟内收集的 &f{item} ×{amount}&a（操作栏 {hotbar}、背包栏 {inventory}、BetterBags {betterbags}）；该物品 {seconds} 秒内不再自动入库。'
 return-full: '&c操作栏、背包栏和 BetterBags 的剩余空间不足，本次物品仍保留在仓库中。'
 return-invalid: '&c这条收集消息已经失效，无法再次返回。'
 return-missing: '&c仓库中的 {item} 数量已不足，本次物品无法返回。'
