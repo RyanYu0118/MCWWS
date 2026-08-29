@@ -141,6 +141,10 @@ function mcwwsPageTransitionPlayEnter() {
 
     const root = document.documentElement;
     if (!root.classList.contains('mcwws-pt-curtain-enter')) {
+        // 残留遮罩（例如 WebView 中断导航）时强制清掉，避免整页“空白”
+        if (root.classList.contains('mcwws-pt-curtain') || root.classList.contains('mcwws-pt-curtain-cover')) {
+            mcwwsPageTransitionClearState();
+        }
         return;
     }
 
@@ -149,6 +153,13 @@ function mcwwsPageTransitionPlayEnter() {
     } catch (_) { /* ignore */ }
 
     root.classList.add('mcwws-page-enter');
+
+    // 兜底：动画回调未触发时，最多 1.2s 后去掉遮罩
+    window.setTimeout(() => {
+        if (root.classList.contains('mcwws-pt-curtain') || root.classList.contains('mcwws-pt-curtain-cover')) {
+            mcwwsPageTransitionClearState();
+        }
+    }, 1200);
 
     requestAnimationFrame(() => {
         requestAnimationFrame(() => {

@@ -82,7 +82,8 @@ app.use(express.json());
 
 const PUBLIC_DIR = path.join(__dirname, 'public');
 const BLUEMAP_WEB_PORT = Number(process.env.BLUEMAP_PORT) || 8100;
-const APK_PATH = path.join(PUBLIC_DIR, 'app', 'MCWWS.apk');
+const APP_DIR = path.join(PUBLIC_DIR, 'app');
+const APK_ALIAS_PATH = path.join(APP_DIR, 'MCWWS.apk');
 const ASSETLINKS_PATH = path.join(PUBLIC_DIR, '.well-known', 'assetlinks.json');
 const PWA_HEAD_SNIPPET = [
     '<link rel="manifest" href="/manifest.webmanifest">',
@@ -94,6 +95,43 @@ const PWA_HEAD_SNIPPET = [
     '<link rel="apple-touch-icon" href="/icons/apple-touch-icon.png">',
     '<script src="/mcwws-pwa.js?v=1" defer></script>'
 ].join('\n    ');
+
+function resolveLatestApk() {
+    if (!fs.existsSync(APP_DIR)) {
+        return null;
+    }
+    const versioned = fs.readdirSync(APP_DIR)
+        .filter((name) => /^MCWWS-.+\.apk$/i.test(name))
+        .map((name) => {
+            const full = path.join(APP_DIR, name);
+            const m = /^MCWWS-(.+)\.apk$/i.exec(name);
+            return {
+                name,
+                version: m ? m[1] : '',
+                path: full,
+                mtime: fs.statSync(full).mtimeMs
+            };
+        })
+        .sort((a, b) => b.mtime - a.mtime);
+    if (versioned.length > 0) {
+        return versioned[0];
+    }
+    if (fs.existsSync(APK_ALIAS_PATH)) {
+        return {
+            name: 'MCWWS.apk',
+            version: '',
+            path: APK_ALIAS_PATH,
+            mtime: fs.statSync(APK_ALIAS_PATH).mtimeMs
+        };
+    }
+    return null;
+}
+
+function sendApkFile(filePath, downloadName, res) {
+    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
+    res.setHeader('Content-Disposition', `attachment; filename="${downloadName}"`);
+    res.sendFile(filePath);
+}
 
 function injectPwaHead(html) {
     if (!html || html.includes('manifest.webmanifest') || html.includes('mcwws-pwa.js')) {
@@ -143,13 +181,38 @@ app.get('/.well-known/assetlinks.json', (req, res) => {
     res.sendFile(ASSETLINKS_PATH);
 });
 
+app.get('/api/app-release', (req, res) => {
+    const latest = resolveLatestApk();
+    if (!latest) {
+        return res.status(404).json({ error: 'APK 尚未构建' });
+    }
+    res.json({
+        version: latest.version || null,
+        fileName: latest.name,
+        url: `/app/${encodeURIComponent(latest.name)}`,
+        aliasUrl: '/app/MCWWS.apk'
+    });
+});
+
 app.get('/app/MCWWS.apk', (req, res) => {
-    if (!fs.existsSync(APK_PATH)) {
+    const latest = resolveLatestApk();
+    if (!latest) {
         return res.status(404).type('text/plain').send('APK 尚未构建，请在仓库运行 tools/mcwws-web-android/build.ps1');
     }
-    res.setHeader('Content-Type', 'application/vnd.android.package-archive');
-    res.setHeader('Content-Disposition', 'attachment; filename="MCWWS.apk"');
-    res.sendFile(APK_PATH);
+    sendApkFile(latest.path, latest.name, res);
+});
+
+app.get(/^\/app\/MCWWS-.+\.apk$/i, (req, res) => {
+    const name = path.basename(req.path);
+    if (!/^MCWWS-.+\.apk$/i.test(name)) {
+        return res.status(400).type('text/plain').send('invalid apk name');
+    }
+    const full = path.resolve(APP_DIR, name);
+    const appRoot = path.resolve(APP_DIR);
+    if (!full.startsWith(appRoot) || !fs.existsSync(full)) {
+        return res.status(404).type('text/plain').send('APK not found');
+    }
+    sendApkFile(full, name, res);
 });
 
 app.use((req, res, next) => {

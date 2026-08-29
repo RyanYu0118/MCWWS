@@ -8,8 +8,18 @@ $GradleDir = Join-Path $Toolchain "gradle-8.7"
 $KeystoreDir = Join-Path $ProjectRoot "keystore"
 $KeystoreFile = Join-Path $KeystoreDir "mcwws-release.jks"
 $ApkDestDir = Join-Path $RepoRoot "plugins\Skript\scripts\web\public\app"
-$ApkDest = Join-Path $ApkDestDir "MCWWS.apk"
 $AssetLinks = Join-Path $RepoRoot "plugins\Skript\scripts\web\public\.well-known\assetlinks.json"
+
+# Read versionName from app/build.gradle
+$AppGradle = Join-Path $ProjectRoot "app\build.gradle"
+$VersionName = "0.0.0"
+if (Test-Path $AppGradle) {
+    $m = Select-String -Path $AppGradle -Pattern "versionName\s+'([^']+)'" | Select-Object -First 1
+    if ($m) { $VersionName = $m.Matches[0].Groups[1].Value }
+}
+$ApkFileName = "MCWWS-$VersionName.apk"
+$ApkDest = Join-Path $ApkDestDir $ApkFileName
+$ApkLatestAlias = Join-Path $ApkDestDir "MCWWS.apk"
 
 New-Item -ItemType Directory -Force -Path $Toolchain, $KeystoreDir, $ApkDestDir | Out-Null
 New-Item -ItemType Directory -Force -Path (Split-Path $AssetLinks) | Out-Null
@@ -182,7 +192,9 @@ try {
 $built = Join-Path $ProjectRoot "app\build\outputs\apk\release\app-release.apk"
 if (-not (Test-Path $built)) { throw "APK not found: $built" }
 Copy-Item -Force $built $ApkDest
+Copy-Item -Force $built $ApkLatestAlias
 Write-Host "Copied APK to $ApkDest"
+Write-Host "Also updated latest alias $ApkLatestAlias"
 
 $certOut = & $keytool -list -v -keystore $KeystoreFile -alias mcwws -storepass mcwws-web-app
 $shaLine = ($certOut | Select-String -Pattern 'SHA-256:|SHA256:').Line | Select-Object -First 1
@@ -205,4 +217,4 @@ if ($shaLine) {
     Write-Host "Wrote assetlinks.json"
 }
 
-Write-Host "Done. APK: https://mcs.ryanstudio.work/app/MCWWS.apk"
+Write-Host "Done. APK: https://mcs.ryanstudio.work/app/$ApkFileName"

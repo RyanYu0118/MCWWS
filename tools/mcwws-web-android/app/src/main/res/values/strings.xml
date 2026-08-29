@@ -1,7 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="web_url">https://mcs.ryanstudio.work/</string>
+    <string name="tab_shop_url">https://mcs.ryanstudio.work/items.html</string>
+    <string name="tab_map_url">https://mcs.ryanstudio.work/map.html</string>
+    <string name="tab_manage_url">https://mcs.ryanstudio.work/manage/shop-locations.html</string>
+    <string name="tab_me_url">https://mcs.ryanstudio.work/ledger.html</string>
+    <string name="nav_shop">商店</string>
+    <string name="nav_map">地图</string>
+    <string name="nav_manage">管理</string>
+    <string name="nav_me">我的</string>
     <string name="error_title">无法连接流浪世界</string>
-    <string name="error_body">请确认手机能打开 https://mcs.ryanstudio.work/ 后再试。</string>
+    <string name="error_body">请确认手机能打开 https://mcs.ryanstudio.work/ 。若浏览器报证书错误，请换用本 App（已支持樱花自签），或给域名配置正规 HTTPS 证书。</string>
     <string name="retry">重新加载</string>
 </resources>

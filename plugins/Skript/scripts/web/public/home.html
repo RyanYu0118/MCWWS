@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -9,7 +9,7 @@
     <meta name="description" content="流浪世界服务器 — 商店系统、地图系统与管理">
     <link rel="stylesheet" href="style.css?v=2.5.91">
     <script src="mcwws-theme.js?v=3"></script>
-    <script src="mcwws-page-transition.js?v=2"></script>
+    <script src="mcwws-page-transition.js?v=3"></script>
     <link rel="stylesheet" href="themes.css?v=18">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -47,8 +47,8 @@
             <a class="services-module-card glass" href="/app/MCWWS.apk" id="mcwwsAppDownload" hidden>
                 <span class="services-module-icon services-module-icon--app" aria-hidden="true">📱</span>
                 <h2 class="services-module-name">Android 客户端</h2>
-                <p class="services-module-desc">安装 APK 后在手机上打开本站（https://mcs.ryanstudio.work/）。首次需允许「安装未知应用」。</p>
-                <span class="services-module-cta">下载 APK →</span>
+                <p class="services-module-desc" id="mcwwsAppDownloadDesc">安装 APK 后在手机上使用底部导航（商店 / 地图 / 管理 / 我的）。首次需允许「安装未知应用」。</p>
+                <span class="services-module-cta" id="mcwwsAppDownloadCta">下载 APK →</span>
             </a>
         </section>
         <p class="services-hub-install-hint" id="mcwwsPwaHint">手机用 Chrome / Edge 打开本站，可把「流浪世界」添加到主屏幕，不必装 APK。</p>
@@ -72,8 +72,26 @@
                 return;
             }
             if (apkCard) {
-                fetch('/app/MCWWS.apk', { method: 'HEAD', cache: 'no-store' })
-                    .then((res) => { apkCard.hidden = !res.ok; })
+                fetch('/api/app-release', { cache: 'no-store' })
+                    .then((res) => (res.ok ? res.json() : null))
+                    .then((info) => {
+                        if (!info || !info.url) {
+                            apkCard.hidden = true;
+                            return;
+                        }
+                        apkCard.hidden = false;
+                        apkCard.href = info.url;
+                        const cta = document.getElementById('mcwwsAppDownloadCta');
+                        if (cta) {
+                            cta.textContent = info.version
+                                ? `下载 MCWWS-${info.version}.apk →`
+                                : '下载 APK →';
+                        }
+                        const desc = document.getElementById('mcwwsAppDownloadDesc');
+                        if (desc && info.version) {
+                            desc.textContent = `当前版本 ${info.version}。安装后使用底部导航：商店 / 地图 / 管理 / 我的。首次需允许「安装未知应用」。`;
+                        }
+                    })
                     .catch(() => { apkCard.hidden = true; });
             }
             window.addEventListener('mcwws-pwa-installable', () => {

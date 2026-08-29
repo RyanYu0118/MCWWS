@@ -2,10 +2,17 @@
 <resources>
     <style name="Theme.MCWWS" parent="Theme.AppCompat.NoActionBar">
         <item name="android:statusBarColor">@color/splash_bg</item>
-        <item name="android:navigationBarColor">@color/splash_bg</item>
+        <item name="android:navigationBarColor">@color/nav_bg</item>
         <item name="android:windowBackground">@color/splash_bg</item>
-        <item name="android:colorPrimary">@color/progress</item>
         <item name="colorPrimary">@color/progress</item>
         <item name="android:windowLightStatusBar">false</item>
+    </style>
+
+    <style name="McwwsBottomTab">
+        <item name="android:gravity">center</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">?android:attr/selectableItemBackgroundBorderless</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
     </style>
 </resources>
