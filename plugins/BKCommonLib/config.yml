@@ -24,7 +24,7 @@ enableItemFrameTiling: true
 # Whether to teleport players to their supposed seat while they hold the sneak button
 # This is used on Minecraft 1.16 and later to make sure players stay near their seat,
 # when exiting the seat was cancelled.
-teleportPlayersToSeat: true
+teleportPlayersToSeat: false
 
 # Whether to force saving to be done synchronously, rather than asynchronously
 # If the Asynchronous File I/O in the JVM has a glitch in it, it might cause very large
