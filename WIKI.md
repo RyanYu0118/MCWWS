@@ -627,6 +627,22 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /news
 ```
 
+指南针上的「服务器告示」：**左键**打开最新一期；**右键**打开历史留档箱子 GUI（按发布时间逆序；未读为附魔书光效，已读为普通书；翻页/返回图标与物品商店一致）。告示书内「打开公共指南」会执行：
+
+```text
+/dm open home
+```
+
+每次更新 `BookNews` 正文并重载后，会自动留档为一期版本；也可手动：
+
+```text
+/newsarchive
+```
+
+```text
+/newsarchive sync
+```
+
 管理员可在指南「服务器管理」页左键热重载常用服务，无需在聊天重复敲命令。
 
 ### 3.4 跨平台与社交
@@ -678,6 +694,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 ```text
 /news
+```
+
+```text
+/newsarchive
 ```
 
 ```text
@@ -770,10 +790,14 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /battlepass reload
 ```
 
-服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载即可（`always: true`，玩家每次进服都会弹书）。首页第一行须为 `发布：yyyy年MM月dd日 HH:mm:ss`。
+服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载即可（`always: true`，玩家每次进服都会弹书）。首页第一行须为 `发布：yyyy年MM月dd日 HH:mm:ss`。重载后会自动同步一期历史留档（`MCWWS_NewsArchive`）。
 
 ```text
 /booknews reload
+```
+
+```text
+/newsarchive sync
 ```
 
 授予实体小方块权限：
@@ -826,6 +850,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
+| 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive.jar`；数据 `plugins/MCWWS_NewsArchive/` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
@@ -968,7 +993,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
 | DeluxeMenus | 1.14.1 DEV | **指南针公共指南** |
-| BookNews | 6.26 | **服务器告示书本**；每次进服弹出；首页含发布时间；`/news` |
+| BookNews | 6.26 | **服务器告示书本**；每次进服弹出；首页含发布时间；`/news`；书内打开指南为 `/dm open home` |
+| MCWWS_NewsArchive | 1.0.0 | **告示历史留档**；`/newsarchive`；未读附魔书 / 已读普通书；商店风格翻页 |
 | BlueMap | 5.23 | 三维网页地图 + mcwws-gis.js |
 | DecentHolograms | 2.10.1 | 全息文字 |
 | TitleManager | — | 标题/Tab 动画 |

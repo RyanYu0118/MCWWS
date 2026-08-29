@@ -510,14 +510,17 @@ items:
       - '&a左键 &7执行 &a/booknews reload'
       - '&e右键 &7执行 &e/booknews clear'
       - '&7改完 config 后左键重载'
+      - '&7重载后自动 /newsarchive sync 留档'
       - '&7每次进服都会弹书（always）'
       - '&7右键清已读仅作排查用'
       - '&7重载后会自动恢复本界面'
     left_click_commands:
       - '[console] lp user %player_name% permission settemp booknews.admin true 30s'
+      - '[console] lp user %player_name% permission settemp mcwws.newsarchive.admin true 30s'
       - '[console] mcwws_queue_reopen_server %player_name%'
       - '[close]'
       - '[player] booknews reload<delay=2>'
+      - '[player] newsarchive sync<delay=4>'
       - '[sound] ENTITY_EXPERIENCE_ORB_PICKUP'
     right_click_commands:
       - '[console] lp user %player_name% permission settemp booknews.admin true 30s'

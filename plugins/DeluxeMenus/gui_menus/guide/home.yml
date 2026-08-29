@@ -111,11 +111,18 @@ items:
       - '&f查看最新功能与修复资讯'
       - '&7每次进服都会自动弹出'
       - '&7指令：/news'
+      - ''
+      - '&a左键 &7打开最新告示'
+      - '&e右键 &7打开历史留档'
     left_click_commands:
       - '[console] lp user %player_uuid% permission set booknews.news true'
       - '[close]'
-      - '[player] news'
+      - '[player] news<delay=2>'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+    right_click_commands:
+      - '[close]'
+      - '[player] newsarchive<delay=2>'
+      - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'shop':
     material: EMERALD
     enchantments:
