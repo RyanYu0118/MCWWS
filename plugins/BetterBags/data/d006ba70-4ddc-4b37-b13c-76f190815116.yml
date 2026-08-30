@@ -64,7 +64,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 12
+  count: 18
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -72,7 +72,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 8
+  count: 12
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -80,7 +80,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 22
+  count: 29
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -298,7 +298,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:bowl
-  count: 16
+  count: 32
   components:
     minecraft:custom_name: '{italic:0b,text:"Bowl"}'
   schema_version: 1
@@ -308,7 +308,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:daylight_detector
-  count: 56
+  count: 64
   components:
     minecraft:lore: '["",{extra:[{bold:0b,color:"blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"可以在夜间工作",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"终极
       发电机",underlined:0b}],text:""},{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"⇨
@@ -324,15 +324,15 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:bedrock
-  count: 1
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:iron_block
-  count: 8
+  count: 16
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:trial_key
-  count: 1
+  count: 2
   components:
     minecraft:lore: '[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"右键：在聊天写入大编号",underlined:0b},{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"潜行+右键分配器/外卖柜：写入大编号",underlined:0b},{bold:0b,color:"dark_gray",extra:[{color:"yellow",text:"A01"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"当前：",underlined:0b}]'
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"大编号
@@ -341,7 +341,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:ominous_trial_key
-  count: 1
+  count: 2
   components:
     minecraft:lore: '[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"右键：设定下次写入的起始小编号",underlined:0b},{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"潜行+右键外卖柜：写入后自动
       +1",underlined:0b},{bold:0b,color:"dark_gray",extra:[{color:"yellow",text:"21"}],italic:0b,obfuscated:0b,strikethrough:0b,text:"下次：",underlined:0b}]'
@@ -359,6 +359,84 @@ items:
       ",underlined:0b},{color:"red",italic:0b,text:"(输出)"}],text:""}'
     minecraft:custom_model_data: '{floats:[2200514.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CARGO_NODE_OUTPUT"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:blackstone
+  count: 50
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:minecart
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:daylight_detector
+  count: 48
+  components:
+    minecraft:lore: '["",{extra:[{bold:0b,color:"blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"可以在夜间工作",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"终极
+      发电机",underlined:0b}],text:""},{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"⇨
+      ",underlined:0b},{color:"yellow",italic:0b,text:"⚡ "},{color:"gray",italic:0b,text:"0
+      J 可储存"}],text:""},{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"⇨
+      ",underlined:0b},{color:"yellow",italic:0b,text:"⚡ "},{color:"gray",italic:0b,text:"256
+      J/s"}],text:""},{extra:[" (日间)"],text:""},{extra:[{bold:0b,color:"dark_gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"⇨
+      ",underlined:0b},{color:"yellow",italic:0b,text:"⚡ "},{color:"gray",italic:0b,text:"128
+      J/s"}],text:""},{extra:[" (夜间)"],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"充能太阳能发电机",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200349.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SOLAR_GENERATOR_4"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:andesite_slab
+  count: 2
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:andesite
+  count: 45
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:flower_pot
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:smooth_quartz_slab
+  count: 61
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:red_terracotta
+  count: 8
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:dirt
+  count: 12
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:birch_log
+  count: 5
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:wheat
+  count: 3
+  components:
+    minecraft:lore: '[{extra:[{bold:0b,color:"dark_green",italic:0b,obfuscated:0b,strikethrough:0b,text:"收获作物时会自动补种。",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"自动补种",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"AV_AUTO_REPLANT_INFUSION"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:feather
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:torch
+  count: 32
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:diamond_sword
+  count: 1
+  components:
+    minecraft:lore: '[{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金制的剑",underlined:0b}],text:""},"",{extra:[{bold:0b,color:"dark_aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"至尊武器",underlined:0b}],text:""},{extra:[{bold:0b,color:"aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"灵魂绑定",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"钛合金剑",underlined:0b}],text:""}'
+    minecraft:enchantments: '{"minecraft:fire_aspect":2,"minecraft:sharpness":8,"minecraft:unbreaking":8}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"SUPREME_TITANIUM_SWORD"}}'
+    minecraft:damage: '1'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
