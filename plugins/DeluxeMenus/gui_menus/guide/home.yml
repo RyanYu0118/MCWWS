@@ -444,7 +444,7 @@ items:
       - '[refresh]'
       - '[close]'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-  'gamemode':
+  'immersive_creative_on':
     material: grass_block
     enchantments:
       - ARROW_DAMAGE;1
@@ -454,15 +454,41 @@ items:
     slot: 33
     priority: 1
     update: true
-    display_name: '&e切换游戏模式'
+    display_name: '&c关闭 &d沉浸式创造'
     lore:
-      - '&f左键：切换至生存模式'
-      - '&f右键：切换至创造模式'
+      - '&a当前已开启'
+      - '&f按 E 为创造物品栏；拿取按商店价扣费'
+      - '&f血条、饥饿与经验仍为生存'
+      - '&e点击关闭，恢复生存背包'
+    view_requirement:
+      requirements:
+        on:
+          type: string equals
+          input: "%mcwwsic_enabled%"
+          output: "yes"
     left_click_commands:
-      - '[console] gamemode survival %player_name%'
+      - '[player] mcwws-immersive off'
+      - '[refresh]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
-    right_click_commands:
-      - '[console] gamemode creative %player_name%'
+  'immersive_creative_off':
+    material: grass_block
+    enchantments:
+      - ARROW_DAMAGE;1
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
+    slot: 33
+    priority: 2
+    update: true
+    display_name: '&a开启 &d沉浸式创造'
+    lore:
+      - '&f开启后按 E 打开原版创造物品栏'
+      - '&f血条、饥饿与经验仍为生存'
+      - '&f从创造栏拿取物品按商店价扣费'
+      - '&7需安装客户端模组才能看到创造栏'
+    left_click_commands:
+      - '[player] mcwws-immersive on'
+      - '[refresh]'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
   'server_management':
     material: END_CRYSTAL

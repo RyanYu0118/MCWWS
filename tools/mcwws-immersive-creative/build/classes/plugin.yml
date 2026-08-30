@@ -1,0 +1,25 @@
+name: MCWWS_ImmersiveCreative
+main: work.mcwws.immersivecreative.McwwsImmersiveCreativePlugin
+version: 1.0.4
+api-version: '1.21'
+depend: [ProtocolLib, Vault, NBTAPI]
+softdepend: [PlaceholderAPI]
+description: 沉浸式创造体验：生存 HUD 下按 E 打开原版创造物品栏，拿取按商店价扣费
+
+commands:
+  mcwws-immersive:
+    description: 开关沉浸式创造体验
+    usage: /mcwws-immersive [on|off]
+    permission: mcwws.immersive-creative.use
+  mcwws-immersive-reload:
+    description: 重载沉浸式创造配置与物价映射
+    usage: /mcwws-immersive-reload
+    permission: mcwws.immersive-creative.admin
+
+permissions:
+  mcwws.immersive-creative.use:
+    description: 使用沉浸式创造体验
+    default: true
+  mcwws.immersive-creative.admin:
+    description: 重载配置
+    default: op

@@ -191,12 +191,12 @@ npc:
           amount: 1
           type: stone_pickaxe
       location:
-        bodyYaw: 64.06091
+        bodyYaw: 58.038025
         x: -183.4521
         y: 77.0
         z: -964.502
-        yaw: 64.0609
-        pitch: 0.0
+        yaw: 58.038
+        pitch: -7.4813
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
       gravity: {
@@ -232,12 +232,6 @@ npc:
           globalcooldown: 120
           command: npc speak &r需求量大的话建议放在背包里面！
           hand: RIGHT
-        globalCooldowns:
-          Z2FtZXJ1bGUgc2VuZENvbW1hbmRGZWVkYmFjayBmYWxzZQ==: 1787067617
-          bnBjIHNwZWFrICZy6ZyA5rGC6YeP5aSn55qE6K+d5bu66K6u5pS+5Zyo6IOM5YyF6YeM6Z2i77yB: 1787067617
-          cGxheXNvdW5kIG1pbmVjcmFmdDplbnRpdHkudmlsbGFnZXIudHJhZGUgcGxheWVyIEBhW25hbWU9JXBsYXllcl9uYW1lJV0gfiB+IH4gMSAwLjggMQ==: 1787067617
-          bnBjIHNwZWFrICZy5oKo5aW977yB6K+36Zeu6ZyA6KaB6YeH6LSt54mp6LWE5ZCX77yf: 1787067614
-          bnBjIHNwZWFrICZy5oiR6L+Z6YeM5pyJ5ZCE56eN5ZCE5qC355qE55+z5p2Q5ZKM55+z5Yi25ZOB77yB: 1787067617
       text:
         text:
         - Hi, I'm <npc>!
@@ -259,12 +253,12 @@ npc:
     uuid: b1a58a87-579b-4cee-91e7-ab8577cf5c19
     traits:
       location:
-        bodyYaw: -0.62351227
+        bodyYaw: -6.5320435
         x: -212.5125
         y: 83.0
         z: -939.4988
-        yaw: -0.6235
-        pitch: -1.1023
+        yaw: -6.532
+        pitch: -15.357
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
       type: PLAYER
@@ -1442,11 +1436,11 @@ npc:
       gravity: {
         }
       location:
-        bodyYaw: 270.33936
+        bodyYaw: 269.9384
         x: -413.45
         y: 95.0
-        z: -496.5115
-        yaw: 270.5543
+        z: -496.4979
+        yaw: -90.0616
         pitch: 1.2527
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
@@ -1660,12 +1654,12 @@ npc:
         skinName: 55e25eac-f92c-4f0d-b5df-e78e34e700b1
         textureRaw: ewogICJ0aW1lc3RhbXAiIDogMTY1NTQyMDU2MDI5NywKICAicHJvZmlsZUlkIiA6ICJiMjdjMjlkZWZiNWU0OTEyYjFlYmQ5NDVkMmI2NzE0YSIsCiAgInByb2ZpbGVOYW1lIiA6ICJIRUtUMCIsCiAgInNpZ25hdHVyZVJlcXVpcmVkIiA6IHRydWUsCiAgInRleHR1cmVzIiA6IHsKICAgICJTS0lOIiA6IHsKICAgICAgInVybCIgOiAiaHR0cDovL3RleHR1cmVzLm1pbmVjcmFmdC5uZXQvdGV4dHVyZS9iNDQxOTFjODFiNGJkYjNjZGUxZDIyNzgzZmQ2YTU2NDM5OGZiZGFiOWY5MmZjNTMwMzE2MDBmNDBkMjFjOWQ3IgogICAgfQogIH0KfQ==
       location:
-        bodyYaw: -177.20547
+        bodyYaw: 68.20209
         x: -544.5237
         y: 64.0
         z: 193.7
-        yaw: 179.0695
-        pitch: 0.0
+        yaw: 68.2021
+        pitch: -40.7153
         worldid: 407ccbed-2f74-4524-be27-8b4371eedfa8
         world: world
       gravity: {

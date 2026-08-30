@@ -1,4 +1,9 @@
 useTimes:
+  functional__p2:
+    k:
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastSellTime: '2026-08-30 20:06:03'
   blocks2:
     N:
       buyUseTimes: 1
@@ -23,6 +28,10 @@ useTimes:
       sellUseTimes: 40
       lastSellTime: '2026-07-31 12:45:14'
   ingredients:
+    Z:
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastSellTime: '2026-08-30 20:06:04'
     W:
       sellUseTimes: 3
       totalSellUseTimes: 3
@@ -166,12 +175,12 @@ useTimes:
       lastSellTime: '2026-07-04 02:47:46'
   functional:
     l:
-      buyUseTimes: 64
-      totalBuyUseTimes: 64
-      sellUseTimes: 63
-      totalSellUseTimes: 63
-      lastBuyTime: '2026-08-30 19:27:38'
-      lastSellTime: '2026-08-18 23:38:15'
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      sellUseTimes: 125
+      totalSellUseTimes: 125
+      lastBuyTime: '2026-08-30 22:28:51'
+      lastSellTime: '2026-08-30 20:06:04'
     k:
       sellUseTimes: 4
       totalSellUseTimes: 4
@@ -280,6 +289,10 @@ useTimes:
       buyUseTimes: 192
       totalBuyUseTimes: 192
       lastBuyTime: '2026-08-17 22:25:26'
+    S:
+      sellUseTimes: 2
+      totalSellUseTimes: 2
+      lastSellTime: '2026-08-30 20:06:03'
   drops:
     A:
       buyUseTimes: 1
@@ -310,9 +323,9 @@ useTimes:
       lastSellTime: '2026-08-28 22:02:22'
   building__p4:
     p:
-      buyUseTimes: 128
-      totalBuyUseTimes: 128
-      lastBuyTime: '2026-08-30 12:45:48'
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
+      lastBuyTime: '2026-08-30 21:21:55'
     b:
       sellUseTimes: 4
       totalSellUseTimes: 4
@@ -330,9 +343,12 @@ useTimes:
       lastSellTime: '2026-08-17 22:15:47'
   colored__p2:
     E:
-      buyUseTimes: 128
-      totalBuyUseTimes: 128
-      lastBuyTime: '2026-08-29 22:04:25'
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
+      sellUseTimes: 10
+      totalSellUseTimes: 10
+      lastBuyTime: '2026-08-30 21:37:28'
+      lastSellTime: '2026-08-30 20:06:04'
     H:
       sellUseTimes: 1
       totalSellUseTimes: 1
@@ -528,6 +544,10 @@ useTimes:
       buyUseTimes: 1
       totalBuyUseTimes: 1
       lastBuyTime: '2026-08-19 22:07:57'
+    a:
+      sellUseTimes: 5
+      totalSellUseTimes: 5
+      lastSellTime: '2026-08-30 20:06:03'
     Y:
       sellUseTimes: 7
       totalSellUseTimes: 7
@@ -550,9 +570,12 @@ useTimes:
       totalBuyUseTimes: 18
       lastBuyTime: '2026-08-19 22:11:21'
     n:
-      buyUseTimes: 128
-      totalBuyUseTimes: 128
-      lastBuyTime: '2026-08-30 00:11:48'
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
+      sellUseTimes: 63
+      totalSellUseTimes: 63
+      lastBuyTime: '2026-08-30 22:11:29'
+      lastSellTime: '2026-08-30 20:06:03'
     W:
       buyUseTimes: 2
       totalBuyUseTimes: 2
@@ -640,9 +663,9 @@ useTimes:
       totalBuyUseTimes: 4
       lastBuyTime: '2026-08-19 21:14:33'
     b:
-      sellUseTimes: 3
-      totalSellUseTimes: 3
-      lastSellTime: '2026-08-28 22:02:22'
+      sellUseTimes: 48
+      totalSellUseTimes: 48
+      lastSellTime: '2026-08-30 20:06:03'
     a:
       sellUseTimes: 55
       totalSellUseTimes: 55
@@ -650,7 +673,10 @@ useTimes:
     r:
       buyUseTimes: 128
       totalBuyUseTimes: 128
+      sellUseTimes: 50
+      totalSellUseTimes: 50
       lastBuyTime: '2026-08-28 22:09:29'
+      lastSellTime: '2026-08-30 20:06:03'
   minerals__p2:
     P:
       buyUseTimes: 2
@@ -696,9 +722,22 @@ useTimes:
       lastSellTime: '2026-05-10 02:06:12'
   building__p8:
     d:
-      buyUseTimes: 192
-      totalBuyUseTimes: 192
-      lastBuyTime: '2026-08-30 00:11:18'
+      buyUseTimes: 256
+      totalBuyUseTimes: 256
+      sellUseTimes: 61
+      totalSellUseTimes: 61
+      lastBuyTime: '2026-08-30 20:54:16'
+      lastSellTime: '2026-08-30 20:06:03'
+  redstone__p2:
+    G:
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastSellTime: '2026-08-30 20:06:02'
+  colored:
+    n:
+      sellUseTimes: 8
+      totalSellUseTimes: 8
+      lastSellTime: '2026-08-30 20:06:04'
   wools__p6:
     N:
       sellUseTimes: 2

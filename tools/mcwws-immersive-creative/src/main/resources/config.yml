@@ -1,0 +1,37 @@
+enabled: true
+# 排查用：把每个创造槽位包的取得/放回/计费明细打进控制台
+debug: true
+mappings-file: plugins/Skript/scripts/web/mcwws/ultimateshop_mappings.yml
+prices-file: plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+require-buy-price: true
+# 创造栏能拿出、但不在商店出售的材质一律拒绝
+deny-unmapped: true
+
+blacklist:
+  - COMMAND_BLOCK
+  - CHAIN_COMMAND_BLOCK
+  - REPEATING_COMMAND_BLOCK
+  - STRUCTURE_BLOCK
+  - STRUCTURE_VOID
+  - JIGSAW
+  - BARRIER
+  - DEBUG_STICK
+  - KNOWLEDGE_BOOK
+  - SPAWNER
+  - TRIAL_SPAWNER
+  - BEDROCK
+  - PLAYER_HEAD
+  - WRITTEN_BOOK
+
+messages:
+  prefix: '&7[&d沉浸式创造&7] '
+  enabled: '&a已开启。按 E 打开创造物品栏；拿取物品按商店价扣费。血条与经验仍为生存。'
+  disabled: '&e已关闭，背包恢复为生存界面。'
+  need-client: '&c需要安装客户端模组 &fMCWWS_ImmersiveCreativeClient &c后，按 E 才会出现创造栏。'
+  client-outdated: '&c客户端模组版本过旧，会导致物品附魔与 Slimefun 数据丢失，已自动关闭沉浸式创造。请更新到 &f1.0.4 &c以上再开启。'
+  purchased: '&7拿取 &f{amount} &7个，扣费 &a¥{price}'
+  cannot-afford: '&c零钱不足，无法拿取（约需 ¥{price}）。'
+  not-buyable: '&c该物品不在商店出售，无法从创造栏取出。'
+  denied: '&c无法从创造栏取出该物品。'
+  no-permission: '&c缺少权限。'
+  reloaded: '&a配置与物价映射已重载。'
