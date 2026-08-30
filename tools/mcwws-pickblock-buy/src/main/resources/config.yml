@@ -9,6 +9,8 @@ require-buy-price: true
 messages:
   prefix: '&7[&e选块购买&7] '
   prompt: '&e背包中没有该方块，再 &6中键 &e同一方块可快速购买 &f{amount} &e个（约 &a¥{price}&e）。'
-  purchased: '&a已购买 &f{amount} &e个该方块&a。'
+  purchased: '&a已购买 &f{amount} &e个该方块，并置于主手&a。'
+  moved-to-bags: '&e主手原物品已放入随身行囊（BetterBags）。'
+  no-space: '&c背包与随身行囊均无空位，无法腾出主手购买。'
   not-buyable: '&c该方块无法在商店购买。'
   confirm-expired: '&7确认已过期，请再次 &6中键 &7同一方块。'

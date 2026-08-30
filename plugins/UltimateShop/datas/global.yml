@@ -314,24 +314,11 @@ useTimes:
     I:
       sellUseTimes: 1
       lastSellTime: '2026-08-02 16:00:54'
-  minerals__p5:
-    R:
-      sellUseTimes: 1
-      lastSellTime: '2026-06-19 22:34:27'
-    P:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-19 22:34:27'
-    Q:
-      sellUseTimes: 1
-      lastSellTime: '2026-06-19 22:34:27'
-  wools__p3:
-    L:
-      sellUseTimes: 4
-      lastSellTime: '2026-06-25 22:37:58'
-    N:
-      sellUseTimes: 1
-      lastSellTime: '2026-08-02 15:57:25'
   building__p4:
+    p:
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      lastBuyTime: '2026-08-30 12:45:48'
     b:
       buyUseTimes: 193
       totalBuyUseTimes: 193
@@ -350,6 +337,23 @@ useTimes:
       totalSellUseTimes: 1
       lastBuyTime: '2026-08-17 22:04:10'
       lastSellTime: '2026-08-17 22:15:47'
+  minerals__p5:
+    R:
+      sellUseTimes: 1
+      lastSellTime: '2026-06-19 22:34:27'
+    P:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-19 22:34:27'
+    Q:
+      sellUseTimes: 1
+      lastSellTime: '2026-06-19 22:34:27'
+  wools__p3:
+    L:
+      sellUseTimes: 4
+      lastSellTime: '2026-06-25 22:37:58'
+    N:
+      sellUseTimes: 1
+      lastSellTime: '2026-08-02 15:57:25'
   flowers__p3:
     G:
       sellUseTimes: 2
@@ -863,8 +867,11 @@ useTimes:
       lastBuyTime: '2026-08-29 21:48:28'
       lastSellTime: '2026-08-28 23:19:08'
     l:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
       sellUseTimes: 63
       totalSellUseTimes: 63
+      lastBuyTime: '2026-08-30 19:27:38'
       lastSellTime: '2026-08-18 23:38:15'
     k:
       sellUseTimes: 4

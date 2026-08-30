@@ -2,36 +2,36 @@
                      FakePlayerPlugin Performance Report
 ==============================================================================
 
-Generated: 2026-08-30 00:50:17
+Generated: 2026-08-30 13:25:00
 Duration: Last 15 minute(s)
-Performance Score: 84/100 (Good)
+Performance Score: 91/100 (Excellent)
 
 --------------------------------------------------------------
 SERVER
 --------------------------------------------------------------
 
 TPS
-  Current: 16.80
+  Current: 16.37
 
 MSPT
   Mean: N/A ms
   P95:  N/A ms
 
 Memory
-  Used: 3066 MB / 5488 MB committed
+  Used: 7261 MB / 12936 MB committed
 
 CPU
   Process: N/A%
   System:  N/A%
 
 GC
-  Avg time:     75.00 ms
+  Avg time:     0.00 ms
   Avg frequency: -1 ms
 
 Entities
   Players:  1
   Bots:     0
-  Total:    2383
+  Total:    482
 
 --------------------------------------------------------------
 FPP BREAKDOWN
@@ -57,8 +57,7 @@ No event counters recorded.
 WARNINGS
 --------------------------------------------------------------
 
-[WARNING] TPS is low: 16.80
-[WARNING] GC avg time is high: 75.00 ms
+[WARNING] TPS is low: 16.37
 
 --------------------------------------------------------------
 SUMMARY
@@ -69,7 +68,7 @@ Server: Paper 26.2-121-a2a42c5 (MC: 26.2)
 Java: 25.0.2
 OS: Windows 11 10.0
 Profiler: builtin
-Health score: 84/100 (Good)
+Health score: 91/100 (Excellent)
 
 ==============================================================================
                                 End of Report

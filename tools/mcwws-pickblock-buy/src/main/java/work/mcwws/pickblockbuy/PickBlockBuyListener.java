@@ -4,6 +4,7 @@ import io.papermc.paper.event.player.PlayerPickBlockEvent;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.format.NamedTextColor;
 import net.kyori.adventure.text.format.TextDecoration;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -24,11 +25,13 @@ public final class PickBlockBuyListener implements Listener {
 
     private final McwwsPickBlockBuyPlugin plugin;
     private final ShopMappingIndex mappingIndex;
+    private final MainHandPreparer handPreparer;
     private final Map<UUID, PendingPickState> pendingByPlayer = new ConcurrentHashMap<>();
 
     public PickBlockBuyListener(McwwsPickBlockBuyPlugin plugin, ShopMappingIndex mappingIndex) {
         this.plugin = plugin;
         this.mappingIndex = mappingIndex;
+        this.handPreparer = new MainHandPreparer(plugin);
     }
 
     @EventHandler(priority = EventPriority.LOW, ignoreCancelled = true)
@@ -84,16 +87,32 @@ public final class PickBlockBuyListener implements Listener {
     }
 
     private void executePurchase(Player player, ShopOffer offer) {
+        MainHandPreparer.Outcome prep = handPreparer.prepare(player);
+        if (prep == MainHandPreparer.Outcome.FAILED_NO_SPACE) {
+            sendConfigured(player, "messages.no-space", NamedTextColor.RED);
+            return;
+        }
+        if (prep == MainHandPreparer.Outcome.MOVED_TO_BAGS) {
+            sendConfigured(player, "messages.moved-to-bags", NamedTextColor.YELLOW);
+        }
+
         int amount = Math.max(1, plugin.getConfig().getInt("buy-amount", 64));
         String command = "shop quickbuy " + offer.shopId() + " " + offer.slot() + " " + amount;
-        Bukkit.getScheduler().runTask(plugin, () -> player.performCommand(command));
+        Bukkit.getScheduler().runTask(plugin, () -> {
+            if (!player.isOnline()) {
+                return;
+            }
+            player.performCommand(command);
+            handPreparer.equipPurchased(player, offer.material(), amount);
 
-        String purchased = plugin.formatMessage(
-                "messages.purchased",
-                "amount", String.valueOf(amount),
-                "price", formatPrice(offer.unitBuyPrice() * amount)
-        );
-        player.sendMessage(plugin.prefixComponent().append(Component.text(purchased, NamedTextColor.GREEN)));
+            String purchased = plugin.formatMessage(
+                    "messages.purchased",
+                    "amount", String.valueOf(amount),
+                    "price", formatPrice(offer.unitBuyPrice() * amount)
+            );
+            player.sendMessage(plugin.prefixComponent().append(
+                    LegacyComponentSerializer.legacySection().deserialize(purchased)));
+        });
     }
 
     private void sendPrompt(Player player, ShopOffer offer) {
@@ -119,7 +138,23 @@ public final class PickBlockBuyListener implements Listener {
         );
         player.sendMessage(plugin.prefixComponent()
                 .append(blockName)
-                .append(Component.text(" " + prompt, NamedTextColor.YELLOW)));
+                .append(Component.text(" ")
+                        .append(LegacyComponentSerializer.legacySection().deserialize(prompt))));
+    }
+
+    private void sendConfigured(Player player, String path, NamedTextColor fallbackColor) {
+        String raw = plugin.formatMessage(path);
+        if (raw == null || raw.isBlank() || raw.equals(path)) {
+            String fallback = switch (path) {
+                case "messages.no-space" -> "背包与随身行囊均无空位，无法腾出主手购买。";
+                case "messages.moved-to-bags" -> "主手物品已放入随身行囊。";
+                default -> path;
+            };
+            player.sendMessage(plugin.prefixComponent().append(Component.text(fallback, fallbackColor)));
+            return;
+        }
+        player.sendMessage(plugin.prefixComponent()
+                .append(LegacyComponentSerializer.legacySection().deserialize(raw)));
     }
 
     private static String formatPrice(double value) {
