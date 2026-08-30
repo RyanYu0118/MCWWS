@@ -50,7 +50,9 @@ public final class ShopPriceIndex {
             if (requireBuyPrice && unitBuy <= 0D) {
                 continue;
             }
-            next.putIfAbsent(material, new ShopOffer(material, shopId, slot, Math.max(unitBuy, 0D)));
+            double unitSell = prices.getDouble(key + ".sell", -1D);
+            next.putIfAbsent(material, new ShopOffer(material, shopId, slot,
+                    Math.max(unitBuy, 0D), Math.max(unitSell, 0D)));
         }
 
         EnumSet<Material> banned = EnumSet.noneOf(Material.class);

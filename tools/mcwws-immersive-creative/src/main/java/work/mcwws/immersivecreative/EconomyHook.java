@@ -35,6 +35,13 @@ public final class EconomyHook {
         return economy.withdrawPlayer(player, amount).transactionSuccess();
     }
 
+    public boolean deposit(Player player, double amount) {
+        if (economy == null || player == null || amount <= 0D) {
+            return true;
+        }
+        return economy.depositPlayer(player, amount).transactionSuccess();
+    }
+
     public static String format(double amount) {
         return MONEY.format(amount);
     }

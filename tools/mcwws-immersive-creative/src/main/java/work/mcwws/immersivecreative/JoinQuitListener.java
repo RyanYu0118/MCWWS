@@ -31,8 +31,5 @@ public final class JoinQuitListener implements Listener {
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
         plugin.state().forget(event.getPlayer().getUniqueId());
-        if (plugin.creativeSlots() != null) {
-            plugin.creativeSlots().clearCredit(event.getPlayer().getUniqueId());
-        }
     }
 }

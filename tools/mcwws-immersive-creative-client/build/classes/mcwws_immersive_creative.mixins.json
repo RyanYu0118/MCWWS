@@ -8,7 +8,9 @@
   "client": [
     "InventoryScreenMixin",
     "CreativeModeInventoryScreenMixin",
-    "MultiPlayerGameModeMixin"
+    "AbstractContainerScreenMixin",
+    "MultiPlayerGameModeMixin",
+    "SlotWrapperAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

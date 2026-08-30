@@ -14,9 +14,11 @@ import java.util.logging.Level;
 public final class ImmersiveChannel implements PluginMessageListener {
 
     public static final String CHANNEL = "mcwws:immersive_creative";
-    /** 1.0.3 及更早的客户端只发材质 + 数量，服务端据此重建物品会抹掉附魔与 Slimefun 数据，必须拒收。 */
+    /** 1.0.4 及更早的客户端不带光标内容，服务端只能靠额度池猜测，会漏扣费，必须拒收。 */
     private static final byte OP_SLOT_LEGACY = 1;
-    private static final byte OP_SLOT_NBT = 2;
+    private static final byte OP_SLOT_NBT_NO_CURSOR = 2;
+    /** 槽位新内容 + 操作后的光标内容，服务端据此按「背包 + 光标」整体算净差额。 */
+    private static final byte OP_SLOT_WITH_CURSOR = 3;
 
     private final McwwsImmersiveCreativePlugin plugin;
 
@@ -40,23 +42,22 @@ public final class ImmersiveChannel implements PluginMessageListener {
         }
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(message))) {
             byte op = in.readByte();
-            if (op == OP_SLOT_LEGACY) {
+            if (op == OP_SLOT_LEGACY || op == OP_SLOT_NBT_NO_CURSOR) {
                 rejectLegacyClient(player);
                 return;
             }
-            if (op != OP_SLOT_NBT) {
+            if (op != OP_SLOT_WITH_CURSOR) {
                 return;
             }
             int slot = in.readInt();
-            byte[] raw = new byte[in.readInt()];
-            in.readFully(raw);
-            String snbt = new String(raw, StandardCharsets.UTF_8);
-            ItemStack stack = toStack(snbt);
+            ItemStack stack = toStack(readString(in));
+            ItemStack carried = toStack(readString(in));
             if (plugin.debug()) {
                 plugin.getLogger().info("[debug] 通道槽位: " + player.getName()
-                        + " slot=" + slot + " item=" + stack.getType() + " x" + stack.getAmount());
+                        + " slot=" + slot + " item=" + stack.getType() + " x" + stack.getAmount()
+                        + " 光标=" + carried.getType() + " x" + carried.getAmount());
             }
-            plugin.creativeSlots().applyFromClient(player, slot, stack);
+            plugin.creativeSlots().applyFromClient(player, slot, stack, carried);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.WARNING, "解析创造槽位消息失败", ex);
         }
@@ -71,7 +72,13 @@ public final class ImmersiveChannel implements PluginMessageListener {
         sendState(player);
         plugin.send(player, "messages.client-outdated");
         plugin.getLogger().warning("玩家 " + player.getName()
-                + " 的客户端模组过旧（仅上报材质），已强制关闭沉浸式创造。");
+                + " 的客户端模组过旧（未上报光标），已强制关闭沉浸式创造。");
+    }
+
+    private static String readString(DataInputStream in) throws java.io.IOException {
+        byte[] raw = new byte[in.readInt()];
+        in.readFully(raw);
+        return new String(raw, StandardCharsets.UTF_8);
     }
 
     private static ItemStack toStack(String snbt) {

@@ -42,9 +42,6 @@ public final class ImmersiveCommand implements CommandExecutor {
             next = !plugin.state().isEnabled(player);
         }
         plugin.state().setEnabled(player, next);
-        if (!next && plugin.creativeSlots() != null) {
-            plugin.creativeSlots().clearCredit(player.getUniqueId());
-        }
         plugin.channel().sendState(player);
         plugin.send(player, next ? "messages.enabled" : "messages.disabled");
         if (next && !ImmersiveChannel.clientPresent(player)) {

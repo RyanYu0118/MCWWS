@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -14,14 +13,18 @@ import org.bukkit.inventory.PlayerInventory;
 
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.UUID;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class CreativeSlotListener {
 
+    /** 读不出槽位时不能当成 -1，那会被误判为「丢弃」。 */
+    private static final int SLOT_UNKNOWN = Integer.MIN_VALUE;
+    /** 只同步光标、不动任何槽位。 */
+    public static final int SLOT_CURSOR_ONLY = -2;
+    /** 客户端把物品丢到界面外。 */
+    public static final int SLOT_DROP = -1;
+
     private final McwwsImmersiveCreativePlugin plugin;
-    private final Map<UUID, Map<Material, Integer>> credit = new ConcurrentHashMap<>();
     private PacketAdapter adapter;
 
     public CreativeSlotListener(McwwsImmersiveCreativePlugin plugin) {
@@ -30,6 +33,8 @@ public final class CreativeSlotListener {
 
     public void register() {
         final McwwsImmersiveCreativePlugin host = plugin;
+        // 客户端模组会取消原版发包，改走自建通道上报（那条路径才带光标）。这里只做兜底拦截，
+        // 防止没装模组或版本不符的客户端把生存背包改成创造语义，不参与任何计费。
         adapter = new PacketAdapter(host, ListenerPriority.HIGH, PacketType.Play.Client.SET_CREATIVE_SLOT) {
             @Override
             public void onPacketReceiving(PacketEvent event) {
@@ -37,15 +42,7 @@ public final class CreativeSlotListener {
                     return;
                 }
                 Player player = event.getPlayer();
-                if (player == null) {
-                    return;
-                }
-                boolean enabled = host.state().isEnabled(player);
-                if (host.debug()) {
-                    host.getLogger().info("[debug] 收到 SET_CREATIVE_SLOT: " + player.getName()
-                            + " enabled=" + enabled + " mode=" + player.getGameMode());
-                }
-                if (!enabled) {
+                if (player == null || !host.state().isEnabled(player)) {
                     return;
                 }
                 GameMode mode = player.getGameMode();
@@ -53,23 +50,13 @@ public final class CreativeSlotListener {
                     return;
                 }
                 event.setCancelled(true);
-                int slot = readSlot(event.getPacket());
-                ItemStack item = readItem(event.getPacket());
-                host.getServer().getScheduler().runTask(host, () -> handle(player, slot, item));
+                if (host.debug()) {
+                    host.getLogger().info("[debug] 丢弃原版 SET_CREATIVE_SLOT（应由模组通道上报）: " + player.getName());
+                }
             }
         };
         ProtocolLibrary.getProtocolManager().addPacketListener(adapter);
-        plugin.getLogger().info("已通过 ProtocolLib 注册创造槽位监听（SET_CREATIVE_SLOT）。");
-    }
-
-    /** 玩家在创造栏里拿在手上或丢掉的物品：服务端已从背包扣掉，记账以便原样放回时不再收费。 */
-    public void clearCredit(UUID uuid) {
-        credit.remove(uuid);
-    }
-
-    /** 客户端模组通过自建通道上报的槽位变更，与 ProtocolLib 路径共用同一套计费逻辑。 */
-    public void applyFromClient(Player player, int slot, ItemStack item) {
-        handle(player, slot, item);
+        plugin.getLogger().info("已注册创造槽位兜底拦截（SET_CREATIVE_SLOT）。");
     }
 
     public void unregister() {
@@ -79,22 +66,39 @@ public final class CreativeSlotListener {
         }
     }
 
-    private void handle(Player player, int slot, ItemStack incoming) {
+    /** 客户端模组上报的一次界面操作：槽位新内容 + 操作后的光标内容。 */
+    public void applyFromClient(Player player, int slot, ItemStack item, ItemStack carried) {
+        handle(player, slot, item, carried);
+    }
+
+    private void handle(Player player, int slot, ItemStack incoming, ItemStack carried) {
         if (!player.isOnline() || !plugin.state().isEnabled(player)) {
             return;
         }
         if (slot == SLOT_UNKNOWN) {
-            plugin.getLogger().warning("无法解析创造槽位包的槽位号，已忽略。");
+            plugin.getLogger().warning("无法解析创造槽位号，已忽略。");
+            return;
+        }
+        if (slot == SLOT_DROP) {
+            // 沉浸式创造禁止把物品丢出界面：客户端已做本地预测，这里回滚并刷新即可。
+            player.updateInventory();
+            plugin.send(player, "messages.drop-denied");
             return;
         }
         // 创造栏一打开，客户端会把整个背包逐格回报一遍。这些回报只是服务端刚下发的内容，
         // 照写一遍不但白费，还会把服务端的物品换成客户端副本，所以内容一致时直接跳过。
-        if (isUnchanged(player, slot, incoming)) {
+        if (isUnchanged(player, slot, incoming) && isSameStack(player.getItemOnCursor(), carried)) {
             return;
         }
+
+        // 一次操作最多只可能让「原光标内容」和「原槽位内容」消失，特殊物品在此拦下，
+        // 避免附魔装备、Slimefun 物品被按原版材质价贱卖或误毁。
+        ItemStack priorCursor = player.getItemOnCursor();
+        ItemStack priorSlot = currentAt(player, slot);
+
         Snapshot before = Snapshot.capture(player);
         try {
-            applyChange(player, slot, incoming);
+            applyChange(player, slot, incoming, carried);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.WARNING, "应用创造栏槽位失败", ex);
             before.restore(player);
@@ -107,38 +111,22 @@ public final class CreativeSlotListener {
         Map<Material, Integer> gained = positiveDelta(beforeCounts, afterCounts);
         Map<Material, Integer> removed = positiveDelta(afterCounts, beforeCounts);
 
-        // 客户端把物品拿在光标上时，服务端只看到槽位被清空。先把这些记成额度，
-        // 等它落到另一个槽位再抵扣，否则单纯挪动位置也会被当成新买一份。
-        Map<Material, Integer> nextCredit = new EnumMap<>(Material.class);
-        nextCredit.putAll(credit.getOrDefault(player.getUniqueId(), Map.of()));
-        removed.forEach((material, amount) -> nextCredit.merge(material, amount, Integer::sum));
-
-        Map<Material, Integer> billable = new EnumMap<>(Material.class);
-        for (Map.Entry<Material, Integer> entry : gained.entrySet()) {
-            Material material = entry.getKey();
-            int amount = entry.getValue();
-            int fromCredit = Math.min(nextCredit.getOrDefault(material, 0), amount);
-            if (fromCredit > 0) {
-                int rest = nextCredit.get(material) - fromCredit;
-                if (rest > 0) {
-                    nextCredit.put(material, rest);
-                } else {
-                    nextCredit.remove(material);
-                }
-            }
-            if (amount > fromCredit) {
-                billable.put(material, amount - fromCredit);
-            }
-        }
-
         if (plugin.debug()) {
-            plugin.getLogger().info("[debug] slot=" + slot + " 取得=" + gained + " 放回=" + removed
-                    + " 计费=" + billable + " 余额度=" + nextCredit);
+            plugin.getLogger().info("[debug] slot=" + slot + " 取得=" + gained + " 卖出=" + removed);
         }
 
-        double total = 0D;
-        int amountSum = 0;
-        for (Map.Entry<Material, Integer> entry : billable.entrySet()) {
+        if (!removed.isEmpty() && (hasCustomData(priorCursor) || hasCustomData(priorSlot))) {
+            before.restore(player);
+            player.updateInventory();
+            plugin.send(player, "messages.special-item");
+            return;
+        }
+
+        double feeRate = Math.max(plugin.getConfig().getDouble("instant-delivery-fee", 1.0D), 0D);
+        double buyTotal = 0D;
+        double baseTotal = 0D;
+        int boughtCount = 0;
+        for (Map.Entry<Material, Integer> entry : gained.entrySet()) {
             Material material = entry.getKey();
             int amount = entry.getValue();
             if (plugin.prices().isBlacklisted(material) || material.isAir()) {
@@ -157,48 +145,83 @@ public final class CreativeSlotListener {
                 }
                 continue;
             }
-            total += offer.unitBuyPrice() * amount;
-            amountSum += amount;
+            baseTotal += offer.unitBuyPrice() * amount;
+            boughtCount += amount;
+        }
+        buyTotal = baseTotal * (1D + feeRate);
+
+        double sellTotal = 0D;
+        int soldCount = 0;
+        for (Map.Entry<Material, Integer> entry : removed.entrySet()) {
+            Material material = entry.getKey();
+            int amount = entry.getValue();
+            ShopOffer offer = plugin.prices().find(material);
+            if (offer == null || offer.unitSellPrice() <= 0D) {
+                // 卖不掉的东西宁可不让它消失，也不要凭空蒸发。
+                before.restore(player);
+                player.updateInventory();
+                plugin.send(player, "messages.not-sellable");
+                return;
+            }
+            sellTotal += offer.unitSellPrice() * amount;
+            soldCount += amount;
         }
 
-        if (total > 0D && plugin.economy().getBalance(player) + 1e-6 < total) {
-            before.restore(player);
-            player.updateInventory();
-            plugin.send(player, "messages.cannot-afford", "price", EconomyHook.format(total));
-            return;
-        }
-        if (total > 0D && !plugin.economy().withdraw(player, total)) {
-            before.restore(player);
-            player.updateInventory();
-            plugin.send(player, "messages.cannot-afford", "price", EconomyHook.format(total));
-            return;
+        double net = buyTotal - sellTotal;
+        if (net > 0D) {
+            if (plugin.economy().getBalance(player) + 1e-6 < net) {
+                before.restore(player);
+                player.updateInventory();
+                plugin.send(player, "messages.cannot-afford", "price", EconomyHook.format(net));
+                return;
+            }
+            if (!plugin.economy().withdraw(player, net)) {
+                before.restore(player);
+                player.updateInventory();
+                plugin.send(player, "messages.cannot-afford", "price", EconomyHook.format(net));
+                return;
+            }
+        } else if (net < 0D) {
+            plugin.economy().deposit(player, -net);
         }
 
-        if (nextCredit.isEmpty()) {
-            credit.remove(player.getUniqueId());
-        } else {
-            credit.put(player.getUniqueId(), nextCredit);
-        }
-
-        if (total > 0D) {
+        if (buyTotal > 0D) {
             plugin.send(player, "messages.purchased",
-                    "amount", String.valueOf(amountSum),
-                    "price", EconomyHook.format(total));
+                    "amount", String.valueOf(boughtCount),
+                    "price", EconomyHook.format(buyTotal),
+                    "base", EconomyHook.format(baseTotal),
+                    "fee", EconomyHook.format(buyTotal - baseTotal));
         }
+        if (sellTotal > 0D) {
+            plugin.send(player, "messages.sold",
+                    "amount", String.valueOf(soldCount),
+                    "price", EconomyHook.format(sellTotal));
+        }
+    }
+
+    /** 带自定义名称、附魔、PDC 等数据的物品视为特殊物品，不参与创造栏买卖。 */
+    private static boolean hasCustomData(ItemStack stack) {
+        return stack != null && !stack.getType().isAir() && stack.hasItemMeta();
     }
 
     /** 槽位内容与服务端现状完全一致（含 NBT 组件与数量）时为真。 */
     private static boolean isUnchanged(Player player, int slot, ItemStack incoming) {
+        if (slot == SLOT_CURSOR_ONLY) {
+            return true;
+        }
         if (slot < 0) {
             return false;
         }
-        ItemStack current = currentAt(player, slot);
-        boolean currentEmpty = current == null || current.getType().isAir();
-        boolean incomingEmpty = incoming == null || incoming.getType().isAir();
-        if (currentEmpty || incomingEmpty) {
-            return currentEmpty && incomingEmpty;
+        return isSameStack(currentAt(player, slot), incoming);
+    }
+
+    private static boolean isSameStack(ItemStack a, ItemStack b) {
+        boolean aEmpty = a == null || a.getType().isAir();
+        boolean bEmpty = b == null || b.getType().isAir();
+        if (aEmpty || bEmpty) {
+            return aEmpty && bEmpty;
         }
-        return current.getAmount() == incoming.getAmount() && current.isSimilar(incoming);
+        return a.getAmount() == b.getAmount() && a.isSimilar(b);
     }
 
     /** 槽位号到背包位置的映射，与 {@link #applyChange} 一一对应。未知槽位返回 null。 */
@@ -220,14 +243,13 @@ public final class CreativeSlotListener {
         };
     }
 
-    private void applyChange(Player player, int slot, ItemStack incoming) {
-        ItemStack stack = incoming == null ? new ItemStack(Material.AIR) : incoming.clone();
-        if (slot < 0) {
-            // 本服禁用创造栏的销毁/丢弃：物品早已在清空槽位时记入额度，这里不再生成掉落物。
+    private void applyChange(Player player, int slot, ItemStack incoming, ItemStack carried) {
+        player.setItemOnCursor(emptyIfAir(carried == null ? null : carried.clone()));
+        if (slot == SLOT_CURSOR_ONLY) {
             return;
         }
+        ItemStack toSet = emptyIfAir(incoming == null ? null : incoming.clone());
         PlayerInventory inv = player.getInventory();
-        ItemStack toSet = emptyIfAir(stack);
         if (slot >= 36 && slot <= 44) {
             inv.setItem(slot - 36, toSet);
             return;
@@ -255,36 +277,6 @@ public final class CreativeSlotListener {
             return new ItemStack(Material.AIR);
         }
         return stack;
-    }
-
-    /** 读不出槽位时不能当成 -1，那会被误判为「丢弃」。 */
-    private static final int SLOT_UNKNOWN = Integer.MIN_VALUE;
-
-    private static int readSlot(PacketContainer packet) {
-        try {
-            if (packet.getShorts().size() > 0) {
-                return packet.getShorts().read(0);
-            }
-        } catch (Exception ignored) {
-        }
-        try {
-            if (packet.getIntegers().size() > 0) {
-                return packet.getIntegers().read(0);
-            }
-        } catch (Exception ignored) {
-        }
-        return SLOT_UNKNOWN;
-    }
-
-    private static ItemStack readItem(PacketContainer packet) {
-        try {
-            if (packet.getItemModifier().size() > 0) {
-                ItemStack stack = packet.getItemModifier().read(0);
-                return stack == null ? new ItemStack(Material.AIR) : stack;
-            }
-        } catch (Exception ignored) {
-        }
-        return new ItemStack(Material.AIR);
     }
 
     private static Map<Material, Integer> positiveDelta(Map<Material, Integer> before, Map<Material, Integer> after) {

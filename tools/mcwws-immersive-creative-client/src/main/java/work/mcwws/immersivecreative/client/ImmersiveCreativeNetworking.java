@@ -18,8 +18,10 @@ import java.nio.charset.StandardCharsets;
 public final class ImmersiveCreativeNetworking {
 
     static final Identifier CHANNEL = Identifier.fromNamespaceAndPath("mcwws", "immersive_creative");
-    /** 只带材质 + 数量的旧协议，会让服务端重建物品从而抹掉附魔和 Slimefun 数据，已废弃。 */
-    private static final byte OP_SLOT_NBT = 2;
+    /** 槽位新内容 + 操作后的光标内容。缺了光标服务端只能靠额度池猜，会漏扣费。 */
+    private static final byte OP_SLOT_WITH_CURSOR = 3;
+    /** 只同步光标、不动任何槽位。 */
+    public static final int SLOT_CURSOR_ONLY = -2;
     private static boolean registered;
 
     private ImmersiveCreativeNetworking() {
@@ -42,18 +44,40 @@ public final class ImmersiveCreativeNetworking {
 
     /**
      * 服务端玩家始终是生存，原版的创造槽位包会被丢弃，ProtocolLib 在 26.2 上也拦不到，
-     * 所以槽位变更走自建通道直接送到插件。{@code slot} 为 -1 表示丢弃/销毁。
+     * 所以槽位变更走自建通道直接送到插件。{@code slot} 为 -1 表示丢弃，-2 表示只同步光标。
+     * <p>
+     * 光标必须一起发：创造物品列表里的取放全是客户端本地改 carried，服务端看不到任何槽位变化，
+     * 只有拿到光标才能把「挪位置」和「凭空多出一份」区分开。
      */
     public static void sendSlot(int slot, ItemStack stack) {
+        sendSlot(slot, stack, currentCarried());
+    }
+
+    public static void sendSlot(int slot, ItemStack stack, ItemStack carried) {
         String nbt = encode(stack);
-        if (nbt == null) {
+        String carriedNbt = encode(carried);
+        if (nbt == null || carriedNbt == null) {
             return;
         }
         try {
-            ClientPlayNetworking.send(new SlotPayload(slot, nbt));
+            ClientPlayNetworking.send(new SlotPayload(slot, nbt, carriedNbt));
         } catch (Exception ex) {
             McwwsImmersiveCreativeClientMod.LOGGER.warn("发送创造槽位失败 slot={}", slot, ex);
         }
+    }
+
+    /** 只把当前光标同步给服务端，用于创造列表里那些不碰任何槽位的取放。 */
+    public static void sendCarriedOnly() {
+        sendSlot(SLOT_CURSOR_ONLY, ItemStack.EMPTY, currentCarried());
+    }
+
+    /** {@code ItemPickerMenu.getCarried()} 直接委托给 inventoryMenu，这里取的就是同一份。 */
+    public static ItemStack currentCarried() {
+        Minecraft client = Minecraft.getInstance();
+        if (client.player == null) {
+            return ItemStack.EMPTY;
+        }
+        return client.player.inventoryMenu.getCarried();
     }
 
     /**
@@ -102,7 +126,7 @@ public final class ImmersiveCreativeNetworking {
     }
 
     /** 编码与服务端 {@code ImmersiveChannel} 手写的 DataInputStream 解析一一对应。 */
-    private record SlotPayload(int slot, String nbt) implements CustomPacketPayload {
+    private record SlotPayload(int slot, String nbt, String carriedNbt) implements CustomPacketPayload {
 
         static final CustomPacketPayload.Type<SlotPayload> TYPE =
                 new CustomPacketPayload.Type<>(CHANNEL);
@@ -110,20 +134,29 @@ public final class ImmersiveCreativeNetworking {
         static final StreamCodec<RegistryFriendlyByteBuf, SlotPayload> CODEC =
                 StreamCodec.of(
                         (buf, payload) -> {
-                            byte[] data = payload.nbt().getBytes(StandardCharsets.UTF_8);
-                            buf.writeByte(OP_SLOT_NBT);
+                            buf.writeByte(OP_SLOT_WITH_CURSOR);
                             buf.writeInt(payload.slot());
-                            buf.writeInt(data.length);
-                            buf.writeBytes(data);
+                            writeString(buf, payload.nbt());
+                            writeString(buf, payload.carriedNbt());
                         },
                         buf -> {
                             buf.readByte();
                             int slot = buf.readInt();
-                            byte[] data = new byte[buf.readInt()];
-                            buf.readBytes(data);
-                            return new SlotPayload(slot, new String(data, StandardCharsets.UTF_8));
+                            return new SlotPayload(slot, readString(buf), readString(buf));
                         }
                 );
+
+        private static void writeString(RegistryFriendlyByteBuf buf, String value) {
+            byte[] data = value.getBytes(StandardCharsets.UTF_8);
+            buf.writeInt(data.length);
+            buf.writeBytes(data);
+        }
+
+        private static String readString(RegistryFriendlyByteBuf buf) {
+            byte[] data = new byte[buf.readInt()];
+            buf.readBytes(data);
+            return new String(data, StandardCharsets.UTF_8);
+        }
 
         @Override
         public Type<? extends CustomPacketPayload> type() {
