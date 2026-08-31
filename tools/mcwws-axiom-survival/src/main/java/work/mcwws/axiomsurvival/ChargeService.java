@@ -55,6 +55,7 @@ public final class ChargeService {
             plugin.getLogger().info("[debug] " + label + " 预估: 格数=" + estimate.affectedBlocks()
                     + ", 受保护=" + estimate.protectedBlocks()
                     + ", 领地拒绝=" + estimate.residenceDeniedBlocks()
+                    + ", 特殊物品=" + estimate.contentsBlocked()
                     + ", 搬运=" + estimate.movedBlocks()
                     + ", 最近=" + FeeAccumulator.formatDistance(estimate.minDistance())
                     + ", 回收=" + estimate.salvage()
@@ -72,6 +73,16 @@ public final class ChargeService {
                             "count", String.valueOf(estimate.residenceDeniedBlocks())
                     )));
             return ChargeDecision.deny("residence-denied");
+        }
+
+        // 容器里的 Slimefun / 自定义属性物品不能靠堆叠复制，bypass 也不行
+        if (estimate.contentsBlocked() != null) {
+            String messageKey = ContainerContents.BLOCKED_SLIMEFUN.equals(estimate.contentsBlocked())
+                    ? "special-items-slimefun"
+                    : "special-items-attributes";
+            deny(player, messageKey, plugin.msg("prefix") + plugin.msg(messageKey, FeeAccumulator.withNear(
+                    estimate.minDistance())));
+            return ChargeDecision.deny(messageKey);
         }
 
         if (!shouldCharge(player)) {

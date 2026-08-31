@@ -104,6 +104,8 @@ messages:
   protected-skipped: "§c已保留 §e{count} §c个受保护方块（Slimefun/不可破坏），这些方块不计费。最近 §e{near} 格。"
   protected-too-many: "受保护方块过多（§e{count} §f个，最近 §e{near} 格），本次编辑已取消，请缩小范围。"
   residence-denied: "§c有 §e{count} §c格缺少领地权限：纯拆除需要「破坏」，其他改动需要同时拥有「放置」和「破坏」；本包编辑已取消。最近 §e{near} §c格。"
+  special-items-slimefun: "§c选区或目标容器里有粘液科技物品，无法用 Axiom 堆叠/复制。请先取出后再操作。最近 §e{near} §c格。"
+  special-items-attributes: "§c选区或目标容器里有带自定义属性修饰的物品，无法用 Axiom 堆叠/复制。请先取出后再操作。最近 §e{near} §c格。"
   world-time-blocked: "§c生存模式下不能用 Axiom 修改世界时间。"
   world-property-blocked: "§c生存模式下不能用 Axiom 修改世界属性。"
   limit-per-edit: "单次编辑费用 §e{total}§f 超过上限 §c{max}§f（最近 §e{near} 格），请分批建造。"

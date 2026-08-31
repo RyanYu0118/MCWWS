@@ -215,6 +215,7 @@ final class PacketFeeEstimator {
         Method getY = blockPosClass.getMethod("getY", long.class);
         Method getZ = blockPosClass.getMethod("getZ", long.class);
         Method bufferGet = blockBuffer.getClass().getMethod("get", int.class, int.class, int.class);
+        Method entityChunkMap = blockBuffer.getClass().getMethod("getBlockEntityChunkMap", long.class);
 
         for (Object sectionEntry : sections) {
             // fastutil 的 entry 实现是私有内部类，反射 getLongKey 会被 IllegalAccessException 挡下，
@@ -230,6 +231,7 @@ final class PacketFeeEstimator {
             int baseX = cx << 4;
             int baseY = cy << 4;
             int baseZ = cz << 4;
+            java.util.Map<Long, Object> nbtAt = blockEntityNbt(entityChunkMap.invoke(blockBuffer, sectionKey), baseX, baseY, baseZ);
             for (int x = 0; x < 16; x++) {
                 for (int y = 0; y < 16; y++) {
                     for (int z = 0; z < 16; z++) {
@@ -243,11 +245,41 @@ final class PacketFeeEstimator {
                             continue;
                         }
                         BlockData target = NmsBlocks.toBlockData(newState);
-                        builder.addChange(block, target);
+                        builder.addChange(block, target, nbtAt.get(packBlock(baseX + x, baseY + y, baseZ + z)));
                     }
                 }
             }
         }
+    }
+
+    private static java.util.Map<Long, Object> blockEntityNbt(Object chunkMap, int baseX, int baseY, int baseZ) {
+        java.util.Map<Long, Object> out = new java.util.HashMap<>();
+        if (!(chunkMap instanceof Map<?, ?> map) || map.isEmpty()) {
+            return out;
+        }
+        for (Map.Entry<?, ?> entry : map.entrySet()) {
+            if (!(entry.getKey() instanceof Number packed)) {
+                continue;
+            }
+            int local = packed.shortValue();
+            int lx = (local >> 8) & 15;
+            int ly = local & 15;
+            int lz = (local >> 4) & 15;
+            Object compressed = entry.getValue();
+            if (compressed == null) {
+                continue;
+            }
+            try {
+                Object tag = compressed.getClass().getMethod("decompress").invoke(compressed);
+                out.put(packBlock(baseX + lx, baseY + ly, baseZ + lz), tag);
+            } catch (ReflectiveOperationException ignored) {
+            }
+        }
+        return out;
+    }
+
+    private static long packBlock(int x, int y, int z) {
+        return ((long) x & 0x3FFFFFFL) << 38 | ((long) z & 0x3FFFFFFL) << 12 | ((long) y & 0xFFFL);
     }
 
     private void accumulateEntry(FeeAccumulator.Builder builder, World world, Object blockPos, Object newState) throws ReflectiveOperationException {

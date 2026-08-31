@@ -40,7 +40,8 @@ public final class FeeAccumulator {
             Map<String, Long> netRemovedCounts,
             Map<String, Long> netPlacedCounts,
             List<BlockState> protectedStates,
-            double minDistance
+            double minDistance,
+            String contentsBlocked
     ) {
         /**
          * 材料 + 人工 − 回收。拆下来的方块按卖价折现给玩家，所以净额可以为负，
@@ -51,7 +52,7 @@ public final class FeeAccumulator {
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE);
+            return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE, null);
         }
     }
 
@@ -79,6 +80,7 @@ public final class FeeAccumulator {
         private double originY;
         private double originZ;
         private double minDistance = UNKNOWN_DISTANCE;
+        private String contentsBlocked;
 
         public Builder(
                 PriceCatalog prices,
@@ -136,20 +138,44 @@ public final class FeeAccumulator {
         }
 
         public void addChange(Block block, BlockData target) {
+            addChange(block, target, null);
+        }
+
+        /**
+         * @param incomingNbt Axiom 方块实体 NBT（堆叠/粘贴复制的容器内容）；没有则为 {@code null}
+         */
+        public void addChange(Block block, BlockData target, Object incomingNbt) {
             if (block == null || target == null) {
                 return;
             }
             BlockData existing = block.getBlockData();
-            if (existing.matches(target)) {
+            boolean sameBlock = existing.matches(target);
+            boolean nbtPresent = incomingNbt != null;
+            if (sameBlock && !nbtPresent) {
                 return;
             }
+            ContainerContents.Scan incoming = nbtPresent
+                    ? ContainerContents.fromNbt(incomingNbt, block.getWorld())
+                    : ContainerContents.Scan.empty();
+            ContainerContents.Scan outgoing = ContainerContents.fromWorld(block);
             if (!ResidenceProtection.canChange(player, block, target)) {
                 residenceDeniedBlocks++;
                 offerBlock(block.getX(), block.getY(), block.getZ());
                 return;
             }
             offerBlock(block.getX(), block.getY(), block.getZ());
-            accumulate(existing, target);
+            if (incoming.blocked() != null) {
+                contentsBlocked = incoming.blocked();
+            } else if (outgoing.blocked() != null) {
+                contentsBlocked = outgoing.blocked();
+            }
+            if (!sameBlock) {
+                accumulate(existing, target);
+            } else {
+                affectedBlocks++;
+            }
+            applyContents(outgoing, false);
+            applyContents(incoming, true);
         }
 
         public void addChange(BlockData existing, BlockData target) {
@@ -177,6 +203,26 @@ public final class FeeAccumulator {
                 labor += laborRates.placeUnit();
             }
             affectedBlocks++;
+        }
+
+        private void applyContents(ContainerContents.Scan scan, boolean placing) {
+            if (scan == null || !scan.hasItems()) {
+                return;
+            }
+            for (Map.Entry<String, Long> entry : scan.counts().entrySet()) {
+                String id = entry.getKey();
+                long amount = entry.getValue();
+                if (id == null || "air".equals(id) || amount <= 0L) {
+                    continue;
+                }
+                if (placing) {
+                    material += prices.getBuyPrice(id) * amount;
+                    placedCounts.merge(id, amount, Long::sum);
+                } else {
+                    salvage += prices.getSellPrice(id) * salvageRate * amount;
+                    removedCounts.merge(id, amount, Long::sum);
+                }
+            }
         }
 
         public Result build() {
@@ -215,7 +261,8 @@ public final class FeeAccumulator {
                     Map.copyOf(netRemoved),
                     Map.copyOf(netPlaced),
                     List.copyOf(protectedStates),
-                    minDistance
+                    minDistance,
+                    contentsBlocked
             );
         }
 

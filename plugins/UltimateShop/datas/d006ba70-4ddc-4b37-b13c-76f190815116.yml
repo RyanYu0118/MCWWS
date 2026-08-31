@@ -23,10 +23,6 @@ useTimes:
       sellUseTimes: 2
       totalSellUseTimes: 2
       lastSellTime: '2026-08-14 23:41:00'
-  redstone__p3:
-    J:
-      sellUseTimes: 40
-      lastSellTime: '2026-07-31 12:45:14'
   ingredients:
     Z:
       sellUseTimes: 1
@@ -48,6 +44,10 @@ useTimes:
       sellUseTimes: 32
       totalSellUseTimes: 32
       lastSellTime: '2026-08-28 22:02:23'
+  redstone__p3:
+    J:
+      sellUseTimes: 40
+      lastSellTime: '2026-07-31 12:45:14'
   mcwws:
     A:
       buyUseTimes: 86
@@ -69,6 +69,15 @@ useTimes:
     G:
       sellUseTimes: 1
       lastSellTime: '2026-07-31 12:33:30'
+  building__p7:
+    A:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-08-31 19:49:31'
+    a:
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
+      lastBuyTime: '2026-08-31 00:10:01'
   nether__p2:
     S:
       sellUseTimes: 1
@@ -175,11 +184,11 @@ useTimes:
       lastSellTime: '2026-07-04 02:47:46'
   functional:
     l:
-      buyUseTimes: 192
-      totalBuyUseTimes: 192
+      buyUseTimes: 256
+      totalBuyUseTimes: 256
       sellUseTimes: 125
       totalSellUseTimes: 125
-      lastBuyTime: '2026-08-31 00:17:43'
+      lastBuyTime: '2026-08-31 20:25:45'
       lastSellTime: '2026-08-30 20:06:04'
     k:
       sellUseTimes: 4
@@ -197,11 +206,6 @@ useTimes:
     E:
       sellUseTimes: 3
       lastSellTime: '2026-08-03 23:07:01'
-  building__p7:
-    a:
-      buyUseTimes: 192
-      totalBuyUseTimes: 192
-      lastBuyTime: '2026-08-31 00:10:01'
   farming__p2:
     Q:
       sellUseTimes: 2
@@ -289,6 +293,10 @@ useTimes:
       buyUseTimes: 192
       totalBuyUseTimes: 192
       lastBuyTime: '2026-08-17 22:25:26'
+    Q:
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      lastBuyTime: '2026-08-31 19:58:20'
     S:
       sellUseTimes: 2
       totalSellUseTimes: 2
