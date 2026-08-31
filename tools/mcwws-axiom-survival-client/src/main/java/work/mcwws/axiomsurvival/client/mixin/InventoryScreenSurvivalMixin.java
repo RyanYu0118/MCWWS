@@ -9,8 +9,9 @@ import work.mcwws.axiomsurvival.client.SurvivalEditorController;
 
 /**
  * 建造阶段本地模式是创造，{@code instabuild} 必须保持 true，否则 Axiom 工具菜单会立刻关掉。
- * E 键打开的 {@code InventoryScreen} 也看 {@code hasInfiniteMaterials()}：Editor 内谎报 false
- * 以保持生存背包；若同时装了沉浸式创造模组且已开启，则谎报 true 以打开创造栏。
+ * E 键打开的 {@code InventoryScreen} 也看 {@code hasInfiniteMaterials()}：
+ * 编辑界面打开时谎报 false，避免抢掉 Axiom 工具菜单；
+ * 建造阶段若沉浸式创造已开启则谎报 true，否则仍谎报 false 以保持生存背包。
  */
 @Mixin(InventoryScreen.class)
 public class InventoryScreenSurvivalMixin {
@@ -23,11 +24,14 @@ public class InventoryScreenSurvivalMixin {
             )
     )
     private boolean mcwws$keepSurvivalInventory(LocalPlayer player) {
-        if (SurvivalEditorController.shouldShowSurvivalHud()) {
+        if (SurvivalEditorController.shouldKeepAxiomMenuInventory()) {
             return false;
         }
         if (mcwws$immersiveCreativeEnabled()) {
             return true;
+        }
+        if (SurvivalEditorController.shouldShowSurvivalHud()) {
+            return false;
         }
         return player.hasInfiniteMaterials();
     }

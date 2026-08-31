@@ -594,10 +594,8 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:splash_potion
+  id: minecraft:glass_bottle
   count: 1
-  components:
-    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_axe
@@ -619,12 +617,6 @@ items:
   components:
     minecraft:potion_contents: '{custom_color:8388608,custom_effects:[{ambient:1b,duration:180,id:"minecraft:strength",show_icon:1b}]}'
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运药水",underlined:0b}],text:""}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:splash_potion
-  count: 1
-  components:
-    minecraft:potion_contents: '{potion:"minecraft:long_swiftness"}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brush
@@ -1869,7 +1861,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:book
-  count: 1
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
@@ -2074,11 +2066,8 @@ items:
     minecraft:damage: '14'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:netherite_chestplate
-  count: 1
-  components:
-    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运甲",underlined:0b}],text:""}'
-    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+  id: minecraft:smooth_quartz_slab
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:mutton
@@ -2216,7 +2205,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:white_concrete
-  count: 41
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_sword
@@ -2266,7 +2255,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:bamboo_trapdoor
-  count: 7
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:trident
@@ -2276,7 +2265,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:smooth_quartz_slab
-  count: 41
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:wheat
@@ -2537,6 +2526,36 @@ items:
 - DataVersion: 4903
   id: minecraft:barrel
   count: 7
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:book
+  count: 64
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:book
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bamboo_trapdoor
+  count: 64
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:bamboo_trapdoor
+  count: 7
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:smooth_quartz_stairs
+  count: 25
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:smooth_quartz_slab
+  count: 40
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:leather_helmet
+  count: 1
+  components:
+    minecraft:damage: '51'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

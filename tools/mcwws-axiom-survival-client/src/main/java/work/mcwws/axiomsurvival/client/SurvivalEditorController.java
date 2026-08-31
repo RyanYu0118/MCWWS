@@ -120,6 +120,14 @@ public final class SurvivalEditorController {
     }
 
     /**
+     * Axiom 编辑界面（本地旁观、工具菜单）打开时，E 必须仍走生存背包。
+     * 此时若谎报创造，会关掉 SwitchHotbarScreen。
+     */
+    public static boolean shouldKeepAxiomMenuInventory() {
+        return localEditorActive && EditorUI.isEnabled();
+    }
+
+    /**
      * 服务端始终是生存：挖掘进度、进食等不要走本地创造的 instabuild/无敌捷径。
      */
     public static boolean shouldActLikeSurvival() {

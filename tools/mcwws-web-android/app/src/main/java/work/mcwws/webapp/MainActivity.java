@@ -40,7 +40,9 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
  */
 public class MainActivity extends AppCompatActivity {
     static final String HOST = "mcs.ryanstudio.work";
-    static final String APP_UA_SUFFIX = " MCWWSApp/1.1.1";
+    /** 地图 iframe、资源子域；樱花自签证书需与主站一并放行 */
+    static final String MAP_HOST = "mcsmap.ryanstudio.work";
+    static final String APP_UA_SUFFIX = " MCWWSApp/1.1.2";
 
     private WebView webView;
     private SwipeRefreshLayout swipeRefresh;
@@ -330,12 +332,15 @@ public class MainActivity extends AppCompatActivity {
             public void onReceivedSslError(WebView view, SslErrorHandler handler, SslError error) {
                 String url = error != null ? error.getUrl() : null;
                 Uri uri = url != null ? Uri.parse(url) : null;
-                if (uri != null && HOST.equalsIgnoreCase(uri.getHost())) {
+                String host = uri != null ? uri.getHost() : null;
+                if (isTrustedSslHost(host)) {
                     handler.proceed();
                     return;
                 }
                 handler.cancel();
-                showLoadError();
+                if (isMainFrameUrl(url)) {
+                    showLoadError();
+                }
             }
         });
 
@@ -369,6 +374,32 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, R.string.error_title, Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    private boolean isTrustedSslHost(@Nullable String host) {
+        if (host == null) {
+            return false;
+        }
+        return HOST.equalsIgnoreCase(host) || MAP_HOST.equalsIgnoreCase(host);
+    }
+
+    private boolean isMainFrameUrl(@Nullable String url) {
+        if (url == null || webView == null) {
+            return true;
+        }
+        String current = webView.getUrl();
+        if (current == null || current.isEmpty()) {
+            return true;
+        }
+        try {
+            Uri failing = Uri.parse(url);
+            Uri main = Uri.parse(current);
+            return failing.getHost() != null
+                    && failing.getHost().equalsIgnoreCase(main.getHost())
+                    && normalizePath(failing.getPath()).equals(normalizePath(main.getPath()));
+        } catch (Exception e) {
+            return true;
+        }
     }
 
     private void showLoadError() {
