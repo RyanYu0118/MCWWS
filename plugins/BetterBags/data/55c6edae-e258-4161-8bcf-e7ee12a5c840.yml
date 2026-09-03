@@ -43,8 +43,11 @@ items:
     minecraft:stored_enchantments: '{"minecraft:blast_protection":4}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
+  id: minecraft:golden_pickaxe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:mending":1}'
+    minecraft:damage: '2'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:white_banner
@@ -56,16 +59,12 @@ items:
     minecraft:item_name: '{translate:"block.minecraft.ominous_banner"}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:golden_pickaxe
-  count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:mending":1}'
+  id: minecraft:diamond
+  count: 5
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:golden_axe
-  count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:unbreaking":3}'
+  id: minecraft:glass
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:enchanted_book
@@ -595,7 +594,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glass_bottle
-  count: 1
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_axe
@@ -668,11 +667,11 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spider_eye
-  count: 40
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:string
-  count: 51
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glow_ink_sac
@@ -843,10 +842,6 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"碳",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2200113.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CARBON"}}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:diamond
-  count: 4
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:golden_axe
@@ -1418,7 +1413,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:rotten_flesh
-  count: 14
+  count: 16
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:netherite_sword
@@ -1647,8 +1642,8 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:pale_oak_planks
-  count: 64
+  id: minecraft:minecart
+  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:pumpkin_seeds
@@ -1693,7 +1688,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:leather
-  count: 1
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:slime_ball
@@ -1939,7 +1934,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:emerald
-  count: 2
+  count: 6
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:allium
@@ -1982,10 +1977,6 @@ items:
 - DataVersion: 4903
   id: minecraft:coal
   count: 64
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:spruce_planks
-  count: 11
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spruce_leaves
@@ -2112,12 +2103,12 @@ items:
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PEACH"}}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:minecart
-  count: 1
+  id: minecraft:blue_ice
+  count: 16
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:powered_rail
-  count: 31
+  id: minecraft:lever
+  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:minecart
@@ -2148,10 +2139,6 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:rail
-  count: 56
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:copper_ingot
   count: 1
   schema_version: 1
@@ -2164,20 +2151,22 @@ items:
   count: 1
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:potion
-  count: 1
+  id: minecraft:player_head
+  count: 5
   components:
-    minecraft:potion_contents: '{potion:"minecraft:long_night_vision"}'
+    minecraft:profile: '{id:[I;-947754177,1901345754,-1706994698,1993660338],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTMyYzI0NTI0YzgyYWIzYjNlNTdjMjA1MmM1MzNmMTNkZDhjMGJlYjhiZGQwNjM2OWJiMjU1NGRhODZjMTIzIn19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,click_event:{action:"open_url",url:"http://entity.minecraft.guardian头"},color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"entity.minecraft.guardian头",underlined:0b},{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GUARDIAN_HEAD"}}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:potion
   count: 1
   components:
-    minecraft:potion_contents: '{potion:"minecraft:long_night_vision"}'
+    minecraft:potion_contents: '{potion:"minecraft:water"}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:redstone_torch
-  count: 23
+  id: minecraft:pitcher_plant
+  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:blackstone
@@ -2246,10 +2235,6 @@ items:
   count: 5
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:glass_bottle
-  count: 1
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:smooth_quartz_slab
   count: 64
   schema_version: 1
@@ -2268,28 +2253,23 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
+  id: minecraft:golden_axe
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:unbreaking":3}'
+    minecraft:damage: '5'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
+  id: minecraft:sulfur
+  count: 2
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
+  id: minecraft:baked_potato
+  count: 1
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:wheat
-  count: 64
+  id: minecraft:light
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:wheat
@@ -2556,6 +2536,30 @@ items:
   count: 1
   components:
     minecraft:damage: '51'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:prismarine_shard
+  count: 23
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"守护者鳍",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203102.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_GUARDIAN_FIN"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:lectern
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:red_mushroom
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:spider_eye
+  count: 6
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:string
+  count: 18
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

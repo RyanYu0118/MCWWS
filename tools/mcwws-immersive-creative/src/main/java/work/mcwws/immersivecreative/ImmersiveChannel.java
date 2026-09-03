@@ -14,6 +14,8 @@ import java.util.logging.Level;
 public final class ImmersiveChannel implements PluginMessageListener {
 
     public static final String CHANNEL = "mcwws:immersive_creative";
+    /** 客户端进服后主动要一次开关，避免 Join 时通道未就绪导致状态包被丢弃。 */
+    private static final byte OP_REQUEST_STATE = 10;
     /** 1.0.4 及更早的客户端不带光标内容，服务端只能靠额度池猜测，会漏扣费，必须拒收。 */
     private static final byte OP_SLOT_LEGACY = 1;
     private static final byte OP_SLOT_NBT_NO_CURSOR = 2;
@@ -30,9 +32,16 @@ public final class ImmersiveChannel implements PluginMessageListener {
         if (player == null || !player.isOnline()) {
             return;
         }
+        // 通道未注册时 Bukkit 会静默丢包；调用方应重试 / 等 RegisterChannel
+        if (!clientPresent(player)) {
+            return;
+        }
         boolean enabled = plugin.state().isEnabled(player);
         byte[] payload = new byte[] { enabled ? (byte) 1 : (byte) 0 };
         player.sendPluginMessage(plugin, CHANNEL, payload);
+        if (plugin.debug()) {
+            plugin.getLogger().info("[debug] 同步开关 -> " + player.getName() + " enabled=" + enabled);
+        }
     }
 
     @Override
@@ -42,6 +51,10 @@ public final class ImmersiveChannel implements PluginMessageListener {
         }
         try (DataInputStream in = new DataInputStream(new ByteArrayInputStream(message))) {
             byte op = in.readByte();
+            if (op == OP_REQUEST_STATE) {
+                sendState(player);
+                return;
+            }
             if (op == OP_SLOT_LEGACY || op == OP_SLOT_NBT_NO_CURSOR) {
                 rejectLegacyClient(player);
                 return;
