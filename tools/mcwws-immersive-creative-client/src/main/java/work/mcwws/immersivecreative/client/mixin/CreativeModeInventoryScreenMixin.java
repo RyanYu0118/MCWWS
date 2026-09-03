@@ -67,6 +67,9 @@ public class CreativeModeInventoryScreenMixin {
     /**
      * 创造物品列表里的取放、数字键塞快捷栏、中键拿一组，有的根本不走
      * {@code handleCreativeModeItemAdd}。每次点击结束后把变更补报给服务端。
+     * <p>
+     * Shift 快速移动会连改多格；补报整份生存背包，避免服务端只看到「清空一格」而误扣费。
+     * 真正计费由服务端按短延迟合并结算（总量不变则不扣）。
      */
     @Inject(method = "slotClicked", at = @At("RETURN"))
     private void mcwws$syncAfterClick(Slot slot, int slotId, int buttonNum,
@@ -75,10 +78,28 @@ public class CreativeModeInventoryScreenMixin {
             return;
         }
         LocalPlayer player = Minecraft.getInstance().player;
-        if (player != null && containerInput == ContainerInput.SWAP
-                && buttonNum >= 0 && buttonNum < 9) {
+        if (player == null) {
+            return;
+        }
+        if (containerInput == ContainerInput.QUICK_MOVE) {
+            syncPlayerInventory(player);
+            return;
+        }
+        if (containerInput == ContainerInput.SWAP && buttonNum >= 0 && buttonNum < 9) {
             ItemStack hotbar = player.getInventory().getItem(buttonNum);
             ImmersiveCreativeNetworking.sendSlot(36 + buttonNum, hotbar);
+        }
+        ImmersiveCreativeNetworking.sendCarriedOnly();
+    }
+
+    /** 上报主背包 / 快捷栏与光标，供服务端合并结算。 */
+    private static void syncPlayerInventory(LocalPlayer player) {
+        var inv = player.getInventory();
+        for (int i = 9; i <= 35; i++) {
+            ImmersiveCreativeNetworking.sendSlot(i, inv.getItem(i));
+        }
+        for (int i = 0; i < 9; i++) {
+            ImmersiveCreativeNetworking.sendSlot(36 + i, inv.getItem(i));
         }
         ImmersiveCreativeNetworking.sendCarriedOnly();
     }

@@ -9,6 +9,9 @@ Messages:
     LeaveMessage: Now leaving %residence.
     EnterMessage: Welcome %player to %residence, owned by %owner..{sound_ENTITY_ALLAY_HURT-1-1}.
   4:
+    LeaveMessage: 你已离开 %residence。
+    EnterMessage: 欢迎 %player 来到 %residence！该领地所有者为 %owner。
+  5:
     LeaveMessage: 您已离开 %residence.
     EnterMessage: 欢迎来到试验区！
 Flags:
@@ -530,6 +533,46 @@ Flags:
     tp: true
     creeper: false
   22:
+    container: true
+    ignite: true
+    harvest: true
+    move: true
+    shear: true
+    use: true
+    destroy: true
+    riding: true
+    animalkilling: true
+    hook: true
+    trade: true
+    mobkilling: true
+    build: true
+    vehicledestroy: true
+    leash: true
+    tp: true
+  23:
+    container: false
+    ignite: false
+    harvest: false
+    shear: false
+    firespread: false
+    use: false
+    destroy: false
+    riding: false
+    monsters: false
+    pvp: false
+    animalkilling: true
+    hook: false
+    build: false
+    explode: false
+    skulk: false
+    vehicledestroy: false
+    tnt: false
+    leash: false
+    pistonprotection: true
+    tp: true
+    nmonsters: false
+    creeper: false
+  24:
     container: false
     ignite: false
     shear: false
@@ -548,7 +591,7 @@ Flags:
     tp: true
     creeper: false
     wspeed2: true
-  23:
+  25:
     container: true
     ignite: false
     note: true
@@ -573,7 +616,7 @@ Flags:
     creeper: false
     wspeed2: true
     table: true
-  24:
+  26:
     container: false
     ignite: false
     shear: false
@@ -596,7 +639,7 @@ Flags:
     tp: true
     wspeed2: true
     creeper: false
-  25:
+  27:
     container: false
     ignite: false
     shear: false
@@ -1052,13 +1095,26 @@ Residences:
     CreatedOn: 1719134233834
     Areas:
       main: -206:63:37:-186:92:54
+  starlight_navigation:
+    TPLoc: -874.88:132.35:163.19:13.55:36.01
+    Messages: 4
+    BlockSellPrice: 0.3
+    Permissions:
+      PlayerFlags:
+        d006ba70-4ddc-4b37-b13c-76f190815116: 22
+      AreaFlags: 23
+      OwnerUUID: d006ba70-4ddc-4b37-b13c-76f190815116
+      OwnerLastKnownName: Ryan_yu__
+    CreatedOn: 1788441208537
+    Areas:
+      main: -1070:63:26:-778:319:505
   technology_mansion:
     TPLoc: -405.0:65.0:355.51:-1.35:-0.0
     Messages: 1
     BlockSellPrice: 0.3
     Permissions:
       PlayerFlags: {}
-      AreaFlags: 22
+      AreaFlags: 24
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1662084334277
@@ -1083,7 +1139,7 @@ Residences:
     BlockSellPrice: 0.3
     Permissions:
       PlayerFlags: {}
-      AreaFlags: 23
+      AreaFlags: 25
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1694014159720
@@ -1103,11 +1159,11 @@ Residences:
       main: -324:63:220:-277:107:253
   trial_area:
     TPLoc: 504.87:67.0:225.94:-0.9:90.14
-    Messages: 4
+    Messages: 5
     BlockSellPrice: 0.3
     Permissions:
       PlayerFlags: {}
-      AreaFlags: 24
+      AreaFlags: 26
       OwnerUUID: 00000000-0000-0000-0000-000000000000
       OwnerLastKnownName: MCWWS
     CreatedOn: 1662462191681
@@ -1121,7 +1177,7 @@ Residences:
         Messages: 2
         Permissions:
           PlayerFlags: {}
-          AreaFlags: 25
+          AreaFlags: 27
           OwnerUUID: 00000000-0000-0000-0000-000000000000
           OwnerLastKnownName: MCWWS
         CreatedOn: 1733837335942

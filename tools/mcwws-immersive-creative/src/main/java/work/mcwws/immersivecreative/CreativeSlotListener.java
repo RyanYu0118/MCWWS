@@ -10,9 +10,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.scheduler.BukkitTask;
 
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 public final class CreativeSlotListener {
@@ -23,8 +26,14 @@ public final class CreativeSlotListener {
     public static final int SLOT_CURSOR_ONLY = -2;
     /** 客户端把物品丢到界面外。 */
     public static final int SLOT_DROP = -1;
+    /**
+     * Shift 在生存背包↔快捷栏挪东西会连发多格更新；按单包差额会误扣/误卖。
+     * 用短尾延迟把同一串操作合并后再结算。
+     */
+    private static final long SETTLE_DELAY_TICKS = 2L;
 
     private final McwwsImmersiveCreativePlugin plugin;
+    private final Map<UUID, PendingBatch> pending = new ConcurrentHashMap<>();
     private PacketAdapter adapter;
 
     public CreativeSlotListener(McwwsImmersiveCreativePlugin plugin) {
@@ -64,6 +73,19 @@ public final class CreativeSlotListener {
             ProtocolLibrary.getProtocolManager().removePacketListener(adapter);
             adapter = null;
         }
+        for (PendingBatch batch : pending.values()) {
+            if (batch.task != null) {
+                batch.task.cancel();
+            }
+        }
+        pending.clear();
+    }
+
+    public void forget(UUID uuid) {
+        PendingBatch batch = pending.remove(uuid);
+        if (batch != null && batch.task != null) {
+            batch.task.cancel();
+        }
     }
 
     /** 客户端模组上报的一次界面操作：槽位新内容 + 操作后的光标内容。 */
@@ -81,6 +103,7 @@ public final class CreativeSlotListener {
         }
         if (slot == SLOT_DROP) {
             // 沉浸式创造禁止把物品丢出界面：客户端已做本地预测，这里回滚并刷新即可。
+            forget(player.getUniqueId());
             player.updateInventory();
             plugin.send(player, "messages.drop-denied");
             return;
@@ -91,31 +114,56 @@ public final class CreativeSlotListener {
             return;
         }
 
-        // 一次操作最多只可能让「原光标内容」和「原槽位内容」消失，特殊物品在此拦下，
-        // 避免附魔装备、Slimefun 物品被按原版材质价贱卖或误毁。
-        ItemStack priorCursor = player.getItemOnCursor();
-        ItemStack priorSlot = currentAt(player, slot);
+        UUID uuid = player.getUniqueId();
+        PendingBatch batch = pending.computeIfAbsent(uuid, id -> {
+            PendingBatch created = new PendingBatch();
+            created.before = Snapshot.capture(player);
+            return created;
+        });
 
-        Snapshot before = Snapshot.capture(player);
         try {
             applyChange(player, slot, incoming, carried);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.WARNING, "应用创造栏槽位失败", ex);
-            before.restore(player);
+            batch.before.restore(player);
             player.updateInventory();
+            forget(uuid);
             return;
         }
 
+        if (batch.task != null) {
+            batch.task.cancel();
+        }
+        batch.task = plugin.getServer().getScheduler().runTaskLater(plugin, () -> settle(player, uuid), SETTLE_DELAY_TICKS);
+    }
+
+    private void settle(Player player, UUID uuid) {
+        PendingBatch batch = pending.remove(uuid);
+        if (batch == null) {
+            return;
+        }
+        batch.task = null;
+        if (!player.isOnline() || !plugin.state().isEnabled(player)) {
+            return;
+        }
+
+        Snapshot before = batch.before;
+        Snapshot after = Snapshot.capture(player);
         Map<Material, Integer> beforeCounts = before.counts();
-        Map<Material, Integer> afterCounts = Snapshot.capture(player).counts();
+        Map<Material, Integer> afterCounts = after.counts();
         Map<Material, Integer> gained = positiveDelta(beforeCounts, afterCounts);
         Map<Material, Integer> removed = positiveDelta(afterCounts, beforeCounts);
 
         if (plugin.debug()) {
-            plugin.getLogger().info("[debug] slot=" + slot + " 取得=" + gained + " 卖出=" + removed);
+            plugin.getLogger().info("[debug] settle 取得=" + gained + " 卖出=" + removed);
         }
 
-        if (!removed.isEmpty() && (hasCustomData(priorCursor) || hasCustomData(priorSlot))) {
+        // 背包内 Shift 挪位：总量不变，直接放过（含附魔/Slimefun 在生存栏之间移动）
+        if (gained.isEmpty() && removed.isEmpty()) {
+            return;
+        }
+
+        if (!removed.isEmpty() && before.hasAnyCustomDataLost(after)) {
             before.restore(player);
             player.updateInventory();
             plugin.send(player, "messages.special-item");
@@ -197,11 +245,6 @@ public final class CreativeSlotListener {
                     "amount", String.valueOf(soldCount),
                     "price", EconomyHook.format(sellTotal));
         }
-    }
-
-    /** 带自定义名称、附魔、PDC 等数据的物品视为特殊物品，不参与创造栏买卖。 */
-    private static boolean hasCustomData(ItemStack stack) {
-        return stack != null && !stack.getType().isAir() && stack.hasItemMeta();
     }
 
     /** 槽位内容与服务端现状完全一致（含 NBT 组件与数量）时为真。 */
@@ -290,6 +333,11 @@ public final class CreativeSlotListener {
         return gained;
     }
 
+    private static final class PendingBatch {
+        private Snapshot before;
+        private BukkitTask task;
+    }
+
     private record Snapshot(ItemStack[] storage, ItemStack[] extra, ItemStack cursor) {
 
         static Snapshot capture(Player player) {
@@ -314,6 +362,41 @@ public final class CreativeSlotListener {
             add(map, extra);
             add(map, new ItemStack[] { cursor });
             return map;
+        }
+
+        /** 带 ItemMeta 的特殊物品若在结算后少了，视为试图卖出/销毁，应整批回滚。 */
+        boolean hasAnyCustomDataLost(Snapshot after) {
+            Map<String, Integer> beforeCustom = customDataCounts();
+            Map<String, Integer> afterCustom = after.customDataCounts();
+            for (Map.Entry<String, Integer> entry : beforeCustom.entrySet()) {
+                int now = afterCustom.getOrDefault(entry.getKey(), 0);
+                if (now < entry.getValue()) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        private Map<String, Integer> customDataCounts() {
+            Map<String, Integer> map = new java.util.HashMap<>();
+            tallyCustom(map, storage);
+            tallyCustom(map, extra);
+            tallyCustom(map, new ItemStack[] { cursor });
+            return map;
+        }
+
+        private static void tallyCustom(Map<String, Integer> map, ItemStack[] items) {
+            if (items == null) {
+                return;
+            }
+            for (ItemStack stack : items) {
+                if (stack == null || stack.getType().isAir() || !stack.hasItemMeta()) {
+                    continue;
+                }
+                // isSimilar 无法做 map key；用类型 + meta 哈希区分附魔/Slimefun 等
+                String key = stack.getType().name() + "|" + stack.getItemMeta().hashCode();
+                map.merge(key, stack.getAmount(), Integer::sum);
+            }
         }
 
         private static void add(Map<Material, Integer> map, ItemStack[] items) {

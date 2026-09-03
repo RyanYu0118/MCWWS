@@ -7,6 +7,8 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRegisterChannelEvent;
 
+import java.util.UUID;
+
 public final class JoinQuitListener implements Listener {
 
     private final McwwsImmersiveCreativePlugin plugin;
@@ -39,7 +41,9 @@ public final class JoinQuitListener implements Listener {
 
     @EventHandler
     public void onQuit(PlayerQuitEvent event) {
-        plugin.state().forget(event.getPlayer().getUniqueId());
+        UUID uuid = event.getPlayer().getUniqueId();
+        plugin.state().forget(uuid);
+        plugin.creativeSlots().forget(uuid);
     }
 
     private void syncJoin(Player player, boolean warnIfMissingClient) {
