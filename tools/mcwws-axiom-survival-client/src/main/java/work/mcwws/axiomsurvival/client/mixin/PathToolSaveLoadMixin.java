@@ -1,5 +1,6 @@
 package work.mcwws.axiomsurvival.client.mixin;
 
+import com.moulberry.axiom.UserAction;
 import com.moulberry.axiom.gizmo.Gizmo;
 import com.moulberry.axiom.tools.modelling.GizmoList;
 import com.moulberry.axiom.tools.path.PathTool;
@@ -52,7 +53,48 @@ public abstract class PathToolSaveLoadMixin {
         if (ImGui.button("全选节点")) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }
-        ImGui.textUnformatted("Ctrl+A 全选。Axiom 按住 Ctrl 会暂时藏起节点，松开后再拖 Y 轴即可整体上移。");
+        ImGui.textUnformatted("Ctrl+A 全选（不会向左平移）。Delete 删除所有金色选中点。按住 Ctrl 会暂时藏起节点，松开后再拖 Y 轴即可整体上移。");
+    }
+
+    @Inject(
+            method = "callAction",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/moulberry/axiom/tools/modelling/GizmoList;delete()V"
+            ),
+            remap = false
+    )
+    private void mcwws$trimConfigsOnDeleteKey(UserAction action, Object data, CallbackInfo ci) {
+        mcwws$trimSelectedPointConfigs();
+    }
+
+    @Inject(
+            method = "displayImguiOptions",
+            at = @At(
+                    value = "INVOKE",
+                    target = "Lcom/moulberry/axiom/tools/modelling/GizmoList;delete()V"
+            ),
+            remap = false
+    )
+    private void mcwws$trimConfigsOnDeleteButton(CallbackInfo ci) {
+        mcwws$trimSelectedPointConfigs();
+    }
+
+    @Unique
+    private void mcwws$trimSelectedPointConfigs() {
+        List<Integer> indices = ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectedDescending();
+        if (indices.isEmpty()) {
+            return;
+        }
+        if (indices.size() == gizmoList.size()) {
+            pointConfigs.clear();
+            return;
+        }
+        for (int i : indices) {
+            if (i >= 0 && i < pointConfigs.size()) {
+                pointConfigs.remove(i);
+            }
+        }
     }
 
     @Unique

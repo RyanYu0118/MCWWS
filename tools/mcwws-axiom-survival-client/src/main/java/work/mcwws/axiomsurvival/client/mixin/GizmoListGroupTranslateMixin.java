@@ -18,6 +18,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.TreeSet;
 
@@ -39,6 +40,9 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
 
     @Shadow
     public abstract void setActiveGizmo(int index);
+
+    @Shadow
+    public abstract void clear();
 
     @Unique
     private final TreeSet<Integer> mcwws$group = new TreeSet<>();
@@ -138,6 +142,15 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
         mcwws$followActiveDelta();
     }
 
+    @Inject(method = "delete", at = @At("HEAD"), cancellable = true, remap = false)
+    private void mcwws$deleteGroup(CallbackInfo ci) {
+        if (mcwws$group.size() <= 1) {
+            return;
+        }
+        mcwws$deleteSelectedGroup();
+        ci.cancel();
+    }
+
     @Override
     public void mcwwsSelectAll() {
         if (gizmos.isEmpty()) {
@@ -153,6 +166,60 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
             mcwws$group.add(i);
         }
         mcwws$dragOrigin = null;
+        mcwws$refreshColours();
+    }
+
+    @Override
+    public List<Integer> mcwwsSelectedDescending() {
+        if (mcwws$group.size() <= 1) {
+            return List.of();
+        }
+        List<Integer> indices = new ArrayList<>(mcwws$group);
+        indices.sort(Comparator.reverseOrder());
+        return indices;
+    }
+
+    @Unique
+    private void mcwws$deleteSelectedGroup() {
+        if (mcwws$group.size() <= 1) {
+            return;
+        }
+        if (mcwws$group.size() == gizmos.size()) {
+            clear();
+            return;
+        }
+        List<Integer> indices = mcwwsSelectedDescending();
+        mcwws$keepGroup = true;
+        try {
+            for (int i : indices) {
+                if (i < 0 || i >= gizmos.size()) {
+                    continue;
+                }
+                Gizmo gizmo = gizmos.get(i);
+                mcwws$pushHistory(
+                        new GizmoList.AddGizmo(i, gizmo.getTargetVec()),
+                        new GizmoList.RemoveGizmo(i),
+                        gizmo.getTargetPosition(),
+                        "#" + (i + 1),
+                        true
+                );
+            }
+        } finally {
+            mcwws$keepGroup = false;
+        }
+        mcwws$group.clear();
+        mcwws$dragOrigin = null;
+        int next = activeGizmo;
+        if (next >= gizmos.size()) {
+            next = gizmos.isEmpty() ? -1 : gizmos.size() - 1;
+        }
+        if (next != activeGizmo) {
+            mcwws$keepGroup = true;
+            setActiveGizmo(next);
+            mcwws$keepGroup = false;
+        } else if (next >= 0) {
+            mcwws$group.add(next);
+        }
         mcwws$refreshColours();
     }
 
