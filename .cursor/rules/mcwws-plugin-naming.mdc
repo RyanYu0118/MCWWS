@@ -1,5 +1,5 @@
 ---
-description: MCWWS 自研插件/模组命名规范（jar、数据目录、plugin.yml / fabric.mod.json）
+description: MCWWS 自研插件/模组命名规范（jar、数据目录、工作室 logo、plugin.yml / fabric.mod.json）
 alwaysApply: true
 ---
 
@@ -45,9 +45,20 @@ MCWWS_<名称>-<自身版本>-need<配套名称>+<配套版本>.jar
 - `MCWWS_AxiomSurvival` ↔ `MCWWS_AxiomSurvivalClient`
 - `MCWWS_ImmersiveCreative` ↔ `MCWWS_ImmersiveCreativeClient`
 
+## 工作室 Logo（Fabric 客户端模组）
+
+自研 Fabric 模组必须在 Mod 列表里显示 **RYAN STUDIO** logo，做法与 `MCWWS_AxiomSurvivalClient` 相同：
+
+1. 把 `tools/branding/mcwws-mod-icon.png` 复制为 `src/main/resources/assets/<fabric.mod.json 的 id>/icon.png`
+2. 在 `fabric.mod.json` 写 `"icon": "assets/<id>/icon.png"`
+3. `authors` 写 `["RYAN STUDIO"]`
+
+不要用第三方模组自己的图标。Paper 插件没有 Mod 列表，不需要这张图。
+
 ## 编写/编译时检查
 
 - 新建插件：`plugin.yml`、`build.ps1`（或 Gradle）输出路径一次性写对
+- 新建客户端模组：同时带上工作室 logo（见上节）
 - 重命名插件：同时改 `plugin.yml`、build 输出路径，并迁移已有 `plugins/<旧名>/` 配置目录
 - 升版本或改配套版本后重新编译，输出新文件名，并删掉同插件旧 jar，避免 Paper / Fabric 加载两份
 - Java `main` 类包名无需与插件名相同，但对外可见名称（命令、日志前缀）建议带 MCWWS 语境
