@@ -27,6 +27,7 @@ import java.util.List;
 
 /**
  * 钢笔多路径图层：Ctrl+C/V 复制粘贴为新图层；重算时把其它图层追加进方块预览，互不串线。
+ * 追加其它层时交换 {@code gizmoList} 引用，避免 clear/add 打断当前拖拽。
  */
 @Mixin(value = PathTool.class, remap = false)
 public abstract class PathToolLayersMixin implements McwwsPathLayers {
@@ -36,6 +37,9 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
 
     @Shadow
     private List<PointConfig> pointConfigs;
+
+    @Shadow
+    private ChunkedBlockRegion chunkedBlockRegion;
 
     @Invoker("createDefaultPointConfig")
     protected abstract PointConfig mcwws$defaultPointConfig();
@@ -82,11 +86,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (mcwws$appendingOtherLayers) {
             return;
         }
-        try {
-            ChunkedBlockRegion.class.getMethod("clear").invoke(region);
-        } catch (ReflectiveOperationException e) {
-            throw new RuntimeException(e);
-        }
+        mcwws$clearRegion(region);
     }
 
     @Inject(method = "recalculate", at = @At("RETURN"), remap = false)
@@ -96,18 +96,34 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         }
         mcwws$ensureLayers();
         mcwws$captureActive();
-        PathLayer activeBackup = mcwws$layers.get(mcwws$activeLayer).copy();
+
         int active = mcwws$activeLayer;
+        PathLayer activeLayer = mcwws$layers.get(active);
+        if (!activeLayer.visible) {
+            mcwws$clearRegion(chunkedBlockRegion);
+        }
+
+        GizmoList savedList = this.gizmoList;
+        List<PointConfig> savedConfigs = new ArrayList<>(this.pointConfigs);
         try {
             for (int i = 0; i < mcwws$layers.size(); i++) {
                 if (i == active) {
                     continue;
                 }
                 PathLayer layer = mcwws$layers.get(i);
-                if (layer.isEmpty()) {
+                if (!layer.visible || layer.isEmpty()) {
                     continue;
                 }
-                mcwws$loadLayer(layer);
+                this.gizmoList = new GizmoList();
+                this.pointConfigs.clear();
+                for (int p = 0; p < layer.points.size(); p++) {
+                    this.gizmoList.addGizmo(layer.points.get(p));
+                    if (p < layer.configs.size()) {
+                        this.pointConfigs.add(new PointConfig(layer.configs.get(p)));
+                    } else {
+                        this.pointConfigs.add(mcwws$defaultPointConfig());
+                    }
+                }
                 mcwws$appendingOtherLayers = true;
                 try {
                     mcwws$invokeRecalculate();
@@ -116,7 +132,9 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 }
             }
         } finally {
-            mcwws$loadLayer(activeBackup);
+            this.gizmoList = savedList;
+            this.pointConfigs.clear();
+            this.pointConfigs.addAll(savedConfigs);
             mcwws$activeLayer = active;
         }
     }
@@ -172,7 +190,14 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         for (int i = 0; i < mcwws$layers.size(); i++) {
             PathLayer layer = mcwws$layers.get(i);
             boolean active = i == mcwws$activeLayer;
-            String label = (active ? "▶ " : "  ") + layer.name + " (" + layer.points.size() + " 点)";
+            // 用「眼/隐」代替 ▶（部分字体把 ▶ 画成问号）
+            String eye = layer.visible ? "眼" : "隐";
+            if (ImGui.smallButton(eye + "##eye" + i)) {
+                layer.visible = !layer.visible;
+                markDirty();
+            }
+            ImGui.sameLine();
+            String label = layer.name + " (" + layer.points.size() + " 点)";
             if (ImGui.selectable(label + "##layer" + i, active)) {
                 if (i != mcwws$activeLayer) {
                     mcwws$switchToLayer(i);
@@ -184,7 +209,16 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 break;
             }
         }
-        ImGui.textUnformatted("Ctrl+C 复制当前选中/整层；Ctrl+V 粘贴为新图层。切换图层后可单独拖动。");
+        ImGui.textUnformatted("点「眼/隐」切换该层是否参与预览与落块。Ctrl+C/V 复制粘贴为新图层。");
+    }
+
+    @Unique
+    private void mcwws$clearRegion(ChunkedBlockRegion region) {
+        try {
+            ChunkedBlockRegion.class.getMethod("clear").invoke(region);
+        } catch (ReflectiveOperationException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     @Unique

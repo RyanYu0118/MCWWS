@@ -10,6 +10,8 @@ import java.util.List;
 public final class PathLayer {
 
     public String name;
+    /** false 时不参与方块预览与落块，仍可切换编辑节点。 */
+    public boolean visible = true;
     public final List<Vec3> points = new ArrayList<>();
     public final List<PointConfig> configs = new ArrayList<>();
 
@@ -19,6 +21,7 @@ public final class PathLayer {
 
     public PathLayer copy() {
         PathLayer copy = new PathLayer(name);
+        copy.visible = visible;
         copy.points.addAll(points);
         for (PointConfig config : configs) {
             copy.configs.add(new PointConfig(config));
