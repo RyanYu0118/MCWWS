@@ -359,8 +359,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 服务端 AxiomPaper | 6.0.1（MC 26.2） |
 | 服务端生存扣费组件 | 1.1.9 |
 | 客户端 Axiom | 6.0.5（MC 26.2） |
-| 客户端生存配套模组 | **1.2.9+** |
-| 沉浸式创造客户端 | **1.0.8+**（按 E 开创造栏；开关重进保留；Shift 整理生存栏不计费；数字键/中键拿一组会扣费；分类页投放为卖出；无 Axiom 也需装） |
+| 客户端生存配套模组 | **1.2.9+**（文件名 `MCWWS_AxiomSurvivalClient-1.2.9-needMCWWS_AxiomSurvival+1.1.9.jar`） |
+| 沉浸式创造客户端 | **1.0.8+**（文件名 `MCWWS_ImmersiveCreativeClient-1.0.8-needMCWWS_ImmersiveCreative+1.0.8.jar`；按 E 开创造栏；开关重进保留；Shift 整理生存栏不计费；数字键/中键拿一组会扣费；分类页投放为卖出；无 Axiom 也需装） |
+
+自研客户端 jar 文件名带自身版本；必须搭配的服务端插件会写在末尾 `need` 段。请只保留一份，删掉旧的无版本文件名，避免模组加载两份。
 
 流程摘要：开菜单时本地旁观；建造时 `E` 默认仍是生存背包、挖掘按生存进度；若在指南开启了**沉浸式创造**，则建造阶段 `E` 为原版创造物品栏（血条/经验仍为生存，拿取按商店价 + 100% 秒送费；需客户端 **1.2.7+**，更早版本会在 Editor 建造时仍打开生存背包）。退出后位置与模式恢复，**编辑界面调的飞行速度会保留**（需客户端 1.2.6+）。进入 Editor 不会自动开飞。Axiom **编辑界面**打开期间沉浸式创造不会抢背包（仍用生存背包，以免关掉 Axiom 工具菜单）。
 
@@ -858,6 +860,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 改扣费数字、权限默认值或交互步骤时，先改实现再改本文。
 
+自研 jar 文件名：`MCWWS_<名称>-<自身版本>.jar`；必须搭配另一自研插件/模组时再加 `-need配套名+配套版本`。`plugin.yml` 的 `name:` 与数据目录仍不带版本。构建脚本点用 `tools/scripts/mcwws-jar-name.ps1`。
+
 | 主题 | 主要位置 |
 | ---- | -------- |
 | 动态价格 | `plugins/Skript/scripts/mcwws/economy/` |
@@ -865,8 +869,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 指令批量改造扣费 | `tools/mcwws-worldedit-survival/` |
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
-| 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy.jar` |
-| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
+| 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.0.jar` |
+| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.8-needMCWWS_ImmersiveCreativeClient+1.0.8.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 网页 UI 设计规范 | `plugins/Skript/scripts/web/ui.md`（同步 **附录 G**） |
@@ -876,7 +880,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
-| 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive.jar`；数据 `plugins/MCWWS_NewsArchive/` |
+| 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive-1.0.0.jar`；数据 `plugins/MCWWS_NewsArchive/` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
@@ -894,23 +898,25 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 > 下列为 `plugins/` 目录内**已加载 jar**（截至文档修订时约 **141** 个）及主要数据目录说明。  
 > **MCWWS_*** 为制作组自研；其余为第三方。`plugins/屏蔽/` 内为**停用**备份，不列入下表。  
-> 版本号取自 jar 文件名；无版本号的以目录内 `plugin.yml` 或 jar 构建信息为准。
+> 版本号取自 jar 文件名；自研 MCWWS 插件已带版本（配套对另含 `-need` 段）。无版本号的第三方以目录内 `plugin.yml` 或 jar 构建信息为准。
 
 ### E.1 制作组自研（MCWWS / RSC）
 
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
-| MCWWS_WorldEditSurvival | — | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限 |
+| MCWWS_WorldEditSurvival | 1.0.5 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限 |
 | MCWWS_PickBlockBuy | 1.0.0 | 生存中键选块购买 |
-| MCWWS_ImmersiveCreative | 1.0.8 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；生存栏整理不计费 |
-| MCWWS_AxiomSurvival | 1.1.9 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；适配 AxiomPaper 6 隧道包 |
-| MCWWS_UltimateShopStash | — | 替代 UltraDepository 的拾取入库与 60s 豁免 |
-| MCWWS_UltimateShopFix | — | 商店 GUI 手持物品防误触 |
-| MCWWS_EconomyLedger | — | 零钱明细队列（飞行/WE/Axiom 合并记账） |
-| MCWWS_WebHost | — | 自动启动 Node 网页服务（默认 :8002） |
-| MCWWS_ResidenceQuiet | — | Residence 拒绝 Boss 栏 2s、Paper 26.2 交互修复 |
-| MCWWS_IdeaAchievements | — | 本服特色成就逻辑 |
-| MCWWS_UltimateAdvancements | — | L 键仅「流浪世界」单页进度 |
+| MCWWS_ImmersiveCreative | 1.0.8 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；生存栏整理不计费；需客户端 1.0.8 |
+| MCWWS_ImmersiveCreativeClient | 1.0.8 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.8` |
+| MCWWS_AxiomSurvival | 1.1.9 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；适配 AxiomPaper 6 隧道包；需客户端 1.2.9 |
+| MCWWS_AxiomSurvivalClient | 1.2.9 | Axiom 生存客户端，装进游戏 `mods/`；jar 含 `needMCWWS_AxiomSurvival+1.1.9` |
+| MCWWS_UltimateShopStash | 1.0.0 | 替代 UltraDepository 的拾取入库与 60s 豁免 |
+| MCWWS_UltimateShopFix | 1.0.1 | 商店 GUI 手持物品防误触 |
+| MCWWS_EconomyLedger | 1.1.0 | 零钱明细队列（飞行/WE/Axiom 合并记账） |
+| MCWWS_WebHost | 1.0.0 | 自动启动 Node 网页服务（默认 :8002） |
+| MCWWS_ResidenceQuiet | 1.5.3 | Residence 拒绝 Boss 栏 2s、Paper 26.2 交互修复 |
+| MCWWS_IdeaAchievements | 1.0.0 | 本服特色成就逻辑 |
+| MCWWS_UltimateAdvancements | 1.0.0 | L 键仅「流浪世界」单页进度 |
 | MCWWS_SFurnaceFix | 1.0.0 | Slimefun 熔炉界面修复 |
 | MCWWS_UltimateTimberFix | 1.4.0 | ExoticGarden 果树连根砍兼容（UT 检测失败时兜底连根砍、补种果树苗、树叶改掉落） |
 | MCWWS_MultitoolFix | 1.0.0 | 竹制品改切斧、按原版可挖掘标签补全 Multitool 映射 |
@@ -939,9 +945,9 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | ---- | ---- | -------- |
 | FastAsyncWorldEdit | 2.15.3 | WorldEdit 高性能后端 |
 | WorldEdit + WorldEditSUI | 1.8.0 | 选区指令与可视化选区 |
-| MCWWS_WorldEditSurvival | — | 见 E.1 |
+| MCWWS_WorldEditSurvival | 1.0.5 | 见 E.1 |
 | AxiomPaper | 6.0.1 MC26.2 | 服务端 Axiom 支持（需与客户端 Axiom 6.x 配套） |
-| MCWWS_AxiomSurvival | — | 见 E.1 |
+| MCWWS_AxiomSurvival | 1.1.9 | 见 E.1 |
 | CurveBuilding | 0.6.3 | 曲线/曲面建造辅助 |
 | ColoredAnvils | 2.0.0 | 染色铁砧 |
 | AnvilPanel | 1.1.0 | 自定义铁砧面板 GUI |
@@ -955,7 +961,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
 | Residence | 6.0.2.4 | 主领地系统；中文 locale |
-| MCWWS_ResidenceQuiet | — | 见 E.1 |
+| MCWWS_ResidenceQuiet | 1.5.3 | 见 E.1 |
 | GriefPrevention | — | 副圈地（world + dimensionalhome）；进服无登录冷却 |
 | WorldGuard | 7.0.17 | 区域 flag、spawn 保护 |
 | CoreProtect | — | 方块日志与回档（管理） |

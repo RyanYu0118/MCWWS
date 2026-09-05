@@ -1,29 +1,53 @@
 ---
-description: MCWWS 自研 Bukkit 插件命名规范（jar、数据目录、plugin.yml）
+description: MCWWS 自研插件/模组命名规范（jar、数据目录、plugin.yml / fabric.mod.json）
 alwaysApply: true
 ---
 
-# MCWWS 自研插件命名规范
+# MCWWS 自研插件与模组命名规范
 
-在本仓库**自行编写或编译**的 Minecraft 插件，必须统一使用 `MCWWS_<名称>` 前缀（下划线分隔）。
+在本仓库**自行编写或编译**的 Minecraft 插件与 Fabric 客户端模组，必须统一使用 `MCWWS_<名称>` 前缀（下划线分隔）。
 
 ## 必须对齐的三处
 
-1. **`plugin.yml` 的 `name:`** — Paper 据此创建 `plugins/<name>/` 数据目录
-2. **输出 jar 文件名** — 如 `plugins/MCWWS_WorldEditSurvival.jar` 或 `MCWWS_SFurnaceFix-1.0.0.jar`
+1. **`plugin.yml` 的 `name:`**（服务端）或对外展示名（客户端）— Paper 据此创建 `plugins/<name>/` 数据目录；**不要**把版本写进 `name:`
+2. **输出 jar 文件名** — 必须带版本，见下方格式
 3. **源码/工具目录** — 推荐 `tools/mcwws-<kebab-case>/` 或根目录 `MCWWS_<名称>/`
 
 三者语义一致；**禁止** jar 叫 `MCWWS_*` 而 `plugin.yml` 仍用无下划线旧名（否则会出现两个配置目录）。
 
+## jar 文件名
+
+```text
+MCWWS_<名称>-<自身版本>.jar
+MCWWS_<名称>-<自身版本>-need<配套名称>+<配套版本>.jar
+```
+
+- 自身版本取 `plugin.yml` / `fabric.mod.json` 的 `version`
+- 有必须搭配使用的自研插件或模组时，在版本后追加 `-need` + 配套对外名称 + `+` + 配套版本（中间无空格）
+- 无配套则不要写 `need`
+- `plugin.yml` 的 `name:` 与数据目录仍是不带版本的 `MCWWS_<名称>`
+
+构建脚本请点用 `tools/scripts/mcwws-jar-name.ps1`，不要手写文件名。
+
 ## 示例
 
-| 插件 | plugin.yml `name` | jar | 数据目录 |
-|------|-------------------|-----|----------|
-| 创世神生存扣费 | `MCWWS_WorldEditSurvival` | `MCWWS_WorldEditSurvival.jar` | `plugins/MCWWS_WorldEditSurvival/` |
+| 插件/模组 | plugin.yml / 对外名 | jar | 数据目录 |
+|---|---|---|---|
+| 创世神生存扣费 | `MCWWS_WorldEditSurvival` | `MCWWS_WorldEditSurvival-1.0.5.jar` | `plugins/MCWWS_WorldEditSurvival/` |
 | Slimefun 熔炉修复 | `MCWWS_SFurnaceFix` | `MCWWS_SFurnaceFix-1.0.0.jar` | `plugins/MCWWS_SFurnaceFix/` |
+| Axiom 生存扣费 | `MCWWS_AxiomSurvival` | `MCWWS_AxiomSurvival-1.1.9-needMCWWS_AxiomSurvivalClient+1.2.9.jar` | `plugins/MCWWS_AxiomSurvival/` |
+| Axiom 生存客户端 | `MCWWS_AxiomSurvivalClient` | `MCWWS_AxiomSurvivalClient-1.2.9-needMCWWS_AxiomSurvival+1.1.9.jar` | （装进游戏 `mods/`） |
+| 沉浸式创造 | `MCWWS_ImmersiveCreative` | `MCWWS_ImmersiveCreative-1.0.8-needMCWWS_ImmersiveCreativeClient+1.0.8.jar` | `plugins/MCWWS_ImmersiveCreative/` |
+| 沉浸式创造客户端 | `MCWWS_ImmersiveCreativeClient` | `MCWWS_ImmersiveCreativeClient-1.0.8-needMCWWS_ImmersiveCreative+1.0.8.jar` | （装进游戏 `mods/`） |
+
+当前配套对：
+
+- `MCWWS_AxiomSurvival` ↔ `MCWWS_AxiomSurvivalClient`
+- `MCWWS_ImmersiveCreative` ↔ `MCWWS_ImmersiveCreativeClient`
 
 ## 编写/编译时检查
 
 - 新建插件：`plugin.yml`、`build.ps1`（或 Gradle）输出路径一次性写对
 - 重命名插件：同时改 `plugin.yml`、build 输出路径，并迁移已有 `plugins/<旧名>/` 配置目录
+- 升版本或改配套版本后重新编译，输出新文件名，并删掉同插件旧 jar，避免 Paper / Fabric 加载两份
 - Java `main` 类包名无需与插件名相同，但对外可见名称（命令、日志前缀）建议带 MCWWS 语境

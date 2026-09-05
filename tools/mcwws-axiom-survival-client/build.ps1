@@ -5,7 +5,12 @@ $Extracted = Join-Path $Lib "extracted"
 $Src = Join-Path $Root "src/main/java"
 $Out = Join-Path $Root "build/classes"
 $Res = Join-Path $Root "src/main/resources"
-$JarOut = Join-Path $Root "build/MCWWS_AxiomSurvivalClient.jar"
+$RepoRoot = Split-Path -Parent (Split-Path $Root)
+. (Join-Path $RepoRoot "tools/scripts/mcwws-jar-name.ps1")
+$McwwsJar = Get-McwwsClientJarPaths -ProjectRoot $Root -ModName "MCWWS_AxiomSurvivalClient" -ResourcesDir $Res `
+    -NeedName "MCWWS_AxiomSurvival" `
+    -NeedVersionFromPluginYml (Join-Path $RepoRoot "tools/mcwws-axiom-survival/src/main/resources/plugin.yml")
+$JarOut = $McwwsJar.JarOut
 
 # 游戏目录含中文，脚本内不写字面量：PowerShell 5.1 按 ANSI 读取会破坏路径
 $McRoot = $env:MCWWS_MC_ROOT
@@ -17,7 +22,7 @@ if ([string]::IsNullOrWhiteSpace($McRoot)) {
         Select-Object -First 1
 }
 if ([string]::IsNullOrWhiteSpace($McRoot)) { throw "Cannot locate .minecraft game directory" }
-$Deploy = Join-Path $McRoot "mods/MCWWS_AxiomSurvivalClient.jar"
+$DeployDir = Join-Path $McRoot "mods"
 $FastUtil = Join-Path $McRoot "libraries/it/unimi/dsi/fastutil/8.5.18/fastutil-8.5.18.jar"
 $AxiomJar = Get-ChildItem -LiteralPath (Join-Path $McRoot "mods") -Filter "Axiom-*.jar" -ErrorAction SilentlyContinue |
     Where-Object { $_.Name -notmatch '\.old$' } |
@@ -47,8 +52,4 @@ $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.Fu
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
-if (Test-Path $JarOut) { Remove-Item $JarOut -Force }
-& $Jar cf $JarOut -C $Out .
-Write-Host "Built $JarOut"
-Copy-Item -LiteralPath $JarOut -Destination $Deploy -Force
-Write-Host "Deployed $Deploy"
+Publish-McwwsClientJar -JarExe $Jar -ClassesDir $Out -JarPaths $McwwsJar -ModName "MCWWS_AxiomSurvivalClient" -ModsDir $DeployDir

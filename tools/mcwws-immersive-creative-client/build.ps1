@@ -6,7 +6,12 @@ $Extracted = Join-Path $AxiomLib "extracted"
 $Src = Join-Path $Root "src/main/java"
 $Out = Join-Path $Root "build/classes"
 $Res = Join-Path $Root "src/main/resources"
-$JarOut = Join-Path $Root "build/MCWWS_ImmersiveCreativeClient.jar"
+$RepoRoot = Split-Path -Parent (Split-Path $Root)
+. (Join-Path $RepoRoot "tools/scripts/mcwws-jar-name.ps1")
+$McwwsJar = Get-McwwsClientJarPaths -ProjectRoot $Root -ModName "MCWWS_ImmersiveCreativeClient" -ResourcesDir $Res `
+    -NeedName "MCWWS_ImmersiveCreative" `
+    -NeedVersionFromPluginYml (Join-Path $RepoRoot "tools/mcwws-immersive-creative/src/main/resources/plugin.yml")
+$JarOut = $McwwsJar.JarOut
 
 $McRoot = $env:MCWWS_MC_ROOT
 if ([string]::IsNullOrWhiteSpace($McRoot)) {
@@ -17,7 +22,7 @@ if ([string]::IsNullOrWhiteSpace($McRoot)) {
         Select-Object -First 1
 }
 if ([string]::IsNullOrWhiteSpace($McRoot)) { throw "Cannot locate .minecraft game directory" }
-$Deploy = Join-Path $McRoot "mods/MCWWS_ImmersiveCreativeClient.jar"
+$DeployDir = Join-Path $McRoot "mods"
 $FastUtil = Join-Path $McRoot "libraries/it/unimi/dsi/fastutil/8.5.18/fastutil-8.5.18.jar"
 # Codec / DynamicOps / Keyable 都在 DataFixerUpper 里，缺了它 javac 会报「无法访问 Codec」
 $DfuDir = Join-Path $McRoot "libraries\com\mojang\datafixerupper"
@@ -62,15 +67,13 @@ $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.Fu
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
-if (Test-Path $JarOut) { Remove-Item $JarOut -Force }
-& $Jar cf $JarOut -C $Out .
-Write-Host "Built $JarOut"
-Copy-Item -LiteralPath $JarOut -Destination $Deploy -Force
-Write-Host "Deployed $Deploy"
+$ExtraModsDirs = @()
 Get-ChildItem "D:\Minecraft" -Directory | ForEach-Object {
-    $extra = Join-Path $_.FullName ".minecraft\mods\MCWWS_ImmersiveCreativeClient.jar"
-    if ((Test-Path $extra) -and ($extra -ne $Deploy)) {
-        Copy-Item -LiteralPath $JarOut -Destination $extra -Force
-        Write-Host "Deployed $extra"
-    }
+    $mods = Join-Path $_.FullName ".minecraft\mods"
+    if (-not (Test-Path $mods)) { return }
+    $has = Get-ChildItem -LiteralPath $mods -File -ErrorAction SilentlyContinue |
+        Where-Object { Test-McwwsJarBelongsToPlugin $_.Name "MCWWS_ImmersiveCreativeClient" }
+    if ($has) { $ExtraModsDirs += $mods }
 }
+Publish-McwwsClientJar -JarExe $Jar -ClassesDir $Out -JarPaths $McwwsJar -ModName "MCWWS_ImmersiveCreativeClient" `
+    -ModsDir $DeployDir -ExtraModsDirs $ExtraModsDirs

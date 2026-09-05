@@ -3,8 +3,10 @@ $Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Src = Join-Path $PSScriptRoot "src/main/java"
 $Res = Join-Path $PSScriptRoot "src/main/resources"
 $Out = Join-Path $PSScriptRoot "build/classes"
-$JarOut = Join-Path $Root "plugins/MCWWS_UltimateShopStash.jar"
-$JarOutNew = Join-Path $Root "plugins/MCWWS_UltimateShopStash.jar.new"
+. (Join-Path $Root "tools/scripts/mcwws-jar-name.ps1")
+$McwwsJar = Get-McwwsPluginJarPaths -RepoRoot $Root -PluginName "MCWWS_UltimateShopStash" -ResourcesDir $Res
+$JarOut = $McwwsJar.JarOut
+$JarOutNew = $McwwsJar.JarOutNew
 
 function Find-Newest {
     param([string]$RelativeDir, [string]$Filter)
@@ -62,17 +64,4 @@ $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.Fu
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
-if (Test-Path $JarOutNew) { Remove-Item $JarOutNew -Force }
-& $JarExe cf $JarOutNew -C $Out .
-if (Test-Path $JarOut) {
-    try {
-        Remove-Item $JarOut -Force
-        Move-Item $JarOutNew $JarOut
-        Write-Host "Built $JarOut"
-    } catch {
-        Write-Host "Built $JarOutNew (原 jar 被占用，停服后替换 plugins/MCWWS_UltimateShopStash.jar)"
-    }
-} else {
-    Move-Item $JarOutNew $JarOut
-    Write-Host "Built $JarOut"
-}
+Publish-McwwsPluginJar -JarExe $JarExe -ClassesDir $Out -JarPaths $McwwsJar -PluginName "MCWWS_UltimateShopStash"
