@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /**
  * 官方钢笔没有保存/导入节点。轨迹以 JSON 落在 {@code config/axiom/mcwws-paths/}。
- * version 1：单层 points；version 2：多层 layers。
+ * version 1：单层 points；version 2：多层 layers；version 3：每层含 settings。
  */
 public final class PathLibrary {
 
@@ -46,11 +46,14 @@ public final class PathLibrary {
     }
 
     public static String toJsonLayers(List<PathLayer> layers, int activeIndex) {
-        StringBuilder sb = new StringBuilder(128 + layers.size() * 64);
-        sb.append("{\n  \"version\": 2,\n  \"active\": ").append(Math.max(0, activeIndex)).append(",\n  \"layers\": [\n");
+        StringBuilder sb = new StringBuilder(256 + layers.size() * 128);
+        sb.append("{\n  \"version\": 3,\n  \"active\": ").append(Math.max(0, activeIndex)).append(",\n  \"layers\": [\n");
         for (int li = 0; li < layers.size(); li++) {
             PathLayer layer = layers.get(li);
-            sb.append("    {\n      \"name\": \"").append(escape(layer.name)).append("\",\n      \"points\": [\n");
+            sb.append("    {\n      \"name\": \"").append(escape(layer.name)).append("\",\n");
+            sb.append("      \"visible\": ").append(layer.visible).append(",\n");
+            layer.settings.appendJson(sb, "      ");
+            sb.append(",\n      \"points\": [\n");
             for (int i = 0; i < layer.points.size(); i++) {
                 Vec3 p = layer.points.get(i);
                 sb.append("        {\"x\": ").append(p.x)
@@ -86,6 +89,35 @@ public final class PathLibrary {
             return layers;
         }
         if (json.contains("\"layers\"")) {
+            List<String> blocks = extractLayerBlocks(json);
+            if (!blocks.isEmpty()) {
+                int idx = 0;
+                for (String block : blocks) {
+                    String name = "图层 " + (idx + 1);
+                    Matcher nameMatcher = LAYER_NAME.matcher(block);
+                    if (nameMatcher.find()) {
+                        name = nameMatcher.group(1).replace("\\\"", "\"").replace("\\\\", "\\");
+                    }
+                    PathLayer layer = new PathLayer(name);
+                    layer.visible = !block.contains("\"visible\": false") && !block.contains("\"visible\":false");
+                    parseSettingsInto(block, layer.settings);
+                    Matcher points = Pattern.compile("\"points\"\\s*:\\s*\\[(.*?)]", Pattern.DOTALL).matcher(block);
+                    if (points.find()) {
+                        Matcher m = POINT.matcher(points.group(1));
+                        while (m.find()) {
+                            layer.points.add(new Vec3(
+                                    Double.parseDouble(m.group(1)),
+                                    Double.parseDouble(m.group(2)),
+                                    Double.parseDouble(m.group(3))
+                            ));
+                        }
+                    }
+                    layers.add(layer);
+                    idx++;
+                }
+                return layers;
+            }
+            // 旧版宽松解析回退
             Matcher nameMatcher = LAYER_NAME.matcher(json);
             Matcher pointBlock = Pattern.compile("\"points\"\\s*:\\s*\\[(.*?)]", Pattern.DOTALL).matcher(json);
             List<String> names = new ArrayList<>();
@@ -121,6 +153,71 @@ public final class PathLibrary {
             layers.add(layer);
         }
         return layers;
+    }
+
+    private static List<String> extractLayerBlocks(String json) {
+        int layersKey = json.indexOf("\"layers\"");
+        if (layersKey < 0) {
+            return List.of();
+        }
+        int arr = json.indexOf('[', layersKey);
+        if (arr < 0) {
+            return List.of();
+        }
+        List<String> blocks = new ArrayList<>();
+        int i = arr + 1;
+        while (i < json.length()) {
+            while (i < json.length() && Character.isWhitespace(json.charAt(i))) {
+                i++;
+            }
+            if (i >= json.length() || json.charAt(i) == ']') {
+                break;
+            }
+            if (json.charAt(i) != '{') {
+                i++;
+                continue;
+            }
+            int depth = 0;
+            int begin = i;
+            for (; i < json.length(); i++) {
+                char c = json.charAt(i);
+                if (c == '{') {
+                    depth++;
+                } else if (c == '}') {
+                    depth--;
+                    if (depth == 0) {
+                        blocks.add(json.substring(begin, i + 1));
+                        i++;
+                        break;
+                    }
+                }
+            }
+        }
+        return blocks;
+    }
+
+    private static void parseSettingsInto(String block, PathLayerToolSettings settings) {
+        settings.curveType = intField(block, "curveType", settings.curveType);
+        settings.looped = boolField(block, "looped", settings.looped);
+        settings.useStairsAndSlabs = boolField(block, "useStairsAndSlabs", settings.useStairsAndSlabs);
+        settings.shape = intField(block, "shape", settings.shape);
+        settings.radius = intField(block, "radius", settings.radius);
+        settings.endRadius = intField(block, "endRadius", settings.endRadius);
+        settings.depth = intField(block, "depth", settings.depth);
+        settings.inverted = boolField(block, "inverted", settings.inverted);
+        settings.slack = intField(block, "slack", settings.slack);
+        settings.keepExisting = boolField(block, "keepExisting", settings.keepExisting);
+        settings.extendToGround = boolField(block, "extendToGround", settings.extendToGround);
+    }
+
+    private static int intField(String block, String key, int fallback) {
+        Matcher m = Pattern.compile("\"" + key + "\"\\s*:\\s*(-?\\d+)").matcher(block);
+        return m.find() ? Integer.parseInt(m.group(1)) : fallback;
+    }
+
+    private static boolean boolField(String block, String key, boolean fallback) {
+        Matcher m = Pattern.compile("\"" + key + "\"\\s*:\\s*(true|false)").matcher(block);
+        return m.find() ? Boolean.parseBoolean(m.group(1)) : fallback;
     }
 
     public static int activeIndexFromJson(String json) {

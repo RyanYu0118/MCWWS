@@ -23,6 +23,7 @@ import work.mcwws.axiomsurvival.client.McwwsPathLayers;
 import work.mcwws.axiomsurvival.client.PathClipboard;
 import work.mcwws.axiomsurvival.client.PathLayer;
 import work.mcwws.axiomsurvival.client.PathLayerIcons;
+import work.mcwws.axiomsurvival.client.PathLayerToolSettings;
 import work.mcwws.axiomsurvival.client.PathLibrary;
 
 import java.util.ArrayList;
@@ -30,7 +31,7 @@ import java.util.List;
 
 /**
  * 钢笔多路径图层：Ctrl+C/V 复制粘贴为新图层；重算时把其它图层追加进方块预览，互不串线。
- * 追加其它层时交换 {@code gizmoList} 引用，避免 clear/add 打断当前拖拽。
+ * 每层独立隔离节点、点配置与曲线/形状等工具参数；追加其它层时交换 {@code gizmoList} 引用，避免 clear/add 打断当前拖拽。
  */
 @Mixin(value = PathTool.class, remap = false)
 public abstract class PathToolLayersMixin implements McwwsPathLayers {
@@ -46,6 +47,39 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
 
     @Shadow
     private ExtrudedGizmo extrudedGizmo;
+
+    @Shadow
+    private int[] curveType;
+
+    @Shadow
+    private boolean looped;
+
+    @Shadow
+    private boolean useStairsAndSlabs;
+
+    @Shadow
+    private int[] shape;
+
+    @Shadow
+    private int[] radius;
+
+    @Shadow
+    private int[] endRadius;
+
+    @Shadow
+    private int[] depth;
+
+    @Shadow
+    private boolean inverted;
+
+    @Shadow
+    private int[] slack;
+
+    @Shadow
+    private boolean keepExisting;
+
+    @Shadow
+    private boolean extendToGround;
 
     @Invoker("createDefaultPointConfig")
     protected abstract PointConfig mcwws$defaultPointConfig();
@@ -111,6 +145,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
 
         GizmoList savedList = this.gizmoList;
         List<PointConfig> savedConfigs = new ArrayList<>(this.pointConfigs);
+        PathLayerToolSettings savedSettings = activeLayer.settings.copy();
         try {
             for (int i = 0; i < mcwws$layers.size(); i++) {
                 if (i == active) {
@@ -130,6 +165,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                         this.pointConfigs.add(mcwws$defaultPointConfig());
                     }
                 }
+                mcwws$applyToolSettings(layer.settings);
                 mcwws$appendingOtherLayers = true;
                 try {
                     mcwws$invokeRecalculate();
@@ -141,6 +177,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             this.gizmoList = savedList;
             this.pointConfigs.clear();
             this.pointConfigs.addAll(savedConfigs);
+            mcwws$applyToolSettings(savedSettings);
             mcwws$activeLayer = active;
         }
     }
@@ -206,9 +243,11 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         ImGui.sameLine();
         if (ImGui.button("新建空图层")) {
             mcwws$captureActive();
-            mcwws$layers.add(new PathLayer("图层 " + (++mcwws$layerSeq)));
+            PathLayer blank = new PathLayer("图层 " + (++mcwws$layerSeq));
+            // 新层用默认工具参数，不继承当前层（避免「看起来像共享」）
+            mcwws$layers.add(blank);
             mcwws$activeLayer = mcwws$layers.size() - 1;
-            mcwws$loadLayer(mcwws$layers.get(mcwws$activeLayer));
+            mcwws$loadLayer(blank);
             markDirty();
         }
 
@@ -247,12 +286,22 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (ImGui.button("全选节点")) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }
-        ImGui.textUnformatted("睁眼/闭眼切换预览；叉号删层。Delete 清空当前层。Ctrl+C/V 复制粘贴。");
+        ImGui.textUnformatted("每层曲线/形状/半径等参数独立。睁眼/闭眼切换预览；叉号删层。Delete 清空当前层。");
 
         ImGui.separator();
         // 曲线 / 形状 / 节点等官方参数收进子菜单，默认折叠
-        if (!ImGui.collapsingHeader("曲线 / 形状 / 节点参数")) {
+        if (!ImGui.collapsingHeader("曲线 / 形状 / 节点参数（仅当前图层）")) {
             ci.cancel();
+        }
+    }
+
+    @Inject(method = "displayImguiOptions", at = @At("RETURN"), remap = false)
+    private void mcwws$captureSettingsAfterUi(CallbackInfo ci) {
+        // 官方参数在 HEAD 之后才改，收尾再写回当前层，保证切换图层前已隔离
+        if (!mcwws$layers.isEmpty()
+                && mcwws$activeLayer >= 0
+                && mcwws$activeLayer < mcwws$layers.size()) {
+            mcwws$readToolSettingsInto(mcwws$layers.get(mcwws$activeLayer).settings);
         }
     }
 
@@ -293,6 +342,40 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 layer.configs.add(mcwws$defaultPointConfig());
             }
         }
+        mcwws$readToolSettingsInto(layer.settings);
+    }
+
+    @Unique
+    private void mcwws$readToolSettingsInto(PathLayerToolSettings target) {
+        target.curveType = curveType[0];
+        target.looped = looped;
+        target.useStairsAndSlabs = useStairsAndSlabs;
+        target.shape = shape[0];
+        target.radius = radius[0];
+        target.endRadius = endRadius[0];
+        target.depth = depth[0];
+        target.inverted = inverted;
+        target.slack = slack[0];
+        target.keepExisting = keepExisting;
+        target.extendToGround = extendToGround;
+    }
+
+    @Unique
+    private void mcwws$applyToolSettings(PathLayerToolSettings source) {
+        if (source == null) {
+            return;
+        }
+        curveType[0] = source.curveType;
+        looped = source.looped;
+        useStairsAndSlabs = source.useStairsAndSlabs;
+        shape[0] = source.shape;
+        radius[0] = source.radius;
+        endRadius[0] = source.endRadius;
+        depth[0] = source.depth;
+        inverted = source.inverted;
+        slack[0] = source.slack;
+        keepExisting = source.keepExisting;
+        extendToGround = source.extendToGround;
     }
 
     @Unique
@@ -307,6 +390,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 pointConfigs.add(mcwws$defaultPointConfig());
             }
         }
+        mcwws$applyToolSettings(layer.settings);
     }
 
     @Unique
@@ -327,8 +411,10 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             PathLayer only = mcwws$layers.get(0);
             only.points.clear();
             only.configs.clear();
+            only.settings.copyFrom(new PathLayerToolSettings());
             gizmoList.clear();
             pointConfigs.clear();
+            mcwws$applyToolSettings(only.settings);
             markDirty();
             return;
         }
@@ -371,7 +457,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (pts.isEmpty()) {
             return false;
         }
-        mcwws$clipboard.set(pts, cfgs);
+        mcwws$clipboard.set(pts, cfgs, active.settings);
         return true;
     }
 

@@ -6,7 +6,7 @@ import net.minecraft.world.phys.Vec3;
 import java.util.ArrayList;
 import java.util.List;
 
-/** 钢笔的一条独立路径（图层）。互不串线，各自栅格化后再合并预览。 */
+/** 钢笔的一条独立路径（图层）。节点、点配置与曲线/形状等工具参数均按层隔离。 */
 public final class PathLayer {
 
     public String name;
@@ -14,6 +14,7 @@ public final class PathLayer {
     public boolean visible = true;
     public final List<Vec3> points = new ArrayList<>();
     public final List<PointConfig> configs = new ArrayList<>();
+    public final PathLayerToolSettings settings = new PathLayerToolSettings();
 
     public PathLayer(String name) {
         this.name = name;
@@ -26,6 +27,7 @@ public final class PathLayer {
         for (PointConfig config : configs) {
             copy.configs.add(new PointConfig(config));
         }
+        copy.settings.copyFrom(settings);
         return copy;
     }
 
