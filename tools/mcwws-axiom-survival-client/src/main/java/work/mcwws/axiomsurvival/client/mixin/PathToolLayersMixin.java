@@ -23,6 +23,7 @@ import work.mcwws.axiomsurvival.client.McwwsPathLayers;
 import work.mcwws.axiomsurvival.client.PathClipboard;
 import work.mcwws.axiomsurvival.client.PathLayer;
 import work.mcwws.axiomsurvival.client.PathLayerIcons;
+import work.mcwws.axiomsurvival.client.PathLibrary;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -187,13 +188,12 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         }
     }
 
-    @Inject(method = "displayImguiOptions", at = @At("RETURN"), remap = false)
-    private void mcwws$layerPanel(CallbackInfo ci) {
+    @Inject(method = "displayImguiOptions", at = @At("HEAD"), cancellable = true, remap = false)
+    private void mcwws$layersFirst(CallbackInfo ci) {
         mcwws$ensureLayers();
         mcwws$captureActive();
 
-        ImGui.separator();
-        ImGui.textUnformatted("路径图层（互不串线，一起生成方块）");
+        ImGui.textUnformatted("路径图层（最高级；互不串线，一起生成方块）");
         if (ImGui.button("复制图层")) {
             mcwws$copySelectionOrLayer();
         }
@@ -216,7 +216,6 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             PathLayer layer = mcwws$layers.get(i);
             boolean active = i == mcwws$activeLayer;
             float icon = ImGui.getFrameHeight();
-            // 先画图标按钮再画 selectable（限宽），避免 selectable 占满行导致「删」点不到
             if (PathLayerIcons.eyeToggle("eye" + i, layer.visible, icon)) {
                 layer.visible = !layer.visible;
                 markDirty();
@@ -235,7 +234,26 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 }
             }
         }
-        ImGui.textUnformatted("睁眼/闭眼切换该层是否参与预览与落块；叉号删除图层。Delete 一次清空当前层。Ctrl+C/V 复制粘贴为新图层。");
+
+        ImGui.separator();
+        if (ImGui.button("保存轨迹")) {
+            PathLibrary.saveDialogLayers(mcwwsAllLayers(), mcwwsActiveLayerIndex());
+        }
+        ImGui.sameLine();
+        if (ImGui.button("导入轨迹")) {
+            PathLibrary.openDialogLayers(this::mcwwsReplaceAllLayers);
+        }
+        ImGui.sameLine();
+        if (ImGui.button("全选节点")) {
+            ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
+        }
+        ImGui.textUnformatted("睁眼/闭眼切换预览；叉号删层。Delete 清空当前层。Ctrl+C/V 复制粘贴。");
+
+        ImGui.separator();
+        // 曲线 / 形状 / 节点等官方参数收进子菜单，默认折叠
+        if (!ImGui.collapsingHeader("曲线 / 形状 / 节点参数")) {
+            ci.cancel();
+        }
     }
 
     @Unique
