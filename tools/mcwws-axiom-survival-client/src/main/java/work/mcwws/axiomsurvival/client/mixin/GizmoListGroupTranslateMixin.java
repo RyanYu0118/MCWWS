@@ -179,6 +179,18 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
         return indices;
     }
 
+    @Override
+    public List<Integer> mcwwsCopyIndicesAscending() {
+        if (!mcwws$group.isEmpty()) {
+            return new ArrayList<>(mcwws$group);
+        }
+        List<Integer> all = new ArrayList<>(gizmos.size());
+        for (int i = 0; i < gizmos.size(); i++) {
+            all.add(i);
+        }
+        return all;
+    }
+
     @Unique
     private void mcwws$deleteSelectedGroup() {
         if (mcwws$group.size() <= 1) {

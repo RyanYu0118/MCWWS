@@ -8,4 +8,7 @@ public interface McwwsGizmoGroup {
 
     /** 当前金色多选下标，从高到低；单选或未成组时为空。 */
     List<Integer> mcwwsSelectedDescending();
+
+    /** 有多选则返回多选（升序），否则返回全部节点下标。 */
+    List<Integer> mcwwsCopyIndicesAscending();
 }
