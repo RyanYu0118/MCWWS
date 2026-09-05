@@ -16,6 +16,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
+import work.mcwws.axiomsurvival.client.McwwsMultiMoveGizmo;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,7 +25,8 @@ import java.util.TreeSet;
 
 /**
  * Axiom 钢笔/建模的 {@link GizmoList} 只有一个 {@code activeGizmo}，拖轴只能动当前节点。
- * Shift+点击加选；Ctrl+A 或工具面板「全选节点」选中全部。拖当前节点时整组平移。
+ * Shift+点击加选；Ctrl+A 或工具面板「全选节点」选中全部。拖当前节点时整组平移；
+ * 整组拖动只记一条「起点→终点」历史，避免 m×n 条碎记录。
  */
 @Mixin(value = GizmoList.class, remap = false)
 public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
@@ -59,6 +61,21 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
     @Unique
     private boolean mcwws$aWasDown;
 
+    @Unique
+    private boolean mcwws$suppressHistory;
+
+    @Unique
+    private boolean mcwws$wasGrabbing;
+
+    @Unique
+    private boolean mcwws$movePending;
+
+    @Unique
+    private int[] mcwws$moveIndices;
+
+    @Unique
+    private Vec3[] mcwws$moveStarts;
+
     @Invoker("pushHistory")
     protected abstract void mcwws$pushHistory(
             GizmoList.GizmoListHistoryAction backwards,
@@ -67,6 +84,20 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
             String description,
             boolean applyForwards
     );
+
+    @Inject(method = "pushHistory", at = @At("HEAD"), cancellable = true, remap = false)
+    private void mcwws$suppressHistoryDuringBatch(
+            GizmoList.GizmoListHistoryAction backwards,
+            GizmoList.GizmoListHistoryAction forwards,
+            BlockPos pos,
+            String description,
+            boolean applyForwards,
+            CallbackInfo ci
+    ) {
+        if (mcwws$suppressHistory) {
+            ci.cancel();
+        }
+    }
 
     @Inject(method = "setActiveGizmo", at = @At("HEAD"), remap = false)
     private void mcwws$rememberActive(int index, CallbackInfo ci) {
@@ -115,6 +146,10 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
     private void mcwws$clearGroup(CallbackInfo ci) {
         mcwws$group.clear();
         mcwws$dragOrigin = null;
+        mcwws$movePending = false;
+        mcwws$suppressHistory = false;
+        mcwws$moveIndices = null;
+        mcwws$moveStarts = null;
     }
 
     @Inject(method = "updateGizmos", at = @At("HEAD"), remap = false)
@@ -123,13 +158,16 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
         boolean aDown = InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_A);
         boolean pressed = aDown && !mcwws$aWasDown;
         mcwws$aWasDown = aDown;
-        if (!pressed || !mc.hasControlDown()) {
-            return;
+        if (pressed && mc.hasControlDown() && !ImGui.getIO().getWantTextInput()) {
+            mcwwsSelectAll();
         }
-        if (ImGui.getIO().getWantTextInput()) {
-            return;
+        // 整组拖拽：在官方写历史之前就压制，并记下起点
+        if (mcwws$group.size() > 1 && mcwws$isActiveGrabbed()) {
+            if (!mcwws$movePending) {
+                mcwws$saveMoveStartsFromCurrent();
+            }
+            mcwws$suppressHistory = true;
         }
-        mcwwsSelectAll();
     }
 
     @Inject(method = "updateGizmos", at = @At("RETURN"), remap = false)
@@ -236,6 +274,70 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
     }
 
     @Unique
+    private boolean mcwws$isActiveGrabbed() {
+        if (activeGizmo < 0 || activeGizmo >= gizmos.size()) {
+            return false;
+        }
+        Gizmo gizmo = gizmos.get(activeGizmo);
+        return gizmo.isGrabbed() || gizmo.isCenterGrabbed() || gizmo.isScaleGrabbed();
+    }
+
+    @Unique
+    private void mcwws$saveMoveStartsFromCurrent() {
+        List<Integer> indices = new ArrayList<>(mcwws$group);
+        int[] idx = new int[indices.size()];
+        Vec3[] starts = new Vec3[indices.size()];
+        for (int i = 0; i < indices.size(); i++) {
+            int g = indices.get(i);
+            idx[i] = g;
+            starts[i] = (g >= 0 && g < gizmos.size()) ? gizmos.get(g).getTargetVec() : Vec3.ZERO;
+        }
+        mcwws$moveIndices = idx;
+        mcwws$moveStarts = starts;
+        mcwws$movePending = true;
+        mcwws$suppressHistory = true;
+    }
+
+    @Unique
+    private void mcwws$commitMoveBatch() {
+        if (!mcwws$movePending || mcwws$moveIndices == null || mcwws$moveStarts == null) {
+            mcwws$movePending = false;
+            mcwws$suppressHistory = false;
+            return;
+        }
+        int[] indices = mcwws$moveIndices;
+        Vec3[] starts = mcwws$moveStarts;
+        Vec3[] ends = new Vec3[indices.length];
+        boolean changed = false;
+        for (int i = 0; i < indices.length; i++) {
+            int g = indices[i];
+            if (g < 0 || g >= gizmos.size()) {
+                ends[i] = starts[i];
+                continue;
+            }
+            ends[i] = gizmos.get(g).getTargetVec();
+            if (!ends[i].equals(starts[i])) {
+                changed = true;
+            }
+        }
+        mcwws$suppressHistory = false;
+        mcwws$movePending = false;
+        mcwws$moveIndices = null;
+        mcwws$moveStarts = null;
+        if (!changed) {
+            return;
+        }
+        BlockPos pos = BlockPos.containing(ends[0]);
+        mcwws$pushHistory(
+                new McwwsMultiMoveGizmo(indices, starts),
+                new McwwsMultiMoveGizmo(indices, ends),
+                pos,
+                "组平移",
+                false
+        );
+    }
+
+    @Unique
     private void mcwws$followActiveDelta() {
         if (activeGizmo < 0 || activeGizmo >= gizmos.size() || mcwws$group.isEmpty()) {
             mcwws$dragOrigin = activeGizmo >= 0 && activeGizmo < gizmos.size()
@@ -244,27 +346,60 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
             mcwws$refreshColours();
             return;
         }
+
+        boolean groupMode = mcwws$group.size() > 1;
+        boolean grabbing = mcwws$isActiveGrabbed();
         Gizmo active = gizmos.get(activeGizmo);
         Vec3 now = active.getTargetVec();
-        if (mcwws$dragOrigin != null && !now.equals(mcwws$dragOrigin)) {
-            Vec3 delta = now.subtract(mcwws$dragOrigin);
-            for (int i : new ArrayList<>(mcwws$group)) {
-                if (i == activeGizmo || i < 0 || i >= gizmos.size()) {
-                    continue;
+        boolean moved = mcwws$dragOrigin != null && !now.equals(mcwws$dragOrigin);
+
+        if (groupMode) {
+            if (moved && !mcwws$movePending) {
+                List<Integer> indices = new ArrayList<>(mcwws$group);
+                int[] idx = new int[indices.size()];
+                Vec3[] starts = new Vec3[indices.size()];
+                Vec3 delta = now.subtract(mcwws$dragOrigin);
+                for (int i = 0; i < indices.size(); i++) {
+                    int g = indices.get(i);
+                    idx[i] = g;
+                    if (g == activeGizmo) {
+                        starts[i] = mcwws$dragOrigin;
+                    } else if (g >= 0 && g < gizmos.size()) {
+                        starts[i] = gizmos.get(g).getTargetVec();
+                    } else {
+                        starts[i] = now;
+                    }
                 }
-                Gizmo extra = gizmos.get(i);
-                Vec3 old = extra.getTargetVec();
-                Vec3 neu = old.add(delta);
-                extra.moveToVec(neu);
-                mcwws$pushHistory(
-                        new GizmoList.MoveGizmo(i, old),
-                        new GizmoList.MoveGizmo(i, neu),
-                        BlockPos.containing(neu),
-                        "#" + (i + 1),
-                        false
-                );
+                mcwws$moveIndices = idx;
+                mcwws$moveStarts = starts;
+                mcwws$movePending = true;
+                mcwws$suppressHistory = true;
+                for (int g : indices) {
+                    if (g == activeGizmo || g < 0 || g >= gizmos.size()) {
+                        continue;
+                    }
+                    gizmos.get(g).moveToVec(gizmos.get(g).getTargetVec().add(delta));
+                }
+            } else if (moved) {
+                Vec3 delta = now.subtract(mcwws$dragOrigin);
+                mcwws$suppressHistory = true;
+                for (int g : new ArrayList<>(mcwws$group)) {
+                    if (g == activeGizmo || g < 0 || g >= gizmos.size()) {
+                        continue;
+                    }
+                    gizmos.get(g).moveToVec(gizmos.get(g).getTargetVec().add(delta));
+                }
             }
+
+            if (mcwws$movePending) {
+                mcwws$suppressHistory = true;
+                if (!grabbing && (mcwws$wasGrabbing || !moved)) {
+                    mcwws$commitMoveBatch();
+                }
+            }
+            mcwws$wasGrabbing = grabbing;
         }
+
         mcwws$dragOrigin = now;
         mcwws$refreshColours();
     }

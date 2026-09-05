@@ -1,6 +1,7 @@
 package work.mcwws.axiomsurvival.client.mixin;
 
 import com.moulberry.axiom.UserAction;
+import com.moulberry.axiom.gizmo.ExtrudedGizmo;
 import com.moulberry.axiom.gizmo.Gizmo;
 import com.moulberry.axiom.render.regions.ChunkedBlockRegion;
 import com.moulberry.axiom.tools.modelling.GizmoList;
@@ -21,6 +22,7 @@ import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
 import work.mcwws.axiomsurvival.client.McwwsPathLayers;
 import work.mcwws.axiomsurvival.client.PathClipboard;
 import work.mcwws.axiomsurvival.client.PathLayer;
+import work.mcwws.axiomsurvival.client.PathLayerIcons;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,6 +42,9 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
 
     @Shadow
     private ChunkedBlockRegion chunkedBlockRegion;
+
+    @Shadow
+    private ExtrudedGizmo extrudedGizmo;
 
     @Invoker("createDefaultPointConfig")
     protected abstract PointConfig mcwws$defaultPointConfig();
@@ -159,6 +164,26 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 mcwws$pasteAsNewLayer();
                 cir.setReturnValue(UserAction.ActionResult.USED_STOP);
             }
+            return;
+        }
+        if (action == UserAction.DELETE) {
+            if (extrudedGizmo != null) {
+                return;
+            }
+            mcwws$ensureLayers();
+            if (!gizmoList.isEmpty()) {
+                // 一次清空当前图层全部节点，避免官方逐点删除要连按多次
+                gizmoList.clear();
+                pointConfigs.clear();
+                mcwws$captureActive();
+                markDirty();
+                cir.setReturnValue(UserAction.ActionResult.USED_STOP);
+                return;
+            }
+            if (mcwws$layers.size() > 1) {
+                mcwws$deleteLayer(mcwws$activeLayer);
+                cir.setReturnValue(UserAction.ActionResult.USED_STOP);
+            }
         }
     }
 
@@ -190,26 +215,27 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         for (int i = 0; i < mcwws$layers.size(); i++) {
             PathLayer layer = mcwws$layers.get(i);
             boolean active = i == mcwws$activeLayer;
-            // 用「眼/隐」代替 ▶（部分字体把 ▶ 画成问号）
-            String eye = layer.visible ? "眼" : "隐";
-            if (ImGui.smallButton(eye + "##eye" + i)) {
+            float icon = ImGui.getFrameHeight();
+            // 先画图标按钮再画 selectable（限宽），避免 selectable 占满行导致「删」点不到
+            if (PathLayerIcons.eyeToggle("eye" + i, layer.visible, icon)) {
                 layer.visible = !layer.visible;
                 markDirty();
             }
-            ImGui.sameLine();
+            ImGui.sameLine(0, 4f);
+            if (PathLayerIcons.deleteButton("dellayer" + i, icon)) {
+                mcwws$deleteLayer(i);
+                break;
+            }
+            ImGui.sameLine(0, 4f);
             String label = layer.name + " (" + layer.points.size() + " 点)";
-            if (ImGui.selectable(label + "##layer" + i, active)) {
+            float width = Math.max(48f, ImGui.getContentRegionAvailX());
+            if (ImGui.selectable(label + "##layer" + i, active, 0, width, 0f)) {
                 if (i != mcwws$activeLayer) {
                     mcwws$switchToLayer(i);
                 }
             }
-            ImGui.sameLine();
-            if (ImGui.smallButton("删##dellayer" + i)) {
-                mcwws$deleteLayer(i);
-                break;
-            }
         }
-        ImGui.textUnformatted("点「眼/隐」切换该层是否参与预览与落块。Ctrl+C/V 复制粘贴为新图层。");
+        ImGui.textUnformatted("睁眼/闭眼切换该层是否参与预览与落块；叉号删除图层。Delete 一次清空当前层。Ctrl+C/V 复制粘贴为新图层。");
     }
 
     @Unique
