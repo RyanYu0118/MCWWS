@@ -28,15 +28,26 @@ final class PacketBufs {
     }
 
     static Object fromBytes(Player player, byte[] bytes) throws ReflectiveOperationException {
-        Object handle = player.getClass().getMethod("getHandle").invoke(player);
-        Object registryAccess = handle.getClass().getMethod("registryAccess").invoke(handle);
-        Class<?> bufClass = Class.forName("net.minecraft.network.RegistryFriendlyByteBuf");
         Class<?> unpooledClass = Class.forName("io.netty.buffer.Unpooled");
         Object wrapped = unpooledClass.getMethod("wrappedBuffer", byte[].class).invoke(null, (Object) bytes);
-        Constructor<?> ctor = bufClass.getConstructor(
-                Class.forName("io.netty.buffer.ByteBuf"),
-                Class.forName("net.minecraft.core.RegistryAccess")
-        );
-        return ctor.newInstance(wrapped, registryAccess);
+        Class<?> byteBufClass = Class.forName("io.netty.buffer.ByteBuf");
+
+        // 优先带 RegistryAccess 的缓冲（与 WrapperPacketListener / 旧版预估一致）
+        try {
+            Object handle = player.getClass().getMethod("getHandle").invoke(player);
+            Object registryAccess = handle.getClass().getMethod("registryAccess").invoke(handle);
+            Class<?> bufClass = Class.forName("net.minecraft.network.RegistryFriendlyByteBuf");
+            Constructor<?> ctor = bufClass.getConstructor(
+                    byteBufClass,
+                    Class.forName("net.minecraft.core.RegistryAccess")
+            );
+            return ctor.newInstance(wrapped, registryAccess);
+        } catch (ReflectiveOperationException ignored) {
+            // Axiom 6 隧道路径可能只需普通 FriendlyByteBuf
+        }
+
+        Class<?> bufClass = Class.forName("net.minecraft.network.FriendlyByteBuf");
+        Constructor<?> ctor = bufClass.getConstructor(byteBufClass);
+        return ctor.newInstance(wrapped);
     }
 }

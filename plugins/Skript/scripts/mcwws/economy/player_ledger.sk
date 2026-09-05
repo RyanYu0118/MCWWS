@@ -6,7 +6,9 @@ import:
     java.nio.charset.StandardCharsets
     java.nio.file.StandardOpenOption
     java.time.Instant
+    java.util.UUID
     me.xpyex.plugin.flywithfood.bukkit.event.EnergyCostEvent
+    work.mcwws.ideachievements.McwwsIdeaAchievementsPlugin
 
 options:
     ledger queue: plugins/Skript/scripts/web/data/ledger_queue.txt
@@ -20,8 +22,18 @@ function mcwwsLedgerSanitize(text: text) :: text:
 function mcwwsLedgerNowIso() :: text:
     return Instant.now().toString()
 
+# 直接调插件 API，避免 execute console command 的「已注入流水」刷屏
 function mcwwsIdeaAchMoneyCmd(uuid: text, amount: number, dir: text):
-    execute console command "mcwws-ideaach money %{_uuid}% %{_amount}% %{_dir}%"
+    set {_typed} to the instance of the plugin McwwsIdeaAchievementsPlugin
+    if {_typed} is not set:
+        stop
+    set {_u} to UUID.fromString({_uuid})
+    set {_credit} to true
+    set {_d} to "%{_dir}%"
+    set {_d} to {_d} in lower case
+    if {_d} is "debit" or {_d} is "spend" or {_d} is "out":
+        set {_credit} to false
+    {_typed}.economyFlow().onMoneyFlow({_u}, {_amount}, {_credit})
 
 function mcwwsScheduleIdeaAchMoney(uuid: text, amount: number, dir: text):
     # FlyWithFood 的 EnergyCostEvent 在异步线程触发，不能直接 dispatchCommand；入队后由 every 1 tick 在主线程执行

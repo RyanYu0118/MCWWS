@@ -12,11 +12,11 @@ alwaysApply: true
 用户要的是 Paper **自带的图形窗口**（带日志面板、玩家列表、TPS 曲线和命令输入框），不是命令提示符。所以必须满足两点：**用 `javaw` 启动**（不产生控制台窗口），且**不加 `nogui` 参数**（加了就没有图形界面）。
 
 ```text
-javaw -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar paper-26.2-112.jar
+javaw -Xms1G -Xmx16G -Dorg.bukkit.plugin.java.LibraryLoader.centralURL=https://maven.aliyun.com/repository/central -jar paper-26.2-121.jar
 ```
 
 - 工作目录：仓库根目录（含 `plugins/`、`world/` 的目录）
-- jar 文件名以目录内实际最新的 `paper-26.2-*.jar` 为准（当前为 `paper-26.2-112.jar`）
+- jar 文件名以目录内实际最新的 `paper-26.2-*.jar` 为准（当前为 `paper-26.2-121.jar`）
 - 由 Agent 代为启动时用 `Start-Process` 拉起，不要把服务器塞进 Agent 的管道 shell
 - 启动成功的判据：`javaw` 进程的 `MainWindowTitle` 为 `Minecraft server`，且 `logs/latest.log` 出现 `Done (…)!`
 - `javaw` 没有 stdout，日志全部落在 `logs/latest.log`，Agent 一律读该文件

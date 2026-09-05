@@ -1,0 +1,71 @@
+use-permissions: true
+
+language: EN # NL of EN
+
+gui:
+  sort:
+    size: 27
+    fill:
+      material: GRAY_STAINED_GLASS_PANE
+    items:
+      chest_auto:
+        slot: 11
+        material: CHEST
+      hotkeys:
+        slot: 13
+        material: TRIPWIRE_HOOK
+      inv_auto:
+        slot: 15
+        material: BARREL
+  
+  hotkeys:
+    size: 27
+    fill:
+      material: GRAY_STAINED_GLASS_PANE
+    layout:
+      middle_click: 13
+      shift_left_empty: 10
+      double_click_empty: 11
+      shift_right_empty: 12
+      left_click_container: 14
+      left_click_outside: 15
+      double_left_outside: 16
+      right_click_outside: 21
+      double_right_outside: 22
+    
+    # Back button (bottom-right)
+    back:
+      slot: 26
+      material: ARROW
+
+hotkeys:
+  enabled-by-default: true
+  middle-click: true
+  shift-left-empty: true
+  double-click-empty: true
+  shift-right-empty: true
+  left-click-container: true
+  left-click-outside: true
+  double-left-outside: true
+  right-click-outside: true
+  double-right-outside: true
+
+sorting:
+  # When using transfer hotkeys (click outside inventory),
+  # should the hotbar be ignored?
+  # true  = hotbar stays untouched
+  # false = hotbar items are also moved
+  ignore-hotbar-on-transfer: false
+
+# Player preferences are also saved during clean shutdown and when a player leaves.
+storage:
+  save-interval-seconds: 10
+
+
+disabled-worlds: []
+
+sorting-method: '{category},{itemsFirst},{name},{color},{customName}'
+
+categories:
+  auto-generate-category-files: true
+  folder: categories

@@ -1,4 +1,4 @@
-$ErrorActionPreference = "Stop"
+﻿$ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Src = Join-Path $PSScriptRoot "src/main/java"
 $Res = Join-Path $PSScriptRoot "src/main/resources"
@@ -38,7 +38,7 @@ $Libs = @(
     (Join-Path $Root "libraries/io/netty/netty-common/4.1.118.Final/netty-common-4.1.118.Final.jar")
 )
 
-$CpParts = @($PaperApi, $Axiom, $Vault, $Slimefun, $Residence) + $Libs | Where-Object { $_ -and (Test-Path $_) }
+$CpParts = @($PaperApi, $PaperServer, $Axiom, $Vault, $Slimefun, $Residence) + $Libs | Where-Object { $_ -and (Test-Path $_) }
 $Cp = ($CpParts | Select-Object -Unique) -join ';'
 if (-not (Test-Path $PaperApi)) { throw "Missing paper-api: $PaperApi" }
 if (-not (Test-Path $Axiom)) { throw "Missing AxiomPaper jar: $Axiom" }

@@ -1,0 +1,108 @@
+error:
+  only_players: "&cOnly players can use this."
+  no_permission: "&cNo permission."
+  disabled_world: "&cSorting is disabled in this world."
+
+action:
+  container_sorted: "&aContainer sorted."
+
+sort:
+  auto_on: "&aAuto chest sort: &2ON"
+  auto_off: "&cAuto chest sort: &4OFF"
+  auto_toggle_on: "&eAuto chest sort: &aON"
+  auto_toggle_off: "&eAuto chest sort: &cOFF"
+  reloaded: "&aConfig & messages reloaded."
+  help:
+    1: "&e/sort &7- Open settings GUI"
+    2: "&e/sort on|off|toggle"
+    3: "&e/sort hotkeys"
+    4: "&e/sort reload"
+
+invsort:
+  sorted_inventory: "&aInventory sorted (hotbar unchanged)."
+  sorted_hotbar: "&aHotbar sorted."
+  auto_on: "&aAuto inventory sort: &2ON"
+  auto_off: "&cAuto inventory sort: &4OFF"
+  help:
+    1: "&e/invsort &7- Sort inventory (without hotbar)"
+    2: "&e/invsort hotbar &7- Sort only your hotbar"
+    3: "&e/invsort on|off|toggle &7- Auto sort"
+
+gui:
+  click_to_toggle: "&8Click to toggle."
+  state:
+    enabled: "&aEnabled"
+    disabled: "&cDisabled"
+
+  sort:
+    title: "&8[CoreChestsort] Settings"
+    fill_name: " "
+    items:
+      chest_auto:
+        name: "&eAuto Chest Sort"
+        lore:
+          - "&7Status: %state%"
+          - "&7Click to toggle."
+      hotkeys:
+        name: "&eHotkeys"
+        lore:
+          - "&7Manage your hotkeys."
+      inv_auto:
+        name: "&eAuto Inventory Sort"
+        lore:
+          - "&7Status: %state%"
+          - "&7Click to toggle."
+
+  hotkeys:
+    title: "&8[CoreChestsort] Hotkeys"
+    fill_name: " "
+    back:
+      name: "&eBack"
+      lore:
+        - "&7Back to settings."
+
+hotkey:
+  text:
+    except_hotbar: "(except hotbar)"
+    include_hotbar: "(including hotbar)"
+
+  name:
+    middle_click: "Middle-Click"
+    shift_left_empty: "Shift + Left Click"
+    double_click_empty: "Double Click"
+    shift_right_empty: "Shift + Right Click"
+    left_click_container: "Left-Click a Container"
+    left_click_outside: "Left-Click outside"
+    double_left_outside: "Double-Left-Click outside"
+    right_click_outside: "Right-Click outside"
+    double_right_outside: "Double-Right-Click outside"
+
+  desc:
+    middle:
+      1: "&7Sorts an inventory using &fMiddle-click"
+      2: "&8(1.18+ clients often don't send this)"
+    shift_left:
+      1: "&7Sort by &fShift + Left Click"
+      2: "&7on any &fEMPTY&7 slot."
+    double_click:
+      1: "&7Sort by &fDouble Click"
+      2: "&7on any &fEMPTY&7 slot."
+    shift_right:
+      1: "&7Sort by &fShift + Right Click"
+      2: "&7on any &fEMPTY&7 slot."
+    left_container:
+      1: "&7Left-Click a container block"
+      2: "&7to sort it instantly."
+    left_outside:
+      1: "&7Puts all &fmatching&7 stuff"
+      2: "&7%hotbar% into the container."
+    double_left_outside:
+      1: "&7Puts &fall items&7"
+      2: "&7%hotbar% into the container."
+    right_outside:
+      1: "&7Puts matching items from"
+      2: "&7the container into your inventory."
+    double_right_outside:
+      1: "&7Empties the whole container"
+      2: "&7into your inventory."
+

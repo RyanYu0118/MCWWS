@@ -19,6 +19,10 @@ if ([string]::IsNullOrWhiteSpace($McRoot)) {
 if ([string]::IsNullOrWhiteSpace($McRoot)) { throw "Cannot locate .minecraft game directory" }
 $Deploy = Join-Path $McRoot "mods/MCWWS_AxiomSurvivalClient.jar"
 $FastUtil = Join-Path $McRoot "libraries/it/unimi/dsi/fastutil/8.5.18/fastutil-8.5.18.jar"
+$AxiomJar = Get-ChildItem -LiteralPath (Join-Path $McRoot "mods") -Filter "Axiom-*.jar" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notmatch '\.old$' } |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
 
 $JavaHome = if ($env:JAVA_HOME) { $env:JAVA_HOME } else { "C:\Program Files\Java\jdk-25.0.2" }
 $Javac = Join-Path $JavaHome "bin/javac.exe"
@@ -28,6 +32,7 @@ $Jspecify = Join-Path $Extracted "jspecify-1.0.0.jar"
 
 $CpParts = @()
 if (Test-Path $FastUtil) { $CpParts += $FastUtil }
+if ($AxiomJar -ne $null) { $CpParts += $AxiomJar.FullName }
 if (Test-Path $Jspecify) { $CpParts += $Jspecify }
 $CpParts += (Join-Path $Lib "*")
 if (Test-Path $Extracted) { $CpParts += (Join-Path $Extracted "*") }

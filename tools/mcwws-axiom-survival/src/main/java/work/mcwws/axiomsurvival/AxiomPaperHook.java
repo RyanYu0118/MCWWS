@@ -52,15 +52,15 @@ public final class AxiomPaperHook {
             return false;
         }
         try {
-            Map<String, PacketHandler> largeHandlers = findLargePayloadHandlers();
+            AxiomLargePayloadHook.HandlerTable handlerTable = findHandlerTable(axiomPaper);
             Map<String, String> paths = new LinkedHashMap<>();
 
-            hookCharging(axiomPaper, largeHandlers, paths, "set_block", true,
+            hookCharging(axiomPaper, handlerTable, paths, "set_block", true,
                     SetBlockPacketListener::new,
                     (player, buf) -> chargeService.evaluate(
                             player, "set_block", estimator.estimateSetBlockPacket(player, buf))
             );
-            hookCharging(axiomPaper, largeHandlers, paths, "set_buffer", true,
+            hookCharging(axiomPaper, handlerTable, paths, "set_buffer", true,
                     SetBlockBufferPacketListener::new,
                     (player, buf) -> {
                         PacketFeeEstimator.BufferEstimate estimate =
@@ -73,46 +73,46 @@ public final class AxiomPaperHook {
                     }
             );
             // 以下通道在 Axiom 改版时更容易改名，单独兜底，避免连带影响方块扣费
-            hookCharging(axiomPaper, largeHandlers, paths, "spawn_entity", false,
+            hookCharging(axiomPaper, handlerTable, paths, "spawn_entity", false,
                     SpawnEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
                             player, "spawn_entity", "生成实体", estimator.countCollection(buf),
                             FeeAccumulator.UNKNOWN_DISTANCE)
             );
-            hookCharging(axiomPaper, largeHandlers, paths, "delete_entity", false,
+            hookCharging(axiomPaper, handlerTable, paths, "delete_entity", false,
                     DeleteEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
                             player, "delete_entity", "删除实体", estimator.countCollection(buf),
                             estimator.minDistanceFromEntityUuids(player, buf))
             );
-            hookCharging(axiomPaper, largeHandlers, paths, "manipulate_entity", false,
+            hookCharging(axiomPaper, handlerTable, paths, "manipulate_entity", false,
                     ManipulateEntityPacketListener::new,
                     (player, buf) -> chargeService.evaluateEntities(
                             player, "manipulate_entity", "调整实体", estimator.countCollection(buf),
                             estimator.minDistanceFromEntityUuids(player, buf))
             );
-            hookCharging(axiomPaper, largeHandlers, paths, "set_world_time", false,
+            hookCharging(axiomPaper, handlerTable, paths, "set_world_time", false,
                     SetTimePacketListener::new,
                     (player, buf) -> chargeService.evaluateWorldControl(
                             player, "world-control.block-world-time", "world-time-blocked")
             );
-            hookCharging(axiomPaper, largeHandlers, paths, "set_world_property", false,
+            hookCharging(axiomPaper, handlerTable, paths, "set_world_property", false,
                     SetWorldPropertyListener::new,
                     (player, buf) -> chargeService.evaluateWorldControl(
                             player, "world-control.block-world-property", "world-property-blocked")
             );
-            replaceChannel(axiomPaper, "set_gamemode", axiom -> {
+            replaceChannel(axiomPaper, handlerTable, "set_gamemode", axiom -> {
                 PacketHandler original = new SetGamemodePacketListener(axiom);
                 return EditorPacketHandlers.wrapGamemode(plugin, editorRestoreService, survivalEditorService, original);
-            });
-            replaceChannel(axiomPaper, "teleport", axiom -> {
+            }, null);
+            replaceChannel(axiomPaper, handlerTable, "teleport", axiom -> {
                 PacketHandler original = new TeleportPacketListener(axiom);
                 return EditorPacketHandlers.wrapTeleport(plugin, editorRestoreService, survivalEditorService, original);
-            });
-            replaceChannel(axiomPaper, "set_no_physical_trigger", axiom -> {
+            }, null);
+            replaceChannel(axiomPaper, handlerTable, "set_no_physical_trigger", axiom -> {
                 PacketHandler original = new SetNoPhysicalTriggerPacketListener(axiom);
                 return EditorPacketHandlers.wrapNoPhysicalTrigger(plugin, editorRestoreService, survivalEditorService, original);
-            });
+            }, null);
             installed = true;
             plugin.getLogger().info("已挂钩 AxiomPaper 扣费通道: " + describePaths(paths)
                     + "；Editor 恢复（含生存 Editor 通道）已就绪。");
@@ -141,26 +141,31 @@ public final class AxiomPaperHook {
         return builder.toString();
     }
 
-    private Map<String, PacketHandler> findLargePayloadHandlers() {
+    private AxiomLargePayloadHook.HandlerTable findHandlerTable(AxiomPaper axiomPaper) {
         try {
-            Map<String, PacketHandler> handlers = AxiomLargePayloadHook.findHandlers();
+            AxiomLargePayloadHook.HandlerTable handlers = AxiomLargePayloadHook.findHandlers(axiomPaper);
             if (handlers == null) {
-                plugin.getLogger().warning("未找到 Axiom 大载荷处理器表，大载荷改块可能不计费。");
+                plugin.getLogger().warning(
+                        "未找到 Axiom 服务端处理器表（supportedServerboundPackets / 大载荷表），"
+                                + "隧道或大载荷改块可能不计费。");
             }
             return handlers;
         } catch (ReflectiveOperationException | RuntimeException ex) {
-            plugin.getLogger().log(Level.WARNING, "读取 Axiom 大载荷处理器表失败: " + ex.getMessage());
+            plugin.getLogger().log(Level.WARNING, "读取 Axiom 服务端处理器表失败: " + ex.getMessage());
             return null;
         }
     }
 
     /**
-     * 按 Axiom 自己的分流方式挂钩：通道在大载荷表里就换表内处理器（Bukkit 侧本就是 Dummy，
-     * 不去动它以免改变 Axiom 行为），否则换 Bukkit 通道监听器。
+     * 同时挂钩查表路径与 Bukkit 插件通道：
+     * <ul>
+     *   <li>Axiom 6：大包走 tunnel → supportedServerboundPackets，小包走 Bukkit</li>
+     *   <li>Axiom 5：大包走 BigPayload 表，小包走 Bukkit</li>
+     * </ul>
      */
     private void hookCharging(
             AxiomPaper axiomPaper,
-            Map<String, PacketHandler> largeHandlers,
+            AxiomLargePayloadHook.HandlerTable handlerTable,
             Map<String, String> paths,
             String channel,
             boolean required,
@@ -168,40 +173,37 @@ public final class AxiomPaperHook {
             ChargingPacketHandlers.PacketGate gate
     ) throws ReflectiveOperationException {
         String channelName = "axiom:" + channel;
-        PacketHandler large = largeHandlers == null ? null : largeHandlers.get(channelName);
-        if (large != null) {
-            try {
-                largeHandlers.put(channelName, wrapCharging(large, channel, gate));
-                paths.put(channel, "大载荷");
-                return;
-            } catch (RuntimeException ex) {
-                plugin.getLogger().log(Level.WARNING,
-                        "写入 Axiom 大载荷处理器表失败 (" + channel + "): " + ex.getMessage());
-                if (required) {
-                    throw ex;
-                }
-                return;
-            }
-        }
+        boolean inTable = handlerTable != null && handlerTable.contains(channelName);
         Function<AxiomPaper, PacketHandler> wrappedFactory =
                 axiom -> wrapCharging(smallFactory.apply(axiom), channel, gate);
-        if (required) {
-            replaceChannel(axiomPaper, channel, wrappedFactory);
-        } else if (!replaceChannelSafely(axiomPaper, channel, wrappedFactory)) {
-            return;
+        try {
+            String path = replaceChannel(axiomPaper, handlerTable, channel, wrappedFactory,
+                    inTable ? "隧道/查表+小载荷" : "小载荷");
+            if (path != null) {
+                paths.put(channel, path);
+            } else if (required) {
+                throw new IllegalStateException("required channel not hooked: " + channel);
+            }
+        } catch (RuntimeException | ReflectiveOperationException ex) {
+            if (required) {
+                throw ex;
+            }
+            plugin.getLogger().log(Level.WARNING,
+                    "AxiomPaper 通道 " + channel + " 挂钩失败，该通道将不受管控: " + ex.getMessage());
         }
-        paths.put(channel, "小载荷");
     }
 
     public static boolean isAxiomSessionActive(Player player) {
         if (player == null) {
             return false;
         }
-        Plugin axiomPlugin = McwwsAxiomSurvivalPlugin.getInstance().getServer().getPluginManager().getPlugin("AxiomPaper");
+        Plugin axiomPlugin = McwwsAxiomSurvivalPlugin.getInstance().getServer()
+                .getPluginManager().getPlugin("AxiomPaper");
         if (!(axiomPlugin instanceof AxiomPaper axiomPaper)) {
             return false;
         }
-        return axiomPaper.activeAxiomPlayers.contains(player.getUniqueId());
+        // Axiom 6 起 activeAxiomPlayers 为 private，改用公开 API
+        return axiomPaper.canUseAxiom(player);
     }
 
     private PacketHandler wrapCharging(
@@ -212,30 +214,32 @@ public final class AxiomPaperHook {
         return ChargingPacketHandlers.wrap(plugin, chargeService, original, channel, gate);
     }
 
-    private boolean replaceChannelSafely(
+    /**
+     * @return 挂钩路径描述；失败返回 null
+     */
+    private String replaceChannel(
             AxiomPaper axiomPaper,
+            AxiomLargePayloadHook.HandlerTable handlerTable,
             String channel,
-            Function<AxiomPaper, PacketHandler> wrappedFactory
-    ) {
-        try {
-            replaceChannel(axiomPaper, channel, wrappedFactory);
-            return true;
-        } catch (Throwable ex) {
-            plugin.getLogger().log(Level.WARNING,
-                    "AxiomPaper 通道 " + channel + " 挂钩失败，该通道将不受管控: " + ex.getMessage());
-            return false;
-        }
-    }
-
-    private void replaceChannel(AxiomPaper axiomPaper, String channel, Function<AxiomPaper, PacketHandler> wrappedFactory)
-            throws ReflectiveOperationException {
+            Function<AxiomPaper, PacketHandler> wrappedFactory,
+            String pathLabel
+    ) throws ReflectiveOperationException {
         String channelName = "axiom:" + channel;
-        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(axiomPaper, channelName);
         PacketHandler wrapped = wrappedFactory.apply(axiomPaper);
+        boolean updatedTable = false;
+        if (handlerTable != null && handlerTable.contains(channelName)) {
+            handlerTable.put(channelName, wrapped);
+            updatedTable = true;
+        }
+        plugin.getServer().getMessenger().unregisterIncomingPluginChannel(axiomPaper, channelName);
         plugin.getServer().getMessenger().registerIncomingPluginChannel(
                 axiomPaper,
                 channelName,
                 new WrapperPacketListener(wrapped)
         );
+        if (pathLabel != null) {
+            return updatedTable ? pathLabel : "小载荷";
+        }
+        return updatedTable ? "隧道/查表+小载荷" : "小载荷";
     }
 }

@@ -55,7 +55,10 @@ public final class IdeaAchCommand implements CommandExecutor, TabCompleter {
                 }
             }
             plugin.economyFlow().onMoneyFlow(uuid, amount, credit);
-            sender.sendMessage("§a已注入流水: " + (credit ? "credit" : "debit") + " " + amount + " → " + uuid);
+            // Skript 经控制台高频调用；控制台不回执，避免刷屏。游戏内手动测试仍有确认。
+            if (sender instanceof Player) {
+                sender.sendMessage("§a已注入流水: " + (credit ? "credit" : "debit") + " " + amount + " → " + uuid);
+            }
             return true;
         }
         sender.sendMessage("未知子命令。用法: /mcwws-ideaach reload | money ...");
