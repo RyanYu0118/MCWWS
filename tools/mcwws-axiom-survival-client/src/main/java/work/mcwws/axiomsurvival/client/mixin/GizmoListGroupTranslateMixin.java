@@ -1,7 +1,9 @@
 package work.mcwws.axiomsurvival.client.mixin;
 
+import com.mojang.blaze3d.platform.InputConstants;
 import com.moulberry.axiom.gizmo.Gizmo;
 import com.moulberry.axiom.tools.modelling.GizmoList;
+import imgui.moulberry92.ImGui;
 import net.minecraft.client.Minecraft;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.phys.Vec3;
@@ -13,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,10 +23,10 @@ import java.util.TreeSet;
 
 /**
  * Axiom 钢笔/建模的 {@link GizmoList} 只有一个 {@code activeGizmo}，拖轴只能动当前节点。
- * Shift+点击把节点加进一组，拖动当前节点时按同一位移平移其余选中节点。
+ * Shift+点击加选；Ctrl+A 或工具面板「全选节点」选中全部。拖当前节点时整组平移。
  */
 @Mixin(value = GizmoList.class, remap = false)
-public abstract class GizmoListGroupTranslateMixin {
+public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
 
     private static final int MCWWS_DEFAULT_CENTER = 0xFFFFFF;
     private static final int MCWWS_GROUP_CENTER = 0xFFCC44;
@@ -34,6 +37,9 @@ public abstract class GizmoListGroupTranslateMixin {
     @Shadow
     private int activeGizmo;
 
+    @Shadow
+    public abstract void setActiveGizmo(int index);
+
     @Unique
     private final TreeSet<Integer> mcwws$group = new TreeSet<>();
 
@@ -42,6 +48,12 @@ public abstract class GizmoListGroupTranslateMixin {
 
     @Unique
     private Vec3 mcwws$dragOrigin;
+
+    @Unique
+    private boolean mcwws$keepGroup;
+
+    @Unique
+    private boolean mcwws$aWasDown;
 
     @Invoker("pushHistory")
     protected abstract void mcwws$pushHistory(
@@ -59,6 +71,10 @@ public abstract class GizmoListGroupTranslateMixin {
 
     @Inject(method = "setActiveGizmo", at = @At("RETURN"), remap = false)
     private void mcwws$updateGroup(int index, CallbackInfo ci) {
+        if (mcwws$keepGroup) {
+            mcwws$refreshColours();
+            return;
+        }
         if (index < 0) {
             mcwws$group.clear();
             mcwws$dragOrigin = null;
@@ -97,6 +113,21 @@ public abstract class GizmoListGroupTranslateMixin {
         mcwws$dragOrigin = null;
     }
 
+    @Inject(method = "updateGizmos", at = @At("HEAD"), remap = false)
+    private void mcwws$ctrlASelectAll(CallbackInfoReturnable<Boolean> cir) {
+        Minecraft mc = Minecraft.getInstance();
+        boolean aDown = InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_A);
+        boolean pressed = aDown && !mcwws$aWasDown;
+        mcwws$aWasDown = aDown;
+        if (!pressed || !mc.hasControlDown()) {
+            return;
+        }
+        if (ImGui.getIO().getWantTextInput()) {
+            return;
+        }
+        mcwwsSelectAll();
+    }
+
     @Inject(method = "updateGizmos", at = @At("RETURN"), remap = false)
     private void mcwws$followAfterUpdate(CallbackInfoReturnable<Boolean> cir) {
         mcwws$followActiveDelta();
@@ -105,6 +136,24 @@ public abstract class GizmoListGroupTranslateMixin {
     @Inject(method = "handleScroll", at = @At("RETURN"), remap = false)
     private void mcwws$followAfterScroll(int scrollX, int scrollY, CallbackInfoReturnable<Boolean> cir) {
         mcwws$followActiveDelta();
+    }
+
+    @Override
+    public void mcwwsSelectAll() {
+        if (gizmos.isEmpty()) {
+            return;
+        }
+        if (activeGizmo < 0) {
+            mcwws$keepGroup = true;
+            setActiveGizmo(0);
+            mcwws$keepGroup = false;
+        }
+        mcwws$group.clear();
+        for (int i = 0; i < gizmos.size(); i++) {
+            mcwws$group.add(i);
+        }
+        mcwws$dragOrigin = null;
+        mcwws$refreshColours();
     }
 
     @Unique
@@ -145,8 +194,8 @@ public abstract class GizmoListGroupTranslateMixin {
     private void mcwws$refreshColours() {
         for (int i = 0; i < gizmos.size(); i++) {
             Gizmo gizmo = gizmos.get(i);
-            boolean extra = i != activeGizmo && mcwws$group.contains(i);
-            gizmo.centerColour = extra ? MCWWS_GROUP_CENTER : MCWWS_DEFAULT_CENTER;
+            boolean selected = mcwws$group.contains(i);
+            gizmo.centerColour = selected ? MCWWS_GROUP_CENTER : MCWWS_DEFAULT_CENTER;
         }
     }
 }
