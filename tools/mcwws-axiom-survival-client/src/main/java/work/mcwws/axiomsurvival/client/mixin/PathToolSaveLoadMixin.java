@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.gen.Invoker;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
 import work.mcwws.axiomsurvival.client.PathLibrary;
 
@@ -64,7 +65,7 @@ public abstract class PathToolSaveLoadMixin {
             ),
             remap = false
     )
-    private void mcwws$trimConfigsOnDeleteKey(UserAction action, Object data, CallbackInfo ci) {
+    private void mcwws$trimConfigsOnDeleteKey(UserAction action, Object data, CallbackInfoReturnable<UserAction.ActionResult> cir) {
         mcwws$trimSelectedPointConfigs();
     }
 
