@@ -1,4 +1,10 @@
 ﻿(function () {
+    // settings.json 曾重复列入本脚本；双实例会双绑控件与跟随逻辑
+    if (window.__mcwwsShopsBooted) {
+        console.warn('[mcwws-shops] duplicate script load skipped');
+        return;
+    }
+    window.__mcwwsShopsBooted = true;
     const API_PORT = 8002;
     const PANEL_ID = 'mcwws-shop-panel';
     const PIN_LAYER_ID = 'mcwws-shop-pin-layer';

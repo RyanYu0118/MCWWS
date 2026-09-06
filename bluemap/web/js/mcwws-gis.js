@@ -1,5 +1,11 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260906-2';
+    const MCWWS_GIS_BUILD = '20260906-6';
+    // settings.json 曾重复列入本脚本；双实例会双绑事件/双 tick，编辑几何彻底错乱
+    if (window.__mcwwsGisBooted) {
+        console.warn('[mcwws-gis] duplicate script load skipped', { build: MCWWS_GIS_BUILD });
+        return;
+    }
+    window.__mcwwsGisBooted = true;
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -71,14 +77,21 @@
     const GIS_ROAD_NAME_SCREEN_MARGIN_PX = 48;
     const GIS_ROAD_NAME_DEDUP_PAD_PX = 10;
     /** 屏幕同名标签中心距小于此值时合并（像素） */
-    const GIS_LABEL_MERGE_MAX_CENTER_PX = 72;
+    const GIS_LABEL_MERGE_MAX_CENTER_PX = 120;
     /** 屏幕同名标签包围盒间距小于此值时合并（像素） */
-    const GIS_LABEL_MERGE_RECT_GAP_PX = 20;
+    const GIS_LABEL_MERGE_RECT_GAP_PX = 36;
+    /** 同名路名世界 XZ 距离小于此值时也合并（方块；避免 3D 倾斜后屏幕距离被拉开） */
+    const GIS_LABEL_MERGE_MAX_WORLD_XZ = 80;
     const GIS_NAME_LABEL_MAX_FONT_PX = 13;
     const GIS_NAME_LABEL_MIN_FONT_PX = 9;
     const GIS_NAME_LABEL_FONT_HEIGHT_MIN = 140;
     /** 相机高度接近可视上下限时，元素淡入淡出的过渡带（方块） */
     const GIS_HEIGHT_VISIBILITY_FADE_BAND = 48;
+    /**
+     * 道路（LineString）分级显示：过渡带内仅绘制「占优」一侧（soft > 0.5），
+     * 并把 (0.5, 1] 重映射为 (0, 1] 做淡入淡出，避免四车/二车半透明叠影。
+     */
+    const GIS_ROAD_LOD_OPAQUE_CUTOFF = 0.5;
     /** 同名路名/建筑名合并时的聚拢动画时长（毫秒） */
     const GIS_LABEL_MERGE_ANIM_MS = 200;
     const VOLUME_SHAPES = Object.freeze({
@@ -1670,6 +1683,28 @@
         return opacity;
     }
 
+    /** 道路分级：互斥淡入淡出（只画占优一侧）；其它要素保留常规淡入淡出 */
+    function usesExclusiveRoadLodFade(feature) {
+        // 编辑时关闭互斥：过渡带内否则半套车道顶点/线段被裁掉，无法选中、插点与拖拽
+        if (gisEditMode) {
+            return false;
+        }
+        return feature?.type === 'LineString';
+    }
+
+    /** 将 soft∈(cutoff,1] 映射到 (0,1]，供占优 LOD 单独过渡 */
+    function remapExclusiveLodOpacity(softOpacity) {
+        const soft = Math.max(0, Math.min(1, softOpacity));
+        if (soft <= GIS_ROAD_LOD_OPAQUE_CUTOFF) {
+            return 0;
+        }
+        const span = 1 - GIS_ROAD_LOD_OPAQUE_CUTOFF;
+        if (!(span > 0)) {
+            return soft > 0 ? 1 : 0;
+        }
+        return Math.max(0, Math.min(1, (soft - GIS_ROAD_LOD_OPAQUE_CUTOFF) / span));
+    }
+
     function getVertexOpacityAtHeight(feature, vertexIndex, viewHeight) {
         if (!isGisHeightVisibilityActive()) {
             return 1;
@@ -1677,6 +1712,9 @@
         const entry = getVertexVisibilityEntry(feature, vertexIndex);
         if (!hasActiveVisibilityRange(entry)) {
             return 1;
+        }
+        if (usesExclusiveRoadLodFade(feature)) {
+            return remapExclusiveLodOpacity(getVisibilityRangeOpacity(entry, viewHeight));
         }
         return getVisibilityRangeOpacity(entry, viewHeight);
     }
@@ -2303,7 +2341,14 @@
         const { min, max } = entry;
         const lo = min == null ? -Infinity : min;
         const hi = max == null ? Infinity : max;
-        return lo < viewHeight && viewHeight <= hi;
+        if (!(lo < viewHeight && viewHeight <= hi)) {
+            return false;
+        }
+        // 道路：过渡带内仅 soft>0.5 的一侧可见，再单独做 0→1 淡入淡出
+        if (usesExclusiveRoadLodFade(feature)) {
+            return getVisibilityRangeOpacity(entry, viewHeight) > GIS_ROAD_LOD_OPAQUE_CUTOFF;
+        }
+        return true;
     }
 
     function isSegmentVisibleAtHeight(feature, indexA, indexB, viewHeight) {
@@ -7062,7 +7107,7 @@
                 </div>
                 ${singleRoad ? `
                 ${renderFeatureVertexVisibilitySectionHtml(found.feature, vtxTargets)}
-                <p class="mcwws-gis-road-props-hint">vertexIds 与 vertexVisibility 按顶点顺序保存在 properties 中；缩放地图可预览路名与线段分级显示</p>
+                <p class="mcwws-gis-road-props-hint">vertexIds 与 vertexVisibility 按顶点顺序保存在 properties 中；缩放可预览路名与线段分级（道路在过渡带互斥淡入淡出，避免两套车道叠影）</p>
                 ` : batchCount > 1 ? '<p class="mcwws-gis-road-props-hint">批量模式下修改线型 / 颜色 / 路名等将应用到全部所选道路；特征点请单选道路后编辑</p>' : ''}
             </div>
         `;
@@ -9674,7 +9719,8 @@
         if (!name || !item.anchor?.world) {
             return null;
         }
-        const screen = projectGisPoint(item.anchor.world, view, camera, false);
+        // 路名优先用沿线屏幕采样点：透视倾斜下「世界插值再投影」会严重偏离可见路段中点
+        const screen = resolveLabelAnchorScreen(item.anchor, view, camera, false);
         if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
             return null;
         }
@@ -9685,6 +9731,23 @@
         const deg = useRoadWidth ? normalizeLabelRotationDeg(item.anchor.angleRad ?? 0) : 0;
         const labelRect = estimateRoadNameLabelRect(screen, name, fontSize, deg);
         return { name, screen, fontSize, deg, labelRect };
+    }
+
+    /** 路名等已带 screen 的锚点直接用；否则再世界投影（建筑名） */
+    function resolveLabelAnchorScreen(anchor, view, camera, liftLabel) {
+        const cached = anchor?.screen;
+        if (
+            cached
+            && Number.isFinite(Number(cached.x))
+            && Number.isFinite(Number(cached.y))
+            && !cached.behind
+        ) {
+            return { x: Number(cached.x), y: Number(cached.y), behind: false };
+        }
+        if (!anchor?.world) {
+            return null;
+        }
+        return projectGisPoint(anchor.world, view, camera, !!liftLabel);
     }
 
     function estimateRoadNameLabelRect(screen, name, fontSize, angleDeg) {
@@ -9727,7 +9790,16 @@
         if (centerDist <= GIS_LABEL_MERGE_MAX_CENTER_PX) {
             return true;
         }
-        return labelRectGap(a.labelRect, b.labelRect) <= GIS_LABEL_MERGE_RECT_GAP_PX;
+        if (labelRectGap(a.labelRect, b.labelRect) <= GIS_LABEL_MERGE_RECT_GAP_PX) {
+            return true;
+        }
+        const aw = a.anchor?.world;
+        const bw = b.anchor?.world;
+        if (!aw || !bw) {
+            return false;
+        }
+        const worldDist = Math.hypot(aw.x - bw.x, aw.z - bw.z);
+        return worldDist <= GIS_LABEL_MERGE_MAX_WORLD_XZ;
     }
 
     function mergeSameNameRoadLabelAnchors(items, view, camera, policy, layoutOptions = {}) {
@@ -9774,15 +9846,26 @@
         });
         return [...buckets.values()].map((members) => {
             const count = members.length;
-            const world = { x: 0, y: 0, z: 0 };
             let cosSum = 0;
             let sinSum = 0;
-            members.forEach(({ anchor }) => {
-                world.x += anchor.world.x;
-                world.y += anchor.world.y;
-                world.z += anchor.world.z;
-                cosSum += Math.cos(anchor.angleRad);
-                sinSum += Math.sin(anchor.angleRad);
+            let sx = 0;
+            let sy = 0;
+            members.forEach((member) => {
+                sx += member.screen.x;
+                sy += member.screen.y;
+                cosSum += Math.cos(member.anchor.angleRad ?? 0);
+                sinSum += Math.sin(member.anchor.angleRad ?? 0);
+            });
+            const screen = { x: sx / count, y: sy / count, behind: false };
+            // 世界锚点取离屏幕均点最近的成员，避免透视下世界质心飞离路面
+            let bestMember = members[0];
+            let bestDist = Infinity;
+            members.forEach((member) => {
+                const d = Math.hypot(member.screen.x - screen.x, member.screen.y - screen.y);
+                if (d < bestDist) {
+                    bestDist = d;
+                    bestMember = member;
+                }
             });
             const mergedDimmed = members.every((member) => member.dimmed);
             const heightOpacity = Math.min(...members.map((member) => member.heightOpacity ?? 1));
@@ -9793,11 +9876,8 @@
             }));
             return {
                 name: members[0].name,
-                world: {
-                    x: world.x / count,
-                    y: world.y / count,
-                    z: world.z / count
-                },
+                world: { ...bestMember.anchor.world },
+                screen,
                 angleRad: Math.atan2(sinSum / count, cosSum / count),
                 primary: true,
                 dimmed: mergedDimmed,
@@ -9828,15 +9908,15 @@
         if (!key) {
             return null;
         }
-        const targetScreen = projectGisPoint(anchor.world, view, camera, false);
-        if (!targetScreen || targetScreen.behind) {
+        const targetScreen = resolveLabelAnchorScreen(anchor, view, camera, false);
+        if (!targetScreen || targetScreen.behind || !isRoadNameOnScreen(targetScreen)) {
             return null;
         }
         const sourceSig = getLabelMergeSourceSig(anchor.mergeSources);
         let anim = gisLabelMergeAnims.get(key);
         if (!anim || anim.sourceSig !== sourceSig) {
             const sourceScreens = anchor.mergeSources.map((src) => {
-                if (src.screen) {
+                if (src.screen && Number.isFinite(src.screen.x) && Number.isFinite(src.screen.y)) {
                     return {
                         x: src.screen.x,
                         y: src.screen.y,
@@ -9983,8 +10063,11 @@
             }
             mergeFade = index === 0 ? 1 : (1 - anim.t);
         } else {
-            // 建筑名抬升投影；路名（rotate/useRoadWidth）贴地
-            screen = projectGisPoint(anchor.world, view, camera, !!liftLabel);
+            // 路名：优先用沿线屏幕采样 / 合并后的屏幕均点；建筑名：抬升后世界投影
+            const preferScreen = rotate || useRoadWidth || !!anchor.screen;
+            screen = preferScreen
+                ? resolveLabelAnchorScreen(anchor, view, camera, !!liftLabel)
+                : projectGisPoint(anchor.world, view, camera, !!liftLabel);
             if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
                 return null;
             }
@@ -10656,8 +10739,16 @@
         });
 
         renderRoadArrowsLayer();
-        renderRoadNameLabelsLayer();
-        renderBuildingNameLabelsLayer();
+        try {
+            renderRoadNameLabelsLayer();
+        } catch (err) {
+            console.warn('[mcwws-gis] renderRoadNameLabelsLayer failed', err);
+        }
+        try {
+            renderBuildingNameLabelsLayer();
+        } catch (err) {
+            console.warn('[mcwws-gis] renderBuildingNameLabelsLayer failed', err);
+        }
 
         if (draftPoints.length && (activeTool === 'line' || activeTool === 'polygon')) {
             const d = buildDraftPreviewPath(view, camera);
@@ -11797,8 +11888,10 @@
     }
 
     function tick() {
-        // 三维建筑已挂在 MapViewer.render 后处理里；拖拽时 BlueMap 会自行 redraw。
-        // tick 不再强制 redraw，避免与控制相机同帧双渲染导致几何微闪。
+        // 平常拖地图由 BlueMap 自行 redraw；编辑拖顶点时相机不动，需补一帧才能刷新 WebGL 体积
+        if (volumeFeatureMeshes.size > 0 && gisVertexDrag) {
+            getBlueMapApp()?.mapViewer?.redraw?.();
+        }
         renderOverlay();
         animationId = requestAnimationFrame(tick);
     }
