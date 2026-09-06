@@ -641,7 +641,8 @@ WebMap:
   Use: true
   # When set to true we will hide residence areas by default on WebMap window
   # Residences can still be enabled throw provided WebMap option on left top side
-  HideByDefault: false
+  # MCWWS：默认隐藏；网页地图「图层 → 显示领地范围」也可开关
+  HideByDefault: true
   # Shows or hides residence flags
   ShowFlags: true
   # When enabled default flags will not be included in residence overview

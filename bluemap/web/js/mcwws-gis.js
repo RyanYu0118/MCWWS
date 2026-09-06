@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260610-117';
+    const MCWWS_GIS_BUILD = '20260906-2';
     const GIS_MOBILE_SHEET_MQ = '(max-width: 640px)';
     const GIS_LAYER_DIALOG_ID = 'mcwws-gis-layer-dialog';
     const MAP_LAYER_MENU_ID = 'mcwws-map-layer-menu';
@@ -101,6 +101,8 @@
     let gisIgnoreHeightClip = false;
     let gisShowRoadNames = true;
     let gisShowBuildingNames = true;
+    /** Residence / BlueMap 领地挤出范围；默认隐藏，减少地图杂乱 */
+    let gisShowResidenceBounds = false;
     /** 原版地图编辑模式下是否显示区域三维立体填充 */
     let gisShowVolume3dBuildings = true;
     let activeTool = 'select';
@@ -123,6 +125,9 @@
     const STORAGE_GIS_SHOW_ROAD_NAMES = 'mcwws-gis-show-road-names';
     const STORAGE_GIS_SHOW_BUILDING_NAMES = 'mcwws-gis-show-building-names';
     const STORAGE_GIS_SHOW_VOLUME3D = 'mcwws-gis-show-volume3d';
+    const STORAGE_GIS_SHOW_RESIDENCE_BOUNDS = 'mcwws-gis-show-residence-bounds';
+    const RESIDENCE_MARKER_SET_IDS = new Set(['Residences', 'residences']);
+    const RESIDENCE_MARKER_SET_LABEL = '领地范围';
     let dirty = false;
     let saving = false;
     let statusMessage = '';
@@ -267,6 +272,8 @@
             gisShowBuildingNames = buildingNames !== '0';
             const volume3d = localStorage.getItem(STORAGE_GIS_SHOW_VOLUME3D);
             gisShowVolume3dBuildings = volume3d !== '0';
+            // 默认隐藏领地范围；仅当用户显式打开过才显示
+            gisShowResidenceBounds = localStorage.getItem(STORAGE_GIS_SHOW_RESIDENCE_BOUNDS) === '1';
         } catch {
             /* ignore */
         }
@@ -280,6 +287,7 @@
             localStorage.setItem(STORAGE_GIS_SHOW_ROAD_NAMES, gisShowRoadNames ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_BUILDING_NAMES, gisShowBuildingNames ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_VOLUME3D, gisShowVolume3dBuildings ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_SHOW_RESIDENCE_BOUNDS, gisShowResidenceBounds ? '1' : '0');
         } catch {
             /* ignore */
         }
@@ -1818,6 +1826,70 @@
         document.body.classList.toggle('mcwws-gis-building-names-off', !gisShowBuildingNames);
         renderOverlay();
         renderLayerDialog();
+    }
+
+    function isResidenceMarkerSet(set) {
+        if (!set) return false;
+        const id = String(set.id || '');
+        if (RESIDENCE_MARKER_SET_IDS.has(id)) return true;
+        const label = String(set.label || '');
+        return label === 'Residences' || label === RESIDENCE_MARKER_SET_LABEL || label.includes('领地');
+    }
+
+    function listResidenceMarkerSets() {
+        const markerSets = getBlueMapApp()?.mapViewer?.markers?.data?.markerSets;
+        if (!markerSets) return [];
+        const list = markerSets instanceof Map
+            ? [...markerSets.values()]
+            : (Array.isArray(markerSets) ? markerSets : Object.values(markerSets));
+        return list.filter(isResidenceMarkerSet);
+    }
+
+    function applyResidenceBoundsVisibility() {
+        const sets = listResidenceMarkerSets();
+        let changed = false;
+        sets.forEach((set) => {
+            if (set.label !== RESIDENCE_MARKER_SET_LABEL) {
+                set.label = RESIDENCE_MARKER_SET_LABEL;
+                changed = true;
+            }
+            if (typeof set.visible === 'boolean' && set.visible !== gisShowResidenceBounds) {
+                set.visible = gisShowResidenceBounds;
+                changed = true;
+            } else if (typeof set.visible !== 'boolean') {
+                set.visible = gisShowResidenceBounds;
+                changed = true;
+            }
+        });
+        if (changed) {
+            getBlueMapApp()?.mapViewer?.redraw?.();
+        }
+        return sets.length > 0;
+    }
+
+    function setGisShowResidenceBounds(enabled) {
+        gisShowResidenceBounds = !!enabled;
+        saveLayerPrefs();
+        applyResidenceBoundsVisibility();
+        renderLayerDialog();
+    }
+
+    function bindResidenceBoundsSync() {
+        const tryApply = () => {
+            applyResidenceBoundsVisibility();
+        };
+        tryApply();
+        const bm = getBlueMapApp();
+        bm?.events?.addEventListener?.('bluemapMapChanged', tryApply);
+        // BlueMap cookies / 异步加载标记集会覆盖可见性，短时重试几次
+        let tries = 0;
+        const timer = window.setInterval(() => {
+            tries += 1;
+            tryApply();
+            if (tries >= 20) {
+                window.clearInterval(timer);
+            }
+        }, 500);
     }
 
     /** 简化地图：始终显示；原版地图：仅编辑模式且开关开启时显示 */
@@ -4346,12 +4418,16 @@
             return;
         }
         const autoClear = renderer.autoClear;
+        const prevSort = renderer.sortObjects;
         renderer.autoClear = false;
+        // 只清深度、不清颜色，避免与地形/标注叠帧时闪一下空帧
         if (typeof renderer.clearDepth === 'function') {
             renderer.clearDepth();
         }
+        renderer.sortObjects = true;
         renderer.render(volumeMeshScene, camera);
         renderer.autoClear = autoClear;
+        renderer.sortObjects = prevSort;
         lastVolumeRenderPath = 'original';
     }
 
@@ -4862,9 +4938,16 @@
         mat.transparent = !opaque;
         mat.depthWrite = opaque;
         mat.depthTest = true;
-        mat.polygonOffset = true;
-        mat.polygonOffsetFactor = 1;
-        mat.polygonOffsetUnits = volumeFeaturePolygonOffsetUnits(featureId);
+        // 不透明时关闭 polygonOffset，拖拽时少一层深度微抖；仅半透明/淡化才偏移
+        if (opaque) {
+            mat.polygonOffset = false;
+            mat.polygonOffsetFactor = 0;
+            mat.polygonOffsetUnits = 0;
+        } else {
+            mat.polygonOffset = true;
+            mat.polygonOffsetFactor = 1;
+            mat.polygonOffsetUnits = volumeFeaturePolygonOffsetUnits(featureId);
+        }
         if (mat.uniforms?.fadeDistanceMin) {
             mat.uniforms.fadeDistanceMin.value = 0;
         }
@@ -6309,6 +6392,22 @@
             return null;
         }
         return computeVolumeShapeCenter(corners);
+    }
+
+    /** 建筑名锚在屋顶中心略上方，避免落在体块几何中心被模型「盖住」 */
+    function computeVolumeBuildingNameAnchor(feature) {
+        const center = computeVolumeGeometricCenter(feature);
+        if (!center) {
+            return null;
+        }
+        const cfg = getVolume3dConfig(feature);
+        const points = getFeatureVertexPoints(feature);
+        const { maxY } = resolveVolumeYRange(cfg, points);
+        return {
+            x: center.x,
+            y: Math.max(center.y, maxY) + 0.8,
+            z: center.z
+        };
     }
 
     function isVolume3dPolygonFeature(feature) {
@@ -9856,7 +9955,11 @@
     }
 
     function resolveNameLabelScreenLayout(anchor, view, camera, policy, options = {}) {
-        const { rotate = false, useRoadWidth = false } = options;
+        const {
+            rotate = false,
+            useRoadWidth = false,
+            liftLabel = !rotate && !useRoadWidth
+        } = options;
         const labelName = anchor?.name || '';
         if (!anchor?.world || !labelName) {
             return null;
@@ -9880,7 +9983,8 @@
             }
             mergeFade = index === 0 ? 1 : (1 - anim.t);
         } else {
-            screen = projectGisPoint(anchor.world, view, camera, false);
+            // 建筑名抬升投影；路名（rotate/useRoadWidth）贴地
+            screen = projectGisPoint(anchor.world, view, camera, !!liftLabel);
             if (!screen || screen.behind || !isRoadNameOnScreen(screen)) {
                 return null;
             }
@@ -10150,14 +10254,14 @@
                 return;
             }
             const name = getBuildingDisplayName(feature);
-            const center = computeVolumeGeometricCenter(feature);
-            if (!name || !center) {
+            const anchorWorld = computeVolumeBuildingNameAnchor(feature);
+            if (!name || !anchorWorld) {
                 return;
             }
             const dimmed = selectionActive && !isFeatureSelected(feature.id);
             flatCandidates.push({
                 feature,
-                anchor: { world: center, name, angleRad: 0 },
+                anchor: { world: anchorWorld, name, angleRad: 0 },
                 dimmed,
                 heightOpacity: getBuildingNameOpacityAtHeight(feature, viewHeight)
             });
@@ -11196,6 +11300,10 @@
                     <span class="mcwws-layer-mode-desc">纯白画布 · 仅标注</span>
                 </button>
             </div>
+            <label class="mcwws-layer-gis-toggle">
+                <input type="checkbox" data-gis-show-residence-bounds ${gisShowResidenceBounds ? 'checked' : ''}>
+                <span>显示领地范围</span>
+            </label>
             <label class="mcwws-layer-gis-toggle${isSimplifiedMapMode() ? ' is-locked' : ''}">
                 <input type="checkbox" data-gis-info-toggle ${gisInfoEnabled ? 'checked' : ''}
                     ${isSimplifiedMapMode() ? 'disabled' : ''}>
@@ -11312,6 +11420,12 @@
             if (buildingNamesInput && e.target.matches('input[type="checkbox"]')) {
                 e.stopPropagation();
                 setGisShowBuildingNames(e.target.checked);
+                return;
+            }
+            const residenceBoundsInput = e.target.closest('[data-gis-show-residence-bounds]');
+            if (residenceBoundsInput && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisShowResidenceBounds(e.target.checked);
                 return;
             }
             const volume3dInput = e.target.closest('[data-gis-show-volume3d]');
@@ -11683,9 +11797,8 @@
     }
 
     function tick() {
-        if (volumeFeatureMeshes.size > 0) {
-            getBlueMapApp()?.mapViewer?.redraw?.();
-        }
+        // 三维建筑已挂在 MapViewer.render 后处理里；拖拽时 BlueMap 会自行 redraw。
+        // tick 不再强制 redraw，避免与控制相机同帧双渲染导致几何微闪。
         renderOverlay();
         animationId = requestAnimationFrame(tick);
     }
@@ -11710,6 +11823,7 @@
         waitForMapControls();
         tryApplyStoredMapRenderMode();
         syncMapRenderModeVisual();
+        bindResidenceBoundsSync();
         requestAnimationFrame(() => {
             requestAnimationFrame(enableMapRenderTransitions);
         });

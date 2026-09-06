@@ -686,14 +686,17 @@ body.mcwws-gis-layer-dialog-open .mcwws-map-controls {
     opacity: 0.28;
 }
 
-/* 层级：道路 SVG 9998 < 路名 10000 < 地图控件 10001 */
-#mcwws-gis-road-name-layer {
+/* 层级：道路 SVG 9998 < 路名/建筑名 10000 < 地图控件 10001
+   建筑名必须 fixed+z-index，否则会落在 body 文档流里被 BlueMap canvas 盖住 */
+#mcwws-gis-road-name-layer,
+#mcwws-gis-building-name-layer {
     position: fixed;
     inset: 0;
     z-index: 10000;
     pointer-events: none;
     width: 100%;
     height: 100%;
+    overflow: visible;
 }
 
 #mcwws-gis-road-name-layer .mcwws-gis-road-name-group {
