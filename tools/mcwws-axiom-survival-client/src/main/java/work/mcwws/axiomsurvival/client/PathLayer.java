@@ -1,12 +1,13 @@
 package work.mcwws.axiomsurvival.client;
 
+import com.moulberry.axiom.custom_blocks.CustomBlockState;
 import com.moulberry.axiom.tools.path.PointConfig;
 import net.minecraft.world.phys.Vec3;
 
 import java.util.ArrayList;
 import java.util.List;
 
-/** 钢笔的一条独立路径（图层）。节点、点配置与曲线/形状等工具参数均按层隔离。 */
+/** 钢笔的一条独立路径（图层）。节点、点配置、工具参数与选块均按层隔离。 */
 public final class PathLayer {
 
     public String name;
@@ -15,6 +16,8 @@ public final class PathLayer {
     public final List<Vec3> points = new ArrayList<>();
     public final List<PointConfig> configs = new ArrayList<>();
     public final PathLayerToolSettings settings = new PathLayerToolSettings();
+    /** 该层默认落块材质（对应 Editor 当前选块）。 */
+    public CustomBlockState block = PathLayerBlocks.defaultBlock();
 
     public PathLayer(String name) {
         this.name = name;
@@ -28,6 +31,7 @@ public final class PathLayer {
             copy.configs.add(new PointConfig(config));
         }
         copy.settings.copyFrom(settings);
+        copy.block = block;
         return copy;
     }
 

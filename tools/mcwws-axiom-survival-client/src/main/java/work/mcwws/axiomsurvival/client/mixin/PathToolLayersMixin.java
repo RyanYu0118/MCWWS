@@ -22,16 +22,20 @@ import work.mcwws.axiomsurvival.client.McwwsGizmoGroup;
 import work.mcwws.axiomsurvival.client.McwwsPathLayers;
 import work.mcwws.axiomsurvival.client.PathClipboard;
 import work.mcwws.axiomsurvival.client.PathLayer;
+import work.mcwws.axiomsurvival.client.PathLayerBlocks;
 import work.mcwws.axiomsurvival.client.PathLayerIcons;
 import work.mcwws.axiomsurvival.client.PathLayerToolSettings;
 import work.mcwws.axiomsurvival.client.PathLibrary;
 
+import com.moulberry.axiom.custom_blocks.CustomBlockState;
+
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeSet;
 
 /**
- * 钢笔多路径图层：Ctrl+C/V 复制粘贴为新图层；重算时把其它图层追加进方块预览，互不串线。
- * 每层独立隔离节点、点配置与曲线/形状等工具参数；追加其它层时交换 {@code gizmoList} 引用，避免 clear/add 打断当前拖拽。
+ * 钢笔多路径图层：Ctrl+C/V 复制粘贴为新图层；Ctrl/Shift 多选图层；重算时合并其它图层预览。
+ * 每层独立隔离节点、点配置、曲线/形状参数与选块；追加其它层时交换 {@code gizmoList} 引用，避免 clear/add 打断当前拖拽。
  */
 @Mixin(value = PathTool.class, remap = false)
 public abstract class PathToolLayersMixin implements McwwsPathLayers {
@@ -105,6 +109,12 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
     @Unique
     private int mcwws$layerSeq = 1;
 
+    @Unique
+    private final TreeSet<Integer> mcwws$selectedLayers = new TreeSet<>();
+
+    @Unique
+    private int mcwws$anchorLayer;
+
     @Inject(method = "reset", at = @At("RETURN"), remap = false)
     private void mcwws$resetLayers(CallbackInfo ci) {
         mcwws$layers.clear();
@@ -112,6 +122,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         mcwws$layerSeq = 1;
         mcwws$layers.add(new PathLayer("图层 1"));
         mcwws$clipboard.clear();
+        mcwws$selectOnly(0);
     }
 
     @Redirect(
@@ -146,6 +157,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         GizmoList savedList = this.gizmoList;
         List<PointConfig> savedConfigs = new ArrayList<>(this.pointConfigs);
         PathLayerToolSettings savedSettings = activeLayer.settings.copy();
+        CustomBlockState savedBlock = PathLayerBlocks.currentActive();
         try {
             for (int i = 0; i < mcwws$layers.size(); i++) {
                 if (i == active) {
@@ -166,6 +178,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                     }
                 }
                 mcwws$applyToolSettings(layer.settings);
+                PathLayerBlocks.setActive(layer.block);
                 mcwws$appendingOtherLayers = true;
                 try {
                     mcwws$invokeRecalculate();
@@ -178,6 +191,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             this.pointConfigs.clear();
             this.pointConfigs.addAll(savedConfigs);
             mcwws$applyToolSettings(savedSettings);
+            PathLayerBlocks.setActive(savedBlock);
             mcwws$activeLayer = active;
         }
     }
@@ -209,8 +223,12 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
                 return;
             }
             mcwws$ensureLayers();
+            if (mcwws$selectedLayers.size() > 1) {
+                mcwws$deleteSelectedLayers();
+                cir.setReturnValue(UserAction.ActionResult.USED_STOP);
+                return;
+            }
             if (!gizmoList.isEmpty()) {
-                // 一次清空当前图层全部节点，避免官方逐点删除要连按多次
                 gizmoList.clear();
                 pointConfigs.clear();
                 mcwws$captureActive();
@@ -244,33 +262,46 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (ImGui.button("新建空图层")) {
             mcwws$captureActive();
             PathLayer blank = new PathLayer("图层 " + (++mcwws$layerSeq));
-            // 新层用默认工具参数，不继承当前层（避免「看起来像共享」）
             mcwws$layers.add(blank);
             mcwws$activeLayer = mcwws$layers.size() - 1;
             mcwws$loadLayer(blank);
+            mcwws$selectOnly(mcwws$activeLayer);
             markDirty();
         }
 
         for (int i = 0; i < mcwws$layers.size(); i++) {
             PathLayer layer = mcwws$layers.get(i);
-            boolean active = i == mcwws$activeLayer;
+            boolean selected = mcwws$selectedLayers.contains(i) || i == mcwws$activeLayer;
             float icon = ImGui.getFrameHeight();
             if (PathLayerIcons.eyeToggle("eye" + i, layer.visible, icon)) {
-                layer.visible = !layer.visible;
+                if (mcwws$selectedLayers.size() > 1 && mcwws$selectedLayers.contains(i)) {
+                    boolean next = !layer.visible;
+                    for (int s : mcwws$selectedLayers) {
+                        if (s >= 0 && s < mcwws$layers.size()) {
+                            mcwws$layers.get(s).visible = next;
+                        }
+                    }
+                } else {
+                    layer.visible = !layer.visible;
+                }
                 markDirty();
             }
             ImGui.sameLine(0, 4f);
             if (PathLayerIcons.deleteButton("dellayer" + i, icon)) {
-                mcwws$deleteLayer(i);
+                if (mcwws$selectedLayers.size() > 1 && mcwws$selectedLayers.contains(i)) {
+                    mcwws$deleteSelectedLayers();
+                } else {
+                    mcwws$deleteLayer(i);
+                }
                 break;
             }
             ImGui.sameLine(0, 4f);
             String label = layer.name + " (" + layer.points.size() + " 点)";
             float width = Math.max(48f, ImGui.getContentRegionAvailX());
-            if (ImGui.selectable(label + "##layer" + i, active, 0, width, 0f)) {
-                if (i != mcwws$activeLayer) {
-                    mcwws$switchToLayer(i);
-                }
+            if (ImGui.selectable(label + "##layer" + i, selected, 0, width, 0f)) {
+                boolean ctrl = ImGui.getIO().getKeyCtrl();
+                boolean shift = ImGui.getIO().getKeyShift();
+                mcwws$onLayerClicked(i, ctrl, shift);
             }
         }
 
@@ -286,10 +317,9 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (ImGui.button("全选节点")) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }
-        ImGui.textUnformatted("每层曲线/形状/半径等参数独立。睁眼/闭眼切换预览；叉号删层。Delete 清空当前层。");
+        ImGui.textUnformatted("Ctrl 加选图层，Shift 连选；每层曲线/形状/选块独立。叉号删层（多选时删所选）。");
 
         ImGui.separator();
-        // 曲线 / 形状 / 节点等官方参数收进子菜单，默认折叠
         if (!ImGui.collapsingHeader("曲线 / 形状 / 节点参数（仅当前图层）")) {
             ci.cancel();
         }
@@ -297,11 +327,12 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
 
     @Inject(method = "displayImguiOptions", at = @At("RETURN"), remap = false)
     private void mcwws$captureSettingsAfterUi(CallbackInfo ci) {
-        // 官方参数在 HEAD 之后才改，收尾再写回当前层，保证切换图层前已隔离
         if (!mcwws$layers.isEmpty()
                 && mcwws$activeLayer >= 0
                 && mcwws$activeLayer < mcwws$layers.size()) {
-            mcwws$readToolSettingsInto(mcwws$layers.get(mcwws$activeLayer).settings);
+            PathLayer layer = mcwws$layers.get(mcwws$activeLayer);
+            mcwws$readToolSettingsInto(layer.settings);
+            layer.block = PathLayerBlocks.currentActive();
         }
     }
 
@@ -321,9 +352,13 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             mcwws$layers.add(layer);
             mcwws$activeLayer = 0;
             mcwws$layerSeq = 1;
+            mcwws$selectOnly(0);
         }
         if (mcwws$activeLayer < 0 || mcwws$activeLayer >= mcwws$layers.size()) {
             mcwws$activeLayer = 0;
+        }
+        if (mcwws$selectedLayers.isEmpty()) {
+            mcwws$selectOnly(mcwws$activeLayer);
         }
     }
 
@@ -343,6 +378,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             }
         }
         mcwws$readToolSettingsInto(layer.settings);
+        layer.block = PathLayerBlocks.currentActive();
     }
 
     @Unique
@@ -391,6 +427,51 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             }
         }
         mcwws$applyToolSettings(layer.settings);
+        PathLayerBlocks.setActive(layer.block != null ? layer.block : PathLayerBlocks.defaultBlock());
+    }
+
+    @Unique
+    private void mcwws$selectOnly(int index) {
+        mcwws$selectedLayers.clear();
+        if (index >= 0) {
+            mcwws$selectedLayers.add(index);
+        }
+        mcwws$anchorLayer = index;
+    }
+
+    @Unique
+    private void mcwws$onLayerClicked(int index, boolean ctrl, boolean shift) {
+        if (index < 0 || index >= mcwws$layers.size()) {
+            return;
+        }
+        if (shift && mcwws$anchorLayer >= 0 && mcwws$anchorLayer < mcwws$layers.size()) {
+            mcwws$selectedLayers.clear();
+            int from = Math.min(mcwws$anchorLayer, index);
+            int to = Math.max(mcwws$anchorLayer, index);
+            for (int i = from; i <= to; i++) {
+                mcwws$selectedLayers.add(i);
+            }
+        } else if (ctrl) {
+            if (mcwws$selectedLayers.contains(index) && mcwws$selectedLayers.size() > 1) {
+                mcwws$selectedLayers.remove(index);
+            } else {
+                mcwws$selectedLayers.add(index);
+            }
+            mcwws$anchorLayer = index;
+        } else {
+            mcwws$selectOnly(index);
+        }
+        if (index != mcwws$activeLayer) {
+            mcwws$switchToLayer(index);
+        } else if (!mcwws$selectedLayers.contains(index)) {
+            // Ctrl 取消选中当前编辑层时，切到仍选中的某一层
+            Integer next = mcwws$selectedLayers.isEmpty() ? null : mcwws$selectedLayers.first();
+            if (next != null && next != mcwws$activeLayer) {
+                mcwws$switchToLayer(next);
+            } else if (mcwws$selectedLayers.isEmpty()) {
+                mcwws$selectOnly(mcwws$activeLayer);
+            }
+        }
     }
 
     @Unique
@@ -398,9 +479,54 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         mcwws$captureActive();
         mcwws$activeLayer = index;
         mcwws$loadLayer(mcwws$layers.get(index));
+        if (!mcwws$selectedLayers.contains(index)) {
+            mcwws$selectedLayers.add(index);
+        }
         if (!gizmoList.isEmpty()) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }
+        markDirty();
+    }
+
+    @Unique
+    private void mcwws$deleteSelectedLayers() {
+        mcwws$captureActive();
+        if (mcwws$selectedLayers.isEmpty()) {
+            mcwws$deleteLayer(mcwws$activeLayer);
+            return;
+        }
+        List<Integer> toRemove = new ArrayList<>(mcwws$selectedLayers);
+        toRemove.sort((a, b) -> Integer.compare(b, a));
+        for (int index : toRemove) {
+            if (mcwws$layers.size() <= 1) {
+                PathLayer only = mcwws$layers.get(0);
+                only.points.clear();
+                only.configs.clear();
+                only.settings.copyFrom(new PathLayerToolSettings());
+                only.block = PathLayerBlocks.defaultBlock();
+                gizmoList.clear();
+                pointConfigs.clear();
+                mcwws$applyToolSettings(only.settings);
+                PathLayerBlocks.setActive(only.block);
+                mcwws$selectOnly(0);
+                markDirty();
+                return;
+            }
+            if (index < 0 || index >= mcwws$layers.size()) {
+                continue;
+            }
+            mcwws$layers.remove(index);
+            if (mcwws$activeLayer > index) {
+                mcwws$activeLayer--;
+            } else if (mcwws$activeLayer >= mcwws$layers.size()) {
+                mcwws$activeLayer = mcwws$layers.size() - 1;
+            } else if (mcwws$activeLayer == index) {
+                mcwws$activeLayer = Math.min(index, mcwws$layers.size() - 1);
+            }
+        }
+        mcwws$activeLayer = Math.max(0, Math.min(mcwws$activeLayer, mcwws$layers.size() - 1));
+        mcwws$loadLayer(mcwws$layers.get(mcwws$activeLayer));
+        mcwws$selectOnly(mcwws$activeLayer);
         markDirty();
     }
 
@@ -412,9 +538,12 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             only.points.clear();
             only.configs.clear();
             only.settings.copyFrom(new PathLayerToolSettings());
+            only.block = PathLayerBlocks.defaultBlock();
             gizmoList.clear();
             pointConfigs.clear();
             mcwws$applyToolSettings(only.settings);
+            PathLayerBlocks.setActive(only.block);
+            mcwws$selectOnly(0);
             markDirty();
             return;
         }
@@ -429,6 +558,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             }
         }
         mcwws$loadLayer(mcwws$layers.get(mcwws$activeLayer));
+        mcwws$selectOnly(mcwws$activeLayer);
         markDirty();
     }
 
@@ -457,7 +587,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         if (pts.isEmpty()) {
             return false;
         }
-        mcwws$clipboard.set(pts, cfgs, active.settings);
+        mcwws$clipboard.set(pts, cfgs, active.settings, active.block);
         return true;
     }
 
@@ -471,6 +601,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
         mcwws$layers.add(layer);
         mcwws$activeLayer = mcwws$layers.size() - 1;
         mcwws$loadLayer(layer);
+        mcwws$selectOnly(mcwws$activeLayer);
         if (!gizmoList.isEmpty()) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }
@@ -508,6 +639,7 @@ public abstract class PathToolLayersMixin implements McwwsPathLayers {
             mcwws$layerSeq = mcwws$layers.size();
         }
         mcwws$loadLayer(mcwws$layers.get(mcwws$activeLayer));
+        mcwws$selectOnly(mcwws$activeLayer);
         if (!gizmoList.isEmpty()) {
             ((McwwsGizmoGroup) (Object) gizmoList).mcwwsSelectAll();
         }

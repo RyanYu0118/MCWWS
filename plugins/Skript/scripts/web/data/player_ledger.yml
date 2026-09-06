@@ -1,507 +1,5 @@
-next_id: 9238
+next_id: 9284
 entries:
-  '4238':
-    id: 4238
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 12
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/27 21:10
-    createdAt: '2026-08-27T13:10:27.810165300Z'
-    updatedAt: '2026-08-27T13:10:29.812408300Z'
-  '4239':
-    id: 4239
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 29
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2ec3dac9-4f6e-4dc1-98c4-6386e6be9259
-    createdAt: '2026-08-27T13:12:41.529562200Z'
-    balanceAfter: 868866.54
-  '4240':
-    id: 4240
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 3736
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:12
-    createdAt: '2026-08-27T13:12:45.812066700Z'
-    updatedAt: '2026-08-27T13:30:27.838016Z'
-  '4241':
-    id: 4241
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 384
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787836406107-33333535572400
-    createdAt: '2026-08-27T13:13:26.107371200Z'
-    balanceAfter: 868318.54
-  '4242':
-    id: 4242
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 7.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-718e4f33-c696-4029-844c-7912266b02f0
-    createdAt: '2026-08-27T13:13:59.842457600Z'
-    balanceAfter: 868227.04
-  '4243':
-    id: 4243
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 14.54
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-bda7df9e-e31d-4cbd-b5bd-a8d27c88f0db
-    createdAt: '2026-08-27T13:14:03.084985400Z'
-    balanceAfter: 868200.5
-  '4244':
-    id: 4244
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 19.3
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-09217432-32b4-4368-9867-32ac9bb010fc
-    createdAt: '2026-08-27T13:14:07.887695900Z'
-    balanceAfter: 868161.2
-  '4245':
-    id: 4245
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 6552
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/27 21:14
-    createdAt: '2026-08-27T13:14:14.816723600Z'
-    updatedAt: '2026-08-27T13:43:10.807356200Z'
-  '4246':
-    id: 4246
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 30.76
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-040ef372-4391-4c80-b1b6-b1d299b93ce9
-    createdAt: '2026-08-27T13:15:05.333896800Z'
-    balanceAfter: 867902.44
-  '4247':
-    id: 4247
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 4.2
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-914d346f-fb1d-4dff-8cf2-f27104b0ec0d
-    createdAt: '2026-08-27T13:15:08.584865200Z'
-    balanceAfter: 867886.24
-  '4248':
-    id: 4248
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 7.55
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-73dbce5a-3ddc-4263-9adb-6612bc985eaa
-    createdAt: '2026-08-27T13:15:54.031124400Z'
-    balanceAfter: 867718.69
-  '4249':
-    id: 4249
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 14.54
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-d5f8189d-5a10-4c4f-b765-33a807ada747
-    createdAt: '2026-08-27T13:16:18.245747100Z'
-    balanceAfter: 867608.15
-  '4250':
-    id: 4250
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 7.55
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2b080cb3-92e3-445e-96b1-dd8973e61295
-    createdAt: '2026-08-27T13:17:16.625135Z'
-    balanceAfter: 867368.6
-  '4251':
-    id: 4251
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 7.55
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-828ab2a1-e815-4ce3-8688-835d0aa56a0e
-    createdAt: '2026-08-27T13:17:33.028779900Z'
-    balanceAfter: 867301.05
-  '4252':
-    id: 4252
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 3.02
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ca53ad78-f0a5-4bbf-a22d-44f8b430e5c7
-    createdAt: '2026-08-27T13:18:31.285110500Z'
-    balanceAfter: 867178.03
-  '4253':
-    id: 4253
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 4.2
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-f29456ef-c43d-4e96-ac30-6c474cecde27
-    createdAt: '2026-08-27T13:18:35.880502200Z'
-    balanceAfter: 867153.83
-  '4254':
-    id: 4254
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 12.08
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-9028f207-bcfc-4778-83b8-8ad073a79fc3
-    createdAt: '2026-08-27T13:18:56.386558500Z'
-    balanceAfter: 867061.75
-  '4255':
-    id: 4255
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 45.6
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-1335a429-49b8-4a8f-a5ba-b51bfd5e2f9f
-    createdAt: '2026-08-27T13:19:00.180422300Z'
-    balanceAfter: 867000.15
-  '4256':
-    id: 4256
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 30.84
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-7e6cc3b7-9e9e-422b-8d28-4f03fe131ed7
-    createdAt: '2026-08-27T13:19:49.800298100Z'
-    balanceAfter: 866789.31
-  '4257':
-    id: 4257
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 1.4
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-fc2a3ecb-5d89-4624-a37a-83011427a972
-    createdAt: '2026-08-27T13:19:53.780247400Z'
-    balanceAfter: 866771.91
-  '4258':
-    id: 4258
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 30.96
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ed00572f-2845-4b42-9a76-27c1b864af88
-    createdAt: '2026-08-27T13:20:29.028366300Z'
-    balanceAfter: 866596.95
-  '4259':
-    id: 4259
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 43.62
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-710b6581-94ba-462b-b317-7ed3a65ad30b
-    createdAt: '2026-08-27T13:20:34.223635800Z'
-    balanceAfter: 866549.33
-  '4260':
-    id: 4260
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 23.28
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-d3178509-a861-4f90-b894-d4692320d05e
-    createdAt: '2026-08-27T13:21:11.690199300Z'
-    balanceAfter: 866462.05
-  '4261':
-    id: 4261
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 23.37
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-da7dfaaa-7916-4e30-ac13-8e089e543a3b
-    createdAt: '2026-08-27T13:21:29.184539Z'
-    balanceAfter: 866366.68
-  '4262':
-    id: 4262
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 7.65
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-4e861fe7-76b4-4abd-b402-7173988b561f
-    createdAt: '2026-08-27T13:22:15.582665100Z'
-    balanceAfter: 866175.03
-  '4263':
-    id: 4263
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 9.18
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-51adaf1d-f251-4a0f-a98d-90e904a82037
-    createdAt: '2026-08-27T13:22:32.483020200Z'
-    balanceAfter: 866097.85
-  '4264':
-    id: 4264
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 1.53
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-fe3724d0-fc2e-4ee7-aba4-f0d759a2c5a0
-    createdAt: '2026-08-27T13:22:49.837521300Z'
-    balanceAfter: 866024.32
-  '4265':
-    id: 4265
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 1.53
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-cb87aca0-7dc8-4a7f-b0fb-d299809d4e2d
-    createdAt: '2026-08-27T13:22:51.987479100Z'
-    balanceAfter: 866014.79
-  '4266':
-    id: 4266
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 5.22
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-6c61469e-770f-4e75-a9ef-923cec15ae04
-    createdAt: '2026-08-27T13:23:06.781432300Z'
-    balanceAfter: 865953.57
-  '4267':
-    id: 4267
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 24.48
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5989fec1-ce32-4039-8574-05ad42db37e4
-    createdAt: '2026-08-27T13:23:17.280377500Z'
-    balanceAfter: 865885.09
-  '4268':
-    id: 4268
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 32
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787837454469-34381897310000
-    createdAt: '2026-08-27T13:30:54.469711500Z'
-    balanceAfter: 864333.09
-  '4269':
-    id: 4269
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 4.57
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787837468459-34395887233800
-    createdAt: '2026-08-27T13:31:08.459880500Z'
-    balanceAfter: 165193839.42
-  '4270':
-    id: 4270
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: teleport
-    amount: 4.57
-    description: 传送玩家（过去）
-    refId: guide-tp-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/27 21:31
-    createdAt: '2026-08-27T13:31:08.460887500Z'
-  '4271':
-    id: 4271
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 20
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:31
-    createdAt: '2026-08-27T13:31:16.812484700Z'
-    updatedAt: '2026-08-27T13:31:31.816673Z'
-  '4272':
-    id: 4272
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 4
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:32
-    createdAt: '2026-08-27T13:32:29.811371900Z'
-  '4273':
-    id: 4273
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 92
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:33
-    createdAt: '2026-08-27T13:33:33.817799Z'
-    updatedAt: '2026-08-27T13:34:38.809885200Z'
-  '4274':
-    id: 4274
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 36
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:35
-    createdAt: '2026-08-27T13:35:15.812117Z'
-    updatedAt: '2026-08-27T13:35:27.811495200Z'
-  '4275':
-    id: 4275
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 116
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:36
-    createdAt: '2026-08-27T13:36:23.824672500Z'
-    updatedAt: '2026-08-27T13:37:18.823208900Z'
-  '4276':
-    id: 4276
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 5.12
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1787837805661-34733090199500
-    createdAt: '2026-08-27T13:36:45.661873800Z'
-    balanceAfter: 165192526.3
-  '4277':
-    id: 4277
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: teleport
-    amount: 5.12
-    description: 传送玩家（过去）
-    refId: guide-tp-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/27 21:36
-    createdAt: '2026-08-27T13:36:45.662873800Z'
-  '4278':
-    id: 4278
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 64
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:37
-    createdAt: '2026-08-27T13:37:49.808891900Z'
-    updatedAt: '2026-08-27T13:38:22.811792400Z'
-  '4279':
-    id: 4279
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 112
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:39
-    createdAt: '2026-08-27T13:39:57.807316500Z'
-    updatedAt: '2026-08-27T13:40:51.819517100Z'
-  '4280':
-    id: 4280
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 64
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1787838049767-34977195356300
-    createdAt: '2026-08-27T13:40:49.767937600Z'
-    balanceAfter: 863837.09
-  '4281':
-    id: 4281
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 4
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/8/27 21:41
-    createdAt: '2026-08-27T13:41:57.817286300Z'
-  '4282':
-    id: 4282
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 1776
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/8/27 21:43
-    createdAt: '2026-08-27T13:43:51.808075500Z'
-    updatedAt: '2026-08-27T13:53:12.813479200Z'
-  '4283':
-    id: 4283
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1224.39
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-e3c8c7b1-2331-43bc-a813-94043940ac28
-    createdAt: '2026-08-27T13:48:12.356953600Z'
-    balanceAfter: 165189213.91
   '4284':
     id: 4284
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -53883,3 +53381,471 @@ entries:
     refId: axiom-89b70b7e-dd4b-4ab5-993f-e5f643caf72b
     createdAt: '2026-09-05T16:34:26.329737300Z'
     balanceAfter: 147939611.18
+  '9238':
+    id: 9238
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 190216.51
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-6e2b6e2f-e981-4836-bb79-ff8b244ce353
+    createdAt: '2026-09-05T17:29:33.399880800Z'
+    balanceAfter: 148129827.69
+  '9239':
+    id: 9239
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom_undo
+    amount: 199727.34
+    description: 'Axiom 撤销收回回收款: set_buffer (原收 190216.51 手续费 9510.83)'
+    refId: axiom-undo-5df68478-3023-4e2a-9a49-50ce09c3ce05
+    createdAt: '2026-09-05T17:29:37.146218500Z'
+    balanceAfter: 147930100.35
+  '9240':
+    id: 9240
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 84
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/6 02:12
+    createdAt: '2026-09-05T18:12:34.935345700Z'
+    updatedAt: '2026-09-05T18:12:54.931406700Z'
+  '9241':
+    id: 9241
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 68
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/6 02:16
+    createdAt: '2026-09-05T18:16:22.941719700Z'
+    updatedAt: '2026-09-05T18:16:38.931865900Z'
+  '9242':
+    id: 9242
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 152
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/6 13:30
+    createdAt: '2026-09-06T05:30:01.846995700Z'
+    updatedAt: '2026-09-06T05:30:39.801082300Z'
+  '9243':
+    id: 9243
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: web_shop
+    amount: 481.68
+    description: '网页商城订单 #44'
+    refId: web-order-44
+    createdAt: '2026-08-24T15:06:46.603Z'
+    balanceAfter: 165205843.55
+  '9244':
+    id: 9244
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: web_shop
+    amount: 1
+    description: '网页商城订单 #45'
+    refId: web-order-45
+    createdAt: '2026-08-25T12:24:17.588Z'
+    balanceAfter: 165204387.13
+  '9245':
+    id: 9245
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: web_shop
+    amount: 2
+    description: '网页商城订单 #47'
+    refId: web-order-47
+    createdAt: '2026-08-25T13:40:25.434Z'
+    balanceAfter: 165200379.99
+  '9246':
+    id: 9246
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 5.92
+    description: 出售 bowl x4
+    refId: us-1d73da24-7d38-4d05-9da2-d6afd50f633c
+    createdAt: '2026-08-23T12:37:58.000Z'
+  '9247':
+    id: 9247
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: shop_sell
+    amount: 292.05
+    description: 出售 spider_eye x59
+    refId: us-04b0a356-d381-430b-b4a2-bc4aeb683820
+    createdAt: '2026-08-23T12:37:58.000Z'
+  '9248':
+    id: 9248
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-66d3989a-aa6d-43ae-a733-47de3b85cfcd
+    createdAt: '2026-08-23T12:39:58.000Z'
+  '9249':
+    id: 9249
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-63aaaa7d-6659-40c7-b1fb-2aecbc0a90d6
+    createdAt: '2026-08-23T12:39:59.000Z'
+  '9250':
+    id: 9250
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-35bb22cd-a6cc-44c4-8800-642eb92b8254
+    createdAt: '2026-08-23T12:40:01.000Z'
+  '9251':
+    id: 9251
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-b5095d71-ec2d-4581-aad5-ef4a9e7de9e0
+    createdAt: '2026-08-23T12:40:01.000Z'
+  '9252':
+    id: 9252
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-960b5224-53ea-4bd7-9841-3646762410af
+    createdAt: '2026-08-23T12:40:03.000Z'
+  '9253':
+    id: 9253
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-448b6f8b-0b35-4a88-971b-d5491ad60bb7
+    createdAt: '2026-08-23T12:40:03.000Z'
+  '9254':
+    id: 9254
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-40e8c6af-2a37-4583-bc7b-4c22ec968c95
+    createdAt: '2026-08-23T12:40:09.000Z'
+  '9255':
+    id: 9255
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 13.99
+    description: 购买 barrel x1
+    refId: us-bbbaa7d7-4066-40df-857a-77fc1a4be3ae
+    createdAt: '2026-08-23T12:40:09.000Z'
+  '9256':
+    id: 9256
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-8e180fe8-29d3-42e2-a48c-e2e889e25381
+    createdAt: '2026-08-23T12:40:22.000Z'
+  '9257':
+    id: 9257
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-126dcb9e-4fd3-4061-9df8-8ffce9900255
+    createdAt: '2026-08-23T12:40:23.000Z'
+  '9258':
+    id: 9258
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-72a117bf-4c8d-4afd-a3f2-cc61ca4e3956
+    createdAt: '2026-08-23T12:40:23.000Z'
+  '9259':
+    id: 9259
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-e1fb76ce-6983-4005-966a-5971b394f063
+    createdAt: '2026-08-23T12:40:23.000Z'
+  '9260':
+    id: 9260
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-0bffacf4-7649-4b16-b118-780bbcfe6d9c
+    createdAt: '2026-08-23T12:40:24.000Z'
+  '9261':
+    id: 9261
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-bb2ca5d9-2944-410d-b070-fed291abaf44
+    createdAt: '2026-08-23T12:40:24.000Z'
+  '9262':
+    id: 9262
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 111.92
+    description: 购买 barrel x8
+    refId: us-32fb1abf-c944-4230-aef5-97261777d1ef
+    createdAt: '2026-08-23T12:40:24.000Z'
+  '9263':
+    id: 9263
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-61cac999-eb55-48b8-aae7-665573383de8
+    createdAt: '2026-09-02T12:52:20.000Z'
+  '9264':
+    id: 9264
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-93138e82-15b9-492e-bba8-004ea7606aa0
+    createdAt: '2026-09-02T13:48:19.000Z'
+  '9265':
+    id: 9265
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-d26d6a44-ddea-45f0-867b-6dc03ba3b088
+    createdAt: '2026-09-02T13:49:07.000Z'
+  '9266':
+    id: 9266
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-5ef59952-080e-4fd1-a045-457ad9deb1c6
+    createdAt: '2026-09-02T13:49:52.000Z'
+  '9267':
+    id: 9267
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-f84ead62-6236-4d31-b3a8-8a0009b60673
+    createdAt: '2026-09-02T14:09:22.000Z'
+  '9268':
+    id: 9268
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-969eedc4-1e6a-4366-a0c8-131e76ea72cb
+    createdAt: '2026-09-02T14:09:51.000Z'
+  '9269':
+    id: 9269
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-620b49f9-d275-4226-bdc3-27b70b8850e0
+    createdAt: '2026-09-02T14:10:48.000Z'
+  '9270':
+    id: 9270
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-4b7f84ee-889b-48a4-8896-90ff4b5f07a9
+    createdAt: '2026-09-02T14:11:10.000Z'
+  '9271':
+    id: 9271
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-56f708e6-1ff3-43f3-b5d2-0c8e9932ed10
+    createdAt: '2026-09-02T14:11:39.000Z'
+  '9272':
+    id: 9272
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-0b592c91-fb02-48ab-9d7d-a4e40ecb1c69
+    createdAt: '2026-09-02T14:14:38.000Z'
+  '9273':
+    id: 9273
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-349e520f-ae02-4c01-92be-40bd90a168bd
+    createdAt: '2026-09-02T14:15:05.000Z'
+  '9274':
+    id: 9274
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-adb7f48b-c15f-4e56-b085-1feb99b3687a
+    createdAt: '2026-09-02T14:15:32.000Z'
+  '9275':
+    id: 9275
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-cca5c763-6b40-472c-b8cb-3da09bb08fe0
+    createdAt: '2026-09-02T14:16:48.000Z'
+  '9276':
+    id: 9276
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-d7586abf-ae4b-4869-af7b-d89023acc85b
+    createdAt: '2026-09-02T14:22:00.000Z'
+  '9277':
+    id: 9277
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-e97bcc35-2b1e-44ea-8241-3b87ff1c7d57
+    createdAt: '2026-09-02T14:24:03.000Z'
+  '9278':
+    id: 9278
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-6639d2d7-a62a-4ff0-9024-5dd47a76c5a4
+    createdAt: '2026-09-02T14:24:34.000Z'
+  '9279':
+    id: 9279
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-4af8f492-4295-4b44-be71-8f21e81320c6
+    createdAt: '2026-09-02T14:25:21.000Z'
+  '9280':
+    id: 9280
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 65.28
+    description: 购买 white_stained_glass_pane x64
+    refId: us-e0652028-f406-4a0e-8eb4-ae21567cfab1
+    createdAt: '2026-09-02T14:25:51.000Z'
+  '9281':
+    id: 9281
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-28edc6b1-c3aa-4726-bd75-0ddc4ad70cbc
+    createdAt: '2026-09-02T14:34:58.000Z'
+  '9282':
+    id: 9282
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-924c2a23-a3b7-43aa-ad94-dcb1e7602dda
+    createdAt: '2026-09-02T14:35:17.000Z'
+  '9283':
+    id: 9283
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: shop_buy
+    amount: 1893.12
+    description: 购买 smooth_quartz x64
+    refId: us-ad47df94-460d-41b0-9447-f7ce3f29a9ac
+    createdAt: '2026-09-02T14:35:38.000Z'

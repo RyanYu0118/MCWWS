@@ -16,7 +16,7 @@ import java.util.regex.Pattern;
 
 /**
  * 官方钢笔没有保存/导入节点。轨迹以 JSON 落在 {@code config/axiom/mcwws-paths/}。
- * version 1：单层 points；version 2：多层 layers；version 3：每层含 settings。
+ * version 1：单层 points；version 2：多层 layers；version 3+：每层含 settings；version 4：含 block。
  */
 public final class PathLibrary {
 
@@ -47,11 +47,15 @@ public final class PathLibrary {
 
     public static String toJsonLayers(List<PathLayer> layers, int activeIndex) {
         StringBuilder sb = new StringBuilder(256 + layers.size() * 128);
-        sb.append("{\n  \"version\": 3,\n  \"active\": ").append(Math.max(0, activeIndex)).append(",\n  \"layers\": [\n");
+        sb.append("{\n  \"version\": 4,\n  \"active\": ").append(Math.max(0, activeIndex)).append(",\n  \"layers\": [\n");
         for (int li = 0; li < layers.size(); li++) {
             PathLayer layer = layers.get(li);
             sb.append("    {\n      \"name\": \"").append(escape(layer.name)).append("\",\n");
             sb.append("      \"visible\": ").append(layer.visible).append(",\n");
+            String blockId = PathLayerBlocks.serialize(layer.block);
+            if (blockId != null && !blockId.isBlank()) {
+                sb.append("      \"block\": \"").append(escape(blockId)).append("\",\n");
+            }
             layer.settings.appendJson(sb, "      ");
             sb.append(",\n      \"points\": [\n");
             for (int i = 0; i < layer.points.size(); i++) {
@@ -101,6 +105,12 @@ public final class PathLibrary {
                     PathLayer layer = new PathLayer(name);
                     layer.visible = !block.contains("\"visible\": false") && !block.contains("\"visible\":false");
                     parseSettingsInto(block, layer.settings);
+                    Matcher blockId = Pattern.compile("\"block\"\\s*:\\s*\"((?:\\\\.|[^\"\\\\])*)\"").matcher(block);
+                    if (blockId.find()) {
+                        layer.block = PathLayerBlocks.deserialize(
+                                blockId.group(1).replace("\\\"", "\"").replace("\\\\", "\\")
+                        );
+                    }
                     Matcher points = Pattern.compile("\"points\"\\s*:\\s*\\[(.*?)]", Pattern.DOTALL).matcher(block);
                     if (points.find()) {
                         Matcher m = POINT.matcher(points.group(1));
