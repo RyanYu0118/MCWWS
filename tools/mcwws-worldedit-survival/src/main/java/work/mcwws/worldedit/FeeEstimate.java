@@ -319,7 +319,12 @@ public final class FeeEstimate {
         if (isAirBlock(block)) {
             return "air";
         }
-        return PriceCatalog.normalize(block.getBlockType().id());
+        String id = PriceCatalog.normalize(block.getBlockType().id());
+        // 与 Axiom 一致：盆栽只按空花盆计价（拆下来也只掉花盆）
+        if (id.startsWith("potted_")) {
+            return "flower_pot";
+        }
+        return id;
     }
 
     public static String itemIdFromState(BlockState state) {

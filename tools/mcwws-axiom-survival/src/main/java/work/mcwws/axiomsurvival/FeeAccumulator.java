@@ -309,7 +309,12 @@ public final class FeeAccumulator {
             if (material.isAir()) {
                 return "air";
             }
-            return PriceCatalog.normalize(material.name().toLowerCase());
+            // 盆栽是独立方块 ID（potted_poppy 等），游戏里拆下来只掉空花盆；计价也只算花盆
+            String id = PriceCatalog.normalize(material.name().toLowerCase());
+            if (id.startsWith("potted_")) {
+                return "flower_pot";
+            }
+            return id;
         }
 
         private static double round(double value) {
@@ -359,7 +364,11 @@ public final class FeeAccumulator {
         if (material.isAir()) {
             return "air";
         }
-        return PriceCatalog.normalize(material.name().toLowerCase());
+        String id = PriceCatalog.normalize(material.name().toLowerCase());
+        if (id.startsWith("potted_")) {
+            return "flower_pot";
+        }
+        return id;
     }
 
     private FeeAccumulator() {
