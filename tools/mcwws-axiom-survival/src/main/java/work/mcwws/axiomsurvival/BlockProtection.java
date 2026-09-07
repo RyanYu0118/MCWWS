@@ -21,6 +21,26 @@ public final class BlockProtection {
         return player.hasPermission(perm);
     }
 
+    /**
+     * 管理员绕过 Slimefun/不可破坏方块还原与领地闸门（与扣费 bypass 分开）。
+     * 默认权限 {@code mcwws.axiom.survival.admin}（OP）。
+     */
+    public static boolean shouldBypassProtection(Player player) {
+        if (player == null) {
+            return true;
+        }
+        McwwsAxiomSurvivalPlugin plugin = McwwsAxiomSurvivalPlugin.getInstance();
+        if (plugin == null) {
+            return player.isOp();
+        }
+        String perm = plugin.getPluginConfig()
+                .getString("protection.admin-bypass-permission", "mcwws.axiom.survival.admin");
+        if (perm == null || perm.isBlank()) {
+            perm = "mcwws.axiom.survival.admin";
+        }
+        return player.hasPermission(perm);
+    }
+
     public static boolean isSurvivalLike(Player player) {
         if (player == null) {
             return false;

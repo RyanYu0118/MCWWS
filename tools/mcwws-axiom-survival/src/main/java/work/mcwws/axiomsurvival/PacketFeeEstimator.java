@@ -241,8 +241,11 @@ final class PacketFeeEstimator {
                         }
                         Block block = world.getBlockAt(baseX + x, baseY + y, baseZ + z);
                         if (BlockProtection.isProtectedBlock(block)) {
-                            builder.addProtected(block);
-                            continue;
+                            if (!builder.bypassesProtection()) {
+                                builder.addProtected(block);
+                                continue;
+                            }
+                            builder.noteSlimefunClear(block);
                         }
                         BlockData target = NmsBlocks.toBlockData(newState);
                         builder.addChange(block, target, nbtAt.get(packBlock(baseX + x, baseY + y, baseZ + z)));
@@ -288,8 +291,11 @@ final class PacketFeeEstimator {
         int z = NmsBlocks.blockPosZ(blockPos);
         Block block = world.getBlockAt(x, y, z);
         if (BlockProtection.isProtectedBlock(block)) {
-            builder.addProtected(block);
-            return;
+            if (!builder.bypassesProtection()) {
+                builder.addProtected(block);
+                return;
+            }
+            builder.noteSlimefunClear(block);
         }
         BlockData target = NmsBlocks.toBlockData(newState);
         builder.addChange(block, target);

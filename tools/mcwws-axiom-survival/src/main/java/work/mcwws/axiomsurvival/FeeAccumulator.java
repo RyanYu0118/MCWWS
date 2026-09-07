@@ -1,5 +1,6 @@
 package work.mcwws.axiomsurvival;
 
+import me.mrCookieSlime.Slimefun.api.BlockStorage;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -24,8 +25,9 @@ public final class FeeAccumulator {
      * @param placedCounts     原始放置计数，同上
      * @param netRemovedCounts 对冲搬运后真正流入市场的量
      * @param netPlacedCounts  对冲搬运后真正从市场取出的量
-     * @param movedBlocks      被判定为搬运（原地拆、别处放同种方块）的格数，只收劳务费
-     * @param minDistance      本次处理的方块（含受保护）离玩家的最小距离；未知时为 {@link #UNKNOWN_DISTANCE}
+     * @param movedBlocks             被判定为搬运（原地拆、别处放同种方块）的格数，只收劳务费
+     * @param slimefunClearLocations  管理员绕过保护后需清理的 Slimefun BlockStorage 坐标
+     * @param minDistance             本次处理的方块（含受保护）离玩家的最小距离；未知时为 {@link #UNKNOWN_DISTANCE}
      */
     public record Result(
             double salvage,
@@ -40,6 +42,7 @@ public final class FeeAccumulator {
             Map<String, Long> netRemovedCounts,
             Map<String, Long> netPlacedCounts,
             List<BlockState> protectedStates,
+            List<Location> slimefunClearLocations,
             double minDistance,
             String contentsBlocked
     ) {
@@ -52,7 +55,7 @@ public final class FeeAccumulator {
         }
 
         public static Result empty() {
-            return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), UNKNOWN_DISTANCE, null);
+            return new Result(0D, 0D, 0D, 0L, 0L, 0L, 0L, Map.of(), Map.of(), Map.of(), Map.of(), List.of(), List.of(), UNKNOWN_DISTANCE, null);
         }
     }
 
@@ -74,6 +77,7 @@ public final class FeeAccumulator {
         private final Map<String, Long> removedCounts = new HashMap<>();
         private final Map<String, Long> placedCounts = new HashMap<>();
         private final List<BlockState> protectedStates = new ArrayList<>();
+        private final List<Location> slimefunClearLocations = new ArrayList<>();
         private Player player;
         private boolean hasOrigin;
         private double originX;
@@ -126,6 +130,10 @@ public final class FeeAccumulator {
             }
         }
 
+        boolean bypassesProtection() {
+            return BlockProtection.shouldBypassProtection(player);
+        }
+
         /** 受保护方块不计费；同时留下原状快照，Axiom 写入后由 ProtectedBlockGuard 还原 */
         public void addProtected(Block block) {
             protectedBlocks++;
@@ -134,6 +142,19 @@ public final class FeeAccumulator {
                 if (protectedStates.size() < protectedCaptureCap) {
                     protectedStates.add(block.getState());
                 }
+            }
+        }
+
+        /** 管理员允许破坏时，记下需清理的 Slimefun BlockStorage，避免留下幽灵数据 */
+        void noteSlimefunClear(Block block) {
+            if (block == null) {
+                return;
+            }
+            try {
+                if (BlockStorage.hasBlockInfo(block)) {
+                    slimefunClearLocations.add(block.getLocation().clone());
+                }
+            } catch (Throwable ignored) {
             }
         }
 
@@ -261,6 +282,7 @@ public final class FeeAccumulator {
                     Map.copyOf(netRemoved),
                     Map.copyOf(netPlaced),
                     List.copyOf(protectedStates),
+                    List.copyOf(slimefunClearLocations),
                     minDistance,
                     contentsBlocked
             );

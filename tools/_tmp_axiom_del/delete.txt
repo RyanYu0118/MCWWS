@@ -1,0 +1,50 @@
+﻿
+>   public void delete();
+      Code:
+           0: aload_0
+           1: getfield      #33                 // Field activeGizmo:I
+           4: iflt          73
+           7: aload_0
+           8: getfield      #10                 // Field gizmos:Ljava/util/List;
+          11: aload_0
+          12: getfield      #33                 // Field activeGizmo:I
+          15: invokeinterface #65,  2           // InterfaceMethod java/util/List.get:(I)Ljava/lang/Object;
+          20: checkcast     #69                 // class com/moulberry/axiom/gizmo/Gizmo
+          23: astore_1
+          24: aload_0
+          25: new           #99                 // class com/moulberry/axiom/tools/modelling/GizmoList$AddGizmo
+          28: dup
+          29: aload_0
+          30: getfield      #33                 // Field activeGizmo:I
+          33: aload_1
+          34: invokevirtual #128                // Method com/moulberry/axiom/gizmo/Gizmo.getTargetVec:()Lnet/minecraft
+/world/phys/Vec3;
+          37: invokespecial #107                // Method com/moulberry/axiom/tools/modelling/GizmoList$AddGizmo."<init
+>":(ILnet/minecraft/world/phys/Vec3;)V
+          40: new           #94                 // class com/moulberry/axiom/tools/modelling/GizmoList$RemoveGizmo
+          43: dup
+          44: aload_0
+          45: getfield      #33                 // Field activeGizmo:I
+          48: invokespecial #96                 // Method com/moulberry/axiom/tools/modelling/GizmoList$RemoveGizmo."<i
+nit>":(I)V
+          51: aload_1
+          52: invokevirtual #174                // Method com/moulberry/axiom/gizmo/Gizmo.getTargetPosition:()Lnet/mine
+craft/core/BlockPos;
+          55: aload_0
+          56: getfield      #33                 // Field activeGizmo:I
+          59: iconst_1
+          60: iadd
+          61: invokedynamic #178,  0            // InvokeDynamic #3:makeConcatWithConstants:(I)Ljava/lang/String;
+          66: iconst_1
+          67: invokevirtual #114                // Method pushHistory:(Lcom/moulberry/axiom/tools/modelling/GizmoList$G
+izmoListHistoryAction;Lcom/moulberry/axiom/tools/modelling/GizmoList$GizmoListHistoryAction;Lnet/minecraft/core/BlockPo
+s;Ljava/lang/String;Z)V
+          70: goto          77
+          73: aload_0
+          74: invokevirtual #179                // Method clear:()V
+          77: return
+  
+    public void clear();
+      Code:
+
+

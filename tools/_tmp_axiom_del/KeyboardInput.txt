@@ -1,0 +1,88 @@
+﻿Compiled from "KeyboardInput.java"
+public class net.minecraft.client.player.KeyboardInput extends net.minecraft.client.player.ClientInput {
+  private final net.minecraft.client.Options options;
+
+  public net.minecraft.client.player.KeyboardInput(net.minecraft.client.Options);
+    Code:
+         0: aload_0
+         1: invokespecial #1                  // Method net/minecraft/client/player/ClientInput."<init>":()V
+         4: aload_0
+         5: aload_1
+         6: putfield      #7                  // Field options:Lnet/minecraft/client/Options;
+         9: return
+
+  private static float calculateImpulse(boolean, boolean);
+    Code:
+         0: iload_0
+         1: iload_1
+         2: if_icmpne     7
+         5: fconst_0
+         6: freturn
+         7: iload_0
+         8: ifeq          15
+        11: fconst_1
+        12: goto          17
+        15: ldc           #13                 // float -1.0f
+        17: freturn
+
+  public void tick();
+    Code:
+         0: aload_0
+         1: new           #14                 // class net/minecraft/world/entity/player/Input
+         4: dup
+         5: aload_0
+         6: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+         9: getfield      #16                 // Field net/minecraft/client/Options.keyUp:Lnet/minecraft/client/KeyMapping;
+        12: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        15: aload_0
+        16: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        19: getfield      #28                 // Field net/minecraft/client/Options.keyDown:Lnet/minecraft/client/KeyMapping;
+        22: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        25: aload_0
+        26: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        29: getfield      #31                 // Field net/minecraft/client/Options.keyLeft:Lnet/minecraft/client/KeyMapping;
+        32: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        35: aload_0
+        36: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        39: getfield      #34                 // Field net/minecraft/client/Options.keyRight:Lnet/minecraft/client/KeyMapping;
+        42: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        45: aload_0
+        46: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        49: getfield      #37                 // Field net/minecraft/client/Options.keyJump:Lnet/minecraft/client/KeyMapping;
+        52: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        55: aload_0
+        56: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        59: getfield      #40                 // Field net/minecraft/client/Options.keyShift:Lnet/minecraft/client/KeyMapping;
+        62: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        65: aload_0
+        66: getfield      #7                  // Field options:Lnet/minecraft/client/Options;
+        69: getfield      #43                 // Field net/minecraft/client/Options.keySprint:Lnet/minecraft/client/KeyMapping;
+        72: invokevirtual #22                 // Method net/minecraft/client/KeyMapping.isDown:()Z
+        75: invokespecial #46                 // Method net/minecraft/world/entity/player/Input."<init>":(ZZZZZZZ)V
+        78: putfield      #49                 // Field keyPresses:Lnet/minecraft/world/entity/player/Input;
+        81: aload_0
+        82: getfield      #49                 // Field keyPresses:Lnet/minecraft/world/entity/player/Input;
+        85: invokevirtual #53                 // Method net/minecraft/world/entity/player/Input.forward:()Z
+        88: aload_0
+        89: getfield      #49                 // Field keyPresses:Lnet/minecraft/world/entity/player/Input;
+        92: invokevirtual #56                 // Method net/minecraft/world/entity/player/Input.backward:()Z
+        95: invokestatic  #59                 // Method calculateImpulse:(ZZ)F
+        98: fstore_1
+        99: aload_0
+       100: getfield      #49                 // Field keyPresses:Lnet/minecraft/world/entity/player/Input;
+       103: invokevirtual #63                 // Method net/minecraft/world/entity/player/Input.left:()Z
+       106: aload_0
+       107: getfield      #49                 // Field keyPresses:Lnet/minecraft/world/entity/player/Input;
+       110: invokevirtual #66                 // Method net/minecraft/world/entity/player/Input.right:()Z
+       113: invokestatic  #59                 // Method calculateImpulse:(ZZ)F
+       116: fstore_2
+       117: aload_0
+       118: new           #69                 // class net/minecraft/world/phys/Vec2
+       121: dup
+       122: fload_2
+       123: fload_1
+       124: invokespecial #71                 // Method net/minecraft/world/phys/Vec2."<init>":(FF)V
+       127: invokevirtual #74                 // Method net/minecraft/world/phys/Vec2.normalized:()Lnet/minecraft/world/phys/Vec2;
+       130: putfield      #78                 // Field moveVector:Lnet/minecraft/world/phys/Vec2;
+       133: return
+}

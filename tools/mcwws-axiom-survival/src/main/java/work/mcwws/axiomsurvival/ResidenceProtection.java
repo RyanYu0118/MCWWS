@@ -21,6 +21,9 @@ final class ResidenceProtection {
         if (player == null || block == null || target == null) {
             return false;
         }
+        if (BlockProtection.shouldBypassProtection(player)) {
+            return true;
+        }
         Residence residence = Residence.getInstance();
         if (residence == null || !residence.isEnabled()) {
             return true;

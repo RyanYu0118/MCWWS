@@ -1,0 +1,33 @@
+﻿Compiled from "GizmoList.java"
+public class com.moulberry.axiom.tools.modelling.GizmoList {
+  private final java.util.List<com.moulberry.axiom.gizmo.Gizmo> gizmos;
+  private final com.moulberry.axiom.world_modification.HistoryBuffer<com.moulberry.axiom.tools.modelling.GizmoList$GizmoListHistoryAction> history;
+  private boolean renderGizmos;
+  private boolean hasGrabbedGizmo;
+  private boolean isCtrlDown;
+  private int activeGizmo;
+  private boolean pendingDeselect;
+  public com.moulberry.axiom.tools.modelling.GizmoList();
+  public com.moulberry.axiom.world_modification.HistoryBuffer<com.moulberry.axiom.tools.modelling.GizmoList$GizmoListHistoryAction> getHistoryBuffer();
+  private void pushHistory(com.moulberry.axiom.tools.modelling.GizmoList$GizmoListHistoryAction, com.moulberry.axiom.tools.modelling.GizmoList$GizmoListHistoryAction, net.minecraft.core.BlockPos, java.lang.String, boolean);
+  public java.util.List<com.moulberry.axiom.gizmo.Gizmo> getGizmos();
+  public int size();
+  public com.moulberry.axiom.gizmo.ExtrudedGizmo extrude();
+  public void finishExtrude(com.moulberry.axiom.gizmo.ExtrudedGizmo, net.minecraft.world.phys.Vec3);
+  public boolean handleScroll(int, int);
+  public boolean hasActiveGizmo();
+  public int getActiveGizmoIndex();
+  public boolean hasGrabbedGizmo();
+  public boolean isEmpty();
+  public void deselectActiveGizmo();
+  public boolean undo();
+  public boolean redo();
+  public void delete();
+  public void clear();
+  public void setActiveGizmo(int);
+  public void addGizmo(net.minecraft.world.phys.Vec3);
+  public boolean leftClick();
+  public boolean updateGizmos(com.moulberry.axiom.render.AxiomWorldRenderContext);
+  public void renderGizmos(com.moulberry.axiom.render.AxiomWorldRenderContext);
+  private static boolean lambda$pushHistory$0(com.moulberry.axiom.world_modification.HistoryEntry, com.moulberry.axiom.world_modification.HistoryEntry);
+}

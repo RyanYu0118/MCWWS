@@ -1,0 +1,214 @@
+﻿Compiled from "AxiomClient.java"
+public class com.moulberry.axiom.AxiomClient {
+  public static java.util.Set<java.util.UUID> ignoredDisplayEntities;
+
+  public com.moulberry.axiom.AxiomClient();
+    Code:
+         0: aload_0
+         1: invokespecial #1                  // Method java/lang/Object."<init>":()V
+         4: return
+
+  public static boolean isAxiomActive(net.minecraft.world.level.GameType);
+    Code:
+         0: getstatic     #7                  // Field com/moulberry/axiom/StaticValues.gameHasTicked:Z
+         3: ifne          8
+         6: iconst_0
+         7: ireturn
+         8: invokestatic  #13                 // Method com/moulberry/axiom/Axiom.getInstance:()Lcom/moulberry/axiom/Axiom;
+        11: ifnull        23
+        14: invokestatic  #13                 // Method com/moulberry/axiom/Axiom.getInstance:()Lcom/moulberry/axiom/Axiom;
+        17: getfield      #19                 // Field com/moulberry/axiom/Axiom.serverConfig:Lcom/moulberry/axiom/ServerConfig;
+        20: ifnonnull     25
+        23: iconst_0
+        24: ireturn
+        25: getstatic     #23                 // Field com/moulberry/axiom/ClientEvents.allowedOnServer:Z
+        28: ifeq          55
+        31: getstatic     #28                 // Field com/moulberry/axiom/ClientEvents.serverSupportsAxiom:Z
+        34: ifeq          55
+        37: getstatic     #31                 // Field com/moulberry/axiom/ClientEvents.processedServerSupportsAxiom:Z
+        40: ifeq          55
+        43: getstatic     #34                 // Field com/moulberry/axiom/ClientEvents.processedAllowedOnServer:Z
+        46: ifeq          55
+        49: getstatic     #37                 // Field com/moulberry/axiom/ClientEvents.remotelyDisabled:Z
+        52: ifeq          57
+        55: iconst_0
+        56: ireturn
+        57: invokestatic  #40                 // InterfaceMethod net/fabricmc/loader/api/FabricLoader.getInstance:()Lnet/fabricmc/loader/api/FabricLoader;
+        60: ldc           #45                 // String replaymod
+        62: invokeinterface #47,  2           // InterfaceMethod net/fabricmc/loader/api/FabricLoader.isModLoaded:(Ljava/lang/String;)Z
+        67: ifeq          81
+        70: getstatic     #51                 // Field com/replaymod/replay/ReplayModReplay.instance:Lcom/replaymod/replay/ReplayModReplay;
+        73: invokevirtual #57                 // Method com/replaymod/replay/ReplayModReplay.getReplayHandler:()Lcom/replaymod/replay/ReplayHandler;
+        76: ifnull        81
+        79: iconst_0
+        80: ireturn
+        81: invokestatic  #61                 // Method net/minecraft/client/Minecraft.getInstance:()Lnet/minecraft/client/Minecraft;
+        84: getfield      #66                 // Field net/minecraft/client/Minecraft.player:Lnet/minecraft/client/player/LocalPlayer;
+        87: astore_1
+        88: aload_1
+        89: ifnonnull     94
+        92: iconst_0
+        93: ireturn
+        94: invokestatic  #61                 // Method net/minecraft/client/Minecraft.getInstance:()Lnet/minecraft/client/Minecraft;
+        97: getfield      #70                 // Field net/minecraft/client/Minecraft.gameMode:Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;
+       100: astore_2
+       101: aload_2
+       102: ifnonnull     107
+       105: iconst_0
+       106: ireturn
+       107: aload_2
+       108: invokevirtual #74                 // Method net/minecraft/client/multiplayer/MultiPlayerGameMode.getPlayerMode:()Lnet/minecraft/world/level/GameType;
+       111: aload_0
+       112: if_acmpne     119
+       115: iconst_1
+       116: goto          120
+       119: iconst_0
+       120: ireturn
+
+  public static void updateItemBlockRenderTypes();
+    Code:
+         0: return
+
+  public static boolean hasPermission(com.moulberry.axiom.restrictions.AxiomPermission);
+    Code:
+         0: getstatic     #80                 // Field com/moulberry/axiom/restrictions/ClientRestrictions.permissions:Lcom/moulberry/axiom/restrictions/AxiomPermissionSet;
+         3: aload_0
+         4: invokevirtual #86                 // Method com/moulberry/axiom/restrictions/AxiomPermissionSet.contains:(Lcom/moulberry/axiom/restrictions/AxiomPermission;)Z
+         7: ireturn
+
+  public static boolean hasPermissions(java.util.EnumSet<com.moulberry.axiom.restrictions.AxiomPermission>);
+    Code:
+         0: getstatic     #80                 // Field com/moulberry/axiom/restrictions/ClientRestrictions.permissions:Lcom/moulberry/axiom/restrictions/AxiomPermissionSet;
+         3: aload_0
+         4: invokevirtual #92                 // Method com/moulberry/axiom/restrictions/AxiomPermissionSet.containsAll:(Ljava/util/EnumSet;)Z
+         7: ireturn
+
+  public static boolean isAxiomActive();
+    Code:
+         0: invokestatic  #96                 // Method com/moulberry/axiom/editor/EditorUI.isEnabled:()Z
+         3: ifeq          12
+         6: getstatic     #102                // Field net/minecraft/world/level/GameType.SPECTATOR:Lnet/minecraft/world/level/GameType;
+         9: goto          15
+        12: getstatic     #108                // Field net/minecraft/world/level/GameType.CREATIVE:Lnet/minecraft/world/level/GameType;
+        15: invokestatic  #111                // Method isAxiomActive:(Lnet/minecraft/world/level/GameType;)Z
+        18: ireturn
+
+  public static void loadCommercialLicenseHistory(net.minecraft.resources.ResourceKey<net.minecraft.world.level.Level>);
+    Code:
+         0: invokestatic  #61                 // Method net/minecraft/client/Minecraft.getInstance:()Lnet/minecraft/client/Minecraft;
+         3: invokevirtual #117                // Method net/minecraft/client/Minecraft.hasSingleplayerServer:()Z
+         6: ifeq          39
+         9: aload_0
+        10: invokevirtual #120                // Method net/minecraft/resources/ResourceKey.identifier:()Lnet/minecraft/resources/Identifier;
+        13: invokestatic  #126                // Method com/moulberry/axiom/utils/StringUtils.convertResourceToPretty:(Lnet/minecraft/resources/Identifier;)Ljava/lang/String;
+        16: astore_2
+        17: invokestatic  #61                 // Method net/minecraft/client/Minecraft.getInstance:()Lnet/minecraft/client/Minecraft;
+        20: invokevirtual #132                // Method net/minecraft/client/Minecraft.getSingleplayerServer:()Lnet/minecraft/client/server/IntegratedServer;
+        23: getfield      #136                // Field net/minecraft/client/server/IntegratedServer.storageSource:Lnet/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess;
+        26: invokevirtual #142                // Method net/minecraft/world/level/storage/LevelStorageSource$LevelStorageAccess.getLevelId:()Ljava/lang/String;
+        29: aload_2
+        30: invokedynamic #148,  0            // InvokeDynamic #0:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+        35: astore_1
+        36: goto          100
+        39: invokestatic  #61                 // Method net/minecraft/client/Minecraft.getInstance:()Lnet/minecraft/client/Minecraft;
+        42: invokevirtual #152                // Method net/minecraft/client/Minecraft.getConnection:()Lnet/minecraft/client/multiplayer/ClientPacketListener;
+        45: invokevirtual #156                // Method net/minecraft/client/multiplayer/ClientPacketListener.getConnection:()Lnet/minecraft/network/Connection;
+        48: invokevirtual #161                // Method net/minecraft/network/Connection.getRemoteAddress:()Ljava/net/SocketAddress;
+        51: astore_2
+        52: aload_2
+        53: instanceof    #167                // class java/net/InetSocketAddress
+        56: ifeq          77
+        59: aload_2
+        60: checkcast     #167                // class java/net/InetSocketAddress
+        63: astore        4
+        65: aload         4
+        67: invokevirtual #169                // Method java/net/InetSocketAddress.getAddress:()Ljava/net/InetAddress;
+        70: invokevirtual #173                // Method java/net/InetAddress.getHostAddress:()Ljava/lang/String;
+        73: astore_3
+        74: goto          82
+        77: aload_2
+        78: invokevirtual #178                // Method java/lang/Object.toString:()Ljava/lang/String;
+        81: astore_3
+        82: aload_0
+        83: invokevirtual #120                // Method net/minecraft/resources/ResourceKey.identifier:()Lnet/minecraft/resources/Identifier;
+        86: invokestatic  #126                // Method com/moulberry/axiom/utils/StringUtils.convertResourceToPretty:(Lnet/minecraft/resources/Identifier;)Ljava/lang/String;
+        89: astore        4
+        91: aload_3
+        92: aload         4
+        94: invokedynamic #181,  0            // InvokeDynamic #1:makeConcatWithConstants:(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;
+        99: astore_1
+       100: aload_1
+       101: invokestatic  #182                // Method com/moulberry/axiom/world_modification/Dispatcher.tryLoadHistory:(Ljava/lang/String;)V
+       104: return
+
+  public static void onAxiomEnabled(net.minecraft.client.Minecraft);
+    Code:
+         0: getstatic     #188                // Field com/moulberry/axiom/Axiom.configuration:Lcom/moulberry/axiom/configuration/AxiomConfig;
+         3: getfield      #192                // Field com/moulberry/axiom/configuration/AxiomConfig.internal:Lcom/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal;
+         6: getfield      #198                // Field com/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal.shownIntroduction:Z
+         9: ifne          13
+        12: return
+        13: getstatic     #188                // Field com/moulberry/axiom/Axiom.configuration:Lcom/moulberry/axiom/configuration/AxiomConfig;
+        16: getfield      #192                // Field com/moulberry/axiom/configuration/AxiomConfig.internal:Lcom/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal;
+        19: getfield      #203                // Field com/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal.hadEditorUIOpen:Z
+        22: ifeq          48
+        25: aload_0
+        26: getfield      #70                 // Field net/minecraft/client/Minecraft.gameMode:Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;
+        29: ifnull        48
+        32: aload_0
+        33: getfield      #70                 // Field net/minecraft/client/Minecraft.gameMode:Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;
+        36: invokevirtual #74                 // Method net/minecraft/client/multiplayer/MultiPlayerGameMode.getPlayerMode:()Lnet/minecraft/world/level/GameType;
+        39: getstatic     #102                // Field net/minecraft/world/level/GameType.SPECTATOR:Lnet/minecraft/world/level/GameType;
+        42: if_acmpne     48
+        45: invokestatic  #206                // Method com/moulberry/axiom/editor/EditorUI.enable:()V
+        48: aload_0
+        49: invokestatic  #209                // Method getEditorUiKeybindConflicts:(Lnet/minecraft/client/Minecraft;)Lnet/minecraft/network/chat/Component;
+        52: astore_1
+        53: aload_1
+        54: ifnull        72
+        57: ldc           #213                // String The Editor UI keybind has conflicts:
+        59: invokestatic  #215                // InterfaceMethod net/minecraft/network/chat/Component.literal:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+        62: aload_1
+        63: invokevirtual #221                // Method net/minecraft/network/chat/MutableComponent.append:(Lnet/minecraft/network/chat/Component;)Lnet/minecraft/network/chat/MutableComponent;
+        66: invokestatic  #227                // Method com/moulberry/axiom/utils/ChatUtils.error:(Lnet/minecraft/network/chat/Component;)V
+        69: goto          163
+        72: getstatic     #188                // Field com/moulberry/axiom/Axiom.configuration:Lcom/moulberry/axiom/configuration/AxiomConfig;
+        75: getfield      #192                // Field com/moulberry/axiom/configuration/AxiomConfig.internal:Lcom/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal;
+        78: getfield      #233                // Field com/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal.showOpenConfigTip:Z
+        81: ifeq          92
+        84: ldc           #236                // String Tip: Access the Axiom config by running /axiomconfig
+        86: invokestatic  #238                // Method com/moulberry/axiom/utils/ChatUtils.info:(Ljava/lang/String;)V
+        89: goto          163
+        92: getstatic     #188                // Field com/moulberry/axiom/Axiom.configuration:Lcom/moulberry/axiom/configuration/AxiomConfig;
+        95: getfield      #192                // Field com/moulberry/axiom/configuration/AxiomConfig.internal:Lcom/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal;
+        98: getfield      #241                // Field com/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal.showOpenContextMenuTip:Z
+       101: ifeq          128
+       104: ldc           #244                // String Tip: Access the Axiom context menu by holding [
+       106: invokestatic  #215                // InterfaceMethod net/minecraft/network/chat/Component.literal:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       109: ldc           #246                // String axiom.keybind.context
+       111: invokestatic  #248                // InterfaceMethod net/minecraft/network/chat/Component.keybind:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       114: ldc           #251                // String ]
+       116: invokevirtual #253                // Method net/minecraft/network/chat/MutableComponent.append:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       119: invokevirtual #221                // Method net/minecraft/network/chat/MutableComponent.append:(Lnet/minecraft/network/chat/Component;)Lnet/minecraft/network/chat/MutableComponent;
+       122: invokestatic  #255                // Method com/moulberry/axiom/utils/ChatUtils.info:(Lnet/minecraft/network/chat/Component;)V
+       125: goto          163
+       128: getstatic     #188                // Field com/moulberry/axiom/Axiom.configuration:Lcom/moulberry/axiom/configuration/AxiomConfig;
+       131: getfield      #192                // Field com/moulberry/axiom/configuration/AxiomConfig.internal:Lcom/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal;
+       134: getfield      #257                // Field com/moulberry/axiom/configuration/AxiomConfig$SubcategoryInternal.showOpenEditorTip:Z
+       137: ifeq          163
+       140: ldc_w         #260                // String Tip: Access the Axiom Editor UI by pressing [
+       143: invokestatic  #215                // InterfaceMethod net/minecraft/network/chat/Component.literal:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       146: ldc_w         #262                // String axiom.keybind.toggle_editor_ui
+       149: invokestatic  #248                // InterfaceMethod net/minecraft/network/chat/Component.keybind:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       152: ldc           #251                // String ]
+       154: invokevirtual #253                // Method net/minecraft/network/chat/MutableComponent.append:(Ljava/lang/String;)Lnet/minecraft/network/chat/MutableComponent;
+       157: invokevirtual #221                // Method net/minecraft/network/chat/MutableComponent.append:(Lnet/minecraft/network/chat/Component;)Lnet/minecraft/network/chat/MutableComponent;
+       160: invokestatic  #255                // Method com/moulberry/axiom/utils/ChatUtils.info:(Lnet/minecraft/network/chat/Component;)V
+       163: return
+
+  static {};
+    Code:
+         0: invokestatic  #299                // InterfaceMethod java/util/Set.of:()Ljava/util/Set;
+         3: putstatic     #305                // Field ignoredDisplayEntities:Ljava/util/Set;
+         6: return
+}

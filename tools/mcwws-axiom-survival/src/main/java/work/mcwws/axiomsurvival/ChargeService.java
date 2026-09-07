@@ -65,7 +65,7 @@ public final class ChargeService {
                     + ", 扣费=" + shouldCharge(player));
         }
 
-        // 领地权限与扣费 bypass 无关：有 bypass 也不能改别人的领地
+        // 领地权限：普通玩家与扣费 bypass 都不能改别人领地；管理员 protection bypass 可改
         if (estimate.residenceDeniedBlocks() > 0L) {
             deny(player, "residence-denied", plugin.msg("prefix") + plugin.msg(
                     "residence-denied", FeeAccumulator.withNear(
@@ -75,8 +75,8 @@ public final class ChargeService {
             return ChargeDecision.deny("residence-denied");
         }
 
-        // 容器里的 Slimefun / 自定义属性物品不能靠堆叠复制，bypass 也不行
-        if (estimate.contentsBlocked() != null) {
+        // 容器里的特殊物品不能靠堆叠复制；管理员破坏/清理受保护方块时放行
+        if (estimate.contentsBlocked() != null && !BlockProtection.shouldBypassProtection(player)) {
             String messageKey = ContainerContents.BLOCKED_SLIMEFUN.equals(estimate.contentsBlocked())
                     ? "special-items-slimefun"
                     : "special-items-attributes";
@@ -86,7 +86,7 @@ public final class ChargeService {
         }
 
         if (!shouldCharge(player)) {
-            return ChargeDecision.allow();
+            return allowAndGuard(estimate);
         }
 
         long maxScan = plugin.getPluginConfig().getLong("max-scan-blocks", 500000L);
@@ -265,6 +265,7 @@ public final class ChargeService {
 
     private ChargeDecision allowAndGuard(FeeAccumulator.Result estimate) {
         ProtectedBlockGuard.scheduleRestore(estimate.protectedStates());
+        ProtectedBlockGuard.scheduleSlimefunClear(estimate.slimefunClearLocations());
         return ChargeDecision.allow();
     }
 

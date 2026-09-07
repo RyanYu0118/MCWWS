@@ -1,0 +1,98 @@
+# Default category file for CoreChestsort
+# File: 970-stone.default.txt
+#sticky=false
+
+# Core stone types
+stone
+cobblestone
+granite*
+diorite*
+andesite*
+
+# End
+end_stone
+end_stone_brick_wall
+
+# Stone bricks & variants
+*stone_bricks
+stone_brick_*
+*_stone_bricks
+cobblestone_wall
+mossy_stone_brick_wall
+
+# Bricks
+brick
+bricks
+brick_*
+brick_wall
+
+# Tuff family
+tuff*
+polished_tuff*
+chiseled_tuff*
+tuff_bricks
+tuff_brick_*
+
+# Sandstone family
+*sandstone
+sandstone_wall
+red_sandstone_wall
+
+# Nether stone
+netherrack
+nether_brick*
+red_nether_bricks
+cracked_nether_bricks
+chiseled_nether_bricks
+red_nether_brick_wall
+
+# Natural blocks
+grass_block
+dirt
+coarse_dirt
+rooted_dirt
+dirt_path
+farmland
+gravel
+sand
+red_sand
+snow
+snowball
+snow_block
+clay
+clay_ball
+terracotta
+ice
+magma_block
+
+# Cobble variants
+mossy_cobblestone
+mossy_cobblestone_wall
+
+# Special natural
+mycelium
+podzol
+soul_sand
+soul_soil
+infested_cobblestone
+infested_stone
+suspicious_gravel
+suspicious_sand
+
+# Smooth / polished
+polished_*
+smooth_stone
+
+# Minecraft 26.1/26.2 stone sets
+chiseled_cinnabar
+cinnabar
+cinnabar_bricks
+cinnabar_brick_wall
+cinnabar_wall
+chiseled_sulfur
+potent_sulfur
+sulfur
+sulfur_bricks
+sulfur_brick_wall
+sulfur_spike
+sulfur_wall

@@ -1,0 +1,1657 @@
+[20:57:20] [main/INFO]: Loading Minecraft 26.2 with Fabric Loader 0.19.3
+[20:57:20] [main/INFO]: Loading 189 mods:
+	- ambientsounds 6.3.6
+	- appleskin 3.0.10+mc26.2
+	- axiom 5.5.0
+	   |-- com_moulberry_axiomclientapi-unobf 1.0.49
+	   \-- lattice 2.0.1+26.1
+	- betteradvancements 0.6.0.72
+	- c2me 0.4.2-alpha.0.43+26.2
+	   |-- c2me-base 0.4.2-alpha.0.43+26.2
+	   |-- c2me-client-uncapvd 0.4.2-alpha.0.43+26.2
+	   |-- c2me-fixes-chunkio-threading-issues 0.4.2-alpha.0.43+26.2
+	   |-- c2me-fixes-general-threading-issues 0.4.2-alpha.0.43+26.2
+	   |-- c2me-fixes-worldgen-threading-issues 0.4.2-alpha.0.43+26.2
+	   |-- c2me-fixes-worldgen-vanilla-bugs 0.4.2-alpha.0.43+26.2
+	   |-- c2me-notickvd 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-allocs 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-chunkio 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-dfc 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-math 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-natives-math 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-scheduling 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-worldgen-general 0.4.2-alpha.0.43+26.2
+	   |-- c2me-opts-worldgen-vanilla 0.4.2-alpha.0.43+26.2
+	   |-- c2me-rewrites-chunk-serializer 0.4.2-alpha.0.43+26.2
+	   |-- c2me-rewrites-chunk-system 0.4.2-alpha.0.43+26.2
+	   |-- c2me-rewrites-chunkio 0.4.2-alpha.0.43+26.2
+	   |-- c2me-server-utils 0.4.2-alpha.0.43+26.2
+	   |-- c2me-threading-lighting 0.4.2-alpha.0.43+26.2
+	   |-- com_electronwill_night-config_core 3.6.5
+	   |-- com_electronwill_night-config_toml 3.6.5
+	   |-- com_github_ben-manes_caffeine_caffeine 3.2.1
+	   |-- com_ibm_async_asyncutil 0.1.0
+	   |-- io_reactivex_rxjava3_rxjava 3.1.12
+	   |-- mixinsquared 0.3.7-beta.1
+	   |-- net_objecthunter_exp4j 0.4.8
+	   |-- org_jctools_jctools-core 4.0.5
+	   \-- org_reactivestreams_reactive-streams 1.0.4
+	- chat_heads 1.2.8
+	- chatanimation 1.3.0
+	- chunky 1.5.3
+	- cloth-config 26.2.155
+	   \-- cloth-basic-math 0.6.1
+	- continuity 3.0.1+26.2
+	- creativecore 2.14.16
+	   \-- net_neoforged_bus 7.2.0
+	- eg_particle_interactions 0.10.2+26.2-fabric
+	- emotecraft 3.4.0-b.build.165
+	   |-- net_raphimc_noteblocklib 3.4.0-20260814.211116-1
+	   |-- org_redlance_emotecraftlibrary_game-sdk 2.2.0
+	   \-- translationfallbacks 1.2.0+mc.26.1-snapshot-10
+	- entity_model_features 3.2.6
+	- entity_texture_features 7.1.1
+	- entityculling 1.10.5
+	   |-- transition 1.0.21
+	   \-- trender 1.0.15
+	- essential-container 1.0.0
+	   \-- essential-loader 1.3.2
+	- fabric-api 0.158.0+26.2
+	   |-- fabric-api-base 2.0.4+ece063239e
+	   |-- fabric-api-lookup-api-v1 2.0.17+11e1c9a39e
+	   |-- fabric-biome-api-v1 18.0.6+c7bd5b8e9e
+	   |-- fabric-block-api-v1 3.0.3+ec56b6019e
+	   |-- fabric-block-getter-api-v2 2.0.7+ec56b6019e
+	   |-- fabric-command-api-v2 3.1.0+00cb03469e
+	   |-- fabric-content-registries-v0 11.3.1+37b1aa249e
+	   |-- fabric-convention-tags-v2 4.7.0+1f023a9e9e
+	   |-- fabric-crash-report-info-v1 1.0.5+086d547a9e
+	   |-- fabric-creative-tab-api-v1 5.0.14+d871b99e9e
+	   |-- fabric-data-attachment-api-v1 2.2.18+515ac5339e
+	   |-- fabric-data-generation-api-v1 25.5.0+aed122aa9e
+	   |-- fabric-debug-api-v1 1.0.2+c792624d9e
+	   |-- fabric-dimensions-v1 5.1.11+515ac5339e
+	   |-- fabric-entity-events-v1 5.0.5+06488ac19e
+	   |-- fabric-events-interaction-v0 5.2.7+515ac5339e
+	   |-- fabric-game-rule-api-v1 4.0.8+46a6d00c9e
+	   |-- fabric-item-api-v1 14.5.0+c68f6cbe9e
+	   |-- fabric-key-mapping-api-v1 2.0.5+e2bdee789e
+	   |-- fabric-lifecycle-events-v1 4.1.3+4575b05f9e
+	   |-- fabric-loot-api-v3 3.0.17+06488ac19e
+	   |-- fabric-menu-api-v1 2.0.16+086d547a9e
+	   |-- fabric-message-api-v1 7.0.8+bb2ed3f79e
+	   |-- fabric-model-loading-api-v1 8.0.16+c80601bb9e
+	   |-- fabric-networking-api-v1 6.3.3+72073ef09e
+	   |-- fabric-object-builder-api-v1 24.1.0+6fcd5f039e
+	   |-- fabric-particles-v1 5.0.18+d1756aa99e
+	   |-- fabric-permission-api-v1 1.0.5+e442d8d09e
+	   |-- fabric-recipe-api-v1 9.0.20+11e1c9a39e
+	   |-- fabric-registry-sync-v0 7.1.0+c7bd5b8e9e
+	   |-- fabric-renderer-api-v1 14.1.3+2b0d8a229e
+	   |-- fabric-renderer-indigo 9.1.3+2b0d8a229e
+	   |-- fabric-rendering-fluids-v1 6.0.4+06488ac19e
+	   |-- fabric-rendering-v1 25.3.2+515ac5339e
+	   |-- fabric-resource-conditions-api-v1 6.1.0+10e9a28b9e
+	   |-- fabric-resource-loader-v0 3.3.20+4fc5413f9e
+	   |-- fabric-resource-loader-v1 2.0.13+9edec1269e
+	   |-- fabric-screen-api-v1 5.2.0+58e078ad9e
+	   |-- fabric-serialization-api-v1 2.0.4+11a26f319e
+	   |-- fabric-sound-api-v1 2.0.5+11a26f319e
+	   |-- fabric-tag-api-v1 2.1.4+515ac5339e
+	   |-- fabric-transfer-api-v1 8.0.12+11dbb7d79e
+	   \-- fabric-transitive-access-wideners-v1 8.1.4+67c847259e
+	- fabric-language-kotlin 1.13.13+kotlin.2.4.10
+	   |-- org_jetbrains_kotlin_kotlin-reflect 2.4.10
+	   |-- org_jetbrains_kotlin_kotlin-stdlib 2.4.10
+	   |-- org_jetbrains_kotlin_kotlin-stdlib-jdk7 2.4.10
+	   |-- org_jetbrains_kotlin_kotlin-stdlib-jdk8 2.4.10
+	   |-- org_jetbrains_kotlinx_atomicfu-jvm 0.33.0
+	   |-- org_jetbrains_kotlinx_kotlinx-coroutines-core-jvm 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-coroutines-jdk8 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-datetime-jvm 0.8.0
+	   |-- org_jetbrains_kotlinx_kotlinx-io-bytestring-jvm 0.9.1
+	   |-- org_jetbrains_kotlinx_kotlinx-io-core-jvm 0.9.1
+	   |-- org_jetbrains_kotlinx_kotlinx-serialization-cbor-jvm 1.11.0
+	   |-- org_jetbrains_kotlinx_kotlinx-serialization-core-jvm 1.11.0
+	   \-- org_jetbrains_kotlinx_kotlinx-serialization-json-jvm 1.11.0
+	- fabricloader 0.19.3
+	   \-- mixinextras 0.5.4
+	- ferritecore 9.0.0
+	- fzzy_config 0.7.6+26.2
+	   |-- blue_endless_jankson 1.2.3
+	   |-- fabric-permissions-api-v0 0.7.0
+	   \-- net_peanuuutz_tomlkt_tomlkt-jvm 0.3.7
+	- ias 9.0.7+26.2-fabric
+	- immediatelyfast 1.16.3+26.2
+	- iris 1.11.2+mc26.2
+	   |-- io_github_douira_glsl-transformer 3.0.0-pre3
+	   |-- org_anarres_jcpp 1.4.14
+	   \-- org_antlr_antlr4-runtime 4.13.1
+	- jade 26.2.11+fabric
+	- java 25
+	- jei 30.25.0.177
+	- journeymap 26.2-6.0.5
+	   |-- ar_com_hjg_pngj 2.1.0
+	   |-- commonnetworking 26.2-1.1.0
+	   \-- journeymap-api-fabric 26.2-2.0.0
+	- litematica 0.28.5
+	   \-- conditional-mixin 0.6.4
+	- lithium 0.25.3+mc26.2
+	- malilib 0.29.4
+	   |-- conditional-mixin 0.6.4
+	   \-- fabric-api-base 2.0.4+ece063239e
+	- mcwws_axiom_survival_client 1.2.7
+	- mcwws_immersive_creative 1.0.8
+	- minecraft 26.2
+	- modmenu 20.0.1
+	   \-- fabric-api-base 2.0.4+ece063239e
+	- moreculling 1.8.1
+	- notenoughanimations 1.12.4
+	   |-- transition 1.0.21
+	   \-- trender 1.0.15
+	- physicsmod 3.2.0
+	- player_animation_library 1.2.6+mc.26.2
+	   |-- com_zigythebird_mochafloats 5.0.0
+	   \-- org_redlance_common-utils_services 1.3.3
+	- reeses-sodium-options 2.2.3+mc26.2
+	- resourcify 1.8.5
+	- schematicpreview 0.0.17+26.2
+	- skinlayers3d 1.11.2
+	   |-- transition 1.0.21
+	   \-- trender 1.0.15
+	- smoothcoasters 26.2-v1
+	- smoothgui 2.0.5
+	   \-- emlib 1.0.1
+	- smoothscroll 2.9.2
+	- smoothswapping 0.9.10
+	- sodium 0.9.1+mc26.2
+	- sodium-extra 0.9.3+mc26.2
+	   \-- me_flashyreese_mods_greenlight-api 0.1.0+mc26.2
+	- sound_physics_remastered 1.5.1+26.2
+	- subtle_effects 1.14.3
+	   \-- com_moulberry_mixinconstraints 1.1.0
+	- tweakeroo 0.29.3
+	   \-- conditional-mixin 0.6.4
+	- voxy 0.2.18-beta
+	   |-- org_apache_commons_commons-pool2 2.12.0
+	   |-- org_lwjgl_lwjgl-lmdb 3.4.1
+	   |-- org_lwjgl_lwjgl-lmdb_natives-linux 3.4.1
+	   |-- org_lwjgl_lwjgl-lmdb_natives-windows 3.4.1
+	   |-- org_lwjgl_lwjgl-zstd 3.4.1
+	   |-- org_lwjgl_lwjgl-zstd_natives-linux 3.4.1
+	   |-- org_lwjgl_lwjgl-zstd_natives-windows 3.4.1
+	   |-- org_lz4_lz4-java 1.8.0
+	   |-- org_rocksdb_rocksdbjni 10.2.1
+	   |-- org_tukaani_xz 1.10
+	   |-- redis_clients_jedis 5.1.0
+	   \-- sodiumprovider 0.0.0
+	- wi_zoom 1.7-MC26.2
+	- worldedit 7.4.5+7590-b8dc4c1
+	   |-- fabric-api-base 2.0.4+ece063239e
+	   \-- worldeditcui_protocol 4.0.3
+	- yet_another_config_lib_v3 3.9.6+26.2-fabric
+	   |-- com_twelvemonkeys_common_common-image 3.12.0
+	   |-- com_twelvemonkeys_common_common-io 3.12.0
+	   |-- com_twelvemonkeys_common_common-lang 3.12.0
+	   |-- com_twelvemonkeys_imageio_imageio-core 3.12.0
+	   |-- com_twelvemonkeys_imageio_imageio-metadata 3.12.0
+	   |-- com_twelvemonkeys_imageio_imageio-webp 3.12.0
+	   |-- org_quiltmc_parsers_gson 0.2.1
+	   \-- org_quiltmc_parsers_json 0.2.1
+	- zmusic 3.8.2
+[20:57:20] [main/INFO]: SpongePowered MIXIN Subsystem Version=0.8.7 Source=file:/D:/Minecraft/%e6%b8%b8%e6%88%8f%e4%b8%bb%e4%bd%93/.minecraft/libraries/net/fabricmc/sponge-mixin/0.17.3+mixin.0.8.7/sponge-mixin-0.17.3+mixin.0.8.7.jar Service=Knot/Fabric Env=CLIENT
+[20:57:20] [main/INFO]: Compatibility level set to JAVA_21
+[20:57:20] [main/INFO]: Compatibility level set to JAVA_25
+[20:57:20] [main/WARN]: Reference map 'ambientsounds.mixins.refmap.json' for ambientsounds.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/INFO]: Loading Mixin Plugin for Axiom/5.5.0
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.base.mixin
+[20:57:21] [main/INFO]: Global Executor Parallelism: 14 configured, 14 evaluated, 14 default evaluated
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.client.uncapvd.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.fixes.chunkio.threading_issues.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.fixes.general.threading_issues.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.fixes.worldgen.threading_issues.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.fixes.worldgen.vanilla_bugs.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.notickvd.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.allocs.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.chunkio.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.dfc.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.math.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.natives_math.mixin
+[20:57:21] [main/INFO]: Attempting to call native library. If your game crashes right after this point, native acceleration may not be available for your system.
+[20:57:21] [main/INFO]: Detected maximum supported ISA target: AVX2
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.scheduling.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.worldgen.general.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.opts.worldgen.vanilla.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.rewrites.chunk_serializer.mixin
+[20:57:21] [main/INFO]: Disabling com.ishland.c2me.rewrites.chunk_serializer.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.rewrites.chunksystem.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.rewrites.chunkio.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.server.utils.mixin
+[20:57:21] [main/INFO]: Initializing com.ishland.c2me.threading.lighting.mixin
+[20:57:21] [main/WARN]: Reference map 'chatanimation.refmap.json' for chatanimation.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'creativecore.mixins.refmap.json' for creativecore.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'creativecore.mixins.refmap.json' for creativecore.fabric.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'emlib.refmap.json' for emlib.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'entityculling.refmap.mixins.json' for entityculling.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris.refmap.json' for mixins.iris.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris-fabric.refmap.json' for mixins.iris.fabric.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris.refmap.json' for mixins.iris.vertexformat.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris.refmap.json' for mixins.iris.bettermipmaps.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris.refmap.json' for mixins.iris.compat.sodium.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'iris.refmap.json' for mixins.iris.fixes.maxfpscrash.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/INFO]: Loaded configuration file for Lithium: 171 options available, 1 override(s) found.
+[20:57:21] [main/WARN]: Reference map 'physics-mod-refmap.json' for physicsmod.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'reeses-sodium-options.refmap.json' for reeses-sodium-options.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'skinlayers3d.refmap.mixins.json' for skinlayers3d.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'smoothgui.refmap.json' for smoothgui.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/INFO]: Loaded configuration file for Sodium: 36 options available, 1 override(s) found
+[20:57:21] [main/INFO]: Loaded configuration file for Sodium Extra: 26 options available, 0 override(s) found
+[20:57:21] [main/WARN]: Reference map 'subtle_effects.refmap.json' for subtle_effects.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'subtle_effects.refmap.json' for subtle_effects.fabric.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'yet_another_config_lib_v3.refmap.json' for yacl.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Reference map 'yet_another_config_lib_v3.refmap.json' for yacl-fabric.mixins.json could not be read. If this is a development environment you can ignore this message
+[20:57:21] [main/WARN]: Error loading class: me/jellysquid/mods/sodium/client/render/chunk/DefaultChunkRenderer (java.lang.ClassNotFoundException: me/jellysquid/mods/sodium/client/render/chunk/DefaultChunkRenderer)
+[20:57:21] [main/WARN]: Error loading class: net/vulkanmod/config/option/Options (java.lang.ClassNotFoundException: net/vulkanmod/config/option/Options)
+[20:57:21] [main/WARN]: Error loading class: ca/spottedleaf/starlight/common/integration/v0/ChunkSystemHooks (java.lang.ClassNotFoundException: ca/spottedleaf/starlight/common/integration/v0/ChunkSystemHooks)
+[20:57:21] [main/WARN]: @Mixin target ca/spottedleaf/starlight/common/integration/v0/ChunkSystemHooks was not found c2me-rewrites-chunk-system.mixins.json:scalablelux.MixinChunkSystemHooks from mod c2me-rewrites-chunk-system
+[20:57:21] [main/WARN]: Error loading class: ca/spottedleaf/starlight/common/thread/SchedulingUtil (java.lang.ClassNotFoundException: ca/spottedleaf/starlight/common/thread/SchedulingUtil)
+[20:57:22] [main/WARN]: Error loading class: de/siphalor/amecs/key_modifiers/impl/AmecsKeyModifiersEarlyInit (java.lang.ClassNotFoundException: de/siphalor/amecs/key_modifiers/impl/AmecsKeyModifiersEarlyInit)
+[20:57:22] [main/WARN]: @Mixin target de.siphalor.amecs.key_modifiers.impl.AmecsKeyModifiersEarlyInit was not found jei.mixins.json:AmecsKeyModifiersEarlyInitMixin from mod jei
+[20:57:22] [main/INFO]: Force-enabling mixin 'compat.worldedit.LevelChunkMixin' as rule 'mixin.compat.worldedit' (added by mods [lithium]) enables it
+[20:57:22] [main/WARN]: Error loading class: org/vivecraft/client_vr/VRData$VRDevicePose (java.lang.ClassNotFoundException: org/vivecraft/client_vr/VRData$VRDevicePose)
+[20:57:22] [main/WARN]: @Mixin target org.vivecraft.client_vr.VRData$VRDevicePose was not found physicsmod.mixins.json:vivecraft.MixinVRDevicePose from mod physicsmod
+[20:57:22] [main/WARN]: Error loading class: net/optifine/shaders/Shaders (java.lang.ClassNotFoundException: net/optifine/shaders/Shaders)
+[20:57:22] [main/WARN]: Error loading class: net/optifine/shaders/ShadersCompatibility (java.lang.ClassNotFoundException: net/optifine/shaders/ShadersCompatibility)
+[20:57:22] [main/WARN]: Error loading class: net/optifine/shaders/Programs (java.lang.ClassNotFoundException: net/optifine/shaders/Programs)
+[20:57:22] [main/WARN]: Error loading class: com/moulberry/flashback/playback/ReplayServer (java.lang.ClassNotFoundException: com/moulberry/flashback/playback/ReplayServer)
+[20:57:22] [main/WARN]: @Mixin target com.moulberry.flashback.playback.ReplayServer was not found physicsmod.mixins.json:flashback.MixinReplayServer from mod physicsmod
+[20:57:22] [main/WARN]: Error loading class: net/optifine/util/BlockUtils (java.lang.ClassNotFoundException: net/optifine/util/BlockUtils)
+[20:57:22] [main/WARN]: Error loading class: ca/spottedleaf/starlight/common/light/StarLightEngine (java.lang.ClassNotFoundException: ca/spottedleaf/starlight/common/light/StarLightEngine)
+[20:57:22] [main/WARN]: Error loading class: betterblockentities/client/gui/config/wrapper/GenericConfigWrapper (java.lang.ClassNotFoundException: betterblockentities/client/gui/config/wrapper/GenericConfigWrapper)
+[20:57:22] [main/WARN]: Error loading class: dev/emi/emi/screen/StackBatcher (java.lang.ClassNotFoundException: dev/emi/emi/screen/StackBatcher)
+[20:57:22] [main/WARN]: Force-disabling mixin 'features.render.world.sky.LevelRendererMixin' as rule 'mixin.features.render.world.sky' (added by mods [iris]) disables it and children
+[20:57:22] [main/WARN]: Disabled mixin 'fi.dy.masa.tweakeroo.mixin.fog.sodium_breaks.MixinGameRenderer_disableFog_sodiumBreaks' due to: 'conflicted/unsupported mod sodium@0.9.1+mc26.2 found'
+[20:57:22] [main/WARN]: Disabled mixin 'fi.dy.masa.tweakeroo.mixin.freecam.sodium_breaks.MixinLevelRenderer_freeCam_sodiumBreaks' due to: 'conflicted/unsupported mod sodium@0.9.1+mc26.2 found'
+[20:57:22] [main/WARN]: Disabled mixin 'fi.dy.masa.tweakeroo.mixin.render.MixinGameRenderer_ViewBob' due to: 'conflicted/unsupported mod iris@1.11.2+mc26.2 found'
+[20:57:22] [main/WARN]: Error loading class: com/moulberry/flashback/record/FlashbackMeta (java.lang.ClassNotFoundException: com/moulberry/flashback/record/FlashbackMeta)
+[20:57:22] [main/WARN]: @Mixin target com.moulberry.flashback.record.FlashbackMeta was not found client.voxy.mixins.json:flashback.MixinFlashbackMeta from mod voxy
+[20:57:22] [main/WARN]: Error loading class: com/moulberry/flashback/record/Recorder (java.lang.ClassNotFoundException: com/moulberry/flashback/record/Recorder)
+[20:57:22] [main/WARN]: @Mixin target com.moulberry.flashback.record.Recorder was not found client.voxy.mixins.json:flashback.MixinFlashbackRecorder from mod voxy
+[20:57:22] [main/WARN]: Error loading class: me/cortex/nvidium/RenderPipeline (java.lang.ClassNotFoundException: me/cortex/nvidium/RenderPipeline)
+[20:57:22] [main/WARN]: @Mixin target me.cortex.nvidium.RenderPipeline was not found client.voxy.mixins.json:nvidium.MixinRenderPipeline from mod voxy
+[20:57:23] [main/INFO]: Starting Essential Loader (stage2) version 1.8.0 (fd9925651d7d2a7c4382209f86cf67c6) [stable]
+[20:57:23] [main/INFO]: Starting Essential v1.4.1.1 (#31e1806134) [stable]
+[20:57:23] [main/INFO]: Java: Java HotSpot(TM) 64-Bit Server VM (v25.0.2) by Oracle Corporation (Oracle Corporation)
+[20:57:23] [main/INFO]: Java Path: C:\Program Files\Java\jdk-25.0.2\bin
+[20:57:23] [main/INFO]: Java Info: mixed mode, sharing
+[20:57:23] [main/INFO]: JVM Arguments: 
+  - -Xmx12717m
+  - -Dfile.encoding=GB18030
+  - -Dstdout.encoding=GB18030
+  - -Dstderr.encoding=GB18030
+  - -Djava.rmi.server.useCodebaseOnly=true
+  - -Dcom.sun.jndi.rmi.object.trustURLCodebase=false
+  - -Dcom.sun.jndi.cosnaming.object.trustURLCodebase=false
+  - -Dlog4j2.formatMsgNoLookups=true
+  - -Dlog4j.configurationFile=D:\Minecraft\游戏主体\.minecraft\versions\26.2\log4j2.xml
+  - -Dminecraft.client.jar=D:\Minecraft\游戏主体\.minecraft\versions\26.2\26.2.jar
+  - -Djava.net.useSystemProxies=true
+  - -XX:+UnlockExperimentalVMOptions
+  - -XX:+UnlockDiagnosticVMOptions
+  - -XX:+UseG1GC
+  - -XX:G1MixedGCCountTarget=5
+  - -XX:G1NewSizePercent=20
+  - -XX:G1ReservePercent=20
+  - -XX:MaxGCPauseMillis=50
+  - -XX:G1HeapRegionSize=32m
+  - -XX:-OmitStackTraceInFastThrow
+  - -XX:-DontCompileHugeMethods
+  - -XX:MaxNodeLimit=240000
+  - -XX:NodeLimitFudgeFactor=8000
+  - -XX:TieredCompileTaskTimeout=10000
+  - -XX:ReservedCodeCacheSize=400M
+  - -XX:NonNMethodCodeHeapSize=12M
+  - -XX:ProfiledCodeHeapSize=194M
+  - -XX:NmethodSweepActivity=1
+  - -XX:+UseCompactObjectHeaders
+  - --sun-misc-unsafe-memory-access=allow
+  - -Dfml.ignoreInvalidMinecraftCertificates=true
+  - -Dfml.ignorePatchDiscrepancies=true
+  - -XX:HeapDumpPath=MojangTricksIntelDriversForPerformance_javaw.exe_minecraft.exe.heapdump
+  - --sun-misc-unsafe-memory-access=allow
+  - --enable-native-access=ALL-UNNAMED
+  - -Djava.library.path=D:\Minecraft\游戏主体\.minecraft\versions\26.2\natives-windows-x86_64/java
+  - -Djna.tmpdir=D:\Minecraft\游戏主体\.minecraft\versions\26.2\natives-windows-x86_64/jna
+  - -Dorg.lwjgl.system.SharedLibraryExtractPath=D:\Minecraft\游戏主体\.minecraft\versions\26.2\natives-windows-x86_64/lwjgl
+  - -Dio.netty.native.workdir=D:\Minecraft\游戏主体\.minecraft\versions\26.2\natives-windows-x86_64/netty
+  - -Dminecraft.launcher.brand=HMCL
+  - -Dminecraft.launcher.version=3.17.0.354
+[20:57:23] [main/INFO]: OS: Windows 11 (v10.0) (Arch: amd64)
+[20:57:23] [main/INFO]: Searching for graphics cards...
+[20:57:23] [main/INFO]: Found graphics adapter: AdapterInfo{vendor=NVIDIA, description='NVIDIA GeForce RTX 5070 Ti Laptop GPU', adapterType=0x00002313, openglIcdFilePath='C:\WINDOWS\System32\DriverStore\FileRepository\nvcvi.inf_amd64_74ce386506dfea26\nvoglv64.dll', openglIcdVersion=32.0.15.9571}
+[20:57:23] [main/INFO]: Found graphics adapter: AdapterInfo{vendor=INTEL, description='Intel(R) RaptorLake-S Mobile Graphics Controller', adapterType=0x0000232B, openglIcdFilePath='C:\Windows\System32\DriverStore\FileRepository\iigd_dch.inf_amd64_a4cee5036c95058a\igxelpicd64.dll', openglIcdVersion=32.0.101.7082}
+[20:57:23] [main/INFO]: Initializing MixinExtras via com.llamalad7.mixinextras.service.MixinExtrasServiceImpl(version=0.5.4).
+[20:57:23] [main/WARN]: Sodium has applied one or more workarounds to prevent crashes or other issues on your system: [NVIDIA_THREADED_OPTIMIZATIONS_BROKEN]
+[20:57:23] [main/WARN]: This is not necessarily an issue, but it may result in certain features or optimizations being disabled. You can sometimes fix these issues by upgrading your graphics driver.
+[20:57:25] [Datafixer Bootstrap #0/INFO]: 295 Datafixer optimizations took 216 milliseconds
+[20:57:29] [Render thread/INFO]: Environment: Environment[sessionHost=https://sessionserver.mojang.com, servicesHost=https://api.minecraftservices.com, profilesHost=https://api.mojang.com, name=PROD]
+[20:57:29] [Render thread/INFO]: Setting user: Ryan_yu__
+[20:57:30] [Render thread/INFO]: Starting DI!
+[20:57:30] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[20:57:30] [Render thread/INFO]: Initializing Axiom/5.5.0
+[20:57:31] [DefaultDispatcher-worker-3/INFO]: Connecting to Essential Connection Manager...
+[20:57:31] [DefaultDispatcher-worker-3/INFO]: Using Default JreDnsResolver
+[20:57:31] [DefaultDispatcher-worker-3/INFO]: Using Default JreSocketFactory
+[20:57:31] [Render thread/INFO]: Initializing ServerSide Packet Registries
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as RocksDB for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as Redis for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as ReadonlyCachingLayer for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config2 as AutoFragmentationAdaptor for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as FragmentationAdaptor for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered ConditionalStorageBackendConfig as ConditionalConfig for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as CompressionAdaptor for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered BasicPathInsertionConfig as BasicPathConfig for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as LMDB for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as Memory for config type StorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as Serializer for config type SectionStorageConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as ZSTD for config type CompressorConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered Config as LZ4 for config type CompressorConfig
+[20:57:31] [Render thread/INFO]: [me.cx.vy.cn.cg.Serialization]: Registered 13 config types
+[20:57:31] [Render thread/INFO]: [STDOUT]: Starting WI Zoom v1.7-MC26.2
+[20:57:32] [Render thread/INFO]: Got request to register class com.sk89q.worldedit.fabric.internal.FabricPlatform with WorldEdit [com.sk89q.worldedit.extension.platform.PlatformManager@6fbeaf91]
+[20:57:32] [Render thread/INFO]: WorldEdit for Fabric (version 7.4.5+7590-b8dc4c1) is loaded
+[20:57:32] [Render thread/INFO]: Loaded bundled ZMusic native library: D:\Minecraft\游戏主体\.minecraft\zmusic\zmusic-43a84a4e90074810.dll
+[20:57:32] [Render thread/INFO]: ZMusic native player initialized, state=0
+[20:57:32] [Render thread/INFO]: Welcome use ZMusic!
+[20:57:32] [Render thread/INFO]: Homepage: https://m.zplu.cc
+[20:57:32] [Render thread/INFO]: Github: https://github.com/starhui-dev/zmusic-mod
+[20:57:32] [Render thread/INFO]: Discord: https://discord.gg/twQgJNufYn
+[20:57:32] [Render thread/INFO]: QQ Group: 1032722724
+[20:57:32] [Render thread/INFO]: Loaded
+[20:57:32] [WebSocketConnectReadThread-187/INFO]: Connected to Essential Connection Manager.
+[20:57:32] [Render thread/INFO]: [Particle Interactions]: Mod init started. Compiled for fabric
+[20:57:32] [Render thread/INFO]: Sodium: [0.9.1+mc26.2], Iris: [1.11.2+mc26.2]
+[20:57:32] [Render thread/INFO]: Assigning MaLiLib Pipelines to Iris Programs:
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/no_depth/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/no_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/lequal_depth/offset_1: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/lequal_depth/offset_2: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/lequal_depth/offset_3: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/lequal_depth/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/lequal_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent/depth_mask: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/translucent: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/no_depth/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/no_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/lequal_depth/offset_1: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/lequal_depth/offset_2: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/lequal_depth/offset_3: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/lequal_depth/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/lequal_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa/depth_mask: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_color/masa: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/text_plate_bg/no_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/text_plate_bg: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape/no_depth/offset: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape/no_depth: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape/offset/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape/offset: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape/no_cull: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/minihud/shape: BASIC_COLOR
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/lequal_depth/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/lequal_depth/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/lequal_depth/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/lequal_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent/lequal_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/translucent: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/lequal_depth/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/lequal_depth/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/lequal_depth/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/lequal_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa/lequal_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/position_color_lines/masa: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines/no_depth/offset: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines/offset/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines/offset: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/minihud/shape_lines: LINES
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/no_depth/no_cull: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/no_depth: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/lequal_depth/offset_1: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/lequal_depth/offset_2: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/lequal_depth/offset_3: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/lequal_depth/no_cull: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/lequal_depth: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent/depth_mask: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/translucent: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/no_depth/no_cull: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/no_depth: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/lequal_depth/offset_1: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/lequal_depth/offset_2: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/lequal_depth/offset_3: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/lequal_depth/no_cull: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/lequal_depth: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa/depth_mask: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found okay program match for malilib:pipeline/position_tex_color/masa: TEXTURED_COLOR
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/lequal_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/translucent: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/lequal_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_lines/masa_simple: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/translucent: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/no_depth/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/no_depth: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/no_cull: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/offset_1: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/offset_2: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple/offset_3: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/debug_line_strip/masa_simple: LINES
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/legacy/solid: TERRAIN_SOLID
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/legacy/wireframe: LINES
+[20:57:32] [Render thread/WARN]: Found fine program match for malilib:pipeline/legacy/cutout: TERRAIN_CUTOUT
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/legacy/solid/masa/offset: TERRAIN_SOLID
+[20:57:32] [Render thread/WARN]: Found *decent* program match for malilib:pipeline/legacy/wireframe/offset: LINES
+[20:57:32] [Render thread/WARN]: Found fine program match for malilib:pipeline/legacy/cutout/offset: TERRAIN_CUTOUT
+[20:57:32] [Render thread/WARN]: Found fine program match for malilib:pipeline/legacy/translucent: SODIUM_TERRAIN_TRANSLUCENT
+[20:57:32] [Render thread/WARN]: Found fine program match for malilib:pipeline/legacy/translucent/offset: SODIUM_TERRAIN_TRANSLUCENT
+[20:57:32] [Render thread/INFO]: [Particle Interactions]: Init done!
+[20:57:32] [Render thread/INFO]: [ETF]: Modifying ETF Render State constructor because: for EMF
+[20:57:32] [Render thread/INFO]: Loading Entity Model Features, (:
+[20:57:32] [Render thread/INFO]: [ETF]: 6 new ETF Random Properties registered by entity_model_features
+[20:57:32] [Render thread/INFO]: Loading Entity Texture Features, the worst server plugin one guy on my discord has ever seen!
+[20:57:32] [Render thread/INFO]: [Indigo] Different rendering plugin detected; not applying Indigo.
+[20:57:32] [Render thread/INFO]: Loaded config fzzy_config:keybinds in 179ms
+[20:57:32] [Render thread/INFO]: IAS: Loading... (platform: fabric)
+[20:57:32] [Render thread/INFO]: IAS: Initializing IAS...
+[20:57:32] [Render thread/INFO]: IAS: IAS has been loaded.
+[20:57:32] [Render thread/INFO]: IAS: Loaded. (10 ms)
+[20:57:32] [Render thread/INFO]: Sending ConfigManager...
+[20:57:32] [Render thread/INFO]: Sending ConfigManager took 704.4 microseconds
+[20:57:32] [Render thread/INFO]: MCWWS Axiom Survival Client 已加载，等待服务端 hello…
+[20:57:32] [Render thread/INFO]: MCWWS Immersive Creative 已加载，等待服务端同步开关。
+[20:57:33] [Render thread/WARN]: Using Cloth Config GUI
+[20:57:33] [Render thread/INFO]: Checking mod updates...
+[20:57:33] [Render thread/INFO]: Reloading reverb parameters
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:block.sand.wind
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:entity.goat.screaming.horn_break
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:entity.leash_knot.break
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:entity.leash_knot.place
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:entity.puffer_fish.ambient
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:entity.wolf.howl
+[20:57:33] [Render thread/INFO]: Unknown sound in sound rate config: minecraft:item.goat_horn.play
+[20:57:33] [Render thread/INFO]: Loaded config subtle_effects:general in 101ms
+[20:57:33] [Render thread/INFO]: Loaded config subtle_effects:blocks in 133ms
+[20:57:33] [ModMenu/Update Checker/Fabric Loader/INFO]: Update available for 'fabricloader@0.19.3'
+[20:57:33] [Render thread/INFO]: Loaded config subtle_effects:entities in 70ms
+[20:57:33] [Render thread/INFO]: Loaded config subtle_effects:environment in 38ms
+[20:57:33] [Render thread/INFO]: Loaded config subtle_effects:items in 20ms
+[20:57:33] [Render thread/WARN]: Found okay program match for subtle_effects:pipeline/entity_particle_translucent: PARTICLES_TRANS
+[20:57:33] [Render thread/WARN]: Found okay program match for subtle_effects:pipeline/alpha_blend: PARTICLES_TRANS
+[20:57:33] [Render thread/INFO]: [STDOUT]: [TRender] Initializing Client...
+[20:57:33] [Render thread/INFO]: Deserializing YACLConfig from 'D:\Minecraft\游戏主体\.minecraft\config\yacl.json5'
+[20:57:33] [Render thread/INFO]: OptiFine not detected.
+[20:57:34] [Render thread/INFO]: i18nLang#load: File: '/assets/tweakeroo/lang/en_us.json' has been loaded successfully
+[20:57:34] [Render thread/WARN]: i18nOptionManager#buildLanguageOptions(tweakeroo): Detected [7] available options.
+[20:57:34] [Render thread/INFO]: Backend library: LWJGL version 3.4.1-snapshot
+[20:57:34] [Render thread/INFO]: Modifying process environment to apply workarounds for the NVIDIA graphics driver...
+[20:57:34] [Render thread/INFO]: Debug functionality is disabled.
+[20:57:34] [Render thread/INFO]: ARB_direct_state_access detected, enabling DSA.
+[20:57:34] [Render thread/WARN]: Unable to resolve shader pack option menu element "FOG_DISTANCE_LOD" defined in shaders.properties
+[20:57:34] [Render thread/INFO]: Profile: MINIMUM (+10 options changed by user)
+[20:57:35] [Download-2/INFO]: Update available for 'malilib@0.29.4', (-> 0.29.5)
+[20:57:35] [Download-2/INFO]: Update available for 'tweakeroo@0.29.3', (-> 0.29.4)
+[20:57:35] [Download-2/INFO]: Update available for 'fabric-api@0.158.0+26.2', (-> 0.159.0+26.2)
+[20:57:35] [Download-2/INFO]: Update available for 'physicsmod@3.2.0', (-> 3.2.2)
+[20:57:35] [Download-2/INFO]: Update available for 'litematica@0.28.5', (-> 0.28.6)
+[20:57:35] [Download-2/INFO]: Update available for 'journeymap@26.2-6.0.5', (-> 26.2-6.0.7+fabric)
+[20:57:35] [Download-2/INFO]: Update available for 'entity_model_features@3.2.6', (-> 3.3.5-fabric-26.2)
+[20:57:35] [Download-2/INFO]: Update available for 'entity_texture_features@7.1.1', (-> 7.2.1-fabric-26.2)
+[20:57:35] [Download-2/INFO]: Update available for 'immediatelyfast@1.16.3+26.2', (-> 1.16.4+26.2-fabric)
+[20:57:35] [Download-2/INFO]: Update available for 'jei@30.25.0.177', (-> 30.29.0.201)
+[20:57:35] [Download-2/INFO]: Update available for 'axiom@5.5.0', (-> 6.0.5)
+[20:57:35] [ForkJoinPool.commonPool-worker-11/WARN]: [Iris Update Check] This version doesn't have an update index, skipping.
+[20:57:35] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External opaque shader patch applied
+[20:57:35] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External translucent shader patch applied
+[20:57:35] [Render thread/INFO]: Using shaderpack: BSL_v10.1.3.zip
+[20:57:35] [Render thread/INFO]: Initializing ImmediatelyFast 1.16.3+26.2 on NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2 (NVIDIA Corporation) with OpenGL 3.3.0 NVIDIA 595.71
+[20:57:35] [Render thread/INFO]: Using graphics backend OpenGL, using drivers: 3.3.0 NVIDIA 595.71
+[20:57:35] [Render thread/INFO]: Using graphics device: NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2 (NVIDIA Corporation)
+[20:57:35] [Render thread/INFO]: Using graphics device extensions: GL_ARB_multi_draw_indirect, GL_ARB_buffer_storage, GL_ARB_shader_draw_parameters, GL_ARB_base_instance, GL_KHR_debug, GL_ARB_draw_indirect, GL_ARB_clip_control, GL_ARB_vertex_attrib_binding, GL_ARB_direct_state_access, GL_EXT_texture_filter_anisotropic
+[20:57:35] [Render thread/INFO]: Using cached localizations...
+[20:57:36] [Render thread/INFO]: Found non-pack entry 'D:\Minecraft\游戏主体\.minecraft\resourcepacks\55', ignoring
+[20:57:36] [Render thread/INFO]: Found non-pack entry 'D:\Minecraft\游戏主体\.minecraft\resourcepacks\Ban', ignoring
+[20:57:36] [Render thread/ERROR]: Failed to open pack D:\Minecraft\游戏主体\.minecraft\resourcepacks\resourcepacks.zip
+java.util.zip.ZipException: invalid CEN header (bad entry name or comment)
+	at java.base/java.util.zip.ZipFile$Source.zerror(ZipFile.java:1831)
+	at java.base/java.util.zip.ZipFile$Source.checkAndAddEntry(ZipFile.java:1249)
+	at java.base/java.util.zip.ZipFile$Source.initCEN(ZipFile.java:1767)
+	at java.base/java.util.zip.ZipFile$Source.<init>(ZipFile.java:1542)
+	at java.base/java.util.zip.ZipFile$Source.get(ZipFile.java:1506)
+	at java.base/java.util.zip.ZipFile$CleanableResource.<init>(ZipFile.java:704)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:204)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:150)
+	at java.base/java.util.zip.ZipFile.<init>(ZipFile.java:164)
+	at knot//net.minecraft.server.packs.FilePackResources$SharedZipFileAccess.getOrCreateZipFile(FilePackResources.java:168)
+	at knot//net.minecraft.server.packs.FilePackResources.getResource(FilePackResources.java:59)
+	at knot//net.minecraft.server.packs.FilePackResources.getRootResource(FilePackResources.java:42)
+	at knot//net.minecraft.server.packs.AbstractPackResources.loadMetadata(AbstractPackResources.java:30)
+	at knot//net.minecraft.server.packs.AbstractPackResources.getMetadataSection(AbstractPackResources.java:23)
+	at knot//net.minecraft.server.packs.repository.Pack.readPackMetadata(Pack.java:56)
+	at knot//net.minecraft.server.packs.repository.Pack.readMetaAndCreate(Pack.java:41)
+	at knot//net.minecraft.server.packs.repository.FolderRepositorySource.lambda$loadPacks$0(FolderRepositorySource.java:63)
+	at knot//net.minecraft.server.packs.repository.FolderRepositorySource.discoverPacks(FolderRepositorySource.java:94)
+	at knot//net.minecraft.server.packs.repository.FolderRepositorySource.loadPacks(FolderRepositorySource.java:59)
+	at knot//net.minecraft.server.packs.repository.PackRepository.discoverAvailable(PackRepository.java:43)
+	at knot//net.minecraft.server.packs.repository.PackRepository.reload(PackRepository.java:36)
+	at knot//net.minecraft.client.Minecraft.<init>(Minecraft.java:586)
+	at knot//net.minecraft.client.main.Main.main(Main.java:278)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+[20:57:36] [Render thread/WARN]: Missing metadata in pack file/resourcepacks.zip
+[20:57:36] [Render thread/WARN]: @Final field KNOWN_ATLASES:Ljava/util/List; in eg_particle_interactions.mixins.json:resource.RegisterAtlasConfig_AtlasManagerMixin from mod eg_particle_interactions should be final
+[20:57:37] [Render thread/INFO]: Hardware information:
+[20:57:37] [Render thread/INFO]: CPU: 24x Intel(R) Core(TM) i7-14650HX
+[20:57:37] [Render thread/INFO]: GPU: NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2 (Supports OpenGL 3.3.0 NVIDIA 595.71)
+[20:57:37] [Render thread/INFO]: OS: Windows 11 (10.0)
+[20:57:38] [Render thread/INFO]: Reloading ResourceManager: axiom_translations, vanilla, ambientsounds, appleskin, axiom, betteradvancements, c2me, chat_heads, chatanimation, chunky, cloth-config, conditional-mixin, continuity, creativecore, eg_particle_interactions, emlib, emotecraft, entity_model_features, entity_texture_features, entityculling, essential, essential-container, essential-loader, fabric-api, fabric-api-base, fabric-api-lookup-api-v1, fabric-biome-api-v1, fabric-block-api-v1, fabric-block-getter-api-v2, fabric-command-api-v2, fabric-content-registries-v0, fabric-convention-tags-v2, fabric-crash-report-info-v1, fabric-creative-tab-api-v1, fabric-data-attachment-api-v1, fabric-data-generation-api-v1, fabric-debug-api-v1, fabric-dimensions-v1, fabric-entity-events-v1, fabric-events-interaction-v0, fabric-game-rule-api-v1, fabric-item-api-v1, fabric-key-mapping-api-v1, fabric-language-kotlin, fabric-lifecycle-events-v1, fabric-loot-api-v3, fabric-menu-api-v1, fabric-message-api-v1, fabric-model-loading-api-v1, fabric-networking-api-v1, fabric-object-builder-api-v1, fabric-particles-v1, fabric-permission-api-v1, fabric-recipe-api-v1, fabric-registry-sync-v0, fabric-renderer-api-v1, fabric-renderer-indigo, fabric-rendering-fluids-v1, fabric-rendering-v1, fabric-resource-conditions-api-v1, fabric-resource-loader-v0, fabric-resource-loader-v1, fabric-screen-api-v1, fabric-serialization-api-v1, fabric-sound-api-v1, fabric-tag-api-v1, fabric-transfer-api-v1, fabric-transitive-access-wideners-v1, fabricloader, fzzy_config, ias, immediatelyfast, iris, jade, jei, journeymap, lattice, litematica, lithium, malilib, mcwws_axiom_survival_client, modmenu, moreculling, notenoughanimations, physicsmod, player_animation_library, reeses-sodium-options, resourcify, schematicpreview, skinlayers3d, smoothcoasters, smoothgui, smoothscroll, smoothswapping, sodium, sodium-extra, sound_physics_remastered, subtle_effects, trender, tweakeroo, voxy, wi_zoom, worldedit, yet_another_config_lib_v3, continuity:default, continuity:glass_pane_culling_fix, file/UltimateFoods.zip, file/Better_Animations (2).zip, file/Better_Expressions (2).zip, file/FreshAnimations_v1.10.5.zip, file/JustExpressions_v1.2.1.zip, file/TrainCarts Demo Pack V4-85d3854f.zip, subtle_effects:biome_color_water_particles, file/Slimefun-ResourcePack, file/SPBR-21.zip, file/hoganfam_trains_v2601a.zip, Essential Assets, essential
+[20:57:38] [Worker-Main-6/INFO]: Found unifont_all_no_pua-17.0.01.hex, loading
+[20:57:38] [Worker-Main-4/INFO]: Found unifont_pua-17.0.01.hex, loading
+[20:57:38] [Worker-Main-14/INFO]: Found unifont_jp_patch-17.0.01.hex, loading
+[20:57:38] [Render thread/INFO]: Placement Manager calculated thread limit: [02/06]
+[20:57:38] [Render thread/INFO]: i18nLang#load: File: '/assets/litematica/lang/en_us.json' has been loaded successfully
+[20:57:38] [Render thread/WARN]: i18nOptionManager#buildLanguageOptions(litematica): Detected [14] available options.
+[20:57:38] [Worker-Main-1/WARN]: Invalid path in datapack: minecraft:models/item/chicken foot.json, ignoring
+[20:57:38] [Worker-Main-1/WARN]: Invalid path in datapack: minecraft:models/item/cookies 3.json, ignoring
+[20:57:38] [Worker-Main-1/WARN]: Invalid path in datapack: minecraft:models/item/fried egg.json, ignoring
+[20:57:38] [Worker-Main-1/WARN]: Invalid path in datapack: minecraft:models/item/lemon dessert.json, ignoring
+[20:57:38] [Worker-Main-1/WARN]: Invalid path in datapack: minecraft:models/item/orange dessert.json, ignoring
+[20:57:38] [Render thread/WARN]: Invalid path in datapack: minecraft:textures/entity/sulfur_cube/sulfur_cube_inner _n.png, ignoring
+[20:57:38] [Render thread/WARN]: Invalid path in datapack: minecraft:textures/entity/sulfur_cube/sulfur_cube_inner _s.png, ignoring
+[20:57:38] [Render thread/INFO]: i18nLang#load: File: '/assets/malilib/lang/en_us.json' has been loaded successfully
+[20:57:38] [Render thread/WARN]: i18nOptionManager#buildLanguageOptions(malilib): Detected [13] available options.
+[20:57:38] [Render thread/INFO]: Carpet: [N/F], CarpetTIS: [N/F]
+[20:57:38] [Render thread/INFO]: i18nLang#load: File: '/assets/malilib/lang/zh_cn.json' has been loaded successfully
+[20:57:38] [Render thread/INFO]: i18nOptionManager#setLang(malilib): Language: 'zh_cn' - has been loaded successfully.
+[20:57:38] [Render thread/INFO]: i18nLang#load: File: '/assets/tweakeroo/lang/zh_cn.json' has been loaded successfully
+[20:57:38] [Render thread/INFO]: i18nOptionManager#setLang(tweakeroo): Language: 'zh_cn' - has been loaded successfully.
+[20:57:38] [Render thread/INFO]: [nt.mt.ct.rr.LevelRenderer]: Not creating renderer due to null identifier
+[20:57:38] [Render thread/WARN]: Unable to find entity: 'minecraft:boat'
+[20:57:38] [Render thread/INFO]: Stopping [0] Placement Manager Daemon threads
+[20:57:38] [Render thread/INFO]: Resetting Placement Manager Thread count from config change [2 -> 4]
+[20:57:39] [Render thread/INFO]: i18nLang#load: File: '/assets/litematica/lang/zh_cn.json' has been loaded successfully
+[20:57:39] [Render thread/INFO]: i18nOptionManager#setLang(litematica): Language: 'zh_cn' - has been loaded successfully.
+[20:57:39] [Render thread/INFO]: Cached all modded block culling states
+[20:57:39] [Render thread/INFO]: Start loading plugin from Jade: snownee.jade.addon.core.CorePlugin
+[20:57:39] [Render thread/INFO]: Start loading plugin from Jade: snownee.jade.addon.vanilla.VanillaPlugin
+[20:57:39] [Worker-Main-3/WARN]: Missing sprite: minecraft:textures/front.png
+[20:57:39] [Render thread/INFO]: Start loading plugin from Jade: snownee.jade.addon.universal.UniversalPlugin
+[20:57:39] [Render thread/INFO]: Start loading plugin from Jade: snownee.jade.addon.access.AccessibilityPlugin
+[20:57:39] [Render thread/INFO]: Start loading plugin from Jade: snownee.jade.addon.debug.DebugPlugin
+[20:57:39] [Worker-Main-16/WARN]: Invalid frame index on sprite infinityexpansion:materials/infinite_machine_core frame 16: 8
+[20:57:39] [Worker-Main-2/WARN]: Texture traincarts:model/nubx/traincarts_carriage_blue_full with size 4x4 limits mip level from 4 to 2
+[20:57:39] [Worker-Main-2/WARN]: minecraft:textures/atlas/blocks.png: dropping miplevel from 4 to 2, because of minimum power of two: 4
+[20:57:39] [Render thread/INFO]: Loaded null for service interface journeymap.api.services.WebMapService
+[20:57:39] [Render thread/INFO]: Loaded journeymap.common.helpers.FabricClientHooks@31000da7 for service interface journeymap.api.services.ClientPlatformService
+[20:57:39] [Render thread/INFO]: Loaded journeymap.common.helpers.FabricHooks@20d056a7 for service interface journeymap.api.services.CommonPlatformService
+[20:57:39] [Render thread/INFO]: Skipping dev-only plugin (set -Djourneymap.dev_plugins=true to enable): journeymap.api.plugins.DebugVerificationPlugin
+[20:57:39] [Render thread/INFO]: Skipping dev-only plugin (set -Djourneymap.dev_plugins=true to enable): journeymap.api.plugins.OverlayLifecycleProfilingPlugin
+[20:57:39] [Worker-Main-2/WARN]: Missing block model: minecraft:block/beehive
+[20:57:39] [Worker-Main-2/WARN]: Missing block model: slimefun:slimefun/weapons/soulbound_trident_throwing
+[20:57:39] [Worker-Main-2/WARN]: Missing block model: minecraft:item/template_spawn_egg
+[20:57:39] [Worker-Main-2/WARN]: Missing block model: minecraft:builtin/entity
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/yel/door_left:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:maxi/coaster_cart_red:
+    #missing
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:block/structure_void:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:block/moving_piston:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/mace:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model infinityexpansion2:machines/infinity_workbench:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/door_right:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_locomotive_piston:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/door_left:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_wheels:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_green_base:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model slimetinker:materials/spout:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_blue_base:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/red/door_left:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/yel/door_right:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_green_full:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_blue_full:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_locomotive_full:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model slimetinker:materials/seared_tank:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model minecraft:item/amalon/tc/metro/red/door_right:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_locomotive_wheels:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model slimetinker:materials/smeltery_controller:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model infinityexpansion2:tools/strainer_base:
+    #missing
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:maxi/coaster_cart_blue:
+    #missing
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model infinityexpansion:machines/infinity_workbench:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_locomotive_base:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:maxi/coaster_cart_green:
+    #missing
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_red_full:
+    particle
+[20:57:41] [Worker-Main-4/WARN]: Missing texture references in model traincarts:nubx/traincarts_carriage_red_base:
+    particle
+[20:57:41] [Render thread/WARN]: Unable to resolve shader pack option menu element "FOG_DISTANCE_LOD" defined in shaders.properties
+[20:57:41] [Render thread/INFO]: Profile: MINIMUM (+10 options changed by user)
+[20:57:41] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External opaque shader patch applied
+[20:57:41] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External translucent shader patch applied
+[20:57:42] [ForkJoinPool.commonPool-worker-5/INFO]: Localization update count: remote=52381, last=52381
+[20:57:42] [Render thread/INFO]: Using shaderpack: BSL_v10.1.3.zip
+[20:57:42] [Render thread/WARN]: minecraft:pipeline/physics_ocean shader program does not use sampler physics_lightmap defined in the pipeline. This might be a bug.
+[20:57:42] [Render thread/WARN]: minecraft:pipeline/physics_smoke shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[20:57:42] [Render thread/WARN]: minecraft:pipeline/physics_smoke shader program does not use sampler Sampler2 defined in the pipeline. This might be a bug.
+[20:57:42] [Render thread/WARN]: minecraft:pipeline/physics_liquid_shadow shader program does not use sampler Sampler0 defined in the pipeline. This might be a bug.
+[20:57:42] [Render thread/WARN]: minecraft:pipeline/physics_liquid_shadow shader program does not use sampler Sampler2 defined in the pipeline. This might be a bug.
+[20:57:42] [Render thread/INFO]: OpenAL initialized on device OpenAL Soft on 扬声器 (EDIFIER N300)
+[20:57:42] [Render thread/INFO]: Initializing Sound Physics
+[20:57:42] [Render thread/INFO]: EFX Extension recognized
+[20:57:42] [Render thread/INFO]: Max auxiliary sends: 4
+[20:57:42] [Render thread/INFO]: Aux slot 1 created
+[20:57:42] [Render thread/INFO]: Aux slot 2 created
+[20:57:42] [Render thread/INFO]: Aux slot 3 created
+[20:57:42] [Render thread/INFO]: Aux slot 4 created
+[20:57:42] [Render thread/INFO]: EFX ready
+[20:57:42] [Render thread/INFO]: Sound engine started
+[20:57:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/particles.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 128x128x0 minecraft:textures/atlas/decorated_pot.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/armor_trims.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 512x256x0 minecraft:textures/atlas/paintings.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/shield_patterns.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 2048x2048x2 minecraft:textures/atlas/blocks.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 32x32x0 eg_particle_interactions:textures/atlas/particle_palettes.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 256x128x0 minecraft:textures/atlas/celestials.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 1024x512x0 minecraft:textures/atlas/banner_patterns.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/items.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 1024x1024x0 minecraft:textures/atlas/gui.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 128x64x0 minecraft:textures/atlas/map_decorations.png-atlas
+[20:57:42] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/shulker_boxes.png-atlas
+[20:57:42] [Render thread/INFO]: Loaded AmbientEngine 'basic' v3.2.5. 11 dimension(s), 11 features, 11 blockgroups, 2 sound collections, 38 regions, 60 sounds, 12 sound categories, 6 solids and 2 biome types
+[20:57:42] [Render thread/INFO]: Queue ZMusic native volume change: 0.20774648
+[20:57:42] [Render thread/INFO]: Thread[#3,Render thread,10,main]
+[20:57:42] [Render thread/INFO]: OpenGL Vendor: NVIDIA Corporation
+[20:57:42] [Render thread/INFO]: OpenGL Renderer: NVIDIA GeForce RTX 5070 Ti Laptop GPU/PCIe/SSE2
+[20:57:42] [Render thread/INFO]: OpenGL Version: 3.3.0 NVIDIA 595.71
+[20:57:42] [Render thread/INFO]: Modifying OpenGL context to apply workarounds for the NVIDIA graphics driver...
+[20:57:42] [Render thread/INFO]: Enabling GL_DEBUG_OUTPUT_SYNCHRONOUS to force the NVIDIA driver to disable threaded command submission
+[20:57:43] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[20:57:44] [Render thread/INFO]: 32932 cache(s) were cleared!
+[20:57:44] [Render thread/INFO]: Created: 512x256x0 jei:textures/atlas/gui.png-atlas
+[20:57:44] [Render thread/INFO]: [Particle Interactions]: Cleared particle palette cache
+[20:57:44] [Render thread/INFO]: [ETF]: reloading ETF data.
+[20:57:44] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[20:57:44] [Render thread/INFO]: Creating pipeline for dimension minecraft:overworld
+[20:57:44] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External opaque shader patch applied
+[20:57:45] [Render thread/INFO]: [me.cx.vy.ct.is.IrisShaderPatch]: External translucent shader patch applied
+[20:57:46] [Render thread/INFO]: binding ocean attributes
+[20:57:46] [Render thread/INFO]: constructed ocean shader successfully
+[20:57:46] [Render thread/INFO]: constructed liquids shader successfully
+[20:57:46] [Render thread/INFO]: binding smoke attributes
+[20:57:46] [Render thread/INFO]: constructed smoke shader successfully
+[20:57:46] [Render thread/INFO]: [nt.mt.ct.rr.LevelRenderer]: Not creating renderer due to null identifier
+[20:57:46] [Render thread/INFO]: [Particle Interactions]: Pack version is: 0.10.2
+[20:57:46] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[20:57:47] [Render thread/WARN]: Found fine program match for minecraft:pipeline/entity_translucent: ENTITIES_TRANSLUCENT
+[20:57:47] [Render thread/WARN]: Found okay program match for minecraft:pipeline/translucent_particle: PARTICLES_TRANS
+[20:57:47] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 2 reached during a single frame. New capacity will be 4.
+[20:57:47] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 4 reached during a single frame. New capacity will be 8.
+[20:57:48] [Render thread/INFO]: Using DearImGui config: config\axiom\imgui.ini
+[20:58:42] [Render thread/INFO]: ZMusic client disconnected, stopping native player
+[20:58:42] [Render thread/INFO]: Stop ZMusic playback
+[20:58:42] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[20:58:42] [Render thread/INFO]: Connecting to 127.0.0.1, 25565
+[20:58:44] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Initializing voxy instance
+[20:58:44] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Dedicated voxy thread pool size: 12
+[20:58:44] [Render thread/INFO]: Enforcing safe world random access
+[20:58:45] [Render thread/INFO]: Reloading pipeline on dimension change: minecraft:overworld => minecraft:overworld
+[20:58:45] [Render thread/INFO]: Destroying pipeline minecraft:overworld
+[20:58:45] [Render thread/INFO]: Creating pipeline for dimension minecraft:overworld
+[20:58:45] [Render thread/INFO]: binding ocean attributes
+[20:58:45] [Render thread/INFO]: constructed ocean shader successfully
+[20:58:45] [Render thread/INFO]: constructed liquids shader successfully
+[20:58:45] [Render thread/INFO]: binding smoke attributes
+[20:58:45] [Render thread/INFO]: constructed smoke shader successfully
+[20:58:45] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Creating new world engine: 2937110969213851113@2110867084
+[20:58:45] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[20:58:45] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderResourceReuse]: Running on nvidia, using workaround sparse buffer allocation
+[20:58:45] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderResourceReuse]: Allocated new geometry buffer: 4294966272, isSparse: true, driver stated 9065Mb of free memory
+[20:58:45] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[20:58:46] [Render thread/INFO]: Started 16 worker threads
+[20:58:46] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Dedicated voxy thread pool size: 1
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[20:58:46] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[20:58:46] [Render thread/WARN]: Unable to find entity: 'minecraft:boat'
+[20:58:46] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[20:58:46] [Render thread/WARN]: Unable to read property: west with value: "false" for blockstate: {Name:"minecraft:cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: east with value: "false" for blockstate: {Name:"minecraft:cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: south with value: "false" for blockstate: {Name:"minecraft:cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: north with value: "false" for blockstate: {Name:"minecraft:cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: west with value: "false" for blockstate: {Name:"minecraft:mossy_cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: east with value: "false" for blockstate: {Name:"minecraft:mossy_cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: south with value: "false" for blockstate: {Name:"minecraft:mossy_cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:46] [Render thread/WARN]: Unable to read property: north with value: "false" for blockstate: {Name:"minecraft:mossy_cobblestone_wall",Properties:{east:"false",north:"false",south:"false",up:"false",west:"false"}}
+[20:58:47] [Render thread/INFO]: Starting [4] Placement Manager Daemon threads
+[20:58:47] [Render thread/WARN]: [me.cx.vy.cl.is.DHImporter]: Unable to load sqlite JDBC or lzma decompressor, DHImporting wont be available
+[20:58:47] [Render thread/INFO]: Loaded 1585 vanilla recipes from client resources.
+[20:58:47] [Render thread/INFO]: Starting JEI...
+[20:58:47] [Render thread/INFO]: Configuring JEI...
+[20:58:47] [Render thread/INFO]: Configuring JEI took 358.6 microseconds
+[20:58:47] [Render thread/INFO]: Registering item subtypes...
+[20:58:47] [Render thread/INFO]: Registering item subtypes took 1.043 milliseconds
+[20:58:47] [Render thread/INFO]: Registering fluid subtypes...
+[20:58:47] [Render thread/INFO]: Registering fluid subtypes took 97.20 microseconds
+[20:58:47] [Render thread/INFO]: Registering ingredients...
+[20:58:47] [Render thread/INFO]: Registering ingredients: jei:minecraft took 59.44 milliseconds
+[20:58:47] [Render thread/INFO]: Registering ingredients took 59.71 milliseconds
+[20:58:47] [Render thread/INFO]: Registering extra ingredients...
+[20:58:47] [Render thread/INFO]: Registering extra ingredients took 134.1 microseconds
+[20:58:47] [Render thread/INFO]: Registering search ingredient aliases...
+[20:58:47] [Render thread/INFO]: Registering search ingredient aliases took 92.20 microseconds
+[20:58:47] [Render thread/INFO]: Registering slot display interpreters...
+[20:58:47] [Render thread/INFO]: Registering slot display interpreters took 1.444 milliseconds
+[20:58:47] [Render thread/INFO]: Registering Mod Info...
+[20:58:47] [Render thread/INFO]: Registering Mod Info took 178.7 microseconds
+[20:58:47] [Render thread/INFO]: Registering advanced search...
+[20:58:47] [Render thread/INFO]: Registering advanced search took 137.9 microseconds
+[20:58:47] [Render thread/INFO]: Registering categories...
+[20:58:47] [Render thread/INFO]: Registering categories took 5.852 milliseconds
+[20:58:47] [Render thread/INFO]: Registering vanilla category extensions...
+[20:58:47] [Render thread/INFO]: Registering vanilla category extensions took 820.4 microseconds
+[20:58:47] [Render thread/INFO]: Registering recipe catalysts...
+[20:58:47] [Render thread/INFO]: Registering recipe catalysts took 301.3 microseconds
+[20:58:47] [Render thread/INFO]: Building recipe registry...
+[20:58:47] [Render thread/INFO]: Building recipe registry took 3.613 milliseconds
+[20:58:47] [Render thread/INFO]: Registering advanced plugins...
+[20:58:47] [Render thread/INFO]: Registering advanced plugins took 136.4 microseconds
+[20:58:47] [Render thread/INFO]: Registering recipes...
+[20:58:47] [Render thread/INFO]: Registering recipes: jei:minecraft took 254.6 milliseconds
+[20:58:47] [Render thread/INFO]: Registering recipes took 254.9 milliseconds
+[20:58:47] [Render thread/INFO]: Registering recipes transfer handlers...
+[20:58:47] [Render thread/INFO]: Registering recipes transfer handlers took 2.170 milliseconds
+[20:58:47] [Render thread/INFO]: Building runtime...
+[20:58:47] [Render thread/INFO]: Registering gui handlers...
+[20:58:47] [Render thread/INFO]: Registering gui handlers took 4.064 milliseconds
+[20:58:47] [Render thread/INFO]: Registering Runtime...
+[20:58:47] [Render thread/INFO]: Starting JEI GUI
+[20:58:47] [Render thread/INFO]: Building ingredient list...
+[20:58:47] [Render thread/INFO]: Building ingredient list took 12.47 milliseconds
+[20:58:47] [Render thread/INFO]: Building ingredient filter...
+[20:58:47] [Render thread/INFO]: Adding 1927 ingredients
+[20:58:47] [Render thread/INFO]: Added 1927 ingredients
+[20:58:47] [Render thread/INFO]: Building ingredient filter took 80.31 milliseconds
+[20:58:47] [Render thread/INFO]: Registering Runtime: jei:fabric_gui took 181.6 milliseconds
+[20:58:47] [Render thread/INFO]: Registering Runtime took 182.0 milliseconds
+[20:58:47] [Render thread/INFO]: Building runtime took 189.3 milliseconds
+[20:58:47] [Render thread/INFO]: Sending Runtime...
+[20:58:47] [Render thread/INFO]: Sending Runtime took 146.0 microseconds
+[20:58:47] [Render thread/INFO]: Starting JEI took 546.9 milliseconds
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] This Paper server does not provide recipes to JEI. JEI is showing default recipes from your client, which may be different on the server.
+[20:58:47] [Render thread/WARN]: This Paper server does not provide recipes to JEI. JEI is showing default recipes from your client, which may be different on the server.
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Welcome, Ryan_yu__!
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Type /help for a list of commands.
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Type /list to see who else is online.
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Players online: 2 - World time: 12:59 PM
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 你有1条消息！输入/mail read来查看。
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Ryan_yu__的飞行模式被设置为开启。
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Ryan_yu__加入了游戏
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] [Skript] 新版本的Skript可用：2.16.2（你目前正在运行2.16.1）。
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] Download it at: https://github.com/SkriptLang/Skript/releases/download/2.16.2/Skript-2.16.2.jar
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] LiteSignIn >>> 你今天还没有签到! [点击此处打开签到界面]
+[20:58:47] [Render thread/INFO]: Loaded 6 advancements
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 战斗通行证 » 欢迎回来！ 你有 2 个奖励 可领取！
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 正在检查更新...
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 发现新版本 V2.14.0
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 更新日志:
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 新增公告已读功能，玩家加入时只推送未读公告
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 适配规范化的公告接口，并修复公告格式与加入消息交错的问题
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 修复网易云登录设备标识未持久化导致登录状态失效的问题
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 修复网易云歌单导入失败的问题
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 修复 PAPI 重载后 ZMusic 占位符失效的问题
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 修复 Leaf 服务端播放与界面消息竞态导致的问题
+[20:58:47] [Render thread/INFO]: [System] [CHAT] [20:58:47] 下载地址: https://github.com/starhui-dev/zmusic-plugin/releases/tag/2.14.0
+[20:58:48] [Render thread/INFO]: Stopping worker threads
+[20:58:48] [Render thread/INFO]: Started 16 worker threads
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[20:58:48] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[20:58:48] [Render thread/INFO]: [System] [CHAT] [20:58:48] NEW PHYSICS VERSION AVAILABLE! CLICK HERE!
+[20:58:48] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 8 reached during a single frame. New capacity will be 16.
+[20:58:48] [Render thread/INFO]: Stopping worker threads
+[20:58:48] [Render thread/INFO]: Started 16 worker threads
+[20:58:49] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/items_n.png-atlas
+[20:58:49] [Render thread/INFO]: Created: 2048x1024x0 minecraft:textures/atlas/items_s.png-atlas
+[20:58:49] [Render thread/INFO]: [System] [CHAT] [20:58:49] [Axiom] Axiom 生存建造已就绪：放置扣材料费与劳务费，拆除按市场卖价折现回收（与创世神一致）。
+[20:58:49] [Render thread/INFO]: [System] [CHAT] [20:58:49] Axiom: Using deprecated axiom.* permission. Please switch to axiom.default for public servers, or axiom.all for private servers
+[20:58:49] [Render thread/INFO]: 服务端已宣告生存 Editor 支持
+[20:58:50] [Render thread/INFO]: Created: 2048x2048x2 minecraft:textures/atlas/blocks_n.png-atlas
+[20:58:50] [Render thread/INFO]: Created: 2048x2048x2 minecraft:textures/atlas/blocks_s.png-atlas
+[20:58:50] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 2097152
+[20:58:50] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 24720
+[20:58:50] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 4194304
+[20:58:52] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 2097152
+[20:58:52] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 4194304
+[20:58:52] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 24720
+[20:59:02] [Render thread/INFO]: [System] [CHAT] [20:59:02] §eJourneyMap:§f 按 [§b.§f]
+[20:59:03] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 16 reached during a single frame. New capacity will be 32.
+[20:59:11] [Render thread/INFO]: [System] [CHAT] [20:59:11] [沉浸式创造] 拿取 1 个，扣费 ¥8 (货价 ¥4 + 秒送费 ¥4)
+[20:59:11] [Render thread/INFO]: [System] [CHAT] [20:59:11] [沉浸式创造] 卖出 1 个，入账 ¥3.96
+[21:03:51] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 32 reached during a single frame. New capacity will be 128.
+[21:03:51] [Render thread/INFO]: Resizing Dynamic Transforms UBO, capacity limit of 128 reached during a single frame. New capacity will be 256.
+[21:03:56] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:03:57] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:03:57] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:03:58] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:03:59] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:00] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:02] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:07] [Render thread/INFO]: [System] [CHAT] [21:04:07] 战斗通行证 » 战斗币 前十名玩家正在领取每日战斗币！
+[21:04:07] [Render thread/INFO]: [System] [CHAT] [21:04:07] #1 [Ryan_yu__ head]Ryan_yu__ 获得 10 战斗币
+[21:04:07] [Render thread/INFO]: [System] [CHAT] [21:04:07] 战斗通行证 » + 10 战斗币！
+[21:04:07] [Render thread/INFO]: [System] [CHAT] [21:04:07] #2 [GuuuuuLei head]GuuuuuLei 获得 9 战斗币
+[21:04:10] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:11] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:14] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:17] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:17] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:23] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:29] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:29] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:04:32] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest_n.png-atlas
+[21:04:32] [Render thread/INFO]: Created: 512x512x0 minecraft:textures/atlas/chest_s.png-atlas
+[21:04:55] [Render thread/INFO]: [System] [CHAT] [21:04:55] [Axiom] 已扣除 40590（1230 格，最近 8.0 格：材料 39975 + 劳务 615 − 回收 0）。
+[21:06:21] [Render thread/WARN]: Received passengers for unknown entity
+[21:06:38] [Render thread/INFO]: [System] [CHAT] [21:06:38] 已收集 腐肉 ×1 并存入仓库 | [返回至背包]
+[21:06:49] [Render thread/INFO]: [System] [CHAT] [21:06:49] 已收集 赭黄蛙明灯 ×1 并存入仓库 | [返回至背包]
+[21:06:55] [Render thread/INFO]: [System] [CHAT] [21:06:55] (FAWE) First position set to (-1070, 63, 26).
+[21:07:27] [Render thread/INFO]: [System] [CHAT] [21:07:27] (FAWE) First position set to (-778, 63, 26).
+[21:08:07] [Render thread/INFO]: [System] [CHAT] [21:08:07] [Axiom] 已扣除 8151（247 格，最近 7.4 格：材料 8027.5 + 劳务 123.5 − 回收 0）。
+[21:08:31] [Render thread/INFO]: [System] [CHAT] [21:08:31] 已收集 平滑石英块 ×1 并存入仓库 | [返回至背包]
+[21:08:39] [Render thread/INFO]: [System] [CHAT] [21:08:39] [Axiom] 已扣除 33（1 格，最近 5.5 格：材料 32.5 + 劳务 0.5 − 回收 0）。
+[21:08:49] [Render thread/INFO]: [System] [CHAT] [21:08:49] (FAWE) Second position set to (-1070, 319, 505) (36144480).
+[21:09:06] [Render thread/INFO]: [System] [CHAT] [21:09:06] [Server: 已将[Ryan_yu__ head]Ryan_yu__设为服务器管理员]
+[21:12:19] [Render thread/INFO]: [System] [CHAT] [21:12:19] 执行此命令前需要先选中两个选取点!
+[21:12:27] [Render thread/INFO]: [System] [CHAT] [21:12:27] (FAWE) First position set to (-1070, 319, 505) (1).
+[21:12:51] [Render thread/INFO]: [System] [CHAT] [21:12:51] (FAWE) Second position set to (-778, 63, 26) (36144480).
+[21:12:57] [Render thread/INFO]: [System] [CHAT] [21:12:57] 执行此命令前需要先选中两个选取点!
+[21:13:25] [Render thread/INFO]: [System] [CHAT] [21:13:25] 选取点成功!
+[21:13:28] [Render thread/INFO]: [System] [CHAT] [21:13:28] 已设置传送位置。
+[21:13:28] [Render thread/INFO]: [System] [CHAT] [21:13:28] 你创建了领地区域, ID为 main。
+[21:13:28] [Render thread/INFO]: [System] [CHAT] [21:13:28] 你创建了领地 starlight_navigation!
+[21:13:48] [Render thread/INFO]: [System] [CHAT] [21:13:48] 已将领地 starlight_navigation 的 animalkilling 权限设置为 true 。
+[21:14:32] [Render thread/INFO]: [System] [CHAT] [21:14:32] 已将领地 starlight_navigation 的 nmonsters 权限设置为 false 。
+[21:14:37] [Render thread/INFO]: [System] [CHAT] [21:14:37] 已将领地 starlight_navigation 的 monsters 权限设置为 false 。
+[21:14:58] [Render thread/INFO]: [System] [CHAT] [21:14:58] 你有1条消息！输入/mail read来查看。
+[21:14:58] [Render thread/INFO]: [System] [CHAT] [21:14:58] world的时间被设置为18000 ticks。
+[21:15:13] [Render thread/INFO]: OpenGL debug message: id=1282, source=API, type=ERROR, severity=HIGH, message='GL_INVALID_OPERATION error generated. No active program.'
+[21:15:13] [Render thread/INFO]: OpenGL debug message: id=1282, source=API, type=ERROR, severity=HIGH, message='GL_INVALID_OPERATION error generated. No active program.'
+[21:15:34] [Render thread/INFO]: [System] [CHAT] [21:15:34] [沉浸式创造] 附魔装备与特殊物品不能在创造栏买卖，已退回原处。
+[21:15:44] [Render thread/INFO]: [System] [CHAT] [21:15:44] [沉浸式创造] 附魔装备与特殊物品不能在创造栏买卖，已退回原处。
+[21:17:11] [Render thread/INFO]: 生存 Editor 会话开始（本地 creative）
+[21:17:11] [Render thread/INFO]: [System] [CHAT] [21:17:11] [Axiom] 已启用生存 Editor（MCWWS_AxiomSurvivalClient 客户端模组已连接）。
+[21:17:16] [Render thread/ERROR]: Missing program axiom:pipeline/replace_mode_block in override list. This is not a critical problem, but it could lead to weird rendering.
+java.lang.Throwable
+	at knot//com.mojang.blaze3d.opengl.GlDevice.handler$cnm000$iris$redirectIrisProgram(GlDevice.java:571)
+	at knot//com.mojang.blaze3d.opengl.GlDevice.getOrCompilePipeline(GlDevice.java)
+	at knot//com.mojang.blaze3d.opengl.GlRenderPass.setPipeline(GlRenderPass.java:83)
+	at knot//com.mojang.blaze3d.systems.RenderPass.setPipeline(RenderPass.java:89)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer$mixinextras$wrapped$14(PreparedRenderType.java:36)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.mixinextras$bridge$drawFromBuffer$mixinextras$wrapped$14$15(PreparedRenderType.java)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.wrapMethod$cnl000$iris$wrapBuffer(PreparedRenderType.java:521)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer(PreparedRenderType.java)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer(PreparedRenderType.java:28)
+	at knot//net.minecraft.client.renderer.feature.RenderTypeFeatureRenderer.executeGroup(RenderTypeFeatureRenderer.java:45)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedGroup.execute(FeatureRenderDispatcher.java:318)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedFrame.executePhase(FeatureRenderDispatcher.java:196)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedFrame.executeTranslucent(FeatureRenderDispatcher.java:162)
+	at knot//net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$0(LevelRenderer.java:440)
+	at knot//com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:67)
+	at knot//net.minecraft.client.renderer.LevelRenderer.render(LevelRenderer.java:240)
+	at knot//net.minecraft.client.renderer.GameRenderer.mixinextras$bridge$render$129(GameRenderer.java)
+	at knot//net.minecraft.client.renderer.GameRenderer.wrapOperation$cni000$iris$renderLevel(GameRenderer.java:5882)
+	at knot//net.minecraft.client.renderer.GameRenderer.wrapOperation$cni000$iris$renderLevel$mixinextras$bridge$109(GameRenderer.java)
+	at knot//net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:588)
+	at knot//net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:428)
+	at knot//net.minecraft.client.Minecraft.renderFrame(Minecraft.java:1374)
+	at knot//net.minecraft.client.Minecraft.runTick(Minecraft.java:1269)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:959)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+[21:18:25] [Render thread/INFO]: [System] [CHAT] [21:18:25] 已收集 平滑石英块 ×1 并存入仓库 | [返回至背包]
+[21:19:02] [Render thread/ERROR]: Missing program axiom:pipeline/replace_mode_block_no_depth in override list. This is not a critical problem, but it could lead to weird rendering.
+java.lang.Throwable
+	at knot//com.mojang.blaze3d.opengl.GlDevice.handler$cnm000$iris$redirectIrisProgram(GlDevice.java:571)
+	at knot//com.mojang.blaze3d.opengl.GlDevice.getOrCompilePipeline(GlDevice.java)
+	at knot//com.mojang.blaze3d.opengl.GlRenderPass.setPipeline(GlRenderPass.java:83)
+	at knot//com.mojang.blaze3d.systems.RenderPass.setPipeline(RenderPass.java:89)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer$mixinextras$wrapped$14(PreparedRenderType.java:36)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.mixinextras$bridge$drawFromBuffer$mixinextras$wrapped$14$15(PreparedRenderType.java)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.wrapMethod$cnl000$iris$wrapBuffer(PreparedRenderType.java:521)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer(PreparedRenderType.java)
+	at knot//net.minecraft.client.renderer.rendertype.PreparedRenderType.drawFromBuffer(PreparedRenderType.java:28)
+	at knot//net.minecraft.client.renderer.feature.RenderTypeFeatureRenderer.executeGroup(RenderTypeFeatureRenderer.java:45)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedGroup.execute(FeatureRenderDispatcher.java:318)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedFrame.executePhase(FeatureRenderDispatcher.java:196)
+	at knot//net.minecraft.client.renderer.feature.FeatureRenderDispatcher$PreparedFrame.executeTranslucent(FeatureRenderDispatcher.java:162)
+	at knot//net.minecraft.client.renderer.LevelRenderer.lambda$addMainPass$0(LevelRenderer.java:440)
+	at knot//com.mojang.blaze3d.framegraph.FrameGraphBuilder.execute(FrameGraphBuilder.java:67)
+	at knot//net.minecraft.client.renderer.LevelRenderer.render(LevelRenderer.java:240)
+	at knot//net.minecraft.client.renderer.GameRenderer.mixinextras$bridge$render$129(GameRenderer.java)
+	at knot//net.minecraft.client.renderer.GameRenderer.wrapOperation$cni000$iris$renderLevel(GameRenderer.java:5882)
+	at knot//net.minecraft.client.renderer.GameRenderer.wrapOperation$cni000$iris$renderLevel$mixinextras$bridge$109(GameRenderer.java)
+	at knot//net.minecraft.client.renderer.GameRenderer.renderLevel(GameRenderer.java:588)
+	at knot//net.minecraft.client.renderer.GameRenderer.render(GameRenderer.java:428)
+	at knot//net.minecraft.client.Minecraft.renderFrame(Minecraft.java:1374)
+	at knot//net.minecraft.client.Minecraft.runTick(Minecraft.java:1269)
+	at knot//net.minecraft.client.Minecraft.run(Minecraft.java:959)
+	at knot//net.minecraft.client.main.Main.main(Main.java:292)
+	at net.fabricmc.loader.impl.game.minecraft.MinecraftGameProvider.launch(MinecraftGameProvider.java:514)
+	at net.fabricmc.loader.impl.launch.knot.Knot.launch(Knot.java:72)
+	at net.fabricmc.loader.impl.launch.knot.KnotClient.main(KnotClient.java:23)
+[21:19:10] [Render thread/INFO]: [System] [CHAT] [21:19:10] [Axiom] 已扣除 3404.16（108 格，最近 8.1 格：材料 3510 + 劳务 162 − 回收 267.84）。
+[21:20:21] [Render thread/INFO]: [System] [CHAT] [21:20:21] [沉浸式创造] 拿取 64 个，扣费 ¥896 (货价 ¥448 + 秒送费 ¥448)
+[21:21:08] [Render thread/INFO]: [System] [CHAT] [21:21:08] [Axiom] 已退还 3233.95（原扣 3404.16，手续费 170.21 / 5%，最近 4.3 格），市场库存已同步还原。
+[21:21:09] [Render thread/INFO]: [System] [CHAT] [21:21:09] [Axiom] 已扣除 3404.16（108 格，最近 4.3 格：材料 3510 + 劳务 162 − 回收 267.84）。
+[21:21:12] [Render thread/INFO]: [System] [CHAT] [21:21:12] 已收集 平滑石英台阶 ×1 并存入仓库 | [返回至背包]
+[21:22:55] [Render thread/INFO]: [System] [CHAT] [21:22:55] [Axiom] 已扣除 146524（5635 格，最近 23.3 格：材料 150657.5 + 劳务 8452.5 − 回收 12586）。
+[21:22:55] [Render thread/INFO]: [System] [CHAT] [21:22:55] [Axiom] 其中 560 格判定为搬运，只收劳务费，未在市场买卖。最近 23.3 格。
+[21:24:08] [Render thread/INFO]: [System] [CHAT] [21:24:08] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-141
+[21:24:08] [Render thread/INFO]: [System] [CHAT] [21:24:08]   9
+[21:24:14] [Render thread/INFO]: [System] [CHAT] [21:24:14] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-147
+[21:24:14] [Render thread/INFO]: [System] [CHAT] [21:24:14]   10
+[21:24:23] [Render thread/INFO]: [System] [CHAT] [21:24:23] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-153
+[21:24:23] [Render thread/INFO]: [System] [CHAT] [21:24:23]   11
+[21:24:28] [Render thread/INFO]: [System] [CHAT] [21:24:28] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-159
+[21:24:28] [Render thread/INFO]: [System] [CHAT] [21:24:28]   12
+[21:24:37] [Render thread/INFO]: [System] [CHAT] [21:24:37] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-165
+[21:24:37] [Render thread/INFO]: [System] [CHAT] [21:24:37]   13
+[21:24:41] [Render thread/INFO]: [System] [CHAT] [21:24:41] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-171
+[21:24:41] [Render thread/INFO]: [System] [CHAT] [21:24:41]   14
+[21:24:45] [Render thread/INFO]: [System] [CHAT] [21:24:45] [Axiom] 已扣除 4950（150 格，最近 6.2 格：材料 4875 + 劳务 225 − 回收 150）。
+[21:24:46] [Render thread/INFO]: [System] [CHAT] [21:24:46] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-177
+[21:24:46] [Render thread/INFO]: [System] [CHAT] [21:24:46]   15
+[21:24:50] [Render thread/INFO]: [System] [CHAT] [21:24:50] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4874, z-183
+[21:24:50] [Render thread/INFO]: [System] [CHAT] [21:24:50]   16
+[21:25:05] [Render thread/INFO]: [System] [CHAT] [21:25:05] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-93
+[21:25:05] [Render thread/INFO]: [System] [CHAT] [21:25:05]   e
+[21:25:09] [Render thread/INFO]: [System] [CHAT] [21:25:09] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-93
+[21:25:09] [Render thread/INFO]: [System] [CHAT] [21:25:09]   1
+[21:25:13] [Render thread/INFO]: [System] [CHAT] [21:25:13] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-98
+[21:25:13] [Render thread/INFO]: [System] [CHAT] [21:25:13]   2
+[21:25:13] [Render thread/INFO]: [System] [CHAT] [21:25:13] [Axiom] 拆除回收 +605.52（29 格，最近 4.4 格：回收 933.22 − 材料 284.2 − 劳务 43.5），已卖给市场。
+[21:25:18] [Render thread/INFO]: [System] [CHAT] [21:25:18] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-103
+[21:25:18] [Render thread/INFO]: [System] [CHAT] [21:25:18]   3
+[21:25:25] [Render thread/INFO]: [System] [CHAT] [21:25:25] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-108
+[21:25:25] [Render thread/INFO]: [System] [CHAT] [21:25:25]   4
+[21:25:29] [Render thread/INFO]: [System] [CHAT] [21:25:29] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-113
+[21:25:29] [Render thread/INFO]: [System] [CHAT] [21:25:29]   5
+[21:25:35] [Render thread/INFO]: [System] [CHAT] [21:25:35] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-118
+[21:25:35] [Render thread/INFO]: [System] [CHAT] [21:25:35]   6
+[21:25:38] [Render thread/INFO]: [System] [CHAT] [21:25:38] [Axiom] 已扣除 155712（6410 格，最近 38.7 格：材料 153795 + 劳务 9585 − 回收 7668）。
+[21:25:38] [Render thread/INFO]: [System] [CHAT] [21:25:38] [Axiom] 其中 980 格判定为搬运，只收劳务费，未在市场买卖。最近 38.7 格。
+[21:25:41] [Render thread/INFO]: [System] [CHAT] [21:25:41] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-123
+[21:25:41] [Render thread/INFO]: [System] [CHAT] [21:25:41]   7
+[21:25:46] [Render thread/INFO]: [System] [CHAT] [21:25:46] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-128
+[21:25:46] [Render thread/INFO]: [System] [CHAT] [21:25:46]   8
+[21:25:50] [Render thread/INFO]: [System] [CHAT] [21:25:50] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-133
+[21:25:50] [Render thread/INFO]: [System] [CHAT] [21:25:50]   9
+[21:25:55] [Render thread/INFO]: [System] [CHAT] [21:25:55] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-138
+[21:25:55] [Render thread/INFO]: [System] [CHAT] [21:25:55]   10
+[21:25:58] [Render thread/INFO]: [System] [CHAT] [21:25:58] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-143
+[21:25:58] [Render thread/INFO]: [System] [CHAT] [21:25:58]   11
+[21:26:02] [Render thread/INFO]: [System] [CHAT] [21:26:02] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-148
+[21:26:02] [Render thread/INFO]: [System] [CHAT] [21:26:02]   12
+[21:26:07] [Render thread/INFO]: [System] [CHAT] [21:26:07] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-153
+[21:26:07] [Render thread/INFO]: [System] [CHAT] [21:26:07]   13
+[21:26:11] [Render thread/INFO]: [System] [CHAT] [21:26:11] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-158
+[21:26:11] [Render thread/INFO]: [System] [CHAT] [21:26:11]   14
+[21:26:18] [Render thread/INFO]: [System] [CHAT] [21:26:18] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-163
+[21:26:18] [Render thread/INFO]: [System] [CHAT] [21:26:18]   15
+[21:26:21] [Render thread/INFO]: [System] [CHAT] [21:26:21] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-168
+[21:26:21] [Render thread/INFO]: [System] [CHAT] [21:26:21]   16
+[21:26:26] [Render thread/INFO]: [System] [CHAT] [21:26:26] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-173
+[21:26:26] [Render thread/INFO]: [System] [CHAT] [21:26:26]   17
+[21:26:30] [Render thread/INFO]: [System] [CHAT] [21:26:30] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-178
+[21:26:30] [Render thread/INFO]: [System] [CHAT] [21:26:30]   18
+[21:26:40] [Render thread/INFO]: [System] [CHAT] [21:26:40] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-183
+[21:26:40] [Render thread/INFO]: [System] [CHAT] [21:26:40]   19
+[21:27:04] [Render thread/INFO]: [System] [CHAT] [21:27:04] [GuuuuuLei head]GuuuuuLei placed a sign @ world: x-4869, z-103
+[21:27:04] [Render thread/INFO]: [System] [CHAT] [21:27:04]   3
+[21:27:48] [Render thread/INFO]: [System] [CHAT] [21:27:48] [Axiom] 已扣除 336.09（17 格，最近 19.1 格：材料 552.5 + 劳务 25.5 − 回收 241.91）。
+[21:27:54] [Render thread/INFO]: [System] [CHAT] [21:27:54] [Axiom] 已扣除 39.76（2 格，最近 18.6 格：材料 65 + 劳务 3 − 回收 28.24）。
+[21:28:00] [Render thread/INFO]: [System] [CHAT] [21:28:00] [Axiom] 已扣除 331.52（16 格，最近 23.2 格：材料 520 + 劳务 24 − 回收 212.48）。
+[21:28:27] [Render thread/INFO]: [System] [CHAT] [21:28:27] [Axiom] 已扣除 62.49（3 格，最近 11.5 格：材料 97.5 + 劳务 4.5 − 回收 39.51）。
+[21:28:34] [Render thread/INFO]: [System] [CHAT] [21:28:34] [Axiom] 已扣除 312.75（15 格，最近 16.7 格：材料 487.5 + 劳务 22.5 − 回收 197.25）。
+[21:28:46] [Render thread/INFO]: [System] [CHAT] [21:28:46] [Axiom] 已扣除 83.8（4 格，最近 14.6 格：材料 130 + 劳务 6 − 回收 52.2）。
+[21:28:55] [Render thread/INFO]: [System] [CHAT] [21:28:55] [Axiom] 已扣除 293.58（14 格，最近 13.3 格：材料 455 + 劳务 21 − 回收 182.42）。
+[21:29:02] [Render thread/INFO]: [System] [CHAT] [21:29:02] [Axiom] 已扣除 108.55（5 格，最近 13.0 格：材料 162.5 + 劳务 7.5 − 回收 61.45）。
+[21:29:10] [Render thread/INFO]: [System] [CHAT] [21:29:10] [Axiom] 已扣除 282.75（13 格，最近 16.9 格：材料 422.5 + 劳务 19.5 − 回收 159.25）。
+[21:29:27] [Render thread/INFO]: [System] [CHAT] [21:29:27] [Axiom] 已扣除 130.98（6 格，最近 43.4 格：材料 195 + 劳务 9 − 回收 73.02）。
+[21:29:35] [Render thread/INFO]: [System] [CHAT] [21:29:35] [Axiom] 已扣除 262.44（12 格，最近 13.0 格：材料 390 + 劳务 18 − 回收 145.56）。
+[21:32:17] [Render thread/INFO]: [System] [CHAT] [21:32:17] [Axiom] 拆除回收 +228.72（8 格，最近 36.3 格：回收 257.44 − 材料 16.72 − 劳务 12），已卖给市场。
+[21:32:48] [Render thread/INFO]: [System] [CHAT] [21:32:48] [Axiom] 拆除回收 +2202.1（104 格，最近 4.6 格：回收 2321.1 − 材料 0 − 劳务 119），已卖给市场。
+[21:32:48] [Render thread/INFO]: [System] [CHAT] [21:32:48] [Axiom] 其中 30 格判定为搬运，只收劳务费，未在市场买卖。最近 4.6 格。
+[21:33:24] [Render thread/INFO]: [System] [CHAT] [21:33:24] [Axiom] 已扣除 2442（74 格，最近 4.3 格：材料 2405 + 劳务 37 − 回收 0）。
+[21:33:49] [Render thread/INFO]: [System] [CHAT] [21:33:49] [Axiom] 拆除回收 +7929.6（280 格，最近 13.5 格：回收 9010.4 − 材料 660.8 − 劳务 420），已卖给市场。
+[21:34:08] [Render thread/INFO]: [System] [CHAT] [21:34:08] [Axiom] 拆除回收 +986.3（35 格，最近 9.8 格：回收 1126.3 − 材料 87.5 − 劳务 52.5），已卖给市场。
+[21:34:18] [Render thread/INFO]: [System] [CHAT] [21:34:18] [Axiom] 已扣除 94.56（3 格，最近 8.9 格：材料 97.5 + 劳务 4.5 − 回收 7.44）。
+[21:34:30] [Render thread/INFO]: [System] [CHAT] [21:34:30] [Axiom] 拆除回收 +562.1（21 格，最近 12.5 格：回收 643.6 − 材料 50 − 劳务 31.5），已卖给市场。
+[21:34:30] [Render thread/INFO]: [System] [CHAT] [21:34:30] [Axiom] 其中 1 格判定为搬运，只收劳务费，未在市场买卖。最近 12.5 格。
+[21:34:41] [Render thread/INFO]: [System] [CHAT] [21:34:41] [Axiom] 拆除回收 +760.86（27 格，最近 7.9 格：回收 868.86 − 材料 67.5 − 劳务 40.5），已卖给市场。
+[21:34:45] [Render thread/INFO]: [System] [CHAT] [21:34:45] [Axiom] 拆除回收 +591.78（21 格，最近 6.1 格：回收 675.78 − 材料 52.5 − 劳务 31.5），已卖给市场。
+[21:35:00] [Render thread/INFO]: [System] [CHAT] [21:35:00] [Axiom] 拆除回收 +394.52（14 格，最近 5.1 格：回收 450.52 − 材料 35 − 劳务 21），已卖给市场。
+[21:35:03] [Render thread/INFO]: [System] [CHAT] [21:35:03] [Axiom] 拆除回收 +225.44（8 格，最近 5.9 格：回收 257.44 − 材料 20 − 劳务 12），已卖给市场。
+[21:35:09] [Render thread/INFO]: [System] [CHAT] [21:35:09] [Axiom] 拆除回收 +56.36（2 格，最近 4.1 格：回收 64.36 − 材料 5 − 劳务 3），已卖给市场。
+[21:35:24] [Render thread/INFO]: [System] [CHAT] [21:35:24] [Axiom] 已扣除 189.12（6 格，最近 8.5 格：材料 195 + 劳务 9 − 回收 14.88）。
+[21:35:41] [Render thread/INFO]: [System] [CHAT] [21:35:41] [Axiom] 已扣除 214.92（9 格，最近 25.3 格：材料 292.5 + 劳务 13.5 − 回收 91.08）。
+[21:35:49] [Render thread/INFO]: [System] [CHAT] [21:35:49] [Axiom] 已扣除 215.37（9 格，最近 14.7 格：材料 292.5 + 劳务 13.5 − 回收 90.63）。
+[21:36:13] [Render thread/INFO]: [System] [CHAT] [21:36:13] [Axiom] 拆除回收 +563.6（20 格，最近 37.6 格：回收 643.6 − 材料 50 − 劳务 30），已卖给市场。
+[21:36:30] [Render thread/INFO]: [System] [CHAT] [21:36:30] [Axiom] 已扣除 241.3（10 格，最近 18.6 格：材料 325 + 劳务 15 − 回收 98.7）。
+[21:36:39] [Render thread/INFO]: [System] [CHAT] [21:36:39] [Axiom] 已扣除 193.6（8 格，最近 16.7 格：材料 260 + 劳务 12 − 回收 78.4）。
+[21:36:46] [Render thread/INFO]: [System] [CHAT] [21:36:46] [Axiom] 拆除回收 +112.72（4 格，最近 13.8 格：回收 128.72 − 材料 10 − 劳务 6），已卖给市场。
+[21:36:54] [Render thread/INFO]: [System] [CHAT] [21:36:54] [Axiom] 已退还 179.66（原扣 189.12，手续费 9.46 / 5%，最近 19.1 格），市场库存已同步还原。
+[21:37:09] [Render thread/INFO]: [System] [CHAT] [21:37:09] [Axiom] 拆除回收 +563.6（20 格，最近 16.6 格：回收 643.6 − 材料 50 − 劳务 30），已卖给市场。
+[21:39:38] [Render thread/INFO]: [System] [CHAT] [21:39:38] [Axiom] 拆除回收 +112.72（4 格，最近 19.0 格：回收 128.72 − 材料 10 − 劳务 6），已卖给市场。
+[21:39:47] [Render thread/INFO]: [System] [CHAT] [21:39:47] [Axiom] 已扣除 269.61（11 格，最近 26.0 格：材料 357.5 + 劳务 16.5 − 回收 104.39）。
+[21:40:01] [Render thread/INFO]: [System] [CHAT] [21:40:01] [Axiom] 已扣除 172.06（7 格，最近 26.3 格：材料 227.5 + 劳务 10.5 − 回收 65.94）。
+[21:40:44] [Netty NIO IO #3/INFO]: ZMusic client disconnected, stopping native player
+[21:40:44] [Netty NIO IO #3/INFO]: Stop ZMusic playback
+[21:40:44] [Netty NIO IO #3/INFO]: 服务端生存 Editor 支持已关闭
+[21:40:44] [Netty NIO IO #3/INFO]: 生存 Editor 会话结束
+[21:40:44] [Render thread/INFO]: ZMusic client disconnected, stopping native player
+[21:40:44] [Render thread/INFO]: Stop ZMusic playback
+[21:40:44] [Render thread/INFO]: Stopping JEI
+[21:40:44] [Render thread/INFO]: Stopping JEI
+[21:40:44] [Render thread/INFO]: Sending Runtime Unavailable...
+[21:40:44] [Render thread/INFO]: Stopping JEI GUI
+[21:40:44] [Render thread/INFO]: Sending Runtime Unavailable took 356.7 microseconds
+[21:40:44] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:40:44] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[21:40:44] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[21:40:44] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:40:44] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[21:40:44] [Render thread/INFO]: Stopping worker threads
+[21:40:44] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[21:40:44] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Shutting down voxy instance
+[21:40:45] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Instance shutdown
+[21:40:46] [Server Pinger #4/ERROR]: Can't ping play.starnet.gg: 未知的主机
+[21:40:56] [Render thread/INFO]: ZMusic client disconnected, stopping native player
+[21:40:56] [Render thread/INFO]: Stop ZMusic playback
+[21:40:56] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[21:40:56] [Render thread/INFO]: Connecting to 127.0.0.1, 25565
+[21:40:58] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Initializing voxy instance
+[21:40:58] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Dedicated voxy thread pool size: 12
+[21:40:58] [Render thread/INFO]: Reloading pipeline on dimension change: minecraft:overworld => minecraft:overworld
+[21:40:58] [Render thread/INFO]: Destroying pipeline minecraft:overworld
+[21:40:58] [Render thread/INFO]: Creating pipeline for dimension minecraft:overworld
+[21:40:58] [Render thread/INFO]: binding ocean attributes
+[21:40:58] [Render thread/INFO]: constructed ocean shader successfully
+[21:40:58] [Render thread/INFO]: constructed liquids shader successfully
+[21:40:58] [Render thread/INFO]: binding smoke attributes
+[21:40:58] [Render thread/INFO]: constructed smoke shader successfully
+[21:40:58] [Render thread/INFO]: [nt.mt.ct.rr.LevelRenderer]: Not creating renderer due to null identifier
+[21:40:58] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Creating new world engine: 2937110969213851113@1988014415
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderResourceReuse]: Running on nvidia, using workaround sparse buffer allocation
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderResourceReuse]: Allocated new geometry buffer: 4294966272, isSparse: true, driver stated 8499Mb of free memory
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[21:40:59] [Render thread/INFO]: Started 16 worker threads
+[21:40:59] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Dedicated voxy thread pool size: 1
+[21:40:59] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[21:41:00] [Render thread/WARN]: Unable to find entity: 'minecraft:boat'
+[21:41:00] [Render thread/INFO]: BlockModelCacheSchematic: refreshing model cache
+[21:41:00] [Render thread/INFO]: Starting [4] Placement Manager Daemon threads
+[21:41:00] [Render thread/INFO]: Loaded 1585 vanilla recipes from client resources.
+[21:41:00] [Render thread/INFO]: Starting JEI...
+[21:41:00] [Render thread/INFO]: Configuring JEI...
+[21:41:00] [Render thread/INFO]: Configuring JEI took 243.3 microseconds
+[21:41:00] [Render thread/INFO]: Registering item subtypes...
+[21:41:00] [Render thread/INFO]: Registering item subtypes took 158.6 microseconds
+[21:41:00] [Render thread/INFO]: Registering fluid subtypes...
+[21:41:00] [Render thread/INFO]: Registering fluid subtypes took 101.4 microseconds
+[21:41:00] [Render thread/INFO]: Registering ingredients...
+[21:41:00] [Render thread/INFO]: Registering ingredients: jei:minecraft took 11.38 milliseconds
+[21:41:00] [Render thread/INFO]: Registering ingredients took 11.65 milliseconds
+[21:41:00] [Render thread/INFO]: Registering extra ingredients...
+[21:41:00] [Render thread/INFO]: Registering extra ingredients took 165.6 microseconds
+[21:41:00] [Render thread/INFO]: Registering search ingredient aliases...
+[21:41:00] [Render thread/INFO]: Registering search ingredient aliases took 66.60 microseconds
+[21:41:00] [Render thread/INFO]: Registering slot display interpreters...
+[21:41:00] [Render thread/INFO]: Registering slot display interpreters took 84.30 microseconds
+[21:41:00] [Render thread/INFO]: Registering Mod Info...
+[21:41:00] [Render thread/INFO]: Registering Mod Info took 448.9 microseconds
+[21:41:00] [Render thread/INFO]: Registering advanced search...
+[21:41:00] [Render thread/INFO]: Registering advanced search took 309.6 microseconds
+[21:41:00] [Render thread/INFO]: Registering categories...
+[21:41:00] [Render thread/INFO]: Registering categories took 435.2 microseconds
+[21:41:00] [Render thread/INFO]: Registering vanilla category extensions...
+[21:41:00] [Render thread/INFO]: Registering vanilla category extensions took 137.4 microseconds
+[21:41:00] [Render thread/INFO]: Registering recipe catalysts...
+[21:41:00] [Render thread/INFO]: Registering recipe catalysts took 138.5 microseconds
+[21:41:00] [Render thread/INFO]: Building recipe registry...
+[21:41:00] [Render thread/INFO]: Building recipe registry took 277.2 microseconds
+[21:41:00] [Render thread/INFO]: Registering advanced plugins...
+[21:41:00] [Render thread/INFO]: Registering advanced plugins took 142.2 microseconds
+[21:41:00] [Render thread/INFO]: Registering recipes...
+[21:41:00] [Render thread/INFO]: Registering recipes: jei:minecraft took 145.3 milliseconds
+[21:41:00] [Render thread/INFO]: Registering recipes took 145.7 milliseconds
+[21:41:00] [Render thread/INFO]: Registering recipes transfer handlers...
+[21:41:00] [Render thread/INFO]: Registering recipes transfer handlers took 248.4 microseconds
+[21:41:00] [Render thread/INFO]: Building runtime...
+[21:41:00] [Render thread/INFO]: Registering gui handlers...
+[21:41:00] [Render thread/INFO]: Registering gui handlers took 148.2 microseconds
+[21:41:00] [Render thread/INFO]: Registering Runtime...
+[21:41:00] [Render thread/INFO]: Starting JEI GUI
+[21:41:00] [Render thread/INFO]: Building ingredient list...
+[21:41:00] [Render thread/INFO]: Building ingredient list took 4.330 milliseconds
+[21:41:00] [Render thread/INFO]: Building ingredient filter...
+[21:41:00] [Render thread/INFO]: Adding 1927 ingredients
+[21:41:00] [Render thread/INFO]: Added 1927 ingredients
+[21:41:00] [Render thread/INFO]: Building ingredient filter took 30.41 milliseconds
+[21:41:00] [Render thread/INFO]: Registering Runtime: jei:fabric_gui took 56.77 milliseconds
+[21:41:00] [Render thread/INFO]: Registering Runtime took 56.98 milliseconds
+[21:41:00] [Render thread/INFO]: Building runtime took 57.22 milliseconds
+[21:41:00] [Render thread/INFO]: Sending Runtime...
+[21:41:00] [Render thread/INFO]: Sending Runtime took 142.7 microseconds
+[21:41:00] [Render thread/INFO]: Starting JEI took 227.4 milliseconds
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] This Paper server does not provide recipes to JEI. JEI is showing default recipes from your client, which may be different on the server.
+[21:41:00] [Render thread/WARN]: This Paper server does not provide recipes to JEI. JEI is showing default recipes from your client, which may be different on the server.
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] veinminer is outdated! Click here to download the latest version (Current: 2.11.2, Latest: 2.12.1)
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] [CommandTimer] A new version of CommandTimer is available. Please visit https://www.spigotmc.org/resources/command-timer.24141/ and download the latest version
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Welcome, Ryan_yu__!
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Type /help for a list of commands.
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Type /list to see who else is online.
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Players online: 2 - World time: 6:19 AM
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] 你有1条消息！输入/mail read来查看。
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Ryan_yu__的飞行模式被设置为开启。
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] (FAWE) A new release for FastAsyncWorldEdit is available: 2.15.4. You are currently on 2.15.3. Download from Modrinth or Hangar.
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] ━━━━━━━━━ ᴜᴘᴅᴀᴛᴇ ᴀᴠᴀɪʟᴀʙʟᴇ ━━━━━━━━━\n  Installed : v2.0.3\n  Latest    : v2.0.6\n  Download  : Modrinth, PaperMC, BuiltByBit\n━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Ryan_yu__加入了游戏
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] [Skript] 新版本的Skript可用：2.16.2（你目前正在运行2.16.1）。
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] Download it at: https://github.com/SkriptLang/Skript/releases/download/2.16.2/Skript-2.16.2.jar
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] LiteSignIn >>> 你今天还没有签到! [点击此处打开签到界面]
+[21:41:00] [Render thread/INFO]: Loaded 6 advancements
+[21:41:00] [Render thread/INFO]: 服务端已宣告生存 Editor 支持
+[21:41:00] [Render thread/INFO]: 服务端已宣告生存 Editor 支持
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] 战斗通行证 » 欢迎回来！ 你有 2 个奖励 可领取！
+[21:41:00] [Render thread/INFO]: [System] [CHAT] [21:41:00] 正在检查更新...
+[21:41:00] [Render thread/INFO]: Stopping worker threads
+[21:41:00] [Render thread/INFO]: Started 16 worker threads
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Creating Voxy render system
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.RenderPipelineFactory]: Creating voxy iris render pipeline
+[21:41:00] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Voxy render system created with 4294966272 geometry capacity, using pipeline 'IrisVoxyRenderPipeline' with renderer 'MDICSectionRenderer'
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 发现新版本 V2.14.0
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 更新日志:
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 新增公告已读功能，玩家加入时只推送未读公告
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 适配规范化的公告接口，并修复公告格式与加入消息交错的问题
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 修复网易云登录设备标识未持久化导致登录状态失效的问题
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 修复网易云歌单导入失败的问题
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 修复 PAPI 重载后 ZMusic 占位符失效的问题
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 修复 Leaf 服务端播放与界面消息竞态导致的问题
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] 下载地址: https://github.com/starhui-dev/zmusic-plugin/releases/tag/2.14.0
+[21:41:01] [Render thread/INFO]: [System] [CHAT] [21:41:01] _________________/ Residence \_________________\n| 6.0.3.2 is now available! Your version: 6.0.2.4\n----------------------------------------
+[21:41:01] [Render thread/INFO]: Stopping worker threads
+[21:41:01] [Render thread/INFO]: Started 16 worker threads
+[21:41:01] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 2097152
+[21:41:01] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 24720
+[21:41:01] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 4194304
+[21:41:02] [Render thread/INFO]: [System] [CHAT] [21:41:02] [Axiom] Axiom 生存建造已就绪：放置扣材料费与劳务费，拆除按市场卖价折现回收（与创世神一致）。
+[21:41:02] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 2097152
+[21:41:02] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$ComputeMemoryCopy]: Resizing scratch data buffer to: 4194304
+[21:41:02] [Render thread/INFO]: 服务端已宣告生存 Editor 支持
+[21:41:14] [Render thread/INFO]: [System] [CHAT] [21:41:14] [Axiom] 拆除回收 +507.24（18 格，最近 7.7 格：回收 579.24 − 材料 45 − 劳务 27），已卖给市场。
+[21:41:20] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 24720
+[21:41:23] [Render thread/INFO]: [System] [CHAT] [21:41:23] [Axiom] 已扣除 148.08（6 格，最近 7.3 格：材料 195 + 劳务 9 − 回收 55.92）。
+[21:41:47] [Render thread/INFO]: [System] [CHAT] [21:41:47] [Axiom] 已扣除 297.12（12 格，最近 24.4 格：材料 390 + 劳务 18 − 回收 110.88）。
+[21:41:57] [Render thread/INFO]: [System] [CHAT] [21:41:57] [Axiom] 拆除回收 +338.16（12 格，最近 10.5 格：回收 386.16 − 材料 30 − 劳务 18），已卖给市场。
+[21:42:05] [Render thread/INFO]: [System] [CHAT] [21:42:05] 传送完成，扣费 ¥128
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 37280
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 56080
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 84320
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 126640
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 190160
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 285440
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 428320
+[21:42:05] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 642560
+[21:42:06] [Chunk Render Task Executor #0/WARN]: [me.cx.vy.cn.wd.ActiveSectionTracker]: section raced to save queue, we lost
+[21:42:06] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 963920
+[21:42:06] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 1446000
+[21:43:16] [Render thread/INFO]: [System] [CHAT] [21:43:16] 未知或不完整的命令。错误见下\nseed<--[此处]
+[21:43:19] [Render thread/INFO]: [System] [CHAT] [21:43:19] [Server: 已将[Ryan_yu__ head]Ryan_yu__设为服务器管理员]
+[21:43:21] [Render thread/INFO]: [System] [CHAT] [21:43:21] 种子：[-1810768653519815203]
+[21:43:57] [Render thread/INFO]: [System] [CHAT] [21:43:57] 传送完成，扣费 ¥23.51
+[21:43:57] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 37280
+[21:43:57] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 56000
+[21:44:07] [Chunk Render Task Executor #1/WARN]: [me.cx.vy.cn.wd.ActiveSectionTracker]: section raced to save queue, we lost
+[21:50:55] [Render thread/INFO]: [System] [CHAT] [21:50:55] 你有1条消息！输入/mail read来查看。
+[21:50:55] [Render thread/INFO]: [System] [CHAT] [21:50:55] 正在回到先前的位置。
+[21:50:55] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 84160
+[21:50:55] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 126400
+[21:50:55] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 189680
+[21:50:58] [Render thread/INFO]: [System] [CHAT] [21:50:58] 正在回到先前的位置。
+[21:50:58] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 284640
+[21:51:07] [Render thread/INFO]: [System] [CHAT] [21:51:07] 正在传送……
+[21:51:07] [Render thread/INFO]: [System] [CHAT] [21:51:07] 正在传送……
+[21:51:07] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 427040
+[21:51:07] [Async Node Manager/INFO]: [me.cx.vy.ct.ce.rg.hl.AsyncNodeManager$SyncResults]: Expanding scatter update buffer to 640640
+[21:51:49] [Render thread/INFO]: [System] [CHAT] [21:51:49] [Axiom] 已扣除 124.85（5 格，最近 15.5 格：材料 162.5 + 劳务 7.5 − 回收 45.15）。
+[21:51:58] [Render thread/INFO]: [System] [CHAT] [21:51:58] [Axiom] 已扣除 350（14 格，最近 26.5 格：材料 455 + 劳务 21 − 回收 126）。
+[21:52:09] [Render thread/INFO]: [System] [CHAT] [21:52:09] [Axiom] 拆除回收 +21.69（1 格，最近 9.5 格：回收 32.18 − 材料 8.99 − 劳务 1.5），已卖给市场。
+[21:52:21] [Render thread/INFO]: [System] [CHAT] [21:52:21] [Axiom] 拆除回收 +169.08（6 格，最近 7.2 格：回收 193.08 − 材料 15 − 劳务 9），已卖给市场。
+[21:52:35] [Render thread/INFO]: [System] [CHAT] [21:52:35] [Axiom] 已扣除 351.4（14 格，最近 27.7 格：材料 455 + 劳务 21 − 回收 124.6）。
+[21:52:41] [Render thread/INFO]: [System] [CHAT] [21:52:41] [Axiom] 已扣除 100.76（4 格，最近 13.6 格：材料 130 + 劳务 6 − 回收 35.24）。
+[21:53:13] [Render thread/INFO]: [System] [CHAT] [21:53:13] [Axiom] 已扣除 75.6（3 格，最近 12.5 格：材料 97.5 + 劳务 4.5 − 回收 26.4）。
+[21:53:36] [Render thread/INFO]: [System] [CHAT] [21:53:36] [Axiom] 已扣除 378.3（15 格，最近 15.2 格：材料 487.5 + 劳务 22.5 − 回收 131.7）。
+[21:53:43] [Render thread/INFO]: [System] [CHAT] [21:53:43] [Axiom] 已扣除 50.64（2 格，最近 16.9 格：材料 65 + 劳务 3 − 回收 17.36）。
+[21:53:59] [Render thread/INFO]: [System] [CHAT] [21:53:59] [Axiom] 已扣除 405.28（16 格，最近 31.0 格：材料 520 + 劳务 24 − 回收 138.72）。
+[21:54:31] [Render thread/INFO]: [System] [CHAT] [21:54:31] [Axiom] 已扣除 1117.6（44 格，最近 9.4 格：材料 1430 + 劳务 66 − 回收 378.4）。
+[21:54:59] [Render thread/INFO]: [System] [CHAT] [21:54:59] [Axiom] 已扣除 1130.36（44 格，最近 10.8 格：材料 1430 + 劳务 66 − 回收 365.64）。
+[21:55:17] [Render thread/INFO]: [System] [CHAT] [21:55:17] [Axiom] 已扣除 362.6（14 格，最近 17.0 格：材料 455 + 劳务 21 − 回收 113.4）。
+[21:55:28] [Render thread/INFO]: [System] [CHAT] [21:55:28] [Axiom] 已扣除 364（14 格，最近 15.2 格：材料 455 + 劳务 21 − 回收 112）。
+[21:55:36] [Render thread/INFO]: [System] [CHAT] [21:55:36] [Axiom] 已扣除 365.26（14 格，最近 16.7 格：材料 455 + 劳务 21 − 回收 110.74）。
+[21:55:56] [Render thread/INFO]: [System] [CHAT] [21:55:56] [Axiom] 已扣除 366.52（14 格，最近 16.8 格：材料 455 + 劳务 21 − 回收 109.48）。
+[21:56:13] [Render thread/INFO]: [System] [CHAT] [21:56:13] [Axiom] 已扣除 365.82（14 格，最近 22.0 格：材料 455 + 劳务 21 − 回收 110.18）。
+[21:56:21] [Render thread/INFO]: [System] [CHAT] [21:56:21] [Axiom] 已扣除 367.08（14 格，最近 25.2 格：材料 455 + 劳务 21 − 回收 108.92）。
+[21:56:35] [Render thread/INFO]: [System] [CHAT] [21:56:35] [Axiom] 已扣除 368.34（14 格，最近 10.8 格：材料 455 + 劳务 21 − 回收 107.66）。
+[21:56:52] [Render thread/INFO]: [System] [CHAT] [21:56:52] [Axiom] 已扣除 369.6（14 格，最近 8.5 格：材料 455 + 劳务 21 − 回收 106.4）。
+[21:57:08] [Render thread/INFO]: [System] [CHAT] [21:57:08] [Axiom] 已扣除 368.48（14 格，最近 15.8 格：材料 455 + 劳务 21 − 回收 107.52）。
+[21:57:24] [Render thread/INFO]: [System] [CHAT] [21:57:24] [Axiom] 已扣除 369.88（14 格，最近 14.7 格：材料 455 + 劳务 21 − 回收 106.12）。
+[21:57:31] [Render thread/INFO]: [System] [CHAT] [21:57:31] [Axiom] 已扣除 344.63（13 格，最近 13.7 格：材料 422.5 + 劳务 19.5 − 回收 97.37）。
+[21:57:44] [Render thread/INFO]: [System] [CHAT] [21:57:44] [Axiom] 已收回拆除回收款 22.77（原收 21.69，手续费 1.08，最近 9.6 格），市场库存已同步还原。
+[21:57:47] [Render thread/INFO]: [System] [CHAT] [21:57:47] [Axiom] 已扣除 53.2（2 格，最近 11.9 格：材料 65 + 劳务 3 − 回收 14.8）。
+[21:57:56] [Render thread/INFO]: [System] [CHAT] [21:57:56] [Axiom] 已扣除 319.32（12 格，最近 30.5 格：材料 390 + 劳务 18 − 回收 88.68）。
+[21:58:15] [Render thread/INFO]: [System] [CHAT] [21:58:15] [Axiom] 已扣除 79.56（3 格，最近 20.5 格：材料 97.5 + 劳务 4.5 − 回收 22.44）。
+[21:58:27] [Render thread/INFO]: [System] [CHAT] [21:58:27] [Axiom] 已扣除 291.83（11 格，最近 33.9 格：材料 357.5 + 劳务 16.5 − 回收 82.17）。
+[21:58:38] [Render thread/INFO]: [System] [CHAT] [21:58:38] [Axiom] 已扣除 106.44（4 格，最近 26.3 格：材料 130 + 劳务 6 − 回收 29.56）。
+[21:58:49] [Render thread/INFO]: [System] [CHAT] [21:58:49] [Axiom] 已扣除 266.3（10 格，最近 26.8 格：材料 325 + 劳务 15 − 回收 73.7）。
+[21:59:03] [Render thread/INFO]: [System] [CHAT] [21:59:03] [Axiom] 已扣除 133.5（5 格，最近 25.1 格：材料 162.5 + 劳务 7.5 − 回收 36.5）。
+[21:59:11] [Render thread/INFO]: [System] [CHAT] [21:59:11] [Axiom] 已扣除 238.95（9 格，最近 29.6 格：材料 292.5 + 劳务 13.5 − 回收 67.05）。
+[21:59:21] [Render thread/INFO]: [System] [CHAT] [21:59:21] [Axiom] 已扣除 159.66（6 格，最近 30.0 格：材料 195 + 劳务 9 − 回收 44.34）。
+[21:59:29] [Render thread/INFO]: [System] [CHAT] [21:59:29] [Axiom] 已扣除 213.2（8 格，最近 41.9 格：材料 260 + 劳务 12 − 回收 58.8）。
+[22:00:30] [Render thread/INFO]: [System] [CHAT] [22:00:30] [Axiom] 已扣除 185.64（7 格，最近 26.7 格：材料 227.5 + 劳务 10.5 − 回收 52.36）。
+[22:00:40] [Render thread/INFO]: [System] [CHAT] [22:00:40] [Axiom] 已扣除 185.99（7 格，最近 31.6 格：材料 227.5 + 劳务 10.5 − 回收 52.01）。
+[22:01:11] [Render thread/INFO]: [System] [CHAT] [22:01:11] [Axiom] 已扣除 158.82（6 格，最近 12.2 格：材料 195 + 劳务 9 − 回收 45.18）。
+[22:01:25] [Render thread/INFO]: [System] [CHAT] [22:01:25] [Axiom] 已扣除 212（8 格，最近 16.6 格：材料 260 + 劳务 12 − 回收 60）。
+[22:01:36] [Render thread/INFO]: [System] [CHAT] [22:01:36] [Axiom] 已扣除 239.04（9 格，最近 25.9 格：材料 292.5 + 劳务 13.5 − 回收 66.96）。
+[22:01:42] [Render thread/INFO]: [System] [CHAT] [22:01:42] [Axiom] 已扣除 133.05（5 格，最近 19.5 格：材料 162.5 + 劳务 7.5 − 回收 36.95）。
+[22:02:24] [Render thread/INFO]: [System] [CHAT] [22:02:24] [Axiom] 已扣除 265（10 格，最近 19.8 格：材料 325 + 劳务 15 − 回收 75）。
+[22:02:33] [Render thread/INFO]: [System] [CHAT] [22:02:33] [Axiom] 已扣除 106.24（4 格，最近 15.9 格：材料 130 + 劳务 6 − 回收 29.76）。
+[22:02:44] [Render thread/INFO]: [System] [CHAT] [22:02:44] [Axiom] 已扣除 292.49（11 格，最近 19.9 格：材料 357.5 + 劳务 16.5 − 回收 81.51）。
+[22:02:50] [Render thread/INFO]: [System] [CHAT] [22:02:50] [Axiom] 已扣除 79.98（3 格，最近 21.3 格：材料 97.5 + 劳务 4.5 − 回收 22.02）。
+[22:07:54] [Render thread/INFO]: [System] [CHAT] [22:07:54] [Axiom] 拆除回收 +786.04（30 格，最近 21.0 格：回收 901.04 − 材料 70 − 劳务 45），已卖给市场。
+[22:07:54] [Render thread/INFO]: [System] [CHAT] [22:07:54] [Axiom] 其中 2 格判定为搬运，只收劳务费，未在市场买卖。最近 21.0 格。
+[22:08:30] [Render thread/INFO]: [System] [CHAT] [22:08:30] [Axiom] 拆除回收 +1183.56（42 格，最近 24.7 格：回收 1351.56 − 材料 105 − 劳务 63），已卖给市场。
+[22:08:39] [Render thread/INFO]: [System] [CHAT] [22:08:39] [Axiom] 拆除回收 +28.18（1 格，最近 5.2 格：回收 32.18 − 材料 2.5 − 劳务 1.5），已卖给市场。
+[22:08:43] [Render thread/INFO]: [System] [CHAT] [22:08:43] [Axiom] 拆除回收 +140.9（5 格，最近 9.4 格：回收 160.9 − 材料 12.5 − 劳务 7.5），已卖给市场。
+[22:09:13] [Render thread/INFO]: [System] [CHAT] [22:09:13] [Axiom] 拆除回收 +1380.82（49 格，最近 41.2 格：回收 1576.82 − 材料 122.5 − 劳务 73.5），已卖给市场。
+[22:09:24] [Render thread/INFO]: [System] [CHAT] [22:09:24] [Axiom] 拆除回收 +1380.82（49 格，最近 12.7 格：回收 1576.82 − 材料 122.5 − 劳务 73.5），已卖给市场。
+[22:09:44] [Render thread/INFO]: [System] [CHAT] [22:09:44] [Axiom] 拆除回收 +28.18（1 格，最近 14.4 格：回收 32.18 − 材料 2.5 − 劳务 1.5），已卖给市场。
+[22:09:51] [Render thread/INFO]: [System] [CHAT] [22:09:51] [Axiom] 拆除回收 +28.18（1 格，最近 11.1 格：回收 32.18 − 材料 2.5 − 劳务 1.5），已卖给市场。
+[22:09:56] [Render thread/INFO]: [System] [CHAT] [22:09:56] [Axiom] 已扣除 63.04（2 格，最近 11.3 格：材料 65 + 劳务 3 − 回收 4.96）。
+[22:09:59] [Render thread/INFO]: [System] [CHAT] [22:09:59] [Axiom] 已扣除 63.04（2 格，最近 8.0 格：材料 65 + 劳务 3 − 回收 4.96）。
+[22:10:22] [Render thread/INFO]: [System] [CHAT] [22:10:22] [Axiom] 拆除回收 +1606.26（57 格，最近 20.7 格：回收 1834.26 − 材料 142.5 − 劳务 85.5），已卖给市场。
+[22:10:26] [Render thread/INFO]: [System] [CHAT] [22:10:26] [Axiom] 已收回拆除回收款 29.59（原收 28.18，手续费 1.41，最近 6.9 格），市场库存已同步还原。
+[22:10:39] [Render thread/INFO]: [System] [CHAT] [22:10:39] [Axiom] 拆除回收 +1183.56（42 格，最近 11.0 格：回收 1351.56 − 材料 105 − 劳务 63），已卖给市场。
+[22:10:47] [Render thread/INFO]: [System] [CHAT] [22:10:47] [Axiom] 拆除回收 +1014.48（36 格，最近 12.2 格：回收 1158.48 − 材料 90 − 劳务 54），已卖给市场。
+[22:10:54] [Render thread/INFO]: [System] [CHAT] [22:10:54] [Axiom] 拆除回收 +845.4（30 格，最近 10.4 格：回收 965.4 − 材料 75 − 劳务 45），已卖给市场。
+[22:10:58] [Render thread/INFO]: [System] [CHAT] [22:10:58] [Axiom] 拆除回收 +676.32（24 格，最近 13.5 格：回收 772.32 − 材料 60 − 劳务 36），已卖给市场。
+[22:11:03] [Render thread/INFO]: [System] [CHAT] [22:11:03] [Axiom] 拆除回收 +507.24（18 格，最近 9.8 格：回收 579.24 − 材料 45 − 劳务 27），已卖给市场。
+[22:11:09] [Render thread/INFO]: [System] [CHAT] [22:11:09] [Axiom] 拆除回收 +338.16（12 格，最近 13.6 格：回收 386.16 − 材料 30 − 劳务 18），已卖给市场。
+[22:11:13] [Render thread/INFO]: [System] [CHAT] [22:11:13] [Axiom] 拆除回收 +169.08（6 格，最近 11.5 格：回收 193.08 − 材料 15 − 劳务 9），已卖给市场。
+[22:16:05] [Render thread/INFO]: [System] [CHAT] [22:16:05] [Axiom] 拆除回收 +1352.64（48 格，最近 20.5 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:11] [Render thread/INFO]: [System] [CHAT] [22:16:11] [Axiom] 拆除回收 +225.44（8 格，最近 17.7 格：回收 257.44 − 材料 20 − 劳务 12），已卖给市场。
+[22:16:29] [Render thread/INFO]: [System] [CHAT] [22:16:29] [Axiom] 拆除回收 +1352.64（48 格，最近 13.4 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:38] [Render thread/INFO]: [System] [CHAT] [22:16:38] [Axiom] 拆除回收 +1352.64（48 格，最近 20.3 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:43] [Render thread/INFO]: [System] [CHAT] [22:16:43] [Axiom] 拆除回收 +1352.64（48 格，最近 21.2 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:49] [Render thread/INFO]: [System] [CHAT] [22:16:49] [Axiom] 拆除回收 +1352.64（48 格，最近 20.6 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:52] [Render thread/INFO]: [System] [CHAT] [22:16:52] [Axiom] 拆除回收 +1352.64（48 格，最近 25.3 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:54] [Render thread/INFO]: [System] [CHAT] [22:16:54] [Axiom] 拆除回收 +1352.64（48 格，最近 25.5 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:16:58] [Render thread/INFO]: [System] [CHAT] [22:16:58] [Axiom] 已收回拆除回收款 1420.27（原收 1352.64，手续费 67.63，最近 25.5 格），市场库存已同步还原。
+[22:17:13] [Render thread/INFO]: [System] [CHAT] [22:17:13] [Axiom] 拆除回收 +1352.64（48 格，最近 21.0 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:16] [Render thread/INFO]: [System] [CHAT] [22:17:16] [Axiom] 拆除回收 +1352.64（48 格，最近 26.4 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:23] [Render thread/INFO]: [System] [CHAT] [22:17:23] [Axiom] 拆除回收 +1352.64（48 格，最近 22.4 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:27] [Render thread/INFO]: [System] [CHAT] [22:17:27] [Axiom] 拆除回收 +1352.64（48 格，最近 22.6 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:33] [Render thread/INFO]: [System] [CHAT] [22:17:33] [Axiom] 拆除回收 +1352.64（48 格，最近 13.5 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:35] [Render thread/INFO]: [System] [CHAT] [22:17:35] [Axiom] 拆除回收 +1352.64（48 格，最近 16.8 格：回收 1544.64 − 材料 120 − 劳务 72），已卖给市场。
+[22:17:56] [Render thread/INFO]: [System] [CHAT] [22:17:56] [Axiom] 拆除回收 +1183.56（42 格，最近 10.1 格：回收 1351.56 − 材料 105 − 劳务 63），已卖给市场。
+[22:18:03] [Render thread/INFO]: [System] [CHAT] [22:18:03] [Axiom] 拆除回收 +1014.48（36 格，最近 10.1 格：回收 1158.48 − 材料 90 − 劳务 54），已卖给市场。
+[22:18:10] [Render thread/INFO]: [System] [CHAT] [22:18:10] [Axiom] 拆除回收 +845.4（30 格，最近 12.3 格：回收 965.4 − 材料 75 − 劳务 45），已卖给市场。
+[22:18:15] [Render thread/INFO]: [System] [CHAT] [22:18:15] [Axiom] 拆除回收 +676.32（24 格，最近 12.2 格：回收 772.32 − 材料 60 − 劳务 36），已卖给市场。
+[22:18:22] [Render thread/INFO]: [System] [CHAT] [22:18:22] [Axiom] 拆除回收 +507.24（18 格，最近 14.1 格：回收 579.24 − 材料 45 − 劳务 27），已卖给市场。
+[22:18:28] [Render thread/INFO]: [System] [CHAT] [22:18:28] [Axiom] 拆除回收 +338.16（12 格，最近 14.7 格：回收 386.16 − 材料 30 − 劳务 18），已卖给市场。
+[22:18:32] [Render thread/INFO]: [System] [CHAT] [22:18:32] [Axiom] 拆除回收 +169.08（6 格，最近 14.0 格：回收 193.08 − 材料 15 − 劳务 9），已卖给市场。
+[22:19:46] [Render thread/INFO]: [System] [CHAT] [22:19:46] [Axiom] 拆除回收 +728.18（29 格，最近 11.4 格：回收 836.68 − 材料 65 − 劳务 43.5），已卖给市场。
+[22:19:46] [Render thread/INFO]: [System] [CHAT] [22:19:46] [Axiom] 其中 3 格判定为搬运，只收劳务费，未在市场买卖。最近 11.4 格。
+[22:19:50] [Render thread/INFO]: [System] [CHAT] [22:19:50] [Axiom] 拆除回收 +450.88（16 格，最近 8.0 格：回收 514.88 − 材料 40 − 劳务 24），已卖给市场。
+[22:20:01] [Render thread/INFO]: [System] [CHAT] [22:20:01] [Axiom] 拆除回收 +1183.56（42 格，最近 5.8 格：回收 1351.56 − 材料 105 − 劳务 63），已卖给市场。
+[22:20:06] [Render thread/INFO]: [System] [CHAT] [22:20:06] [Axiom] 拆除回收 +1014.48（36 格，最近 6.6 格：回收 1158.48 − 材料 90 − 劳务 54），已卖给市场。
+[22:20:13] [Render thread/INFO]: [System] [CHAT] [22:20:13] [Axiom] 拆除回收 +845.4（30 格，最近 7.9 格：回收 965.4 − 材料 75 − 劳务 45），已卖给市场。
+[22:20:20] [Render thread/INFO]: [System] [CHAT] [22:20:20] [Axiom] 拆除回收 +676.32（24 格，最近 7.1 格：回收 772.32 − 材料 60 − 劳务 36），已卖给市场。
+[22:20:31] [Render thread/INFO]: [System] [CHAT] [22:20:31] [Axiom] 拆除回收 +507.24（18 格，最近 9.7 格：回收 579.24 − 材料 45 − 劳务 27），已卖给市场。
+[22:20:35] [Render thread/INFO]: [System] [CHAT] [22:20:35] [Axiom] 拆除回收 +338.16（12 格，最近 4.7 格：回收 386.16 − 材料 30 − 劳务 18），已卖给市场。
+[22:20:39] [Render thread/INFO]: [System] [CHAT] [22:20:39] [Axiom] 拆除回收 +169.08（6 格，最近 4.9 格：回收 193.08 − 材料 15 − 劳务 9），已卖给市场。
+[22:20:47] [Render thread/INFO]: [System] [CHAT] [22:20:47] [☘] 玩家 [GuuuuuLei head]GuuuuuLei 获得成就 消防员
+[22:25:48] [Render thread/INFO]: [System] [CHAT] [22:25:48] 你暂时离开了。
+[22:26:00] [Render thread/INFO]: [System] [CHAT] [22:26:00] 你回来了。
+[22:30:34] [Render thread/INFO]: [System] [CHAT] [22:30:34] [沉浸式创造] 附魔装备与特殊物品不能在创造栏买卖，已退回原处。
+[22:30:46] [Render thread/INFO]: [System] [CHAT] [22:30:46] 已收集 平滑石英块 ×1 并存入仓库 | [返回至背包]
+[22:30:48] [Render thread/INFO]: [System] [CHAT] [22:30:48] 已返回最近一分钟内收集的 平滑石英块 ×1（操作栏 1、背包栏 0、BetterBags 0）；该物品 60 秒内不再自动入库。
+[22:31:04] [Render thread/INFO]: [System] [CHAT] [22:31:04] 已收集 泥土 ×1 并存入仓库 | [返回至背包]
+[22:32:06] [Render thread/INFO]: [System] [CHAT] [22:32:06] [Axiom] 已扣除 1084.6（34 格，最近 2.5 格：材料 1105 + 劳务 51 − 回收 71.4）。
+[22:32:23] [Render thread/INFO]: [System] [CHAT] [22:32:23] [Axiom] 已扣除 42.85（5 格，最近 7.2 格：材料 40.35 + 劳务 2.5 − 回收 0）。
+[22:32:33] [Render thread/INFO]: [System] [CHAT] [22:32:33] 已收集 平滑石英台阶 ×2 并存入仓库 | [返回至背包]
+[22:32:43] [Render thread/INFO]: [System] [CHAT] [22:32:43] [Axiom] 已扣除 165（5 格，最近 5.4 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:33:15] [Render thread/INFO]: [System] [CHAT] [22:33:15] [Axiom] 已扣除 86（10 格，最近 5.1 格：材料 81 + 劳务 5 − 回收 0）。
+[22:33:25] [Render thread/INFO]: [System] [CHAT] [22:33:25] 已收集 平滑石英台阶 ×2 并存入仓库 | [返回至背包]
+[22:33:25] [Render thread/INFO]: [System] [CHAT] [22:33:25] 已收集 平滑石英台阶 ×1 并存入仓库 | [返回至背包]
+[22:33:34] [Render thread/INFO]: [System] [CHAT] [22:33:34] [Axiom] 已扣除 165（5 格，最近 6.4 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:33:47] [Render thread/INFO]: [System] [CHAT] [22:33:47] [Axiom] 已扣除 86.6（10 格，最近 5.4 格：材料 81.6 + 劳务 5 − 回收 0）。
+[22:33:52] [Render thread/INFO]: [System] [CHAT] [22:33:52] 已收集 平滑石英台阶 ×2 并存入仓库 | [返回至背包]
+[22:34:03] [Render thread/INFO]: [System] [CHAT] [22:34:03] [Axiom] 已扣除 165（5 格，最近 8.9 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:34:15] [Render thread/INFO]: [System] [CHAT] [22:34:15] [Axiom] 已扣除 87.3（10 格，最近 2.9 格：材料 82.3 + 劳务 5 − 回收 0）。
+[22:34:23] [Render thread/INFO]: [System] [CHAT] [22:34:23] [Axiom] 已扣除 165（5 格，最近 3.2 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:34:34] [Render thread/INFO]: [System] [CHAT] [22:34:34] [Axiom] 已扣除 87.6（10 格，最近 6.7 格：材料 82.6 + 劳务 5 − 回收 0）。
+[22:34:42] [Render thread/INFO]: [System] [CHAT] [22:34:42] [Axiom] 已扣除 165（5 格，最近 2.2 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:35:22] [Render thread/INFO]: [System] [CHAT] [22:35:22] [Axiom] 已扣除 88.3（10 格，最近 8.4 格：材料 83.3 + 劳务 5 − 回收 0）。
+[22:35:28] [Render thread/INFO]: [System] [CHAT] [22:35:28] [Axiom] 已扣除 165（5 格，最近 3.6 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:35:36] [Render thread/INFO]: [System] [CHAT] [22:35:36] [Axiom] 已扣除 88.6（10 格，最近 3.8 格：材料 83.6 + 劳务 5 − 回收 0）。
+[22:35:43] [Render thread/INFO]: [System] [CHAT] [22:35:43] [Axiom] 已扣除 165（5 格，最近 4.0 格：材料 162.5 + 劳务 2.5 − 回收 0）。
+[22:40:53] [Render thread/INFO]: [System] [CHAT] [22:40:53] [Axiom] 已扣除 302.76（18 格，最近 18.8 格：材料 293.76 + 劳务 9 − 回收 0）。
+[22:41:13] [Render thread/INFO]: [System] [CHAT] [22:41:13] [Axiom] 已扣除 911.16（54 格，最近 13.2 格：材料 884.16 + 劳务 27 − 回收 0）。
+[22:42:22] [Render thread/INFO]: [System] [CHAT] [22:42:22] [Axiom] 已扣除 918.72（54 格，最近 27.7 格：材料 891.72 + 劳务 27 − 回收 0）。
+[22:42:31] [Render thread/INFO]: [System] [CHAT] [22:42:31] [Axiom] 已扣除 924.84（54 格，最近 24.8 格：材料 897.84 + 劳务 27 − 回收 0）。
+[22:42:42] [Render thread/INFO]: [System] [CHAT] [22:42:42] [Axiom] 已扣除 933.48（54 格，最近 30.2 格：材料 906.48 + 劳务 27 − 回收 0）。
+[22:42:59] [Render thread/INFO]: [System] [CHAT] [22:42:59] GuuuuuLei退出了游戏
+[22:43:36] [Render thread/INFO]: [System] [CHAT] [22:43:36] [Axiom] 已扣除 36628.2（2012 格，最近 28.3 格：材料 35916.4 + 劳务 1248 − 回收 536.2）。
+[22:43:36] [Render thread/INFO]: [System] [CHAT] [22:43:36] [Axiom] 其中 67 格判定为搬运，只收劳务费，未在市场买卖。最近 28.3 格。
+[22:43:48] [Render thread/INFO]: [System] [CHAT] [22:43:48] [Axiom] 已扣除 45659.89（1963 格，最近 11.4 格：材料 44831.8 + 劳务 1174.5 − 回收 346.41）。
+[22:43:48] [Render thread/INFO]: [System] [CHAT] [22:43:48] [Axiom] 其中 18 格判定为搬运，只收劳务费，未在市场买卖。最近 11.4 格。
+[22:44:11] [WebSocketConnectReadThread-187/WARN]: Connection closed unexpectedly (CloseInfo(code=1006, reason=, remote=true, knownReason=null)) after 1h 46m 39.049388800s
+[22:44:11] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[22:44:12] [DefaultDispatcher-worker-7/INFO]: Connecting to Essential Connection Manager...
+[22:44:13] [WebSocketConnectReadThread-4330/INFO]: Connected to Essential Connection Manager.
+[22:45:40] [Render thread/INFO]: [System] [CHAT] [22:45:40] 战斗通行证 » ⟳ 每日任务已重置！
+[22:53:46] [Render thread/INFO]: [System] [CHAT] [22:53:46] 你暂时离开了。
+[23:35:04] [Essential Thread 14/WARN]: Connection closed unexpectedly (CloseInfo(code=4500, reason=SERVER_KEEP_ALIVE_TIMEOUT, remote=false, knownReason=null)) after 50m 51.517206600s
+[23:35:04] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[23:35:08] [DefaultDispatcher-worker-7/WARN]: Got unexpected reply from Mojang:
+javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115)
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448)
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTls(ConnectPlan.kt:351)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTlsEtc(ConnectPlan.kt:206)
+	at knot//gg.essential.lib.okhttp3.internal.connection.FastFallbackExchangeFinder.find(FastFallbackExchangeFinder.kt:78)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.initExchange$okhttp(RealCall.kt:298)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.kt:32)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.kt:101)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.kt:85)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.kt:74)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.HttpUtils$httpClient$lambda$0$$inlined$-addInterceptor$1.intercept(OkHttpClient.kt:1389)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.har.HttpLoggingEventListener$Interceptor.intercept(HttpLoggingEventListener.kt:460)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.getResponseWithInterceptorChain$okhttp(RealCall.kt:226)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall$AsyncCall.run(RealCall.kt:574)
+	at knot//kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+	at knot//kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279)
+	... 35 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382)
+	... 40 more
+[23:35:08] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[23:35:11] [DefaultDispatcher-worker-7/WARN]: Got unexpected reply from Mojang:
+javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115)
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448)
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTls(ConnectPlan.kt:351)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTlsEtc(ConnectPlan.kt:206)
+	at knot//gg.essential.lib.okhttp3.internal.connection.FastFallbackExchangeFinder.find(FastFallbackExchangeFinder.kt:78)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.initExchange$okhttp(RealCall.kt:298)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.kt:32)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.kt:101)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.kt:85)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.kt:74)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.HttpUtils$httpClient$lambda$0$$inlined$-addInterceptor$1.intercept(OkHttpClient.kt:1389)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.har.HttpLoggingEventListener$Interceptor.intercept(HttpLoggingEventListener.kt:460)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.getResponseWithInterceptorChain$okhttp(RealCall.kt:226)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall$AsyncCall.run(RealCall.kt:574)
+	at knot//kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+	at knot//kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279)
+	... 35 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382)
+	... 40 more
+[23:35:11] [Render thread/INFO]: Waiting 4s before re-trying
+[23:35:15] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[23:35:31] [DefaultDispatcher-worker-7/WARN]: Got unexpected reply from Mojang:
+javax.net.ssl.SSLHandshakeException: (certificate_unknown) PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.ssl.Alert.createSSLException(Alert.java:130)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:376)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:319)
+	at java.base/sun.security.ssl.TransportContext.fatal(TransportContext.java:314)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1295)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.onConsumeCertificate(CertificateMessage.java:1172)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.consume(CertificateMessage.java:1115)
+	at java.base/sun.security.ssl.SSLHandshake.consume(SSLHandshake.java:421)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:477)
+	at java.base/sun.security.ssl.HandshakeContext.dispatch(HandshakeContext.java:448)
+	at java.base/sun.security.ssl.TransportContext.dispatch(TransportContext.java:199)
+	at java.base/sun.security.ssl.SSLTransport.decode(SSLTransport.java:172)
+	at java.base/sun.security.ssl.SSLSocketImpl.decode(SSLSocketImpl.java:1506)
+	at java.base/sun.security.ssl.SSLSocketImpl.readHandshakeRecord(SSLSocketImpl.java:1421)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:455)
+	at java.base/sun.security.ssl.SSLSocketImpl.startHandshake(SSLSocketImpl.java:426)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTls(ConnectPlan.kt:351)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectPlan.connectTlsEtc(ConnectPlan.kt:206)
+	at knot//gg.essential.lib.okhttp3.internal.connection.FastFallbackExchangeFinder.find(FastFallbackExchangeFinder.kt:78)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.initExchange$okhttp(RealCall.kt:298)
+	at knot//gg.essential.lib.okhttp3.internal.connection.ConnectInterceptor.intercept(ConnectInterceptor.kt:32)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.cache.CacheInterceptor.intercept(CacheInterceptor.kt:101)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.BridgeInterceptor.intercept(BridgeInterceptor.kt:85)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.http.RetryAndFollowUpInterceptor.intercept(RetryAndFollowUpInterceptor.kt:74)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.HttpUtils$httpClient$lambda$0$$inlined$-addInterceptor$1.intercept(OkHttpClient.kt:1389)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.util.har.HttpLoggingEventListener$Interceptor.intercept(HttpLoggingEventListener.kt:460)
+	at knot//gg.essential.lib.okhttp3.internal.http.RealInterceptorChain.proceed(RealInterceptorChain.kt:126)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall.getResponseWithInterceptorChain$okhttp(RealCall.kt:226)
+	at knot//gg.essential.lib.okhttp3.internal.connection.RealCall$AsyncCall.run(RealCall.kt:574)
+	at knot//kotlinx.coroutines.internal.LimitedDispatcher$Worker.run(LimitedDispatcher.kt:124)
+	at knot//kotlinx.coroutines.scheduling.TaskImpl.run(Tasks.kt:89)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler.runSafely(CoroutineScheduler.kt:586)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.executeTask(CoroutineScheduler.kt:798)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.runWorker(CoroutineScheduler.kt:717)
+	at knot//kotlinx.coroutines.scheduling.CoroutineScheduler$Worker.run(CoroutineScheduler.kt:704)
+Caused by: sun.security.validator.ValidatorException: PKIX path building failed: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:387)
+	at java.base/sun.security.validator.PKIXValidator.engineValidate(PKIXValidator.java:270)
+	at java.base/sun.security.validator.Validator.validate(Validator.java:256)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkTrusted(X509TrustManagerImpl.java:230)
+	at java.base/sun.security.ssl.X509TrustManagerImpl.checkServerTrusted(X509TrustManagerImpl.java:132)
+	at java.base/sun.security.ssl.CertificateMessage$T13CertificateConsumer.checkServerCerts(CertificateMessage.java:1279)
+	... 35 more
+Caused by: sun.security.provider.certpath.SunCertPathBuilderException: unable to find valid certification path to requested target
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.build(SunCertPathBuilder.java:148)
+	at java.base/sun.security.provider.certpath.SunCertPathBuilder.engineBuild(SunCertPathBuilder.java:129)
+	at java.base/java.security.cert.CertPathBuilder.build(CertPathBuilder.java:299)
+	at java.base/sun.security.validator.PKIXValidator.doBuild(PKIXValidator.java:382)
+	... 40 more
+[23:35:31] [Render thread/INFO]: Waiting 8s before re-trying
+[23:35:39] [Render thread/INFO]: Authenticating to Mojang as Ryan_yu__ (d006ba70-4ddc-4b37-b13c-76f190815116)
+[23:35:41] [DefaultDispatcher-worker-21/INFO]: Connecting to Essential Connection Manager...
+[23:35:45] [WebSocketConnectReadThread-5969/INFO]: Connected to Essential Connection Manager.
+[23:46:25] [Netty NIO IO #10/INFO]: ZMusic client disconnected, stopping native player
+[23:46:25] [Netty NIO IO #10/INFO]: Stop ZMusic playback
+[23:46:25] [Netty NIO IO #10/INFO]: 服务端生存 Editor 支持已关闭
+[23:46:25] [Render thread/INFO]: ZMusic client disconnected, stopping native player
+[23:46:25] [Render thread/INFO]: Stop ZMusic playback
+[23:46:25] [Render thread/INFO]: Stopping JEI
+[23:46:25] [Render thread/INFO]: Stopping JEI
+[23:46:25] [Render thread/INFO]: Sending Runtime Unavailable...
+[23:46:25] [Render thread/INFO]: Stopping JEI GUI
+[23:46:25] [Render thread/INFO]: Sending Runtime Unavailable took 297.3 microseconds
+[23:46:25] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[23:46:25] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down rendering
+[23:46:25] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Shutting down render pipeline
+[23:46:25] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Flushing download stream
+[23:46:25] [Render thread/INFO]: [me.cx.vy.ct.ce.VoxyRenderSystem]: Render shutdown completed
+[23:46:25] [Render thread/INFO]: Stopping worker threads
+[23:46:25] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]
+[23:46:25] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Shutting down voxy instance
+[23:46:26] [Render thread/INFO]: [me.cx.vy.cl.VoxyInstance]: Instance shutdown
+[23:46:27] [Server Pinger #0/ERROR]: Can't ping play.starnet.gg: 未知的主机
+[23:46:28] [Render thread/INFO]: Stopping [4] Placement Manager Daemon threads
+[23:46:28] [CullThread/INFO]: [STDOUT]: Shutting down culling task!
+[23:46:28] [Render thread/INFO]: Stopping!
+[23:46:28] [Render thread/INFO]: Saving axiom configuration (client stopping)...
+[23:46:28] [Render thread/INFO]: IAS: Closing IAS...
+[23:46:28] [Render thread/INFO]: IAS: Shutting down IAS executor...
+[23:46:28] [Render thread/INFO]: IAS: IAS executor shut down.
+[23:46:28] [Render thread/INFO]: IAS: IAS has been unloaded.
+[23:46:28] [Render thread/INFO]: ZMusic client disconnected, stopping native player
+[23:46:28] [Render thread/INFO]: Stop ZMusic playback
+[23:46:28] [Render thread/INFO]: [ETF]: emissive suffixes loaded: [_e]

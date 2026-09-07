@@ -1,0 +1,22 @@
+name: CoreChestsort
+main: nl.xbengie.chestsort.ChestSortPlugin
+version: 1.0.7
+api-version: "1.21"
+authors: [xBengie]
+softdepend: [Lands, WorldGuard, GriefPrevention, Towny, PlotSquared]
+description: Simple automatic chest and inventory sorting with hotkeys.
+
+commands:
+  sort:
+    aliases: [chestsort]
+    usage: "/sort [on|off|toggle|hotkeys|help|reload]"
+  invsort:
+    aliases: [isort]
+    usage: "/invsort [hotbar|all|toggle|on|off|help]"
+permissions:
+  chestsort.use:
+    default: true
+  chestsort.use.inventory:
+    default: true
+  chestsort.reload:
+    default: op

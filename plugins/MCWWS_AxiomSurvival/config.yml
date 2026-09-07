@@ -39,10 +39,13 @@ reverse-market-on-undo: true
 
 # 受保护方块（Slimefun 机器、不可破坏方块）：Axiom 异步落地无法逐格拦下，
 # 因此记录原状快照，写入后按快照还原；超过 max-restore-blocks 则整包取消。
+# admin-bypass-permission：持有者可用 Axiom 真正破坏这些方块（并清理 Slimefun 数据）与领地保护格；
+# 与扣费 bypass-permission 分开，默认给 OP（mcwws.axiom.survival.admin）。
 protection:
   restore-protected-blocks: true
   max-restore-blocks: 4096
   restore-delay-ticks: 5
+  admin-bypass-permission: mcwws.axiom.survival.admin
 
 # 实体生成/删除/调整：不消耗材料，只按只数收劳务费
 entity:
