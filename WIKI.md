@@ -387,6 +387,24 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /axiomcheck
 ```
 
+### 8.1.1 管理员：Cursor MCP 建造桥
+
+管理端工具（玩家无感）：本机 Cursor 可通过 MCP 调用 `MCWWS_BuildBridge`，在服内**直写方块**并执行 FAWE。HTTP **仅**绑定 `127.0.0.1:8765`，Bearer token 鉴权；不走网页商城 `:8002`，本期不接入生存创世神扣费。
+
+| 组件 | 路径 |
+| ---- | ---- |
+| 服务端插件 | `plugins/MCWWS_BuildBridge-1.0.0.jar`（数据目录 `plugins/MCWWS_BuildBridge/`） |
+| MCP 进程 | `tools/mcwws-build-bridge-mcp/`（`npm install` 后由 Cursor `mcp.json` 启动） |
+| 说明 | `tools/mcwws-build-bridge-mcp/README.md` |
+
+配置要点：`http.token`（首次启动自动生成）、可选 `actor-player`（在线 OP，用于 FAWE 选区/按坐标粘贴）。重载：
+
+```text
+/mcwws-buildbridge-reload
+```
+
+工具概要：`list_players` / `get_player_pos` / `get_block`；`set_block` / `fill` / `set_blocks`；`fawe_pos` / `fawe_set` / `fawe_replace` / `fawe_copy` / `fawe_paste` / `fawe_undo` / `fawe_redo`；`fawe_schem_list` / `fawe_schem_load` / `fawe_schem_paste`。
+
 ### 8.2 曲线与曲面
 
 **CurveBuilding** 提供曲线/曲面选区与放置辅助，适合道路、拱券、穹顶等自由形态；与 WorldEdit 选区配合使用，改造方块仍走**建筑学 · 物质的改造**计费。
@@ -794,6 +812,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 ```
 
 ```text
+/mcwws-buildbridge-reload
+```
+
+```text
 /mcwws-resquiet-reload
 ```
 
@@ -874,6 +896,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.0.jar` |
+| Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.0.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.8-needMCWWS_ImmersiveCreativeClient+1.0.8.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -910,6 +933,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | ---- | ---- | -------- |
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.0 | 生存中键选块购买 |
+| MCWWS_BuildBridge | 1.0.0 | 本机 HTTP + Cursor MCP 管理端直写方块与 FAWE 桥（127.0.0.1:8765） |
 | MCWWS_ImmersiveCreative | 1.0.8 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；生存栏整理不计费；需客户端 1.0.8 |
 | MCWWS_ImmersiveCreativeClient | 1.0.8 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.8` |
 | MCWWS_AxiomSurvival | 1.1.11 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.6 |
@@ -949,6 +973,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | ---- | ---- | -------- |
 | FastAsyncWorldEdit | 2.15.3 | WorldEdit 高性能后端 |
 | WorldEdit + WorldEditSUI | 1.8.0 | 选区指令与可视化选区 |
+| MCWWS_BuildBridge | 1.0.0 | 见 E.1 |
 | MCWWS_WorldEditSurvival | 1.0.6 | 见 E.1 |
 | AxiomPaper | 6.0.1 MC26.2 | 服务端 Axiom 支持（需与客户端 Axiom 6.x 配套） |
 | MCWWS_AxiomSurvival | 1.1.11 | 见 E.1 |

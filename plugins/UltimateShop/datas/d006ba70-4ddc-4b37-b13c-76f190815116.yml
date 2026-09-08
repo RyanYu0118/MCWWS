@@ -23,10 +23,6 @@ useTimes:
       sellUseTimes: 2
       totalSellUseTimes: 2
       lastSellTime: '2026-08-14 23:41:00'
-  redstone__p3:
-    J:
-      sellUseTimes: 40
-      lastSellTime: '2026-07-31 12:45:14'
   ingredients:
     Z:
       sellUseTimes: 1
@@ -48,6 +44,10 @@ useTimes:
       sellUseTimes: 32
       totalSellUseTimes: 32
       lastSellTime: '2026-08-28 22:02:23'
+  redstone__p3:
+    J:
+      sellUseTimes: 40
+      lastSellTime: '2026-07-31 12:45:14'
   mcwws:
     A:
       buyUseTimes: 86
@@ -351,11 +351,11 @@ useTimes:
       lastSellTime: '2026-08-17 22:15:47'
   colored__p2:
     E:
-      buyUseTimes: 192
-      totalBuyUseTimes: 192
+      buyUseTimes: 256
+      totalBuyUseTimes: 256
       sellUseTimes: 10
       totalSellUseTimes: 10
-      lastBuyTime: '2026-08-30 21:37:28'
+      lastBuyTime: '2026-09-07 23:56:08'
       lastSellTime: '2026-08-30 20:06:04'
     H:
       sellUseTimes: 1
@@ -737,6 +737,10 @@ useTimes:
       sellUseTimes: 1
       lastSellTime: '2026-05-10 02:06:12'
   building__p8:
+    c:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-09-07 23:23:56'
     b:
       buyUseTimes: 896
       totalBuyUseTimes: 896
@@ -755,8 +759,11 @@ useTimes:
       lastSellTime: '2026-08-30 20:06:02'
   colored:
     n:
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
       sellUseTimes: 8
       totalSellUseTimes: 8
+      lastBuyTime: '2026-09-07 23:41:56'
       lastSellTime: '2026-08-30 20:06:04'
   wools__p6:
     N:
