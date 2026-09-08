@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "mcwws-build-bridge": {
+      "command": "node",
+      "args": [
+        "D:/Minecraft/服务器/26.2/tools/mcwws-build-bridge-mcp/src/index.js"
+      ],
+      "env": {
+        "MCWWS_BUILD_URL": "http://127.0.0.1:8765",
+        "MCWWS_BUILD_TOKEN": "31da3d7bc079ece25981e62f09167c68a0a65dc4f2c971f5"
+      }
+    }
+  }
+}
