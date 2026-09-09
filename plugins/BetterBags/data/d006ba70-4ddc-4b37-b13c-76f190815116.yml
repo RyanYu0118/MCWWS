@@ -21,16 +21,15 @@ items:
     minecraft:damage: '60'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:copper_boots
+  id: minecraft:leather_helmet
   count: 1
   components:
-    minecraft:damage: '1'
+    minecraft:enchantments: '{"minecraft:protection":2}'
+    minecraft:damage: '29'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:golden_helmet
+  id: minecraft:copper_boots
   count: 1
-  components:
-    minecraft:damage: '62'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:snowball
@@ -242,10 +241,10 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:copper_leggings
+  id: minecraft:golden_helmet
   count: 1
   components:
-    minecraft:damage: '125'
+    minecraft:damage: '37'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:glow_item_frame
@@ -304,7 +303,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:poppy
-  count: 2
+  count: 1
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:daylight_detector
@@ -463,31 +462,10 @@ items:
     minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运剑",underlined:0b}],text:""}'
   schema_version: 1
 - DataVersion: 4903
-  id: minecraft:copper_boots
-  count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:projectile_protection":2}'
-    minecraft:damage: '75'
-  schema_version: 1
-- DataVersion: 4903
   id: minecraft:copper_leggings
   count: 1
   components:
-    minecraft:enchantments: '{"minecraft:projectile_protection":2,"minecraft:unbreaking":1}'
-    minecraft:damage: '130'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:leather_helmet
-  count: 1
-  components:
-    minecraft:enchantments: '{"minecraft:protection":2}'
-    minecraft:damage: '29'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:golden_helmet
-  count: 1
-  components:
-    minecraft:damage: '55'
+    minecraft:damage: '82'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
@@ -535,6 +513,13 @@ items:
 - DataVersion: 4903
   id: minecraft:waxed_exposed_copper_chain
   count: 59
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:diamond_chestplate
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:blast_protection":5,"minecraft:projectile_protection":10,"minecraft:protection":10,"minecraft:thorns":10,"minecraft:unbreaking":10}'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"yellow",italic:0b,obfuscated:0b,strikethrough:0b,text:"幸运甲",underlined:0b}],text:""}'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
