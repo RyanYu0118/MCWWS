@@ -31,6 +31,7 @@ public final class BuildApiHandler {
                 health.put("ok", true);
                 health.put("service", "MCWWS_BuildBridge");
                 health.put("fawe", fawe.isAvailable());
+                health.put("history", blocks.historyStatus());
                 ok(exchange, health);
                 return;
             }
@@ -90,6 +91,24 @@ public final class BuildApiHandler {
             if ("POST".equalsIgnoreCase(method) && "/set_blocks".equals(normalized)) {
                 List<Object> list = JsonUtil.asArray(req.get("blocks"));
                 ok(exchange, blocks.setBlocks(JsonUtil.str(req, "world"), list));
+                return;
+            }
+            if ("POST".equalsIgnoreCase(method) && "/undo".equals(normalized)) {
+                Integer times = JsonUtil.iOrNull(req, "times");
+                ok(exchange, blocks.undo(times == null ? 1 : times));
+                return;
+            }
+            if ("POST".equalsIgnoreCase(method) && "/redo".equals(normalized)) {
+                Integer times = JsonUtil.iOrNull(req, "times");
+                ok(exchange, blocks.redo(times == null ? 1 : times));
+                return;
+            }
+            if ("GET".equalsIgnoreCase(method) && "/history".equals(normalized)) {
+                ok(exchange, blocks.historyStatus());
+                return;
+            }
+            if ("POST".equalsIgnoreCase(method) && "/history".equals(normalized)) {
+                ok(exchange, blocks.historyStatus());
                 return;
             }
             if ("POST".equalsIgnoreCase(method) && "/fawe_status".equals(normalized)) {

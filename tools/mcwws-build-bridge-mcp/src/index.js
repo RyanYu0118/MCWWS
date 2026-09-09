@@ -1,10 +1,26 @@
 #!/usr/bin/env node
 import { McpServer } from "@modelcontextprotocol/sdk/server/mcp.js";
 import { StdioServerTransport } from "@modelcontextprotocol/sdk/server/stdio.js";
+import { Agent, fetch as undiciFetch } from "undici";
 import { z } from "zod";
+import {
+  buildIndex,
+  indexStatus,
+  searchSchems,
+  schemInfo,
+  DEFAULT_SCHEM_ROOT,
+} from "./schem-lib.js";
 
 const BASE_URL = (process.env.MCWWS_BUILD_URL || "http://127.0.0.1:8765").replace(/\/$/, "");
 const TOKEN = process.env.MCWWS_BUILD_TOKEN || "";
+const INSECURE_TLS =
+  process.env.MCWWS_BUILD_INSECURE_TLS === "1" ||
+  process.env.NODE_TLS_REJECT_UNAUTHORIZED === "0";
+
+// 樱花等自签 HTTPS 隧道需关闭证书校验（仅建议内网/临时联机）
+const insecureAgent = INSECURE_TLS
+  ? new Agent({ connect: { rejectUnauthorized: false } })
+  : undefined;
 
 async function api(method, path, body) {
   if (!TOKEN) {
@@ -19,7 +35,10 @@ async function api(method, path, body) {
     headers["Content-Type"] = "application/json";
     init.body = JSON.stringify(body);
   }
-  const res = await fetch(`${BASE_URL}${path}`, init);
+  if (insecureAgent) {
+    init.dispatcher = insecureAgent;
+  }
+  const res = await undiciFetch(`${BASE_URL}${path}`, init);
   const text = await res.text();
   let json;
   try {
@@ -97,7 +116,7 @@ server.tool(
 
 server.tool(
   "set_block",
-  "Place a single block via Bukkit (admin direct write)",
+  "Place a single block via Bukkit (admin direct write; recorded for write_undo)",
   {
     world: z.string().optional(),
     x: z.number().int(),
@@ -116,7 +135,7 @@ server.tool(
 
 server.tool(
   "fill",
-  "Fill a cuboid with one block type (volume limited by plugin)",
+  "Fill a cuboid with one block type (volume limited; recorded for write_undo)",
   {
     world: z.string().optional(),
     x1: z.number().int(),
@@ -138,7 +157,7 @@ server.tool(
 
 server.tool(
   "set_blocks",
-  "Batch place explicit blocks",
+  "Batch place explicit blocks (recorded for write_undo)",
   {
     world: z.string().optional(),
     blocks: z
@@ -155,6 +174,45 @@ server.tool(
   async (args) => {
     try {
       return toolResult(await api("POST", "/set_blocks", args));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "write_undo",
+  "Undo last Bukkit direct write(s) from BuildBridge history (NOT FAWE //undo). Prefer this after set_block/fill/set_blocks.",
+  { times: z.number().int().optional().describe("How many write operations to undo, default 1") },
+  async (args) => {
+    try {
+      return toolResult(await api("POST", "/undo", args));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "write_redo",
+  "Redo BuildBridge direct writes previously undone with write_undo",
+  { times: z.number().int().optional() },
+  async (args) => {
+    try {
+      return toolResult(await api("POST", "/redo", args));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "write_history",
+  "Show BuildBridge direct-write undo/redo stack status",
+  {},
+  async () => {
+    try {
+      return toolResult(await api("GET", "/history"));
     } catch (e) {
       return toolError(e);
     }
@@ -305,6 +363,88 @@ server.tool(
   async (args) => {
     try {
       return toolResult(await api("POST", "/fawe_schem_paste", args));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "schem_index_status",
+  "Status of local Litematica reference library index (path, count, last build)",
+  {},
+  async () => {
+    try {
+      return toolResult(indexStatus());
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "schem_search",
+  "Search local Litematica library by description (uses filename, folder tags, metadata). Call this BEFORE designing buildings to find visual references.",
+  {
+    query: z
+      .string()
+      .describe("Chinese or English description, e.g. 现代快餐店 玻璃幕墙 / modern restaurant"),
+    limit: z.number().int().min(1).max(50).optional().describe("Max hits, default 12"),
+  },
+  async ({ query, limit }) => {
+    try {
+      return toolResult(searchSchems(query, { limit }));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "schem_info",
+  "Get one indexed schematic details by relative path or file name",
+  {
+    path: z.string().describe("Relative path under schem root, or file name"),
+  },
+  async ({ path: p }) => {
+    try {
+      return toolResult(schemInfo(p));
+    } catch (e) {
+      return toolError(e);
+    }
+  }
+);
+
+server.tool(
+  "schem_reindex",
+  "Rebuild Litematica search index from MCWWS_SCHEM_ROOT (can take minutes for 10k+ files). Prefer CLI scripts/build-schem-index.mjs for full rebuilds.",
+  {
+    quick: z
+      .boolean()
+      .optional()
+      .describe("If true, only index paths/filenames (no NBT metadata)"),
+    max_files: z
+      .number()
+      .int()
+      .optional()
+      .describe("Limit files for a partial rebuild"),
+  },
+  async ({ quick, max_files }) => {
+    try {
+      const index = await buildIndex({
+        parseMeta: !quick,
+        maxFiles: max_files || Infinity,
+        concurrency: 8,
+      });
+      return toolResult({
+        ok: true,
+        root: index.root || DEFAULT_SCHEM_ROOT,
+        count: index.count,
+        builtAt: index.builtAt,
+        parsed: index.parsed,
+        reused: index.reused,
+        failed: index.failed,
+      });
     } catch (e) {
       return toolError(e);
     }

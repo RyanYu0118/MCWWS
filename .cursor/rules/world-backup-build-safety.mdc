@@ -1,0 +1,24 @@
+---
+description: 世界备份路径与建造桥安全红线（防不可撤回破坏）
+alwaysApply: true
+---
+
+# 世界备份与 MCP 建造安全
+
+## 每日备份（还原优先用这个）
+
+- 用户基本每天会在 `D:\Minecraft\服务器\26.2.zip` 备份整服（约数十 GB）。
+- **需要还原地形/建筑时，优先从这个 zip 抽对应 `world/dimensions/minecraft/overworld/region/r.*.mca`（或相关维度 region）**，不要先去翻过期单人档或空的 CoreProtect。
+- 使用 zip 还原 region **必须先停服**（`stop-process.ps1`），拷贝完成后再用 `javaw` 开服。
+- 还原前先把当前损坏的 `r.*.mca` 复制到带时间戳的安全目录（例如 `region/_pre_restore_<timestamp>/`），便于回退。
+- 尽量只恢复受影响 chunk/region，避免整世界回滚；若只知大致坐标，按 block→chunk→region 计算后精确抽取。
+
+## 建造桥 / 批量改地形红线
+
+Agent 通过 `MCWWS_BuildBridge` 或脚本 `set_blocks`/`fill` 改世界时：
+
+1. **禁止**在未确认占地前对大范围执行 `air` 清场或整片 `grass_block` 覆盖。
+2. 动工前必须：读取玩家坐标 → 对照 Residence / GIS / 邻近建筑 → **用文字报出拟建 AABB（x/y/z 范围）并说明避开哪些领地**，用户未明确同意前不写块。
+3. 单次体积宁小勿大；宁可靠近空地/马路缝隙，也不要压已知建筑（如 `library_garden`、`macdonalds_*` 等）。
+4. 直写会记入 BuildBridge 内存历史：误操作先调 MCP `write_undo`（可多次）；与 FAWE `//undo` / `fawe_undo` 不是同一套。重启服务器会清空直写历史。
+5. `write_undo` 不够或历史已丢：立刻停手 → 停服 → 从 `D:\Minecraft\服务器\26.2.zip` 恢复受影响 region → 再开服验证。

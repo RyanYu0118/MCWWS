@@ -64,7 +64,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 18
+  count: 24
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -72,7 +72,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 12
+  count: 16
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -80,7 +80,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 29
+  count: 31
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -167,7 +167,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
-  count: 1
+  count: 2
   components:
     minecraft:profile: '{id:[I;513989614,-308789711,-1654726514,-208727265],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViOTJhMTNmMDFiYWVjZTU2NjU0ZTgxNzgzM2Y5ODI5YmMwMjVhZDczMzYwOWMwYmRkMGQzYTM1OWM5ZDk0MyJ9fX0="}]}'
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种能填充周围世界的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
@@ -231,7 +231,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:oak_sapling
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"dark_red",italic:0b,obfuscated:0b,strikethrough:0b,text:"番茄植物",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2201038.0f]}'
@@ -475,6 +475,66 @@ items:
   components:
     minecraft:enchantments: '{"minecraft:projectile_protection":2,"minecraft:unbreaking":1}'
     minecraft:damage: '130'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:leather_helmet
+  count: 1
+  components:
+    minecraft:enchantments: '{"minecraft:protection":2}'
+    minecraft:damage: '29'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:golden_helmet
+  count: 1
+  components:
+    minecraft:damage: '55'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1957630486,-1490666226,-2046518342,-309186826],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYjgzZjE0YmZlNjVmZGFjYTk5MDQwY2UzNDZhZmYwNDhhNmQzYjlkMjRiNGQ4MmMxNzIwYTU1ZTVlNDVlNzdiOCJ9fX0="}]}'
+    minecraft:lore: '[{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"最后一口气",underlined:0b}],text:""}]'
+    minecraft:custom_name: '{extra:[{bold:1b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"吐息",underlined:0b}],text:""}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"PLAYER_FIRE"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 3
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"蓝莓灌木丛",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200981.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BLUEBERRY_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"接骨木果灌木丛",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201001.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ELDERBERRY_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1359101601,-121094374,-1354953858,870175203],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMWU0ODgzYTFlMjJjMzI0ZTc1MzE1MWUyYWM0MjRjNzRmMWNjNjQ2ZWVjOGVhMGRiMzQyMGYxZGQxZDhiIn19fQ=="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"red",italic:0b,obfuscated:0b,strikethrough:0b,text:"接骨木果",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2201000.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"ELDERBERRY"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;655400302,1515666019,-1906661823,1901972813],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYTVhNWM0YTBhMTZkYWJjOWIxZWM3MmZjODNlMjNhYzE1ZDAxOTdkZTYxYjEzOGJhYmNhN2M4YTI5YzgyMCJ9fX0="}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"blue",italic:0b,obfuscated:0b,strikethrough:0b,text:"蓝莓",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200980.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"BLUEBERRY"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:waxed_exposed_copper_chain
+  count: 59
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

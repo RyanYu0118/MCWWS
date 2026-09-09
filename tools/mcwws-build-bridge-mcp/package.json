@@ -8,12 +8,17 @@
     "mcwws-build-bridge-mcp": "./src/index.js"
   },
   "scripts": {
-    "start": "node src/index.js"
+    "start": "node src/index.js",
+    "schem:index": "node scripts/build-schem-index.mjs",
+    "schem:index:quick": "node scripts/build-schem-index.mjs --quick"
   },
   "engines": {
     "node": ">=20"
   },
   "dependencies": {
-    "@modelcontextprotocol/sdk": "^1.12.1"
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "prismarine-nbt": "^2.8.0",
+    "prismarine-provider-anvil": "^2.13.0",
+    "undici": "^8.10.2"
   }
 }

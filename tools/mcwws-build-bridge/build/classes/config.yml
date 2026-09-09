@@ -8,6 +8,12 @@ limits:
   max-fill-volume: 200000
   max-batch-blocks: 50000
 
+# 直写 set_block / fill / set_blocks 的内存历史（与 FAWE //undo 独立）
+history:
+  enabled: true
+  max-entries: 20
+  max-blocks-per-entry: 200000
+
 default-world: world
 
 # FAWE 命令代理玩家（可选）。留空则用控制台；控制台选区不稳时可填在线 OP 名
