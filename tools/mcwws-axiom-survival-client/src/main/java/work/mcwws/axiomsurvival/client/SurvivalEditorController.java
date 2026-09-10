@@ -1,5 +1,6 @@
 package work.mcwws.axiomsurvival.client;
 
+import com.mojang.blaze3d.platform.Window;
 import com.moulberry.axiom.editor.EditorUI;
 import com.moulberry.axiom.integration.ServerIntegration;
 import net.minecraft.client.Minecraft;
@@ -143,12 +144,26 @@ public final class SurvivalEditorController {
     }
 
     /**
+     * 窗口已最小化或宽高为 0。用于暂停 Axiom 激活谎报与 Editor 叠加层，
+     * 避免 Axiom MixinWindow 在 0 尺寸视口下伪造宽高触发原生内存暴涨。
+     */
+    public static boolean isClientWindowMinimized() {
+        Minecraft mc = Minecraft.getInstance();
+        if (mc == null) {
+            return false;
+        }
+        Window window = mc.getWindow();
+        return window != null && (window.isIconified() || window.isMinimized());
+    }
+
+    /**
      * {@code AxiomClient.isAxiomActive} 要求本地模式恰好等于创造（菜单开启时为旁观），
      * 否则工具槽与全部建筑工具都不可用。未进 Editor 时本地模式是真生存，
      * 因此只对该判定谎报虚拟模式，本地模式与背包/飞行/挖掘仍保持真生存。
+     * 最小化时停止谎报，让 Axiom 整条客户端管线按未激活处理。
      */
     public static boolean shouldSpoofAxiomActive() {
-        return serverSupported;
+        return serverSupported && !isClientWindowMinimized();
     }
 
     /**
