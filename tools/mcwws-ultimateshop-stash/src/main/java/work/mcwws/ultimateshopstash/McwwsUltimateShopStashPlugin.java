@@ -1,5 +1,6 @@
 package work.mcwws.ultimateshopstash;
 
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 import work.mcwws.ultimateshopstash.catalog.ShopCatalog;
 import work.mcwws.ultimateshopstash.collect.CollectListener;
@@ -19,6 +20,10 @@ import work.mcwws.ultimateshopstash.trade.TradeInterceptor;
 import work.mcwws.ultimateshopstash.util.ChineseItemNames;
 import work.mcwws.ultimateshopstash.util.Messages;
 
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+
 public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
 
     private static McwwsUltimateShopStashPlugin instance;
@@ -30,6 +35,8 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
     private WithdrawMenu withdrawMenu;
     private ShopLorePatcher lorePatcher;
     private PendingReturnManager pendingReturns;
+    /** 选块购买等：下一次商店买入不要把溢出吸进仓库，好让调用方把物品放到主手。 */
+    private final Set<UUID> skipNextBuyDeposit = ConcurrentHashMap.newKeySet();
 
     public static McwwsUltimateShopStashPlugin getInstance() {
         return instance;
@@ -85,6 +92,18 @@ public final class McwwsUltimateShopStashPlugin extends JavaPlugin {
 
     public boolean depositShopBuys() {
         return getConfig().getBoolean("deposit-shop-buys", true);
+    }
+
+    /** 标记该玩家下一次商店买入跳过「溢出入库」。 */
+    public void skipNextShopBuyDeposit(Player player) {
+        if (player != null) {
+            skipNextBuyDeposit.add(player.getUniqueId());
+        }
+    }
+
+    /** @return true 表示本次应跳过入库（并已消费标记） */
+    public boolean consumeSkipBuyDeposit(Player player) {
+        return player != null && skipNextBuyDeposit.remove(player.getUniqueId());
     }
 
     @Override

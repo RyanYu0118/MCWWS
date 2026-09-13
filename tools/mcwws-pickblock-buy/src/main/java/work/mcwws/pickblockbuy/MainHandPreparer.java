@@ -50,7 +50,42 @@ final class MainHandPreparer {
     }
 
     /**
+     * 短时关闭 UltimateShopStash 对「下一次商店买入」的溢出入库，避免刚买的一组进仓库而不是主手。
+     */
+    void suppressStashCollect(Player player, org.bukkit.Material material) {
+        if (!plugin.getServer().getPluginManager().isPluginEnabled("MCWWS_UltimateShopStash")) {
+            return;
+        }
+        try {
+            org.bukkit.plugin.Plugin stash = plugin.getServer().getPluginManager().getPlugin("MCWWS_UltimateShopStash");
+            if (stash == null) {
+                return;
+            }
+            stash.getClass().getMethod("skipNextShopBuyDeposit", Player.class).invoke(stash, player);
+        } catch (ReflectiveOperationException ex) {
+            plugin.getLogger().warning("无法跳过仓库购买入库: " + ex.getMessage());
+        }
+    }
+
+    /** 清掉未消费的一次性跳过标记（交易取消时用）。 */
+    void clearStashBuySkip(Player player) {
+        if (!plugin.getServer().getPluginManager().isPluginEnabled("MCWWS_UltimateShopStash")) {
+            return;
+        }
+        try {
+            org.bukkit.plugin.Plugin stash = plugin.getServer().getPluginManager().getPlugin("MCWWS_UltimateShopStash");
+            if (stash == null) {
+                return;
+            }
+            stash.getClass().getMethod("consumeSkipBuyDeposit", Player.class).invoke(stash, player);
+        } catch (ReflectiveOperationException ignored) {
+            // 旧版仓库没有该方法时忽略
+        }
+    }
+
+    /**
      * 购买完成后，从身上取出最多 {@code amount} 个指定材料放进主手。
+     * 若主手已是该材质则补足到目标数量；否则整组换上主手。
      */
     void equipPurchased(Player player, org.bukkit.Material material, int amount) {
         if (material == null || amount <= 0) {
@@ -58,7 +93,20 @@ final class MainHandPreparer {
         }
         PlayerInventory inventory = player.getInventory();
         int want = Math.min(amount, material.getMaxStackSize());
-        int gathered = 0;
+
+        ItemStack held = inventory.getItemInMainHand();
+        if (held != null && held.getType() == material && held.getAmount() >= want) {
+            return;
+        }
+
+        int alreadyHeld = 0;
+        if (held != null && held.getType() == material) {
+            alreadyHeld = held.getAmount();
+            inventory.setItemInMainHand(null);
+        }
+
+        int need = want - alreadyHeld;
+        int gathered = alreadyHeld;
 
         ItemStack[] storage = inventory.getStorageContents();
         for (int i = 0; i < storage.length && gathered < want; i++) {
@@ -79,9 +127,49 @@ final class MainHandPreparer {
         inventory.setStorageContents(storage);
 
         if (gathered <= 0) {
+            tryPullFromStash(player, material, need);
+            held = inventory.getItemInMainHand();
+            if (held != null && held.getType() == material && held.getAmount() > 0) {
+                return;
+            }
             return;
         }
         inventory.setItemInMainHand(new ItemStack(material, gathered));
+    }
+
+    /** 若购得物品已被仓库吸走，尝试取回并放到主手。 */
+    private void tryPullFromStash(Player player, org.bukkit.Material material, int amount) {
+        if (amount <= 0 || !plugin.getServer().getPluginManager().isPluginEnabled("MCWWS_UltimateShopStash")) {
+            return;
+        }
+        try {
+            org.bukkit.plugin.Plugin stash = plugin.getServer().getPluginManager().getPlugin("MCWWS_UltimateShopStash");
+            if (stash == null) {
+                return;
+            }
+            Object storage = stash.getClass().getMethod("storage").invoke(stash);
+            if (storage == null) {
+                return;
+            }
+            String key = material.name();
+            Object haveObj = storage.getClass()
+                    .getMethod("getAmount", java.util.UUID.class, String.class)
+                    .invoke(storage, player.getUniqueId(), key);
+            long have = haveObj instanceof Number n ? n.longValue() : 0L;
+            if (have <= 0) {
+                return;
+            }
+            long take = Math.min(amount, have);
+            Object ok = storage.getClass()
+                    .getMethod("tryRemove", java.util.UUID.class, String.class, long.class)
+                    .invoke(storage, player.getUniqueId(), key, take);
+            if (!Boolean.TRUE.equals(ok)) {
+                return;
+            }
+            player.getInventory().setItemInMainHand(new ItemStack(material, (int) take));
+        } catch (ReflectiveOperationException ex) {
+            plugin.getLogger().warning("无法从仓库取回选块购买物品: " + ex.getMessage());
+        }
     }
 
     private static int findEmptyStorageSlot(PlayerInventory inventory, int excludeSlot) {

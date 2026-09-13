@@ -70,6 +70,9 @@ public class CreativeModeInventoryScreenMixin {
      * <p>
      * Shift 快速移动会连改多格；补报整份生存背包，避免服务端只看到「清空一格」而误扣费。
      * 真正计费由服务端按短延迟合并结算（总量不变则不扣）。
+     * <p>
+     * 中键从分类页拿一组：原版只放光标，关掉界面后常被塞进背包仓库区；
+     * 这里改成直接写入当前选中的快捷栏（主手），与数字键取货一致。
      */
     @Inject(method = "slotClicked", at = @At("RETURN"))
     private void mcwws$syncAfterClick(Slot slot, int slotId, int buttonNum,
@@ -81,6 +84,10 @@ public class CreativeModeInventoryScreenMixin {
         if (player == null) {
             return;
         }
+        if (containerInput == ContainerInput.CLONE && isCatalogSlot(slot)
+                && placeCarriedOnMainHand(player)) {
+            return;
+        }
         if (containerInput == ContainerInput.QUICK_MOVE) {
             syncPlayerInventory(player);
             return;
@@ -90,6 +97,26 @@ public class CreativeModeInventoryScreenMixin {
             ImmersiveCreativeNetworking.sendSlot(36 + buttonNum, hotbar);
         }
         ImmersiveCreativeNetworking.sendCarriedOnly();
+    }
+
+    /**
+     * 把光标上的一组放到当前主手快捷栏并上报。主手原有物品会被覆盖（与数字键取货相同，
+     * 服务端按差额结算：多出的买入、被盖掉的按卖出价）。
+     */
+    private static boolean placeCarriedOnMainHand(LocalPlayer player) {
+        ItemStack carried = ImmersiveCreativeNetworking.currentCarried();
+        if (carried.isEmpty()) {
+            return false;
+        }
+        int hotbar = player.getInventory().getSelectedSlot();
+        if (hotbar < 0 || hotbar > 8) {
+            hotbar = 0;
+        }
+        ItemStack toPlace = carried.copy();
+        player.getInventory().setItem(hotbar, toPlace);
+        player.inventoryMenu.setCarried(ItemStack.EMPTY);
+        ImmersiveCreativeNetworking.sendSlot(36 + hotbar, toPlace, ItemStack.EMPTY);
+        return true;
     }
 
     /** 上报主背包 / 快捷栏与光标，供服务端合并结算。 */

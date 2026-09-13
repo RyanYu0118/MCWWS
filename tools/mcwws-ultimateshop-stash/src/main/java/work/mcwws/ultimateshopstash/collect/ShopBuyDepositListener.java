@@ -24,6 +24,9 @@ public final class ShopBuyDepositListener implements Listener {
             return;
         }
         Player player = event.getPlayer();
+        if (plugin.consumeSkipBuyDeposit(player)) {
+            return;
+        }
         String key = ItemKeys.fromObjectItem(event.getItem());
         if (key == null || !plugin.catalog().contains(key)) {
             return;

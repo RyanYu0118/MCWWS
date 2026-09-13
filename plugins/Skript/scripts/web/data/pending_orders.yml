@@ -1286,12 +1286,12 @@ orders:
         playerUuid: d006ba70-4ddc-4b37-b13c-76f190815116
         playerId: Ryan_yu__
         username: Ryan Yu
-        status: delivered
+        status: picked_up
         total: 2
         balanceAfter: 1.6520037999E8
         economyChargedInGame: true
         createdAt: '2026-08-25T13:40:25.434Z'
-        updatedAt: '2026-08-25 21:40:50'
+        updatedAt: '2026-09-10 21:27:32'
         failureReason: ''
         deliveringLine: 0
         deliveringStartedAt: '2026-08-25 21:40:49'
@@ -1312,6 +1312,7 @@ orders:
                 shopTitle: 建筑方块 (5/10)
                 status: delivered
                 deliveredTo: A01/10
+        pickedUpAt: '2026-09-10 21:27:32'
     '48':
         economyChargedInGame: true
         updatedAt: '2026-07-14 01:04:36'

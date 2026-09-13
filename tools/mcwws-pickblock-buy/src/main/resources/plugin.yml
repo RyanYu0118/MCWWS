@@ -1,9 +1,9 @@
 name: MCWWS_PickBlockBuy
 main: work.mcwws.pickblockbuy.McwwsPickBlockBuyPlugin
-version: 1.0.0
+version: 1.0.1
 api-version: '1.21'
 depend: [UltimateShop]
-softdepend: [PlaceholderAPI, BetterBags]
+softdepend: [PlaceholderAPI, BetterBags, MCWWS_UltimateShopStash]
 description: 生存模式中键选块快速购买（背包无货时二次中键买一组，购得物品置于主手）
 
 commands:

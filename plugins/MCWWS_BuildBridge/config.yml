@@ -1,4 +1,4 @@
-﻿http:
+http:
   host: 127.0.0.1
   port: 8765
   # 留空则首次启动自动生成并写回本文件
@@ -16,6 +16,6 @@ history:
 default-world: world
 
 # FAWE 命令代理玩家（可选）。留空则用控制台；控制台选区不稳时可填在线 OP 名
-actor-player: ''
+actor-player: Ryan_yu__
 
 schematics-directory: plugins/FastAsyncWorldEdit/schematics

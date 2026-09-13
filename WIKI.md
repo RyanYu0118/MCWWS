@@ -318,7 +318,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | ---- | ---------- | ---------- |
 | 指令批量改造 | 选区填充、替换、剪贴板、几何体、附近工具等 | 熟悉 `//set`、`//replace`、`//paste` 等指令的玩家 |
 | 可视化编辑 | 笔刷、原理图粘贴、实体摆放、生物群系画笔等 | 安装配套客户端模组后，在生存中打开 Editor |
-| 沉浸式创造 | 手摆方块时用原版创造物品栏取货 | 指南首页开启（重进仍保留）；需客户端 1.0.8+；拿取扣商店价+100% 秒送费，分类页投放为卖出；生存栏整理不计费 |
+| 沉浸式创造 | 手摆方块时用原版创造物品栏取货 | 指南首页开启（重进仍保留）；需客户端 1.0.9+；拿取扣商店价+100% 秒送费，中键一组直接进主手；分类页投放为卖出；生存栏整理不计费 |
 
 **共通限制（节选）：**
 
@@ -363,7 +363,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 服务端生存扣费组件 | 1.1.11 |
 | 客户端 Axiom | 6.0.5（MC 26.2） |
 | 客户端生存配套模组 | **1.4.7+**（文件名 `MCWWS_AxiomSurvivalClient-1.4.7-needMCWWS_AxiomSurvival+1.1.11.jar`；可与服务端 1.1.11 搭配） |
-| 沉浸式创造客户端 | **1.0.8+**（文件名 `MCWWS_ImmersiveCreativeClient-1.0.8-needMCWWS_ImmersiveCreative+1.0.8.jar`；按 E 开创造栏；开关重进保留；Shift 整理生存栏不计费；数字键/中键拿一组会扣费；分类页投放为卖出；无 Axiom 也需装） |
+| 沉浸式创造客户端 | **1.0.9+**（文件名 `MCWWS_ImmersiveCreativeClient-1.0.9-needMCWWS_ImmersiveCreative+1.0.9.jar`；按 E 开创造栏；开关重进保留；Shift 整理生存栏不计费；数字键/中键拿一组会扣费且中键直接进主手；分类页投放为卖出；无 Axiom 也需装） |
 
 自研客户端 jar 文件名带自身版本；必须搭配的服务端插件会写在末尾 `need` 段。请只保留一份，删掉旧的无版本文件名，避免模组加载两份。
 
@@ -532,20 +532,20 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 **快捷键**（以键位名为准，可在控制设置改绑定）：左/右键买卖 1 个；Shift+左键选购买量；Shift+右键选出售量；副手交换键收藏；丢弃键从本地仓库取回（最多 64，不扣钱）；Ctrl+丢弃键切换该物品是否自动吸取进仓库。
 
-**生存选块购买（建筑向）：** 对准世界里的方块按 **选块键**（默认鼠标中键）。若背包里**已有**该方块，行为与原版一致（切到快捷栏）；若**没有**且商店可买，第一次会提示「再中键一次购买一组（64 个）」并显示约价，**8 秒内**对同一方块再按选块键即走 `/shop quickbuy` 扣款发货，并将购得的一组**置于主手**。若主手原有物品，会先挪到身上空位；身上满则进 **BetterBags 随身行囊**并提示；行囊也满则**取消购买**并提示。背包满溢仍进本地仓库。创造模式不受影响。
+**生存选块购买（建筑向）：** 对准世界里的方块按 **选块键**（默认鼠标中键）。若背包里**已有**该方块，行为与原版一致（切到快捷栏）；若**没有**且商店可买，第一次会提示「再中键一次购买一组（64 个）」并显示约价，**8 秒内**对同一方块再按选块键即走 `/shop quickbuy` 扣款发货，并将购得的一组**置于主手**（当次购买跳过仓库溢出入库）。若主手原有物品，会先挪到身上空位；身上满则进 **BetterBags 随身行囊**并提示；行囊也满则**取消购买**并提示。创造模式不受影响。
 
 **沉浸式创造（建筑向）：** 指南首页可开关，**重进服务器后仍会保持**上次选择。开启后按 **E** 打开与原版**相同的创造物品栏**（分类、搜索、底部仍是自己的生存背包），但游戏模式仍是生存：血条、饥饿、经验、受伤与挖掘进度不变，也不会因此获得创造飞行。关闭后 E 恢复生存背包。
 
 计费与操作：
 
-- 从分类页**取出**（左键 1 个、右键加减 1 个、中键一组、数字键 1～9 直接塞进对应快捷栏一组）按商店买价扣费，并**加收 100% 秒送费**（合计为买价的 2 倍）。零钱不够则整次操作回退。
+- 从分类页**取出**（左键 1 个、右键加减 1 个、中键一组直接进当前主手快捷栏、数字键 1～9 直接塞进对应快捷栏一组）按商店买价扣费，并**加收 100% 秒送费**（合计为买价的 2 倍）。零钱不够则整次操作回退。
 - 底部**生存背包与快捷栏之间**整理物品（含 Shift 快速移动）**不计费**，只挪自己已有的东西。
 - 把物品放回**分类页**按商店卖价回收入账（不能卖的会退回，不会凭空消失）。
 - **❌ 销毁格已禁用**：把物品放上去会退回它被拿出的那个背包槽；来自分类页、还没放进背包的则留在光标上。
 - 附魔装备、Slimefun 物品等带数据的特殊物品不能在创造栏买卖，操作会整次退回。
 - 商店不出售或黑名单物品无法取出。
 
-客户端模组 `MCWWS_ImmersiveCreativeClient` 需 **1.0.8+**（1.0.8 起修复 Shift 在生存栏与快捷栏间挪物误扣费；1.0.7 起进服会主动向服务端核对开关），用 Axiom 生存配套时请同时更新到 **1.4.7+**（1.4.7 起修复最小化原生内存暴涨；1.4.6 起图层名不再出现问号；1.4.5 起图层 Ctrl/Shift 多选且每层选块独立；1.4.4 起每层钢笔参数独立隔离；1.4.3 起图层置顶、曲线形状收入子菜单并修正眼睛椭圆；1.4.2 起图层睁眼/闭眼图标与叉号删层、Delete 清空整层、组平移单条历史、最小化跳过 Editor 叠加层；1.4.1 起图层可显隐、拖节点不再卡一格；1.4.0 起钢笔支持多路径图层与 Ctrl+C/V 粘贴为新图层；1.3.3 起可正常启动；1.3.2 会因 KeyboardInput mixin 崩溃，1.3.1 会因 Delete 注入崩溃；1.3.1 起 Ctrl+A 全选钢笔节点时不再向左平移；1.3.0 起可保存/导入钢笔轨迹并用 Ctrl+A 全选上移；1.2.8 起 Enter 确认钢笔会保留节点；1.2.9 起 Shift+点击可多节点整组平移；1.2.6 及更早在 Editor 建造阶段会忽略沉浸式创造开关，按 E 仍开生存背包）。低于 1.0.6 的版本：数字键拿一组可能不扣款、中键可能无响应、分类页投放会把物品毁掉。低于 1.0.4 的版本上报槽位时**只带材质、不带 NBT**，会把背包里物品的附魔、Slimefun 数据、自定义名全部抹掉；服务端会识别并**自动为该玩家关闭**沉浸式创造。1.0.0 / 1.0.1 另有按 E 崩溃的问题。
+客户端模组 `MCWWS_ImmersiveCreativeClient` 需 **1.0.9+**（1.0.9 起中键从分类页拿一组直接进主手，不再先停在光标/背包仓库区；1.0.8 起修复 Shift 在生存栏与快捷栏间挪物误扣费；1.0.7 起进服会主动向服务端核对开关），用 Axiom 生存配套时请同时更新到 **1.4.7+**（1.4.7 起修复最小化原生内存暴涨；1.4.6 起图层名不再出现问号；1.4.5 起图层 Ctrl/Shift 多选且每层选块独立；1.4.4 起每层钢笔参数独立隔离；1.4.3 起图层置顶、曲线形状收入子菜单并修正眼睛椭圆；1.4.2 起图层睁眼/闭眼图标与叉号删层、Delete 清空整层、组平移单条历史、最小化跳过 Editor 叠加层；1.4.1 起图层可显隐、拖节点不再卡一格；1.4.0 起钢笔支持多路径图层与 Ctrl+C/V 粘贴为新图层；1.3.3 起可正常启动；1.3.2 会因 KeyboardInput mixin 崩溃，1.3.1 会因 Delete 注入崩溃；1.3.1 起 Ctrl+A 全选钢笔节点时不再向左平移；1.3.0 起可保存/导入钢笔轨迹并用 Ctrl+A 全选上移；1.2.8 起 Enter 确认钢笔会保留节点；1.2.9 起 Shift+点击可多节点整组平移；1.2.6 及更早在 Editor 建造阶段会忽略沉浸式创造开关，按 E 仍开生存背包）。低于 1.0.6 的版本：数字键拿一组可能不扣款、中键可能无响应、分类页投放会把物品毁掉。低于 1.0.4 的版本上报槽位时**只带材质、不带 NBT**，会把背包里物品的附魔、Slimefun 数据、自定义名全部抹掉；服务端会识别并**自动为该玩家关闭**沉浸式创造。1.0.0 / 1.0.1 另有按 E 崩溃的问题。
 
 ```text
 /mcwws-immersive
@@ -636,7 +636,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 公共标记点（设） | 开 | `spawn.set`；传送 `/spawn` 本身无权限节点 |
 | 外卖大/小编号 | **关** | 仅 OP 或 `mcwws.delivery.admin`；取件码仍人人可用 |
 | 生存中键选块购买 | 开 | `mcwws.shop.pickbuy` + `ultimateshop.quickbuy`（均写入 LuckPerms `default` 组；后者插件默认仅 OP，须显式放开）；背包无货时二次中键买一组 |
-| 沉浸式创造 | 开 | `mcwws.immersive-creative.use`；指南开关（重进保留）；需客户端 1.0.8+；拿取按商店价+100% 秒送费；生存栏整理不计费 |
+| 沉浸式创造 | 开 | `mcwws.immersive-creative.use`；指南开关（重进保留）；需客户端 1.0.9+；拿取按商店价+100% 秒送费；中键一组进主手；生存栏整理不计费 |
 
 ---
 
@@ -895,9 +895,9 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 指令批量改造扣费 | `tools/mcwws-worldedit-survival/` |
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
-| 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.0.jar` |
+| 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.8-needMCWWS_ImmersiveCreativeClient+1.0.8.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
+| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 网页 UI 设计规范 | `plugins/Skript/scripts/web/ui.md`（同步 **附录 G**） |
@@ -932,13 +932,13 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
-| MCWWS_PickBlockBuy | 1.0.0 | 生存中键选块购买 |
+| MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_ImmersiveCreative | 1.0.8 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；生存栏整理不计费；需客户端 1.0.8 |
-| MCWWS_ImmersiveCreativeClient | 1.0.8 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.8` |
+| MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
+| MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.11 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.7 |
 | MCWWS_AxiomSurvivalClient | 1.4.7 | Axiom 生存客户端，装进游戏 `mods/`；jar 含 `needMCWWS_AxiomSurvival+1.1.11`；1.4.7 修最小化内存泄漏 |
-| MCWWS_UltimateShopStash | 1.0.0 | 替代 UltraDepository 的拾取入库与 60s 豁免 |
+| MCWWS_UltimateShopStash | 1.0.1 | 替代 UltraDepository 的拾取入库与 60s 豁免；支持选块购买跳过一次溢出入库 |
 | MCWWS_UltimateShopFix | 1.0.1 | 商店 GUI 手持物品防误触 |
 | MCWWS_EconomyLedger | 1.1.0 | 零钱明细队列（飞行/WE/Axiom 合并记账） |
 | MCWWS_WebHost | 1.0.0 | 自动启动 Node 网页服务（默认 :8002） |

@@ -1,0 +1,14 @@
+name: ExtraHeads
+version: Build 6 (git 91961af)
+main: io.github.thebusybiscuit.extraheads.ExtraHeads
+description: A Slimefun Addon that adds heads of mobs
+authors:
+  - TheBusyBiscuit
+  - ybw0014
+website: https://github.com/SlimefunGuguProject/ExtraHeads
+depend:
+  - Slimefun
+api-version: "1.18"
+softdepend:
+  - PlaceholderAPI
+  - GuizhanLibPlugin

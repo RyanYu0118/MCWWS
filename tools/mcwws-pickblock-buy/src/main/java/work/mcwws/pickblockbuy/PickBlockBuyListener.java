@@ -102,8 +102,22 @@ public final class PickBlockBuyListener implements Listener {
             if (!player.isOnline()) {
                 return;
             }
-            player.performCommand(command);
+            // 购买瞬间禁止仓库把这批货吸走，否则 equipPurchased 找不到物品、主手仍空。
+            handPreparer.suppressStashCollect(player, offer.material());
+            try {
+                player.performCommand(command);
+            } finally {
+                // 若交易被取消、未走到入库监听，清掉一次性标记，避免影响下一次正常商店购买。
+                handPreparer.clearStashBuySkip(player);
+            }
+            // UltimateShop / 仓库监听可能同 tick 末尾才落袋，再补一 tick 确保能抓到主手。
             handPreparer.equipPurchased(player, offer.material(), amount);
+            Bukkit.getScheduler().runTask(plugin, () -> {
+                if (!player.isOnline()) {
+                    return;
+                }
+                handPreparer.equipPurchased(player, offer.material(), amount);
+            });
 
             String purchased = plugin.formatMessage(
                     "messages.purchased",
