@@ -35,10 +35,23 @@ $Jar = Join-Path $JavaHome "bin/jar.exe"
 
 $Jspecify = Join-Path $Extracted "jspecify-1.0.0.jar"
 
+# 资源管理器拖放投影要直接注册 GLFW drop 回调，minecraft-client jar 里没有 lwjgl
+$LwjglJars = @()
+$LwjglRoot = Join-Path $McRoot "libraries/org/lwjgl"
+if (Test-Path $LwjglRoot) {
+    foreach ($artifact in @("lwjgl", "lwjgl-glfw")) {
+        $found = Get-ChildItem (Join-Path $LwjglRoot $artifact) -Recurse -Filter "$artifact-*.jar" -ErrorAction SilentlyContinue |
+            Where-Object { $_.Name -notmatch 'natives|sources|unsafe' } |
+            Sort-Object Name -Descending | Select-Object -First 1
+        if ($found) { $LwjglJars += $found.FullName }
+    }
+}
+
 $CpParts = @()
 if (Test-Path $FastUtil) { $CpParts += $FastUtil }
 if ($AxiomJar -ne $null) { $CpParts += $AxiomJar.FullName }
 if (Test-Path $Jspecify) { $CpParts += $Jspecify }
+$CpParts += $LwjglJars
 $CpParts += (Join-Path $Lib "*")
 if (Test-Path $Extracted) { $CpParts += (Join-Path $Extracted "*") }
 $Cp = ($CpParts -join ';')

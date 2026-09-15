@@ -480,128 +480,128 @@ info:
     zombified_piglin: Zombified piglin
   # Avoid adding color codes to the enchant name
   EnchantNames:
-    projectile_protection: Projectile_Protection
-    aqua_affinity: Aqua_Affinity
-    multishot: Multishot
-    blast_protection: Blast_Protection
-    flame: Flame
-    mending: Mending
+    bane_of_arthropods: Bane_Of_Arthropods
+    knockback: Knockback
     channeling: Channeling
     smite: Smite
-    sweeping_edge: SweepingEdge
-    binding_curse: BindingCurse
-    luck_of_the_sea: Luck_Of_The_Sea
-    soul_speed: SOULSPEED
-    breach: Breach
-    swift_sneak: SWIFTSNEAK
+    piercing: Piercing
+    power: Power
     frost_walker: FrostWalker
-    riptide: Riptide
-    protection: Protection
-    knockback: Knockback
-    vanishing_curse: Vanishing_curse
     loyalty: Loyalty
-    fortune: Fortune
-    unbreaking: Unbreaking
+    swift_sneak: SWIFTSNEAK
+    impaling: Impaling
+    breach: Breach
     lure: Lure
+    protection: Protection
+    vanishing_curse: Vanishing_curse
+    mending: Mending
     density: Density
     thorns: Thorns
-    wind_burst: Wind_burst
     quick_charge: QUICKCHARGE
-    sharpness: Sharpness
-    piercing: Piercing
-    depth_strider: DepthStrider
-    lunge: Lunge
-    infinity: Infinity
-    bane_of_arthropods: Bane_Of_Arthropods
     efficiency: Efficiency
-    impaling: Impaling
-    punch: Punch
-    looting: Looting
-    fire_aspect: FireAspect
-    power: Power
-    silk_touch: SilkTouch
-    fire_protection: Fire_Protection
+    sharpness: Sharpness
+    depth_strider: DepthStrider
     feather_falling: Feather_Falling
+    multishot: Multishot
+    fire_protection: Fire_Protection
+    riptide: Riptide
+    fire_aspect: FireAspect
+    punch: Punch
+    silk_touch: SilkTouch
+    infinity: Infinity
+    unbreaking: Unbreaking
+    projectile_protection: Projectile_Protection
+    flame: Flame
+    aqua_affinity: Aqua_Affinity
+    binding_curse: BindingCurse
+    sweeping_edge: SweepingEdge
+    lunge: Lunge
+    looting: Looting
     respiration: Respiration
+    wind_burst: Wind_burst
+    luck_of_the_sea: Luck_Of_The_Sea
+    blast_protection: Blast_Protection
+    soul_speed: SOULSPEED
+    fortune: Fortune
   PotionEffectAliases:
-    absorption:
-    - Absorption
-    conduitpower:
-    - Conduit power
-    levitation:
-    - Levitation
+    waterbreathing:
+    - Water breathing
+    jumpboost:
+    - Jump boost
+    unluck:
+    - Unluck
+    fireresistance:
+    - Fire resistance
+    miningfatigue:
+    - Mining fatigue
     darkness:
     - Darkness
     wither:
     - Wither
-    haste:
-    - Haste
-    raidomen:
-    - Raid omen
-    unluck:
-    - Unluck
-    infested:
-    - Infested
-    miningfatigue:
-    - Mining fatigue
-    jumpboost:
-    - Jump boost
-    weakness:
-    - Weakness
     resistance:
     - Resistance
-    waterbreathing:
-    - Water breathing
-    badomen:
-    - Bad omen
-    instanthealth:
-    - Instant health
-    fireresistance:
-    - Fire resistance
-    saturation:
-    - Saturation
-    trialomen:
-    - Trial omen
-    glowing:
-    - Glowing
-    poison:
-    - Poison
-    oozing:
-    - Oozing
-    windcharged:
-    - Wind charged
-    luck:
-    - Luck
-    strength:
-    - Strength
-    instantdamage:
-    - Instant damage
-    speed:
-    - Speed
-    healthboost:
-    - Health boost
-    blindness:
-    - Blindness
     nausea:
     - Nausea
-    regeneration:
-    - Regeneration
+    glowing:
+    - Glowing
+    infested:
+    - Infested
+    blindness:
+    - Blindness
     invisibility:
     - Invisibility
-    slowness:
-    - Slowness
-    slowfalling:
-    - Slow falling
-    nightvision:
-    - Night vision
-    heroofthevillage:
-    - Hero of the village
-    hunger:
-    - Hunger
-    weaving:
-    - Weaving
+    regeneration:
+    - Regeneration
+    poison:
+    - Poison
+    weakness:
+    - Weakness
+    raidomen:
+    - Raid omen
+    strength:
+    - Strength
+    oozing:
+    - Oozing
+    badomen:
+    - Bad omen
     dolphinsgrace:
     - Dolphins grace
+    trialomen:
+    - Trial omen
+    instantdamage:
+    - Instant damage
+    nightvision:
+    - Night vision
+    conduitpower:
+    - Conduit power
+    instanthealth:
+    - Instant health
+    weaving:
+    - Weaving
+    healthboost:
+    - Health boost
+    luck:
+    - Luck
+    speed:
+    - Speed
+    slowfalling:
+    - Slow falling
+    levitation:
+    - Levitation
+    saturation:
+    - Saturation
+    windcharged:
+    - Wind charged
+    hunger:
+    - Hunger
+    absorption:
+    - Absorption
+    heroofthevillage:
+    - Hero of the village
+    haste:
+    - Haste
+    slowness:
+    - Slowness
 dialog:
   signEditor: Sign Editor
   update: Update

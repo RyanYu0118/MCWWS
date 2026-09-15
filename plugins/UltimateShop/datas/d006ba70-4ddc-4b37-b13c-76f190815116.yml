@@ -23,6 +23,10 @@ useTimes:
       sellUseTimes: 2
       totalSellUseTimes: 2
       lastSellTime: '2026-08-14 23:41:00'
+  redstone__p3:
+    J:
+      sellUseTimes: 40
+      lastSellTime: '2026-07-31 12:45:14'
   ingredients:
     Z:
       sellUseTimes: 1
@@ -44,10 +48,6 @@ useTimes:
       sellUseTimes: 32
       totalSellUseTimes: 32
       lastSellTime: '2026-08-28 22:02:23'
-  redstone__p3:
-    J:
-      sellUseTimes: 40
-      lastSellTime: '2026-07-31 12:45:14'
   mcwws:
     A:
       buyUseTimes: 86
@@ -283,8 +283,11 @@ useTimes:
       totalSellUseTimes: 4
       lastSellTime: '2026-08-17 22:18:14'
     p:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
       sellUseTimes: 279
       totalSellUseTimes: 279
+      lastBuyTime: '2026-09-14 22:32:49'
       lastSellTime: '2026-08-18 20:00:00'
     q:
       sellUseTimes: 960
@@ -336,6 +339,10 @@ useTimes:
       totalSellUseTimes: 8
       lastSellTime: '2026-08-28 22:02:22'
   building__p4:
+    o:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-09-14 20:56:15'
     p:
       buyUseTimes: 192
       totalBuyUseTimes: 192
@@ -552,9 +559,9 @@ useTimes:
       totalBuyUseTimes: 576
       lastBuyTime: '2026-09-12 16:22:50'
     Z:
-      buyUseTimes: 256
-      totalBuyUseTimes: 256
-      lastBuyTime: '2026-09-13 23:19:51'
+      buyUseTimes: 448
+      totalBuyUseTimes: 448
+      lastBuyTime: '2026-09-14 22:27:37'
   building:
     A:
       buyUseTimes: 69
@@ -687,11 +694,11 @@ useTimes:
       lastBuyTime: '2026-06-26 22:15:19'
   natural:
     A:
-      buyUseTimes: 128
-      totalBuyUseTimes: 128
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
       sellUseTimes: 10
       totalSellUseTimes: 10
-      lastBuyTime: '2026-09-12 16:22:02'
+      lastBuyTime: '2026-09-13 23:42:44'
       lastSellTime: '2026-08-20 22:42:22'
     D:
       sellUseTimes: 19
