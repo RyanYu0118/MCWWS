@@ -24,7 +24,7 @@
 | 指南传送按距离计费，跨维度另加收 | 领地划界，中文旗标与提示 |
 | 光源须手持才能拆改；砍树可连根放倒并补种；潜行连锁采矿最多 64 格 | 与 NPC 对话完成新手引导；L 键仅「流浪世界」一页；成就用 `/aach list` |
 | 大规模改造分「指令批量」与「可视化编辑」两种方式，规则一致 | 撤销退 95%；同次编辑内搬运同种方块只收劳务 |
-| 粘液科技指南首次进服赠送；配方书与自定义合成 GUI 全员可浏览 | 每日签到 `/signin gui`；服务器告示 `/news`；基岩版经 Geyser 同端口进服 |
+| 粘液科技指南首次进服赠送；配方书与自定义合成 GUI 全员可浏览 | 每日签到 `/signin gui`；服务器告示 `/news`；**白名单制**（须管理员添加）；基岩版经 Geyser 同端口进服 |
 | 护符、炼金注入与末地奇术等魔法向内容分散在 Slimefun 附属中 | 商店附魔分类与动态物价联动；领地可限制负面药水 PvP 效果 |
 
 ---
@@ -640,6 +640,34 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 生存中键选块购买 | 开 | `mcwws.shop.pickbuy` + `ultimateshop.quickbuy`（均写入 LuckPerms `default` 组；后者插件默认仅 OP，须显式放开）；背包无货时二次中键买一组 |
 | 沉浸式创造 | 开 | `mcwws.immersive-creative.use`；指南开关（重进保留）；需客户端 1.0.9+；拿取按商店价+100% 秒送费；中键一组进主手；生存栏整理不计费 |
 
+### 2.4 服务器白名单
+
+本服开启原版**白名单**：未列入者无法进入（踢出文案为「你不在此服务器的白名单中！」）。`server.properties` 中 `white-list=true`，且 `enforce-whitelist=true`（已在线但不在名单者也会被踢）。
+
+- 历史曾进服的 Java / 基岩账号已写入 `whitelist.json`（基岩名前缀 `.`）；假人、系统账号未列入
+- 新玩家须由 **OP** 添加后才能进服
+- **OP 本身不受白名单拦截**，但仍建议把常用号写进名单
+
+管理员在游戏内（需 OP）：
+
+```text
+/whitelist add <玩家名>
+```
+
+```text
+/whitelist remove <玩家名>
+```
+
+```text
+/whitelist list
+```
+
+```text
+/whitelist reload
+```
+
+控制台 / 图形窗口底部（不要前导 `/`）用 `whitelist add <玩家名>` 等同样子命令；开关为 `whitelist on` / `whitelist off`。
+
 ---
 
 ## 3. 社会学
@@ -700,6 +728,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 | 功能 | 说明 |
 | ---- | ---- |
+| 白名单 | 须在名单内才能进服；新玩家请联系管理员添加；基岩账号用带 `.` 前缀的用户名 |
 | Geyser + floodgate | 基岩版玩家 UDP **25565** 进同一 Java 服；Bedrock 名前缀 `.`，支持账号链接 |
 | GSit | 坐在方块/玩家/楼梯上社交，见建筑学 · 装饰 |
 | ChestSort | 中键或 `/sort`、`/isort` 整理箱子与背包 |
@@ -855,6 +884,20 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /newsarchive sync
 ```
 
+白名单（控制台不带 `/`；游戏内 OP 带 `/`）：
+
+```text
+whitelist reload
+```
+
+```text
+whitelist on
+```
+
+```text
+/whitelist add <玩家名>
+```
+
 授予实体小方块权限：
 
 ```text
@@ -920,6 +963,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | Multitool 竹制品切斧 | `tools/mcwws-multitool-fix/` |
 | 魔法 / 炼金附属 | `plugins/AlchimiaVitae/`、`plugins/Alchema/`、`plugins/TranscEndence/` |
 | 每日签到 | `plugins/LiteSignIn/` |
+| 服务器白名单 | `server.properties`（`white-list`、`enforce-whitelist`）、`whitelist.json`；踢出文案 `spigot.yml` `messages.whitelist` |
 | 基岩桥接 | `plugins/Geyser-Spigot/`、`plugins/floodgate/` |
 | 轨道交通 | `plugins/Train_Carts/`、`plugins/TCCoasters/` |
 
