@@ -23,7 +23,7 @@ alwaysApply: true
 
 ## BookNews 同步（仅 `y` / 提交并推送）
 
-用户约定：**`y` = 提交 + 推送**；若本次推送内容**与服务器玩法/配置相关**（玩家或管理员能感知），还必须把变更写进 BookNews。配置为 **`Open-Book-Onjoin.always: true`**，玩家**每次进服**都会打开告示书。
+用户约定：**`y` = 提交 + 推送**；若本次推送内容**与服务器玩法/配置相关**（玩家或管理员能感知），还必须把变更写进 BookNews。进服弹书由 **MCWWS_NewsArchive** 处理（默认仅最新一期未读才弹；玩家可在指南针告示按钮 Shift+右键改为每次进服都弹）。**不要**把 BookNews 的 `Open-Book-Onjoin.enable` 改回 `true`，否则会与留档插件重复弹书。
 
 ### 何时写入
 
@@ -51,7 +51,7 @@ alwaysApply: true
 
 示例：`发布：2026年08月24日 23:12:54`。时间为**写入告示当下**的本地时间（北京时间），不要用模糊日期或省略秒。
 3. **首页紧接发布时间后写清本期要点**（新功能 / 修复 / 注意），篇幅控制在玩家能翻完；细节可指向指南针或 Wiki。
-4. 保持 `Open-Book-Onjoin.enable: true` 与 **`always: true`**（每次进服弹书）；不要改回 `always: false`，除非用户明确要求。
+4. 保持 `Open-Book-Onjoin.enable: false`（进服弹书由 `MCWWS_NewsArchive` 按玩家模式处理）。重载 BookNews 后会自动留档新版本，未读玩家下次进服会看到。
 5. 将 `config.yml`（及必要的 BookNews 相关文件）**纳入同一次** `git add` / commit。
 6. 推送成功后，若服在运行且 BookNews 已加载，执行（或请用户执行；管理页可点「重载服务器告示」）：
 
@@ -59,7 +59,7 @@ alwaysApply: true
 /booknews reload
 ```
 
-`always: true` 时一般**不必**再 `/booknews clear`（每次进服都会弹）；仅当需要强制刷新已读状态或排查问题时才清。
+默认**不必**再 `/booknews clear`（未读检测看 `MCWWS_NewsArchive` 留档已读表）；仅当需要强制刷新已读状态或排查问题时才清。
 
 7. 若当时无法执行控制台命令（服已停、无权限等），在回复里用 plaintext 指令块写明 `/booknews reload`，提醒用户开服后执行。
 8. 提交说明正文可带一句「同步 BookNews 玩家告示」，但告示正文以 `config.yml` 为准，不要把整本书粘进 commit message。
@@ -122,4 +122,4 @@ alwaysApply: true
 4. 用 HEREDOC / 临时 UTF-8 文件写入双语 commit message（噪声放末尾一条）
 5. `git commit` 后 `git status` 验证
 6. 用户选「提交并推送」或回复 `y` 时再 `git push`
-7. 推送后对运行中的服执行 `/booknews reload`（或提示用户执行）；首页须含 `发布：yyyy年MM月dd日 HH:mm:ss`
+7. 推送后对运行中的服执行 `/booknews reload`（或提示用户执行）；首页须含 `发布：yyyy年MM月dd日 HH:mm:ss`。重载后 `MCWWS_NewsArchive` 会自动留档，默认模式下未读玩家下次进服才会弹书。

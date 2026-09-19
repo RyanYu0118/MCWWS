@@ -1,6 +1,14 @@
 # BookNews 配置相对服务器根目录
 booknews-config: plugins/BookNews/config.yml
 
+# 进服弹书（BookNews 的 Open-Book-Onjoin 应关闭，改由本插件处理）
+join:
+  # on_update = 仅最新一期未读时弹；always = 每次进服都弹
+  default-mode: on_update
+  # 延迟秒数；-1 表示沿用 BookNews 的 OpenBookDelaySecond
+  delay-seconds: -1
+  open-sound: ENTITY_PLAYER_LEVELUP
+
 # 与商店翻页图标一致（ItemsAdder / 资源包 custom model data）
 gui:
   title: '&8服务器告示 · 历史 ({page}/{pages})'
@@ -22,3 +30,5 @@ messages:
   opened: '&7正在打开：&f{title}'
   unknown: '&c找不到该版本：&f{id}'
   reloaded: '&a告示留档已重载。'
+  join-mode-always: '&a进服弹书已设为：&f每次进服都打开'
+  join-mode-update: '&a进服弹书已设为：&f仅在有新告示时打开'

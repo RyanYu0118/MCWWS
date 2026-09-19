@@ -1,7 +1,10 @@
 package work.mcwws.newsarchive;
 
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import org.bukkit.Sound;
 import org.bukkit.command.CommandSender;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import java.io.File;
@@ -11,13 +14,16 @@ public final class McwwsNewsArchivePlugin extends JavaPlugin {
 
     private ArchiveStore store;
     private BookRenderer bookRenderer;
+    private JoinPrefs joinPrefs;
 
     @Override
     public void onEnable() {
         saveDefaultConfig();
         store = new ArchiveStore(this);
         bookRenderer = new BookRenderer(store);
+        joinPrefs = new JoinPrefs(this);
         store.reload();
+        joinPrefs.reload();
         syncFromBookNewsQuiet();
 
         ArchiveCommand command = new ArchiveCommand(this);
@@ -39,10 +45,68 @@ public final class McwwsNewsArchivePlugin extends JavaPlugin {
         return bookRenderer;
     }
 
+    public JoinPrefs joinPrefs() {
+        return joinPrefs;
+    }
+
     public void reloadAll() {
         reloadConfig();
         store.reload();
+        joinPrefs.reload();
+        getServer().getOnlinePlayers().forEach(joinPrefs::applyPermission);
         syncFromBookNewsQuiet();
+    }
+
+    public boolean shouldOpenOnJoin(Player player) {
+        if (player == null || player.hasPermission("booknews.skip")) {
+            return false;
+        }
+        NewsVersion latest = store.latest();
+        if (latest == null) {
+            return false;
+        }
+        if (joinPrefs.isAlways(player.getUniqueId())) {
+            return true;
+        }
+        return !store.hasRead(player.getUniqueId(), latest.id());
+    }
+
+    public void openLatestForJoin(Player player) {
+        NewsVersion latest = store.latest();
+        if (latest == null || player == null || !player.isOnline()) {
+            return;
+        }
+        store.markRead(player.getUniqueId(), latest.id());
+        playOpenSound(player);
+        bookRenderer.open(player, latest);
+    }
+
+    public long joinOpenDelayTicks() {
+        long configuredDelay = getConfig().getLong("join.delay-seconds", -1L);
+        if (configuredDelay >= 0L) {
+            return configuredDelay * 20L;
+        }
+        long fromBookNews = 5L;
+        try {
+            YamlConfiguration cfg = YamlConfiguration.loadConfiguration(
+                    resolveServerFile(getConfig().getString("booknews-config", "plugins/BookNews/config.yml")));
+            fromBookNews = Math.max(0L, cfg.getLong("OpenBookDelaySecond", 5L));
+        } catch (Exception ignored) {
+            // keep default
+        }
+        return fromBookNews * 20L;
+    }
+
+    private void playOpenSound(Player player) {
+        String name = getConfig().getString("join.open-sound", "ENTITY_PLAYER_LEVELUP");
+        if (name == null || name.isBlank() || name.equalsIgnoreCase("none")) {
+            return;
+        }
+        try {
+            player.playSound(player.getLocation(), Sound.valueOf(name.toUpperCase()), 1f, 1f);
+        } catch (IllegalArgumentException ignored) {
+            // invalid sound name
+        }
     }
 
     public void syncFromBookNewsQuiet() {

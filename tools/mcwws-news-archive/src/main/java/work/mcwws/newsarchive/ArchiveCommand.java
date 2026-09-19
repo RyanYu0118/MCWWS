@@ -79,8 +79,26 @@ public final class ArchiveCommand implements CommandExecutor, TabCompleter {
                 plugin.bookRenderer().open(player, version);
                 return true;
             }
+            case "joinmode", "togglejoin" -> {
+                if (!(sender instanceof Player player)) {
+                    sender.sendMessage(Component.text("仅玩家可切换进服弹书模式。"));
+                    return true;
+                }
+                if (!player.hasPermission("mcwws.newsarchive.use")) {
+                    plugin.send(player, "messages.no-permission");
+                    return true;
+                }
+                JoinPrefs.Mode next = plugin.joinPrefs().toggle(player.getUniqueId());
+                plugin.joinPrefs().applyPermission(player);
+                if (next == JoinPrefs.Mode.ALWAYS) {
+                    plugin.send(player, "messages.join-mode-always");
+                } else {
+                    plugin.send(player, "messages.join-mode-update");
+                }
+                return true;
+            }
             default -> {
-                sender.sendMessage(Component.text("/newsarchive [sync|reload|open <id>]"));
+                sender.sendMessage(Component.text("/newsarchive [sync|reload|open <id>|joinmode]"));
                 return true;
             }
         }
@@ -90,7 +108,7 @@ public final class ArchiveCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         List<String> out = new ArrayList<>();
         if (args.length == 1) {
-            for (String option : List.of("sync", "reload", "open")) {
+            for (String option : List.of("sync", "reload", "open", "joinmode")) {
                 if (option.startsWith(args[0].toLowerCase(Locale.ROOT))) {
                     out.add(option);
                 }

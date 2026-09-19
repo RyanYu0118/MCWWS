@@ -1,17 +1,20 @@
 name: MCWWS_NewsArchive
 main: work.mcwws.newsarchive.McwwsNewsArchivePlugin
-version: 1.0.0
+version: 1.1.0
 api-version: '1.21'
-description: 服务器告示历史留档；箱子 GUI 按时间逆序，未读附魔书 / 已读普通书
+description: 服务器告示历史留档；箱子 GUI 按时间逆序；进服弹书模式
 commands:
   newsarchive:
     description: 打开服务器告示历史留档
-    usage: /newsarchive [sync|reload|open <id>]
+    usage: /newsarchive [sync|reload|open <id>|joinmode]
     aliases: [newshistory, news-history]
 permissions:
   mcwws.newsarchive.use:
-    description: 打开告示历史 GUI / 阅读留档
+    description: 打开告示历史 GUI / 阅读留档 / 切换进服弹书模式
     default: true
   mcwws.newsarchive.admin:
     description: 同步与重载告示留档
     default: op
+  mcwws.newsarchive.join.always:
+    description: 进服每次打开告示（由插件按玩家偏好动态赋予，勿手动给予）
+    default: false

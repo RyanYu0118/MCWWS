@@ -11,9 +11,9 @@ OpenBookSoundEffect:
   sound-effect: ENTITY_PLAYER_LEVELUP
 
 Open-Book-Onjoin:
-  enable: true
-  # true = 每次进服都弹书；false = 仅在管理员执行 /booknews clear 之后、玩家尚未读过时弹
-  always: true
+  enable: false
+  # 进服弹书改由 MCWWS_NewsArchive 按玩家模式处理（默认仅有新告示时弹）
+  always: false
 
 KeepBook: false
 
@@ -99,12 +99,14 @@ Interactive-Word:
 
 book:
   '1': |-
-    &8发布：2026年09月19日 14:17:18
+    &8发布：2026年09月19日 22:15:06
     &0&l流浪世界 · 服务器告示
     &8────────────
     &0你好，&l%player_name%&0！
 
-    &0每次进服都会打开本书。
+    &0默认仅在有新告示时弹出。
+    &0指南针告示按钮 Shift+右键
+    &0可改为每次进服都打开。
     &0本期：Axiom 领地拒绝
     &0· 没权限改领地不再踢人
     &0· 左下角聊天会提示原因

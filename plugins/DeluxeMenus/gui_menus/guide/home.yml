@@ -95,7 +95,7 @@ items:
       - '[player] ca gui'
       - '[close]'
       - '[sound] ENTITY_SNOW_GOLEM_DEATH'
-  'news':
+  'news_always':
     material: WRITTEN_BOOK
     enchantments:
       - ARROW_DAMAGE;1
@@ -109,11 +109,17 @@ items:
     lore:
       - ''
       - '&f查看最新功能与修复资讯'
-      - '&7每次进服都会自动弹出'
+      - '&7进服弹书：&a每次进服都打开'
       - '&7指令：/news'
       - ''
       - '&a左键 &7打开最新告示'
       - '&e右键 &7打开历史留档'
+      - '&dShift+右键 &7改为仅有更新时弹'
+    view_requirement:
+      requirements:
+        always_mode:
+          type: has permission
+          permission: mcwws.newsarchive.join.always
     left_click_commands:
       - '[console] lp user %player_uuid% permission set booknews.news true'
       - '[close]'
@@ -123,6 +129,43 @@ items:
       - '[close]'
       - '[player] newsarchive<delay=2>'
       - '[sound] BLOCK_NOTE_BLOCK_HAT'
+    shift_right_click_commands:
+      - '[player] newsarchive joinmode'
+      - '[sound] BLOCK_NOTE_BLOCK_CHIME'
+      - '[refresh]'
+  'news':
+    material: WRITTEN_BOOK
+    enchantments:
+      - ARROW_DAMAGE;1
+    item_flags:
+      - HIDE_ENCHANTS
+      - HIDE_ATTRIBUTES
+    slot: 3
+    priority: 2
+    update: true
+    display_name: '&b>>> 服务器告示 <<<'
+    lore:
+      - ''
+      - '&f查看最新功能与修复资讯'
+      - '&7进服弹书：&e仅有新告示时打开'
+      - '&7指令：/news'
+      - ''
+      - '&a左键 &7打开最新告示'
+      - '&e右键 &7打开历史留档'
+      - '&dShift+右键 &7改为每次进服都弹'
+    left_click_commands:
+      - '[console] lp user %player_uuid% permission set booknews.news true'
+      - '[close]'
+      - '[player] news<delay=2>'
+      - '[sound] ENTITY_SNOW_GOLEM_DEATH'
+    right_click_commands:
+      - '[close]'
+      - '[player] newsarchive<delay=2>'
+      - '[sound] BLOCK_NOTE_BLOCK_HAT'
+    shift_right_click_commands:
+      - '[player] newsarchive joinmode'
+      - '[sound] BLOCK_NOTE_BLOCK_CHIME'
+      - '[refresh]'
   'shop':
     material: EMERALD
     enchantments:

@@ -700,13 +700,13 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 右键服务器指南针进入**公共指南**：贸易、传送、功能购买、服务管理等入口集中于此。  
 首页可开关**沉浸式创造**（按 E 打开创造物品栏、拿取扣商店价 + 100% 秒送费，血条与经验仍为生存）。  
-首页有**服务器告示**（书本）：首页写明发布时间（精确到秒）；**每次进服**都会自动打开。也可随时：
+首页有**服务器告示**（书本）：首页写明发布时间（精确到秒）。**默认仅在有新告示时**进服自动打开；可在指南针该按钮上 **Shift+右键** 改为每次进服都打开。也可随时：
 
 ```text
 /news
 ```
 
-指南针上的「服务器告示」：**左键**打开最新一期；**右键**打开历史留档箱子 GUI（按发布时间逆序；未读为附魔书光效，已读为普通书；翻页/返回图标与物品商店一致）。告示书内「打开公共指南」会执行：
+指南针上的「服务器告示」：**左键**打开最新一期；**右键**打开历史留档箱子 GUI（按发布时间逆序；未读为附魔书光效，已读为普通书；翻页/返回图标与物品商店一致）；**Shift+右键**切换进服弹书模式（每次进服 / 仅有更新时，默认后者）。告示书内「打开公共指南」会执行：
 
 ```text
 /dm open home
@@ -874,7 +874,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /battlepass reload
 ```
 
-服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载即可（`always: true`，玩家每次进服都会弹书）。首页第一行须为 `发布：yyyy年MM月dd日 HH:mm:ss`。重载后会自动同步一期历史留档（`MCWWS_NewsArchive`）。
+服务器告示（BookNews）：改完 `plugins/BookNews/config.yml` 后重载即可。`Open-Book-Onjoin.enable` 保持 `false`，进服弹书由 `MCWWS_NewsArchive` 处理（默认仅最新一期未读才弹）。首页第一行须为 `发布：yyyy年MM月dd日 HH:mm:ss`。重载后会自动同步一期历史留档。
 
 ```text
 /booknews reload
@@ -952,7 +952,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
-| 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive-1.0.0.jar`；数据 `plugins/MCWWS_NewsArchive/` |
+| 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive-1.1.0.jar`；数据 `plugins/MCWWS_NewsArchive/` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
@@ -1102,8 +1102,8 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 插件 | 版本 | 本服作用 |
 | ---- | ---- | -------- |
 | DeluxeMenus | 1.14.1 DEV | **指南针公共指南** |
-| BookNews | 6.26 | **服务器告示书本**；每次进服弹出；首页含发布时间；`/news`；书内打开指南为 `/dm open home` |
-| MCWWS_NewsArchive | 1.0.0 | **告示历史留档**；`/newsarchive`；未读附魔书 / 已读普通书；商店风格翻页 |
+| BookNews | 6.26 | **服务器告示书本**；首页含发布时间；`/news`；书内打开指南为 `/dm open home`；进服弹书已交给留档插件 |
+| MCWWS_NewsArchive | 1.1.0 | **告示历史留档**与进服弹书；默认仅有更新才弹；`/newsarchive joinmode`；未读附魔书 / 已读普通书 |
 | BlueMap | 5.23 | 三维网页地图 + mcwws-gis.js |
 | DecentHolograms | 2.10.1 | 全息文字 |
 | TitleManager | — | 标题/Tab 动画 |

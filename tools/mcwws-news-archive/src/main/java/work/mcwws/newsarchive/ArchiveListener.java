@@ -9,6 +9,7 @@ import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryDragEvent;
 import org.bukkit.event.player.PlayerCommandPreprocessEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.server.ServerCommandEvent;
 
 public final class ArchiveListener implements Listener {
@@ -102,24 +103,20 @@ public final class ArchiveListener implements Listener {
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        if (player.hasPermission("booknews.skip")) {
+        plugin.joinPrefs().applyPermission(player);
+        if (!plugin.shouldOpenOnJoin(player)) {
             return;
         }
-        // 进服自动弹书后，把最新期标为已读（与 BookNews OpenBookDelaySecond 对齐）
-        long delaySeconds = 5L;
-        try {
-            org.bukkit.configuration.file.YamlConfiguration cfg =
-                    org.bukkit.configuration.file.YamlConfiguration.loadConfiguration(
-                            plugin.resolveServerFile(plugin.getConfig().getString(
-                                    "booknews-config", "plugins/BookNews/config.yml")));
-            if (!cfg.getBoolean("Open-Book-Onjoin.enable", true)) {
-                return;
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            if (player.isOnline() && plugin.shouldOpenOnJoin(player)) {
+                plugin.openLatestForJoin(player);
             }
-            delaySeconds = Math.max(0L, cfg.getLong("OpenBookDelaySecond", 5L));
-        } catch (Exception ignored) {
-            // keep default
-        }
-        Bukkit.getScheduler().runTaskLater(plugin, () -> markLatestRead(player), (delaySeconds + 1L) * 20L);
+        }, plugin.joinOpenDelayTicks());
+    }
+
+    @EventHandler
+    public void onQuit(PlayerQuitEvent event) {
+        plugin.joinPrefs().clearPermission(event.getPlayer());
     }
 
     private void markLatestRead(Player player) {
