@@ -1,35 +1,5 @@
-next_id: 11212
+next_id: 11215
 entries:
-  '6212':
-    id: 6212
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: shop_sell
-    amount: 0.99
-    description: 出售 light x1
-    refId: us-105ea956-a3b3-4cfa-9d13-56fc2563fb80
-    createdAt: '2026-07-20T17:25:23.000Z'
-  '6213':
-    id: 6213
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: shop_sell
-    amount: 0.99
-    description: 出售 light x1
-    refId: us-3bf007bf-130d-4546-8500-507cb41d2b50
-    createdAt: '2026-07-20T17:25:23.000Z'
-  '6214':
-    id: 6214
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: shop_sell
-    amount: 0.99
-    description: 出售 light x1
-    refId: us-4247305b-3438-4dea-84a4-de42df9f8103
-    createdAt: '2026-07-20T17:25:23.000Z'
   '6215':
     id: 6215
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -54508,3 +54478,36 @@ entries:
     description: 飞行消耗
     refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/18 19:40
     createdAt: '2026-09-18T11:40:23.009820700Z'
+  '11212':
+    id: 11212
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 296
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/19 12:22
+    createdAt: '2026-09-19T04:22:42.031005400Z'
+    updatedAt: '2026-09-19T04:24:10.029832300Z'
+  '11213':
+    id: 11213
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 76
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/19 12:25
+    createdAt: '2026-09-19T04:25:49.034581900Z'
+    updatedAt: '2026-09-19T04:26:07.027564Z'
+  '11214':
+    id: 11214
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 236
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/19 12:27
+    createdAt: '2026-09-19T04:27:08.027711Z'
+    updatedAt: '2026-09-19T04:28:06.023279400Z'
