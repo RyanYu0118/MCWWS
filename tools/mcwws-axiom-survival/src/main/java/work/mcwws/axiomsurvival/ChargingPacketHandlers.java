@@ -69,13 +69,16 @@ final class ChargingPacketHandlers {
         }
         try {
             if (!decide(plugin, gate, player, friendlyByteBuf, channel)) {
+                PacketBufs.skipRemaining(friendlyByteBuf);
                 return;
             }
         } catch (ReflectiveOperationException ex) {
             plugin.getLogger().log(Level.WARNING, "Axiom 扣费预估失败 (" + channel + "): " + ex.getMessage(), ex);
+            PacketBufs.skipRemaining(friendlyByteBuf);
             return;
         } catch (InterruptedException ex) {
             Thread.currentThread().interrupt();
+            PacketBufs.skipRemaining(friendlyByteBuf);
             return;
         } catch (Throwable ex) {
             // Axiom 在处理器抛异常时会直接踢人，这里兜住任何意外，宁可放过一次编辑

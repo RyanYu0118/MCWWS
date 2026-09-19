@@ -18,6 +18,21 @@ final class PacketBufs {
         buf.getClass().getMethod("readerIndex", int.class).invoke(buf, index);
     }
 
+    /**
+     * 拒绝改块时必须把剩余字节吃掉。AxiomPaper 在处理器返回后检查
+     * {@code readableBytes()==0}，否则会踢人并报 Failed to fully read axiom:… packet。
+     */
+    static void skipRemaining(Object buf) {
+        if (buf == null) {
+            return;
+        }
+        try {
+            int writer = (int) buf.getClass().getMethod("writerIndex").invoke(buf);
+            readerIndex(buf, writer);
+        } catch (ReflectiveOperationException ignored) {
+        }
+    }
+
     static byte[] copyReadable(Object buf) throws ReflectiveOperationException {
         int mark = readerIndex(buf);
         int length = (int) buf.getClass().getMethod("readableBytes").invoke(buf);

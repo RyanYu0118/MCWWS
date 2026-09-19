@@ -78,7 +78,7 @@ final class EditorPacketHandlers {
                 }
                 switch (result) {
                     case RESTORE_NOW -> restoreService.restoreNow(player);
-                    case SKIP -> { }
+                    case SKIP -> PacketBufs.skipRemaining(buf);
                     case PROCEED -> PacketDelegate.invoke(delegate, player, buf);
                 }
                 return null;
