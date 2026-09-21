@@ -1,0 +1,83 @@
+# MCWWS_WorldSync — 两端互斥完整世界同步
+# 同一时刻只有持有写入锁的节点允许玩家进服。待机端只收 staging，开服前（onLoad）再套到世界目录。
+
+node-id: local
+# listen = 公网/Docker 协调端（对端连进来）
+# connect = 家庭 NAT 后主动连出
+mode: connect
+
+token: CHANGE_ME
+
+listen:
+  host: 0.0.0.0
+  port: 8766
+
+# connect 模式：本地连出，不要给家里做端口映射
+# 若 Nginx 反代，可写成 https://www.songyi.icu/worldsync
+peer-url: http://127.0.0.1:8766
+
+# 开服后是否尝试声明写入锁（首次打底完成后，当前这份磁盘世界所在的那一端设 true）
+claim-on-enable: false
+
+# 租约：对端心跳超时后锁进入冻结（两端都拒绝进服），避免双写。不会自动把锁交给待机端。
+lease-seconds: 45
+heartbeat-seconds: 4
+flush-seconds: 15
+
+join:
+  deny-message: "世界正在另一端运行（持锁节点：{holder}）。请管理员执行 /worldsync handover 后再进服。"
+  # 即使有 mcwws.worldsync.bypass 权限，默认仍踢；紧急开服排错才改 true
+  allow-bypass-permission: false
+
+handover:
+  kick-message: "世界正在切换到另一端，请稍候从对端重新进入。"
+  # stop = 冲刷后 shutdown，下次进程启动时 onLoad 应用 staging
+  # none = 只写 apply-on-boot 标记，由你手动停开服
+  # process = 执行 process.command
+  # http = 调用可配置的 MCSManager/脚本 HTTP
+  restart-mode: stop
+  shutdown-delay-ticks: 40
+  process:
+    command: []
+  http:
+    enabled: false
+    method: POST
+    url: ""
+    headers: {}
+    body: ""
+
+# 相对服务器根目录（world 容器）的前缀。不要默认同步整个 plugins/
+sync-prefixes:
+  - world/
+  - world_nether/
+  - world_the_end/
+  - dimensionalhome/
+  - plugins/Residence/
+  - plugins/Essentials/userdata/
+  - plugins/MCWWS_EconomyLedger/
+  - plugins/MCWWS_NewsArchive/
+  - plugins/UltimateShop/
+  - plugins/GriefPreventionData/
+  - plugins/WorldGuard/
+  - plugins/BankPlus/
+  - plugins/Skript/scripts/web/mcwws/economy/web_prices.yml
+  - plugins/Skript/scripts/mcwws/economy/market_state.yml
+
+# 禁止热拷与无意义文件（即使前缀命中也不传）
+skip-globs:
+  - "**/*.mv.db"
+  - "**/*.mv.db-shm"
+  - "**/*.mv.db-wal"
+  - "**/*.lock"
+  - "**/*.jar"
+  - "**/*.jar.new"
+  - "**/logs/**"
+  - "**/.paper-remapped/**"
+  - "**/session.lock"
+  - "**/uid.dat"
+  - "**/CoreProtect/**"
+
+# LuckPerms 请两端改连同一 MariaDB，不要同步 H2。
+# CoreProtect 库很大，默认跳过；需要回档历史再从白名单自行加前缀并去掉 skip。
+
+debug: false

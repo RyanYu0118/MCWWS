@@ -1,0 +1,21 @@
+name: MCWWS_WorldSync
+main: work.mcwws.worldsync.McwwsWorldSyncPlugin
+version: 1.0.0
+api-version: '1.21'
+description: 两端世界互斥写入锁与脏文件增量同步（同一时刻仅一端可进服）
+authors: [RYAN STUDIO]
+
+commands:
+  worldsync:
+    description: 世界同步状态、接管、冲刷与重载
+    usage: /worldsync [status|handover|flush|claim|release|force-lock|reload]
+    aliases: [mcwws-worldsync]
+    permission: mcwws.worldsync.admin
+
+permissions:
+  mcwws.worldsync.admin:
+    description: 管理世界同步锁与接管
+    default: op
+  mcwws.worldsync.bypass:
+    description: 无写入锁时仍允许进服（紧急；默认不开）
+    default: false

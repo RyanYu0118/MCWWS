@@ -304,6 +304,38 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - **BlueMap + MCWWS WebHost**：浏览器端地图与商城、账本（见地理学 · 测绘）
 - **CommandPrompterPaper**：聊天栏分步提示长命令，减少记指令负担
 
+### 7.4 两端世界互斥同步（管理员）
+
+本服可在**本机 Paper**与公网（如 MCSManager / Docker，`www.songyi.icu`）各跑一份 **26.2** 世界，但**不能**两端同时对玩家开放。同一时刻只有持有**写入锁**的那一端允许进服；另一端拒绝登录，只把脏世界/玩家/白名单插件数据收到 `staging`，接管时重启套用。
+
+这不是「两端玩家互相看见挖方块」。完整箱子、红石、实体、领地与经济要一致，就必须避免两端同时 tick 同一世界。
+
+**首次：** 先用备份/整包把两边世界对齐，再装 `MCWWS_WorldSync`。公网节点 `mode: listen`、端口默认 **8766**（可用 Nginx 反代成 `https://域名/worldsync`）；家里 NAT 后的节点 `mode: connect`，`peer-url` 连出公网。两边 `token` 相同且不要用 `CHANGE_ME`。当前磁盘世界所在的那一端设 `claim-on-enable: true` 或进服后执行：
+
+```text
+/worldsync claim
+```
+
+**日常切换**（在**即将游玩的那一端**、确认对端不要留人）：
+
+```text
+/worldsync handover
+```
+
+持锁端会踢人、存盘、冲刷脏 `r.*.mca` 与白名单文件并放锁；本端写 `apply-on-boot` 后按 `handover.restart-mode` 关服，下次启动在**世界加载前**套用 staging。也可手动停服后运行 `tools/mcwws-world-sync/apply-staging.ps1`（Windows）或 `apply-staging.sh`（Linux/Docker）。
+
+```text
+/worldsync status
+```
+
+```text
+/worldsync flush
+```
+
+心跳超时不会把锁自动交给待机端（防止双写），锁会**冻结**，两端都进不了，需确认无人后再 `/worldsync force-lock` 或完成一次 handover。
+
+**数据范围：** 配置里的 `sync-prefixes`（主世界/下界/末地、Residence、Essentials 玩家数据、部分 MCWWS 与商店状态等）。**不同步** LuckPerms 的 H2（`*.mv.db` 热拷会坏库）——权限请两端改连**同一 MariaDB**。CoreProtect 默认跳过。不要把 BuildBridge 的 `127.0.0.1:8765` 当同步通道。
+
 ---
 
 ## 8. 建筑学
@@ -640,6 +672,8 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 | 生存中键选块购买 | 开 | `mcwws.shop.pickbuy` + `ultimateshop.quickbuy`（均写入 LuckPerms `default` 组；后者插件默认仅 OP，须显式放开）；背包无货时二次中键买一组 |
 | 沉浸式创造 | 开 | `mcwws.immersive-creative.use`；指南开关（重进保留）；需客户端 1.0.9+；拿取按商店价+100% 秒送费；中键一组进主手；生存栏整理不计费 |
 
+若本机与公网各有一份世界：**同一时刻只有一端开放进服**；另一端会提示世界在对端运行（管理员见计算机学 · 两端世界互斥同步）。
+
 ### 2.4 服务器白名单
 
 本服开启原版**白名单**：未列入者无法进入（踢出文案为「你不在此服务器的白名单中！」）。`server.properties` 中 `white-list=true`，且 `enforce-whitelist=true`（已在线但不在名单者也会被踢）。
@@ -847,6 +881,22 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 ```
 
 ```text
+/worldsync status
+```
+
+```text
+/worldsync handover
+```
+
+```text
+/worldsync flush
+```
+
+```text
+/worldsync claim
+```
+
+```text
 /mcwws-resquiet-reload
 ```
 
@@ -914,7 +964,7 @@ whitelist on
    - 化学（辐射、工艺流程、能源化工）
    - 魔法学（附魔、炼金注入、护符、奇术）
    - 合成学（配方、手持规则、大型合成链）
-   - 计算机学（电力物流、脚本自动化、终端）
+   - 计算机学（电力物流、脚本自动化、终端、两端世界互斥同步）
    - 建筑学（生存改造、曲线、轨道交通、装饰）
    - 承载学（随身物品、外卖柜、储物）
 3. **社会科学**
@@ -942,6 +992,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.0.0.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -969,7 +1020,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 
 ## 附录 E：全插件百科
 
-> 下列为 `plugins/` 目录内**已加载 jar**（截至文档修订时约 **141** 个）及主要数据目录说明。  
+> 下列为 `plugins/` 目录内**已加载 jar**（截至文档修订时约 **142** 个）及主要数据目录说明。  
 > **MCWWS_*** 为制作组自研；其余为第三方。`plugins/屏蔽/` 内为**停用**备份，不列入下表。  
 > 版本号取自 jar 文件名；自研 MCWWS 插件已带版本（配套对另含 `-need` 段）。无版本号的第三方以目录内 `plugin.yml` 或 jar 构建信息为准。
 
@@ -980,6 +1031,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
+| MCWWS_WorldSync | 1.0.0 | 本机与公网世界互斥写入锁；脏 region/玩家/白名单插件数据进 staging；`/worldsync handover` 接管后重启套用；默认端口 8766 |
 | MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |
