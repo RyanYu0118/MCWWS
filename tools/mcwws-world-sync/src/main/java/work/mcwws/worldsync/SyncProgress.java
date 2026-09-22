@@ -48,8 +48,9 @@ public final class SyncProgress {
 
     public String consoleLine() {
         int pct = percent();
+        String pctText = pctText();
         String path = current.isEmpty() ? "" : "  " + shorten(current);
-        return phase + " " + bar(pct) + " " + pct + "%  " + Math.min(done, total) + "/" + total + path;
+        return phase + " " + bar(pct) + " " + pctText + "  " + Math.min(done, total) + "/" + total + path;
     }
 
     /** Shown on the disconnect screen while a transfer is running. */
@@ -58,7 +59,7 @@ public final class SyncProgress {
             return "正在从另一端同步最新世界，请稍后重新连接。";
         }
         int pct = percent();
-        return "正在从另一端同步最新世界（" + phase + " " + bar(pct) + " " + pct + "%，"
+        return "正在从另一端同步最新世界（" + phase + " " + bar(pct) + " " + pctText() + "，"
                 + Math.min(done, total) + "/" + total + "），请稍后重新连接。";
     }
 
@@ -67,6 +68,17 @@ public final class SyncProgress {
             return 0;
         }
         return Math.min(100, done * 100 / total);
+    }
+
+    private String pctText() {
+        if (total <= 0) {
+            return "0%";
+        }
+        int pct = percent();
+        if (pct == 0 && done > 0) {
+            return String.format(java.util.Locale.ROOT, "%.1f%%", done * 100.0 / total);
+        }
+        return pct + "%";
     }
 
     static String bar(int pct) {

@@ -14,6 +14,8 @@ import java.time.Duration;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public final class SyncPeerClient {
     private final McwwsWorldSyncPlugin plugin;
@@ -116,6 +118,81 @@ public final class SyncPeerClient {
         }
         try (InputStream in = resp.body()) {
             plugin.staging().writeStaging(rel, in, -1);
+        }
+    }
+
+    /**
+     * @return false when the listen node has no zip bundle endpoint
+     */
+    public boolean pullBundle() throws IOException, InterruptedException {
+        HttpRequest req = HttpIo.authed(plugin.config().peerUrl + "/v1/outbox/bundle", plugin.config().token)
+                .GET()
+                .timeout(Duration.ofMinutes(30))
+                .build();
+        HttpResponse<InputStream> resp = send(req, HttpResponse.BodyHandlers.ofInputStream());
+        int code = resp.statusCode();
+        if (code == 404 || code == 405) {
+            resp.body().close();
+            return false;
+        }
+        if (code >= 400) {
+            String err = new String(resp.body().readAllBytes(), StandardCharsets.UTF_8);
+            throw new IOException("bundle HTTP " + code + " " + err);
+        }
+        long len = resp.headers().firstValueAsLong("Content-Length").orElse(-1L);
+        int total = len > 0L && len <= Integer.MAX_VALUE ? (int) len : 1;
+        Path tmp = plugin.getDataFolder().toPath().resolve("incoming-bundle.zip");
+        Files.createDirectories(tmp.getParent());
+        plugin.progress().begin("下载压缩包", total);
+        long got = 0L;
+        try (InputStream in = resp.body(); java.io.OutputStream out = Files.newOutputStream(tmp)) {
+            byte[] buf = new byte[65536];
+            int n;
+            while ((n = in.read(buf)) >= 0) {
+                out.write(buf, 0, n);
+                got += n;
+                int shown = len > 0L ? (int) Math.min(got, total) : 1;
+                plugin.progress().tick(plugin, shown, (got / 1024) + " KB");
+            }
+        }
+        plugin.getLogger().info("压缩包已下载 " + (got / 1024) + " KB，正在解压");
+        unzipBundle(tmp);
+        Files.deleteIfExists(tmp);
+        ackBundle();
+        plugin.progress().end(plugin);
+        return true;
+    }
+
+    private void unzipBundle(Path zip) throws IOException {
+        try (ZipInputStream zin = new ZipInputStream(Files.newInputStream(zip))) {
+            ZipEntry entry;
+            while ((entry = zin.getNextEntry()) != null) {
+                if (entry.isDirectory()) {
+                    continue;
+                }
+                String name = entry.getName();
+                if (!PathPolicy.allowed(name, plugin.config().prefixes, plugin.config().skipGlobs)) {
+                    plugin.getLogger().warning("跳过压缩包条目 " + name);
+                    continue;
+                }
+                plugin.staging().writeStaging(name, zin, -1);
+                zin.closeEntry();
+            }
+        }
+    }
+
+    private void ackBundle() {
+        try {
+            HttpRequest req = HttpIo.authed(plugin.config().peerUrl + "/v1/outbox/bundle/ack", plugin.config().token)
+                    .timeout(Duration.ofSeconds(60))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .build();
+            HttpResponse<String> resp = send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+            if (resp.statusCode() >= 400 && resp.statusCode() != 404 && resp.statusCode() != 405) {
+                plugin.getLogger().warning("确认压缩包失败 HTTP " + resp.statusCode());
+            }
+        } catch (Exception e) {
+            plugin.getLogger().warning("确认压缩包失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
         }
     }
 

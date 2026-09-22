@@ -16,7 +16,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
-import java.util.stream.Stream;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 /** Coordinator HTTP API on the listen node. */
 public final class SyncListenServer {
@@ -40,6 +41,8 @@ public final class SyncListenServer {
         server.createContext("/v1/outbox", this::outboxList);
         server.createContext("/v1/outbox/file", this::outboxFile);
         server.createContext("/v1/outbox/ack", this::outboxAck);
+        server.createContext("/v1/outbox/bundle", this::outboxBundle);
+        server.createContext("/v1/outbox/bundle/ack", this::outboxBundleAck);
         server.setExecutor(Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r, "MCWWS-WorldSync-http");
             t.setDaemon(true);
@@ -237,6 +240,82 @@ public final class SyncListenServer {
         }
         plugin.outbox().forget(rel);
         HttpIo.json(ex, 200, HttpIo.ok("path", rel));
+    }
+
+    private void outboxBundle(HttpExchange ex) throws IOException {
+        if (!"GET".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        List<String> files = new ArrayList<>();
+        for (String rel : plugin.outbox().list()) {
+            if (PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
+                files.add(rel);
+            }
+        }
+        Path dir = plugin.getDataFolder().toPath();
+        Path zip = dir.resolve("outbox-bundle.zip");
+        Path manifest = dir.resolve("outbox-bundle.txt");
+        plugin.getLogger().info("正在打包 " + files.size() + " 个文件（已跳过日志）");
+        long written = writeBundle(zip, files);
+        Files.writeString(manifest, String.join("\n", files), StandardCharsets.UTF_8);
+        plugin.getLogger().info("压缩包 " + (written / 1024) + " KB，开始发送");
+        ex.getResponseHeaders().set("Content-Type", "application/zip");
+        ex.sendResponseHeaders(200, written);
+        try (OutputStream out = ex.getResponseBody()) {
+            Files.copy(zip, out);
+        }
+    }
+
+    private long writeBundle(Path zip, List<String> files) throws IOException {
+        Files.createDirectories(zip.getParent());
+        try (ZipOutputStream zout = new ZipOutputStream(Files.newOutputStream(zip))) {
+            byte[] buf = new byte[65536];
+            for (String rel : files) {
+                Path src = plugin.outbox().resolve(rel);
+                if (!Files.isRegularFile(src)) {
+                    continue;
+                }
+                zout.putNextEntry(new ZipEntry(rel));
+                try (InputStream in = Files.newInputStream(src)) {
+                    int n;
+                    while ((n = in.read(buf)) >= 0) {
+                        zout.write(buf, 0, n);
+                    }
+                }
+                zout.closeEntry();
+            }
+        }
+        return Files.size(zip);
+    }
+
+    private void outboxBundleAck(HttpExchange ex) throws IOException {
+        if (!"POST".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        Path manifest = plugin.getDataFolder().toPath().resolve("outbox-bundle.txt");
+        if (!Files.isRegularFile(manifest)) {
+            HttpIo.json(ex, 404, HttpIo.err("no bundle"));
+            return;
+        }
+        int n = 0;
+        for (String rel : Files.readAllLines(manifest, StandardCharsets.UTF_8)) {
+            if (rel.isBlank()) {
+                continue;
+            }
+            plugin.outbox().forget(rel.trim());
+            n++;
+        }
+        Files.deleteIfExists(manifest);
+        Files.deleteIfExists(plugin.getDataFolder().toPath().resolve("outbox-bundle.zip"));
+        HttpIo.json(ex, 200, HttpIo.ok("forgotten", n));
     }
 
     public List<String> knownPeers() {

@@ -179,6 +179,16 @@ public final class HandoverService {
             plugin.progress().end(plugin);
             return;
         }
+        try {
+            if (plugin.client().pullBundle()) {
+                plugin.getLogger().info("压缩包已写入 staging");
+                return;
+            }
+            plugin.getLogger().info("对端没有压缩包接口，改为逐个文件");
+        } catch (IOException e) {
+            plugin.progress().end(plugin);
+            throw e;
+        }
         plugin.progress().begin("拉取", files.size());
         plugin.getLogger().info(plugin.progress().consoleLine());
         java.util.ArrayList<String> failed = new java.util.ArrayList<>();

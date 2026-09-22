@@ -77,6 +77,13 @@ public final class PathPolicy {
                 String ext = rest.substring(1);
                 return p.toLowerCase(Locale.ROOT).endsWith(ext.toLowerCase(Locale.ROOT));
             }
+            if (rest.endsWith("/**")) {
+                String middle = rest.substring(0, rest.length() - 3);
+                return p.equals(middle)
+                        || p.startsWith(middle + "/")
+                        || p.endsWith("/" + middle)
+                        || p.contains("/" + middle + "/");
+            }
             return p.endsWith(rest) || p.contains("/" + rest) || p.equals(rest);
         }
         if (g.startsWith("*.")) {
