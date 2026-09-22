@@ -92,7 +92,11 @@ public final class HandoverService {
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
                 sender.sendMessage(Component.text("正在请求对端冲刷并移交…", NamedTextColor.AQUA));
-                if (plugin.config().connectMode()) {
+                if (plugin.config().s3Mode()) {
+                    plugin.relay().requestHandover();
+                    waitCloudRelease();
+                    plugin.relay().pullChanged();
+                } else if (plugin.config().connectMode()) {
                     plugin.client().requestHandover();
                     waitAndPull();
                 } else {
@@ -157,12 +161,27 @@ public final class HandoverService {
     }
 
     private void releaseLock() throws Exception {
-        if (plugin.config().connectMode()) {
+        if (plugin.config().s3Mode() && plugin.relay() != null) {
+            plugin.relay().release();
+        } else if (plugin.config().connectMode() && plugin.client() != null) {
             plugin.client().release();
         }
         plugin.lock().releaseIfSelf();
         plugin.lock().setJoiningBlocked(true);
         plugin.lock().setHandover(false, "");
+    }
+
+    private void waitCloudRelease() throws Exception {
+        long deadline = System.currentTimeMillis() + 180_000L;
+        while (System.currentTimeMillis() < deadline) {
+            plugin.relay().poll();
+            String holder = plugin.lock().holder();
+            if (holder.isEmpty() || plugin.config().nodeId.equals(holder)) {
+                return;
+            }
+            Thread.sleep(1500);
+        }
+        throw new IOException("等待对端释放云端写入锁超时");
     }
 
     private void restartAfterApply() {

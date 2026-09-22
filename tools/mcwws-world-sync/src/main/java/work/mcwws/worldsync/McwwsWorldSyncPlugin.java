@@ -17,11 +17,13 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private OutboxStore outbox;
     private SyncListenServer listen;
     private SyncPeerClient client;
+    private S3Relay relay;
     private HandoverService handover;
     private FlushService flush;
     private Path serverRoot;
     private int heartbeatTask = -1;
     private boolean appliedOnLoad;
+    private volatile boolean peerOnline;
 
     @Override
     public void onLoad() {
@@ -59,7 +61,13 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
             pc.setExecutor(cmd);
             pc.setTabCompleter(cmd);
         }
-        if (!config.tokenOk()) {
+        if (config.s3Mode()) {
+            if (!config.s3Ready()) {
+                getLogger().severe("transport=s3 但 s3.bucket / access-key / secret-key 还没填，同步不会启动。");
+                lock.setJoiningBlocked(true);
+                return;
+            }
+        } else if (!config.tokenOk()) {
             getLogger().severe("请先在 plugins/MCWWS_WorldSync/config.yml 设置 token（不要用 CHANGE_ME），否则不会启动同步端口。");
             lock.setJoiningBlocked(true);
             return;
@@ -85,7 +93,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         } else {
             lock.setJoiningBlocked(true);
         }
-        getLogger().info("MCWWS_WorldSync 已启用 node=" + config.nodeId + " mode=" + config.mode);
+        getLogger().info("MCWWS_WorldSync 已启用 node=" + config.nodeId + " transport=" + config.transport);
     }
 
     @Override
@@ -108,12 +116,23 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         reloadConfig();
         config = new SyncConfig(getConfig());
         lock.setSelf(config.nodeId);
+        relay = null;
+        if (config.s3Mode() && config.s3Ready()) {
+            startNetwork();
+            return;
+        }
         if (config.tokenOk()) {
             startNetwork();
         }
     }
 
     private void startNetwork() {
+        if (config.s3Mode()) {
+            relay = new S3Relay(this);
+            client = null;
+            return;
+        }
+        relay = null;
         client = new SyncPeerClient(this);
         if (config.listenMode()) {
             try {
@@ -126,6 +145,15 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     }
 
     private void tick() {
+        if (config.s3Mode()) {
+            if (relay != null) {
+                getServer().getScheduler().runTaskAsynchronously(this, () -> relay.poll());
+            }
+            if (lock.hasLock()) {
+                flush.maybePeriodic();
+            }
+            return;
+        }
         lock.expireIfNeeded();
         if (lock.hasLock()) {
             lock.refreshLease(config.leaseSeconds * 1000L);
@@ -139,6 +167,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private void connectTick() {
         try {
             Map<String, Object> st = client.heartbeat();
+            peerOnline = true;
             applyRemoteStatus(st);
             if (!lock.hasLock()) {
                 for (String rel : client.listOutbox()) {
@@ -151,8 +180,9 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
                 getServer().getScheduler().runTask(this, () -> handover.onRemoteRequest(from));
             }
         } catch (Exception e) {
+            peerOnline = false;
             if (config.debug) {
-                getLogger().warning("对端心跳失败: " + e.getMessage());
+                getLogger().warning("对端心跳失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
         }
     }
@@ -179,6 +209,14 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     }
 
     public void claimLock(boolean forceLog) throws Exception {
+        if (config.s3Mode()) {
+            relay.claim();
+            getServer().getScheduler().runTask(this, () -> handover.restoreHolderWorldRules());
+            if (forceLog) {
+                getLogger().info("本节点持有云端写入锁 generation=" + lock.generation());
+            }
+            return;
+        }
         if (config.connectMode()) {
             Map<String, Object> st = client.claim();
             applyRemoteStatus(st);
@@ -211,6 +249,8 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         m.put("handoverPending", lock.handoverPending());
         m.put("handoverFrom", lock.handoverFrom());
         m.put("joiningBlocked", lock.joiningBlocked());
+        m.put("transport", config.transport);
+        m.put("peerOnline", peerOnline);
         m.put("leaseUntil", lock.leaseUntil());
         return m;
     }
@@ -239,6 +279,14 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         return client;
     }
 
+    public S3Relay relay() {
+        return relay;
+    }
+
+    public void markPeerOnline(boolean online) {
+        this.peerOnline = online;
+    }
+
     public HandoverService handover() {
         return handover;
     }
@@ -249,5 +297,9 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
 
     public Path serverRoot() {
         return serverRoot;
+    }
+
+    public boolean peerOnline() {
+        return peerOnline;
     }
 }

@@ -5,12 +5,13 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 public final class FlushService {
     private final McwwsWorldSyncPlugin plugin;
     private volatile long lastFlush;
+    private volatile long lastFailLog;
+    private volatile boolean skippedPeerLogged;
 
     public FlushService(McwwsWorldSyncPlugin plugin) {
         this.plugin = plugin;
@@ -77,7 +78,11 @@ public final class FlushService {
                     lastFlush = System.currentTimeMillis();
                 } catch (Exception e) {
                     plugin.dirty().addAll(paths);
-                    plugin.getLogger().severe("冲刷失败，已把路径放回脏集: " + e.getMessage());
+                    long now = System.currentTimeMillis();
+                    if (now - lastFailLog > 120_000L) {
+                        lastFailLog = now;
+                        plugin.getLogger().warning("冲刷暂停（对端未连通，本机可继续玩）: " + describe(e));
+                    }
                 } finally {
                     if (after != null) {
                         after.run();
@@ -94,10 +99,29 @@ public final class FlushService {
         if (plugin.dirty().size() == 0) {
             return;
         }
+        if (plugin.config().connectMode() && !plugin.config().s3Mode() && !plugin.peerOnline()) {
+            if (!skippedPeerLogged) {
+                skippedPeerLogged = true;
+                plugin.getLogger().info("对端未连通，脏区块先留在本机，连上公网后再冲刷。");
+            }
+            return;
+        }
+        skippedPeerLogged = false;
         if (System.currentTimeMillis() - lastFlush < plugin.config().flushSeconds * 1000L) {
             return;
         }
         runNow(false, null);
+    }
+
+    private static String describe(Throwable e) {
+        if (e == null) {
+            return "unknown";
+        }
+        String m = e.getMessage();
+        if (m == null || m.isBlank()) {
+            return e.getClass().getSimpleName();
+        }
+        return e.getClass().getSimpleName() + ": " + m;
     }
 
     private void send(List<String> paths) throws Exception {
@@ -111,7 +135,9 @@ public final class FlushService {
             if (!Files.isRegularFile(src)) {
                 continue;
             }
-            if (plugin.config().listenMode()) {
+            if (plugin.config().s3Mode()) {
+                plugin.relay().putFile(rel, src);
+            } else if (plugin.config().listenMode()) {
                 plugin.outbox().put(rel, src);
             } else {
                 plugin.client().putFile(rel, src);
@@ -122,7 +148,7 @@ public final class FlushService {
             }
         }
         if (!sent.isEmpty()) {
-            plugin.getLogger().info("已同步 " + sent.size() + " 个文件到对端 staging/outbox");
+                plugin.getLogger().info("已同步 " + sent.size() + " 个文件");
         }
     }
 }

@@ -54,25 +54,40 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
             });
             case "release" -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
-                    if (plugin.config().connectMode() && plugin.client() != null) {
+                    if (plugin.config().s3Mode() && plugin.relay() != null) {
+                        plugin.relay().release();
+                    } else if (plugin.config().connectMode() && plugin.client() != null) {
                         plugin.client().release();
                     }
                     plugin.lock().releaseIfSelf();
                     plugin.lock().setJoiningBlocked(true);
                     plugin.getServer().getScheduler().runTask(plugin, () -> plugin.handover().applyStandbyWorldRules());
-                    sender.sendMessage(Component.text("已释放写入锁，本端拒绝进服。", NamedTextColor.YELLOW));
+                    plugin.getServer().getScheduler().runTask(plugin,
+                            () -> sender.sendMessage(Component.text("已释放写入锁，本端拒绝进服。", NamedTextColor.YELLOW)));
                 } catch (Exception e) {
-                    sender.sendMessage(Component.text("释放失败: " + e.getMessage(), NamedTextColor.RED));
+                    plugin.getServer().getScheduler().runTask(plugin,
+                            () -> sender.sendMessage(Component.text("释放失败: " + e.getMessage(), NamedTextColor.RED)));
                 }
             });
             case "handover" -> plugin.handover().requestTakeover(sender);
-            case "force-lock" -> {
-                plugin.lock().setHolder(plugin.config().nodeId, plugin.lock().generation() + 1,
-                        System.currentTimeMillis() + plugin.config().leaseSeconds * 1000L, false);
-                plugin.lock().setJoiningBlocked(false);
-                plugin.getServer().getScheduler().runTask(plugin, () -> plugin.handover().restoreHolderWorldRules());
-                sender.sendMessage(Component.text("已强制本节点持锁（仅紧急排错；确认对端无人游玩）。", NamedTextColor.GOLD));
-            }
+            case "force-lock" -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
+                try {
+                    if (plugin.config().s3Mode() && plugin.relay() != null) {
+                        plugin.relay().force();
+                    } else {
+                        plugin.lock().setHolder(plugin.config().nodeId, plugin.lock().generation() + 1,
+                                System.currentTimeMillis() + plugin.config().leaseSeconds * 1000L, false);
+                        plugin.lock().setJoiningBlocked(false);
+                    }
+                    plugin.getServer().getScheduler().runTask(plugin, () -> {
+                        plugin.handover().restoreHolderWorldRules();
+                        sender.sendMessage(Component.text("已强制本节点持锁（仅紧急排错；确认对端无人游玩）。", NamedTextColor.GOLD));
+                    });
+                } catch (Exception e) {
+                    plugin.getServer().getScheduler().runTask(plugin,
+                            () -> sender.sendMessage(Component.text("强制持锁失败: " + e.getMessage(), NamedTextColor.RED)));
+                }
+            });
             default -> sender.sendMessage(Component.text("用法: /worldsync [status|handover|flush|claim|release|force-lock|reload]", NamedTextColor.GRAY));
         }
         return true;

@@ -334,6 +334,8 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 心跳超时不会把锁自动交给待机端（防止双写），锁会**冻结**，两端都进不了，需确认无人后再 `/worldsync force-lock` 或完成一次 handover。
 
+**对象存储中转（不用开 8766）：** 两边 `config.yml` 都设 `transport: s3`，填写同一个阿里云 OSS（或其它兼容 OSS 签名的桶）的 `endpoint`、`bucket`、`access-key`、`secret-key`。桶保持私有。正在玩的那一端 `node-id` 不同（例如 `local` 与 `songyi`），并执行一次 `/worldsync force-lock` 把锁写到云上。之后脏文件由持锁端上传，另一端拉到 `staging`。换边仍用 `/worldsync handover`。
+
 **数据范围：** 配置里的 `sync-prefixes`（主世界/下界/末地、Residence、Essentials 玩家数据、部分 MCWWS 与商店状态等）。**不同步** LuckPerms 的 H2（`*.mv.db` 热拷会坏库）——权限请两端改连**同一 MariaDB**。CoreProtect 默认跳过。不要把 BuildBridge 的 `127.0.0.1:8765` 当同步通道。
 
 ---
@@ -992,7 +994,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.0.0.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.1.0.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -1031,7 +1033,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_WorldSync | 1.0.0 | 本机与公网世界互斥写入锁；脏 region/玩家/白名单插件数据进 staging；`/worldsync handover` 接管后重启套用；默认端口 8766 |
+| MCWWS_WorldSync | 1.1.0 | 本机与公网世界互斥写入锁；可直连或经阿里云 OSS 中转；`/worldsync handover` 接管后重启套用 |
 | MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |

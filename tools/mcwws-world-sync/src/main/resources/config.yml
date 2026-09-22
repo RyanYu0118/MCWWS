@@ -77,6 +77,18 @@ skip-globs:
   - "**/uid.dat"
   - "**/CoreProtect/**"
 
+# direct = 现有 HTTP（公网 listen / 本机 connect，要放行 8766）
+# s3 = 两边都主动连对象存储，不用映射 8766。桶不要公开。
+transport: direct
+
+s3:
+  endpoint: https://oss-cn-hangzhou.aliyuncs.com
+  bucket: ""
+  access-key: ""
+  secret-key: ""
+  prefix: mcwws-worldsync/
+  addressing: virtual
+
 # LuckPerms 请两端改连同一 MariaDB，不要同步 H2。
 # CoreProtect 库很大，默认跳过；需要回档历史再从白名单自行加前缀并去掉 skip。
 

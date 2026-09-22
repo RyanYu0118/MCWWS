@@ -28,10 +28,10 @@ useTimes:
     A:
       buyUseTimes: 86
       totalBuyUseTimes: 3
-      sellUseTimes: 232
-      totalSellUseTimes: 131
+      sellUseTimes: 295
+      totalSellUseTimes: 194
       lastBuyTime: '2026-08-15 20:12:12'
-      lastSellTime: '2026-09-02 22:52:14'
+      lastSellTime: '2026-09-21 21:10:40'
   natural__p6:
     A:
       buyUseTimes: 1
@@ -123,13 +123,6 @@ useTimes:
     M:
       sellUseTimes: 2
       lastSellTime: '2026-06-19 22:28:05'
-  minerals__p6:
-    E:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-25 18:46:05'
-    D:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-19 22:34:27'
   natural__p3:
     L:
       sellUseTimes: 13
@@ -201,6 +194,13 @@ useTimes:
       sellUseTimes: 90
       totalSellUseTimes: 90
       lastSellTime: '2026-08-18 21:53:41'
+  minerals__p6:
+    E:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-25 18:46:05'
+    D:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-19 22:34:27'
   drops:
     C:
       sellUseTimes: 2
@@ -529,11 +529,11 @@ useTimes:
       lastBuyTime: '2026-09-18 19:25:54'
       lastSellTime: '2026-09-18 19:27:03'
     e:
-      buyUseTimes: 4034
-      totalBuyUseTimes: 4034
+      buyUseTimes: 4355
+      totalBuyUseTimes: 4355
       sellUseTimes: 86
       totalSellUseTimes: 86
-      lastBuyTime: '2026-09-18 17:57:57'
+      lastBuyTime: '2026-09-21 20:47:42'
       lastSellTime: '2026-09-18 18:31:24'
     g:
       buyUseTimes: 1544
@@ -1222,17 +1222,28 @@ useTimes:
       lastSellTime: '2026-06-25 21:37:36'
   daily:
     B:
-      sellUseTimes: 18
       totalSellUseTimes: 26
-      lastSellTime: '2026-09-19 20:53:29'
-      lastResetSellTime: '2026-09-19 11:00:00'
-      cooldownSellTime: '2026-09-20 11:00:00'
+      lastResetSellTime: '2026-09-20 11:00:00'
+      cooldownSellTime: '2026-09-22 07:00:00'
     C:
       sellUseTimes: 1
       totalSellUseTimes: 10
       lastSellTime: '2026-09-18 19:27:03'
       lastResetSellTime: '2026-09-14 11:00:00'
       cooldownSellTime: '2026-09-19 11:00:00'
+  brewing:
+    T:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-09-21 20:49:30'
+    E:
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      lastBuyTime: '2026-09-21 20:48:55'
+    O:
+      buyUseTimes: 960
+      totalBuyUseTimes: 960
+      lastBuyTime: '2026-09-21 20:49:52'
   building__p2:
     g:
       buyUseTimes: 6
@@ -1438,6 +1449,40 @@ useTimes:
     P:
       sellUseTimes: 2
       lastSellTime: '2026-07-24 15:11:05'
+  blocks2:
+    O:
+      buyUseTimes: 1
+      lastBuyTime: '2026-05-31 18:00:55'
+    N:
+      buyUseTimes: 1
+      sellUseTimes: 99
+      lastBuyTime: '2026-07-24 02:07:04'
+      lastSellTime: '2026-07-24 02:07:28'
+    M:
+      sellUseTimes: 2247
+      lastSellTime: '2026-06-30 14:46:56'
+    L:
+      sellUseTimes: 1
+      lastSellTime: '2026-06-25 22:37:29'
+    R:
+      buyUseTimes: 62
+      sellUseTimes: 3191
+      lastBuyTime: '2026-06-19 18:18:31'
+      lastSellTime: '2026-08-02 15:56:35'
+    P:
+      sellUseTimes: 2
+      lastSellTime: '2026-06-19 22:28:05'
+    A:
+      buyUseTimes: 3347
+      sellUseTimes: 1165
+      lastBuyTime: '2026-06-26 22:13:15'
+      lastSellTime: '2026-07-24 15:02:51'
+    F:
+      sellUseTimes: 1
+      lastSellTime: '2026-06-25 21:26:18'
+    H:
+      sellUseTimes: 1
+      lastSellTime: '2026-07-19 21:14:58'
   food:
     o:
       buyUseTimes: 1
@@ -1509,40 +1554,6 @@ useTimes:
       sellUseTimes: 1
       totalSellUseTimes: 1
       lastSellTime: '2026-09-02 22:52:15'
-  blocks2:
-    O:
-      buyUseTimes: 1
-      lastBuyTime: '2026-05-31 18:00:55'
-    N:
-      buyUseTimes: 1
-      sellUseTimes: 99
-      lastBuyTime: '2026-07-24 02:07:04'
-      lastSellTime: '2026-07-24 02:07:28'
-    M:
-      sellUseTimes: 2247
-      lastSellTime: '2026-06-30 14:46:56'
-    L:
-      sellUseTimes: 1
-      lastSellTime: '2026-06-25 22:37:29'
-    R:
-      buyUseTimes: 62
-      sellUseTimes: 3191
-      lastBuyTime: '2026-06-19 18:18:31'
-      lastSellTime: '2026-08-02 15:56:35'
-    P:
-      sellUseTimes: 2
-      lastSellTime: '2026-06-19 22:28:05'
-    A:
-      buyUseTimes: 3347
-      sellUseTimes: 1165
-      lastBuyTime: '2026-06-26 22:13:15'
-      lastSellTime: '2026-07-24 15:02:51'
-    F:
-      sellUseTimes: 1
-      lastSellTime: '2026-06-25 21:26:18'
-    H:
-      sellUseTimes: 1
-      lastSellTime: '2026-07-19 21:14:58'
   functional__p2:
     k:
       buyUseTimes: 38
@@ -1858,11 +1869,11 @@ useTimes:
       totalSellUseTimes: 1
       lastSellTime: '2026-09-18 18:31:24'
     D:
-      buyUseTimes: 10
-      totalBuyUseTimes: 10
+      buyUseTimes: 16
+      totalBuyUseTimes: 16
       sellUseTimes: 1
       totalSellUseTimes: 1
-      lastBuyTime: '2026-09-19 20:06:53'
+      lastBuyTime: '2026-09-21 20:50:24'
       lastSellTime: '2026-09-02 22:21:32'
     h:
       sellUseTimes: 1
@@ -2070,11 +2081,11 @@ useTimes:
       lastBuyTime: '2026-09-18 19:19:14'
       lastSellTime: '2026-09-18 19:27:04'
     j:
-      buyUseTimes: 960
-      totalBuyUseTimes: 960
+      buyUseTimes: 1088
+      totalBuyUseTimes: 1088
       sellUseTimes: 283
       totalSellUseTimes: 283
-      lastBuyTime: '2026-09-18 17:50:40'
+      lastBuyTime: '2026-09-21 21:05:12'
       lastSellTime: '2026-09-18 17:43:47'
     l:
       buyUseTimes: 64
@@ -2488,6 +2499,11 @@ useTimes:
     P:
       sellUseTimes: 53
       lastSellTime: '2026-07-19 21:06:25'
+  brewing__p4:
+    A:
+      sellUseTimes: 1025
+      totalSellUseTimes: 1025
+      lastSellTime: '2026-09-21 20:50:00'
   colored__p3:
     n:
       buyUseTimes: 128
@@ -2633,11 +2649,11 @@ useTimes:
       totalBuyUseTimes: 68
       lastBuyTime: '2026-09-03 22:06:20'
     O:
-      buyUseTimes: 68
-      totalBuyUseTimes: 68
+      buyUseTimes: 132
+      totalBuyUseTimes: 132
       sellUseTimes: 58
       totalSellUseTimes: 58
-      lastBuyTime: '2026-09-03 22:28:16'
+      lastBuyTime: '2026-09-21 21:10:04'
       lastSellTime: '2026-09-13 21:56:39'
     J:
       buyUseTimes: 64
@@ -2789,6 +2805,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;D;;E;;F
-    refreshDoneTime: '2026-09-22 00:00:00'
+    nowValue: B;;C;;D;;E;;G
+    refreshDoneTime: '2026-09-23 00:00:00'
 customPlaceholder: {}

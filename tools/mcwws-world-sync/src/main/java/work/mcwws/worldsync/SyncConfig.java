@@ -33,6 +33,13 @@ public final class SyncConfig {
     public final List<String> prefixes;
     public final List<String> skipGlobs;
     public final boolean debug;
+    public final String transport;
+    public final String s3Endpoint;
+    public final String s3Bucket;
+    public final String s3AccessKey;
+    public final String s3SecretKey;
+    public final String s3Prefix;
+    public final boolean s3VirtualHost;
 
     public SyncConfig(FileConfiguration cfg) {
         nodeId = cfg.getString("node-id", "local").trim();
@@ -69,6 +76,39 @@ public final class SyncConfig {
         prefixes = normalizePrefixes(cfg.getStringList("sync-prefixes"));
         skipGlobs = new ArrayList<>(cfg.getStringList("skip-globs"));
         debug = cfg.getBoolean("debug", false);
+        transport = cfg.getString("transport", "direct").trim().toLowerCase(Locale.ROOT);
+        s3Endpoint = trimSlash(cfg.getString("s3.endpoint", "https://oss-cn-hangzhou.aliyuncs.com"));
+        s3Bucket = cfg.getString("s3.bucket", "").trim();
+        s3AccessKey = cfg.getString("s3.access-key", "").trim();
+        s3SecretKey = cfg.getString("s3.secret-key", "").trim();
+        String prefix = PathPolicy.posix(cfg.getString("s3.prefix", "mcwws-worldsync/"));
+        if (!prefix.endsWith("/")) {
+            prefix = prefix + "/";
+        }
+        if (prefix.startsWith("/")) {
+            prefix = prefix.substring(1);
+        }
+        s3Prefix = prefix;
+        s3VirtualHost = !"path".equalsIgnoreCase(cfg.getString("s3.addressing", "virtual"));
+    }
+
+    public boolean s3Mode() {
+        return "s3".equals(transport);
+    }
+
+    public boolean s3Ready() {
+        return !s3Bucket.isEmpty() && !s3AccessKey.isEmpty() && !s3SecretKey.isEmpty() && !s3Endpoint.isEmpty();
+    }
+
+    private static String trimSlash(String url) {
+        if (url == null) {
+            return "";
+        }
+        String u = url.trim();
+        while (u.endsWith("/")) {
+            u = u.substring(0, u.length() - 1);
+        }
+        return u;
     }
 
     public boolean listenMode() {
