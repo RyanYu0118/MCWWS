@@ -83,9 +83,6 @@ public final class LockState {
     }
 
     public synchronized boolean claimLocal(long leaseMs) {
-        if (frozen.get()) {
-            return false;
-        }
         String h = holder.get();
         if (!h.isEmpty() && !h.equals(selfId) && System.currentTimeMillis() < leaseUntilMillis.get()) {
             return false;

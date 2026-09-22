@@ -110,12 +110,9 @@ public final class SyncListenServer {
             return;
         }
         plugin.lock().expireIfNeeded();
-        if (plugin.lock().frozen()) {
-            HttpIo.json(ex, 409, HttpIo.err("lock frozen after lease timeout; use /worldsync force-lock"));
-            return;
-        }
         String holder = plugin.lock().holder();
-        if (!holder.isEmpty() && !holder.equals(node)) {
+        boolean leaseValid = !holder.isEmpty() && System.currentTimeMillis() < plugin.lock().leaseUntil();
+        if (leaseValid && !holder.equals(node)) {
             HttpIo.json(ex, 409, HttpIo.err("held by " + holder));
             return;
         }

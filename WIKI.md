@@ -316,7 +316,9 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /worldsync claim
 ```
 
-**日常切换**（在**即将游玩的那一端**、确认对端不要留人）：
+**进服即切换：** 直接连接你要玩的那一端。若锁是空的，这一端会接过锁并让你进入。若世界正在另一端，这一端会暂停对方（对方玩家被提示改连节点）、等对方存盘上传、把最新文件放进 staging，然后**重启**。重启完成前这次登录会被挡住，提示稍后重连；重启后进入的才是刚同步的世界和位置。不要在旧进程里等待方块自己变掉。
+
+管理员仍可手动：
 
 ```text
 /worldsync handover
@@ -332,7 +334,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /worldsync flush
 ```
 
-心跳超时不会把锁自动交给待机端（防止双写），锁会**冻结**，两端都进不了，需确认无人后再 `/worldsync force-lock` 或完成一次 handover。
+心跳超时不会把锁自动交给待机端（防止双写）。锁空着时，下一次有人进服的那一端会接过锁。对端仍持有有效锁时，进服会自动暂停对端并拉取数据，不会两边同时开放。
 
 **对象存储中转（不用开 8766）：** 两边 `config.yml` 都设 `transport: s3`，填写同一个阿里云 OSS（或其它兼容 OSS 签名的桶）的 `endpoint`、`bucket`、`access-key`、`secret-key`。桶保持私有。正在玩的那一端 `node-id` 不同（例如 `local` 与 `songyi`），并执行一次 `/worldsync force-lock` 把锁写到云上。之后脏文件由持锁端上传，另一端拉到 `staging`。换边仍用 `/worldsync handover`。
 
@@ -994,7 +996,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.1.0.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.0.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -1033,7 +1035,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_WorldSync | 1.1.0 | 本机与公网世界互斥写入锁；可直连或经阿里云 OSS 中转；`/worldsync handover` 接管后重启套用 |
+| MCWWS_WorldSync | 1.2.0 | 进服自动暂停另一端并拉取最新世界，重启后才进入；锁空着时由本次进服的一端接锁 |
 | MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |

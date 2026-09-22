@@ -208,6 +208,39 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         }
     }
 
+    /**
+     * @return null when this login may enter. Otherwise the kick text.
+     *         Entering a server that does not hold the lock starts a switch:
+     *         the other side is paused and its latest files are pulled, then this side restarts.
+     */
+    public String admissionMessage() {
+        if (lock.hasLock() && !lock.joiningBlocked()) {
+            return null;
+        }
+        if (handover != null && handover.busy()) {
+            return "正在从另一端同步最新世界，请稍后重新连接。";
+        }
+        String holder = lock.holder();
+        boolean otherLive = !holder.isEmpty()
+                && !holder.equals(config.nodeId)
+                && System.currentTimeMillis() < lock.leaseUntil();
+        if (otherLive) {
+            if (handover != null) {
+                handover.beginAutoTakeover();
+            }
+            return "正在暂停另一端并拉取最新世界。同步完成后本服会重启，请稍后重新连接。";
+        }
+        try {
+            claimLock(false);
+            if (lock.hasLock() && !lock.joiningBlocked()) {
+                return null;
+            }
+        } catch (Exception e) {
+            getLogger().warning("进服声明锁失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+        }
+        return "世界锁暂不可用。若另一端仍在运行，请稍后重新连接。";
+    }
+
     public void claimLock(boolean forceLog) throws Exception {
         if (config.s3Mode()) {
             relay.claim();

@@ -61,7 +61,9 @@ public final class HandoverService {
             return;
         }
         plugin.lock().setJoiningBlocked(true);
-        Component kick = Component.text(plugin.config().kickMessage, NamedTextColor.GOLD);
+        Component kick = Component.text(
+                "这一端已暂停。请改连另一节点，同步完成后再进入。",
+                NamedTextColor.GOLD);
         for (Player p : plugin.getServer().getOnlinePlayers()) {
             p.kick(kick);
         }
@@ -85,13 +87,20 @@ public final class HandoverService {
             sender.sendMessage(Component.text("本节点已持有写入锁，无需接管。", NamedTextColor.YELLOW));
             return;
         }
+        beginAutoTakeover();
+    }
+
+    /** Join-triggered switch. Safe to call more than once. */
+    public void beginAutoTakeover() {
+        if (plugin.lock().hasLock() && !plugin.lock().joiningBlocked()) {
+            return;
+        }
         if (!running.compareAndSet(false, true)) {
-            sender.sendMessage(Component.text("接管已在进行中。", NamedTextColor.YELLOW));
             return;
         }
         plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
             try {
-                sender.sendMessage(Component.text("正在请求对端冲刷并移交…", NamedTextColor.AQUA));
+                plugin.getLogger().info("进服触发接管：暂停对端并拉取最新世界");
                 if (plugin.config().s3Mode()) {
                     plugin.relay().requestHandover();
                     waitCloudRelease();
@@ -105,18 +114,14 @@ public final class HandoverService {
                         throw new IOException("协调端无对端持锁者，可用 /worldsync claim 直接声明");
                     }
                     plugin.lock().setHandover(true, plugin.config().nodeId);
-                    plugin.getServer().getScheduler().runTask(plugin, () -> {
-                        // listen node requesting: holder is the connect peer; they see handoverPending on heartbeat
-                    });
                     waitAndPull();
                 }
                 plugin.staging().markApplyOnBoot();
-                sender.sendMessage(Component.text("staging 已就绪，即将重启以套用世界文件。", NamedTextColor.GREEN));
+                plugin.getLogger().info("最新数据已写入 staging，即将重启后才允许进入");
                 plugin.getServer().getScheduler().runTask(plugin, this::restartAfterApply);
             } catch (Exception e) {
                 running.set(false);
-                plugin.getLogger().severe("接管失败: " + e.getMessage());
-                sender.sendMessage(Component.text("接管失败: " + e.getMessage(), NamedTextColor.RED));
+                plugin.getLogger().severe("自动接管失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
         });
     }

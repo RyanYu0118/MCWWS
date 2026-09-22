@@ -17,25 +17,21 @@ public final class JoinGuardListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onPreLogin(AsyncPlayerPreLoginEvent event) {
-        if (plugin.lock().hasLock() && !plugin.lock().joiningBlocked()) {
-            return;
+        String deny = plugin.admissionMessage();
+        if (deny != null) {
+            event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(deny, NamedTextColor.GOLD));
         }
-        String msg = plugin.config().denyMessage.replace("{holder}",
-                plugin.lock().holder().isEmpty() ? "无/冻结" : plugin.lock().holder());
-        event.disallow(AsyncPlayerPreLoginEvent.Result.KICK_OTHER, Component.text(msg, NamedTextColor.RED));
     }
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLogin(PlayerLoginEvent event) {
-        if (plugin.lock().hasLock() && !plugin.lock().joiningBlocked()) {
-            return;
-        }
         if (plugin.config().allowBypassPermission && event.getPlayer().hasPermission("mcwws.worldsync.bypass")) {
             event.allow();
             return;
         }
-        String msg = plugin.config().denyMessage.replace("{holder}",
-                plugin.lock().holder().isEmpty() ? "无/冻结" : plugin.lock().holder());
-        event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text(msg, NamedTextColor.RED));
+        String deny = plugin.admissionMessage();
+        if (deny != null) {
+            event.disallow(PlayerLoginEvent.Result.KICK_OTHER, Component.text(deny, NamedTextColor.GOLD));
+        }
     }
 }
