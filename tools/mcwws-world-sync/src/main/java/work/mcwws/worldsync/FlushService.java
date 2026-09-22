@@ -129,29 +129,45 @@ public final class FlushService {
 
     private void send(List<String> paths) throws Exception {
         Path root = plugin.serverRoot();
-        List<String> sent = new ArrayList<>();
+        List<String> todo = new ArrayList<>();
         for (String rel : paths) {
             if (!PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
                 continue;
             }
             Path src = PathPolicy.resolveUnder(root, rel);
-            if (!Files.isRegularFile(src)) {
-                continue;
-            }
-            if (plugin.config().s3Mode()) {
-                plugin.relay().putFile(rel, src);
-            } else if (plugin.config().listenMode()) {
-                plugin.outbox().put(rel, src);
-            } else {
-                plugin.client().putFile(rel, src);
-            }
-            sent.add(rel);
-            if (plugin.config().debug) {
-                plugin.getLogger().info("synced " + rel);
+            if (Files.isRegularFile(src)) {
+                todo.add(rel);
             }
         }
-        if (!sent.isEmpty()) {
-                plugin.getLogger().info("已同步 " + sent.size() + " 个文件");
+        boolean bar = todo.size() >= 20;
+        if (bar) {
+            plugin.progress().begin("写入待传", todo.size());
+            plugin.getLogger().info(plugin.progress().consoleLine());
+        }
+        try {
+            for (int i = 0; i < todo.size(); i++) {
+                String rel = todo.get(i);
+                Path src = PathPolicy.resolveUnder(root, rel);
+                if (plugin.config().s3Mode()) {
+                    plugin.relay().putFile(rel, src);
+                } else if (plugin.config().listenMode()) {
+                    plugin.outbox().put(rel, src);
+                } else {
+                    plugin.client().putFile(rel, src);
+                }
+                if (bar) {
+                    plugin.progress().tick(plugin, i + 1, rel);
+                } else if (plugin.config().debug) {
+                    plugin.getLogger().info("synced " + rel);
+                }
+            }
+        } finally {
+            if (bar) {
+                plugin.progress().end(plugin);
+            }
+        }
+        if (!todo.isEmpty() && !bar) {
+            plugin.getLogger().info("已同步 " + todo.size() + " 个文件");
         }
     }
 }

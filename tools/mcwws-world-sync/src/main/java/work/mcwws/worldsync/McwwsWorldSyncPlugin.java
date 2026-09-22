@@ -24,6 +24,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private int heartbeatTask = -1;
     private boolean appliedOnLoad;
     private volatile boolean peerOnline;
+    private final SyncProgress progress = new SyncProgress();
     private volatile boolean admissionResolving;
     private volatile String admissionDetail = "";
 
@@ -220,7 +221,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
             return null;
         }
         if (handover != null && handover.busy()) {
-            return "正在从另一端同步最新世界，请稍后重新连接。";
+            return progress.kickHint();
         }
         if (otherHolderLive()) {
             if (handover != null) {
@@ -380,6 +381,10 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
 
     public HandoverService handover() {
         return handover;
+    }
+
+    public SyncProgress progress() {
+        return progress;
     }
 
     public FlushService flush() {

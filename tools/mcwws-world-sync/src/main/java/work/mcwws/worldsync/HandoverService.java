@@ -87,6 +87,12 @@ public final class HandoverService {
             sender.sendMessage(Component.text("本节点已持有写入锁，无需接管。", NamedTextColor.YELLOW));
             return;
         }
+        if (busy() || plugin.progress().active()) {
+            String line = plugin.progress().active() ? plugin.progress().consoleLine() : "正在开始，请看接下来的控制台日志";
+            sender.sendMessage(Component.text("接管已在进行：" + line, NamedTextColor.GOLD));
+            return;
+        }
+        sender.sendMessage(Component.text("已开始接管。进度写在本端控制台，大约每 2 秒一行。", NamedTextColor.GOLD));
         beginAutoTakeover();
     }
 
@@ -121,6 +127,7 @@ public final class HandoverService {
                 plugin.getServer().getScheduler().runTask(plugin, this::restartAfterApply);
             } catch (Exception e) {
                 running.set(false);
+                plugin.progress().end(plugin);
                 plugin.getLogger().severe("自动接管失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
         });
@@ -129,39 +136,59 @@ public final class HandoverService {
     private void waitAndPull() throws Exception {
         long deadline = System.currentTimeMillis() + 180_000L;
         boolean released = false;
+        plugin.progress().begin("等待对端存盘", 1);
         while (System.currentTimeMillis() < deadline) {
             if (plugin.config().connectMode()) {
                 Map<String, Object> st = plugin.client().heartbeat();
                 plugin.applyRemoteStatus(st);
-                pullOutbox();
                 String holder = JsonUtil.str(st, "holder", "");
                 if (holder.isEmpty() || plugin.config().nodeId.equals(holder)) {
                     released = true;
-                    pullOutbox();
                     break;
                 }
+                plugin.progress().tick(plugin, 0, "持锁 " + holder);
             } else {
                 plugin.lock().expireIfNeeded();
                 if (plugin.lock().holder().isEmpty()) {
                     released = true;
                     break;
                 }
+                plugin.progress().tick(plugin, 0, "持锁 " + plugin.lock().holder());
             }
             Thread.sleep(1500);
         }
         if (!released) {
+            plugin.progress().end(plugin);
             throw new IOException("等待对端释放写入锁超时");
         }
+        pullOutbox();
     }
 
     private void pullOutbox() throws IOException, InterruptedException {
         if (!plugin.config().connectMode()) {
             return;
         }
+        java.util.ArrayList<String> files = new java.util.ArrayList<>();
         for (String rel : plugin.client().listOutbox()) {
             if (PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
-                plugin.client().pullOutboxFile(rel);
+                files.add(rel);
             }
+        }
+        plugin.getLogger().info("待拉取 " + files.size() + " 个文件");
+        if (files.isEmpty()) {
+            plugin.progress().end(plugin);
+            return;
+        }
+        plugin.progress().begin("拉取", files.size());
+        plugin.getLogger().info(plugin.progress().consoleLine());
+        try {
+            for (int i = 0; i < files.size(); i++) {
+                String rel = files.get(i);
+                plugin.client().pullOutboxFile(rel);
+                plugin.progress().tick(plugin, i + 1, rel);
+            }
+        } finally {
+            plugin.progress().end(plugin);
         }
     }
 
