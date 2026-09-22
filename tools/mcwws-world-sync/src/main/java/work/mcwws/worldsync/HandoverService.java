@@ -181,14 +181,40 @@ public final class HandoverService {
         }
         plugin.progress().begin("拉取", files.size());
         plugin.getLogger().info(plugin.progress().consoleLine());
+        java.util.ArrayList<String> failed = new java.util.ArrayList<>();
         try {
             for (int i = 0; i < files.size(); i++) {
                 String rel = files.get(i);
-                plugin.client().pullOutboxFile(rel);
+                if (!pullOne(rel)) {
+                    failed.add(rel);
+                }
                 plugin.progress().tick(plugin, i + 1, rel);
+            }
+            if (!failed.isEmpty()) {
+                plugin.getLogger().warning("首轮有 " + failed.size() + " 个文件失败，开始重试");
+                java.util.ArrayList<String> still = new java.util.ArrayList<>();
+                for (String rel : failed) {
+                    if (!pullOne(rel)) {
+                        still.add(rel);
+                    }
+                }
+                if (!still.isEmpty()) {
+                    throw new IOException("仍有 " + still.size() + " 个文件拉取失败，例如 " + still.get(0));
+                }
             }
         } finally {
             plugin.progress().end(plugin);
+        }
+    }
+
+    private boolean pullOne(String rel) {
+        try {
+            plugin.client().pullOutboxFile(rel);
+            plugin.client().ackOutbox(rel);
+            return true;
+        } catch (Exception e) {
+            plugin.getLogger().warning("拉取失败 " + rel + ": " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+            return false;
         }
     }
 

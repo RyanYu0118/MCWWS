@@ -39,6 +39,7 @@ public final class SyncListenServer {
         server.createContext("/v1/file", this::putFile);
         server.createContext("/v1/outbox", this::outboxList);
         server.createContext("/v1/outbox/file", this::outboxFile);
+        server.createContext("/v1/outbox/ack", this::outboxAck);
         server.setExecutor(Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r, "MCWWS-WorldSync-http");
             t.setDaemon(true);
@@ -219,6 +220,23 @@ public final class SyncListenServer {
         try (OutputStream out = ex.getResponseBody()) {
             out.write(data);
         }
+    }
+
+    private void outboxAck(HttpExchange ex) throws IOException {
+        if (!"POST".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        String rel = HttpIo.query(ex, "path");
+        if (rel == null || !PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
+            HttpIo.json(ex, 400, HttpIo.err("path not allowed"));
+            return;
+        }
+        plugin.outbox().forget(rel);
+        HttpIo.json(ex, 200, HttpIo.ok("path", rel));
     }
 
     public List<String> knownPeers() {
