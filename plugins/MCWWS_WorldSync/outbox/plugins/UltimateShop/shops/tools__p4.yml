@@ -1,0 +1,195 @@
+settings:
+  menu: shop-menu-tools__p4
+  buy-more: true
+  shop-name: '{lang:tools-shop-name} (4/4)'
+  hide-message: false
+  secret-shop-items: false
+  allow-favourite: true
+  menu-settings:
+    buttons:
+      '4':
+        display-item:
+          material: LIME_STAINED_GLASS_PANE
+          name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
+        actions:
+          '1':
+            type: shop_menu
+            shop: tools__p3
+      '5':
+        display-item:
+          material: BLACK_STAINED_GLASS_PANE
+          name: '{lang:next-page-button}'
+          custom-model-data: 2200010
+items:
+  A:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_CREATOR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_creator%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_creator%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_PRECIPICE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_precipice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_precipice%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_OTHERSIDE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_otherside%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_otherside%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  D:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_RELIC
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_relic%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_relic%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  E:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_5
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_5%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_5%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  F:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_PIGSTEP
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_pigstep%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_pigstep%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  G:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_TEARS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_tears%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_tears%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  H:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUSIC_DISC_LAVA_CHICKEN
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_music_disc_lava_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_music_disc_lava_chicken%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  I:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: FIREWORK_ROCKET
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_firework_rocket%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_firework_rocket%'
+        placeholder: '{amount}$'
+        start-apply: 0

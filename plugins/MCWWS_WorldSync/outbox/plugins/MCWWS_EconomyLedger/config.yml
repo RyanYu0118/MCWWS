@@ -1,0 +1,55 @@
+# 写入 Node player-ledger 消费的队列文件（与 Skript mcwwsAppendLedgerQueueLine 相同）
+ledger-queue-path: plugins/Skript/scripts/web/data/ledger_queue.txt
+
+# 同一 refId 或 uuid+方向+金额 在此窗口内不重复写入（毫秒）
+dedup-window-ms: 4000
+
+# 飞行消耗已由 Skript FlyWithFood 事件单独记录，此处跳过 Essentials 侧相同金额的 API 扣款
+flight:
+  skip-via-economy-event: true
+  amounts:
+    - 4.0
+
+# 屏幕提示：装了 MCWWS_AxiomSurvivalClient 的玩家显示在左下角浮层，其余玩家回退到 action bar。
+# 同分类同方向的连续变动在 merge-window-ms 内累加成一条（飞行每秒扣费、Axiom 逐包扣费），
+# 单笔变动照常单独显示，与网页零钱明细一致。
+notify:
+  # 左下角浮层与 action bar 提示已按需关闭，扣费说明只走聊天框
+  enabled: false
+  actionbar-fallback: true
+  merge-window-ms: 2000
+  format: "{color}{sign}{amount} &7· &f{label} &7· 余 &e{balance}"
+  credit-color: "&a"
+  debit-color: "&c"
+  # 飞行扣费在账本里由 Skript 记录，这里单独给它分类名以便合并与显示
+  flight-category: flight
+  flight-description: 飞行消耗
+  # 分类 → 屏幕显示名；没列出的分类退回账本说明的前半段
+  labels:
+    flight: 飞行消耗
+    axiom: Axiom 建造
+    axiom_undo: Axiom 撤销退款
+    axiom_salvage: Axiom 拆除回收
+    worldedit: 创世神建造
+    worldedit_undo: 创世神撤销退款
+    worldedit_salvage: 创世神拆除回收
+    shop_sell: 出售物品
+    shop_buy: 购买物品
+    other: 经济变动
+
+# Essentials UserBalanceUpdateEvent.Cause 到明细分类的映射
+cause-categories:
+  COMMAND_ECO: other
+  COMMAND_PAY: other
+  COMMAND_SELL: shop_sell
+  API: other
+  SPECIAL: other
+  UNKNOWN: other
+
+cause-descriptions:
+  COMMAND_ECO: 管理员经济命令
+  COMMAND_PAY: 玩家转账
+  COMMAND_SELL: 出售物品
+  API: 经济 API 扣款
+  SPECIAL: 经济变动
+  UNKNOWN: 其他经济变动

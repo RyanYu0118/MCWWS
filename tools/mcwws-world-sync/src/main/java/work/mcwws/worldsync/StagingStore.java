@@ -35,14 +35,16 @@ public final class StagingStore {
     public void writeStaging(String rel, byte[] data) throws IOException {
         Path dest = PathPolicy.resolveUnder(staging, rel);
         Files.createDirectories(dest.getParent());
+        replaceIfDirectory(dest);
         Path tmp = dest.resolveSibling(dest.getFileName() + ".part");
         Files.write(tmp, data);
-        Files.move(tmp, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
+        moveReplacing(tmp, dest);
     }
 
     public void writeStaging(String rel, InputStream in, long expectedSize) throws IOException {
         Path dest = PathPolicy.resolveUnder(staging, rel);
         Files.createDirectories(dest.getParent());
+        replaceIfDirectory(dest);
         Path tmp = dest.resolveSibling(dest.getFileName() + ".part");
         try (OutputStream out = Files.newOutputStream(tmp)) {
             in.transferTo(out);
@@ -51,6 +53,21 @@ public final class StagingStore {
             Files.deleteIfExists(tmp);
             throw new IOException("size mismatch for " + rel);
         }
+        moveReplacing(tmp, dest);
+    }
+
+    private static void replaceIfDirectory(Path dest) throws IOException {
+        if (!Files.isDirectory(dest)) {
+            return;
+        }
+        try (Stream<Path> walk = Files.walk(dest)) {
+            for (Path p : walk.sorted((a, b) -> b.getNameCount() - a.getNameCount()).toList()) {
+                Files.deleteIfExists(p);
+            }
+        }
+    }
+
+    private static void moveReplacing(Path tmp, Path dest) throws IOException {
         try {
             Files.move(tmp, dest, StandardCopyOption.REPLACE_EXISTING, StandardCopyOption.ATOMIC_MOVE);
         } catch (IOException e) {

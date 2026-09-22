@@ -57,8 +57,11 @@ public final class FlushService {
                         plugin.getLogger().warning("扫描白名单 " + prefix + ": " + ex.getMessage());
                     }
                 }
-                Path playerDir = root.resolve("world/playerdata");
-                if (Files.isDirectory(playerDir)) {
+                for (String playerDirRel : new String[] {"world/players/data", "world/playerdata"}) {
+                    Path playerDir = root.resolve(playerDirRel);
+                    if (!Files.isDirectory(playerDir)) {
+                        continue;
+                    }
                     try (Stream<Path> files = Files.list(playerDir)) {
                         files.filter(Files::isRegularFile).forEach(f -> {
                             try {
@@ -67,7 +70,7 @@ public final class FlushService {
                             }
                         });
                     } catch (IOException e) {
-                        plugin.getLogger().warning("扫描 playerdata: " + e.getMessage());
+                        plugin.getLogger().warning("扫描 " + playerDirRel + ": " + e.getMessage());
                     }
                 }
             }

@@ -1,0 +1,39 @@
+settings:
+  menu: shop-menu-mcwws
+  buy-more: true
+  shop-name: '{lang:mcwws-shop-name}'
+  hide-message: false
+  secret-shop-items: true
+  allow-favourite: true
+  menu-settings:
+    buttons:
+      '4':
+        display-item:
+          material: BLACK_STAINED_GLASS_PANE
+          name: '{lang:previous-page-button}'
+          custom-model-data: 2200008
+      '5':
+        display-item:
+          material: BLACK_STAINED_GLASS_PANE
+          name: '{lang:next-page-button}'
+          custom-model-data: 2200010
+items:
+  A:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: LIGHT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_light%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_light%'
+        placeholder: '{amount}$'
+        start-apply: 0

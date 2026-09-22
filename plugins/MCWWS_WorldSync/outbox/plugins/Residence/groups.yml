@@ -1,0 +1,90 @@
+Groups:
+  Default:
+    Residence:
+      CanCreate: true
+      MaxResidences: 100
+      MaxAreasPerResidence: 200
+      MaxEastWest: 1600
+      MinEastWest: 3
+      MaxNorthSouth: 1600
+      MinNorthSouth: 3
+      MaxUpDown: 384
+      MinUpDown: 3
+      MinHeight: -64
+      MaxHeight: 320
+      MaxSubzonesInArea: 3
+      SubzoneDepth: 3
+      SubzoneMaxEastWest: 16
+      SubzoneMinEastWest: 3
+      SubzoneMaxNorthSouth: 16
+      SubzoneMinNorthSouth: 3
+      SubzoneMaxUpDown: 384
+      SubzoneMinUpDown: 3
+      CanTeleport: true
+      Unstuck: true
+      Kick: false
+      SelectCommandAccess: true
+      ItemListAccess: true
+    Messaging:
+      CanChange: true
+      DefaultEnter: 欢迎 %player 来到 %residence！该领地所有者为 %owner。
+      DefaultLeave: 你已离开 %residence。
+    Lease:
+      MaxDays: 16
+      RenewIncrement: 14
+    Rent:
+      MaxRents: 3
+      MaxRentables: 3
+      MaxRentDays: 31
+    Economy:
+      CanBuy: true
+      CanSell: false
+      IgnoreLimits: false
+      BuyCost: 0.5
+      SellCost: 0.25
+      RenewCost: 0.2
+    Flags:
+      Permission: null
+      Default: null
+      CreatorDefault: null
+      GroupDefault: null
+      World:
+        Global: null
+        WorldNameHere: null
+  NextGroup:
+    Residence:
+      CanCreate: true
+      MaxResidences: 4
+      MaxAreasPerResidence: 2
+      MaxEastWest: 20
+      MaxNorthSouth: 20
+      MaxUpDown: 20
+      MinHeight: -64
+      MaxHeight: 320
+      SubzoneDepth: 3
+      CanTeleport: true
+      Unstuck: true
+      Kick: true
+      SelectCommandAccess: true
+      ItemListAccess: true
+    Messaging:
+      CanChange: true
+      DefaultEnter: 欢迎 %player 来到 %residence！该领地所有者为 %owner。
+      DefaultLeave: 你已离开 %residence。
+    Lease:
+      MaxDays: 16
+      RenewIncrement: 14
+    Rent:
+      MaxRents: 3
+      MaxRentables: 3
+      MaxRentDays: 31
+    Economy:
+      CanBuy: true
+      CanSell: false
+      IgnoreLimits: false
+      BuyCost: 0.7
+      SellCost: 0.3
+      RenewCost: 0.3
+GroupAssignments:
+  bekvon: default
+  player: default

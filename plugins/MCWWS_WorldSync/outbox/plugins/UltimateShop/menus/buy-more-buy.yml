@@ -1,0 +1,113 @@
+title: '{lang:buy-more-title}'
+size: 36
+
+dialog:
+  enabled: false
+
+layout:
+  - '0000R000Q'
+  - '012345670'
+  - '0000P0000'
+  - '0000Y0000'
+
+amount-items:
+  1:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×1'
+      lore:
+        - '{lang:buy-more-set-1}'
+    set-amount: 1
+  2:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×2'
+      lore:
+        - '{lang:buy-more-set-2}'
+    set-amount: 2
+  3:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×4'
+      lore:
+        - '{lang:buy-more-set-4}'
+    set-amount: 4
+  4:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×8'
+      lore:
+        - '{lang:buy-more-set-8}'
+    set-amount: 8
+  5:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×16'
+      lore:
+        - '{lang:buy-more-set-16}'
+    set-amount: 16
+  6:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×32'
+      lore:
+        - '{lang:buy-more-set-32}'
+    set-amount: 32
+  7:
+    display-item:
+      material: LIME_WOOL
+      amount: 1
+      glow: true
+      name: '&a&l×64'
+      lore:
+        - '{lang:buy-more-set-64}'
+    set-amount: 64
+
+display-item: P
+
+confirm-items:
+  Y:
+    display-item:
+      material: PAPER
+      name: '{lang:buy-more-buy-button} x{amount}'
+      lore:
+        - '{lang:buy-more-buy-button-lore-1}'
+        - '{lang:buy-more-buy-button-lore-2}'
+    click-action: buy
+
+buttons:
+  0:
+    display-item:
+      material: GRAY_STAINED_GLASS_PANE
+      name: ' '
+      custom-model-data: 2200002
+      hide-tool-tip: true
+  R:
+    display-item:
+      material: ENCHANTED_BOOK
+      name: '{lang:back-button}'
+      custom-model-data: 2200003
+      glow: false
+    actions:
+      1:
+        type: shop_menu
+        shop: '{shop}'
+  Q:
+    display-item:
+      material: BARRIER
+      name: '{lang:close-button}'
+    actions:
+      1:
+        type: close

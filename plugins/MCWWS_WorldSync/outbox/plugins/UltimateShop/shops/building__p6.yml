@@ -1,0 +1,883 @@
+settings:
+  menu: example-shop-menu
+  buy-more: true
+  shop-name: '{lang:building-shop-name} (6/10)'
+  hide-message: false
+  secret-shop-items: false
+  allow-favourite: true
+  menu-settings:
+    buttons:
+      '4':
+        display-item:
+          material: LIME_STAINED_GLASS_PANE
+          name: '{lang:previous-page-button}'
+          custom-model-data: 2200007
+        actions:
+          '1':
+            type: shop_menu
+            shop: building__p5
+      '5':
+        display-item:
+          material: LIME_STAINED_GLASS_PANE
+          name: '{lang:next-page-button}'
+          custom-model-data: 2200009
+        actions:
+          '1':
+            type: shop_menu
+            shop: building__p7
+items:
+  A:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHISELED_TUFF
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_chiseled_tuff%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_chiseled_tuff%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  D:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POLISHED_TUFF
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_polished_tuff%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_polished_tuff%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  E:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POLISHED_TUFF_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_polished_tuff_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_polished_tuff_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  F:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POLISHED_TUFF_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_polished_tuff_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_polished_tuff_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  G:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POLISHED_TUFF_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_polished_tuff_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_polished_tuff_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  H:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  I:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_BRICK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  J:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_BRICK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  K:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: TUFF_BRICK_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_tuff_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_tuff_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  L:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHISELED_TUFF_BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_chiseled_tuff_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_chiseled_tuff_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  M:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'N':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BRICK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  O:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BRICK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  P:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: BRICK_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Q:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: PACKED_MUD
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_packed_mud%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_packed_mud%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  R:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUD_BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mud_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mud_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  S:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUD_BRICK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mud_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mud_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  T:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUD_BRICK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mud_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mud_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  U:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: MUD_BRICK_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_mud_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_mud_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  V:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RESIN_BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_resin_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_resin_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  W:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RESIN_BRICK_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_resin_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_resin_brick_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  X:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RESIN_BRICK_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_resin_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_resin_brick_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'Y':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RESIN_BRICK_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_resin_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_resin_brick_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  Z:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHISELED_RESIN_BRICKS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_chiseled_resin_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_chiseled_resin_bricks%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  a:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  b:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SANDSTONE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  c:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SANDSTONE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  d:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SANDSTONE_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sandstone_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sandstone_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  e:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHISELED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_chiseled_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_chiseled_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  g:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  h:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_SANDSTONE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  i:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_SANDSTONE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  j:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CUT_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cut_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cut_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  k:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  l:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_SANDSTONE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  m:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_SANDSTONE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  'n':
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RED_SANDSTONE_WALL
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_sandstone_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_sandstone_wall%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  o:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CHISELED_RED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_chiseled_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_chiseled_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  p:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_RED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  q:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_RED_SANDSTONE_STAIRS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_red_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_red_sandstone_stairs%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  r:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SMOOTH_RED_SANDSTONE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_smooth_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_smooth_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  t:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CUT_RED_SANDSTONE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cut_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cut_red_sandstone%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  u:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: CUT_RED_SANDSTONE_SLAB
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cut_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cut_red_sandstone_slab%'
+        placeholder: '{amount}$'
+        start-apply: 0

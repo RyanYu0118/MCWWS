@@ -230,15 +230,14 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
             }
             return "正在暂停另一端并拉取最新世界。同步完成后本服会重启，请稍后重新连接。";
         }
-        try {
-            claimLock(false);
-            if (lock.hasLock() && !lock.joiningBlocked()) {
-                return null;
+        getServer().getScheduler().runTaskAsynchronously(this, () -> {
+            try {
+                claimLock(false);
+            } catch (Exception e) {
+                getLogger().warning("进服声明锁失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
             }
-        } catch (Exception e) {
-            getLogger().warning("进服声明锁失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
-        }
-        return "世界锁暂不可用。若另一端仍在运行，请稍后重新连接。";
+        });
+        return "正在确认世界锁，请马上重新连接。";
     }
 
     public void claimLock(boolean forceLog) throws Exception {

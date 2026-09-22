@@ -29,9 +29,10 @@ public final class DirtyTracker {
         Path worldFolder = world.getWorldFolder().toPath();
         int rx = chunkX >> 5;
         int rz = chunkZ >> 5;
+        Path base = dimensionRoot(world, worldFolder);
         String[] sub = {"region", "entities", "poi"};
         for (String folder : sub) {
-            Path file = worldFolder.resolve(folder).resolve("r." + rx + "." + rz + ".mca");
+            Path file = base.resolve(folder).resolve("r." + rx + "." + rz + ".mca");
             try {
                 mark(PathPolicy.relative(serverRoot, file));
             } catch (IllegalArgumentException ignored) {
@@ -44,11 +45,25 @@ public final class DirtyTracker {
         }
     }
 
+    /** 26.2 stores terrain under dimensions/&lt;namespace&gt;/&lt;key&gt;/; older worlds use world/region. */
+    static Path dimensionRoot(World world, Path worldFolder) {
+        var key = world.getKey();
+        Path modern = worldFolder.resolve("dimensions").resolve(key.getNamespace()).resolve(key.getKey());
+        if (Files.isDirectory(modern)) {
+            return modern;
+        }
+        return worldFolder;
+    }
+
     public void markPlayer(UUID uuid, Path serverRoot, Path worldContainer) {
         String id = uuid.toString();
+        markExisting(serverRoot, worldContainer.resolve("world/players/data/" + id + ".dat"));
+        markExisting(serverRoot, worldContainer.resolve("world/players/data/" + id + ".dat_old"));
         markExisting(serverRoot, worldContainer.resolve("world/playerdata/" + id + ".dat"));
         markExisting(serverRoot, worldContainer.resolve("world/playerdata/" + id + ".dat_old"));
+        markExisting(serverRoot, worldContainer.resolve("world/players/stats/" + id + ".json"));
         markExisting(serverRoot, worldContainer.resolve("world/stats/" + id + ".json"));
+        markExisting(serverRoot, worldContainer.resolve("world/players/advancements/" + id + ".json"));
         markExisting(serverRoot, worldContainer.resolve("world/advancements/" + id + ".json"));
     }
 

@@ -18,6 +18,7 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.event.player.PlayerBucketEmptyEvent;
 import org.bukkit.event.player.PlayerBucketFillEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.event.world.ChunkUnloadEvent;
 import org.bukkit.event.world.StructureGrowEvent;
 import org.bukkit.event.world.WorldSaveEvent;
@@ -113,6 +114,14 @@ public final class DirtyListener implements Listener {
         if (holder instanceof org.bukkit.block.BlockState state) {
             mark(state.getBlock());
         }
+    }
+
+    @EventHandler(priority = EventPriority.MONITOR)
+    public void onLoad(ChunkLoadEvent e) {
+        if (!plugin.lock().hasLock()) {
+            return;
+        }
+        plugin.dirty().markChunk(e.getWorld(), e.getChunk(), plugin.serverRoot());
     }
 
     @EventHandler(priority = EventPriority.MONITOR)

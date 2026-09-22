@@ -47,19 +47,19 @@ public final class SyncPeerClient {
     public Map<String, Object> claim() throws IOException, InterruptedException {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("nodeId", plugin.config().nodeId);
-        return postJson("/v1/lock/claim", body);
+        return postJson("/v1/lock/claim", body, Duration.ofSeconds(30));
     }
 
     public Map<String, Object> release() throws IOException, InterruptedException {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("nodeId", plugin.config().nodeId);
-        return postJson("/v1/lock/release", body);
+        return postJson("/v1/lock/release", body, Duration.ofSeconds(30));
     }
 
     public Map<String, Object> requestHandover() throws IOException, InterruptedException {
         Map<String, Object> body = new LinkedHashMap<>();
         body.put("from", plugin.config().nodeId);
-        return postJson("/v1/handover", body);
+        return postJson("/v1/handover", body, Duration.ofSeconds(30));
     }
 
     public Map<String, Object> status() throws IOException, InterruptedException {
@@ -117,9 +117,9 @@ public final class SyncPeerClient {
         }
     }
 
-    private Map<String, Object> postJson(String path, Map<String, Object> body) throws IOException, InterruptedException {
+    private Map<String, Object> postJson(String path, Map<String, Object> body, Duration timeout) throws IOException, InterruptedException {
         HttpRequest req = HttpIo.authed(plugin.config().peerUrl + path, plugin.config().token)
-                .timeout(Duration.ofSeconds(30))
+                .timeout(timeout)
                 .header("Content-Type", "application/json")
                 .POST(HttpRequest.BodyPublishers.ofString(JsonUtil.stringify(body)))
                 .build();
