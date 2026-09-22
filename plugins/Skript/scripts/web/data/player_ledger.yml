@@ -1,16 +1,5 @@
-next_id: 11835
+next_id: 11836
 entries:
-  '6835':
-    id: 6835
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 138.24
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-22efe456-6b6d-409a-898a-8b4d515558e3
-    createdAt: '2026-08-30T05:22:06.921838400Z'
-    balanceAfter: 171939949.68
   '6836':
     id: 6836
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -54647,3 +54636,14 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/22 23:01
     createdAt: '2026-09-22T15:01:32.388202800Z'
     updatedAt: '2026-09-22T15:13:14.214835900Z'
+  '11835':
+    id: 11835
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 56
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/22 23:16
+    createdAt: '2026-09-22T15:16:54.083585300Z'
+    updatedAt: '2026-09-22T15:17:08.083326400Z'

@@ -996,7 +996,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.2.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.3.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -1035,7 +1035,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_WorldSync | 1.2.2 | 进服自动暂停另一端并拉取最新世界；26.2 地形从 dimensions 目录同步，确认锁不再卡住登录 |
+| MCWWS_WorldSync | 1.2.3 | 进服发现锁在另一端会自动接管；确认锁失败时踢出提示会写明原因 |
 | MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |

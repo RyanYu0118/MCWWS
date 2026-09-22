@@ -24,6 +24,8 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private int heartbeatTask = -1;
     private boolean appliedOnLoad;
     private volatile boolean peerOnline;
+    private volatile boolean admissionResolving;
+    private volatile String admissionDetail = "";
 
     @Override
     public void onLoad() {
@@ -220,24 +222,81 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         if (handover != null && handover.busy()) {
             return "正在从另一端同步最新世界，请稍后重新连接。";
         }
-        String holder = lock.holder();
-        boolean otherLive = !holder.isEmpty()
-                && !holder.equals(config.nodeId)
-                && System.currentTimeMillis() < lock.leaseUntil();
-        if (otherLive) {
+        if (otherHolderLive()) {
             if (handover != null) {
                 handover.beginAutoTakeover();
             }
             return "正在暂停另一端并拉取最新世界。同步完成后本服会重启，请稍后重新连接。";
         }
+        if (config.connectMode() && client != null) {
+            if (!admissionResolving) {
+                admissionResolving = true;
+                getServer().getScheduler().runTaskAsynchronously(this, this::resolveConnectAdmission);
+            }
+            if (!admissionDetail.isEmpty()) {
+                return admissionDetail;
+            }
+            return "正在确认世界锁，请马上重新连接。";
+        }
         getServer().getScheduler().runTaskAsynchronously(this, () -> {
             try {
                 claimLock(false);
             } catch (Exception e) {
-                getLogger().warning("进服声明锁失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+                getLogger().warning("进服声明锁失败: " + describe(e));
             }
         });
         return "正在确认世界锁，请马上重新连接。";
+    }
+
+    private boolean otherHolderLive() {
+        String holder = lock.holder();
+        return !holder.isEmpty()
+                && !holder.equals(config.nodeId)
+                && System.currentTimeMillis() < lock.leaseUntil();
+    }
+
+    /** Connect node: learn who holds the lock, then either claim it or start takeover. */
+    private void resolveConnectAdmission() {
+        try {
+            try {
+                applyRemoteStatus(client.status());
+            } catch (Exception statusEx) {
+                getLogger().warning("读取对端锁状态失败: " + describe(statusEx));
+            }
+            if (otherHolderLive()) {
+                admissionDetail = "正在暂停另一端并拉取最新世界。同步完成后本服会重启，请稍后重新连接。";
+                getLogger().info("写入锁在 " + lock.holder() + "，开始接管");
+                handover.beginAutoTakeover();
+                return;
+            }
+            claimLock(false);
+            admissionDetail = "";
+        } catch (Exception e) {
+            String msg = describe(e);
+            if (msg.startsWith("held by ")) {
+                String other = msg.substring("held by ".length()).trim();
+                lock.setHolder(other, lock.generation(), System.currentTimeMillis() + config.leaseSeconds * 1000L, false);
+                admissionDetail = "正在暂停另一端并拉取最新世界。同步完成后本服会重启，请稍后重新连接。";
+                getLogger().info("写入锁在 " + other + "，开始接管");
+                handover.beginAutoTakeover();
+            } else {
+                admissionDetail = "确认世界锁失败：" + msg;
+                getLogger().warning("进服声明锁失败: " + msg);
+            }
+        } finally {
+            admissionResolving = false;
+        }
+    }
+
+    private static String describe(Throwable e) {
+        if (e == null) {
+            return "unknown";
+        }
+        String msg = e.getMessage();
+        if (msg == null || msg.isBlank()) {
+            return e.getClass().getSimpleName();
+        }
+        return msg;
     }
 
     public void claimLock(boolean forceLog) throws Exception {
