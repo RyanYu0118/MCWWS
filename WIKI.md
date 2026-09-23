@@ -324,6 +324,12 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /worldsync handover
 ```
 
+```text
+/worldsync push
+```
+
+`handover` 仍是换边：持锁端暂停并交出世界。`push` 是强制推送：在你要当准的那一端执行。它会扫描 `sync-prefixes`，按文件校验对比；不一致的才打包送出，并且采用执行命令这一端的内容。对端写入 staging 后重启才换上。日志、备份目录、`.tmp` 和损坏存档不参与。
+
 持锁端会踢人、存盘、冲刷脏 `r.*.mca` 与白名单文件并放锁；本端写 `apply-on-boot` 后按 `handover.restart-mode` 关服，下次启动在**世界加载前**套用 staging。也可手动停服后运行 `tools/mcwws-world-sync/apply-staging.ps1`（Windows）或 `apply-staging.sh`（Linux/Docker）。
 
 ```text
@@ -996,7 +1002,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.6.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.7.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -1035,7 +1041,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_WorldSync | 1.2.6 | 接管打成一个压缩包传输；日志目录不再逐个文件拉取 |
+| MCWWS_WorldSync | 1.2.7 | 强制推送：扫描同步范围，不一致时采用执行命令一端的文件 |
 | MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |

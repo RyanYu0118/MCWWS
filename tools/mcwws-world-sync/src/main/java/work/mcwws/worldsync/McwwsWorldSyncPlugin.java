@@ -19,6 +19,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private SyncPeerClient client;
     private S3Relay relay;
     private HandoverService handover;
+    private ForcePushService forcePush;
     private FlushService flush;
     private Path serverRoot;
     private int heartbeatTask = -1;
@@ -55,6 +56,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         }
         lock.setSelf(config.nodeId);
         handover = new HandoverService(this);
+        forcePush = new ForcePushService(this);
         flush = new FlushService(this);
         getServer().getPluginManager().registerEvents(new JoinGuardListener(this), this);
         getServer().getPluginManager().registerEvents(new DirtyListener(this), this);
@@ -172,6 +174,11 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
             Map<String, Object> st = client.heartbeat();
             peerOnline = true;
             applyRemoteStatus(st);
+            String pushFrom = JsonUtil.str(st, "pushFrom", "");
+            if (forcePush != null && !pushFrom.isEmpty() && !pushFrom.equals(config.nodeId)) {
+                forcePush.pullFromListen(pushFrom);
+                return;
+            }
             if (!lock.hasLock()) {
                 for (String rel : client.listOutbox()) {
                     if (PathPolicy.allowed(rel, config.prefixes, config.skipGlobs)) {
@@ -340,6 +347,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         m.put("players", getServer().getOnlinePlayers().size());
         m.put("handoverPending", lock.handoverPending());
         m.put("handoverFrom", lock.handoverFrom());
+        m.put("pushFrom", forcePush == null ? "" : forcePush.winner());
         m.put("joiningBlocked", lock.joiningBlocked());
         m.put("transport", config.transport);
         m.put("peerOnline", peerOnline);
@@ -381,6 +389,10 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
 
     public HandoverService handover() {
         return handover;
+    }
+
+    public ForcePushService forcePush() {
+        return forcePush;
     }
 
     public SyncProgress progress() {

@@ -70,6 +70,7 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
                 }
             });
             case "handover" -> plugin.handover().requestTakeover(sender);
+            case "push" -> plugin.forcePush().start(sender);
             case "force-lock" -> plugin.getServer().getScheduler().runTaskAsynchronously(plugin, () -> {
                 try {
                     if (plugin.config().s3Mode() && plugin.relay() != null) {
@@ -88,7 +89,7 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
                             () -> sender.sendMessage(Component.text("强制持锁失败: " + e.getMessage(), NamedTextColor.RED)));
                 }
             });
-            default -> sender.sendMessage(Component.text("用法: /worldsync [status|handover|flush|claim|release|force-lock|reload]", NamedTextColor.GRAY));
+            default -> sender.sendMessage(Component.text("用法: /worldsync [status|handover|push|flush|claim|release|force-lock|reload]", NamedTextColor.GRAY));
         }
         return true;
     }
@@ -97,7 +98,7 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             String p = args[0].toLowerCase(Locale.ROOT);
-            return Stream.of("status", "handover", "flush", "claim", "release", "force-lock", "reload")
+            return Stream.of("status", "handover", "push", "flush", "claim", "release", "force-lock", "reload")
                     .filter(s -> s.startsWith(p))
                     .toList();
         }

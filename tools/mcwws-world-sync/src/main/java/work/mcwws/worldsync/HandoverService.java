@@ -252,6 +252,10 @@ public final class HandoverService {
         throw new IOException("等待对端释放云端写入锁超时");
     }
 
+    public void restartNow() {
+        restartAfterApply();
+    }
+
     private void restartAfterApply() {
         String mode = plugin.config().restartMode;
         plugin.getLogger().info("接管重启模式: " + mode);

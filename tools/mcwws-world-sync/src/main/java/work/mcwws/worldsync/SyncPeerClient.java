@@ -213,6 +213,68 @@ public final class SyncPeerClient {
         }
     }
 
+    public List<String> comparePush(String winner, Map<String, String> files) throws IOException, InterruptedException {
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("winner", winner);
+        body.put("files", files);
+        Map<String, Object> resp = postJson("/v1/push/compare", body, Duration.ofMinutes(20));
+        return JsonUtil.strList(resp, "differ");
+    }
+
+    public void uploadPushBundle(Path zip) throws IOException, InterruptedException {
+        HttpRequest req = HttpIo.authed(plugin.config().peerUrl + "/v1/push/apply", plugin.config().token)
+                .timeout(Duration.ofMinutes(30))
+                .header("Content-Type", "application/zip")
+                .POST(HttpRequest.BodyPublishers.ofFile(zip))
+                .build();
+        HttpResponse<String> resp = send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        if (resp.statusCode() >= 400) {
+            throw new IOException("push apply HTTP " + resp.statusCode() + " " + resp.body());
+        }
+    }
+
+    public void downloadPushBundle() throws IOException, InterruptedException {
+        HttpRequest req = HttpIo.authed(plugin.config().peerUrl + "/v1/push/bundle", plugin.config().token)
+                .GET()
+                .timeout(Duration.ofMinutes(30))
+                .build();
+        HttpResponse<InputStream> resp = send(req, HttpResponse.BodyHandlers.ofInputStream());
+        if (resp.statusCode() >= 400) {
+            resp.body().close();
+            throw new IOException("push bundle HTTP " + resp.statusCode());
+        }
+        long len = resp.headers().firstValueAsLong("Content-Length").orElse(-1L);
+        int total = len > 0L && len <= Integer.MAX_VALUE ? (int) len : 1;
+        Path tmp = plugin.getDataFolder().toPath().resolve("incoming-push.zip");
+        Files.createDirectories(tmp.getParent());
+        plugin.progress().begin("下载差异包", total);
+        long got = 0L;
+        try (InputStream in = resp.body(); java.io.OutputStream out = Files.newOutputStream(tmp)) {
+            byte[] buf = new byte[65536];
+            int n;
+            while ((n = in.read(buf)) >= 0) {
+                out.write(buf, 0, n);
+                got += n;
+                plugin.progress().tick(plugin, len > 0L ? (int) Math.min(got, total) : 1, (got / 1024) + " KB");
+            }
+        } finally {
+            plugin.progress().end(plugin);
+        }
+        plugin.forcePush().consumeBundle(tmp);
+    }
+
+    public void finishPush() {
+        try {
+            HttpRequest req = HttpIo.authed(plugin.config().peerUrl + "/v1/push/done", plugin.config().token)
+                    .timeout(Duration.ofSeconds(30))
+                    .POST(HttpRequest.BodyPublishers.noBody())
+                    .build();
+            send(req, HttpResponse.BodyHandlers.ofString(StandardCharsets.UTF_8));
+        } catch (Exception e) {
+            plugin.getLogger().warning("结束强制推送通知失败: " + (e.getMessage() == null ? e.getClass().getSimpleName() : e.getMessage()));
+        }
+    }
+
     private <T> HttpResponse<T> send(HttpRequest req, HttpResponse.BodyHandler<T> handler) throws IOException, InterruptedException {
         IOException last = null;
         for (int attempt = 1; attempt <= 4; attempt++) {

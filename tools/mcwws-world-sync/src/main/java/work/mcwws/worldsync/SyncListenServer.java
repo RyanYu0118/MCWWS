@@ -43,6 +43,10 @@ public final class SyncListenServer {
         server.createContext("/v1/outbox/ack", this::outboxAck);
         server.createContext("/v1/outbox/bundle", this::outboxBundle);
         server.createContext("/v1/outbox/bundle/ack", this::outboxBundleAck);
+        server.createContext("/v1/push/compare", this::pushCompare);
+        server.createContext("/v1/push/bundle", this::pushBundle);
+        server.createContext("/v1/push/apply", this::pushApply);
+        server.createContext("/v1/push/done", this::pushDone);
         server.setExecutor(Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r, "MCWWS-WorldSync-http");
             t.setDaemon(true);
@@ -316,6 +320,73 @@ public final class SyncListenServer {
         Files.deleteIfExists(manifest);
         Files.deleteIfExists(plugin.getDataFolder().toPath().resolve("outbox-bundle.zip"));
         HttpIo.json(ex, 200, HttpIo.ok("forgotten", n));
+    }
+
+    private void pushCompare(HttpExchange ex) throws IOException {
+        if (!"POST".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        Map<String, Object> body = JsonUtil.parseObject(HttpIo.readUtf8(ex));
+        String winner = JsonUtil.str(body, "winner", "");
+        Map<String, String> files = new java.util.LinkedHashMap<>();
+        Object raw = body.get("files");
+        if (raw instanceof Map<?, ?> map) {
+            for (Map.Entry<?, ?> e : map.entrySet()) {
+                if (e.getKey() != null && e.getValue() != null) {
+                    files.put(String.valueOf(e.getKey()), String.valueOf(e.getValue()));
+                }
+            }
+        }
+        HttpIo.json(ex, 200, plugin.forcePush().compare(winner, files));
+    }
+
+    private void pushBundle(HttpExchange ex) throws IOException {
+        if (!"GET".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        Path zip = plugin.getDataFolder().toPath().resolve("push-bundle.zip");
+        plugin.forcePush().writeDifferZip(zip);
+        long len = Files.size(zip);
+        ex.getResponseHeaders().set("Content-Type", "application/zip");
+        ex.sendResponseHeaders(200, len);
+        try (OutputStream out = ex.getResponseBody()) {
+            Files.copy(zip, out);
+        }
+        Files.deleteIfExists(zip);
+    }
+
+    private void pushApply(HttpExchange ex) throws IOException {
+        if (!"POST".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        try (InputStream in = ex.getRequestBody()) {
+            plugin.forcePush().acceptZip(in);
+        }
+        HttpIo.json(ex, 200, HttpIo.ok("applied", true));
+    }
+
+    private void pushDone(HttpExchange ex) throws IOException {
+        if (!"POST".equals(ex.getRequestMethod())) {
+            HttpIo.text(ex, 405, "method");
+            return;
+        }
+        if (!gate(ex)) {
+            return;
+        }
+        plugin.forcePush().clearArmed();
+        HttpIo.json(ex, 200, HttpIo.ok("cleared", true));
     }
 
     public List<String> knownPeers() {
