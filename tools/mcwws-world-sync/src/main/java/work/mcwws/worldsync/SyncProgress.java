@@ -67,7 +67,7 @@ public final class SyncProgress {
         if (total <= 0) {
             return 0;
         }
-        return Math.min(100, done * 100 / total);
+        return (int) Math.min(100L, done * 100L / total);
     }
 
     private String pctText() {
