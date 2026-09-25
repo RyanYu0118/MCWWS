@@ -64,6 +64,7 @@ sync-prefixes:
   - plugins/Skript/scripts/mcwws/economy/market_state.yml
 
 # 禁止热拷与无意义文件（即使前缀命中也不传）
+# 另有硬编码跳过：*.tmp、*_corrupted_*、**/logs/**、**/Backup/**
 skip-globs:
   - "**/*.mv.db"
   - "**/*.mv.db-shm"
@@ -71,7 +72,10 @@ skip-globs:
   - "**/*.lock"
   - "**/*.jar"
   - "**/*.jar.new"
+  - "**/*.tmp"
   - "**/logs/**"
+  - "**/Backup/**"
+  - "**/backup/**"
   - "**/.paper-remapped/**"
   - "**/session.lock"
   - "**/uid.dat"

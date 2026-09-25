@@ -6,7 +6,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 /** Hash every allowed file under the sync prefixes. */
@@ -52,17 +51,6 @@ public final class TreeScan {
     }
 
     static boolean include(McwwsWorldSyncPlugin plugin, String rel) {
-        if (!PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
-            return false;
-        }
-        String path = PathPolicy.posix(rel).toLowerCase(Locale.ROOT);
-        String name = path.substring(path.lastIndexOf('/') + 1);
-        if (name.endsWith(".tmp") || name.contains("_corrupted_")) {
-            return false;
-        }
-        if (path.contains("/logs/") || path.contains("/backup/")) {
-            return false;
-        }
-        return true;
+        return PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs);
     }
 }

@@ -328,7 +328,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /worldsync push
 ```
 
-`handover` 仍是换边：持锁端暂停并交出世界。`push` 是强制推送：在你要当准的那一端执行。它会扫描 `sync-prefixes`，按文件校验对比；不一致的才打包送出，并且采用执行命令这一端的内容。对端写入 staging 后重启才换上。日志、备份目录、`.tmp` 和损坏存档不参与。
+`handover` 仍是换边：持锁端暂停并交出世界。`push` 是强制推送：在你要当准的那一端执行。它会扫描 `sync-prefixes`，按文件校验对比；不一致的才打包送出，并且采用执行命令这一端的内容。对端写入 staging 后重启才换上。日常冲刷与强制推送都会跳过日志、`Backup` 目录、`.tmp` 临时文件和 `*_corrupted_*` 损坏存档副本。
 
 持锁端会踢人、存盘、冲刷脏 `r.*.mca` 与白名单文件并放锁；本端写 `apply-on-boot` 后按 `handover.restart-mode` 关服，下次启动在**世界加载前**套用 staging。也可手动停服后运行 `tools/mcwws-world-sync/apply-staging.ps1`（Windows）或 `apply-staging.sh`（Linux/Docker）。
 
@@ -1002,7 +1002,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.8.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.9.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |

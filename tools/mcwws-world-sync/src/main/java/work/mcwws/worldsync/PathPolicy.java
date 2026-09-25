@@ -49,6 +49,16 @@ public final class PathPolicy {
         String path = posix(rel);
         int slash = path.lastIndexOf('/');
         String name = slash >= 0 ? path.substring(slash + 1) : path;
+        // Hard noise filters (also listed in skip-globs for documentation).
+        // Flush / push / peer receive all go through allowed() → skipped().
+        String pathLower = path.toLowerCase(Locale.ROOT);
+        String nameLower = name.toLowerCase(Locale.ROOT);
+        if (nameLower.endsWith(".tmp")
+                || nameLower.contains("_corrupted_")
+                || pathLower.contains("/logs/")
+                || pathLower.contains("/backup/")) {
+            return true;
+        }
         for (String glob : skipGlobs) {
             if (glob == null || glob.isBlank()) {
                 continue;
@@ -57,9 +67,8 @@ public final class PathPolicy {
                 return true;
             }
         }
-        String lower = name.toLowerCase(Locale.ROOT);
-        return lower.endsWith(".mv.db")
-                || lower.endsWith(".lock")
+        return nameLower.endsWith(".mv.db")
+                || nameLower.endsWith(".lock")
                 || "session.lock".equalsIgnoreCase(name)
                 || "uid.dat".equalsIgnoreCase(name);
     }

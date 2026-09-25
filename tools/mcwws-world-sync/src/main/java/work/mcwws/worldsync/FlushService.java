@@ -39,13 +39,16 @@ public final class FlushService {
                     Path p = PathPolicy.resolveUnder(root, prefix.endsWith("/") ? prefix.substring(0, prefix.length() - 1) : prefix);
                     try {
                         if (Files.isRegularFile(p)) {
-                            plugin.dirty().mark(PathPolicy.relative(root, p));
+                            String rel = PathPolicy.relative(root, p);
+                            if (TreeScan.include(plugin, rel)) {
+                                plugin.dirty().mark(rel);
+                            }
                         } else if (Files.isDirectory(p)) {
                             try (Stream<Path> walk = Files.walk(p, 6)) {
                                 walk.filter(Files::isRegularFile).limit(4000).forEach(f -> {
                                     try {
                                         String rel = PathPolicy.relative(root, f);
-                                        if (PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
+                                        if (TreeScan.include(plugin, rel)) {
                                             plugin.dirty().mark(rel);
                                         }
                                     } catch (IllegalArgumentException ignored) {
@@ -65,7 +68,10 @@ public final class FlushService {
                     try (Stream<Path> files = Files.list(playerDir)) {
                         files.filter(Files::isRegularFile).forEach(f -> {
                             try {
-                                plugin.dirty().mark(PathPolicy.relative(root, f));
+                                String rel = PathPolicy.relative(root, f);
+                                if (TreeScan.include(plugin, rel)) {
+                                    plugin.dirty().mark(rel);
+                                }
                             } catch (IllegalArgumentException ignored) {
                             }
                         });
@@ -131,7 +137,7 @@ public final class FlushService {
         Path root = plugin.serverRoot();
         List<String> todo = new ArrayList<>();
         for (String rel : paths) {
-            if (!PathPolicy.allowed(rel, plugin.config().prefixes, plugin.config().skipGlobs)) {
+            if (!TreeScan.include(plugin, rel)) {
                 continue;
             }
             Path src = PathPolicy.resolveUnder(root, rel);
