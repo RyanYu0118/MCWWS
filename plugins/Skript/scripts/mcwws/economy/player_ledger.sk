@@ -31,7 +31,7 @@ function mcwwsIdeaAchMoneyCmd(uuid: text, amount: number, dir: text):
     set {_credit} to true
     set {_d} to "%{_dir}%"
     set {_d} to {_d} in lower case
-    if {_d} is "debit" or {_d} is "spend" or {_d} is "out":
+    if {_d} is "debit", "spend" or "out":
         set {_credit} to false
     {_typed}.economyFlow().onMoneyFlow({_u}, {_amount}, {_credit})
 
