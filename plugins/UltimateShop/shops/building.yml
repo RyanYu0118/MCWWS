@@ -1,11 +1,18 @@
 settings:
   menu: example-shop-menu
   buy-more: true
-  shop-name: '{lang:building-shop-name} (1/10)'
+  shop-name: '{lang:building-shop-name} (1/11)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:

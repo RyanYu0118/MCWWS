@@ -1,11 +1,18 @@
 settings:
-  menu: shop-menu-ingredients__p4
+  menu: example-shop-menu
   buy-more: true
   shop-name: '{lang:ingredients-shop-name} (4/4)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - '000000000'
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:

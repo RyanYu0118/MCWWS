@@ -6,6 +6,13 @@ settings:
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:
@@ -31,6 +38,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: RED_HARNESS
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_red_harness%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_red_harness%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: BLACK_HARNESS
         amount: 1
     buy-prices:
@@ -45,7 +71,7 @@ items:
         amount: '%mcwws.price_sell_black_harness%'
         placeholder: '{amount}$'
         start-apply: 0
-  B:
+  C:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -64,7 +90,7 @@ items:
         amount: '%mcwws.price_sell_carrot_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
-  C:
+  D:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -83,7 +109,7 @@ items:
         amount: '%mcwws.price_sell_warped_fungus_on_a_stick%'
         placeholder: '{amount}$'
         start-apply: 0
-  D:
+  E:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -102,7 +128,7 @@ items:
         amount: '%mcwws.price_sell_oak_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  E:
+  F:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -121,7 +147,7 @@ items:
         amount: '%mcwws.price_sell_oak_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  F:
+  G:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -140,7 +166,7 @@ items:
         amount: '%mcwws.price_sell_spruce_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  G:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -159,7 +185,7 @@ items:
         amount: '%mcwws.price_sell_spruce_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -178,7 +204,7 @@ items:
         amount: '%mcwws.price_sell_birch_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  I:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -197,7 +223,7 @@ items:
         amount: '%mcwws.price_sell_birch_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  J:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -216,7 +242,7 @@ items:
         amount: '%mcwws.price_sell_jungle_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  K:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -235,7 +261,7 @@ items:
         amount: '%mcwws.price_sell_jungle_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  L:
+  M:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -254,7 +280,7 @@ items:
         amount: '%mcwws.price_sell_acacia_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  M:
+  'N':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -273,7 +299,7 @@ items:
         amount: '%mcwws.price_sell_acacia_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  'N':
+  O:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -292,7 +318,7 @@ items:
         amount: '%mcwws.price_sell_dark_oak_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  O:
+  P:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -311,7 +337,7 @@ items:
         amount: '%mcwws.price_sell_dark_oak_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  P:
+  Q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -330,7 +356,7 @@ items:
         amount: '%mcwws.price_sell_mangrove_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  Q:
+  R:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -349,7 +375,7 @@ items:
         amount: '%mcwws.price_sell_mangrove_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  R:
+  S:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -368,7 +394,7 @@ items:
         amount: '%mcwws.price_sell_cherry_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  S:
+  T:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -387,7 +413,7 @@ items:
         amount: '%mcwws.price_sell_cherry_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  T:
+  U:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -406,7 +432,7 @@ items:
         amount: '%mcwws.price_sell_pale_oak_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  U:
+  V:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -425,7 +451,7 @@ items:
         amount: '%mcwws.price_sell_pale_oak_chest_boat%'
         placeholder: '{amount}$'
         start-apply: 0
-  V:
+  W:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -444,7 +470,7 @@ items:
         amount: '%mcwws.price_sell_bamboo_raft%'
         placeholder: '{amount}$'
         start-apply: 0
-  W:
+  X:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -463,7 +489,7 @@ items:
         amount: '%mcwws.price_sell_bamboo_chest_raft%'
         placeholder: '{amount}$'
         start-apply: 0
-  X:
+  'Y':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -482,7 +508,7 @@ items:
         amount: '%mcwws.price_sell_rail%'
         placeholder: '{amount}$'
         start-apply: 0
-  'Y':
+  Z:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -501,7 +527,7 @@ items:
         amount: '%mcwws.price_sell_powered_rail%'
         placeholder: '{amount}$'
         start-apply: 0
-  Z:
+  a:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -520,7 +546,7 @@ items:
         amount: '%mcwws.price_sell_detector_rail%'
         placeholder: '{amount}$'
         start-apply: 0
-  a:
+  b:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -539,7 +565,7 @@ items:
         amount: '%mcwws.price_sell_activator_rail%'
         placeholder: '{amount}$'
         start-apply: 0
-  b:
+  c:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -558,7 +584,7 @@ items:
         amount: '%mcwws.price_sell_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
-  c:
+  d:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -577,7 +603,7 @@ items:
         amount: '%mcwws.price_sell_hopper_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
-  d:
+  e:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -596,7 +622,7 @@ items:
         amount: '%mcwws.price_sell_chest_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
-  e:
+  g:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -615,7 +641,7 @@ items:
         amount: '%mcwws.price_sell_furnace_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
-  g:
+  h:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -634,7 +660,7 @@ items:
         amount: '%mcwws.price_sell_tnt_minecart%'
         placeholder: '{amount}$'
         start-apply: 0
-  h:
+  i:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -653,7 +679,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_13%'
         placeholder: '{amount}$'
         start-apply: 0
-  i:
+  j:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -672,7 +698,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_cat%'
         placeholder: '{amount}$'
         start-apply: 0
-  j:
+  k:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -691,7 +717,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_blocks%'
         placeholder: '{amount}$'
         start-apply: 0
-  k:
+  l:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -710,7 +736,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_chirp%'
         placeholder: '{amount}$'
         start-apply: 0
-  l:
+  m:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -729,7 +755,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_far%'
         placeholder: '{amount}$'
         start-apply: 0
-  m:
+  'n':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -748,7 +774,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_mall%'
         placeholder: '{amount}$'
         start-apply: 0
-  'n':
+  o:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -767,7 +793,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_mellohi%'
         placeholder: '{amount}$'
         start-apply: 0
-  o:
+  p:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -786,7 +812,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_stal%'
         placeholder: '{amount}$'
         start-apply: 0
-  p:
+  q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -805,7 +831,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_strad%'
         placeholder: '{amount}$'
         start-apply: 0
-  q:
+  r:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -824,7 +850,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_ward%'
         placeholder: '{amount}$'
         start-apply: 0
-  r:
+  t:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -843,7 +869,7 @@ items:
         amount: '%mcwws.price_sell_music_disc_11%'
         placeholder: '{amount}$'
         start-apply: 0
-  t:
+  u:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -860,24 +886,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_music_disc_creator_music_box%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  u:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: MUSIC_DISC_WAIT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_music_disc_wait%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_music_disc_wait%'
         placeholder: '{amount}$'
         start-apply: 0

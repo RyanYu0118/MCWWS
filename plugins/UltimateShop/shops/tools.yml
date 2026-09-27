@@ -6,6 +6,13 @@ settings:
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:
@@ -711,6 +718,25 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: SULFUR_CUBE_BUCKET
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sulfur_cube_bucket%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sulfur_cube_bucket%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  m:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: LAVA_BUCKET
         amount: 1
     buy-prices:
@@ -725,7 +751,7 @@ items:
         amount: '%mcwws.price_sell_lava_bucket%'
         placeholder: '{amount}$'
         start-apply: 0
-  m:
+  'n':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -744,7 +770,7 @@ items:
         amount: '%mcwws.price_sell_powder_snow_bucket%'
         placeholder: '{amount}$'
         start-apply: 0
-  'n':
+  o:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -763,7 +789,7 @@ items:
         amount: '%mcwws.price_sell_milk_bucket%'
         placeholder: '{amount}$'
         start-apply: 0
-  o:
+  p:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -782,7 +808,7 @@ items:
         amount: '%mcwws.price_sell_fishing_rod%'
         placeholder: '{amount}$'
         start-apply: 0
-  p:
+  q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -801,7 +827,7 @@ items:
         amount: '%mcwws.price_sell_flint_and_steel%'
         placeholder: '{amount}$'
         start-apply: 0
-  q:
+  r:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -820,7 +846,7 @@ items:
         amount: '%mcwws.price_sell_fire_charge%'
         placeholder: '{amount}$'
         start-apply: 0
-  r:
+  t:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -839,7 +865,7 @@ items:
         amount: '%mcwws.price_sell_bone_meal%'
         placeholder: '{amount}$'
         start-apply: 0
-  t:
+  u:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -856,24 +882,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_shears%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  u:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BRUSH
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_brush%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_brush%'
         placeholder: '{amount}$'
         start-apply: 0

@@ -1,11 +1,18 @@
 settings:
-  menu: shop-menu-natural__p6
+  menu: example-shop-menu
   buy-more: true
   shop-name: '{lang:natural-shop-name} (6/6)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKL000000
+      - '000000000'
+      - '000000000'
+      - '000000000'
     buttons:
       '4':
         display-item:
@@ -27,6 +34,82 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: SLIME_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_slime_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_slime_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  B:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: HONEY_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_honey_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_honey_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  C:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: RESIN_BLOCK
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_resin_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_resin_block%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  D:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: OCHRE_FROGLIGHT
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_ochre_froglight%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_ochre_froglight%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  E:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: VERDANT_FROGLIGHT
         amount: 1
     buy-prices:
@@ -41,7 +124,7 @@ items:
         amount: '%mcwws.price_sell_verdant_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
-  B:
+  F:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -60,7 +143,7 @@ items:
         amount: '%mcwws.price_sell_pearlescent_froglight%'
         placeholder: '{amount}$'
         start-apply: 0
-  C:
+  G:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -79,7 +162,7 @@ items:
         amount: '%mcwws.price_sell_sculk%'
         placeholder: '{amount}$'
         start-apply: 0
-  D:
+  H:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -98,7 +181,7 @@ items:
         amount: '%mcwws.price_sell_sculk_vein%'
         placeholder: '{amount}$'
         start-apply: 0
-  E:
+  I:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -117,7 +200,7 @@ items:
         amount: '%mcwws.price_sell_sculk_catalyst%'
         placeholder: '{amount}$'
         start-apply: 0
-  F:
+  J:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -136,7 +219,7 @@ items:
         amount: '%mcwws.price_sell_sculk_shrieker%'
         placeholder: '{amount}$'
         start-apply: 0
-  G:
+  K:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -155,7 +238,7 @@ items:
         amount: '%mcwws.price_sell_sculk_sensor%'
         placeholder: '{amount}$'
         start-apply: 0
-  H:
+  L:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:

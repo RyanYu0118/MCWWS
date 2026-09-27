@@ -6,6 +6,13 @@ settings:
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
+    layout:
+      - fs043500x
+      - ABCDEFGHI
+      - JKLMNOPQR
+      - STUVWXYZa
+      - bcdeghijk
+      - lmnopqrtu
     buttons:
       '4':
         display-item:
@@ -654,6 +661,82 @@ items:
     product-mode: CLASSIC_ALL
     products:
       '1':
+        material: CINNABAR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_cinnabar%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_cinnabar%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  j:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SULFUR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sulfur%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sulfur%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  k:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: SULFUR_SPIKE
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_sulfur_spike%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_sulfur_spike%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  l:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
+        material: POTENT_SULFUR
+        amount: 1
+    buy-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_buy_potent_sulfur%'
+        placeholder: '{amount}$'
+        start-apply: 0
+    sell-prices:
+      '1':
+        economy-plugin: Vault
+        amount: '%mcwws.price_sell_potent_sulfur%'
+        placeholder: '{amount}$'
+        start-apply: 0
+  m:
+    price-mode: CLASSIC_ALL
+    product-mode: CLASSIC_ALL
+    products:
+      '1':
         material: MAGMA_BLOCK
         amount: 1
     buy-prices:
@@ -668,7 +751,7 @@ items:
         amount: '%mcwws.price_sell_magma_block%'
         placeholder: '{amount}$'
         start-apply: 0
-  j:
+  'n':
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -687,7 +770,7 @@ items:
         amount: '%mcwws.price_sell_obsidian%'
         placeholder: '{amount}$'
         start-apply: 0
-  k:
+  o:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -706,7 +789,7 @@ items:
         amount: '%mcwws.price_sell_crying_obsidian%'
         placeholder: '{amount}$'
         start-apply: 0
-  l:
+  p:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -725,7 +808,7 @@ items:
         amount: '%mcwws.price_sell_netherrack%'
         placeholder: '{amount}$'
         start-apply: 0
-  m:
+  q:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -744,7 +827,7 @@ items:
         amount: '%mcwws.price_sell_crimson_nylium%'
         placeholder: '{amount}$'
         start-apply: 0
-  'n':
+  r:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -763,7 +846,7 @@ items:
         amount: '%mcwws.price_sell_warped_nylium%'
         placeholder: '{amount}$'
         start-apply: 0
-  o:
+  t:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -782,7 +865,7 @@ items:
         amount: '%mcwws.price_sell_soul_sand%'
         placeholder: '{amount}$'
         start-apply: 0
-  p:
+  u:
     price-mode: CLASSIC_ALL
     product-mode: CLASSIC_ALL
     products:
@@ -799,81 +882,5 @@ items:
       '1':
         economy-plugin: Vault
         amount: '%mcwws.price_sell_soul_soil%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  q:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BONE_BLOCK
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_bone_block%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_bone_block%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  r:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BLACKSTONE
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_blackstone%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_blackstone%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  t:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: BASALT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_basalt%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_basalt%'
-        placeholder: '{amount}$'
-        start-apply: 0
-  u:
-    price-mode: CLASSIC_ALL
-    product-mode: CLASSIC_ALL
-    products:
-      '1':
-        material: SMOOTH_BASALT
-        amount: 1
-    buy-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_buy_smooth_basalt%'
-        placeholder: '{amount}$'
-        start-apply: 0
-    sell-prices:
-      '1':
-        economy-plugin: Vault
-        amount: '%mcwws.price_sell_smooth_basalt%'
         placeholder: '{amount}$'
         start-apply: 0
