@@ -10,6 +10,7 @@ const yaml = require('js-yaml');
 const ROOT = path.join(__dirname, '..', '..', '..', '..', '..');
 const ITEMS_DB = path.join(ROOT, 'plugins', 'Skript', 'scripts', 'mcwws', 'economy', 'database', 'items.yml');
 const SHOPS_DIR = path.join(ROOT, 'plugins', 'UltimateShop', 'shops');
+const MAPPING_PATH = path.join(__dirname, '..', 'mcwws', 'ultimateshop_mappings.yml');
 const TABS_JSON = path.join(__dirname, '..', 'mcwws', 'creative_tabs_26.2.json');
 
 const VANILLA_TAB_ORDER = [
@@ -263,6 +264,36 @@ function writeShopPages(shopId, itemIds) {
     return unique.length;
 }
 
+function writeMappingsFromShops() {
+    const mappings = {};
+    fs.readdirSync(SHOPS_DIR)
+        .filter((name) => name.endsWith('.yml'))
+        .sort()
+        .forEach((name) => {
+            const shopId = name.replace(/\.yml$/, '');
+            if (PRESERVE_SHOPS.has(shopId.replace(/__p\d+$/, ''))) return;
+            const doc = yaml.load(fs.readFileSync(path.join(SHOPS_DIR, name), 'utf8')) || {};
+            const items = doc.items || {};
+            Object.keys(items).forEach((slot) => {
+                const def = items[slot];
+                const products = def && def.products;
+                const first = products && (products[1] || products['1']);
+                const material = first && first.material;
+                const id = normalizeId(material);
+                if (!id || mappings[id]) return;
+                mappings[id] = {
+                    shop: shopId,
+                    item: String(slot),
+                    amount: 1
+                };
+            });
+        });
+    const header = '# UltimateShop 映射（由 sync-ultimateshop-from-items.js 根据 shops/*.yml 生成）\n# shop = 商店 ID，item = 该商店 yml 中的槽位字母\n# 沉浸式创造 / 选块购买 / 网页下单都读这份清单\n\n';
+    fs.writeFileSync(MAPPING_PATH, header + yaml.dump(mappings, { lineWidth: 120, noRefs: true }), 'utf8');
+    console.log(`ultimateshop_mappings.yml → ${Object.keys(mappings).length} 个可购物品`);
+    return Object.keys(mappings).length;
+}
+
 function deleteRetiredShops() {
     const keepPrefixes = new Set([...PRESERVE_SHOPS, ...GENERATED_SHOPS]);
     fs.readdirSync(SHOPS_DIR)
@@ -319,7 +350,8 @@ function main() {
         total += writeShopPages(shopId, shopBuckets[shopId]);
     });
 
-    console.log(`\n完成：${pricedSet.size} 个有价物品，商店上架 ${total} 条（创造栏多标签重复 ${total - pricedSet.size} 条；已跳过 daily / example）。`);
+    const mapped = writeMappingsFromShops();
+    console.log(`\n完成：${pricedSet.size} 个有价物品，商店上架 ${total} 条（创造栏多标签重复 ${total - pricedSet.size} 条；映射 ${mapped}；已跳过 daily / example）。`);
 }
 
 main();

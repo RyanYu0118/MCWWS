@@ -1,38 +1,5 @@
-next_id: 11908
+next_id: 11911
 entries:
-  '6908':
-    id: 6908
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 138.24
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-9f225028-4eea-4da6-89b9-491155f657cf
-    createdAt: '2026-08-30T05:23:38.038012200Z'
-    balanceAfter: 171949846.96
-  '6909':
-    id: 6909
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 138.24
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-460e9453-3c64-4a5f-a204-d1ec4fb7ad0a
-    createdAt: '2026-08-30T05:23:39.272433500Z'
-    balanceAfter: 171949977.2
-  '6910':
-    id: 6910
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 138.24
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-97a73ae6-a389-453f-b6c5-0b98bf93b5b9
-    createdAt: '2026-08-30T05:23:39.716684900Z'
-    balanceAfter: 171950115.44
   '6911':
     id: 6911
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -54641,3 +54608,36 @@ entries:
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/26 23:23
     createdAt: '2026-09-26T15:23:50.684837500Z'
     updatedAt: '2026-09-26T15:29:28.685337300Z'
+  '11908':
+    id: 11908
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1790510041959-33727264882000
+    createdAt: '2026-09-27T11:54:01.961060800Z'
+    balanceAfter: 146376238.52
+  '11909':
+    id: 11909
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 64
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1790510047931-33733237128500
+    createdAt: '2026-09-27T11:54:07.932776200Z'
+    balanceAfter: 146376174.52
+  '11910':
+    id: 11910
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 18568
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/27 19:54
+    createdAt: '2026-09-27T11:54:32.344708600Z'
+    updatedAt: '2026-09-27T13:12:13.339581700Z'

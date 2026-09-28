@@ -568,6 +568,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - 分类对齐 **26.2 创造物品栏**；同物可出现在多类，同价
 - 另设酿造、附魔（按效果/等级）、每日特供、服内特有物品等分类
 - 刷怪蛋与管理员方块不流通
+- **沉浸式创造**和**选块购买**只卖映射表里有的物品（`plugins/Skript/scripts/web/mcwws/ultimateshop_mappings.yml`）。改价表后必须同步商店并重写这份映射，否则创造栏会提示「不在商店出售」
 
 **文字搜索（必看）：** 点放大镜 → 点漏斗 → 菜单关闭 → 在聊天栏输入中文名（如「橡木」）→ 结果页重开。筛选槽放物品则无需打字。
 
@@ -998,6 +999,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | ---- | -------- |
 | 动态价格 | `plugins/Skript/scripts/mcwws/economy/` |
 | 导出物价 | `plugins/Skript/scripts/web/mcwws/economy/web_prices.yml` |
+| 商店可买映射 | `plugins/Skript/scripts/web/mcwws/ultimateshop_mappings.yml`（`sync-ultimateshop-from-items.js` 随商店一起写；沉浸式创造 / 选块购买 / 网页下单用） |
 | 指令批量改造扣费 | `tools/mcwws-worldedit-survival/` |
 | 可视化编辑扣费 | `tools/mcwws-axiom-survival/`、`tools/mcwws-axiom-survival-client/` |
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
