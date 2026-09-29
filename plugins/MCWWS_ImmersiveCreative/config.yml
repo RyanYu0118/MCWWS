@@ -35,6 +35,7 @@ messages:
   sold: '&7卖出 &f{amount} &7个，入账 &a¥{price}'
   cannot-afford: '&c零钱不足，无法拿取（约需 ¥{price}）。'
   not-buyable: '&c该物品不在商店出售，无法从创造栏取出。'
+  unknown-item: '&c该物品本服无法识别（多半是更高版本创造栏里的方块），已退回。'
   not-sellable: '&c该物品无法回收，已退回原处。'
   special-item: '&c附魔装备与特殊物品不能在创造栏买卖，已退回原处。'
   drop-denied: '&c沉浸式创造下不能把物品丢出界面。'

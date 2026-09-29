@@ -1,6 +1,5 @@
-# UltimateShop 映射（由 sync-ultimateshop-from-items.js 根据 shops/*.yml 生成）
-# shop = 商店 ID，item = 该商店 yml 中的槽位字母
-# 沉浸式创造 / 选块购买 / 网页下单都读这份清单
+# UltimateShop 映射（由 server.js 根据 shops/*.yml 自动生成）
+# shop = 商店 ID（如 blocks、farming），item = 该商店 yml 中的槽位字母
 
 arrow_of_fire_resistance_1:
   shop: brewing
@@ -3634,6 +3633,34 @@ spectral_arrow:
   shop: combat__p2
   item: g
   amount: 1
+redstone:
+  shop: ingredients__p2
+  item: k
+  amount: 1
+iron_ingot:
+  shop: ingredients
+  item: P
+  amount: 1
+gold_ingot:
+  shop: ingredients
+  item: Q
+  amount: 1
+copper_ingot:
+  shop: ingredients
+  item: O
+  amount: 1
+diamond:
+  shop: ingredients
+  item: H
+  amount: 1
+lapis_lazuli:
+  shop: ingredients
+  item: G
+  amount: 1
+emerald:
+  shop: ingredients
+  item: F
+  amount: 1
 enchanted_book_aqua_affinity_1:
   shop: enchantments
   item: A
@@ -4118,9 +4145,53 @@ enchanted_book_unbreaking_3:
   shop: enchantments__p3
   item: e
   amount: 1
-apple:
-  shop: food
+potion:
+  shop: example
   item: A
+  amount: 1
+bundle:
+  shop: example
+  item: B
+  amount: 1
+suspicious_sand:
+  shop: example
+  item: C
+  amount: 1
+enchanted_book:
+  shop: example
+  item: E
+  amount: 1
+potato:
+  shop: example
+  item: F
+  amount: 1
+axolotl_bucket:
+  shop: example
+  item: H
+  amount: 1
+tropical_fish_bucket:
+  shop: example
+  item: I
+  amount: 1
+player_head:
+  shop: example
+  item: J
+  amount: 1
+firework_rocket:
+  shop: example
+  item: L
+  amount: 1
+spawner:
+  shop: example
+  item: 'N'
+  amount: 1
+apple:
+  shop: example
+  item: P
+  amount: 1
+echo_shard:
+  shop: example
+  item: S
   amount: 1
 golden_apple:
   shop: food
@@ -4153,10 +4224,6 @@ carrot:
 golden_carrot:
   shop: food
   item: I
-  amount: 1
-potato:
-  shop: food
-  item: J
   amount: 1
 baked_potato:
   shop: food
@@ -4850,18 +4917,6 @@ raw_gold:
   shop: ingredients
   item: E
   amount: 1
-emerald:
-  shop: ingredients
-  item: F
-  amount: 1
-lapis_lazuli:
-  shop: ingredients
-  item: G
-  amount: 1
-diamond:
-  shop: ingredients
-  item: H
-  amount: 1
 ancient_debris:
   shop: ingredients
   item: I
@@ -4885,18 +4940,6 @@ iron_nugget:
 gold_nugget:
   shop: ingredients
   item: 'N'
-  amount: 1
-copper_ingot:
-  shop: ingredients
-  item: O
-  amount: 1
-iron_ingot:
-  shop: ingredients
-  item: P
-  amount: 1
-gold_ingot:
-  shop: ingredients
-  item: Q
   amount: 1
 netherite_scrap:
   shop: ingredients
@@ -5022,10 +5065,6 @@ popped_chorus_fruit:
   shop: ingredients__p2
   item: H
   amount: 1
-echo_shard:
-  shop: ingredients__p2
-  item: I
-  amount: 1
 disc_fragment_5:
   shop: ingredients__p2
   item: J
@@ -5129,10 +5168,6 @@ glass_bottle:
 nether_wart:
   shop: ingredients__p2
   item: j
-  amount: 1
-redstone:
-  shop: ingredients__p2
-  item: k
   amount: 1
 glowstone_dust:
   shop: ingredients__p2
@@ -6398,17 +6433,9 @@ salmon_bucket:
   shop: tools
   item: g
   amount: 1
-tropical_fish_bucket:
-  shop: tools
-  item: h
-  amount: 1
 pufferfish_bucket:
   shop: tools
   item: i
-  amount: 1
-axolotl_bucket:
-  shop: tools
-  item: j
   amount: 1
 tadpole_bucket:
   shop: tools
@@ -6449,10 +6476,6 @@ name_tag:
 lead:
   shop: tools__p2
   item: C
-  amount: 1
-bundle:
-  shop: tools__p2
-  item: D
   amount: 1
 white_bundle:
   shop: tools__p2
@@ -6781,8 +6804,4 @@ music_disc_lava_chicken:
 music_disc_bounce:
   shop: tools__p4
   item: J
-  amount: 1
-firework_rocket:
-  shop: tools__p4
-  item: K
   amount: 1

@@ -153,7 +153,7 @@ public final class SurvivalEditorController {
             return false;
         }
         Window window = mc.getWindow();
-        return window != null && (window.isIconified() || window.isMinimized());
+        return window != null && window.isIconified();
     }
 
     /**

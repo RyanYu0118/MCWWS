@@ -1,7 +1,7 @@
 {
   "schemaVersion": 1,
   "id": "mcwws_immersive_creative",
-  "version": "1.0.9",
+  "version": "1.1.0",
   "name": "MCWWS Immersive Creative",
   "description": "生存 HUD 下按 E 打开原版创造物品栏；拿取由服务端按商店价扣费。",
   "authors": ["RYAN STUDIO"],
@@ -17,8 +17,8 @@
     "mcwws_immersive_creative.mixins.json"
   ],
   "depends": {
-    "fabricloader": ">=0.14.21",
-    "minecraft": ">26.1 <26.3",
+    "fabricloader": ">=0.19.5",
+    "minecraft": "~26.3",
     "fabric-api": "*"
   }
 }

@@ -19,6 +19,6 @@ public final class McwwsPathHotkeys {
         if (mc.player == null || !mc.hasControlDown()) {
             return false;
         }
-        return InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_A);
+        return InputConstants.isKeyDown(InputConstants.KEY_A);
     }
 }

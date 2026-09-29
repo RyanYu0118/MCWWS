@@ -590,6 +590,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - **❌ 销毁格已禁用**：把物品放上去会退回它被拿出的那个背包槽；来自分类页、还没放进背包的则留在光标上。
 - 附魔装备、Slimefun 物品等带数据的特殊物品不能在创造栏买卖，操作会整次退回。
 - 商店不出售或黑名单物品无法取出。
+- 客户端比本服新、创造栏出现本服没有的方块时，服务端会拒绝并强制同步背包，**不会白拿**（服务端 1.0.10+）。
 
 客户端模组 `MCWWS_ImmersiveCreativeClient` 需 **1.0.9+**（1.0.9 起中键从分类页拿一组直接进主手，不再先停在光标/背包仓库区；1.0.8 起修复 Shift 在生存栏与快捷栏间挪物误扣费；1.0.7 起进服会主动向服务端核对开关），用 Axiom 生存配套时请同时更新到 **1.4.8+**（1.4.8 起可从资源管理器直接拖入投影文件粘贴；1.4.7 起修复最小化原生内存暴涨；1.4.6 起图层名不再出现问号；1.4.5 起图层 Ctrl/Shift 多选且每层选块独立；1.4.4 起每层钢笔参数独立隔离；1.4.3 起图层置顶、曲线形状收入子菜单并修正眼睛椭圆；1.4.2 起图层睁眼/闭眼图标与叉号删层、Delete 清空整层、组平移单条历史、最小化跳过 Editor 叠加层；1.4.1 起图层可显隐、拖节点不再卡一格；1.4.0 起钢笔支持多路径图层与 Ctrl+C/V 粘贴为新图层；1.3.3 起可正常启动；1.3.2 会因 KeyboardInput mixin 崩溃，1.3.1 会因 Delete 注入崩溃；1.3.1 起 Ctrl+A 全选钢笔节点时不再向左平移；1.3.0 起可保存/导入钢笔轨迹并用 Ctrl+A 全选上移；1.2.8 起 Enter 确认钢笔会保留节点；1.2.9 起 Shift+点击可多节点整组平移；1.2.6 及更早在 Editor 建造阶段会忽略沉浸式创造开关，按 E 仍开生存背包）。低于 1.0.6 的版本：数字键拿一组可能不扣款、中键可能无响应、分类页投放会把物品毁掉。低于 1.0.4 的版本上报槽位时**只带材质、不带 NBT**，会把背包里物品的附魔、Slimefun 数据、自定义名全部抹掉；服务端会识别并**自动为该玩家关闭**沉浸式创造。1.0.0 / 1.0.1 另有按 E 崩溃的问题。
 
@@ -1006,7 +1007,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
 | 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.9.jar`；数据 `plugins/MCWWS_WorldSync/` |
-| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.9-needMCWWS_ImmersiveCreativeClient+1.0.9.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
+| 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.10-needMCWWS_ImmersiveCreativeClient+1.1.0.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
 | 网页 UI 设计规范 | `plugins/Skript/scripts/web/ui.md`（同步 **附录 G**） |
@@ -1045,7 +1046,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
 | MCWWS_WorldSync | 1.2.8 | 强制推送；进度超过约 21MB 时百分比不再变成负数 |
-| MCWWS_ImmersiveCreative | 1.0.9 | 沉浸式创造：生存 HUD 下 E 开创造栏，开关重进保留，拿取按商店价+秒送费；中键一组进主手；生存栏整理不计费；需客户端 1.0.9 |
+| MCWWS_ImmersiveCreative | 1.0.10 | 沉浸式创造：生存 HUD 下 E 开创造栏；本服无法识别的创造栏物品会拒绝并回滚，避免漏扣费；需客户端 1.1.0 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |
 | MCWWS_AxiomSurvivalClient | 1.4.8 | Axiom 生存客户端，装进游戏 `mods/`；jar 含 `needMCWWS_AxiomSurvival+1.1.11`；1.4.8 支持拖入投影直接粘贴 |

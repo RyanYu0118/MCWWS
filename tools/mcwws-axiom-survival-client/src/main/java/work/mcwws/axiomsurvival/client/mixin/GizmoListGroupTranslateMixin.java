@@ -155,7 +155,7 @@ public abstract class GizmoListGroupTranslateMixin implements McwwsGizmoGroup {
     @Inject(method = "updateGizmos", at = @At("HEAD"), remap = false)
     private void mcwws$ctrlASelectAll(CallbackInfoReturnable<Boolean> cir) {
         Minecraft mc = Minecraft.getInstance();
-        boolean aDown = InputConstants.isKeyDown(mc.getWindow(), InputConstants.KEY_A);
+        boolean aDown = InputConstants.isKeyDown(InputConstants.KEY_A);
         boolean pressed = aDown && !mcwws$aWasDown;
         mcwws$aWasDown = aDown;
         if (pressed && mc.hasControlDown() && !ImGui.getIO().getWantTextInput()) {

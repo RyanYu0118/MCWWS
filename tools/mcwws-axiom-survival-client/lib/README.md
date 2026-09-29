@@ -4,10 +4,10 @@
 
 | 文件 | 来源 |
 |------|------|
-| `Axiom-5.5.0-for-MC26.2.jar` | 客户端 `.minecraft/mods/` |
-| `minecraft-client-26.2.jar` | 官方客户端或 `bluemap/minecraft-client-26.2.jar` |
+| `Axiom-*-for-MC26.3.jar` | 客户端 `.minecraft/mods/`（`build.ps1` 也会自动搜） |
+| `minecraft-client-26.3.jar` | 官方客户端 `versions/26.3/26.3.jar` 复制并改名 |
 | `fabric-loader-*.jar` | `.minecraft/libraries/net/fabricmc/fabric-loader/` |
-| `fabric-api-0.156.0+26.2.jar` | `.minecraft/mods/` |
-| `mixin-0.8.7.jar` | Fabric loader 依赖 |
+| `fabric-api-*-26.3.jar` | `.minecraft/mods/` |
+| `sponge-mixin-*.jar` | Fabric loader 依赖 |
 
-`build.ps1` 会自动在常见路径搜索；若失败请手动放入 `lib/`。
+`build.ps1` 会自动在常见路径搜索 Axiom；其余请放入 `lib/`。

@@ -63,8 +63,23 @@ public final class ImmersiveChannel implements PluginMessageListener {
                 return;
             }
             int slot = in.readInt();
-            ItemStack stack = toStack(readString(in));
-            ItemStack carried = toStack(readString(in));
+            String itemSnbt = readString(in);
+            String carriedSnbt = readString(in);
+            ItemStack stack;
+            ItemStack carried;
+            try {
+                stack = toStack(itemSnbt);
+                carried = toStack(carriedSnbt);
+            } catch (Exception ex) {
+                plugin.getLogger().log(Level.WARNING, "解析创造槽位消息失败: " + previewSnbt(itemSnbt), ex);
+                rejectUnparseable(player);
+                return;
+            }
+            if (unparseable(itemSnbt, stack) || unparseable(carriedSnbt, carried)) {
+                plugin.getLogger().warning("无法还原创造栏物品，已拒绝: " + previewSnbt(itemSnbt));
+                rejectUnparseable(player);
+                return;
+            }
             if (plugin.debug()) {
                 plugin.getLogger().info("[debug] 通道槽位: " + player.getName()
                         + " slot=" + slot + " item=" + stack.getType() + " x" + stack.getAmount()
@@ -73,7 +88,41 @@ public final class ImmersiveChannel implements PluginMessageListener {
             plugin.creativeSlots().applyFromClient(player, slot, stack, carried);
         } catch (Exception ex) {
             plugin.getLogger().log(Level.WARNING, "解析创造槽位消息失败", ex);
+            rejectUnparseable(player);
         }
+    }
+
+    /**
+     * SNBT 对不上本服物品注册表时（例如 26.3 客户端创造栏里的羊毛楼梯），
+     * 绝不能静默丢包，否则客户端预测物品会留在身上且不扣费。
+     */
+    private void rejectUnparseable(Player player) {
+        if (player == null || !player.isOnline()) {
+            return;
+        }
+        if (plugin.creativeSlots() != null) {
+            plugin.creativeSlots().forget(player.getUniqueId());
+        }
+        player.setItemOnCursor(new ItemStack(Material.AIR));
+        player.closeInventory();
+        player.updateInventory();
+        if (plugin.state().isEnabled(player)) {
+            plugin.send(player, "messages.unknown-item");
+        }
+    }
+
+    private static boolean unparseable(String snbt, ItemStack stack) {
+        if (snbt == null || snbt.isBlank()) {
+            return false;
+        }
+        return stack == null || stack.getType().isAir();
+    }
+
+    private static String previewSnbt(String snbt) {
+        if (snbt == null || snbt.isBlank()) {
+            return "(empty)";
+        }
+        return snbt.length() <= 180 ? snbt : snbt.substring(0, 180) + "...";
     }
 
     /** 旧客户端会导致物品丢数据，直接给它关掉沉浸式创造，别等玩家发现附魔没了。 */

@@ -12,14 +12,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.nbt.NbtAccounter;
 import net.minecraft.nbt.NbtIo;
-import org.lwjgl.glfw.GLFW;
-import org.lwjgl.glfw.GLFWDropCallbackI;
 
 import java.io.BufferedInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 import java.util.Locale;
 
 /**
@@ -30,57 +29,41 @@ import java.util.Locale;
  * 落块仍走正常改块包，服务端 MCWWS_AxiomSurvival 照常计费。
  *
  * <p>Axiom Editor 是 ImGui 叠加层而非 {@code Screen}，收不到 vanilla 的
- * {@code onFilesDrop}，因此这里直接挂 GLFW 回调；Editor 未激活时原样转发给
- * vanilla 之前注册的回调，不影响拖资源包等原有行为。
+ * {@code onFilesDrop}。26.3 起窗口后端从 GLFW 换成 SDL，拖放经
+ * {@code MouseHandler#onDrop} 派发；由 mixin 在该处拦截，Editor 未激活时放行原版。
  */
 public final class SchematicDropHandler {
-
-    private static boolean installed;
-    private static GLFWDropCallbackI previous;
 
     private SchematicDropHandler() {
     }
 
-    /** 窗口创建后调用；重复调用无副作用 */
-    public static void install() {
-        if (installed) {
-            return;
+    /**
+     * @return {@code true} 已接管本次拖放（调用方应取消 vanilla 后续）
+     */
+    public static boolean tryHandle(List<String> files) {
+        if (!EditorUI.isActive() || files == null || files.isEmpty()) {
+            return false;
         }
-        Minecraft mc = Minecraft.getInstance();
-        if (mc == null || mc.getWindow() == null) {
-            return;
-        }
-        long handle = mc.getWindow().handle();
-        if (handle == 0L) {
-            return;
-        }
-        previous = GLFW.glfwSetDropCallback(handle, SchematicDropHandler::onFilesDropped);
-        installed = true;
-        McwwsAxiomSurvivalClientMod.LOGGER.info("已接管窗口拖放：Editor 内可直接拖入投影文件");
-    }
-
-    private static void onFilesDropped(long window, int count, long names) {
-        Path schematic = EditorUI.isActive() ? firstSupported(count, names) : null;
+        Path schematic = firstSupported(files);
         if (schematic == null) {
-            forward(window, count, names);
-            return;
+            return false;
         }
-        // GLFW 回调运行在事件轮询里，落块与渲染状态一律回主线程再动
+        // onDrop 已在主线程，但保持 execute 以免与其它输入事件交错
         Minecraft.getInstance().execute(() -> pasteIntoWorld(schematic));
+        return true;
     }
 
-    private static Path firstSupported(int count, long names) {
-        for (int i = 0; i < count; i++) {
-            String raw;
-            try {
-                raw = org.lwjgl.glfw.GLFWDropCallback.getName(names, i);
-            } catch (RuntimeException ignored) {
-                continue;
-            }
+    private static Path firstSupported(List<String> files) {
+        for (String raw : files) {
             if (raw == null || raw.isBlank()) {
                 continue;
             }
-            Path path = Path.of(raw);
+            Path path;
+            try {
+                path = Path.of(raw);
+            } catch (RuntimeException ignored) {
+                continue;
+            }
             if (isSupported(path) && Files.isRegularFile(path)) {
                 return path;
             }
@@ -94,12 +77,6 @@ public final class SchematicDropHandler {
                 || name.endsWith(".schem")
                 || name.endsWith(".schematic")
                 || name.endsWith(".bp");
-    }
-
-    private static void forward(long window, int count, long names) {
-        if (previous != null) {
-            previous.invoke(window, count, names);
-        }
     }
 
     private static void pasteIntoWorld(Path path) {

@@ -2198,7 +2198,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:book
-  count: 1
+  count: 12
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:bamboo_trapdoor
@@ -2303,6 +2303,10 @@ items:
   count: 64
   schema_version: 1
 - DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
   id: minecraft:splash_potion
   count: 1
   components:
@@ -2355,7 +2359,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:ink_sac
-  count: 2
+  count: 10
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:elytra
@@ -2442,6 +2446,51 @@ items:
   count: 1
   components:
     minecraft:damage: '377'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_boat
+  count: 1
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:mending":1}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:enchanted_book
+  count: 1
+  components:
+    minecraft:stored_enchantments: '{"minecraft:looting":3}'
+    minecraft:repair_cost: '3'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
