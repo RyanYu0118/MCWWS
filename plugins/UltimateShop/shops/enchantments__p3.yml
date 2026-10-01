@@ -1,18 +1,11 @@
 settings:
-  menu: example-shop-menu
+  menu: shop-menu-enchantments__p3
   buy-more: true
   shop-name: '{lang:enchantments-shop-name} (3/3)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
-    layout:
-      - fs043500x
-      - ABCDEFGHI
-      - JKLMNOPQR
-      - STUVWXYZa
-      - bcde00000
-      - '000000000'
     buttons:
       '4':
         display-item:

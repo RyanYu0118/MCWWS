@@ -100,6 +100,10 @@ useTimes:
       totalSellUseTimes: 103
       lastBuyTime: '2026-09-07 21:55:08'
       lastSellTime: '2026-08-30 23:01:57'
+    k:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-01 21:31:11'
   flowers__p4:
     H:
       sellUseTimes: 4
@@ -362,9 +366,12 @@ useTimes:
       totalBuyUseTimes: 1
       lastBuyTime: '2026-08-20 20:02:27'
     g:
-      buyUseTimes: 33
-      totalBuyUseTimes: 33
-      lastBuyTime: '2026-08-20 20:18:21'
+      buyUseTimes: 87
+      totalBuyUseTimes: 87
+      sellUseTimes: 1
+      totalSellUseTimes: 1
+      lastBuyTime: '2026-10-01 21:49:04'
+      lastSellTime: '2026-10-01 21:49:05'
     Y:
       sellUseTimes: 2
       totalSellUseTimes: 2
@@ -374,9 +381,12 @@ useTimes:
       totalSellUseTimes: 5316
       lastSellTime: '2026-08-27 21:56:51'
     c:
-      sellUseTimes: 4
-      totalSellUseTimes: 4
-      lastSellTime: '2026-08-20 20:07:38'
+      buyUseTimes: 1
+      totalBuyUseTimes: 1
+      sellUseTimes: 5
+      totalSellUseTimes: 5
+      lastBuyTime: '2026-10-01 21:50:15'
+      lastSellTime: '2026-10-01 21:50:16'
     e:
       sellUseTimes: 169
       totalSellUseTimes: 169
@@ -755,6 +765,11 @@ useTimes:
       sellUseTimes: 3
       lastBuyTime: '2026-05-31 15:05:38'
       lastSellTime: '2026-05-31 15:05:44'
+  building__p9:
+    J:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-01 22:06:12'
   redstone__p2:
     M:
       buyUseTimes: 2
@@ -2807,6 +2822,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;D;;F;;G
-    refreshDoneTime: '2026-09-30 00:00:00'
+    nowValue: A;;C;;D;;E;;F
+    refreshDoneTime: '2026-10-02 00:00:00'
 customPlaceholder: {}

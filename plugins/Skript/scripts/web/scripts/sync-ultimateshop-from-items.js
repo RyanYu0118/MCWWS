@@ -10,6 +10,8 @@ const yaml = require('js-yaml');
 const ROOT = path.join(__dirname, '..', '..', '..', '..', '..');
 const ITEMS_DB = path.join(ROOT, 'plugins', 'Skript', 'scripts', 'mcwws', 'economy', 'database', 'items.yml');
 const SHOPS_DIR = path.join(ROOT, 'plugins', 'UltimateShop', 'shops');
+const MENUS_DIR = path.join(ROOT, 'plugins', 'UltimateShop', 'menus');
+const EXAMPLE_MENU_FILE = path.join(MENUS_DIR, 'example-shop-menu.yml');
 const MAPPING_PATH = path.join(__dirname, '..', 'mcwws', 'ultimateshop_mappings.yml');
 const TABS_JSON = path.join(__dirname, '..', 'mcwws', 'creative_tabs_26.2.json');
 
@@ -180,6 +182,28 @@ function slimefunPageButton(kind, enabled, targetShopId) {
     return button;
 }
 
+function writeShopMenuFile(menuName, itemCount) {
+    const template = fs.readFileSync(EXAMPLE_MENU_FILE, 'utf8');
+    const rows = [SHOP_FUNCTION_ROW, ...buildProductLayoutRows(itemCount)];
+    const layoutYaml = `layout:\n${rows.map((row) => `  - '${row}'`).join('\n')}\n`;
+    const updated = template.replace(/^layout:\n(?: {2}- .+\n)+/m, layoutYaml);
+    if (updated === template) {
+        throw new Error(`无法写入商店菜单 ${menuName}：未匹配到 example-shop-menu.yml 的 layout 块`);
+    }
+    fs.writeFileSync(path.join(MENUS_DIR, `${menuName}.yml`), updated, 'utf8');
+}
+
+function deleteStaleShopMenus(shopId, keepMenuFiles) {
+    const prefix = `shop-menu-${shopId}`;
+    fs.readdirSync(MENUS_DIR)
+        .filter((name) => name.startsWith(prefix) && name.endsWith('.yml'))
+        .forEach((name) => {
+            if (keepMenuFiles.has(name)) return;
+            fs.unlinkSync(path.join(MENUS_DIR, name));
+            console.log(`删除旧菜单 ${name}`);
+        });
+}
+
 function buildShopDoc(shopId, itemIds, options = {}) {
     const meta = SHOP_META[shopId] || {
         shopName: shopId,
@@ -189,6 +213,7 @@ function buildShopDoc(shopId, itemIds, options = {}) {
     const totalPages = Number(options.totalPages) || 1;
     const prevShopId = options.prevShopId || null;
     const nextShopId = options.nextShopId || null;
+    const menuName = options.menuName || meta.menu;
     const pageLabel = totalPages > 1 ? ` (${pageIndex + 1}/${totalPages})` : '';
 
     const items = {};
@@ -198,7 +223,7 @@ function buildShopDoc(shopId, itemIds, options = {}) {
 
     const doc = {
         settings: {
-            menu: meta.menu,
+            menu: menuName,
             'buy-more': true,
             'shop-name': `${meta.shopName}${pageLabel}`,
             'hide-message': false,
@@ -210,8 +235,9 @@ function buildShopDoc(shopId, itemIds, options = {}) {
 
     const hasPrev = pageIndex > 0 && !!prevShopId;
     const hasNext = !!nextShopId;
+    // 只覆盖翻页按钮。不要在这里写 layout：UltimateShop 会把 menu-settings
+    // 合并进批量购买菜单，layout 一旦被商店页覆盖，数量按钮会全部消失。
     doc.settings['menu-settings'] = {
-        layout: [SHOP_FUNCTION_ROW, ...buildProductLayoutRows(itemIds.length)],
         buttons: {
             [PREV_PAGE_BTN]: slimefunPageButton('prev', hasPrev, prevShopId),
             [NEXT_PAGE_BTN]: slimefunPageButton('next', hasNext, nextShopId)
@@ -246,18 +272,28 @@ function writeShopPages(shopId, itemIds) {
         .filter((name) => stalePattern.test(name))
         .forEach((name) => fs.unlinkSync(path.join(SHOPS_DIR, name)));
 
+    const keepMenuFiles = new Set();
     pages.forEach((pageItems, pageIndex) => {
         const prevShopId = pageIndex > 0 ? shopPageId(shopId, pageIndex - 1) : null;
         const nextShopId = pageIndex < pages.length - 1 ? shopPageId(shopId, pageIndex + 1) : null;
+        const fullPage = pageItems.length >= SLOTS_PER_PAGE;
+        const meta = SHOP_META[shopId] || { menu: 'example-shop-menu' };
+        const menuName = fullPage ? meta.menu : `shop-menu-${shopPageId(shopId, pageIndex)}`;
+        if (!fullPage) {
+            writeShopMenuFile(menuName, pageItems.length);
+            keepMenuFiles.add(`${menuName}.yml`);
+        }
         const doc = buildShopDoc(shopId, pageItems, {
             pageIndex,
             totalPages: pages.length,
             prevShopId,
-            nextShopId
+            nextShopId,
+            menuName
         });
         const outPath = path.join(SHOPS_DIR, shopPageFileName(shopId, pageIndex));
         fs.writeFileSync(outPath, yaml.dump(doc, { lineWidth: 120, noRefs: true }), 'utf8');
     });
+    deleteStaleShopMenus(shopId, keepMenuFiles);
 
     const pageInfo = pages.length > 1 ? ` (${pages.length} 页)` : '';
     console.log(`${shopId}.yml → ${unique.length} 个商品${pageInfo}`);

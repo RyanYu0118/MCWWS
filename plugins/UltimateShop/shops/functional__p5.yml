@@ -1,18 +1,11 @@
 settings:
-  menu: example-shop-menu
+  menu: shop-menu-functional__p5
   buy-more: true
   shop-name: '{lang:functional-shop-name} (5/5)'
   hide-message: false
   secret-shop-items: false
   allow-favourite: true
   menu-settings:
-    layout:
-      - fs043500x
-      - ABCDEFGHI
-      - JKLMNOPQR
-      - STUVWXYZa
-      - bcdeghijk
-      - lmnop0000
     buttons:
       '4':
         display-item:

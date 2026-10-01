@@ -185,13 +185,13 @@ menu:
     display-item-max-stack: false
     default:
       menu: buy-more
-      max-amount: 693
+      max-amount: 64
     only-buy:
       menu: buy-more-buy
-      max-amount: 693
+      max-amount: 64
     only-sell:
       menu: buy-more-sell
-      max-amount: 693
+      max-amount: 64
   auto-open:
     enabled: true
     menu: main
@@ -220,7 +220,7 @@ menu:
         item: '{item}'
         buy-more-menu:
           menu: buy-more-buy
-          max-amount: 693
+          max-amount: 64
     buy-more-sell:
       display-name: '选择出售数量'
       sell-only: true
@@ -230,7 +230,7 @@ menu:
         item: '{item}'
         buy-more-menu:
           menu: buy-more-sell
-          max-amount: 693
+          max-amount: 64
     buy-one-stack:
       display-name: 'Buy One Stack'
       buy-only: true
