@@ -17,7 +17,6 @@ import:
     org.bukkit.entity.Display
     org.bukkit.entity.Entity
     org.bukkit.util.Transformation
-    org.bukkit.util.Vector
     org.joml.Quaternionf
     org.joml.Vector3f
     java.lang.Math
@@ -82,47 +81,38 @@ function mcwwsIronGateClearDisplays():
     delete {mcwws.irongate.d::*}
     delete {mcwws.irongate.y::*}
 
-function mcwwsIronGatePushPlayers(phi: number, opening: boolean):
+function mcwwsIronGateClearCollision():
+    loop {mcwws.irongate.col::*}:
+        set {_loc} to loop-value
+        if {_loc} is set:
+            set {_b} to {_loc}.getBlock()
+            if {_b}.getType() is Material.BARRIER:
+                {_b}.setType(Material.AIR)
+    delete {mcwws.irongate.col::*}
+
+function mcwwsIronGatePlaceCollision(phi: number):
+    mcwwsIronGateClearCollision()
+    set {_w} to mcwwsIronGateWorld()
+    if {_w} is not set:
+        stop
     set {_sin} to Math.sin({_phi})
     set {_cos} to Math.cos({_phi})
-    set {_nx} to {_cos}
-    set {_nz} to -1 * {_sin}
-    if {_opening} is false:
-        set {_nx} to -1 * {_nx}
-        set {_nz} to -1 * {_nz}
-    set {_dphi} to 1.5707964 / 46
-    loop all players:
-        if "%world of loop-player%" is not "world":
-            continue
-        set {_y} to y-coord of loop-player
-        if {_y} < 63.2:
-            continue
-        if {_y} > 67.2:
-            continue
-        set {_rx} to x-coord of loop-player + 720
-        set {_rz} to z-coord of loop-player - 103
-        set {_along} to {_rx} * {_sin} + {_rz} * {_cos}
-        if {_along} < 0.15:
-            continue
-        if {_along} > 23:
-            continue
-        set {_across} to {_rx} * {_nx} + {_rz} * {_nz}
-        if {_across} > 0.62:
-            continue
-        if {_across} < -0.35:
-            continue
-        set {_need} to 0.62 - {_across}
-        set {_spd} to {_along} * {_dphi} + {_need} * 0.35
-        if {_spd} < 0.22:
-            set {_spd} to 0.22
-        if {_spd} > 0.85:
-            set {_spd} to 0.85
-        loop-player.setVelocity(new Vector({_nx} * {_spd}, 0.06, {_nz} * {_spd}))
-        if {_need} > 0.12:
-            set {_loc} to loop-player.getLocation()
-            {_loc}.setX({_loc}.getX() + {_nx} * {_need})
-            {_loc}.setZ({_loc}.getZ() + {_nz} * {_need})
-            loop-player.teleport({_loc})
+    set {_d} to 1
+    while {_d} <= 22:
+        set {_ix} to floor(-720 + {_sin} * {_d} + 0.5)
+        set {_iz} to floor(103 + {_cos} * {_d} + 0.5)
+        if {_ix} is -720:
+            if {_iz} is 103:
+                add 1 to {_d}
+                continue
+        set {_y} to 64
+        while {_y} <= 66:
+            set {_b} to {_w}.getBlockAt({_ix}, {_y}, {_iz})
+            if {_b}.getType() is Material.AIR:
+                {_b}.setType(Material.BARRIER)
+                add {_b}.getLocation() to {mcwws.irongate.col::*}
+            add 1 to {_y}
+        add 1 to {_d}
 
 function mcwwsIronGateClearClosedBlocks():
     set {_w} to mcwwsIronGateWorld()
@@ -246,6 +236,7 @@ function mcwwsIronGateCommitEndPose():
 function mcwwsIronGateFinish():
     set {mcwws.irongate.busy} to false
     set {mcwws.irongate.frame} to 0
+    mcwwsIronGateClearCollision()
     mcwwsIronGateClearDisplays()
     if {mcwws.irongate.dir} is "close":
         mcwwsIronGatePlaceClosedBlocks()
@@ -278,11 +269,11 @@ function mcwwsIronGateStart(dir: text):
     if {_dir} is "open":
         mcwwsIronGateClearClosedBlocks()
         mcwwsIronGateSpawnDisplays(0)
-        mcwwsIronGatePushPlayers(0, true)
+        mcwwsIronGatePlaceCollision(0)
     else:
         mcwwsIronGateClearOpenBlocks()
         mcwwsIronGateSpawnDisplays(1.5707964)
-        mcwwsIronGatePushPlayers(1.5707964, false)
+        mcwwsIronGatePlaceCollision(1.5707964)
 
 function mcwwsIronGateToggle():
     if {mcwws.irongate.busy} is true:
@@ -297,9 +288,11 @@ on script load:
     set {mcwws.irongate.frame} to 0
     if {mcwws.irongate.open} is not set:
         set {mcwws.irongate.open} to true
+    mcwwsIronGateClearCollision()
     mcwwsIronGateClearDisplays()
 
 on script unload:
+    mcwwsIronGateClearCollision()
     mcwwsIronGateClearDisplays()
 
 every 1 tick:
@@ -312,17 +305,17 @@ every 1 tick:
         else:
             if {mcwws.irongate.frame} < 5:
                 if {mcwws.irongate.dir} is "open":
-                    mcwwsIronGatePushPlayers(0, true)
+                    mcwwsIronGatePlaceCollision(0)
                 else:
-                    mcwwsIronGatePushPlayers(1.5707964, false)
+                    mcwwsIronGatePlaceCollision(1.5707964)
             else:
                 set {_t} to ({mcwws.irongate.frame} - 5) / 46
                 if {_t} > 1:
                     set {_t} to 1
                 if {mcwws.irongate.dir} is "open":
-                    mcwwsIronGatePushPlayers({_t} * 1.5707964, true)
+                    mcwwsIronGatePlaceCollision({_t} * 1.5707964)
                 else:
-                    mcwwsIronGatePushPlayers((1 - {_t}) * 1.5707964, false)
+                    mcwwsIronGatePlaceCollision((1 - {_t}) * 1.5707964)
 
 command /mcwws-irongate [<text>]:
     description: 行政区西门大铁门开合
@@ -369,6 +362,18 @@ on right click:
             stop
 
 on break:
+    if event-block.getType() is Material.BARRIER:
+        set {_x} to x-coord of event-block
+        set {_y} to y-coord of event-block
+        set {_z} to z-coord of event-block
+        if {_y} >= 64:
+            if {_y} <= 66:
+                if {_x} >= -720:
+                    if {_x} <= -698:
+                        if {_z} >= 103:
+                            if {_z} <= 125:
+                                if player is not op:
+                                    cancel event
     if mcwwsIronGateIsLeafCell(x-coord of event-block, y-coord of event-block, z-coord of event-block) is true:
         if mcwwsIronGateIsBar(event-block.getType()) is true:
             if player is not op:
