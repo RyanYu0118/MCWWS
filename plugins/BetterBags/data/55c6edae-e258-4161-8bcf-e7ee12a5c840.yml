@@ -276,7 +276,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:bucket
-  count: 1
+  count: 5
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:copper_helmet
@@ -912,16 +912,6 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
-  count: 3
-  components:
-    minecraft:profile: '{id:[I;1147247507,747124443,-1528363618,-1287761749],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzJkNDEwNDJjZTk5MTQ3Y2MzOGNhYzllNDY3NDE1NzZlN2VlNzkxMjgzZTZmYWM4ZDMyOTJjYWUyOTM1ZjFmIn19fQ=="}]}'
-    minecraft:lore: '["",{extra:[{bold:0b,italic:0b,obfuscated:0b,strikethrough:0b,text:"可以把不要的物品放进这里",underlined:0b}],text:""}]'
-    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_aqua",italic:0b,obfuscated:0b,strikethrough:0b,text:"垃圾箱",underlined:0b}],text:""}'
-    minecraft:custom_model_data: '{floats:[2200519.0f]}'
-    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"TRASH_CAN_BLOCK"}}'
-  schema_version: 1
-- DataVersion: 4903
-  id: minecraft:player_head
   count: 6
   components:
     minecraft:profile: '{id:[I;2140516546,-975947166,-2099628260,-605961595],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTZkMWMxYTY5YTNkZTlmZWM5NjJhNzdiZjNiMmUzNzZkZDI1Yzg3M2EzZDhmMTRmMWRkMzQ1ZGFlNGM0In19fQ=="}]}'
@@ -1149,7 +1139,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 21
+  count: 22
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -1299,7 +1289,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 1
+  count: 2
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -1542,7 +1532,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:crafting_table
-  count: 1
+  count: 2
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:spruce_sapling
@@ -2166,7 +2156,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:light
-  count: 48
+  count: 64
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:pumpkin_seeds
@@ -2550,6 +2540,16 @@ items:
   count: 1
   components:
     minecraft:damage: '67'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:shears
+  count: 1
+  components:
+    minecraft:damage: '3'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:light
+  count: 40
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
