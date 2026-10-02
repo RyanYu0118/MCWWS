@@ -169,7 +169,8 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             set {_bd} to {_w}.spawn({_loc}, BlockDisplay.class)
             {_bd}.setBlock(mcwwsIronGateBarData())
             {_bd}.setTeleportDuration(0)
-            {_bd}.setInterpolationDuration(4)
+            {_bd}.setInterpolationDuration(0)
+            {_bd}.setInterpolationDelay(0)
             {_bd}.setShadowRadius(0)
             {_bd}.setShadowStrength(0)
             {_bd}.setBrightness(new Display.Brightness(15, 15))
@@ -181,7 +182,11 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             add 1 to {_y}
         add 1 to {_d}
 
-function mcwwsIronGateMoveDisplays(phi: number):
+function mcwwsIronGateCommitEndPose():
+    if {mcwws.irongate.dir} is "open":
+        set {_phi} to 1.5707964
+    else:
+        set {_phi} to 0
     loop {mcwws.irongate.ents::*}:
         set {_uuid} to loop-value
         set {_id} to UUID.fromString("%{_uuid}%")
@@ -189,7 +194,8 @@ function mcwwsIronGateMoveDisplays(phi: number):
         if {_ent} is not set:
             continue
         set {_d} to {mcwws.irongate.d::%{_uuid}%}
-        {_ent}.setInterpolationDuration(4)
+        {_ent}.setInterpolationDelay(0)
+        {_ent}.setInterpolationDuration(46)
         {_ent}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
 
 function mcwwsIronGateFinish():
@@ -252,15 +258,10 @@ on script unload:
 every 1 tick:
     if {mcwws.irongate.busy} is true:
         add 1 to {mcwws.irongate.frame}
-        set {_t} to {mcwws.irongate.frame} / 48
-        if {_t} >= 1:
+        if {mcwws.irongate.frame} is 1:
+            mcwwsIronGateCommitEndPose()
+        if {mcwws.irongate.frame} >= 48:
             mcwwsIronGateFinish()
-        else:
-            if {mcwws.irongate.dir} is "open":
-                set {_phi} to {_t} * 1.5707964
-            else:
-                set {_phi} to (1 - {_t}) * 1.5707964
-            mcwwsIronGateMoveDisplays({_phi})
 
 command /mcwws-irongate [<text>]:
     description: 行政区西门大铁门开合
