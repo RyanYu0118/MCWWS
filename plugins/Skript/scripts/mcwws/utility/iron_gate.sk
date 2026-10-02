@@ -1,6 +1,6 @@
 # MCWWS：行政区西门大铁门（绕转角 90° 开合）
 # 关：x=-720 z=104..125 y=64..66
-# 开：收起，不覆盖 z=103 现有氧化铜栏
+# 开：x=-719..-698 z=103 y=64..66（北侧落地，不改转轴柱）
 # 材质：与 z=103 一侧相同的 waxed_exposed_copper_bars
 # 转轴：(-720, 103) 铜栏柱。右键转轴或关闭态门叶即可开关。
 
@@ -35,7 +35,14 @@ function mcwwsIronGateIsLeafCell(x: number, y: number, z: number) :: boolean:
         if {_z} >= 104:
             if {_z} <= 125:
                 return true
+    if {_z} is 103:
+        if {_x} >= -719:
+            if {_x} <= -698:
+                return true
     return false
+
+function mcwwsIronGateBarDataEW() :: object:
+    return Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=false,south=false,waterlogged=false,west=true]")
 
 function mcwwsIronGateIsPivot(x: number, z: number) :: boolean:
     if {_x} is -720:
@@ -109,6 +116,39 @@ function mcwwsIronGatePlaceClosedBlocks():
         add 1 to {_z}
     mcwwsIronGateSetPivotSouth(true)
 
+function mcwwsIronGateClearOpenBlocks():
+    set {_w} to mcwwsIronGateWorld()
+    if {_w} is not set:
+        stop
+    set {_x} to -719
+    while {_x} <= -698:
+        set {_y} to 64
+        while {_y} <= 66:
+            set {_b} to {_w}.getBlockAt({_x}, {_y}, 103)
+            if mcwwsIronGateIsBar({_b}.getType()) is true:
+                {_b}.setType(Material.AIR)
+            add 1 to {_y}
+        add 1 to {_x}
+
+function mcwwsIronGatePlaceOpenBlocks():
+    set {_w} to mcwwsIronGateWorld()
+    if {_w} is not set:
+        stop
+    set {_data} to mcwwsIronGateBarDataEW()
+    set {_x} to -719
+    while {_x} <= -698:
+        set {_y} to 64
+        while {_y} <= 66:
+            set {_b} to {_w}.getBlockAt({_x}, {_y}, 103)
+            if {_b}.getType() is Material.AIR:
+                {_b}.setBlockData({_data})
+            else:
+                if mcwwsIronGateIsBar({_b}.getType()) is true:
+                    {_b}.setBlockData({_data})
+            add 1 to {_y}
+        add 1 to {_x}
+    mcwwsIronGateSetPivotSouth(false)
+
 function mcwwsIronGatePose(phi: number, d: number) :: object:
     set {_sin} to Math.sin({_phi})
     set {_cos} to Math.cos({_phi})
@@ -160,6 +200,7 @@ function mcwwsIronGateFinish():
         mcwwsIronGatePlaceClosedBlocks()
         set {mcwws.irongate.open} to false
     else:
+        mcwwsIronGatePlaceOpenBlocks()
         set {mcwws.irongate.open} to true
     set {_w} to mcwwsIronGateWorld()
     if {_w} is set:
@@ -187,6 +228,7 @@ function mcwwsIronGateStart(dir: text):
         mcwwsIronGateClearClosedBlocks()
         mcwwsIronGateSpawnDisplays(0)
     else:
+        mcwwsIronGateClearOpenBlocks()
         mcwwsIronGateSpawnDisplays(1.5707964)
 
 function mcwwsIronGateToggle():
