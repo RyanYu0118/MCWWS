@@ -218,11 +218,7 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             add 1 to {_y}
         add 1 to {_d}
 
-function mcwwsIronGateCommitEndPose():
-    if {mcwws.irongate.dir} is "open":
-        set {_phi} to 1.5707964
-    else:
-        set {_phi} to 0
+function mcwwsIronGateCommitPhi(phi: number):
     loop {mcwws.irongate.ents::*}:
         set {_ent} to loop-value
         if {_ent} is not set:
@@ -231,7 +227,7 @@ function mcwwsIronGateCommitEndPose():
         set {_d} to {mcwws.irongate.d::%{_uuid}%}
         {_ent}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
         {_ent}.setInterpolationDelay(0)
-        {_ent}.setInterpolationDuration(46)
+        {_ent}.setInterpolationDuration(6)
 
 function mcwwsIronGateFinish():
     set {mcwws.irongate.busy} to false
@@ -298,9 +294,7 @@ on script unload:
 every 1 tick:
     if {mcwws.irongate.busy} is true:
         add 1 to {mcwws.irongate.frame}
-        if {mcwws.irongate.frame} is 5:
-            mcwwsIronGateCommitEndPose()
-        if {mcwws.irongate.frame} >= 52:
+        if {mcwws.irongate.frame} >= 54:
             mcwwsIronGateFinish()
         else:
             if {mcwws.irongate.frame} < 5:
@@ -309,13 +303,26 @@ every 1 tick:
                 else:
                     mcwwsIronGatePlaceCollision(1.5707964)
             else:
-                set {_t} to ({mcwws.irongate.frame} - 5) / 46
+                set {_elapsed} to {mcwws.irongate.frame} - 5
+                set {_t} to {_elapsed} / 48
                 if {_t} > 1:
                     set {_t} to 1
                 if {mcwws.irongate.dir} is "open":
-                    mcwwsIronGatePlaceCollision({_t} * 1.5707964)
+                    set {_phi} to {_t} * 1.5707964
                 else:
-                    mcwwsIronGatePlaceCollision((1 - {_t}) * 1.5707964)
+                    set {_phi} to (1 - {_t}) * 1.5707964
+                mcwwsIronGatePlaceCollision({_phi})
+                set {_mod} to {_elapsed} mod 6
+                if {_mod} is 0:
+                    if {_elapsed} <= 42:
+                        set {_k} to {_elapsed} / 6 + 1
+                        set {_u} to {_k} / 8
+                        if {_u} > 1:
+                            set {_u} to 1
+                        if {mcwws.irongate.dir} is "open":
+                            mcwwsIronGateCommitPhi({_u} * 1.5707964)
+                        else:
+                            mcwwsIronGateCommitPhi((1 - {_u}) * 1.5707964)
 
 command /mcwws-irongate [<text>]:
     description: 行政区西门大铁门开合
