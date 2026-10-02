@@ -312,7 +312,7 @@ every 1 tick:
                 else:
                     set {_phi} to (1 - {_t}) * 1.5707964
                 mcwwsIronGatePlaceCollision({_phi})
-                set {_mod} to {_elapsed} mod 6
+                set {_mod} to mod({_elapsed}, 6)
                 if {_mod} is 0:
                     if {_elapsed} <= 42:
                         set {_k} to {_elapsed} / 6 + 1
