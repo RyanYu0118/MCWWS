@@ -170,7 +170,6 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             {_bd}.setBlock(mcwwsIronGateBarData())
             {_bd}.setTeleportDuration(0)
             {_bd}.setInterpolationDuration(0)
-            {_bd}.setInterpolationDelay(0)
             {_bd}.setShadowRadius(0)
             {_bd}.setShadowStrength(0)
             {_bd}.setBrightness(new Display.Brightness(15, 15))
@@ -182,11 +181,7 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             add 1 to {_y}
         add 1 to {_d}
 
-function mcwwsIronGateCommitEndPose():
-    if {mcwws.irongate.dir} is "open":
-        set {_phi} to 1.5707964
-    else:
-        set {_phi} to 0
+function mcwwsIronGateEachDisplay(callback: text):
     loop {mcwws.irongate.ents::*}:
         set {_uuid} to loop-value
         set {_id} to UUID.fromString("%{_uuid}%")
@@ -194,9 +189,23 @@ function mcwwsIronGateCommitEndPose():
         if {_ent} is not set:
             continue
         set {_d} to {mcwws.irongate.d::%{_uuid}%}
-        {_ent}.setInterpolationDelay(0)
-        {_ent}.setInterpolationDuration(46)
-        {_ent}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
+        if {_callback} is "arm":
+            {_ent}.setInterpolationDuration(46)
+            if {mcwws.irongate.dir} is "open":
+                {_ent}.setTransformation(mcwwsIronGatePose(0, {_d}))
+            else:
+                {_ent}.setTransformation(mcwwsIronGatePose(1.5707964, {_d}))
+        else:
+            if {mcwws.irongate.dir} is "open":
+                {_ent}.setTransformation(mcwwsIronGatePose(1.5707964, {_d}))
+            else:
+                {_ent}.setTransformation(mcwwsIronGatePose(0, {_d}))
+
+function mcwwsIronGateArmInterpolation():
+    mcwwsIronGateEachDisplay("arm")
+
+function mcwwsIronGateCommitEndPose():
+    mcwwsIronGateEachDisplay("end")
 
 function mcwwsIronGateFinish():
     set {mcwws.irongate.busy} to false
@@ -258,9 +267,11 @@ on script unload:
 every 1 tick:
     if {mcwws.irongate.busy} is true:
         add 1 to {mcwws.irongate.frame}
-        if {mcwws.irongate.frame} is 1:
+        if {mcwws.irongate.frame} is 2:
+            mcwwsIronGateArmInterpolation()
+        if {mcwws.irongate.frame} is 3:
             mcwwsIronGateCommitEndPose()
-        if {mcwws.irongate.frame} >= 48:
+        if {mcwws.irongate.frame} >= 50:
             mcwwsIronGateFinish()
 
 command /mcwws-irongate [<text>]:
