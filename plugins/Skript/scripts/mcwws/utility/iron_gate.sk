@@ -53,12 +53,6 @@ function mcwwsIronGateIsBar(type: object) :: boolean:
         return true
     return false
 
-function mcwwsIronGateIsKeepStub(y: number, z: number) :: boolean:
-    if {_z} is 125:
-        if {_y} is 66:
-            return true
-    return false
-
 function mcwwsIronGateSetPivotSouth(connect: boolean):
     set {_w} to mcwwsIronGateWorld()
     if {_w} is not set:
@@ -89,10 +83,9 @@ function mcwwsIronGateClearClosedBlocks():
     while {_z} <= 125:
         set {_y} to 64
         while {_y} <= 66:
-            if mcwwsIronGateIsKeepStub({_y}, {_z}) is false:
-                set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
-                if mcwwsIronGateIsBar({_b}.getType()) is true:
-                    {_b}.setType(Material.AIR)
+            set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
+            if mcwwsIronGateIsBar({_b}.getType()) is true:
+                {_b}.setType(Material.AIR)
             add 1 to {_y}
         add 1 to {_z}
     mcwwsIronGateSetPivotSouth(false)
@@ -106,16 +99,20 @@ function mcwwsIronGatePlaceClosedBlocks():
     while {_z} <= 125:
         set {_y} to 64
         while {_y} <= 66:
-            if mcwwsIronGateIsKeepStub({_y}, {_z}) is false:
-                set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
-                if {_b}.getType() is Material.AIR:
+            set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
+            if {_b}.getType() is Material.AIR:
+                {_b}.setBlockData({_data})
+            else:
+                if mcwwsIronGateIsBar({_b}.getType()) is true:
                     {_b}.setBlockData({_data})
-                else:
-                    if {_b}.getType() is Material.IRON_BLOCK:
-                        {_b}.setBlockData({_data})
             add 1 to {_y}
         add 1 to {_z}
     mcwwsIronGateSetPivotSouth(true)
+
+function mcwwsIronGatePose(phi: number, d: number) :: object:
+    set {_sin} to Math.sin({_phi})
+    set {_cos} to Math.cos({_phi})
+    return new Transformation(new Vector3f({_sin} * {_d}, 0, {_cos} * {_d}), new Quaternionf().rotationY({_phi}), new Vector3f(1, 1, 1), new Quaternionf())
 
 function mcwwsIronGateSpawnDisplays(phi: number):
     mcwwsIronGateClearDisplays()
@@ -127,17 +124,15 @@ function mcwwsIronGateSpawnDisplays(phi: number):
     while {_d} <= 22:
         set {_y} to 64
         while {_y} <= 66:
-            set {_x} to -720 + Math.sin({_phi}) * {_d}
-            set {_z} to 103 + Math.cos({_phi}) * {_d}
-            set {_loc} to new Location({_w}, {_x}, {_y}, {_z})
+            set {_loc} to new Location({_w}, -720, {_y}, 103)
             set {_bd} to {_w}.spawn({_loc}, BlockDisplay.class)
             {_bd}.setBlock({_data})
-            {_bd}.setTeleportDuration(4)
+            {_bd}.setTeleportDuration(0)
             {_bd}.setInterpolationDuration(4)
             {_bd}.setShadowRadius(0)
             {_bd}.setShadowStrength(0)
             {_bd}.setBrightness(new Display.Brightness(15, 15))
-            {_bd}.setTransformation(new Transformation(new Vector3f(0, 0, 0), new Quaternionf().rotationY({_phi}), new Vector3f(1, 1, 1), new Quaternionf()))
+            {_bd}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
             set {_uuid} to {_bd}.getUniqueId().toString()
             add {_uuid} to {mcwws.irongate.ents::*}
             set {mcwws.irongate.d::%{_uuid}%} to {_d}
@@ -146,12 +141,6 @@ function mcwwsIronGateSpawnDisplays(phi: number):
         add 1 to {_d}
 
 function mcwwsIronGateMoveDisplays(phi: number):
-    set {_w} to mcwwsIronGateWorld()
-    if {_w} is not set:
-        stop
-    set {_sin} to Math.sin({_phi})
-    set {_cos} to Math.cos({_phi})
-    set {_rot} to new Quaternionf().rotationY({_phi})
     loop {mcwws.irongate.ents::*}:
         set {_uuid} to loop-value
         set {_id} to UUID.fromString("%{_uuid}%")
@@ -159,12 +148,8 @@ function mcwwsIronGateMoveDisplays(phi: number):
         if {_ent} is not set:
             continue
         set {_d} to {mcwws.irongate.d::%{_uuid}%}
-        set {_y} to {mcwws.irongate.y::%{_uuid}%}
-        set {_x} to -720 + {_sin} * {_d}
-        set {_z} to 103 + {_cos} * {_d}
-        {_ent}.setTeleportDuration(4)
-        {_ent}.teleport(new Location({_w}, {_x}, {_y}, {_z}))
-        {_ent}.setTransformation(new Transformation(new Vector3f(0, 0, 0), {_rot}, new Vector3f(1, 1, 1), new Quaternionf()))
+        {_ent}.setInterpolationDuration(4)
+        {_ent}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
 
 function mcwwsIronGateFinish():
     set {mcwws.irongate.busy} to false

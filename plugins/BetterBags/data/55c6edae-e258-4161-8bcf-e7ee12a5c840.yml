@@ -1083,7 +1083,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:quartz
-  count: 21
+  count: 25
   components:
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
@@ -2540,6 +2540,16 @@ items:
   count: 1
   components:
     minecraft:damage: '201'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:packed_ice
+  count: 54
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:shears
+  count: 1
+  components:
+    minecraft:damage: '67'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false
