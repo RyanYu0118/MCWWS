@@ -475,6 +475,30 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 
 **RandomBlockPlacement** 微调方块朝向随机性，偏景观自然感；**WorldEditSUI** 为选区可视化叠加层。
 
+### 8.5 行政区西门大铁门
+
+主世界西侧人行道缺口（转轴 `(-720, 103)`，叶面约 `y=64–66`、长 22 格）有一扇 **90° 平开铁门**：关闭时沿 `x=-720` 挡住南北通道，打开时绕转角收到东侧现有氧化铜栏（`z=103`）上，**不拆铜栏**。开合约 **1.2 秒**，中间为方块展示实体过渡，静止关闭时落地为铁块以便挡路。
+
+右键转轴铜栏，或右键关闭态铁门，即可开关。管理员也可：
+
+```text
+/mcwws-irongate toggle
+```
+
+```text
+/mcwws-irongate open
+```
+
+```text
+/mcwws-irongate close
+```
+
+```text
+/mcwws-irongate status
+```
+
+非 OP 不能徒手拆关闭态铁块。重载脚本后默认视为**打开**（通道畅通），不会自动落门。
+
 ---
 
 ## 9. 承载学（物质的空间占有）
@@ -918,6 +942,10 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 ```
 
 ```text
+/mcwws-irongate toggle
+```
+
+```text
 /shop reload
 ```
 
@@ -1016,6 +1044,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 领地提示 | `tools/mcwws-residence-quiet/` |
 | 进服冷却 | `plugins/GriefPreventionData/config.yml`（`Spam.LoginCooldownSeconds`，本服为 0） |
 | 指南与传送 | `plugins/DeluxeMenus/gui_menus/guide/`；标记/返回默认权限 `plugins/Skript/scripts/mcwws/utility/guide_marker_perms.sk` |
+| 行政区西门铁门 | `plugins/Skript/scripts/mcwws/utility/iron_gate.sk` |
 | 服务器告示（BookNews） | `plugins/BookNews/config.yml`；首页入口 `guide/home.yml` |
 | 告示历史留档 | `tools/mcwws-news-archive/` → `MCWWS_NewsArchive-1.1.0.jar`；数据 `plugins/MCWWS_NewsArchive/` |
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
