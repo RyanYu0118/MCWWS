@@ -67,7 +67,7 @@ function mcwwsIronGateSetPivotSouth(connect: boolean):
     set {_y} to 64
     while {_y} <= 66:
         if {_connect} is true:
-            {_w}.getBlockAt(-720, {_y}, 103).setBlockData(Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=true,south=true,waterlogged=false,west=false]"))
+            {_w}.getBlockAt(-720, {_y}, 103).setBlockData(Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=false,north=true,south=true,waterlogged=false,west=false]"))
         else:
             {_w}.getBlockAt(-720, {_y}, 103).setBlockData(Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=true,south=false,waterlogged=false,west=false]"))
         add 1 to {_y}
