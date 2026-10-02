@@ -46,14 +46,6 @@ function mcwwsIronGateIsPivot(x: number, z: number) :: boolean:
 function mcwwsIronGateBarData() :: object:
     return Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=false,north=true,south=true,waterlogged=false,west=false]")
 
-function mcwwsIronGateBarDataEW() :: object:
-    return Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=false,south=false,waterlogged=false,west=true]")
-
-function mcwwsIronGateBarDataAt(phi: number) :: object:
-    if {_phi} > 0.785398:
-        return mcwwsIronGateBarDataEW()
-    return mcwwsIronGateBarData()
-
 function mcwwsIronGateIsBar(type: object) :: boolean:
     if {_type} is Material.WAXED_EXPOSED_COPPER_BARS:
         return true
@@ -120,7 +112,9 @@ function mcwwsIronGatePlaceClosedBlocks():
 function mcwwsIronGatePose(phi: number, d: number) :: object:
     set {_sin} to Math.sin({_phi})
     set {_cos} to Math.cos({_phi})
-    return new Transformation(new Vector3f({_sin} * {_d}, 0, {_cos} * {_d}), new Quaternionf(), new Vector3f(1, 1, 1), new Quaternionf())
+    set {_tx} to 0.5 + {_sin} * {_d} - 0.5 * {_cos} - 0.5 * {_sin}
+    set {_tz} to 0.5 + {_cos} * {_d} + 0.5 * {_sin} - 0.5 * {_cos}
+    return new Transformation(new Vector3f({_tx}, 0, {_tz}), new Quaternionf().rotationY({_phi}), new Vector3f(1, 1, 1), new Quaternionf())
 
 function mcwwsIronGateSpawnDisplays(phi: number):
     mcwwsIronGateClearDisplays()
@@ -133,7 +127,7 @@ function mcwwsIronGateSpawnDisplays(phi: number):
         while {_y} <= 66:
             set {_loc} to new Location({_w}, -720, {_y}, 103)
             set {_bd} to {_w}.spawn({_loc}, BlockDisplay.class)
-            {_bd}.setBlock(mcwwsIronGateBarDataAt({_phi}))
+            {_bd}.setBlock(mcwwsIronGateBarData())
             {_bd}.setTeleportDuration(0)
             {_bd}.setInterpolationDuration(4)
             {_bd}.setShadowRadius(0)
@@ -156,7 +150,6 @@ function mcwwsIronGateMoveDisplays(phi: number):
             continue
         set {_d} to {mcwws.irongate.d::%{_uuid}%}
         {_ent}.setInterpolationDuration(4)
-        {_ent}.setBlock(mcwwsIronGateBarDataAt({_phi}))
         {_ent}.setTransformation(mcwwsIronGatePose({_phi}, {_d}))
 
 function mcwwsIronGateFinish():
