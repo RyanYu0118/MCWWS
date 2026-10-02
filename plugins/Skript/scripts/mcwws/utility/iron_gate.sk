@@ -1,7 +1,8 @@
 # MCWWS：行政区西门大铁门（绕转角 90° 开合）
 # 关：x=-720 z=104..125 y=64..66
 # 开：收起，不覆盖 z=103 现有氧化铜栏
-# 转轴：(-720, 103) 铜栏柱。右键转轴或关闭态铁块即可开关。
+# 材质：与 z=103 一侧相同的 waxed_exposed_copper_bars
+# 转轴：(-720, 103) 铜栏柱。右键转轴或关闭态门叶即可开关。
 
 import:
     org.bukkit.Bukkit
@@ -42,6 +43,34 @@ function mcwwsIronGateIsPivot(x: number, z: number) :: boolean:
             return true
     return false
 
+function mcwwsIronGateBarData() :: object:
+    return Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=false,north=true,south=true,waterlogged=false,west=false]")
+
+function mcwwsIronGateIsBar(type: object) :: boolean:
+    if {_type} is Material.WAXED_EXPOSED_COPPER_BARS:
+        return true
+    if {_type} is Material.IRON_BLOCK:
+        return true
+    return false
+
+function mcwwsIronGateIsKeepStub(y: number, z: number) :: boolean:
+    if {_z} is 125:
+        if {_y} is 66:
+            return true
+    return false
+
+function mcwwsIronGateSetPivotSouth(connect: boolean):
+    set {_w} to mcwwsIronGateWorld()
+    if {_w} is not set:
+        stop
+    set {_y} to 64
+    while {_y} <= 66:
+        if {_connect} is true:
+            {_w}.getBlockAt(-720, {_y}, 103).setBlockData(Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=true,south=true,waterlogged=false,west=false]"))
+        else:
+            {_w}.getBlockAt(-720, {_y}, 103).setBlockData(Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=true,south=false,waterlogged=false,west=false]"))
+        add 1 to {_y}
+
 function mcwwsIronGateClearDisplays():
     loop {mcwws.irongate.ents::*}:
         set {_id} to UUID.fromString("%loop-value%")
@@ -60,32 +89,40 @@ function mcwwsIronGateClearClosedBlocks():
     while {_z} <= 125:
         set {_y} to 64
         while {_y} <= 66:
-            set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
-            if {_b}.getType() is Material.IRON_BLOCK:
-                {_b}.setType(Material.AIR)
+            if mcwwsIronGateIsKeepStub({_y}, {_z}) is false:
+                set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
+                if mcwwsIronGateIsBar({_b}.getType()) is true:
+                    {_b}.setType(Material.AIR)
             add 1 to {_y}
         add 1 to {_z}
+    mcwwsIronGateSetPivotSouth(false)
 
 function mcwwsIronGatePlaceClosedBlocks():
     set {_w} to mcwwsIronGateWorld()
     if {_w} is not set:
         stop
+    set {_data} to mcwwsIronGateBarData()
     set {_z} to 104
     while {_z} <= 125:
         set {_y} to 64
         while {_y} <= 66:
-            set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
-            if {_b}.getType() is Material.AIR:
-                {_b}.setType(Material.IRON_BLOCK)
+            if mcwwsIronGateIsKeepStub({_y}, {_z}) is false:
+                set {_b} to {_w}.getBlockAt(-720, {_y}, {_z})
+                if {_b}.getType() is Material.AIR:
+                    {_b}.setBlockData({_data})
+                else:
+                    if {_b}.getType() is Material.IRON_BLOCK:
+                        {_b}.setBlockData({_data})
             add 1 to {_y}
         add 1 to {_z}
+    mcwwsIronGateSetPivotSouth(true)
 
 function mcwwsIronGateSpawnDisplays(phi: number):
     mcwwsIronGateClearDisplays()
     set {_w} to mcwwsIronGateWorld()
     if {_w} is not set:
         stop
-    set {_data} to Bukkit.createBlockData(Material.IRON_BLOCK)
+    set {_data} to mcwwsIronGateBarData()
     set {_d} to 1
     while {_d} <= 22:
         set {_y} to 64
@@ -95,8 +132,8 @@ function mcwwsIronGateSpawnDisplays(phi: number):
             set {_loc} to new Location({_w}, {_x}, {_y}, {_z})
             set {_bd} to {_w}.spawn({_loc}, BlockDisplay.class)
             {_bd}.setBlock({_data})
-            {_bd}.setTeleportDuration(2)
-            {_bd}.setInterpolationDuration(2)
+            {_bd}.setTeleportDuration(4)
+            {_bd}.setInterpolationDuration(4)
             {_bd}.setShadowRadius(0)
             {_bd}.setShadowStrength(0)
             {_bd}.setBrightness(new Display.Brightness(15, 15))
@@ -125,7 +162,7 @@ function mcwwsIronGateMoveDisplays(phi: number):
         set {_y} to {mcwws.irongate.y::%{_uuid}%}
         set {_x} to -720 + {_sin} * {_d}
         set {_z} to 103 + {_cos} * {_d}
-        {_ent}.setTeleportDuration(2)
+        {_ent}.setTeleportDuration(4)
         {_ent}.teleport(new Location({_w}, {_x}, {_y}, {_z}))
         {_ent}.setTransformation(new Transformation(new Vector3f(0, 0, 0), {_rot}, new Vector3f(1, 1, 1), new Quaternionf()))
 
@@ -187,7 +224,7 @@ on script unload:
 every 1 tick:
     if {mcwws.irongate.busy} is true:
         add 1 to {mcwws.irongate.frame}
-        set {_t} to {mcwws.irongate.frame} / 24
+        set {_t} to {mcwws.irongate.frame} / 48
         if {_t} >= 1:
             mcwwsIronGateFinish()
         else:
@@ -236,13 +273,13 @@ on right click:
                 cancel event
                 stop
     if mcwwsIronGateIsLeafCell({_x}, {_y}, {_z}) is true:
-        if {_b} is iron block:
+        if mcwwsIronGateIsBar({_b}.getType()) is true:
             mcwwsIronGateToggle()
             cancel event
             stop
 
 on break:
     if mcwwsIronGateIsLeafCell(x-coord of event-block, y-coord of event-block, z-coord of event-block) is true:
-        if event-block is iron block:
+        if mcwwsIronGateIsBar(event-block.getType()) is true:
             if player is not op:
                 cancel event
