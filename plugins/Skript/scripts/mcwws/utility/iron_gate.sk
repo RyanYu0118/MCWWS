@@ -41,6 +41,75 @@ function mcwwsIronGateIsLeafCell(x: number, y: number, z: number) :: boolean:
                 return true
     return false
 
+function mcwwsIronGateInClickCell(x: number, y: number, z: number) :: boolean:
+    set {_ix} to floor({_x})
+    set {_iy} to floor({_y})
+    set {_iz} to floor({_z})
+    if {_ix} is -720:
+        if {_iz} is 103:
+            if {_iy} >= 64:
+                if {_iy} <= 67:
+                    return true
+    if {_iy} < 64:
+        return false
+    if {_iy} > 66:
+        return false
+    if {_ix} is -720:
+        if {_iz} >= 104:
+            if {_iz} <= 125:
+                return true
+    if {_iz} is 103:
+        if {_ix} >= -719:
+            if {_ix} <= -698:
+                return true
+    return false
+
+function mcwwsIronGateCellIsHandle(x: number, y: number, z: number) :: boolean:
+    if mcwwsIronGateInClickCell({_x}, {_y}, {_z}) is false:
+        return false
+    set {_w} to mcwwsIronGateWorld()
+    if {_w} is not set:
+        return false
+    set {_type} to {_w}.getBlockAt(floor({_x}), floor({_y}), floor({_z})).getType()
+    if mcwwsIronGateIsBar({_type}) is true:
+        return true
+    if {_type} is Material.BARRIER:
+        return true
+    return false
+
+function mcwwsIronGatePlayerAimsAtGate(p: player) :: boolean:
+    if {_p} is not set:
+        return false
+    set {_eye} to {_p}.getEyeLocation()
+    if {_eye} is not set:
+        return false
+    if {_eye}.getWorld() is not mcwwsIronGateWorld():
+        return false
+    set {_dir} to {_eye}.getDirection()
+    set {_dx} to {_dir}.getX()
+    set {_dy} to {_dir}.getY()
+    set {_dz} to {_dir}.getZ()
+    set {_ex} to {_eye}.getX()
+    set {_ey} to {_eye}.getY()
+    set {_ez} to {_eye}.getZ()
+    if Math.abs({_dx}) > 0.001:
+        set {_t} to (-719.5 - {_ex}) / {_dx}
+        if {_t} > 0.02:
+            if {_t} <= 6:
+                set {_hy} to {_ey} + {_t} * {_dy}
+                set {_hz} to {_ez} + {_t} * {_dz}
+                if mcwwsIronGateCellIsHandle(-720, {_hy}, {_hz}) is true:
+                    return true
+    if Math.abs({_dz}) > 0.001:
+        set {_t} to (103.5 - {_ez}) / {_dz}
+        if {_t} > 0.02:
+            if {_t} <= 6:
+                set {_hx} to {_ex} + {_t} * {_dx}
+                set {_hy} to {_ey} + {_t} * {_dy}
+                if mcwwsIronGateCellIsHandle({_hx}, {_hy}, 103) is true:
+                    return true
+    return false
+
 function mcwwsIronGateBarDataEW() :: object:
     return Bukkit.createBlockData("minecraft:waxed_exposed_copper_bars[east=true,north=false,south=false,waterlogged=false,west=true]")
 
@@ -350,23 +419,20 @@ on right click:
         stop
     if {mcwws.irongate.busy} is true:
         stop
+    if mcwwsIronGatePlayerAimsAtGate(player) is true:
+        mcwwsIronGateToggle()
+        cancel event
+        stop
     set {_b} to clicked block
     if {_b} is not set:
         stop
-    set {_x} to x-coord of {_b}
-    set {_y} to y-coord of {_b}
-    set {_z} to z-coord of {_b}
-    if mcwwsIronGateIsPivot({_x}, {_z}) is true:
-        if {_y} >= 64:
-            if {_y} <= 67:
-                mcwwsIronGateToggle()
-                cancel event
-                stop
-    if mcwwsIronGateIsLeafCell({_x}, {_y}, {_z}) is true:
-        if mcwwsIronGateIsBar({_b}.getType()) is true:
-            mcwwsIronGateToggle()
-            cancel event
-            stop
+    set {_x} to floor(x-coord of {_b})
+    set {_y} to floor(y-coord of {_b})
+    set {_z} to floor(z-coord of {_b})
+    if mcwwsIronGateCellIsHandle({_x}, {_y}, {_z}) is true:
+        mcwwsIronGateToggle()
+        cancel event
+        stop
 
 on break:
     if event-block.getType() is Material.BARRIER:
