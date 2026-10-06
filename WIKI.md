@@ -340,6 +340,8 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 /worldsync flush
 ```
 
+待机端平时只发心跳，不拉取世界文件；持锁端的改动先攒在本机 `outbox`，等到 `handover` 时打成一个压缩包传过去（强制推送另走差异包）。所以两边都开着时不会持续占用上行。
+
 心跳超时不会把锁自动交给待机端（防止双写）。锁空着时，下一次有人进服的那一端会接过锁。对端仍持有有效锁时，进服会自动暂停对端并拉取数据，不会两边同时开放。
 
 **对象存储中转（不用开 8766）：** 两边 `config.yml` 都设 `transport: s3`，填写同一个阿里云 OSS（或其它兼容 OSS 签名的桶）的 `endpoint`、`bucket`、`access-key`、`secret-key`。桶保持私有。正在玩的那一端 `node-id` 不同（例如 `local` 与 `songyi`），并执行一次 `/worldsync force-lock` 把锁写到云上。之后脏文件由持锁端上传，另一端拉到 `staging`。换边仍用 `/worldsync handover`。
@@ -1034,7 +1036,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 店内贸易补丁 / 仓库 | `tools/mcwws-ultimateshop-fix/`、`tools/mcwws-ultimateshop-stash/` |
 | 生存中键选块购买 | `tools/mcwws-pickblock-buy/` → `plugins/MCWWS_PickBlockBuy-1.0.1.jar` |
 | Cursor MCP 建造桥 | `tools/mcwws-build-bridge/` → `MCWWS_BuildBridge-1.1.0.jar`；MCP `tools/mcwws-build-bridge-mcp/` |
-| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.9.jar`；数据 `plugins/MCWWS_WorldSync/` |
+| 两端世界互斥同步 | `tools/mcwws-world-sync/` → `MCWWS_WorldSync-1.2.10.jar`；数据 `plugins/MCWWS_WorldSync/` |
 | 沉浸式创造 | `tools/mcwws-immersive-creative/` → `MCWWS_ImmersiveCreative-1.0.10-needMCWWS_ImmersiveCreativeClient+1.1.0.jar`；客户端 `tools/mcwws-immersive-creative-client/` |
 | 零钱明细 | `tools/mcwws-economy-ledger/` |
 | 网页服务 | `tools/mcwws-web-host/`、`plugins/Skript/scripts/web/` |
@@ -1074,7 +1076,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | MCWWS_WorldEditSurvival | 1.0.6 | 生存 WorldEdit 扣费、撤销 95%、50 万格扫描上限；盆栽只按花盆计价 |
 | MCWWS_PickBlockBuy | 1.0.1 | 生存中键选块购买（购得直接主手，跳过仓库溢出入库） |
 | MCWWS_BuildBridge | 1.1.0 | 本机 HTTP + Cursor MCP 管理端直写方块、直写 undo/redo 与 FAWE 桥（127.0.0.1:8765） |
-| MCWWS_WorldSync | 1.2.8 | 强制推送；进度超过约 21MB 时百分比不再变成负数 |
+| MCWWS_WorldSync | 1.2.10 | 强制推送；待机端只在换边时拉一次压缩包，不再每次心跳重复下载 outbox |
 | MCWWS_ImmersiveCreative | 1.0.10 | 沉浸式创造：生存 HUD 下 E 开创造栏；本服无法识别的创造栏物品会拒绝并回滚，避免漏扣费；需客户端 1.1.0 |
 | MCWWS_ImmersiveCreativeClient | 1.0.9 | 沉浸式创造客户端，装进游戏 `mods/`；jar 含 `needMCWWS_ImmersiveCreative+1.0.9` |
 | MCWWS_AxiomSurvival | 1.1.12 | 生存 Axiom 扣费、容器内容物价、实体操作计价、禁止切创造；管理员可破 Slimefun/领地保护格；领地拒绝改聊天气泡不再踢人；盆栽只按花盆计价；适配 AxiomPaper 6 隧道包；需客户端 1.4.8 |

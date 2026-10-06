@@ -179,13 +179,8 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
                 forcePush.pullFromListen(pushFrom);
                 return;
             }
-            if (!lock.hasLock()) {
-                for (String rel : client.listOutbox()) {
-                    if (PathPolicy.allowed(rel, config.prefixes, config.skipGlobs)) {
-                        client.pullOutboxFile(rel);
-                    }
-                }
-            } else if (JsonUtil.bool(st, "handoverPending", false)) {
+            // Standby pulls the outbox only during a handover; looping here re-downloads every file each heartbeat.
+            if (lock.hasLock() && JsonUtil.bool(st, "handoverPending", false)) {
                 String from = JsonUtil.str(st, "handoverFrom", "");
                 getServer().getScheduler().runTask(this, () -> handover.onRemoteRequest(from));
             }
