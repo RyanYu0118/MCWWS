@@ -16,4 +16,8 @@ migration:
 
 sounds:
   collect: ENTITY_EXPERIENCE_ORB_PICKUP
+  # 自动入库提示音音量（0 = 静音），连续入库时同一玩家每隔 collect-cooldown-ms 毫秒最多响一次
+  collect-volume: 0.15
+  collect-pitch: 1.2
+  collect-cooldown-ms: 800
   withdraw: ENTITY_ITEM_PICKUP

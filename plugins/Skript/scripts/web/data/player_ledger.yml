@@ -1,599 +1,5 @@
-next_id: 13569
+next_id: 13623
 entries:
-  '8569':
-    id: 8569
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 16000
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1788266902665-27351092273300
-    createdAt: '2026-09-01T12:48:22.665321300Z'
-    balanceAfter: 4145645.67
-  '8570':
-    id: 8570
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 319.36
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1788266929957-27378385877600
-    createdAt: '2026-09-01T12:48:49.957833800Z'
-    balanceAfter: 4145326.31
-  '8571':
-    id: 8571
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 16000
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1788267040665-27489092845100
-    createdAt: '2026-09-01T12:50:40.665426100Z'
-    balanceAfter: 4129326.31
-  '8572':
-    id: 8572
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 16000
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1788267040884-27489311690500
-    createdAt: '2026-09-01T12:50:40.884978900Z'
-    balanceAfter: 4113326.31
-  '8573':
-    id: 8573
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 3000
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267856945-28305373382800
-    createdAt: '2026-09-01T13:04:16.945825200Z'
-    balanceAfter: 168125822.74
-  '8574':
-    id: 8574
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: other
-    amount: 1485
-    description: 经济 API 扣款（收入）
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267858084-28306512276100
-    createdAt: '2026-09-01T13:04:18.084944800Z'
-    balanceAfter: 168127303.74
-  '8575':
-    id: 8575
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 6
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267946011-28394438292100
-    createdAt: '2026-09-01T13:05:46.011605100Z'
-    balanceAfter: 168126945.74
-  '8576':
-    id: 8576
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: other
-    amount: 2.97
-    description: 经济 API 扣款（收入）
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267946446-28394873898300
-    createdAt: '2026-09-01T13:05:46.447251400Z'
-    balanceAfter: 168126948.71
-  '8577':
-    id: 8577
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 8
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267947143-28395570344000
-    createdAt: '2026-09-01T13:05:47.143481600Z'
-    balanceAfter: 168126936.71
-  '8578':
-    id: 8578
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: other
-    amount: 3.96
-    description: 经济 API 扣款（收入）
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1788267947516-28395943321100
-    createdAt: '2026-09-01T13:05:47.516093400Z'
-    balanceAfter: 168126940.67
-  '8579':
-    id: 8579
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 493.54
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5f36f145-106d-4ed6-98ad-b02a1b97aae6
-    createdAt: '2026-09-01T13:40:30.724131500Z'
-    balanceAfter: 168118183.13
-  '8580':
-    id: 8580
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 550063.44
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2b4f26fa-4122-41ff-9267-3d0408c8ff2a
-    createdAt: '2026-09-01T13:40:31.684405400Z'
-    balanceAfter: 167568119.69
-  '8581':
-    id: 8581
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 4568.62
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2af8f1cd-3ec4-4be9-8016-1a0417edd7c0
-    createdAt: '2026-09-01T13:40:32.524922200Z'
-    balanceAfter: 167563551.07
-  '8582':
-    id: 8582
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 5912.13
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-4376f7fe-2849-4d7f-b193-4e80061de822
-    createdAt: '2026-09-01T13:40:33.085728200Z'
-    balanceAfter: 167557638.94
-  '8583':
-    id: 8583
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 6665.63
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-0b102b2a-a39e-45eb-8bb0-50f813476f36
-    createdAt: '2026-09-01T13:40:33.624292400Z'
-    balanceAfter: 167550973.31
-  '8584':
-    id: 8584
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 7387.26
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-8a504bea-61e2-4e8f-ba51-ac512c714af3
-    createdAt: '2026-09-01T13:40:34.283493800Z'
-    balanceAfter: 167543586.05
-  '8585':
-    id: 8585
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 6553.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-e0357bcf-f241-49b9-adf4-ca6d9826023d
-    createdAt: '2026-09-01T13:40:34.811717800Z'
-    balanceAfter: 167537032.55
-  '8586':
-    id: 8586
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 553272.6
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-9a54954d-9ff4-4122-bf98-dbcd6413fbf3
-    createdAt: '2026-09-01T13:40:35.483416300Z'
-    balanceAfter: 166983759.95
-  '8587':
-    id: 8587
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 5574.46
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-3340868a-9fd3-4818-a79e-8a2042d4d538
-    createdAt: '2026-09-01T13:40:36.146061300Z'
-    balanceAfter: 166978185.49
-  '8588':
-    id: 8588
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 4937.66
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-a246077e-9f78-407b-848f-81ed2cce75fa
-    createdAt: '2026-09-01T13:40:37.031646200Z'
-    balanceAfter: 166973247.83
-  '8589':
-    id: 8589
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 4366.66
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5339803d-023c-4cd4-8e41-2af1c35ab551
-    createdAt: '2026-09-01T13:40:37.528631500Z'
-    balanceAfter: 166968881.17
-  '8590':
-    id: 8590
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 647483.01
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-b772e295-533c-40ac-ba63-45b225446f34
-    createdAt: '2026-09-01T13:40:38.434988200Z'
-    balanceAfter: 166321398.16
-  '8591':
-    id: 8591
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 10560.47
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-9d729561-91f7-444d-94de-71d6f6c62bfe
-    createdAt: '2026-09-01T13:40:39.621419200Z'
-    balanceAfter: 166310837.69
-  '8592':
-    id: 8592
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 33
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-a96eae11-83d7-4ac4-815f-26c23e9d2d19
-    createdAt: '2026-09-01T13:40:44.129659300Z'
-    balanceAfter: 166310804.69
-  '8593':
-    id: 8593
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 551471.49
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-e4b05428-ef32-40ff-87a6-eeb21c341cb4
-    createdAt: '2026-09-01T13:40:55.968454500Z'
-    balanceAfter: 165759333.2
-  '8594':
-    id: 8594
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 9976.47
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-9278debc-3591-4bec-958a-e8fe4f80907c
-    createdAt: '2026-09-01T13:40:56.625253900Z'
-    balanceAfter: 165749356.73
-  '8595':
-    id: 8595
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 7328.49
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-92b49250-9d64-4a63-bdfb-5afc2ea133a1
-    createdAt: '2026-09-01T13:40:59.428320Z'
-    balanceAfter: 165742028.24
-  '8596':
-    id: 8596
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1826
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-e39a6dac-676a-4137-b6a3-4c6e598e7f80
-    createdAt: '2026-09-01T13:41:03.181263800Z'
-    balanceAfter: 165740202.24
-  '8597':
-    id: 8597
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1440.58
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ed26eaa3-0f20-47aa-8b39-f3ba769947c7
-    createdAt: '2026-09-01T13:41:03.791837700Z'
-    balanceAfter: 165738761.66
-  '8598':
-    id: 8598
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1287
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-90754580-e791-4dbe-a769-5d5778627c15
-    createdAt: '2026-09-01T13:41:04.660959300Z'
-    balanceAfter: 165737474.66
-  '8599':
-    id: 8599
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1226.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-94f401c8-e3d4-4155-a098-db3030c93160
-    createdAt: '2026-09-01T13:41:05.259485500Z'
-    balanceAfter: 165736248.16
-  '8600':
-    id: 8600
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1177
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-22b3de76-208e-4b40-970b-6dc14479b21c
-    createdAt: '2026-09-01T13:41:05.946744300Z'
-    balanceAfter: 165735071.16
-  '8601':
-    id: 8601
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1083.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-c8839b66-e75b-4334-948a-5eb40b4800a9
-    createdAt: '2026-09-01T13:41:06.607714200Z'
-    balanceAfter: 165733987.66
-  '8602':
-    id: 8602
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 983.99
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-c9a07fe7-944f-4f7d-8028-c010600e5e74
-    createdAt: '2026-09-01T13:41:07.116194700Z'
-    balanceAfter: 165733003.67
-  '8603':
-    id: 8603
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 929.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ebc848fa-ac3b-4bb5-8cca-503b2ad74e12
-    createdAt: '2026-09-01T13:41:07.701416600Z'
-    balanceAfter: 165732074.17
-  '8604':
-    id: 8604
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 550755
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5d9613f7-f563-4a38-ab1f-921eb21f97dd
-    createdAt: '2026-09-01T13:41:27.681081200Z'
-    balanceAfter: 165181319.17
-  '8605':
-    id: 8605
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 556795
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-dc5b4751-e0ac-404b-9b16-5a32f9a52272
-    createdAt: '2026-09-01T13:41:28.442164700Z'
-    balanceAfter: 164624524.17
-  '8606':
-    id: 8606
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 576585.3
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-1922710f-a0c4-4447-bf43-d8e3e61a00ef
-    createdAt: '2026-09-01T13:41:30.809179900Z'
-    balanceAfter: 164047938.87
-  '8607':
-    id: 8607
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 625655.48
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ebe13f32-aade-4dd7-b007-c02c684937ae
-    createdAt: '2026-09-01T13:41:31.864652100Z'
-    balanceAfter: 163422283.39
-  '8608':
-    id: 8608
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 636932.6
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-a0196462-ef77-4428-90c8-d9e0c0e73525
-    createdAt: '2026-09-01T13:41:32.961501700Z'
-    balanceAfter: 162785350.79
-  '8609':
-    id: 8609
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 634724.57
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-63afa166-58bb-4391-bbe4-543bb331a10b
-    createdAt: '2026-09-01T13:41:35.373446Z'
-    balanceAfter: 162150626.22
-  '8610':
-    id: 8610
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 632295.91
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-78bc0f97-3ec2-46aa-b398-8bdb2ee08cfa
-    createdAt: '2026-09-01T13:41:36.740884900Z'
-    balanceAfter: 161518330.31
-  '8611':
-    id: 8611
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 346.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-7729128a-9979-4e7a-b803-437102c14f3d
-    createdAt: '2026-09-01T13:41:38.423460600Z'
-    balanceAfter: 161517983.81
-  '8612':
-    id: 8612
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 66
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-fd3b0527-ddc8-4ea0-95d7-c8be77860be2
-    createdAt: '2026-09-01T13:41:40.887960900Z'
-    balanceAfter: 161517917.81
-  '8613':
-    id: 8613
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 170.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-f659fb08-c7bd-4860-a34c-98444f165955
-    createdAt: '2026-09-01T13:41:43.263773300Z'
-    balanceAfter: 161517747.31
-  '8614':
-    id: 8614
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 93.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-77b18cf4-cfb8-44a3-a499-0caf583777d0
-    createdAt: '2026-09-01T13:41:43.748284800Z'
-    balanceAfter: 161517653.81
-  '8615':
-    id: 8615
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 5.5
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-70b12646-9b66-44f4-a1aa-548dc53cf400
-    createdAt: '2026-09-01T13:41:47.020681200Z'
-    balanceAfter: 161517648.31
-  '8616':
-    id: 8616
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_undo
-    amount: 5.22
-    description: 'Axiom 撤销退款: set_buffer (原扣 5.5 手续费 0.28)'
-    refId: axiom-undo-9e982d64-4038-4e2b-951b-6c73a16c210c
-    createdAt: '2026-09-01T13:41:59.046412100Z'
-    balanceAfter: 161517653.53
-  '8617':
-    id: 8617
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_undo
-    amount: 88.82
-    description: 'Axiom 撤销退款: set_buffer (原扣 93.5 手续费 4.68)'
-    refId: axiom-undo-47588528-3641-4d1e-915e-a00c433f1378
-    createdAt: '2026-09-01T13:41:59.982118800Z'
-    balanceAfter: 161517742.35
-  '8618':
-    id: 8618
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 104.65
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-ccb68d89-b70b-4d3b-a5f0-b1bcb00a9f72
-    createdAt: '2026-09-01T13:42:00.766732Z'
-    balanceAfter: 161517847
-  '8619':
-    id: 8619
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_undo
-    amount: 62.7
-    description: 'Axiom 撤销退款: set_buffer (原扣 66 手续费 3.3)'
-    refId: axiom-undo-22cdab2f-2800-48f9-8068-fefa041a3ee7
-    createdAt: '2026-09-01T13:42:01.435724Z'
-    balanceAfter: 161517909.7
-  '8620':
-    id: 8620
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_undo
-    amount: 329.17
-    description: 'Axiom 撤销退款: set_buffer (原扣 346.5 手续费 17.33)'
-    refId: axiom-undo-6e03f5d3-8230-4d5b-9d39-fab792556041
-    createdAt: '2026-09-01T13:42:02.074589300Z'
-    balanceAfter: 161518238.87
-  '8621':
-    id: 8621
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 247325.38
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-7953e230-a457-475d-9a43-57f11b5466fe
-    createdAt: '2026-09-01T13:42:03.323867Z'
-    balanceAfter: 161765564.25
-  '8622':
-    id: 8622
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 219352.86
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-605608d9-bf3e-4c27-bb29-24fc3e1f8938
-    createdAt: '2026-09-01T13:42:06.219924Z'
-    balanceAfter: 161984917.11
   '8623':
     id: 8623
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -54905,3 +54311,597 @@ entries:
     description: 传送玩家（过去）
     refId: guide-tp-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/6 20:42
     createdAt: '2026-10-06T12:42:43.099492900Z'
+  '13569':
+    id: 13569
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 9688
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/8 21:08
+    createdAt: '2026-10-08T13:08:28.679834400Z'
+    updatedAt: '2026-10-08T13:51:00.990082400Z'
+  '13570':
+    id: 13570
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 13.55
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-1e78e274-abce-4bed-8e70-1a0c8fd98a20
+    createdAt: '2026-10-08T13:09:11.911460700Z'
+    balanceAfter: 125658065.86
+  '13571':
+    id: 13571
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 5.48
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-f0345dbe-195a-4742-8935-aa140ac6c04b
+    createdAt: '2026-10-08T13:14:17.526034800Z'
+    balanceAfter: 125657075.34
+  '13572':
+    id: 13572
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 6.32
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-cb5c6d74-4729-4910-942a-3313c6ce2d1d
+    createdAt: '2026-10-08T13:14:21.958942800Z'
+    balanceAfter: 125657049.02
+  '13573':
+    id: 13573
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.15
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-d447855e-fbe0-46ee-a14a-a1e29aa6fa8d
+    createdAt: '2026-10-08T13:14:24.544958Z'
+    balanceAfter: 125657022.87
+  '13574':
+    id: 13574
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.48
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-6fa3dda2-2f06-4262-bf72-f589c56937f9
+    createdAt: '2026-10-08T13:14:25.839697200Z'
+    balanceAfter: 125656996.39
+  '13575':
+    id: 13575
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.92
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-d166ee8b-9c83-44e8-b74f-f9f1ec68a978
+    createdAt: '2026-10-08T13:14:28.394741800Z'
+    balanceAfter: 125656969.47
+  '13576':
+    id: 13576
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 17.97
+    description: 'Axiom 撤销退款: set_buffer (原扣 18.92 手续费 0.95)'
+    refId: axiom-undo-9ed7cf33-1906-432b-ae40-5127f9d4355a
+    createdAt: '2026-10-08T13:14:32.130199900Z'
+    balanceAfter: 125656971.44
+  '13577':
+    id: 13577
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.92
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-c7f2bc9b-11eb-4494-be3b-4698e618e266
+    createdAt: '2026-10-08T13:14:39.715594200Z'
+    balanceAfter: 125656920.52
+  '13578':
+    id: 13578
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 19.25
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-41dc3594-14f1-4100-9b77-df82564295f6
+    createdAt: '2026-10-08T13:14:41.896240300Z'
+    balanceAfter: 125656893.27
+  '13579':
+    id: 13579
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 19.58
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-0a65aa51-8cb2-40b5-9102-149bab48a28c
+    createdAt: '2026-10-08T13:14:45.146634500Z'
+    balanceAfter: 125656861.69
+  '13580':
+    id: 13580
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.02
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-16fa596b-e887-46eb-bbcf-9b4e78869624
+    createdAt: '2026-10-08T13:14:49.531551900Z'
+    balanceAfter: 125656825.67
+  '13581':
+    id: 13581
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 19.91
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-37dbf2a2-598b-4a1f-94b8-a8bea6865f9f
+    createdAt: '2026-10-08T13:14:57.781385100Z'
+    balanceAfter: 125656769.76
+  '13582':
+    id: 13582
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.13
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-fb7f6745-d9b3-4c6f-a67f-cdd122e5393d
+    createdAt: '2026-10-08T13:15:00.223956500Z'
+    balanceAfter: 125656741.63
+  '13583':
+    id: 13583
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.57
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-8f88cb95-0208-45a4-9cf2-a8d0993c619b
+    createdAt: '2026-10-08T13:15:02.431419500Z'
+    balanceAfter: 125656713.06
+  '13584':
+    id: 13584
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 21.01
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-384b9ffa-2a97-488e-bf2f-b23936127cb7
+    createdAt: '2026-10-08T13:15:04.400312300Z'
+    balanceAfter: 125656684.05
+  '13585':
+    id: 13585
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 21.23
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-ec6f530b-cf38-4d83-9c4f-0874c9200d42
+    createdAt: '2026-10-08T13:15:06.418748300Z'
+    balanceAfter: 125656654.82
+  '13586':
+    id: 13586
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 28.96
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-1395c788-1492-431c-8bc9-ba254a376853
+    createdAt: '2026-10-08T13:15:07.975089200Z'
+    balanceAfter: 125656617.86
+  '13587':
+    id: 13587
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 30.91
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-baf14296-a541-4324-bb1c-5cb3948c3d7e
+    createdAt: '2026-10-08T13:15:09.400543800Z'
+    balanceAfter: 125656582.95
+  '13588':
+    id: 13588
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 31.02
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-f6a55dd6-bf3e-454d-a051-5c982af90dfa
+    createdAt: '2026-10-08T13:15:10.925896100Z'
+    balanceAfter: 125656543.93
+  '13589':
+    id: 13589
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 31.35
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-a656b322-1fa3-440c-a520-adc3849b292a
+    createdAt: '2026-10-08T13:15:14.072333400Z'
+    balanceAfter: 125656500.58
+  '13590':
+    id: 13590
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 8.47
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-1867915f-d66f-4049-a9f4-2fd996b7a8ec
+    createdAt: '2026-10-08T13:41:50.064738Z'
+    balanceAfter: 125650285.05
+  '13591':
+    id: 13591
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 7.81
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-4882118e-4a91-4c8c-b51f-dc091578c07e
+    createdAt: '2026-10-08T13:41:55.263522600Z'
+    balanceAfter: 125650272.86
+  '13592':
+    id: 13592
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 17.71
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-b60c1c55-7b40-4232-9b59-1bec2a801679
+    createdAt: '2026-10-08T13:41:57.541955300Z'
+    balanceAfter: 125650247.15
+  '13593':
+    id: 13593
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 17.93
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-77e85840-5f1c-47ad-90e9-c7556213939d
+    createdAt: '2026-10-08T13:41:58.742726600Z'
+    balanceAfter: 125650221.22
+  '13594':
+    id: 13594
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.26
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-70bb13fd-961a-4569-9895-6cc88d721cd9
+    createdAt: '2026-10-08T13:42:02.589474300Z'
+    balanceAfter: 125650190.96
+  '13595':
+    id: 13595
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 18.7
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-3ef5092c-1e47-4d9f-adca-0aa788e348a5
+    createdAt: '2026-10-08T13:42:04.673767500Z'
+    balanceAfter: 125650164.26
+  '13596':
+    id: 13596
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 19.03
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-260d43ed-152b-4adf-b3a6-863450a8074b
+    createdAt: '2026-10-08T13:42:05.807742500Z'
+    balanceAfter: 125650137.23
+  '13597':
+    id: 13597
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 6.58
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-9ca51705-3763-4d4d-8feb-da7fe4c4d3a3
+    createdAt: '2026-10-08T13:42:13.598029900Z'
+    balanceAfter: 125650102.65
+  '13598':
+    id: 13598
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 3.72
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-a267ea7f-8e34-480f-93a1-63844c66ddec
+    createdAt: '2026-10-08T13:42:16.290505Z'
+    balanceAfter: 125650094.37
+  '13599':
+    id: 13599
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 6.06
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-d88d2fbd-1789-43b0-8f04-b3993517acf4
+    createdAt: '2026-10-08T13:42:19.941785Z'
+    balanceAfter: 125650072.31
+  '13600':
+    id: 13600
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.13
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-c9dfddf0-3a98-42dc-82bd-d3b30794694a
+    createdAt: '2026-10-08T13:42:23.253374Z'
+    balanceAfter: 125650040.18
+  '13601':
+    id: 13601
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.46
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-9a499110-7eeb-4e7c-8c88-4376dfe90625
+    createdAt: '2026-10-08T13:42:25.153690900Z'
+    balanceAfter: 125650011.72
+  '13602':
+    id: 13602
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.79
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-f5ec0940-7448-4e69-998e-aa08fea7d4ec
+    createdAt: '2026-10-08T13:42:31.063477400Z'
+    balanceAfter: 125649966.93
+  '13603':
+    id: 13603
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 21.23
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-503bea02-a328-431d-9808-312fb5f0a9ec
+    createdAt: '2026-10-08T13:42:33.246313300Z'
+    balanceAfter: 125649937.7
+  '13604':
+    id: 13604
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 21.56
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-5dfe01ef-72cb-4856-9eb6-f2c6929070de
+    createdAt: '2026-10-08T13:42:35.024785100Z'
+    balanceAfter: 125649908.14
+  '13605':
+    id: 13605
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.92
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-007bb59e-d076-4133-9f5c-3bf14c2df734
+    createdAt: '2026-10-08T13:43:20.069881800Z'
+    balanceAfter: 125649726.22
+  '13606':
+    id: 13606
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.93
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-dac0d379-14ab-40fd-b776-cf47d04cd7b5
+    createdAt: '2026-10-08T13:43:22.407339800Z'
+    balanceAfter: 125649716.29
+  '13607':
+    id: 13607
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.93
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-c0373fdf-3691-4088-9322-b227056ac581
+    createdAt: '2026-10-08T13:43:23.884357700Z'
+    balanceAfter: 125649706.36
+  '13608':
+    id: 13608
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.93
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-3f97cf9e-3dff-4dde-bf2b-b53a785aacba
+    createdAt: '2026-10-08T13:43:25.967189100Z'
+    balanceAfter: 125649696.43
+  '13609':
+    id: 13609
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.94
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-13d30b62-f21e-4f68-8ec8-9a858c2f445e
+    createdAt: '2026-10-08T13:43:27.990360500Z'
+    balanceAfter: 125649686.49
+  '13610':
+    id: 13610
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.94
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-b295b0aa-4b66-4696-9156-64ee051c125a
+    createdAt: '2026-10-08T13:43:29.261669500Z'
+    balanceAfter: 125649680.55
+  '13611':
+    id: 13611
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.84
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.94 手续费 0.1)'
+    refId: axiom-undo-3359842a-6470-4067-9b04-01368f261ab9
+    createdAt: '2026-10-08T13:43:36.814095600Z'
+    balanceAfter: 125649650.39
+  '13612':
+    id: 13612
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.84
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.94 手续费 0.1)'
+    refId: axiom-undo-14c3ec9b-f5d2-4250-9707-cfb5ff1aa9a4
+    createdAt: '2026-10-08T13:43:37.267425100Z'
+    balanceAfter: 125649652.23
+  '13613':
+    id: 13613
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.83
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.93 手续费 0.1)'
+    refId: axiom-undo-556cac5e-9919-4262-872e-3daa9c3be0b7
+    createdAt: '2026-10-08T13:43:37.664524800Z'
+    balanceAfter: 125649654.06
+  '13614':
+    id: 13614
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.83
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.93 手续费 0.1)'
+    refId: axiom-undo-75926f0b-e75e-4da9-ab35-28f47356055c
+    createdAt: '2026-10-08T13:43:38.007512500Z'
+    balanceAfter: 125649651.89
+  '13615':
+    id: 13615
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.83
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.93 手续费 0.1)'
+    refId: axiom-undo-33b5e90e-1629-4aa8-aca0-effb4b16bc47
+    createdAt: '2026-10-08T13:43:38.583919800Z'
+    balanceAfter: 125649653.72
+  '13616':
+    id: 13616
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.93
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-9ab79d0f-6f9f-4695-a6ff-63c523a7f5a7
+    createdAt: '2026-10-08T13:43:46.463047800Z'
+    balanceAfter: 125649619.79
+  '13617':
+    id: 13617
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 21.23
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-579e893d-eb81-416b-a897-48cb3138ef82
+    createdAt: '2026-10-08T13:43:52.395816100Z'
+    balanceAfter: 125649574.56
+  '13618':
+    id: 13618
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 0.82
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-00276fa4-aae9-4529-ad3f-1fef46038484
+    createdAt: '2026-10-08T13:44:00.169954100Z'
+    balanceAfter: 125649543.38
+  '13619':
+    id: 13619
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom_undo
+    amount: 0.86
+    description: 'Axiom 撤销收回回收款: set_buffer (原收 0.82 手续费 0.04)'
+    refId: axiom-undo-0d6c7c98-346d-4058-9c91-936cb02d8f80
+    createdAt: '2026-10-08T13:44:01.434069300Z'
+    balanceAfter: 125649538.52
+  '13620':
+    id: 13620
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 1.69
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-77435f19-b520-4546-ae5c-578e8cb2c069
+    createdAt: '2026-10-08T13:44:12.267420700Z'
+    balanceAfter: 125649496.21
+  '13621':
+    id: 13621
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 0.68
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-fc861988-c72e-4827-bf4c-6f8f2019a09a
+    createdAt: '2026-10-08T13:44:23.998836200Z'
+    balanceAfter: 125649451.53
+  '13622':
+    id: 13622
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 20.9
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-2cd62537-56a6-4c8a-bcca-88d6ccff8278
+    createdAt: '2026-10-08T13:44:41.573556800Z'
+    balanceAfter: 125649362.63

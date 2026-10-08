@@ -5,14 +5,22 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
+import org.bukkit.NamespacedKey;
+import org.bukkit.Registry;
 import org.bukkit.Sound;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import work.mcwws.ultimateshopstash.McwwsUltimateShopStashPlugin;
 import work.mcwws.ultimateshopstash.util.Messages;
 
+import java.util.Locale;
 import java.util.Map;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
 
 public final class StashNotifier {
+
+    private static final Map<UUID, Long> LAST_COLLECT_SOUND = new ConcurrentHashMap<>();
 
     private StashNotifier() {
     }
@@ -38,6 +46,35 @@ public final class StashNotifier {
         message[prefix.length] = button;
         player.spigot().sendMessage(message);
 
-        player.playSound(player.getLocation(), Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 0.5f, 1.2f);
+        playCollectSound(plugin, player);
+    }
+
+    private static void playCollectSound(McwwsUltimateShopStashPlugin plugin, Player player) {
+        FileConfiguration cfg = plugin.getConfig();
+        float volume = (float) cfg.getDouble("sounds.collect-volume", 0.15);
+        if (volume <= 0f) {
+            return;
+        }
+        long now = System.currentTimeMillis();
+        long cooldownMs = cfg.getLong("sounds.collect-cooldown-ms", 800L);
+        Long last = LAST_COLLECT_SOUND.get(player.getUniqueId());
+        if (last != null && now - last < cooldownMs) {
+            return;
+        }
+        LAST_COLLECT_SOUND.put(player.getUniqueId(), now);
+
+        String soundName = cfg.getString("sounds.collect", "ENTITY_EXPERIENCE_ORB_PICKUP");
+        Sound sound = null;
+        try {
+            sound = Registry.SOUNDS.get(NamespacedKey.minecraft(
+                    soundName.toLowerCase(Locale.ROOT).replace('.', '_')));
+        } catch (Throwable ignored) {
+            // fall through to default
+        }
+        if (sound == null) {
+            sound = Sound.ENTITY_EXPERIENCE_ORB_PICKUP;
+        }
+        float pitch = (float) cfg.getDouble("sounds.collect-pitch", 1.2);
+        player.playSound(player.getLocation(), sound, volume, pitch);
     }
 }
