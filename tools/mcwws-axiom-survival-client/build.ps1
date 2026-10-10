@@ -28,6 +28,10 @@ $AxiomJar = Get-ChildItem -LiteralPath (Join-Path $McRoot "mods") -Filter "Axiom
     Where-Object { $_.Name -notmatch '\.old$' } |
     Sort-Object LastWriteTime -Descending |
     Select-Object -First 1
+$VitrailJar = Get-ChildItem -LiteralPath (Join-Path $McRoot "mods") -Filter "vitrail-*.jar" -ErrorAction SilentlyContinue |
+    Where-Object { $_.Name -notmatch '\.old$' } |
+    Sort-Object LastWriteTime -Descending |
+    Select-Object -First 1
 
 $JavaHome = if ($env:JAVA_HOME) { $env:JAVA_HOME } else { "C:\Program Files\Java\jdk-25.0.2" }
 $Javac = Join-Path $JavaHome "bin/javac.exe"
@@ -38,6 +42,7 @@ $Jspecify = Join-Path $Extracted "jspecify-1.0.0.jar"
 $CpParts = @()
 if (Test-Path $FastUtil) { $CpParts += $FastUtil }
 if ($AxiomJar -ne $null) { $CpParts += $AxiomJar.FullName }
+if ($VitrailJar -ne $null) { $CpParts += $VitrailJar.FullName }
 if (Test-Path $Jspecify) { $CpParts += $Jspecify }
 $CpParts += (Join-Path $Lib "*")
 if (Test-Path $Extracted) { $CpParts += (Join-Path $Extracted "*") }

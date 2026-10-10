@@ -14,6 +14,6 @@ public final class McwwsAxiomSurvivalClientMod implements ClientModInitializer {
         SurvivalEditorNetworking.register();
         BalanceHudNetworking.register();
         // 拖放由 MouseHandlerDropMixin 拦截（26.3 SDL）；无需再挂原生回调
-        LOGGER.info("MCWWS Axiom Survival Client 已加载，等待服务端 hello…");
+        LOGGER.info("MCWWS Axiom Survival Client 1.5.1 已加载（含 Vitrail 预览重挂），等待服务端 hello…");
     }
 }

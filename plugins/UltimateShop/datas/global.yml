@@ -712,8 +712,11 @@ useTimes:
       lastBuyTime: '2026-10-06 19:53:08'
       lastSellTime: '2026-09-09 20:52:49'
     S:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
       sellUseTimes: 39
       totalSellUseTimes: 39
+      lastBuyTime: '2026-10-10 20:21:30'
       lastSellTime: '2026-08-28 21:59:04'
     E:
       buyUseTimes: 14
@@ -723,11 +726,11 @@ useTimes:
       lastBuyTime: '2026-09-18 18:27:04'
       lastSellTime: '2026-09-18 18:31:24'
     H:
-      buyUseTimes: 7
-      totalBuyUseTimes: 7
+      buyUseTimes: 71
+      totalBuyUseTimes: 71
       sellUseTimes: 28
       totalSellUseTimes: 28
-      lastBuyTime: '2026-08-29 20:18:54'
+      lastBuyTime: '2026-10-10 20:20:00'
       lastSellTime: '2026-08-28 21:59:04'
     J:
       buyUseTimes: 4
@@ -748,6 +751,10 @@ useTimes:
       totalSellUseTimes: 52
       lastBuyTime: '2026-08-26 12:55:48'
       lastSellTime: '2026-08-28 21:59:04'
+    U:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-10 20:20:43'
     X:
       sellUseTimes: 2
       totalSellUseTimes: 2
@@ -1092,11 +1099,11 @@ useTimes:
       lastBuyTime: '2026-08-29 21:48:28'
       lastSellTime: '2026-08-28 23:19:08'
     l:
-      buyUseTimes: 256
-      totalBuyUseTimes: 256
+      buyUseTimes: 320
+      totalBuyUseTimes: 320
       sellUseTimes: 125
       totalSellUseTimes: 125
-      lastBuyTime: '2026-08-31 20:25:45'
+      lastBuyTime: '2026-10-09 20:29:52'
       lastSellTime: '2026-08-30 20:06:04'
     k:
       buyUseTimes: 384
@@ -2671,6 +2678,11 @@ useTimes:
       sellUseTimes: 2
       lastBuyTime: '2026-06-26 22:18:25'
       lastSellTime: '2026-08-06 20:24:19'
+  colored__p4:
+    e:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-10 20:27:26'
   transport:
     F:
       buyUseTimes: 1
@@ -2879,6 +2891,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;B;;C;;E;;F
-    refreshDoneTime: '2026-10-09 00:00:00'
+    nowValue: A;;C;;D;;E;;F
+    refreshDoneTime: '2026-10-11 00:00:00'
 customPlaceholder: {}
