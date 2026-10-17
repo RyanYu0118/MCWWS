@@ -10,7 +10,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 生存扣费与 FAWE 改块之间的闸门。
  * FAWE 的 PlatformCommandManager 根本不看 {@code CommandEvent.isCancelled()}，取消事件拦不住指令，
  * 因此「余额不足 / 缺领地权限 / 预估失败」必须靠这里的拒绝标记，在 EditSession 与写块两处兜住。
- * 没有结论的写入（笔刷、其他插件的编辑）一律放行，避免误伤正常功能。
+ * 笔刷点击另走 BufferedBrushExtent 逐笔结算，不复用指令的授权状态。
+ * 其他没有结论的插件编辑保持原有放行行为。
  */
 final class WeEditAuthorization {
 

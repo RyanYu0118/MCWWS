@@ -38,6 +38,12 @@ public final class McwwsWeSurvivalPlugin extends JavaPlugin {
         }
         priceCatalog = new PriceCatalog(this);
         priceCatalog.reload();
+        // FAWE silently discards unlisted third-party extents. Register the
+        // billing gate as well as persisting it in this server's FAWE config.
+        var allowedExtents = com.fastasyncworldedit.core.configuration.Settings.settings().EXTENT.ALLOWED_PLUGINS;
+        if (!allowedExtents.contains(BufferedBrushExtent.class.getName())) {
+            allowedExtents.add(BufferedBrushExtent.class.getName());
+        }
         listener = new WeSurvivalListener(this);
         listener.register();
         getCommand("mcwws-we-reload").setExecutor((sender, command, label, args) -> {

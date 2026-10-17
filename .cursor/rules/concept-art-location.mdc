@@ -1,0 +1,16 @@
+---
+description: Minecraft 建筑概念设计图的存放位置
+alwaysApply: true
+---
+
+# 建筑概念设计图存放位置
+
+凡是与 Minecraft 建筑 / 地标 / 街区 / 岛屿规划相关的**概念设计图、效果图、俯视卫星图、深度图、视角渲染图**，生成后一律放到：
+
+```text
+D:\Minecraft\服务器\概念设计图
+```
+
+- 用 `GenerateImage` 生成后，立即把文件从 Cursor 的 `assets` 目录移动（不是复制）到上面的目录，回复里给出新路径。
+- 文件名以项目英文前缀开头，便于同一项目的多张图排在一起，例如 `halloween_island_01_satellite.jpg`。
+- 该目录在服务器仓库（`26.2`）之外，不纳入 git 提交，也不写入 `WIKI.md` / BookNews。

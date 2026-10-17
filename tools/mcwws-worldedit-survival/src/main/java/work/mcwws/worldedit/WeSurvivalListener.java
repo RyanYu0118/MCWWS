@@ -441,6 +441,14 @@ public final class WeSurvivalListener {
             debug("EditSession 跳过: stage=" + event.getStage() + " actor=" + actorName(actor));
             return;
         }
+        // Brush clicks are independent edits, not covered by earlier command payments/denials.
+        if (BrushBilling.isBrushExecution()) {
+            if (event.getStage() == EditSession.Stage.BEFORE_HISTORY) {
+                event.setExtent(BrushBilling.wrap(event.getExtent(), event.getWorld(), player, plugin));
+                debug("笔刷已挂逐笔计费闸门: player=" + player.getName());
+            }
+            return;
+        }
         // FAWE 无视 CommandEvent 的取消，但 EditSessionEvent 一取消就会换成 NullExtent，
         // 这是唯一能整条掐掉「余额不足 / 缺领地权限」编辑的地方
         if (WeEditAuthorization.isDenied(player)) {

@@ -57,23 +57,15 @@ useTimes:
       sellUseTimes: 2
       totalSellUseTimes: 2
       lastSellTime: '2026-08-28 21:45:58'
-  flowers__p5:
-    E:
-      sellUseTimes: 159
-      lastSellTime: '2026-07-24 14:55:39'
-    F:
-      sellUseTimes: 7
-      lastSellTime: '2026-07-24 15:11:05'
-    B:
-      sellUseTimes: 67
-      lastSellTime: '2026-06-19 19:23:24'
-    C:
-      sellUseTimes: 22
-      lastSellTime: '2026-08-03 22:58:21'
-    D:
-      sellUseTimes: 32
-      lastSellTime: '2026-06-19 19:27:41'
   building__p8:
+    M:
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      lastBuyTime: '2026-10-16 20:40:20'
+    N:
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      lastBuyTime: '2026-10-16 20:46:23'
     T:
       sellUseTimes: 1
       totalSellUseTimes: 1
@@ -104,6 +96,22 @@ useTimes:
       buyUseTimes: 128
       totalBuyUseTimes: 128
       lastBuyTime: '2026-10-04 22:08:24'
+  flowers__p5:
+    E:
+      sellUseTimes: 159
+      lastSellTime: '2026-07-24 14:55:39'
+    F:
+      sellUseTimes: 7
+      lastSellTime: '2026-07-24 15:11:05'
+    B:
+      sellUseTimes: 67
+      lastSellTime: '2026-06-19 19:23:24'
+    C:
+      sellUseTimes: 22
+      lastSellTime: '2026-08-03 22:58:21'
+    D:
+      sellUseTimes: 32
+      lastSellTime: '2026-06-19 19:27:41'
   flowers__p4:
     H:
       sellUseTimes: 4
@@ -284,9 +292,9 @@ useTimes:
       lastBuyTime: '2026-09-03 21:13:26'
       lastSellTime: '2026-09-18 18:31:24'
     m:
-      buyUseTimes: 64
-      totalBuyUseTimes: 64
-      lastBuyTime: '2026-10-02 15:48:55'
+      buyUseTimes: 192
+      totalBuyUseTimes: 192
+      lastBuyTime: '2026-10-16 19:33:41'
     o:
       buyUseTimes: 64
       totalBuyUseTimes: 64
@@ -303,9 +311,9 @@ useTimes:
       lastBuyTime: '2026-08-30 21:31:28'
       lastSellTime: '2026-08-30 23:01:58'
     t:
-      buyUseTimes: 96
-      totalBuyUseTimes: 96
-      lastBuyTime: '2026-10-02 15:45:40'
+      buyUseTimes: 160
+      totalBuyUseTimes: 160
+      lastBuyTime: '2026-10-16 19:37:10'
     b:
       buyUseTimes: 193
       totalBuyUseTimes: 193
@@ -372,10 +380,34 @@ useTimes:
       sellUseTimes: 2
       totalSellUseTimes: 2
       lastSellTime: '2026-08-30 20:06:03'
+    j:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:44:09'
+    i:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:45:09'
+    n:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:40:32'
     p:
       buyUseTimes: 64
       totalBuyUseTimes: 64
       lastBuyTime: '2026-10-02 00:41:01'
+    o:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:40:13'
+    d:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:43:43'
+    e:
+      buyUseTimes: 128
+      totalBuyUseTimes: 128
+      lastBuyTime: '2026-10-16 21:38:07'
     h:
       buyUseTimes: 576
       totalBuyUseTimes: 576
@@ -539,6 +571,10 @@ useTimes:
       totalSellUseTimes: 57
       lastBuyTime: '2026-08-31 21:19:59'
       lastSellTime: '2026-09-01 15:14:44'
+    D:
+      buyUseTimes: 64
+      totalBuyUseTimes: 64
+      lastBuyTime: '2026-10-16 20:03:43'
   ingredients__p2:
     t:
       buyUseTimes: 2
@@ -2708,9 +2744,9 @@ useTimes:
       lastBuyTime: '2026-08-28 22:16:15'
       lastSellTime: '2026-09-26 20:17:10'
     C:
-      buyUseTimes: 4
-      totalBuyUseTimes: 4
-      lastBuyTime: '2026-08-19 21:14:33'
+      buyUseTimes: 68
+      totalBuyUseTimes: 68
+      lastBuyTime: '2026-10-17 22:14:56'
     b:
       sellUseTimes: 48
       totalSellUseTimes: 48
@@ -2891,6 +2927,6 @@ useTimes:
 favourites: {}
 randomPlaceholder:
   daily:
-    nowValue: A;;C;;D;;E;;F
-    refreshDoneTime: '2026-10-11 00:00:00'
+    nowValue: A;;B;;D;;F;;G
+    refreshDoneTime: '2026-10-18 00:00:00'
 customPlaceholder: {}

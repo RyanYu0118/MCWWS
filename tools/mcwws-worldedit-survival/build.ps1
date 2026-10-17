@@ -1,3 +1,4 @@
+param([switch]$StageOnly)
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Src = Join-Path $PSScriptRoot "src/main/java"
@@ -42,7 +43,9 @@ if ([string]::IsNullOrWhiteSpace($JavaHome)) {
 $JarExe = Join-Path $JavaHome "bin/jar.exe"
 if (-not (Test-Path $JarExe)) { throw "Missing jar.exe: $JarExe" }
 
-if (Test-Path $Out) { Remove-Item $Out -Recurse -Force }
+$ResolvedOut = [IO.Path]::GetFullPath($Out)
+if (-not $ResolvedOut.StartsWith([IO.Path]::GetFullPath($PSScriptRoot) + [IO.Path]::DirectorySeparatorChar)) { throw "Output outside project" }
+if (Test-Path $Out) { Remove-Item -LiteralPath $ResolvedOut -Recurse -Force }
 New-Item -ItemType Directory -Path $Out | Out-Null
 
 $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
@@ -53,8 +56,15 @@ foreach ($JavaFile in $JavaFiles) {
         [System.IO.File]::WriteAllBytes($JavaFile, $Bytes[3..($Bytes.Length - 1)])
     }
 }
-javac -encoding UTF-8 -cp $Cp -d $Out $JavaFiles
+& (Join-Path $JavaHome "bin/javac.exe") -encoding UTF-8 -cp $Cp -d $Out $JavaFiles
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
-Publish-McwwsPluginJar -JarExe $JarExe -ClassesDir $Out -JarPaths $McwwsJar -PluginName "MCWWS_WorldEditSurvival"
+if ($StageOnly) {
+    $StagedJar = Join-Path $PSScriptRoot ("build/" + $McwwsJar.JarName)
+    & $JarExe cf $StagedJar -C $Out .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    Write-Host "Staged $StagedJar"
+} else {
+    Publish-McwwsPluginJar -JarExe $JarExe -ClassesDir $Out -JarPaths $McwwsJar -PluginName "MCWWS_WorldEditSurvival"
+}

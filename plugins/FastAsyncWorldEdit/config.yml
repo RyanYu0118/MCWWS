@@ -113,6 +113,7 @@ extent:
   allowed-plugins: 
   - "io.github.thebusybiscuit.slimefun4.integrations.WorldEditIntegration$1"
   - "work.mcwws.worldedit.ProtectedFeeExtent"
+  - "work.mcwws.worldedit.BufferedBrushExtent"
   # Should debug messages be sent when third party extents are used?
   debug: true
 
