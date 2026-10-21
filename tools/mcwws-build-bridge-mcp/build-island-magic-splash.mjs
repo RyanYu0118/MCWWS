@@ -1,0 +1,28 @@
+import fs from 'node:fs';
+const dir='tools/mcwws-build-bridge-mcp/island-magic-splash-20261020/';
+const plan=JSON.parse(fs.readFileSync(dir+'plan.json'));
+const token=fs.readFileSync('plugins/MCWWS_BuildBridge/config.yml','utf8').match(/token:\s*(\S+)/)[1];
+async function api(e,body){const r=await fetch('http://127.0.0.1:8765/'+e,{method:'POST',headers:{Authorization:`Bearer ${token}`,'Content-Type':'application/json'},body:JSON.stringify({world:'world',...body})});const j=await r.json();if(!r.ok||!j.ok)throw Error(JSON.stringify(j));return j;}
+async function read(list){let i=0;const out=new Array(list.length);await Promise.all(Array.from({length:24},async()=>{while(i<list.length){const n=i++,p=list[n];out[n]={x:p.x,y:p.y,z:p.z,block:(await api('get_block',{x:p.x,y:p.y,z:p.z})).block};}}));return out;}
+const seen=new Set(),old=new Set(plan.previousBlocks.map(p=>`${p.x},${p.y},${p.z}`));
+for(const p of plan.patch){
+ const key=`${p.x},${p.y},${p.z}`;
+ if(p.x< -396||p.x> -295||p.y<143||p.y>221||p.z<2729||p.z>2827||seen.has(key)||old.has(key))throw Error('Invalid addition '+key);
+ seen.add(key);
+}
+const contacts=plan.streams.flatMap(s=>[s.tower,s.anchor]).map(([x,y,z])=>({x,y,z}));
+const before=await read(plan.patch),contactsBefore=await read(contacts);
+const conflicts=before.filter(p=>p.block!=='minecraft:air');
+fs.writeFileSync(dir+'before-'+Date.now()+'.json',JSON.stringify({blocks:before,contacts:contactsBefore}));
+if(conflicts.length){fs.writeFileSync(dir+'conflicts.json',JSON.stringify(conflicts,null,2));throw Error('Occupied additions: '+conflicts.length);}
+console.log('Preflight clear:',before.length,'new air positions.');
+const result=await api('set_blocks',{blocks:plan.patch});
+fs.appendFileSync(dir+'writes.jsonl',JSON.stringify({time:new Date().toISOString(),result})+'\n');
+console.log('Placed',JSON.stringify(result));
+const after=await read(plan.blocks),contactsAfter=await read(contacts);
+const failures=after.filter((p,i)=>p.block.split('[')[0]!==plan.blocks[i].block);
+const changedContacts=contactsAfter.filter((p,i)=>p.block!==contactsBefore[i].block);
+const report={time:new Date().toISOString(),added:plan.patch.length,total:after.length,failures,changedContacts};
+fs.writeFileSync(dir+'verification.json',JSON.stringify(report,null,2));
+console.log(JSON.stringify(report));
+if(failures.length||changedContacts.length)process.exitCode=1;
