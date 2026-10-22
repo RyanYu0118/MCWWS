@@ -71,6 +71,8 @@
 | Nullscape 26.2 v1.2.20 | 末地维度景观与结构 |
 | Structory 1.3.7 / Structory Towers 1.0.17 | ambient 结构与塔楼点缀 |
 
+主世界可放置方块的高度是 **Y=-64 到 Y=2031**，由数据包 **mcwws_overworld_height** 把维度高度设为 2096。地板仍是 Y=-64，Terralith / Terratonic 的噪声和生物群系没有改。下界、末地高度不变。
+
 **`dimensionalhome`** 为额外家园维度；**`world_nether`**、**`world_the_end`** 与主世界共享上述下界/末地包。  
 **One_day** 插件按和风天气 API 将主世界天气与真实城市同步（配置于 `plugins/One_day/`）。
 
@@ -1057,6 +1059,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
 | 地图壳页配置 | `plugins/Skript/scripts/web/public/services-config.js`、`/api/services-config` |
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
+| 主世界建筑上限 | `world/datapacks/mcwws_overworld_height/`（Y=-64 到 Y=2031） |
 | 连锁采矿 | `plugins/VeinMiner/` |
 | UltimateTimber × ExoticGarden 果树保护 | `tools/mcwws-ultimatetimber-fix/` |
 | Multitool 竹制品切斧 | `tools/mcwws-multitool-fix/` |
@@ -1296,8 +1299,11 @@ BKCommonLib 2.0.2 · CommandAPI 12.0.0 · ProtocolLib 5.4.1 · NBTAPI 2.16.0 · 
 | ------ | ---- | ---- |
 | **bukkit** | Paper 内置 | 插件持久化资源（`pack.mcmeta`: Persistent resources provided by plugins） |
 | **mcwws_advancement_labels** | MCWWS 自研 | 原版五根进度标题加「原版 ·」前缀，配合关闭原版 L 键页、仅保留「流浪世界」 |
+| **mcwws_overworld_height** | MCWWS 自研 | 主世界建筑上限提到 Y=2031（`min_y` -64，`height` / `logical_height` 2096）。不改地形生成 |
 
 `mcwws_advancement_labels` 修改路径：`data/minecraft/advancement/{story,adventure,husbandry,nether,end}/root.json`。
+
+`mcwws_overworld_height` 只覆盖 `data/minecraft/dimension_type/overworld.json`。下界和末地的维度类型不动。已在 319 以上放过方块之后，不要删这个数据包，否则世界会损坏。
 
 ### F.3 其他维度
 
