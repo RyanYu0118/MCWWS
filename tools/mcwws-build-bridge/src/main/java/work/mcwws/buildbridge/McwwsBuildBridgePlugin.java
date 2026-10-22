@@ -24,7 +24,8 @@ public final class McwwsBuildBridgePlugin extends JavaPlugin {
         playerQueryService = new PlayerQueryService(this);
         blockWriteService = new BlockWriteService(this, playerQueryService);
         faweBridgeService = new FaweBridgeService(this, playerQueryService);
-        BuildApiHandler handler = new BuildApiHandler(playerQueryService, blockWriteService, faweBridgeService);
+        FaweBulkService faweBulkService = new FaweBulkService(this);
+        BuildApiHandler handler = new BuildApiHandler(playerQueryService, blockWriteService, faweBridgeService, faweBulkService);
         httpServer = new LocalHttpServer(this, handler);
         try {
             httpServer.start();

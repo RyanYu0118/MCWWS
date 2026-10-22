@@ -12,11 +12,13 @@ public final class BuildApiHandler {
     private final PlayerQueryService players;
     private final BlockWriteService blocks;
     private final FaweBridgeService fawe;
+    private final FaweBulkService bulk;
 
-    public BuildApiHandler(PlayerQueryService players, BlockWriteService blocks, FaweBridgeService fawe) {
+    public BuildApiHandler(PlayerQueryService players, BlockWriteService blocks, FaweBridgeService fawe, FaweBulkService bulk) {
         this.players = players;
         this.blocks = blocks;
         this.fawe = fawe;
+        this.bulk = bulk;
     }
 
     public void handle(String method, String path, String body, HttpExchange exchange) throws IOException {
@@ -127,6 +129,11 @@ public final class BuildApiHandler {
             }
             if ("POST".equalsIgnoreCase(method) && "/fawe_set".equals(normalized)) {
                 ok(exchange, fawe.set(JsonUtil.str(req, "pattern", JsonUtil.str(req, "block", null))));
+                return;
+            }
+            if ("POST".equalsIgnoreCase(method) && "/fawe_bulk".equals(normalized)) {
+                Object jobs = req.get("jobs");
+                ok(exchange, bulk.fill(JsonUtil.str(req, "world"), JsonUtil.asArray(jobs)));
                 return;
             }
             if ("POST".equalsIgnoreCase(method) && "/fawe_replace".equals(normalized)) {
