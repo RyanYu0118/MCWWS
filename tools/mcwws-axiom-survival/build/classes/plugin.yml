@@ -1,6 +1,6 @@
 name: MCWWS_AxiomSurvival
 main: work.mcwws.axiomsurvival.McwwsAxiomSurvivalPlugin
-version: 1.1.12
+version: 1.1.13
 api-version: '1.21'
 depend: [Vault, AxiomPaper]
 softdepend: [Slimefun, Residence, MCWWS_EconomyLedger, GriefPrevention]
@@ -21,7 +21,7 @@ commands:
 
 permissions:
   mcwws.axiom.survival.admin:
-    description: 管理 Axiom 生存插件；可用 Axiom 破坏 Slimefun/不可破坏方块与领地保护格
+    description: 管理 Axiom 生存插件；可用 Axiom 破坏 Slimefun/不可破坏方块与领地保护格；可切换游戏模式
     default: op
   mcwws.axiom.survival.use:
     description: 生存模式下使用 Axiom 建造（按格扣费）

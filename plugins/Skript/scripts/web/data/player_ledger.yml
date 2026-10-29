@@ -1,1179 +1,5 @@
-next_id: 16866
+next_id: 16973
 entries:
-  '11866':
-    id: 11866
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 9888
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790424891867-34679321930800
-    createdAt: '2026-09-26T12:14:51.867903300Z'
-    balanceAfter: 2258027.17
-  '11867':
-    id: 11867
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 4
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:15
-    createdAt: '2026-09-26T12:15:23.086872400Z'
-  '11868':
-    id: 11868
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 55.83
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5d50dc8c-8027-4ea7-9ec9-68aa251d7f05
-    createdAt: '2026-09-26T12:16:31.824225200Z'
-    balanceAfter: 2257967.34
-  '11869':
-    id: 11869
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 18.68
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-cf7fde83-c2d4-4094-b118-08b1c4c3b5af
-    createdAt: '2026-09-26T12:16:34.874387500Z'
-    balanceAfter: 2257948.66
-  '11870':
-    id: 11870
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 152
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:16
-    createdAt: '2026-09-26T12:16:37.075918600Z'
-    updatedAt: '2026-09-26T12:17:14.076911300Z'
-  '11871':
-    id: 11871
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 1.98
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030266-34817719832400
-    createdAt: '2026-09-26T12:17:10.266240600Z'
-    balanceAfter: 2257814.64
-  '11872':
-    id: 11872
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 3464.96
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030419-34817872462500
-    createdAt: '2026-09-26T12:17:10.419039700Z'
-    balanceAfter: 2261279.6
-  '11873':
-    id: 11873
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 977.24
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030538-34817991915000
-    createdAt: '2026-09-26T12:17:10.538918900Z'
-    balanceAfter: 2262256.84
-  '11874':
-    id: 11874
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 8.91
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030654-34818107608900
-    createdAt: '2026-09-26T12:17:10.654673800Z'
-    balanceAfter: 2262265.75
-  '11875':
-    id: 11875
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 102.96
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030808-34818261330400
-    createdAt: '2026-09-26T12:17:10.808320400Z'
-    balanceAfter: 2262368.71
-  '11876':
-    id: 11876
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 41.55
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425030932-34818385510200
-    createdAt: '2026-09-26T12:17:10.932426500Z'
-    balanceAfter: 2262410.26
-  '11877':
-    id: 11877
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 178.08
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425031048-34818502387900
-    createdAt: '2026-09-26T12:17:11.049710Z'
-    balanceAfter: 2262588.34
-  '11878':
-    id: 11878
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: credit
-    category: other
-    amount: 1.98
-    description: 经济 API 扣款（收入）
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425031222-34818676001600
-    createdAt: '2026-09-26T12:17:11.222684800Z'
-    balanceAfter: 2262586.32
-  '11879':
-    id: 11879
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.01
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425056305-34843758099400
-    createdAt: '2026-09-26T12:17:36.305272800Z'
-    balanceAfter: 2262564.31
-  '11880':
-    id: 11880
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.02
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425056529-34843982877900
-    createdAt: '2026-09-26T12:17:36.530242200Z'
-    balanceAfter: 2262554.29
-  '11881':
-    id: 11881
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.03
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425056785-34844238953900
-    createdAt: '2026-09-26T12:17:36.786349600Z'
-    balanceAfter: 2262544.26
-  '11882':
-    id: 11882
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.04
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425056966-34844419725100
-    createdAt: '2026-09-26T12:17:36.967131300Z'
-    balanceAfter: 2262534.22
-  '11883':
-    id: 11883
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.05
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425057119-34844572738800
-    createdAt: '2026-09-26T12:17:37.119538100Z'
-    balanceAfter: 2262524.17
-  '11884':
-    id: 11884
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.06
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425057445-34844898701300
-    createdAt: '2026-09-26T12:17:37.445076Z'
-    balanceAfter: 2262514.11
-  '11885':
-    id: 11885
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.07
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425057729-34845182232600
-    createdAt: '2026-09-26T12:17:37.729404500Z'
-    balanceAfter: 2262504.04
-  '11886':
-    id: 11886
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.08
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425057907-34845360847800
-    createdAt: '2026-09-26T12:17:37.907717Z'
-    balanceAfter: 2262493.96
-  '11887':
-    id: 11887
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.09
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425058099-34845552823500
-    createdAt: '2026-09-26T12:17:38.099691100Z'
-    balanceAfter: 2262483.87
-  '11888':
-    id: 11888
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.1
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425058436-34845889453900
-    createdAt: '2026-09-26T12:17:38.436728900Z'
-    balanceAfter: 2262473.77
-  '11889':
-    id: 11889
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.11
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425058653-34846106527900
-    createdAt: '2026-09-26T12:17:38.653410100Z'
-    balanceAfter: 2262463.66
-  '11890':
-    id: 11890
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.12
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425058940-34846394346500
-    createdAt: '2026-09-26T12:17:38.940775300Z'
-    balanceAfter: 2262453.54
-  '11891':
-    id: 11891
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 10.13
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790425059244-34846696968200
-    createdAt: '2026-09-26T12:17:39.244113300Z'
-    balanceAfter: 2262443.41
-  '11892':
-    id: 11892
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 56.04
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-1f64fd50-b86e-45c1-8e01-8ecfd8ab7c8a
-    createdAt: '2026-09-26T12:18:12.875624200Z'
-    balanceAfter: 2262387.37
-  '11893':
-    id: 11893
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 18.75
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-3e4d49ab-7586-424c-9cac-558eaa004c48
-    createdAt: '2026-09-26T12:18:17.030419500Z'
-    balanceAfter: 2262368.62
-  '11894':
-    id: 11894
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 8
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:18
-    createdAt: '2026-09-26T12:18:19.080737600Z'
-    updatedAt: '2026-09-26T12:18:20.076528400Z'
-  '11895':
-    id: 11895
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 56.25
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2c8e0f60-809e-420a-bb23-80d1609575d4
-    createdAt: '2026-09-26T12:19:11.029856900Z'
-    balanceAfter: 2262304.37
-  '11896':
-    id: 11896
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 18.82
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-b78adfe2-c5a0-41cf-9a6d-c5dd80bf61d0
-    createdAt: '2026-09-26T12:19:13.272338400Z'
-    balanceAfter: 2262285.55
-  '11897':
-    id: 11897
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 64
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:19
-    createdAt: '2026-09-26T12:19:16.076656800Z'
-    updatedAt: '2026-09-26T12:19:34.084379700Z'
-  '11898':
-    id: 11898
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 56.46
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-e9a60e1e-33df-4b86-9602-afba129c4635
-    createdAt: '2026-09-26T12:20:31.171650500Z'
-    balanceAfter: 2262165.09
-  '11899':
-    id: 11899
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 18.88
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-d259b264-be40-4c90-ba34-377a2e031610
-    createdAt: '2026-09-26T12:20:33.392088900Z'
-    balanceAfter: 2262146.21
-  '11900':
-    id: 11900
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 4
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:20
-    createdAt: '2026-09-26T12:20:44.076310Z'
-  '11901':
-    id: 11901
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 37.8
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-0ea8e8bb-be55-43a9-90d7-51850cb45e36
-    createdAt: '2026-09-26T12:21:25.389627300Z'
-    balanceAfter: 2262104.41
-  '11902':
-    id: 11902
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: axiom
-    amount: 18.91
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-00a08322-ca06-47d3-a277-6b276e1aca31
-    createdAt: '2026-09-26T12:21:27.284295800Z'
-    balanceAfter: 2262085.5
-  '11903':
-    id: 11903
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: flight
-    amount: 188
-    description: 飞行消耗
-    refId: flight-55c6edae-e258-4161-8bcf-e7ee12a5c840-2026/9/26 20:21
-    createdAt: '2026-09-26T12:21:30.078424300Z'
-    updatedAt: '2026-09-26T12:22:31.075086700Z'
-  '11904':
-    id: 11904
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 117.65
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1790426623798-36411252075900
-    createdAt: '2026-09-26T12:43:43.799565300Z'
-    balanceAfter: 146398442.52
-  '11905':
-    id: 11905
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: teleport
-    amount: 117.65
-    description: 传送玩家（过去）
-    refId: guide-tp-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/26 20:43
-    createdAt: '2026-09-26T12:43:43.800793600Z'
-  '11906':
-    id: 11906
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 21028
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/26 20:43
-    createdAt: '2026-09-26T12:43:57.690416700Z'
-    updatedAt: '2026-09-26T14:11:38.686494900Z'
-  '11907':
-    id: 11907
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 1112
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/26 23:23
-    createdAt: '2026-09-26T15:23:50.684837500Z'
-    updatedAt: '2026-09-26T15:29:28.685337300Z'
-  '11908':
-    id: 11908
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 64
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1790510041959-33727264882000
-    createdAt: '2026-09-27T11:54:01.961060800Z'
-    balanceAfter: 146376238.52
-  '11909':
-    id: 11909
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: other
-    amount: 64
-    description: 经济 API 扣款
-    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1790510047931-33733237128500
-    createdAt: '2026-09-27T11:54:07.932776200Z'
-    balanceAfter: 146376174.52
-  '11910':
-    id: 11910
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 19468
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/27 19:54
-    createdAt: '2026-09-27T11:54:32.344708600Z'
-    updatedAt: '2026-09-27T13:15:58.347284600Z'
-  '11911':
-    id: 11911
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 160
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/27 21:23
-    createdAt: '2026-09-27T13:23:20.337462700Z'
-    updatedAt: '2026-09-27T13:23:59.344068700Z'
-  '11912':
-    id: 11912
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 960
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/27 21:47
-    createdAt: '2026-09-27T13:47:19.348127600Z'
-    updatedAt: '2026-09-27T13:51:34.348232800Z'
-  '11913':
-    id: 11913
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 27398.15
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-fb3d9564-a521-4525-9619-2a7430b71489
-    createdAt: '2026-09-27T13:48:02.458257Z'
-    balanceAfter: 146383768.67
-  '11914':
-    id: 11914
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 778
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-88e7d076-87e6-4596-a163-7266e3391894
-    createdAt: '2026-09-27T13:48:31.056387800Z'
-    balanceAfter: 146384434.67
-  '11915':
-    id: 11915
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 1.62
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-6965912b-c9cf-4317-98ce-4855ede69263
-    createdAt: '2026-09-27T13:48:35.023962500Z'
-    balanceAfter: 146384420.29
-  '11916':
-    id: 11916
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.01
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-f6e9e679-e5a0-496c-91e5-23a44e949d45
-    createdAt: '2026-09-27T13:48:37.035534200Z'
-    balanceAfter: 146384412.28
-  '11917':
-    id: 11917
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.01
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-81845803-db62-4ac8-bece-bfcc3f29d0a4
-    createdAt: '2026-09-27T13:48:38.127863200Z'
-    balanceAfter: 146384408.27
-  '11918':
-    id: 11918
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.01
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-f4f08fa1-89cf-4a21-b300-499178d55c99
-    createdAt: '2026-09-27T13:48:39.330944200Z'
-    balanceAfter: 146384404.26
-  '11919':
-    id: 11919
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.09
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5155e0fb-5d50-4c4c-81d0-e4cd8581c844
-    createdAt: '2026-09-27T13:48:40.194677700Z'
-    balanceAfter: 146384400.17
-  '11920':
-    id: 11920
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 352.92
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-40918165-8d18-41cb-a19c-2c8fb71dfeb2
-    createdAt: '2026-09-27T13:48:54.744601700Z'
-    balanceAfter: 146383987.25
-  '11921':
-    id: 11921
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 3963.72
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5e64ca7a-6d38-4010-8e3f-c91d67c0e502
-    createdAt: '2026-09-27T13:48:59.322997600Z'
-    balanceAfter: 146380007.53
-  '11922':
-    id: 11922
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 220
-    description: 'Axiom 建造: spawn_entity'
-    refId: axiom-0230c492-483e-4414-b7ba-763dd67d81f5
-    createdAt: '2026-09-27T13:48:59.329342Z'
-    balanceAfter: 146379787.53
-  '11923':
-    id: 11923
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 114302.35
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-d2b0116e-647d-4197-aca0-4f5d72a29f95
-    createdAt: '2026-09-27T13:58:02.898189600Z'
-    balanceAfter: 146264925.18
-  '11924':
-    id: 11924
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: flight
-    amount: 20
-    description: 飞行消耗
-    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/9/27 21:59
-    createdAt: '2026-09-27T13:59:49.362349700Z'
-    updatedAt: '2026-09-27T13:59:53.342249900Z'
-  '11925':
-    id: 11925
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 229248.88
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-9471773a-200d-47e0-b9bc-2f85762e27f0
-    createdAt: '2026-09-27T13:59:57.308174900Z'
-    balanceAfter: 146035656.3
-  '11926':
-    id: 11926
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.09
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-d0306520-20c0-4fd9-b82b-7201e7a0e281
-    createdAt: '2026-09-27T14:23:12.870090200Z'
-    balanceAfter: 146035656.21
-  '11927':
-    id: 11927
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.05
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5d169395-a55f-4591-b7b5-b2e1bed6a04c
-    createdAt: '2026-09-27T14:23:13.420697700Z'
-    balanceAfter: 146035656.16
-  '11928':
-    id: 11928
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 16.15
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-1c1166c9-5e59-4be5-b02f-3446a383fb0b
-    createdAt: '2026-09-27T14:24:35.219331500Z'
-    balanceAfter: 146035640.01
-  '11929':
-    id: 11929
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 11956.05
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-5dfc387d-1c96-492c-ba57-f6669a34942b
-    createdAt: '2026-09-27T14:25:52.523573100Z'
-    balanceAfter: 146023683.96
-  '11930':
-    id: 11930
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 14844.29
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-be0cfc8e-49e4-4c45-a454-d720c94aecf1
-    createdAt: '2026-09-27T14:26:10.231271400Z'
-    balanceAfter: 146008839.67
-  '11931':
-    id: 11931
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 87.48
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-ba8bf60b-ad18-40ea-9c0d-29d4fbd78d98
-    createdAt: '2026-09-27T14:34:50.570408200Z'
-    balanceAfter: 146008927.15
-  '11932':
-    id: 11932
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 19.76
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-2e4edb15-b225-4f10-8c53-7cd4e293583a
-    createdAt: '2026-09-27T14:34:52.284195100Z'
-    balanceAfter: 146008946.91
-  '11933':
-    id: 11933
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 16.26
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-59ff1b13-f987-4c7e-9097-fd23258dd5cf
-    createdAt: '2026-09-27T14:34:52.834561900Z'
-    balanceAfter: 146008963.17
-  '11934':
-    id: 11934
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 16.26
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-d46a8f3d-fe37-4599-9d7c-90709f3e8f32
-    createdAt: '2026-09-27T14:34:53.216961300Z'
-    balanceAfter: 146008979.43
-  '11935':
-    id: 11935
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 83.2
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-6a49da73-5c07-43b3-a3a5-240a8354f45f
-    createdAt: '2026-09-27T14:34:53.641107500Z'
-    balanceAfter: 146009062.63
-  '11936':
-    id: 11936
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.84
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-52ffed28-63b5-4ced-8fe7-8943c744b9d0
-    createdAt: '2026-09-27T14:34:54.359771300Z'
-    balanceAfter: 146009072.47
-  '11937':
-    id: 11937
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 24.3
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-ae48a594-a480-4767-acd5-903d4ccca507
-    createdAt: '2026-09-27T14:34:54.637461800Z'
-    balanceAfter: 146009096.77
-  '11938':
-    id: 11938
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.8
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-11619851-a637-474d-94fe-942bc7766696
-    createdAt: '2026-09-27T14:34:55.116980800Z'
-    balanceAfter: 146009106.57
-  '11939':
-    id: 11939
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 16.2
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-e4266433-9bf4-426e-ac53-8c5f2e7ba83b
-    createdAt: '2026-09-27T14:34:55.383006700Z'
-    balanceAfter: 146009122.77
-  '11940':
-    id: 11940
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.78
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-4c088e88-333d-4ccd-9672-dcdb861dbae6
-    createdAt: '2026-09-27T14:34:57.918778600Z'
-    balanceAfter: 146009132.55
-  '11941':
-    id: 11941
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 24.15
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-bfbeb71d-6a0b-40b2-a620-298f5d0f881a
-    createdAt: '2026-09-27T14:34:58.170732100Z'
-    balanceAfter: 146009156.7
-  '11942':
-    id: 11942
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.78
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-5212ae6b-6552-4664-a529-b5f145485f0d
-    createdAt: '2026-09-27T14:34:58.521508200Z'
-    balanceAfter: 146009166.48
-  '11943':
-    id: 11943
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 16.06
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-ed41578a-b57d-4a69-bade-7f9a08e12334
-    createdAt: '2026-09-27T14:34:58.877772500Z'
-    balanceAfter: 146009182.54
-  '11944':
-    id: 11944
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 47.7
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-3f08b359-bc89-4e29-9a20-cd004695588f
-    createdAt: '2026-09-27T14:34:59.177394300Z'
-    balanceAfter: 146009230.24
-  '11945':
-    id: 11945
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.74
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-fbd16c3e-7b1d-4f72-baae-ad8a27523386
-    createdAt: '2026-09-27T14:34:59.607171100Z'
-    balanceAfter: 146009239.98
-  '11946':
-    id: 11946
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 24.03
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-337148c3-cad5-4cf7-aefc-708c4c4ea9f8
-    createdAt: '2026-09-27T14:34:59.977904Z'
-    balanceAfter: 146009264.01
-  '11947':
-    id: 11947
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.72
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-7d1449c1-f6a4-4b82-b4c7-7fb4f4324222
-    createdAt: '2026-09-27T14:35:00.973376200Z'
-    balanceAfter: 146009273.73
-  '11948':
-    id: 11948
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 15.94
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-558a5afa-934c-4cd8-bb08-020214d6d868
-    createdAt: '2026-09-27T14:35:01.728522900Z'
-    balanceAfter: 146009289.67
-  '11949':
-    id: 11949
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.7
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-3f74a265-060b-4785-aab7-4fce9abbc639
-    createdAt: '2026-09-27T14:35:01.916561400Z'
-    balanceAfter: 146009299.37
-  '11950':
-    id: 11950
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.91
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-c6cbf475-1521-4d15-b25c-9a6a97d219bf
-    createdAt: '2026-09-27T14:35:02.121930200Z'
-    balanceAfter: 146009323.28
-  '11951':
-    id: 11951
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.7
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-fdc2bd0c-873b-4ade-9d31-b118155eaef2
-    createdAt: '2026-09-27T14:35:02.324491200Z'
-    balanceAfter: 146009332.98
-  '11952':
-    id: 11952
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 15.86
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-9b28cdda-b8f7-4b5f-89c7-ab0d19d91dcd
-    createdAt: '2026-09-27T14:35:02.903065200Z'
-    balanceAfter: 146009348.84
-  '11953':
-    id: 11953
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.66
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-e8eb8862-e609-471b-8e31-3732b261507f
-    createdAt: '2026-09-27T14:35:03.022454900Z'
-    balanceAfter: 146009358.5
-  '11954':
-    id: 11954
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.79
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-337f6700-c8bc-4b51-94c5-2ba2b4b322ae
-    createdAt: '2026-09-27T14:35:03.261198900Z'
-    balanceAfter: 146009382.29
-  '11955':
-    id: 11955
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.64
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-e4a1cd39-488c-41d3-9307-fcf65e1c84c0
-    createdAt: '2026-09-27T14:35:03.836394100Z'
-    balanceAfter: 146009391.93
-  '11956':
-    id: 11956
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 0.04
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-2348cae1-a935-4548-9c44-718a2bb9366c
-    createdAt: '2026-09-27T14:35:04.324149300Z'
-    balanceAfter: 146009391.89
-  '11957':
-    id: 11957
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 15.76
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-aeb8a8e1-3cf8-4a15-b48d-f7fcc55e283b
-    createdAt: '2026-09-27T14:35:05.177642900Z'
-    balanceAfter: 146009407.65
-  '11958':
-    id: 11958
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.62
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-d3c89348-8e4d-461c-b48e-b2e644e98b1d
-    createdAt: '2026-09-27T14:35:05.385335900Z'
-    balanceAfter: 146009417.27
-  '11959':
-    id: 11959
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.61
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-034a181e-58c8-4b43-9753-58851787c705
-    createdAt: '2026-09-27T14:35:06.077659Z'
-    balanceAfter: 146009440.88
-  '11960':
-    id: 11960
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 19.2
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-7e81b4ca-cd6a-4a1b-b40f-7fb465763318
-    createdAt: '2026-09-27T14:35:06.373085300Z'
-    balanceAfter: 146009460.08
-  '11961':
-    id: 11961
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.52
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-3325a9d5-c42f-4d67-b457-13555c272883
-    createdAt: '2026-09-27T14:35:07.981774400Z'
-    balanceAfter: 146009483.6
-  '11962':
-    id: 11962
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.54
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-bcc42a58-0eb5-47db-b5b5-33462118e896
-    createdAt: '2026-09-27T14:35:08.420356400Z'
-    balanceAfter: 146009493.14
-  '11963':
-    id: 11963
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: debit
-    category: axiom
-    amount: 1
-    description: 'Axiom 建造: set_buffer'
-    refId: axiom-ddc87855-230f-448d-bcf7-84ca115b6d24
-    createdAt: '2026-09-27T14:35:09.034171700Z'
-    balanceAfter: 146009492.14
-  '11964':
-    id: 11964
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 15.62
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-ff54dc8f-5f82-4b7a-8a37-ed24e0c82b7c
-    createdAt: '2026-09-27T14:35:10.462140100Z'
-    balanceAfter: 146009507.76
-  '11965':
-    id: 11965
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.52
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-79cb5699-3ebf-465b-9454-1ddb99a77db2
-    createdAt: '2026-09-27T14:35:10.732778200Z'
-    balanceAfter: 146009517.28
-  '11966':
-    id: 11966
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.37
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-71537171-a5d1-4f81-92d6-5ca4d1ebaaa2
-    createdAt: '2026-09-27T14:35:11.016457100Z'
-    balanceAfter: 146009540.65
-  '11967':
-    id: 11967
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.52
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-9c5dedc0-4b91-40c8-8797-8abc3712d0af
-    createdAt: '2026-09-27T14:35:11.469470500Z'
-    balanceAfter: 146009550.17
-  '11968':
-    id: 11968
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.31
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-17502d6e-1c36-4e68-b392-498ac9c02964
-    createdAt: '2026-09-27T14:35:12.308201300Z'
-    balanceAfter: 146009573.48
-  '11969':
-    id: 11969
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.48
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-63aa0a6e-0248-493e-94e2-4540e14985c2
-    createdAt: '2026-09-27T14:35:12.731477500Z'
-    balanceAfter: 146009582.96
-  '11970':
-    id: 11970
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 15.48
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-c4395ff0-bb56-443d-9c20-057a3b6677fa
-    createdAt: '2026-09-27T14:35:14.246787700Z'
-    balanceAfter: 146009598.44
-  '11971':
-    id: 11971
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 9.46
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-20ab7e8f-906a-481d-afc7-0be83f3c2b13
-    createdAt: '2026-09-27T14:35:14.519305500Z'
-    balanceAfter: 146009607.9
-  '11972':
-    id: 11972
-    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
-    playerId: Ryan_yu__
-    direction: credit
-    category: axiom_salvage
-    amount: 23.16
-    description: 'Axiom 拆除回收: set_buffer'
-    refId: axiom-salvage-858f3878-ad1f-46da-a8b3-2cf375832f9d
-    createdAt: '2026-09-27T14:35:14.878421200Z'
-    balanceAfter: 146009631.06
   '11973':
     id: 11973
     uuid: d006ba70-4ddc-4b37-b13c-76f190815116
@@ -54930,8 +53756,1185 @@ entries:
     playerId: Ryan_yu__
     direction: debit
     category: flight
-    amount: 2172
+    amount: 22536
     description: 飞行消耗
     refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/22 21:09
     createdAt: '2026-10-22T13:09:19.414024600Z'
-    updatedAt: '2026-10-22T13:18:30.336304200Z'
+    updatedAt: '2026-10-22T14:43:53.858505700Z'
+  '16866':
+    id: 16866
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 3948
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 16:11
+    createdAt: '2026-10-23T08:11:44.414655700Z'
+    updatedAt: '2026-10-23T08:32:22.665863100Z'
+  '16867':
+    id: 16867
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8820
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 18:31
+    createdAt: '2026-10-23T10:31:46.513195900Z'
+    updatedAt: '2026-10-23T11:19:58.176964800Z'
+  '16868':
+    id: 16868
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 3772
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 19:31
+    createdAt: '2026-10-23T11:31:51.338437300Z'
+    updatedAt: '2026-10-23T11:49:55.997521900Z'
+  '16869':
+    id: 16869
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1920
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 19:50
+    createdAt: '2026-10-23T11:50:56.736072800Z'
+    updatedAt: '2026-10-23T12:01:41.254176100Z'
+  '16870':
+    id: 16870
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 2620
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 20:28
+    createdAt: '2026-10-23T12:28:12.852633900Z'
+    updatedAt: '2026-10-23T12:40:29.868129100Z'
+  '16871':
+    id: 16871
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 4
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 20:41
+    createdAt: '2026-10-23T12:41:00.295040300Z'
+  '16872':
+    id: 16872
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1480
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:11
+    createdAt: '2026-10-23T13:11:47.620425800Z'
+    updatedAt: '2026-10-23T13:18:30.351052400Z'
+  '16873':
+    id: 16873
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 248
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:19
+    createdAt: '2026-10-23T13:19:17.336967100Z'
+    updatedAt: '2026-10-23T13:20:22.780959700Z'
+  '16874':
+    id: 16874
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 308
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:46
+    createdAt: '2026-10-23T13:46:17.785024Z'
+    updatedAt: '2026-10-23T13:48:13.792101400Z'
+  '16875':
+    id: 16875
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 16
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:48
+    createdAt: '2026-10-23T13:48:47.780009800Z'
+    updatedAt: '2026-10-23T13:48:50.798231300Z'
+  '16876':
+    id: 16876
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 344
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:50
+    createdAt: '2026-10-23T13:50:07.791436800Z'
+    updatedAt: '2026-10-23T13:51:32.827991200Z'
+  '16877':
+    id: 16877
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 112
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:52
+    createdAt: '2026-10-23T13:52:40.798276800Z'
+    updatedAt: '2026-10-23T13:53:07.794957600Z'
+  '16878':
+    id: 16878
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1624
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 21:54
+    createdAt: '2026-10-23T13:54:56.788581Z'
+    updatedAt: '2026-10-23T14:01:53.798466600Z'
+  '16879':
+    id: 16879
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1136
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:03
+    createdAt: '2026-10-23T14:03:58.812761200Z'
+    updatedAt: '2026-10-23T14:08:53.967104200Z'
+  '16880':
+    id: 16880
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1348
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:15
+    createdAt: '2026-10-23T14:15:13.636830900Z'
+    updatedAt: '2026-10-23T14:21:36.807163Z'
+  '16881':
+    id: 16881
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 344
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:34
+    createdAt: '2026-10-23T14:34:18.800225400Z'
+    updatedAt: '2026-10-23T14:36:15.806525800Z'
+  '16882':
+    id: 16882
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 392
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:36
+    createdAt: '2026-10-23T14:36:49.795004400Z'
+    updatedAt: '2026-10-23T14:39:08.688138200Z'
+  '16883':
+    id: 16883
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 16
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:40
+    createdAt: '2026-10-23T14:40:34.067263200Z'
+    updatedAt: '2026-10-23T14:40:37.040694500Z'
+  '16884':
+    id: 16884
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 176
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/23 22:41
+    createdAt: '2026-10-23T14:41:46.602656300Z'
+    updatedAt: '2026-10-23T14:43:28.751118400Z'
+  '16885':
+    id: 16885
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 2032
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 00:39
+    createdAt: '2026-10-23T16:39:08.747121300Z'
+    updatedAt: '2026-10-23T16:50:18.670550600Z'
+  '16886':
+    id: 16886
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1112
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 01:01
+    createdAt: '2026-10-23T17:01:17.662886500Z'
+    updatedAt: '2026-10-23T17:06:50.792017Z'
+  '16887':
+    id: 16887
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 644
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 01:07
+    createdAt: '2026-10-23T17:07:43.280755600Z'
+    updatedAt: '2026-10-23T17:11:38.539672Z'
+  '16888':
+    id: 16888
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 24
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:48
+    createdAt: '2026-10-24T02:48:09.155545100Z'
+    updatedAt: '2026-10-24T02:48:16.491079800Z'
+  '16889':
+    id: 16889
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 284
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:50
+    createdAt: '2026-10-24T02:50:17.143678500Z'
+    updatedAt: '2026-10-24T02:51:46.598280300Z'
+  '16890':
+    id: 16890
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 52
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:52
+    createdAt: '2026-10-24T02:52:34.414245100Z'
+    updatedAt: '2026-10-24T02:52:47.096917800Z'
+  '16891':
+    id: 16891
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 48
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:54
+    createdAt: '2026-10-24T02:54:22.100505400Z'
+    updatedAt: '2026-10-24T02:54:34.725022800Z'
+  '16892':
+    id: 16892
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 76
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:55
+    createdAt: '2026-10-24T02:55:46.247432400Z'
+    updatedAt: '2026-10-24T02:56:19.618064Z'
+  '16893':
+    id: 16893
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 348
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 10:58
+    createdAt: '2026-10-24T02:58:22.681351900Z'
+    updatedAt: '2026-10-24T03:00:49.642959900Z'
+  '16894':
+    id: 16894
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 268
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:23
+    createdAt: '2026-10-24T03:23:30.634106600Z'
+    updatedAt: '2026-10-24T03:24:58.561582700Z'
+  '16895':
+    id: 16895
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 8
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:26
+    createdAt: '2026-10-24T03:26:42.531203600Z'
+    updatedAt: '2026-10-24T03:26:43.520870300Z'
+  '16896':
+    id: 16896
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 352
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:30
+    createdAt: '2026-10-24T03:30:11.518653700Z'
+    updatedAt: '2026-10-24T03:31:41.172361900Z'
+  '16897':
+    id: 16897
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 296
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:43
+    createdAt: '2026-10-24T03:43:16.157545100Z'
+    updatedAt: '2026-10-24T03:45:14.781519300Z'
+  '16898':
+    id: 16898
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 36
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:46
+    createdAt: '2026-10-24T03:46:23.655547500Z'
+    updatedAt: '2026-10-24T03:46:41.768803200Z'
+  '16899':
+    id: 16899
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 160
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 11:48
+    createdAt: '2026-10-24T03:48:33.960664300Z'
+    updatedAt: '2026-10-24T03:49:26.419834400Z'
+  '16900':
+    id: 16900
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 400
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:00
+    createdAt: '2026-10-24T04:00:09.724230Z'
+    updatedAt: '2026-10-24T04:02:44.750727600Z'
+  '16901':
+    id: 16901
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 35.42
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-ac4fea05-e9a9-4564-9ef3-24a9623b529c
+    createdAt: '2026-10-24T04:01:04.554180900Z'
+    balanceAfter: 125045978.8
+  '16902':
+    id: 16902
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 0.16
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-33e55b15-a16a-46cb-a2eb-38660cd220d1
+    createdAt: '2026-10-24T04:01:05.041870800Z'
+    balanceAfter: 125045974.64
+  '16903':
+    id: 16903
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 323.19
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-dc9aedac-87ef-4fc5-92b2-c560d07409db
+    createdAt: '2026-10-24T04:01:10.704919400Z'
+    balanceAfter: 125046277.83
+  '16904':
+    id: 16904
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 319.39
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-15e0d51f-8047-4071-a3ee-58df08df9937
+    createdAt: '2026-10-24T04:01:12.421704300Z'
+    balanceAfter: 125046589.22
+  '16905':
+    id: 16905
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 319.39
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-504fa1ca-b5b6-4571-b386-995419fb4b22
+    createdAt: '2026-10-24T04:01:13.161966200Z'
+    balanceAfter: 125046904.61
+  '16906':
+    id: 16906
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 311.78
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-725d6dea-7529-48f4-8aca-5fae12f85037
+    createdAt: '2026-10-24T04:01:14.456514Z'
+    balanceAfter: 125047212.39
+  '16907':
+    id: 16907
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 311.78
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-48302b50-b455-4366-aeac-8ff8666b92f1
+    createdAt: '2026-10-24T04:01:15.259551400Z'
+    balanceAfter: 125047520.17
+  '16908':
+    id: 16908
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 304.17
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-4bb2124e-e2d4-4ca9-a961-0be632670d4c
+    createdAt: '2026-10-24T04:01:16.298531400Z'
+    balanceAfter: 125047820.34
+  '16909':
+    id: 16909
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 304.17
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-e48747d5-eec1-4813-93be-3586a10e5c3c
+    createdAt: '2026-10-24T04:01:16.957935100Z'
+    balanceAfter: 125048120.51
+  '16910':
+    id: 16910
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 0.01
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-62d4179b-c62d-4d5c-ab62-f367b25c75f0
+    createdAt: '2026-10-24T04:01:17.265058600Z'
+    balanceAfter: 125048120.5
+  '16911':
+    id: 16911
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 296.57
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-eca7d1b0-a1ff-4d2c-b332-3dcfc70f7f58
+    createdAt: '2026-10-24T04:01:18.118501100Z'
+    balanceAfter: 125048413.07
+  '16912':
+    id: 16912
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 292.77
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-59a1ea2a-09e3-4029-a4a5-0da0c9a4749d
+    createdAt: '2026-10-24T04:01:18.573094900Z'
+    balanceAfter: 125048705.84
+  '16913':
+    id: 16913
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 0.01
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-7b47e170-9164-4c0b-ae7d-b1eabbe832df
+    createdAt: '2026-10-24T04:01:18.956081600Z'
+    balanceAfter: 125048701.83
+  '16914':
+    id: 16914
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 36
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:03
+    createdAt: '2026-10-24T04:03:47.753651300Z'
+    updatedAt: '2026-10-24T04:04:01.753932500Z'
+  '16915':
+    id: 16915
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 20
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:04
+    createdAt: '2026-10-24T04:04:51.747208100Z'
+    updatedAt: '2026-10-24T04:04:55.757376900Z'
+  '16916':
+    id: 16916
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 40
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:05
+    createdAt: '2026-10-24T04:05:41.918515Z'
+    updatedAt: '2026-10-24T04:06:04.778867600Z'
+  '16917':
+    id: 16917
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 444
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:06
+    createdAt: '2026-10-24T04:06:52.754762700Z'
+    updatedAt: '2026-10-24T04:08:59.720199300Z'
+  '16918':
+    id: 16918
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 272
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:10
+    createdAt: '2026-10-24T04:10:06.715070100Z'
+    updatedAt: '2026-10-24T04:11:13.863040200Z'
+  '16919':
+    id: 16919
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 956
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 12:11
+    createdAt: '2026-10-24T04:11:44.938971200Z'
+    updatedAt: '2026-10-24T04:16:58.508606500Z'
+  '16920':
+    id: 16920
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 68
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 16:30
+    createdAt: '2026-10-24T08:30:39.667734Z'
+    updatedAt: '2026-10-24T08:31:07.641573800Z'
+  '16921':
+    id: 16921
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 75728
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 16:32
+    createdAt: '2026-10-24T08:32:11.646194100Z'
+    updatedAt: '2026-10-24T13:48:12.647779400Z'
+  '16922':
+    id: 16922
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1856
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 21:55
+    createdAt: '2026-10-24T13:55:25.638742400Z'
+    updatedAt: '2026-10-24T14:03:58.641869100Z'
+  '16923':
+    id: 16923
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 184
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-3c072b27-fbed-4258-8a5a-69bbdb540cb1
+    createdAt: '2026-10-24T14:03:23.522281400Z'
+    balanceAfter: 124969313.83
+  '16924':
+    id: 16924
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 4684.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-bd53b472-72e9-4ada-a8ee-8dff4da3e5f6
+    createdAt: '2026-10-24T14:04:24.709223100Z'
+    balanceAfter: 124964545.33
+  '16925':
+    id: 16925
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 9338.52
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-193aa559-ea89-40d4-bdaa-967f59519de7
+    createdAt: '2026-10-24T14:04:32.916518Z'
+    balanceAfter: 124955206.81
+  '16926':
+    id: 16926
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 35887.26
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-4edceb72-ec36-45a1-8603-56252a626b45
+    createdAt: '2026-10-24T14:04:47.402329900Z'
+    balanceAfter: 124919319.55
+  '16927':
+    id: 16927
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 34092.9
+    description: 'Axiom 撤销退款: set_buffer (原扣 35887.26 手续费 1794.36)'
+    refId: axiom-undo-075d938a-1ef8-476f-a884-12fdfe5094a1
+    createdAt: '2026-10-24T14:05:04.591493600Z'
+    balanceAfter: 124953412.45
+  '16928':
+    id: 16928
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 8871.59
+    description: 'Axiom 撤销退款: set_buffer (原扣 9338.52 手续费 466.93)'
+    refId: axiom-undo-a8e7cf02-6905-452f-a602-8ed5bffdbaaf
+    createdAt: '2026-10-24T14:05:05.351968400Z'
+    balanceAfter: 124962284.04
+  '16929':
+    id: 16929
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 4450.27
+    description: 'Axiom 撤销退款: set_buffer (原扣 4684.5 手续费 234.23)'
+    refId: axiom-undo-38865cb1-9d54-44c7-ade8-2a18365fe370
+    createdAt: '2026-10-24T14:05:06.331649700Z'
+    balanceAfter: 124966734.31
+  '16930':
+    id: 16930
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 34676.95
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-96a828cf-d72e-4a6f-87ad-e31fad8b4aff
+    createdAt: '2026-10-24T14:05:18.183119Z'
+    balanceAfter: 124932057.36
+  '16931':
+    id: 16931
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 32943.1
+    description: 'Axiom 撤销退款: set_buffer (原扣 34676.95 手续费 1733.85)'
+    refId: axiom-undo-d6ecd73a-347e-43a8-b62f-668a8abc6b4b
+    createdAt: '2026-10-24T14:05:28.535494900Z'
+    balanceAfter: 124965000.46
+  '16932':
+    id: 16932
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 116
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:05
+    createdAt: '2026-10-24T14:05:32.638000700Z'
+    updatedAt: '2026-10-24T14:06:00.637730300Z'
+  '16933':
+    id: 16933
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 176
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:06
+    createdAt: '2026-10-24T14:06:39.640477700Z'
+    updatedAt: '2026-10-24T14:07:53.657921100Z'
+  '16934':
+    id: 16934
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 376
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:10
+    createdAt: '2026-10-24T14:10:45.641125600Z'
+    updatedAt: '2026-10-24T14:12:18.647817700Z'
+  '16935':
+    id: 16935
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 2616
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:19
+    createdAt: '2026-10-24T14:19:25.641618400Z'
+    updatedAt: '2026-10-24T14:30:28.639727300Z'
+  '16936':
+    id: 16936
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 236
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:34
+    createdAt: '2026-10-24T14:34:37.644814Z'
+    updatedAt: '2026-10-24T14:35:35.641150200Z'
+  '16937':
+    id: 16937
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 2968
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:38
+    createdAt: '2026-10-24T14:38:36.646671Z'
+    updatedAt: '2026-10-24T14:50:57.636173700Z'
+  '16938':
+    id: 16938
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 396
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:53
+    createdAt: '2026-10-24T14:53:49.636767200Z'
+    updatedAt: '2026-10-24T14:55:27.759649200Z'
+  '16939':
+    id: 16939
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 396
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/24 22:56
+    createdAt: '2026-10-24T14:56:05.749156700Z'
+    updatedAt: '2026-10-24T14:58:08.752513400Z'
+  '16940':
+    id: 16940
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 157.68
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-5d761837-82f7-42d6-8533-584fa8df4902
+    createdAt: '2026-10-24T15:00:21.678140Z'
+    balanceAfter: 124957878.14
+  '16941':
+    id: 16941
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 1.05
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-ae7bacd9-214b-4591-bf90-091c2546eb5d
+    createdAt: '2026-10-24T15:00:23.742900200Z'
+    balanceAfter: 124957879.19
+  '16942':
+    id: 16942
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 1.05
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-bde83061-c761-4a79-8edc-aaeae6ecb77d
+    createdAt: '2026-10-24T15:00:24.956170800Z'
+    balanceAfter: 124957880.24
+  '16943':
+    id: 16943
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 1.05
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-95626ecb-44cc-4b6c-9723-ed1895027b22
+    createdAt: '2026-10-24T15:00:25.692725900Z'
+    balanceAfter: 124957881.29
+  '16944':
+    id: 16944
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 47.16
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-378e12bb-bf25-419d-8777-b84bd121b8b0
+    createdAt: '2026-10-24T15:00:27.870255200Z'
+    balanceAfter: 124957928.45
+  '16945':
+    id: 16945
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 61.25
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-75ada428-96be-425a-94e2-c3a7bdd8f8a4
+    createdAt: '2026-10-24T15:00:29.023356Z'
+    balanceAfter: 124957989.7
+  '16946':
+    id: 16946
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_salvage
+    amount: 20.7
+    description: 'Axiom 拆除回收: set_buffer'
+    refId: axiom-salvage-9e8e3359-deca-43ef-a250-e75811e4c5da
+    createdAt: '2026-10-24T15:00:30.657406500Z'
+    balanceAfter: 124958010.4
+  '16947':
+    id: 16947
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-bb80724c-2eda-47f6-b265-a0569dba8da8
+    createdAt: '2026-10-24T15:41:01.499027Z'
+    balanceAfter: 124958008.9
+  '16948':
+    id: 16948
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 3
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-d4ca975f-9350-4558-a106-67951eaa48ab
+    createdAt: '2026-10-24T15:41:06.685221300Z'
+    balanceAfter: 124958005.9
+  '16949':
+    id: 16949
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.42
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.5 手续费 0.08)'
+    refId: axiom-undo-9925dcc0-4801-434c-8f31-1d4b5e5f1d4e
+    createdAt: '2026-10-24T15:41:14.741780500Z'
+    balanceAfter: 124958007.32
+  '16950':
+    id: 16950
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 3
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-2ecb9ed6-4fa4-4832-a5a4-4b1b4c92b434
+    createdAt: '2026-10-24T15:41:19.340934500Z'
+    balanceAfter: 124958004.32
+  '16951':
+    id: 16951
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 2.85
+    description: 'Axiom 撤销退款: set_buffer (原扣 3 手续费 0.15)'
+    refId: axiom-undo-24e02903-13f7-4654-99d2-d3f671f8babe
+    createdAt: '2026-10-24T15:41:26.797983100Z'
+    balanceAfter: 124958007.17
+  '16952':
+    id: 16952
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-68e36267-93aa-4718-b9a7-ce3801aa1ac5
+    createdAt: '2026-10-24T15:41:42.693282600Z'
+    balanceAfter: 124958005.67
+  '16953':
+    id: 16953
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 3
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-6e57bd58-6726-44f5-bde3-84aa68c38585
+    createdAt: '2026-10-24T15:41:48.292830400Z'
+    balanceAfter: 124958002.67
+  '16954':
+    id: 16954
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.42
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.5 手续费 0.08)'
+    refId: axiom-undo-71a8a5cb-8e43-40e7-a39d-f0642d26cf50
+    createdAt: '2026-10-24T15:41:55.945545300Z'
+    balanceAfter: 124958004.09
+  '16955':
+    id: 16955
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 2.85
+    description: 'Axiom 撤销退款: set_buffer (原扣 3 手续费 0.15)'
+    refId: axiom-undo-6b545229-0e04-423f-8475-cfada57281d6
+    createdAt: '2026-10-24T15:42:00.591881500Z'
+    balanceAfter: 124958006.94
+  '16956':
+    id: 16956
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 2.85
+    description: 'Axiom 撤销退款: set_buffer (原扣 3 手续费 0.15)'
+    refId: axiom-undo-ed92d376-13cd-40a4-9ce7-91b2e55dbb2e
+    createdAt: '2026-10-24T15:42:08.576662600Z'
+    balanceAfter: 124958009.79
+  '16957':
+    id: 16957
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 95.53
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1793041947125-32630560437400
+    createdAt: '2026-10-26T19:12:27.127223800Z'
+    balanceAfter: 124957914.26
+  '16958':
+    id: 16958
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 89.6
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1793041960991-32644426219100
+    createdAt: '2026-10-26T19:12:40.991345400Z'
+    balanceAfter: 124957824.66
+  '16959':
+    id: 16959
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 112
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:13
+    createdAt: '2026-10-26T19:13:22.896853500Z'
+    updatedAt: '2026-10-26T19:13:49.882974Z'
+  '16960':
+    id: 16960
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 580
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:15
+    createdAt: '2026-10-26T19:15:17.894130700Z'
+    updatedAt: '2026-10-26T19:17:41.883000400Z'
+  '16961':
+    id: 16961
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 620
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:33
+    createdAt: '2026-10-26T19:33:19.670839900Z'
+    updatedAt: '2026-10-26T19:35:53.677922700Z'
+  '16962':
+    id: 16962
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 168
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:37
+    createdAt: '2026-10-26T19:37:18.681864600Z'
+    updatedAt: '2026-10-26T19:37:59.677879900Z'
+  '16963':
+    id: 16963
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 72
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:38
+    createdAt: '2026-10-26T19:38:30.681740600Z'
+    updatedAt: '2026-10-26T19:38:47.681049400Z'
+  '16964':
+    id: 16964
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 688
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:40
+    createdAt: '2026-10-26T19:40:44.677106500Z'
+    updatedAt: '2026-10-26T19:43:35.674941200Z'
+  '16965':
+    id: 16965
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 632
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 03:45
+    createdAt: '2026-10-26T19:45:28.677719500Z'
+    updatedAt: '2026-10-26T19:48:35.675602200Z'
+  '16966':
+    id: 16966
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: other
+    amount: 77.26
+    description: 经济 API 扣款
+    refId: ess-d006ba70-4ddc-4b37-b13c-76f190815116-1793043933679-34615328815700
+    createdAt: '2026-10-26T19:45:33.679422100Z'
+    balanceAfter: 124955483.4
+  '16967':
+    id: 16967
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 384
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 16:27
+    createdAt: '2026-10-27T08:27:11.855422300Z'
+    updatedAt: '2026-10-27T08:29:03.265330400Z'
+  '16968':
+    id: 16968
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 80
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/27 16:29
+    createdAt: '2026-10-27T08:29:33.266831900Z'
+    updatedAt: '2026-10-27T08:29:52.260887700Z'
+  '16969':
+    id: 16969
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 28
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/29 16:37
+    createdAt: '2026-10-29T08:37:10.879633800Z'
+    updatedAt: '2026-10-29T08:37:16.875381100Z'
+  '16970':
+    id: 16970
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: axiom
+    amount: 1.5
+    description: 'Axiom 建造: set_buffer'
+    refId: axiom-22c1a2fe-a88a-43b0-adec-87a40287b591
+    createdAt: '2026-10-29T08:37:12.762882200Z'
+    balanceAfter: 124954401.9
+  '16971':
+    id: 16971
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: credit
+    category: axiom_undo
+    amount: 1.42
+    description: 'Axiom 撤销退款: set_buffer (原扣 1.5 手续费 0.08)'
+    refId: axiom-undo-72a83ed3-6aba-459c-8e9a-528e0cad234f
+    createdAt: '2026-10-29T08:37:14.754967900Z'
+    balanceAfter: 124954395.32
+  '16972':
+    id: 16972
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 1016
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/29 16:38
+    createdAt: '2026-10-29T08:38:36.876003Z'
+    updatedAt: '2026-10-29T08:43:04.876357Z'
+   

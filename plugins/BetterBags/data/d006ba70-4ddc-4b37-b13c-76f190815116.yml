@@ -63,7 +63,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 48
+  count: 55
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"杏鮑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203096.0f]}'
@@ -71,7 +71,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 38
+  count: 42
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"金针菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203095.0f]}'
@@ -79,7 +79,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:brown_mushroom
-  count: 62
+  count: 63
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"纽扣蘑菇",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203097.0f]}'
@@ -159,14 +159,14 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:honeycomb
-  count: 1
+  count: 3
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"gold",italic:0b,obfuscated:0b,strikethrough:0b,text:"蜂蜜蜂蜡",underlined:0b}],text:""}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"HONEY_COMB"}}'
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:player_head
-  count: 4
+  count: 6
   components:
     minecraft:profile: '{id:[I;513989614,-308789711,-1654726514,-208727265],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvOTViOTJhMTNmMDFiYWVjZTU2NjU0ZTgxNzgzM2Y5ODI5YmMwMjVhZDczMzYwOWMwYmRkMGQzYTM1OWM5ZDk0MyJ9fX0="}]}'
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"一种能填充周围世界的植物。",underlined:0b}],text:""},{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"",underlined:0b}],text:""},{extra:[{color:"yellow",italic:0b,text:"原始植物不会生产物品，"}],text:""},{extra:[{color:"yellow",italic:0b,text:"仅用于培育。"}],text:""},"",{extra:[{bold:0b,color:"#E4ED32",italic:0b,obfuscated:0b,strikethrough:0b,text:"植物",underlined:0b}],text:""}]'
@@ -508,7 +508,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:fern
-  count: 3
+  count: 4
   components:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"蕨菜",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203093.0f]}'
@@ -571,7 +571,7 @@ items:
   schema_version: 1
 - DataVersion: 4903
   id: minecraft:quartz
-  count: 4
+  count: 5
   components:
     minecraft:lore: '["",{extra:[{bold:0b,color:"gray",italic:0b,obfuscated:0b,strikethrough:0b,text:"从石头中掉落的一种常见的矿物",underlined:0b}],text:""}]'
     minecraft:custom_name: '{extra:[{bold:0b,color:"white",italic:0b,obfuscated:0b,strikethrough:0b,text:"硼砂",underlined:0b}],text:""}'
@@ -624,6 +624,79 @@ items:
     minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"花生",underlined:0b}],text:""}'
     minecraft:custom_model_data: '{floats:[2203068.0f]}'
     minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_PEANUTS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:melon_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"芜菁种子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203045.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_TURNIP_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:beetroot_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"高粱种子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203043.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_SORGHUM_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pumpkin_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"黄瓜种子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203054.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_CUCUMBER_SEEDS"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"dark_green",italic:0b,obfuscated:0b,strikethrough:0b,text:"卷心菜植物",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200983.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CABBAGE_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:player_head
+  count: 1
+  components:
+    minecraft:profile: '{id:[I;-1465632306,-2098318526,-1158062394,-2049071368],name:"CS-CoreLib",properties:[{name:"textures",value:"eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMTYxNDkxOTZmM2E4ZDZkNmYyNGU1MWIyN2U0Y2I3MWM2YmFiNjYzNDQ5ZGFmZmI3YWEyMTFiYmU1NzcyNDIifX19"}]}'
+    minecraft:custom_name: '{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"香菜",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200986.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CILANTRO"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:potato
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"姜黄",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203079.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_TURMERIC"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:pumpkin_seeds
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"鲑鱼子",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203101.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_SALMON_ROE"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:oak_sapling
+  count: 1
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"green",italic:0b,obfuscated:0b,strikethrough:0b,text:"香菜植物",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2200987.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"CILANTRO_BUSH"}}'
+  schema_version: 1
+- DataVersion: 4903
+  id: minecraft:mutton
+  count: 5
+  components:
+    minecraft:custom_name: '{extra:[{bold:0b,color:"#FFFF55",italic:0b,obfuscated:0b,strikethrough:0b,text:"生山羊肉",underlined:0b}],text:""}'
+    minecraft:custom_model_data: '{floats:[2203099.0f]}'
+    minecraft:custom_data: '{PublicBukkitValues:{"slimefun:slimefun_item":"GN_RAW_CHEVON"}}'
   schema_version: 1
 multiplier: 1.0
 ignore-item-value: false

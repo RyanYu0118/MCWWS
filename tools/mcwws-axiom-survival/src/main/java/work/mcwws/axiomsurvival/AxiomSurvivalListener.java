@@ -77,6 +77,9 @@ public final class AxiomSurvivalListener implements Listener {
         if (player == null || BlockProtection.shouldBypass(player) || !player.hasPermission("mcwws.axiom.survival.use")) {
             return;
         }
+        if (BlockProtection.shouldBypassProtection(player)) {
+            return;
+        }
         // 菜单打开到「进入 Editor」上报之间还没有会话，这段时间的模式同样由服务端掌控
         if (survivalEditorService.isClientEditorSession(player) || survivalEditorService.isMenuOpen(player)) {
             event.setCancelled(true);
@@ -120,6 +123,14 @@ public final class AxiomSurvivalListener implements Listener {
         }
         Player player = event.getPlayer();
         if (player == null || !player.hasPermission("mcwws.axiom.survival.use") || BlockProtection.shouldBypass(player)) {
+            return;
+        }
+        if (BlockProtection.shouldBypassProtection(player)) {
+            if (!GameModeChanges.isInternal(player)) {
+                GameMode chosen = event.getNewGameMode();
+                survivalEditorService.rememberChosenMode(player, chosen);
+                EditorSessionState.rememberChosenMode(player, chosen);
+            }
             return;
         }
         if (survivalEditorService.isClientEditorSession(player)) {

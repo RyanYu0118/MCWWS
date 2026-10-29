@@ -11,7 +11,13 @@ import java.util.concurrent.ConcurrentHashMap;
 
 final class EditorSessionState {
 
-    private record Snapshot(GameMode gameMode, Location location, boolean allowFlight, boolean flying) {
+    private record Snapshot(
+            GameMode gameMode,
+            Location location,
+            boolean allowFlight,
+            boolean flying,
+            boolean explicitMode
+    ) {
     }
 
     private static final Map<UUID, Snapshot> SNAPSHOTS = new ConcurrentHashMap<>();
@@ -37,13 +43,27 @@ final class EditorSessionState {
             return;
         }
         UUID id = player.getUniqueId();
-        SNAPSHOTS.put(id, new Snapshot(mode, location.clone(), player.getAllowFlight(), player.isFlying()));
+        SNAPSHOTS.put(id, new Snapshot(mode, location.clone(), player.getAllowFlight(), player.isFlying(), false));
         ENTERED_AT_TICK.put(id, Bukkit.getCurrentTick());
         LAST_AXIOM_TELEPORT_TICK.remove(id);
         McwwsAxiomSurvivalPlugin.getInstance().getLogger().info(
                 "Editor 快照: " + player.getName() + " @ "
                         + location.getBlockX() + "," + location.getBlockY() + "," + location.getBlockZ()
         );
+    }
+
+    /** 管理员主动改模式后，退出 Editor 时恢复到这个模式，而不是进编辑器前的生存。 */
+    static void rememberChosenMode(Player player, GameMode mode) {
+        if (player == null || mode == null) {
+            return;
+        }
+        Snapshot old = SNAPSHOTS.get(player.getUniqueId());
+        if (old == null) {
+            return;
+        }
+        SNAPSHOTS.put(player.getUniqueId(), new Snapshot(
+                mode, old.location(), old.allowFlight(), old.flying(), true
+        ));
     }
 
     static boolean has(Player player) {
@@ -116,7 +136,7 @@ final class EditorSessionState {
             return;
         }
         GameMode target = snapshot.gameMode();
-        if (target != GameMode.SURVIVAL && target != GameMode.ADVENTURE) {
+        if (!snapshot.explicitMode() && target != GameMode.SURVIVAL && target != GameMode.ADVENTURE) {
             target = GameMode.SURVIVAL;
         }
         Location location = snapshot.location();
@@ -124,7 +144,7 @@ final class EditorSessionState {
             player.teleport(location);
         }
         if (player.getGameMode() != target) {
-            player.setGameMode(target);
+            GameModeChanges.apply(player, target);
         }
         FlyWithFoodBridge.restoreFlyState(player, snapshot.allowFlight(), snapshot.flying());
         if (snapshot.allowFlight() && snapshot.flying()) {

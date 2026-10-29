@@ -24,7 +24,13 @@ final class SurvivalEditorService {
     private final Set<UUID> announced = ConcurrentHashMap.newKeySet();
 
     /** 开菜单前的建造位置、飞行状态与游戏模式；飞行权限由服务端自己记录，客户端本地创造会污染 abilities */
-    private record MenuSnapshot(Location location, boolean allowFlight, boolean flying, GameMode mode) {
+    private record MenuSnapshot(
+            Location location,
+            boolean allowFlight,
+            boolean flying,
+            GameMode mode,
+            boolean explicitMode
+    ) {
     }
 
     SurvivalEditorService(McwwsAxiomSurvivalPlugin plugin, EditorRestoreService editorRestoreService) {
@@ -38,6 +44,20 @@ final class SurvivalEditorService {
 
     boolean isClientEditorSession(Player player) {
         return player != null && clientEditorSessions.containsKey(player.getUniqueId());
+    }
+
+    /** 管理员在菜单期间改了模式，关菜单时按新模式恢复，避免被快照拉回生存。 */
+    void rememberChosenMode(Player player, GameMode mode) {
+        if (player == null || mode == null) {
+            return;
+        }
+        MenuSnapshot snapshot = menuSnapshots.get(player.getUniqueId());
+        if (snapshot == null) {
+            return;
+        }
+        menuSnapshots.put(player.getUniqueId(), new MenuSnapshot(
+                snapshot.location(), snapshot.allowFlight(), snapshot.flying(), mode, true
+        ));
     }
 
     /** 菜单期间服务端会主动切旁观，模式变更监听要放行这一次 */
@@ -68,7 +88,7 @@ final class SurvivalEditorService {
         // 客户端是「先开菜单、后报进入 Editor」，此时的旁观是菜单期间由服务端自己切的，
         // 再强制切回生存会被模式监听器当成退出 Editor 而触发恢复
         if (player.getGameMode() == GameMode.SPECTATOR && !isMenuOpen(player)) {
-            player.setGameMode(GameMode.SURVIVAL);
+            GameModeChanges.apply(player, GameMode.SURVIVAL);
         }
         editorRestoreService.onEnterSpectator(player);
         clientEditorSessions.put(player.getUniqueId(), System.currentTimeMillis());
@@ -91,7 +111,7 @@ final class SurvivalEditorService {
             return;
         }
         menuSnapshots.put(player.getUniqueId(), new MenuSnapshot(
-                location.clone(), player.getAllowFlight(), player.isFlying(), player.getGameMode()
+                location.clone(), player.getAllowFlight(), player.isFlying(), player.getGameMode(), false
         ));
         // 必须在切旁观之前快照：旁观自带飞行，进 Editor 时若已是旁观就捕获不到生存飞行权限
         editorRestoreService.onEnterSpectator(player);
@@ -101,7 +121,7 @@ final class SurvivalEditorService {
         ));
         if (spectatorDuringMenu()) {
             if (player.getGameMode() != GameMode.SPECTATOR) {
-                player.setGameMode(GameMode.SPECTATOR);
+                GameModeChanges.apply(player, GameMode.SPECTATOR);
             }
             return;
         }
@@ -151,11 +171,11 @@ final class SurvivalEditorService {
     /** 菜单期间切了旁观就要切回来；快照本身是旁观（异常情况）时退回生存，与其余恢复路径一致 */
     private void restoreGameMode(Player player, MenuSnapshot snapshot) {
         GameMode target = snapshot.mode();
-        if (target == null || target == GameMode.SPECTATOR) {
+        if (target == null || (!snapshot.explicitMode() && target == GameMode.SPECTATOR)) {
             target = GameMode.SURVIVAL;
         }
         if (player.getGameMode() != target) {
-            player.setGameMode(target);
+            GameModeChanges.apply(player, target);
         }
     }
 
@@ -252,7 +272,7 @@ final class SurvivalEditorService {
         if (!player.hasPermission("mcwws.axiom.survival.use")) {
             return false;
         }
-        player.setGameMode(GameMode.SURVIVAL);
+        GameModeChanges.apply(player, GameMode.SURVIVAL);
         player.setFallDistance(0f);
         plugin.getLogger().info("进服时修正 Editor 遗留旁观: " + player.getName());
         return true;

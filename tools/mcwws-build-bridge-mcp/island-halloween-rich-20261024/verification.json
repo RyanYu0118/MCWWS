@@ -1,0 +1,38 @@
+{
+  "time": "2026-10-24T15:21:30.764Z",
+  "placed": 392,
+  "groups": {
+    "landing_corner_display": 12,
+    "stair_foot_display": 4,
+    "courtyard_banner": 36,
+    "courtyard_pumpkin_sconce": 24,
+    "corridor_chain_lantern": 36,
+    "corridor_banner": 24,
+    "exterior_chain_lantern": 24,
+    "exterior_pumpkin_sconce": 12,
+    "high_corridor_cobweb": 36,
+    "stair_corner_cobweb": 12
+  },
+  "skipped": [],
+  "failures": [],
+  "connectivity": [
+    {
+      "floor": 102,
+      "reachable": 1156,
+      "allFourLandingsConnected": true,
+      "fullRingConnected": true
+    },
+    {
+      "floor": 110,
+      "reachable": 1164,
+      "allFourLandingsConnected": true,
+      "fullRingConnected": true
+    },
+    {
+      "floor": 118,
+      "reachable": 1155,
+      "allFourLandingsConnected": true,
+      "fullRingConnected": true
+    }
+  ]
+}

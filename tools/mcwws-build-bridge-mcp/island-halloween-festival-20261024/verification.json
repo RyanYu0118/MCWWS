@@ -1,0 +1,64 @@
+{
+  "time": "2026-10-24T15:38:35.661Z",
+  "placed": 622,
+  "types": 24,
+  "materials": [
+    "minecraft:jack_o_lantern",
+    "minecraft:carved_pumpkin",
+    "minecraft:black_candle",
+    "minecraft:wither_skeleton_skull",
+    "minecraft:soul_lantern",
+    "minecraft:orange_candle",
+    "minecraft:purple_candle",
+    "minecraft:red_candle",
+    "minecraft:potted_wither_rose",
+    "minecraft:potted_dead_bush",
+    "minecraft:potted_red_mushroom",
+    "minecraft:skeleton_skull",
+    "minecraft:potted_crimson_fungus",
+    "minecraft:barrel",
+    "minecraft:brewing_stand",
+    "minecraft:water_cauldron",
+    "minecraft:potted_warped_fungus",
+    "minecraft:orange_wall_banner",
+    "minecraft:skeleton_wall_skull",
+    "minecraft:purple_wall_banner",
+    "minecraft:wither_skeleton_wall_skull",
+    "minecraft:black_wall_banner",
+    "minecraft:polished_deepslate_slab",
+    "minecraft:hanging_roots"
+  ],
+  "groups": {
+    "roof_parapet_ornament": 68,
+    "roof_witchcraft_nook": 16,
+    "roof_merlon_pennant": 32,
+    "roof_skull_plaque": 32,
+    "extra_landing_curio": 12,
+    "apothecary_wall_shelf": 138,
+    "corridor_skull_plaque": 48,
+    "ceiling_hanging_roots": 72,
+    "tower_apothecary": 4
+  },
+  "skipped": 0,
+  "failures": [],
+  "connectivity": [
+    {
+      "floor": 102,
+      "fullCircuit": true,
+      "fourStairsConnected": true,
+      "reachable": 1152
+    },
+    {
+      "floor": 110,
+      "fullCircuit": true,
+      "fourStairsConnected": true,
+      "reachable": 1160
+    },
+    {
+      "floor": 118,
+      "fullCircuit": true,
+      "fourStairsConnected": true,
+      "reachable": 1119
+    }
+  ]
+}

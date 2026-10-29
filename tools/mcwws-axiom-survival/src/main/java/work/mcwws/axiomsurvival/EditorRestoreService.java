@@ -40,7 +40,7 @@ final class EditorRestoreService {
             return;
         }
         if (player.getGameMode() == GameMode.SPECTATOR) {
-            player.setGameMode(GameMode.SURVIVAL);
+            GameModeChanges.apply(player, GameMode.SURVIVAL);
             McwwsAxiomSurvivalPlugin.sendMessage(player, plugin.msg("prefix") + plugin.msg("editor-restored"));
             plugin.getLogger().info("Editor 强制生存: " + player.getName());
         }

@@ -102,6 +102,9 @@ final class EditorPacketHandlers {
         if (!restoreService.enabled() || !player.hasPermission("mcwws.axiom.survival.use")) {
             return BeforeResult.PROCEED;
         }
+        if (BlockProtection.shouldBypassProtection(player)) {
+            return BeforeResult.PROCEED;
+        }
         int mark = PacketBufs.readerIndex(buf);
         int modeId = readByte(buf);
         PacketBufs.readerIndex(buf, mark);

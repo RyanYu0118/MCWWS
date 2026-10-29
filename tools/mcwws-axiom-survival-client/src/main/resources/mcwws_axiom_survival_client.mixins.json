@@ -7,6 +7,9 @@
   "client": [
     "AxiomClientActiveMixin",
     "AxiomClientSpectatorPermissionMixin",
+    "ChunkRenderOverriderShaderMixin",
+    "ChunkedBlockRegionOpacityMixin",
+    "IrisApiWrapperShadersMixin",
     "EntityGizmoPermissionMixin",
     "GizmoListGroupTranslateMixin",
     "ClientPacketListenerAbilitiesMixin",
