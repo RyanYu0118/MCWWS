@@ -60,7 +60,7 @@
 
 #### 网页地图的两套瓦片
 
-两套图读的是同一个主世界存档 `world`，写成两个互不影响的 BlueMap 文件库。存储类型都是 `file`，根目录 `bluemap/web/maps`，压缩都是 gzip。勾选或取消「渲染 Y=320 以上方块」只切换浏览器读哪一套，不会重新烘焙。地表图要在服务器执行一次 `bluemap reload` 后才会开始生成；某一格还没渲出来时，网页暂时退回完整图。
+两套图读的是同一个主世界存档 `world`，写成两个互不影响的 BlueMap 文件库。存储类型都是 `file`，根目录 `bluemap/web/maps`，压缩都是 gzip。勾选或取消「渲染 Y=320 以上方块」只切换浏览器读哪一套，不会重新烘焙。地表图要在服务器执行一次 `bluemap reload` 后才会开始生成；某一格还没渲出来时，网页暂时退回完整图。烘焙进行中，控制台每分钟自动打一次与手动执行 `bluemap` 相同的状态（进度、剩余时间、正在更新的区域）。队列空了就停。脚本是 `plugins/Skript/scripts/mcwws/utility/bluemap_status.sk`。
 
 | | 完整图 | 地表图 |
 | --- | --- | --- |
@@ -1091,6 +1091,7 @@ Halo 嵌入商店页：全宽、藏 TOC，只留商城本体。
 | 成就 / 赛季 / 新手引导 | `plugins/AdvancedAchievements/`、`tools/mcwws-idea-achievements/`、`plugins/BattlePass-Fork/`、`plugins/BetonQuest/QuestPackages/mcwws_newbie/` |
 | 世界进度 | `tools/mcwws-ultimateadvancements/` |
 | 测绘前端 | `bluemap/web/js/mcwws-gis.js`、`bluemap/web/js/mcwws-api-base.js`（外网 API/地图域解析） |
+| 地图渲染状态 | `plugins/Skript/scripts/mcwws/utility/bluemap_status.sk`（队列非空时每分钟打一次 `bluemap` 状态） |
 | 地图壳页配置 | `plugins/Skript/scripts/web/public/services-config.js`、`/api/services-config` |
 | 进度根标题 datapack | `world/datapacks/mcwws_advancement_labels/` |
 | 主世界建筑上限 | `world/datapacks/mcwws_overworld_height/`（Y=-64 到 Y=2031） |

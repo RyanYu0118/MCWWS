@@ -1,0 +1,33 @@
+# 渲染队列非空时，每分钟在控制台打一次 BlueMap 状态（等同手动执行 bluemap）
+# 空闲时 tasks.dat 里没有 region-update，不再刷屏
+
+import:
+    java.io.File
+    java.nio.file.Files
+    java.nio.charset.StandardCharsets
+
+function mcwwsBlueMapHasRenderWork() :: boolean:
+    set {_file} to new File("bluemap/tasks.dat")
+    if {_file}.exists() is false:
+        return false
+    if {_file}.length() < 32:
+        return false
+    set {_bytes} to Files.readAllBytes({_file}.toPath())
+    set {_text} to new String({_bytes}, StandardCharsets.ISO_8859_1)
+    if {_text} contains "bluemap:region-update":
+        return true
+    if {_text} contains "bluemap:map-update":
+        return true
+    return false
+
+function mcwwsPrintBlueMapStatus():
+    if mcwwsBlueMapHasRenderWork() is false:
+        stop
+    execute console command "bluemap"
+
+on load:
+    wait 5 seconds
+    mcwwsPrintBlueMapStatus()
+
+every 1 minute:
+    mcwwsPrintBlueMapStatus()
