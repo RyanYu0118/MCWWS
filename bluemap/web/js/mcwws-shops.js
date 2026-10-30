@@ -146,7 +146,7 @@
     };
     const PLAYER_LOCATE_MAP_IDS = ['world', 'world_nether', 'world_the_end'];
     /** 不在维度菜单中展示的地图（仍可在 BlueMap 配置中存在） */
-    const SHOP_HIDDEN_MAP_IDS = ['dimensionalhome'];
+    const SHOP_HIDDEN_MAP_IDS = ['dimensionalhome', 'world_surface'];
 
     const MODULE_ROW_PRIMARY = [
         { id: 'items', label: '\u7269\u54c1\u76ee\u5f55', icon: '\ud83d\uded2', color: '#3b82f6', action: 'economy-items' },

@@ -63,7 +63,7 @@ send-server-details: true
 packet-limiter:
   enabled: true
   # The maximum packets a client can send per second.
-  max-per-second: 800
+  max-per-second: -1
   max-per-second-kick-message: You are sending too many packets!
   #
   # We can also kick them if they repeatedly send too many packets over a longer period of time.

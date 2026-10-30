@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20260906-6';
+    const MCWWS_GIS_BUILD = '20261030-2';
     // settings.json 曾重复列入本脚本；双实例会双绑事件/双 tick，编辑几何彻底错乱
     if (window.__mcwwsGisBooted) {
         console.warn('[mcwws-gis] duplicate script load skipped', { build: MCWWS_GIS_BUILD });
@@ -116,6 +116,8 @@
     let gisShowBuildingNames = true;
     /** Residence / BlueMap 领地挤出范围；默认隐藏，减少地图杂乱 */
     let gisShowResidenceBounds = false;
+    /** 默认不渲染 Y=320 以上方块，避免超高建筑挡住地表并拖慢网页地图 */
+    let gisRenderAbove320 = false;
     /** 原版地图编辑模式下是否显示区域三维立体填充 */
     let gisShowVolume3dBuildings = true;
     let activeTool = 'select';
@@ -139,6 +141,9 @@
     const STORAGE_GIS_SHOW_BUILDING_NAMES = 'mcwws-gis-show-building-names';
     const STORAGE_GIS_SHOW_VOLUME3D = 'mcwws-gis-show-volume3d';
     const STORAGE_GIS_SHOW_RESIDENCE_BOUNDS = 'mcwws-gis-show-residence-bounds';
+    const STORAGE_GIS_RENDER_ABOVE_320 = 'mcwws-gis-render-above-320';
+    /** 原版主世界上表面。顶点 Y 超过此值的三角面默认不画（方块 Y=319 的顶面正好在 320） */
+    const VANILLA_BUILD_SURFACE_Y = 320;
     const RESIDENCE_MARKER_SET_IDS = new Set(['Residences', 'residences']);
     const RESIDENCE_MARKER_SET_LABEL = '领地范围';
     let dirty = false;
@@ -287,6 +292,8 @@
             gisShowVolume3dBuildings = volume3d !== '0';
             // 默认隐藏领地范围；仅当用户显式打开过才显示
             gisShowResidenceBounds = localStorage.getItem(STORAGE_GIS_SHOW_RESIDENCE_BOUNDS) === '1';
+            // 默认不渲染 Y=320 以上；仅当用户显式打开过才显示超高方块
+            gisRenderAbove320 = localStorage.getItem(STORAGE_GIS_RENDER_ABOVE_320) === '1';
         } catch {
             /* ignore */
         }
@@ -301,6 +308,7 @@
             localStorage.setItem(STORAGE_GIS_SHOW_BUILDING_NAMES, gisShowBuildingNames ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_VOLUME3D, gisShowVolume3dBuildings ? '1' : '0');
             localStorage.setItem(STORAGE_GIS_SHOW_RESIDENCE_BOUNDS, gisShowResidenceBounds ? '1' : '0');
+            localStorage.setItem(STORAGE_GIS_RENDER_ABOVE_320, gisRenderAbove320 ? '1' : '0');
         } catch {
             /* ignore */
         }
@@ -11392,6 +11400,10 @@
                 </button>
             </div>
             <label class="mcwws-layer-gis-toggle">
+                <input type="checkbox" data-gis-render-above-320 ${gisRenderAbove320 ? 'checked' : ''}>
+                <span>渲染 Y=320 以上方块（默认关闭。瓦片烘焙的是每一列最高处，只裁网格仍会看到行星发动机；关闭时改用地表重渲瓦片）</span>
+            </label>
+            <label class="mcwws-layer-gis-toggle">
                 <input type="checkbox" data-gis-show-residence-bounds ${gisShowResidenceBounds ? 'checked' : ''}>
                 <span>显示领地范围</span>
             </label>
@@ -11511,6 +11523,12 @@
             if (buildingNamesInput && e.target.matches('input[type="checkbox"]')) {
                 e.stopPropagation();
                 setGisShowBuildingNames(e.target.checked);
+                return;
+            }
+            const above320Input = e.target.closest('[data-gis-render-above-320]');
+            if (above320Input && e.target.matches('input[type="checkbox"]')) {
+                e.stopPropagation();
+                setGisRenderAbove320(e.target.checked);
                 return;
             }
             const residenceBoundsInput = e.target.closest('[data-gis-show-residence-bounds]');
@@ -11887,6 +11905,98 @@
         return tag === 'INPUT' || tag === 'TEXTAREA' || active.isContentEditable;
     }
 
+    function setGisRenderAbove320(enabled) {
+        gisRenderAbove320 = !!enabled;
+        saveLayerPrefs();
+        // 已加载的瓦片仍是旧地址，刷新后才会改走地表图或完整图
+        location.reload();
+    }
+
+    /**
+     * 低清瓦片把每一列最高方块的颜色和高度烘焙进去；洞穴剔除也按这个最高面。
+     * 行星发动机把列顶抬到一千多格之后，320 以下的原始地表根本不在瓦片里。
+     * 默认改请求 world_surface（按 Y<=319 重渲）；该瓦片还没有时退回现有完整瓦片。
+     */
+    function rewriteWorldTileUrl(url) {
+        const text = String(url || '');
+        if (gisRenderAbove320 || !text.includes('maps/world/tiles/')) {
+            return text;
+        }
+        if (text.includes('maps/world_surface/tiles/')) {
+            return text;
+        }
+        return text.replace('maps/world/tiles/', 'maps/world_surface/tiles/');
+    }
+
+    function installWorldSurfaceTileRouting() {
+        if (window.__mcwwsTileRouteInstalled) {
+            return;
+        }
+        window.__mcwwsTileRouteInstalled = true;
+        const origOpen = XMLHttpRequest.prototype.open;
+        const origAdd = XMLHttpRequest.prototype.addEventListener;
+        XMLHttpRequest.prototype.open = function mcwwsTileOpen(method, url) {
+            const args = arguments;
+            if (this.__mcwwsBypass) {
+                this.__mcwwsRewritten = false;
+                return origOpen.apply(this, args);
+            }
+            const original = String(url || '');
+            const rewritten = rewriteWorldTileUrl(original);
+            this.__mcwwsOrigUrl = original;
+            this.__mcwwsMethod = method;
+            this.__mcwwsRewritten = rewritten !== original;
+            this.__mcwwsFallbackDone = false;
+            args[1] = rewritten;
+            return origOpen.apply(this, args);
+        };
+        XMLHttpRequest.prototype.addEventListener = function mcwwsTileListen(type, fn) {
+            if (type === 'load' && this.__mcwwsRewritten && typeof fn === 'function') {
+                const wrapped = function mcwwsTileLoad(ev) {
+                    if (!this.__mcwwsFallbackDone && (this.status === 404 || this.status === 204)) {
+                        this.__mcwwsFallbackDone = true;
+                        const retry = new XMLHttpRequest();
+                        retry.__mcwwsBypass = true;
+                        retry.open(this.__mcwwsMethod || 'GET', this.__mcwwsOrigUrl, true);
+                        retry.responseType = this.responseType;
+                        retry.addEventListener('load', function mcwwsTileFallbackLoad(e2) {
+                            fn.call(retry, e2);
+                        });
+                        retry.addEventListener('error', function mcwwsTileFallbackErr(e2) {
+                            fn.call(this, ev);
+                        });
+                        retry.send();
+                        return;
+                    }
+                    fn.call(this, ev);
+                };
+                return origAdd.call(this, type, wrapped, arguments[2]);
+            }
+            return origAdd.apply(this, arguments);
+        };
+        const imgSrc = Object.getOwnPropertyDescriptor(HTMLImageElement.prototype, 'src');
+        if (imgSrc?.set && imgSrc?.get) {
+            Object.defineProperty(HTMLImageElement.prototype, 'src', {
+                configurable: true,
+                enumerable: imgSrc.enumerable,
+                get() {
+                    return imgSrc.get.call(this);
+                },
+                set(value) {
+                    const original = String(value || '');
+                    const rewritten = rewriteWorldTileUrl(original);
+                    if (rewritten !== original) {
+                        this.addEventListener('error', function mcwwsImgFallback() {
+                            this.removeEventListener('error', mcwwsImgFallback);
+                            imgSrc.set.call(this, original);
+                        });
+                    }
+                    imgSrc.set.call(this, rewritten);
+                }
+            });
+        }
+    }
+
     function tick() {
         // 平常拖地图由 BlueMap 自行 redraw；编辑拖顶点时相机不动，需补一帧才能刷新 WebGL 体积
         if (volumeFeatureMeshes.size > 0 && gisVertexDrag) {
@@ -11972,6 +12082,13 @@
     }
 
     publishGisVolumeDiag();
+
+    try {
+        gisRenderAbove320 = localStorage.getItem(STORAGE_GIS_RENDER_ABOVE_320) === '1';
+    } catch {
+        /* ignore */
+    }
+    installWorldSurfaceTileRouting();
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', start, { once: true });
