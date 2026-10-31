@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20261031-1';
+    const MCWWS_GIS_BUILD = '20261031-2';
     // settings.json 曾重复列入本脚本；双实例会双绑事件/双 tick，编辑几何彻底错乱
     if (window.__mcwwsGisBooted) {
         console.warn('[mcwws-gis] duplicate script load skipped', { build: MCWWS_GIS_BUILD });

@@ -1,16 +1,5 @@
-next_id: 17390
+next_id: 17391
 entries:
-  '12390':
-    id: 12390
-    uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
-    playerId: GuuuuuLei
-    direction: debit
-    category: other
-    amount: 5.68
-    description: 经济 API 扣款
-    refId: ess-55c6edae-e258-4161-8bcf-e7ee12a5c840-1790778550533-11231973028000
-    createdAt: '2026-09-30T14:29:10.533574900Z'
-    balanceAfter: 2750474.11
   '12391':
     id: 12391
     uuid: 55c6edae-e258-4161-8bcf-e7ee12a5c840
@@ -54940,3 +54929,14 @@ entries:
     refId: axiom-53fe354c-6722-47bc-8e6e-8f59ff1d14f9
     createdAt: '2026-10-30T17:49:48.000155600Z'
     balanceAfter: 125249081.14
+  '17390':
+    id: 17390
+    uuid: d006ba70-4ddc-4b37-b13c-76f190815116
+    playerId: Ryan_yu__
+    direction: debit
+    category: flight
+    amount: 5604
+    description: 飞行消耗
+    refId: flight-d006ba70-4ddc-4b37-b13c-76f190815116-2026/10/31 19:14
+    createdAt: '2026-10-31T11:14:22.755557300Z'
+    updatedAt: '2026-10-31T11:38:02.591267100Z'
