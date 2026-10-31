@@ -1,5 +1,5 @@
 (function () {
-    const MCWWS_GIS_BUILD = '20261030-2';
+    const MCWWS_GIS_BUILD = '20261031-1';
     // settings.json 曾重复列入本脚本；双实例会双绑事件/双 tick，编辑几何彻底错乱
     if (window.__mcwwsGisBooted) {
         console.warn('[mcwws-gis] duplicate script load skipped', { build: MCWWS_GIS_BUILD });
@@ -11916,6 +11916,7 @@
      * 低清瓦片把每一列最高方块的颜色和高度烘焙进去；洞穴剔除也按这个最高面。
      * 行星发动机把列顶抬到一千多格之后，320 以下的原始地表根本不在瓦片里。
      * 默认改请求 world_surface（按 Y<=319 重渲）；该瓦片还没有时退回现有完整瓦片。
+     * BlueMap 5 的高清 .prbm 和低清 .png 都走 fetch（Three FileLoader），不走 XMLHttpRequest。
      */
     function rewriteWorldTileUrl(url) {
         const text = String(url || '');
@@ -11994,6 +11995,30 @@
                     imgSrc.set.call(this, rewritten);
                 }
             });
+        }
+        const origFetch = window.fetch;
+        if (typeof origFetch === 'function') {
+            window.fetch = function mcwwsTileFetch(input, init) {
+                const original = typeof input === 'string'
+                    ? input
+                    : (input && typeof input.url === 'string' ? input.url : '');
+                const rewritten = rewriteWorldTileUrl(original);
+                if (!original || rewritten === original) {
+                    return origFetch.apply(this, arguments);
+                }
+                const request = typeof input === 'string'
+                    ? rewritten
+                    : new Request(rewritten, input.clone());
+                return origFetch.call(this, request, init).then((response) => {
+                    if (response.status !== 404 && response.status !== 204) {
+                        return response;
+                    }
+                    const fallback = typeof input === 'string'
+                        ? input
+                        : new Request(original, input.clone());
+                    return origFetch.call(this, fallback, init);
+                });
+            };
         }
     }
 

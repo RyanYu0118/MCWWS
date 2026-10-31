@@ -60,7 +60,7 @@
 
 #### 网页地图的两套瓦片
 
-两套图读的是同一个主世界存档 `world`，写成两个互不影响的 BlueMap 文件库。存储类型都是 `file`，根目录 `bluemap/web/maps`，压缩都是 gzip。勾选或取消「渲染 Y=320 以上方块」只切换浏览器读哪一套，不会重新烘焙。地表图要在服务器执行一次 `bluemap reload` 后才会开始生成；某一格还没渲出来时，网页暂时退回完整图。烘焙进行中，控制台每分钟自动打一次与手动执行 `bluemap` 相同的状态（进度、剩余时间、正在更新的区域）。队列空了就停。脚本是 `plugins/Skript/scripts/mcwws/utility/bluemap_status.sk`。
+两套图读的是同一个主世界存档 `world`，写成两个互不影响的 BlueMap 文件库。存储类型都是 `file`，根目录 `bluemap/web/maps`，压缩都是 gzip。勾选或取消「渲染 Y=320 以上方块」只切换浏览器读哪一套，不会重新烘焙。高清三维瓦片和低清图都是 BlueMap 用 `fetch` 去取的，关闭开关时这些请求会改到地表图。地表图要在服务器执行一次 `bluemap reload` 后才会开始生成；某一格还没渲出来时，网页暂时退回完整图，那一块仍会看到行星发动机，放大后也会卡。烘焙进行中，控制台每分钟自动打一次与手动执行 `bluemap` 相同的状态（进度、剩余时间、正在更新的区域）。队列空了就停。脚本是 `plugins/Skript/scripts/mcwws/utility/bluemap_status.sk`。
 
 | | 完整图 | 地表图 |
 | --- | --- | --- |
