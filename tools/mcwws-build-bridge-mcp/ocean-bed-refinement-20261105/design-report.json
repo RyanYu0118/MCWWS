@@ -1,0 +1,58 @@
+{
+  "columns": 193248,
+  "anchor_columns": 3212,
+  "bounds": [
+    -1170,
+    -690,
+    2820,
+    3450
+  ],
+  "stats": {
+    "before": {
+      "height_percentiles": [
+        -41.0,
+        29.0,
+        39.0,
+        55.0,
+        61.0
+      ],
+      "neighbor_height_percentiles": [
+        0.0,
+        1.0,
+        10.0,
+        62.0
+      ],
+      "edges_over_8": 4407,
+      "seam_percentiles": [
+        0.0,
+        7.0,
+        29.0,
+        47.0
+      ],
+      "seam_edges_over_8": 232
+    },
+    "target": {
+      "height_percentiles": [
+        -8.0,
+        0.0,
+        13.0,
+        51.0,
+        61.0
+      ],
+      "neighbor_height_percentiles": [
+        0.0,
+        1.0,
+        2.0,
+        43.0
+      ],
+      "edges_over_8": 159,
+      "seam_percentiles": [
+        1.0,
+        2.0,
+        4.0,
+        25.0
+      ],
+      "seam_edges_over_8": 15
+    }
+  }
+}

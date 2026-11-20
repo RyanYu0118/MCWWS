@@ -1,0 +1,67 @@
+html:has(.shop-locations-page) { background: #1d2b26; }
+html.mcwws-embedded-manage-root,
+html.mcwws-embedded-manage-root body { background: transparent !important; }
+
+body.shop-locations-page {
+    color-scheme: dark;
+    --text-primary: #f7f7f7;
+    --text-secondary: #dedede;
+    --text-muted: #bcbcbc;
+    --success: #eee;
+}
+body.shop-locations-page,
+body.shop-locations-page :is(h2, p, span, div, input, button, td, th, a, strong) {
+    font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif !important;
+    font-weight: revert !important;
+}
+.shop-locations-page .content { padding: 16px clamp(12px, 3vw, 32px) 28px; }
+.shop-locations-page :is(#tab-shop > .card, .auth-gate-card, .auth-modal) {
+    border: 1px solid #ffffff38;
+    border-radius: 24px;
+    padding: clamp(16px, 2.5vw, 28px);
+    background: linear-gradient(145deg, #ffffff15, transparent 70%), #1d2b26d9;
+    backdrop-filter: blur(12px);
+    box-shadow: inset 0 1px #ffffff24, 0 12px 34px #0005;
+}
+.shop-locations-heading {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 20px;
+}
+.shop-locations-kicker { color: #ccc; font-size: 11px; letter-spacing: .16em; }
+.shop-locations-page .shop-locations-heading h2 { margin: 6px 0; font-size: clamp(1.3rem, 3vw, 1.8rem); }
+.shop-locations-heading p { color: #ddd; line-height: 1.55; font-size: .88rem; }
+.shop-locations-page .items-card { border-radius: 16px; border-color: #ffffff28; background: #0002; }
+.shop-locations-page .items-scroll { max-height: none; overflow-x: auto; }
+.shop-locations-page .items-table { min-width: 720px; }
+.shop-locations-page .items-table th { background: #303733; color: #eee; }
+.shop-locations-page .items-table :is(th, td) { padding: 12px; border-bottom-color: #ffffff20; }
+.shop-locations-page .items-table tr:hover td { background: #ffffff10; }
+.shop-locations-page .items-table td:nth-child(3) { min-width: 250px !important; }
+.shop-locations-page .items-table td:nth-child(4) { min-width: 120px !important; }
+.shop-locations-page .shop-location-input {
+    min-height: 36px;
+    border-radius: 10px;
+    border-color: #ffffff35;
+    color: #fff;
+    background: #0004;
+}
+.shop-locations-page .shop-location-input::placeholder { color: #bcbcbc; }
+.shop-locations-page :is(.shop-locations-heading button, .items-table button) {
+    min-height: 34px;
+    white-space: nowrap;
+    padding-inline: 12px;
+    border-radius: 999px;
+    border: 1px solid #ffffff55;
+    color: #171717;
+    background: #eee;
+    transition: background-color 360ms ease-in-out, border-color 360ms ease-in-out;
+}
+.shop-locations-page :is(.shop-locations-heading button, .items-table button):hover { background: #fff; color: #111; }
+.shop-locations-page :is(button, input):focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+    .shop-locations-page :is(.shop-locations-heading button, .items-table button) { transition: none; }
+}

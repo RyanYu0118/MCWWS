@@ -1,4 +1,4 @@
-configVersion: 3.2.0-CONFIG-1 # Don't change this! The plugin's automatic config updater handles it.
+configVersion: 3.3.0-CONFIG-3 # Don't change this! The plugin's automatic config updater handles it.
 text_parser: legacyminimessage
 date_format: dd.MM.yyyy HH:mm
 default_notify_io: chat
@@ -22,7 +22,7 @@ mysql:
   pass: ''
   base: ''
   prefix: betonquest_
-  reconnect_interval: 1000
+  hikari_pooling: true
 profile:
   initial_name: default
 language:
@@ -169,3 +169,4 @@ hook:
   nexo: true
   fancyholograms: true
   thebrewingproject: true
+  discordsrv: true

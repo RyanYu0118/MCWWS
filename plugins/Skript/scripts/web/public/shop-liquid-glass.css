@@ -1,0 +1,147 @@
+body {
+    --shop-glass-edge: #ffffff38;
+    --shop-glass-tint: rgb(29 43 38 / .66);
+    --shop-glass-ink: #f7f7f7;
+    --shop-glass-secondary: #ddd;
+}
+
+body :is(.glass, .item-card, .shop-item-card, .health-card, .trade-offer-card, .cart-drawer, .cart-delivery-menu, .mcwws-auth-popover-body, .item-modal-section, .modal-section) {
+    color: var(--shop-glass-ink);
+    color-scheme: dark;
+    background: linear-gradient(150deg, #ffffff22, transparent 50%, #ffffff0b), var(--shop-glass-tint) !important;
+    border: 1px solid var(--shop-glass-edge) !important;
+    border-radius: 22px;
+    box-shadow: inset 0 1px #ffffff32, inset 0 -1px #ffffff12, 0 8px 24px #0004 !important;
+    backdrop-filter: blur(9px);
+    -webkit-backdrop-filter: blur(9px);
+    --text-primary: var(--shop-glass-ink);
+    --text-secondary: var(--shop-glass-secondary);
+    --text-muted: #c4c4c4;
+}
+
+body :is(.modal-content, .cart-drawer, .cart-delivery-menu, .mcwws-auth-popover-body) {
+    --shop-glass-tint: rgb(23 34 30 / .90);
+}
+
+body :is(.glass .glass, .health-card, .trade-offer-card, .item-modal-section, .modal-section) {
+    --shop-glass-tint: rgb(23 34 30 / .48);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+}
+
+body :is(.hero-search, .search-box, .search-input, .filter-select, .filter-checkbox, .cart-delivery-input, .cart-qty-input, .modal-content input, .modal-content select, .modal-content textarea) {
+    color-scheme: dark;
+    color: var(--shop-glass-ink);
+    background-color: #141b19bc !important;
+    border-color: var(--shop-glass-edge) !important;
+    border-radius: 12px;
+    box-shadow: inset 0 1px #ffffff1a;
+}
+
+body :is(input, textarea)::placeholder { color: #c4c4c4; }
+body :is(.category-section, .item-card, .shop-item-card, .cart-drawer, .modal-content, .transactions-section) :focus-visible {
+    outline: 2px solid #fff;
+    outline-offset: 2px;
+}
+body :is(.item-card, .shop-item-card, .trade-offer-card):hover {
+    border-color: #ffffff75 !important;
+}
+
+/* A single moving capsule replaces the disconnected category tiles. */
+body .category-section {
+    padding: 5px;
+    border-radius: 50px;
+    --depth: 17%;
+    --material-blur: 3px;
+    text-shadow: 0 1px 4px #0a0f0d;
+}
+body .category-tabs {
+    position: relative;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 4px;
+    overflow: visible;
+    padding: 0;
+    isolation: isolate;
+}
+body .category-tabs .category-btn {
+    flex: 0 0 auto;
+    position: relative;
+    z-index: 1;
+    white-space: nowrap;
+    border-radius: 40px;
+    background: transparent !important;
+    color: #eef2f1;
+    min-height: 44px;
+    padding: 0 17px;
+    justify-content: center;
+    gap: 9px;
+    font-size: .875rem;
+    font-weight: 400;
+    border: 0;
+    box-shadow: none;
+    user-select: none;
+    touch-action: none;
+    max-width: 100%;
+    cursor: grab;
+    transition: color 360ms, text-shadow 360ms;
+}
+body .category-tabs .category-btn.active { color: #fff; }
+body .category-tabs .category-btn:hover { color: #eef2f1; }
+.category-dock-slider {
+    position: absolute;
+    left: 0;
+    top: 0;
+    display: block;
+    box-sizing: border-box;
+    z-index: 0;
+    pointer-events: none;
+    border-radius: 999px;
+    border: 0;
+    background: rgb(225 245 235 / calc(.15 - .09 * var(--slider-lift, 0)));
+    box-shadow: none;
+    transform-origin: center;
+    will-change: transform;
+}
+.category-dock-slider[hidden] { display: none; }
+body .category-tabs .category-btn { transition: color 360ms, text-shadow 360ms; }
+.category-tabs[data-drop-lifted] .category-dock-slider {
+    z-index: 2;
+    box-shadow: inset 0 1px 2px #fbfcfc72, inset 0 -1px 3px #dae3e034, 0 5px 12px #0c121050;
+}
+.category-tabs[data-drop-lifted] .category-dock-slider::after {
+    content: "";
+    position: absolute;
+    inset: 3px 12% auto;
+    height: 30%;
+    border-radius: inherit;
+    background: linear-gradient(#fbfcfc24, transparent);
+}
+.category-dock-slider gl-fx > .r { display: none; }
+.is-dragging .category-btn { cursor: grabbing !important; }
+@media (prefers-reduced-motion: reduce) { .category-dock-slider { transition: none; } }
+
+.shop-refraction-backdrop {
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+    background: url("services-world-night.png") 56% 10% / max(100%, 245vh) auto no-repeat;
+}
+body [data-shop-lens][data-shop-lens] {
+    background: transparent !important;
+    border-color: transparent !important;
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+    box-shadow: none !important;
+}
+body [data-shop-lens] > gl-fx > .r { display: none; }
+
+@media (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    body :is(.glass, .item-card, .shop-item-card, .health-card, .trade-offer-card, .cart-drawer, .cart-delivery-menu, .mcwws-auth-popover-body, .item-modal-section, .modal-section) {
+        --shop-glass-tint: #202a26;
+        backdrop-filter: none;
+        -webkit-backdrop-filter: none;
+    }
+}

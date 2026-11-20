@@ -1,6 +1,9 @@
 # MCWWS_WorldSync — 两端互斥完整世界同步
 # 同一时刻只有持有写入锁的节点允许玩家进服。待机端只收 staging，开服前（onLoad）再套到世界目录。
 
+# 暂停同步时，本节点继续拒绝进服。
+enabled: true
+
 node-id: local
 # listen = 公网/Docker 协调端（对端连进来）
 # connect = 家庭 NAT 后主动连出

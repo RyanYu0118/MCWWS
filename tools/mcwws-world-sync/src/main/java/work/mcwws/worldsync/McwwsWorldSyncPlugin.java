@@ -22,7 +22,9 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     private ForcePushService forcePush;
     private FlushService flush;
     private Path serverRoot;
-    private int heartbeatTask = -1;
+    private volatile boolean syncEnabled;
+    private int httpRequests;
+    private volatile int heartbeatTask = -1;
     private boolean appliedOnLoad;
     private volatile boolean peerOnline;
     private final SyncProgress progress = new SyncProgress();
@@ -66,18 +68,18 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
             pc.setExecutor(cmd);
             pc.setTabCompleter(cmd);
         }
-        if (config.s3Mode()) {
-            if (!config.s3Ready()) {
-                getLogger().severe("transport=s3 但 s3.bucket / access-key / secret-key 还没填，同步不会启动。");
-                lock.setJoiningBlocked(true);
-                return;
-            }
-        } else if (!config.tokenOk()) {
-            getLogger().severe("请先在 plugins/MCWWS_WorldSync/config.yml 设置 token（不要用 CHANGE_ME），否则不会启动同步端口。");
+        syncEnabled = getConfig().getBoolean("enabled", true);
+        if (syncEnabled && !networkConfigured()) {
+            getLogger().severe("世界同步缺少有效凭证，拒绝进服。");
+        }
+        if (!syncEnabled || !networkConfigured()) {
             lock.setJoiningBlocked(true);
             return;
         }
-        startNetwork();
+        if (!startNetwork()) {
+            lock.setJoiningBlocked(true);
+            return;
+        }
         getServer().getScheduler().runTask(this, () -> {
             if (lock.hasLock()) {
                 handover.restoreHolderWorldRules();
@@ -85,8 +87,7 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
                 handover.applyStandbyWorldRules();
             }
         });
-        int period = config.heartbeatSeconds * 20;
-        heartbeatTask = getServer().getScheduler().scheduleSyncRepeatingTask(this, this::tick, 40L, Math.max(20, period));
+        scheduleHeartbeat();
         if (appliedOnLoad || config.claimOnEnable) {
             getServer().getScheduler().runTaskLaterAsynchronously(this, () -> {
                 try {
@@ -103,6 +104,10 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
 
     @Override
     public void onDisable() {
+        stopNetworkAndHeartbeat();
+    }
+
+    private void stopNetworkAndHeartbeat() {
         if (heartbeatTask != -1) {
             getServer().getScheduler().cancelTask(heartbeatTask);
             heartbeatTask = -1;
@@ -113,29 +118,118 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
         }
     }
 
-    public void reloadSync() {
-        if (listen != null) {
-            listen.stop();
-            listen = null;
-        }
-        reloadConfig();
-        config = new SyncConfig(getConfig());
-        lock.setSelf(config.nodeId);
-        relay = null;
-        if (config.s3Mode() && config.s3Ready()) {
-            startNetwork();
-            return;
-        }
-        if (config.tokenOk()) {
-            startNetwork();
-        }
+    private boolean networkConfigured() {
+        return config.s3Mode() ? config.s3Ready() : config.tokenOk();
     }
 
-    private void startNetwork() {
+    private void scheduleHeartbeat() {
+        if (heartbeatTask != -1) {
+            getServer().getScheduler().cancelTask(heartbeatTask);
+        }
+        heartbeatTask = getServer().getScheduler().scheduleSyncRepeatingTask(
+                this, this::tick, 40L, config.heartbeatSeconds * 20L);
+    }
+
+    public boolean syncEnabled() {
+        return syncEnabled;
+    }
+
+    synchronized boolean beginHttpRequest() {
+        if (!syncEnabled) {
+            return false;
+        }
+        httpRequests++;
+        return true;
+    }
+
+    synchronized void endHttpRequest() {
+        httpRequests--;
+    }
+
+    private boolean syncBusy() {
+        var scheduler = getServer().getScheduler();
+        return httpRequests > 0 || admissionResolving || handover.busy() || forcePush.busy()
+                || progress.active() || lock.handoverPending()
+                || scheduler.getActiveWorkers().stream().anyMatch(worker -> worker.getOwner() == this)
+                || scheduler.getPendingTasks().stream().anyMatch(
+                        task -> task.getOwner() == this && task.getTaskId() != heartbeatTask && !task.isCancelled());
+    }
+
+    public synchronized String setSyncEnabled(boolean enabled) {
+        if (enabled == syncEnabled && (!enabled || heartbeatTask != -1)) {
+            return enabled ? "世界同步已启用。" : "世界同步已暂停。";
+        }
+        if (syncBusy()) {
+            return "同步任务仍在进行，请完成后重试。";
+        }
+        if (!enabled && (config.nodeId.equals(lock.holder()) || !getServer().getOnlinePlayers().isEmpty())) {
+            return "暂停仅允许在无人在线且未持有写入锁的待机节点执行。";
+        }
+        if (enabled && (!networkConfigured() || staging.hasApplyFlag())) {
+            return "无法恢复同步：请检查网络配置，或在重启时先应用待处理的世界文件。";
+        }
+        if (enabled) {
+            if (!startNetwork()) {
+                return "同步监听启动失败，请检查控制台。";
+            }
+            syncEnabled = true;
+            scheduleHeartbeat();
+        } else {
+            syncEnabled = false;
+            stopNetworkAndHeartbeat();
+            client = null;
+            relay = null;
+            peerOnline = false;
+            lock.setJoiningBlocked(true);
+        }
+        getConfig().set("enabled", enabled);
+        saveConfig();
+        return enabled ? "世界同步已恢复，进服仍须通过写入锁检查。" : "世界同步已暂停，本节点拒绝进服。";
+    }
+
+    public synchronized String reloadSync() {
+        if (syncBusy()) {
+            return "同步任务仍在进行，请完成后重试。";
+        }
+        SyncConfig previous = config;
+        reloadConfig();
+        SyncConfig updated = new SyncConfig(getConfig());
+        boolean enabled = getConfig().getBoolean("enabled", true);
+        if (!enabled && syncEnabled) {
+            String result = setSyncEnabled(false);
+            if (syncEnabled) {
+                return result;
+            }
+        }
+        if (!previous.nodeId.equals(updated.nodeId)
+                || !previous.mode.equals(updated.mode) || !previous.transport.equals(updated.transport)) {
+            return "节点 ID、模式或传输方式变更须停服后生效。";
+        }
+        if (syncEnabled && !(updated.s3Mode() ? updated.s3Ready() : updated.tokenOk())) {
+            return "配置缺少同步凭证，继续使用原配置。";
+        }
+        config = updated;
+        lock.setSelf(updated.nodeId);
+        if (!enabled || !syncEnabled || heartbeatTask == -1) {
+            return setSyncEnabled(enabled);
+        }
+        stopNetworkAndHeartbeat();
+        if (!startNetwork()) {
+            config = previous;
+            if (startNetwork()) {
+                scheduleHeartbeat();
+            }
+            return "新配置监听启动失败，已尝试恢复原配置，请检查控制台。";
+        }
+        scheduleHeartbeat();
+        return "已重载世界同步配置和心跳。";
+    }
+
+    private boolean startNetwork() {
         if (config.s3Mode()) {
             relay = new S3Relay(this);
             client = null;
-            return;
+            return true;
         }
         relay = null;
         client = new SyncPeerClient(this);
@@ -145,8 +239,11 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
                 listen.start();
             } catch (IOException e) {
                 getLogger().log(Level.SEVERE, "无法监听同步端口", e);
+                listen = null;
+                return false;
             }
         }
+        return true;
     }
 
     private void tick() {
@@ -218,7 +315,10 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
      *         Entering a server that does not hold the lock starts a switch:
      *         the other side is paused and its latest files are pulled, then this side restarts.
      */
-    public String admissionMessage() {
+    public synchronized String admissionMessage() {
+        if (!syncEnabled || heartbeatTask == -1) {
+            return "本节点的世界同步已暂停或尚未启动。";
+        }
         if (lock.hasLock() && !lock.joiningBlocked()) {
             return null;
         }
@@ -332,6 +432,8 @@ public final class McwwsWorldSyncPlugin extends JavaPlugin {
     public Map<String, Object> statusMap() {
         Map<String, Object> m = new LinkedHashMap<>();
         m.put("ok", true);
+        m.put("enabled", syncEnabled);
+        m.put("running", syncEnabled && heartbeatTask != -1);
         m.put("nodeId", config.nodeId);
         m.put("mode", config.mode);
         m.put("holder", lock.holder());

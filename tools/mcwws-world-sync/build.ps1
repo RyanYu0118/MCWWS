@@ -1,3 +1,4 @@
+param([switch]$StageOnly)
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent (Split-Path -Parent $PSScriptRoot)
 $Src = Join-Path $PSScriptRoot "src/main/java"
@@ -48,7 +49,11 @@ $JavacExe = Join-Path $JavaHome "bin/javac.exe"
 if (-not (Test-Path $JarExe)) { throw "Missing jar.exe: $JarExe" }
 if (-not (Test-Path $JavacExe)) { throw "Missing javac.exe: $JavacExe" }
 
-if (Test-Path $Out) { Remove-Item $Out -Recurse -Force }
+if ($StageOnly) { $Out = Join-Path $PSScriptRoot "build/staged-classes" }
+$ResolvedOut = [IO.Path]::GetFullPath($Out)
+$ProjectPrefix = [IO.Path]::GetFullPath($PSScriptRoot) + [IO.Path]::DirectorySeparatorChar
+if (-not $ResolvedOut.StartsWith($ProjectPrefix, [StringComparison]::OrdinalIgnoreCase)) { throw "Output outside project" }
+if (Test-Path -LiteralPath $ResolvedOut) { Remove-Item -LiteralPath $ResolvedOut -Recurse -Force }
 New-Item -ItemType Directory -Path $Out | Out-Null
 
 $JavaFiles = Get-ChildItem $Src -Recurse -Filter *.java | ForEach-Object { $_.FullName }
@@ -62,4 +67,11 @@ foreach ($JavaFile in $JavaFiles) {
 if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
 
 Copy-Item -Recurse -Force (Join-Path $Res "*") $Out
+if ($StageOnly) {
+    $StagedJar = Join-Path $PSScriptRoot ("build/" + $McwwsJar.JarName)
+    & $JarExe cf $StagedJar -C $Out .
+    if ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }
+    Write-Host "Staged $StagedJar"
+    return
+}
 Publish-McwwsPluginJar -JarExe $JarExe -ClassesDir $Out -JarPaths $McwwsJar -PluginName "MCWWS_WorldSync"

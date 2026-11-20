@@ -137,6 +137,26 @@ public class MainActivity extends AppCompatActivity {
     private void openTab(@IdRes int tabId, boolean forceReload) {
         String target = urlForTab(tabId);
         String current = webView.getUrl();
+        String service = workspaceService(tabId);
+        if (service != null) {
+            currentTabId = tabId;
+            paintSelectedTab(tabId);
+            updateSwipeForTab(tabId);
+            errorOverlay.setVisibility(View.GONE);
+            pageHadError = false;
+            String workspaceUrl = getString(R.string.web_url) + "home.html?shell=android&service=" + service;
+            if (!forceReload && isWorkspaceUrl(current)) {
+                webView.evaluateJavascript(
+                        "(function(){if(!window.MCWWS_SERVICES_WORKSPACE)return false;"
+                                + "window.MCWWS_SERVICES_WORKSPACE.open('" + service + "');return true;})()",
+                        result -> {
+                            if (!"true".equals(result) && currentTabId == tabId) webView.loadUrl(workspaceUrl);
+                        });
+            } else {
+                webView.loadUrl(workspaceUrl);
+            }
+            return;
+        }
         boolean sameSection = current != null && tabIdForPath(safePath(current)) == tabId;
         currentTabId = tabId;
         paintSelectedTab(tabId);
@@ -151,6 +171,20 @@ public class MainActivity extends AppCompatActivity {
             return;
         }
         webView.loadUrl(target);
+    }
+
+    private String workspaceService(@IdRes int tabId) {
+        if (tabId == R.id.nav_shop) return "shop";
+        if (tabId == R.id.nav_map) return "map";
+        if (tabId == R.id.nav_manage) return "manage";
+        return null;
+    }
+
+    private boolean isWorkspaceUrl(String url) {
+        if (url == null) return false;
+        Uri uri = Uri.parse(url);
+        return HOST.equalsIgnoreCase(uri.getHost()) && "/home.html".equals(uri.getPath())
+                && "android".equals(uri.getQueryParameter("shell"));
     }
 
     private void paintSelectedTab(@IdRes int selectedId) {
@@ -281,6 +315,7 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
                 if (Build.VERSION.SDK_INT >= 21) {
+                    if (!request.isForMainFrame()) return false;
                     return handleUri(request.getUrl());
                 }
                 return false;
@@ -301,6 +336,12 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
+            public void doUpdateVisitedHistory(WebView view, String url, boolean isReload) {
+                super.doUpdateVisitedHistory(view, url, isReload);
+                if (isWorkspaceUrl(url)) syncTabFromUrl(url);
+            }
+
+            @Override
             public void onPageFinished(WebView view, String url) {
                 swipeRefresh.setRefreshing(false);
                 progressBar.setVisibility(View.GONE);
@@ -309,8 +350,8 @@ public class MainActivity extends AppCompatActivity {
                 injectAppShellPolish();
                 if (url != null && !pageHadError) {
                     String path = normalizePath(safePath(url));
-                    if ("/".equals(path) || "/home.html".equalsIgnoreCase(path)) {
-                        webView.loadUrl(getString(R.string.tab_shop_url));
+                    if (!isWorkspaceUrl(url) && ("/".equals(path) || "/home.html".equalsIgnoreCase(path))) {
+                        openTab(R.id.nav_shop, true);
                     }
                 }
             }
@@ -418,7 +459,9 @@ public class MainActivity extends AppCompatActivity {
             if (!HOST.equalsIgnoreCase(uri.getHost())) {
                 return;
             }
-            int tab = tabIdForPath(uri.getPath());
+            String service = isWorkspaceUrl(url) ? uri.getQueryParameter("service") : null;
+            int tab = "map".equals(service) ? R.id.nav_map : "manage".equals(service)
+                    ? R.id.nav_manage : tabIdForPath(uri.getPath());
             if (tab != currentTabId) {
                 currentTabId = tab;
                 paintSelectedTab(tab);

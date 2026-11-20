@@ -646,6 +646,17 @@ body.mcwws-clean-mode #mcwws-shop-pin-layer {
     background: #f5f3ff;
 }
 
+.mcwws-ctrl-night-vision {
+    font-size: 12px;
+    font-weight: 600;
+    white-space: nowrap;
+}
+
+.mcwws-ctrl-night-vision[aria-pressed="true"] {
+    color: #065f46;
+    background: #d1fae5;
+}
+
 .mcwws-ctrl-daynight-icon {
     display: block;
 }

@@ -340,19 +340,21 @@
             return `<div class="mcwws-dock-result-hint">${escapeHtml(emptyMsg)}</div>`;
         }
         return list.map((marker) => `
-            <button class="mcwws-shop-row${isTradeHighlight(marker) ? ' is-trade-hit' : ''}" type="button" data-shop-id="${escapeHtml(marker.id)}">
-                <span class="mcwws-shop-pin">\u2316</span>
+            <div class="mcwws-shop-row${isTradeHighlight(marker) ? ' is-trade-hit' : ''}" data-shop-id="${escapeHtml(marker.id)}">
+                <button type="button" class="mcwws-shop-row-open">
+                <span class="mcwws-shop-pin" aria-hidden="true">\u2316</span>
                 <span class="mcwws-shop-main">
                     <span class="mcwws-shop-name">${escapeHtml(marker.label)}</span>
                     <span class="mcwws-shop-meta">${escapeHtml(marker.shopId)} \u00b7 ${marker.itemCount || 0} \u4e2a\u5546\u54c1</span>
                     <span class="mcwws-shop-pos">${escapeHtml(marker.map)} / ${marker.position.x}, ${marker.position.y}, ${marker.position.z}</span>
                     ${marker.description ? `<span class="mcwws-shop-desc">${escapeHtml(marker.description)}</span>` : ''}
                 </span>
+                </button>
                 <span class="mcwws-shop-row-actions">
                     <button type="button" class="mcwws-shop-mini-btn" data-view="perspective" data-shop-id="${escapeHtml(marker.id)}">3D</button>
                     <button type="button" class="mcwws-shop-mini-btn" data-view="flat" data-shop-id="${escapeHtml(marker.id)}">\u4fef\u89c6</button>
                 </span>
-            </button>
+            </div>
         `).join('');
     }
 
@@ -1758,6 +1760,7 @@
             '.mcwws-ctrl-mode',
             '.mcwws-ctrl-zoom',
             '.mcwws-ctrl-daynight',
+            '.mcwws-ctrl-night-vision',
             '.mcwws-ctrl-locate',
             '.mcwws-ctrl-fly'
         ].forEach((sel) => {
@@ -3492,6 +3495,64 @@
         getBlueMapApp()?.mapViewer?.redraw?.();
     }
 
+    function bindNightVisionControl(button) {
+        if (!button) return;
+        const viewer = getBlueMapApp()?.mapViewer;
+        if (!viewer?.events) {
+            button.disabled = true;
+            return;
+        }
+
+        const nightVision = { value: false };
+        const light = 'color.rgb *= mix(ambientLight, 1.0, light / 15.0);';
+        const relief = 'color.rgb += mix(shade, shade * 0.3 + ao, aoStrength);';
+        function installOnTile(tile, layer) {
+            const tileMaterial = tile?.model?.material;
+            const materials = Array.isArray(tileMaterial) ? tileMaterial : [tileMaterial];
+            for (const material of materials) {
+                const shader = material?.fragmentShader;
+                if (!shader?.includes(light) || material.uniforms.mcwwsNightVision) continue;
+                if (layer === 'lowres' && !shader.includes(relief)) continue;
+
+                let nextShader = shader.replace('uniform float ambientLight;', 'uniform float ambientLight;\nuniform bool mcwwsNightVision;')
+                    .replace(light, `if (!mcwwsNightVision) { ${light} }`);
+                if (layer === 'lowres') {
+                    nextShader = nextShader.replace(relief, `
+                        if (mcwwsNightVision) {
+                            float peak = max(max(color.r, color.g), color.b);
+                            float shadow = 1.0 - clamp(peak / 0.32, 0.0, 1.0);
+                            float lift = shadow * shadow * shadow;
+                            float terrainShade = mix(shade, shade * 0.3 + ao, aoStrength);
+                            vec3 shadowColor = color.rgb * (1.0 + 3.2 * lift);
+                            color.rgb = shadowColor + terrainShade * mix(vec3(1.0), shadowColor, lift);
+                        } else {
+                            ${relief}
+                        }
+                    `);
+                }
+                material.uniforms.mcwwsNightVision = nightVision;
+                material.fragmentShader = nextShader;
+                material.needsUpdate = true;
+            }
+        }
+
+        viewer.events.addEventListener('bluemapMapTileLoaded', ({ detail }) => {
+            installOnTile(detail.tile, detail.layer);
+        });
+        const map = viewer.map;
+        map?.hiresTileManager?.tiles.forEach(tile => installOnTile(tile, 'hires'));
+        map?.lowresTileManager?.forEach(manager => {
+            manager.tiles.forEach(tile => installOnTile(tile, 'lowres'));
+        });
+
+        button.addEventListener('click', () => {
+            const enabled = nightVision.value = !nightVision.value;
+            button.setAttribute('aria-pressed', String(enabled));
+            button.title = enabled ? '关闭夜视' : '开启夜视';
+            redrawMapViewer();
+        });
+    }
+
     function loadDayNightLockFromStorage() {
         try {
             const stored = localStorage.getItem(STORAGE_DAY_NIGHT_LOCK);
@@ -4104,6 +4165,7 @@
                                 </g>
                             </svg>
                         </button>
+                        <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-night-vision" aria-pressed="false" title="开启夜视">夜视</button>
                         <button type="button" class="mcwws-ctrl-btn mcwws-ctrl-locate" title="定位到已登录玩家（需先登录）" disabled>
                             <svg class="mcwws-ctrl-locate-progress" viewBox="0 0 40 40" aria-hidden="true">
                                 <circle class="mcwws-ctrl-locate-progress-track" cx="20" cy="20" r="17" pathLength="100" />
@@ -4149,6 +4211,7 @@
         root.querySelector('.mcwws-ctrl-zoom-in')?.addEventListener('click', () => adjustMapZoom(1));
         root.querySelector('.mcwws-ctrl-zoom-out')?.addEventListener('click', () => adjustMapZoom(-1));
         bindDayNightControl(root.querySelector('.mcwws-ctrl-daynight'));
+        bindNightVisionControl(root.querySelector('.mcwws-ctrl-night-vision'));
         root.querySelector('.mcwws-ctrl-locate')?.addEventListener('click', () => {
             void togglePlayerLocate();
         });

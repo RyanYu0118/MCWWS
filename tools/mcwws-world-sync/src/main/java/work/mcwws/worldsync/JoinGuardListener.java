@@ -25,7 +25,7 @@ public final class JoinGuardListener implements Listener {
 
     @EventHandler(priority = EventPriority.LOWEST)
     public void onLogin(PlayerLoginEvent event) {
-        if (plugin.config().allowBypassPermission && event.getPlayer().hasPermission("mcwws.worldsync.bypass")) {
+        if (plugin.syncEnabled() && plugin.config().allowBypassPermission && event.getPlayer().hasPermission("mcwws.worldsync.bypass")) {
             event.allow();
             return;
         }

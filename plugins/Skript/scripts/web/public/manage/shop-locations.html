@@ -1059,9 +1059,11 @@
             }
         }
     </style>
+    <script src="../shop-embed.js?v=2"></script>
+    <link rel="stylesheet" href="shop-locations-glass.css?v=1">
 </head>
 
-<body>
+<body class="shop-locations-page">
 
     <div class="toast-container" id="toasts"></div>
 
@@ -1153,12 +1155,13 @@
             <!-- ═══ 商店选项卡 ═══ -->
             <div class="tab-content active" id="tab-shop">
                 <div class="card">
-                    <div style="display:flex;justify-content:space-between;align-items:center;gap:16px;margin-bottom:16px;">
+                    <div class="shop-locations-heading">
                         <div>
-                            <h2 style="margin-bottom:4px;">🗺️ UltimateShop 商店位置</h2>
-                            <p style="color:var(--text-secondary);font-size:13px;">为每个商店粘贴 BlueMap 链接（含 <code>#世界:坐标...</code> 锚点即可）。打开地图后会显示 MCWWS 商店搜索与标记。</p>
+                            <span class="shop-locations-kicker">ULTIMATESHOP / MAP</span>
+                            <h2>商店位置</h2>
+                            <p>粘贴带坐标锚点的 BlueMap 链接，保存后商店就会显示在地图上。</p>
                         </div>
-                        <button class="btn btn-ghost btn-sm" onclick="loadShopLocations()">🔄 刷新商店</button>
+                        <button class="btn btn-ghost btn-sm" onclick="loadShopLocations()">↻ 刷新商店</button>
                     </div>
                     <div class="items-card">
                         <div class="items-scroll">
@@ -1169,7 +1172,7 @@
                                         <th>物品数</th>
                                         <th>BlueMap 网页链接</th>
                                         <th>备注</th>
-                                        <th></th>
+                                        <th scope="col">操作</th>
                                     </tr>
                                 </thead>
                                 <tbody id="shopLocationsBody">

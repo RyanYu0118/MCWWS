@@ -1,111 +1,105 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
+<!doctype html>
+<html lang="zh-CN" data-intensity="vivid">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="view-transition" content="same-origin">
-    <link rel="icon" type="image/png" href="https://www.ryanstudio.work/upload/Icon.png">
-    <title>流浪世界服务</title>
-    <meta name="description" content="流浪世界服务器 — 商店系统、地图系统与管理">
-    <link rel="stylesheet" href="style.css?v=2.5.92">
-    <script src="mcwws-theme.js?v=3"></script>
-    <script src="mcwws-page-transition.js?v=3"></script>
-    <link rel="stylesheet" href="themes.css?v=24">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#1D2B26">
+  <meta name="description" content="流浪世界服务器的商店、地图、管理与客户端入口。">
+  <title>流浪世界服务</title>
+  <link rel="stylesheet" href="services-home-glass.css?v=10">
+  <link rel="stylesheet" href="services-workspace.css?v=9">
+  <script type="module" src="services-home-glass.js?v=6"></script>
+  <script type="module" src="services-workspace.js?v=18"></script>
 </head>
-<body class="services-hub-page">
-    <header class="services-hub-hero">
-        <div class="services-hub-hero-glow" aria-hidden="true"></div>
-        <div class="services-hub-hero-inner">
-            <h1 class="services-hub-title">流浪世界服务</h1>
-            <p class="services-hub-subtitle">选择要使用的系统模块</p>
+<body>
+  <glass-scene class="alpine-scene">
+  <div class="landscape" data-glass-backdrop aria-hidden="true"></div>
+  <header class="top">
+    <div class="top-inner glass" data-liquid>
+      <a href="#scene" class="wordmark" data-service="home"><span class="mark" aria-hidden="true"></span><span data-workspace-brand>流浪世界</span></a>
+      <span class="threshold">流浪世界服务</span>
+      <div class="segmented glass" data-liquid role="group" aria-label="光感强度">
+        <span class="dock-slider" aria-hidden="true" hidden></span>
+        <button type="button" data-intensity="soft" aria-pressed="false">弱</button>
+        <button type="button" data-intensity="balanced" aria-pressed="false">均衡</button>
+        <button type="button" data-intensity="vivid" aria-pressed="true">强</button>
+      </div>
+      <nav class="segmented glass shop-workspace-nav" data-liquid aria-label="模块导航" hidden>
+        <span class="dock-slider" aria-hidden="true" hidden></span>
+        <a href="index.html" data-shop-view="dashboard">仪表盘</a>
+        <a href="items.html" data-shop-view="catalog" aria-current="page">物品目录</a>
+        <a href="manage/shop-locations.html" data-shop-view="manage" hidden>商店位置</a>
+      </nav>
+      <div class="shop-workspace-actions" aria-label="商店操作" hidden>
+        <span data-shop-status aria-live="off"></span>
+        <button type="button" data-shop-action="refresh" aria-label="刷新" title="刷新">⟳</button>
+        <button type="button" data-shop-action="cart" aria-label="购物车" title="购物车">购物车<span data-shop-cart-count hidden></span></button>
+        <button type="button" data-shop-action="account" aria-label="账户" title="账户" aria-expanded="false">
+          <img data-shop-avatar alt="" hidden>
+          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="hero" id="scene" aria-labelledby="hero-title">
+      <div class="hero-inner">
+        <p class="eyebrow"><span></span> MCWWS / SERVICES</p>
+        <h1 id="hero-title">流浪世界服务</h1>
+        <p class="lede">在雨夜灯火中，回到流浪世界。</p>
+        <div class="hero-actions">
+          <button type="button" class="glass primary" data-liquid id="open-panel"><span class="orbit" aria-hidden="true"></span>打开光感面板</button>
         </div>
-    </header>
+      </div>
+      <aside class="caption">
+        <span class="caption-line" aria-hidden="true"></span>
+        <div><strong>雨夜与灯火</strong><small>切换右上角档位，体验不同光感</small></div>
+      </aside>
+    </section>
+    <section class="materials" aria-labelledby="materials-title">
+      <div class="materials-inner">
+        <p class="eyebrow"><span></span> WORLD SERVICES</p>
+        <h2 id="materials-title">从这里进入流浪世界</h2>
+        <p class="section-copy">底栏可直接点击，也可按住横滑，松手进入对应服务。</p>
+        <p id="mcwwsPwaHint" class="section-copy">可将本站添加到手机主屏幕。</p>
+      </div>
+    </section>
+  </main>
 
-    <main class="services-hub-main container">
-        <section class="services-module-grid" aria-label="系统模块">
-            <a class="services-module-card glass" href="items.html">
-                <span class="services-module-icon services-module-icon--shop" aria-hidden="true">🛒</span>
-                <h2 class="services-module-name">商店系统</h2>
-                <p class="services-module-desc">物品目录、价格查询、交易上架与经济数据仪表板</p>
-                <span class="services-module-cta">进入商店系统 →</span>
-            </a>
-            <a class="services-module-card glass" href="map.html">
-                <span class="services-module-icon services-module-icon--map" aria-hidden="true">🗺️</span>
-                <h2 class="services-module-name">地图系统</h2>
-                <p class="services-module-desc">BlueMap 三维地图、GIS 道路/区域标注（管理员）、商店标记与交易搜索</p>
-                <span class="services-module-cta">进入地图系统 →</span>
-            </a>
-            <a class="services-module-card glass" href="manage/shop-locations.html">
-                <span class="services-module-icon services-module-icon--manage" aria-hidden="true">⚙️</span>
-                <h2 class="services-module-name">管理</h2>
-                <p class="services-module-desc">UltimateShop 商店 BlueMap 位置配置（需管理员权限）</p>
-                <span class="services-module-cta">进入管理 →</span>
-            </a>
-            <a class="services-module-card glass" href="/app/MCWWS.apk" id="mcwwsAppDownload" hidden>
-                <span class="services-module-icon services-module-icon--app" aria-hidden="true">📱</span>
-                <h2 class="services-module-name">Android 客户端</h2>
-                <p class="services-module-desc" id="mcwwsAppDownloadDesc">安装 APK 后在手机上使用底部导航（商店 / 地图 / 管理 / 我的）。首次需允许「安装未知应用」。</p>
-                <span class="services-module-cta" id="mcwwsAppDownloadCta">下载 APK →</span>
-            </a>
-        </section>
-        <p class="services-hub-install-hint" id="mcwwsPwaHint">手机用 Chrome / Edge 打开本站，可把「流浪世界」添加到主屏幕，不必装 APK。</p>
-    </main>
+  <section class="service-workspace" aria-label="服务工作区" hidden>
+    <div class="service-track">
+      <iframe title="商店" data-service-src="items.html?embed=workspace-v8&glass=8" inert aria-hidden="true"></iframe>
+      <iframe title="地图" data-service-src="map.html" inert aria-hidden="true"></iframe>
+      <iframe title="管理" data-service-src="manage/shop-locations.html?embed=workspace-manage" inert aria-hidden="true"></iframe>
+    </div>
+  </section>
 
-    <footer class="services-hub-footer">
-        <p>流浪世界服务系统 - 由 RYAN STUDIO 制作 - <a href="https://www.ryanstudio.work" target="_blank" rel="noopener">流浪世界服务器</a></p>
-    </footer>
+  <nav class="dock glass" aria-label="服务导航">
+    <span class="dock-slider" aria-hidden="true" hidden></span>
+    <a href="#scene" data-service="home" aria-current="page" draggable="false" aria-label="主页" title="主页">
+      <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 8-7 8 7v10h-6v-6h-4v6H4z"/></svg>
+    </a>
+    <a href="items.html" data-service="shop" draggable="false" aria-label="商店" title="商店"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 13H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
+    <a href="map.html" data-service="map" draggable="false" aria-label="地图" title="地图"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Z"/><path d="M9 3v16M15 5v16"/></svg></a>
+    <a href="manage/shop-locations.html" data-service="manage" draggable="false" aria-label="管理" title="管理"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8m4 0h4M4 17h3m4 0h9"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></a>
+    <a href="/app/MCWWS.apk" id="mcwwsAppDownload" draggable="false" aria-label="下载客户端" title="下载客户端"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a>
+  </nav>
 
-    <script src="services-config.js?v=1"></script>
-    <script>
-        (function () {
-            const inApp = /MCWWSApp/i.test(navigator.userAgent)
-                || window.matchMedia('(display-mode: standalone)').matches
-                || window.navigator.standalone === true;
-            const apkCard = document.getElementById('mcwwsAppDownload');
-            const hint = document.getElementById('mcwwsPwaHint');
-            if (inApp) {
-                if (apkCard) apkCard.hidden = true;
-                if (hint) hint.hidden = true;
-                return;
-            }
-            if (apkCard) {
-                fetch('/api/app-release', { cache: 'no-store' })
-                    .then((res) => (res.ok ? res.json() : null))
-                    .then((info) => {
-                        if (!info || !info.url) {
-                            apkCard.hidden = true;
-                            return;
-                        }
-                        apkCard.hidden = false;
-                        apkCard.href = info.url;
-                        const cta = document.getElementById('mcwwsAppDownloadCta');
-                        if (cta) {
-                            cta.textContent = info.version
-                                ? `下载 MCWWS-${info.version}.apk →`
-                                : '下载 APK →';
-                        }
-                        const desc = document.getElementById('mcwwsAppDownloadDesc');
-                        if (desc && info.version) {
-                            desc.textContent = `当前版本 ${info.version}。安装后使用底部导航：商店 / 地图 / 管理 / 我的。首次需允许「安装未知应用」。`;
-                        }
-                    })
-                    .catch(() => { apkCard.hidden = true; });
-            }
-            window.addEventListener('mcwws-pwa-installable', () => {
-                if (!hint || !window.MCWWS_PWA) return;
-                hint.innerHTML = '可以把本站安装成手机应用。';
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.className = 'services-hub-install-btn';
-                btn.textContent = '安装到桌面';
-                btn.addEventListener('click', () => window.MCWWS_PWA.promptInstall());
-                hint.appendChild(document.createTextNode(' '));
-                hint.appendChild(btn);
-            });
-        })();
-    </script>
+  <dialog class="glass panel" data-liquid id="light-panel" aria-labelledby="panel-title">
+    <div class="handle" aria-hidden="true"></div>
+    <form method="dialog"><button class="close" aria-label="关闭光感面板" autofocus>×</button></form>
+    <p class="eyebrow"><span></span> ULTRA_THICK</p>
+    <h2 id="panel-title">光感面板</h2>
+    <p>这块半模态面板使用最厚的材质。切换光感强度，对比边缘高光和背景通透度。</p>
+    <div class="segmented glass panel-options" data-liquid role="group" aria-label="光感强度">
+      <span class="dock-slider" aria-hidden="true" hidden></span>
+      <button type="button" data-intensity="soft" aria-pressed="false">弱</button>
+      <button type="button" data-intensity="balanced" aria-pressed="false">均衡</button>
+      <button type="button" data-intensity="vivid" aria-pressed="true">强</button>
+    </div>
+  </dialog>
+  </glass-scene>
+  <script src="services-config.js?v=1" defer></script>
 </body>
 </html>

@@ -26,15 +26,17 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
             return true;
         }
         String sub = args.length == 0 ? "status" : args[0].toLowerCase(Locale.ROOT);
+        if (!plugin.syncEnabled() && !List.of("status", "reload", "enable", "disable").contains(sub)) {
+            sender.sendMessage(Component.text("世界同步已暂停，请先执行 /worldsync enable。", NamedTextColor.YELLOW));
+            return true;
+        }
         switch (sub) {
             case "status" -> {
                 Map<String, Object> m = plugin.statusMap();
                 sender.sendMessage(Component.text(JsonUtil.stringify(m), NamedTextColor.AQUA));
             }
-            case "reload" -> {
-                plugin.reloadSync();
-                sender.sendMessage(Component.text("已重载 MCWWS_WorldSync 配置并重启监听。", NamedTextColor.GREEN));
-            }
+            case "reload" -> sender.sendMessage(Component.text(plugin.reloadSync()));
+            case "enable", "disable" -> sender.sendMessage(Component.text(plugin.setSyncEnabled(sub.equals("enable"))));
             case "flush" -> {
                 if (!plugin.lock().hasLock()) {
                     sender.sendMessage(Component.text("本节点没有写入锁。", NamedTextColor.YELLOW));
@@ -89,7 +91,7 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
                             () -> sender.sendMessage(Component.text("强制持锁失败: " + e.getMessage(), NamedTextColor.RED)));
                 }
             });
-            default -> sender.sendMessage(Component.text("用法: /worldsync [status|handover|push|flush|claim|release|force-lock|reload]", NamedTextColor.GRAY));
+            default -> sender.sendMessage(Component.text("用法: /worldsync [status|handover|push|flush|claim|release|force-lock|reload|enable|disable]", NamedTextColor.GRAY));
         }
         return true;
     }
@@ -98,7 +100,7 @@ public final class WorldSyncCommand implements CommandExecutor, TabCompleter {
     public List<String> onTabComplete(CommandSender sender, Command command, String alias, String[] args) {
         if (args.length == 1) {
             String p = args[0].toLowerCase(Locale.ROOT);
-            return Stream.of("status", "handover", "push", "flush", "claim", "release", "force-lock", "reload")
+            return Stream.of("status", "handover", "push", "flush", "claim", "release", "force-lock", "reload", "enable", "disable")
                     .filter(s -> s.startsWith(p))
                     .toList();
         }

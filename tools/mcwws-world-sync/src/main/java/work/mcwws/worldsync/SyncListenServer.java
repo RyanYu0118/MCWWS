@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream;
 public final class SyncListenServer {
     private final McwwsWorldSyncPlugin plugin;
     private HttpServer server;
+    private java.util.concurrent.ExecutorService executor;
     private final Map<String, Long> lastSeen = new ConcurrentHashMap<>();
 
     public SyncListenServer(McwwsWorldSyncPlugin plugin) {
@@ -32,34 +33,54 @@ public final class SyncListenServer {
     public void start() throws IOException {
         SyncConfig cfg = plugin.config();
         server = HttpServer.create(new InetSocketAddress(cfg.listenHost, cfg.listenPort), 0);
-        server.createContext("/v1/status", this::status);
-        server.createContext("/v1/heartbeat", this::heartbeat);
-        server.createContext("/v1/lock/claim", this::claim);
-        server.createContext("/v1/lock/release", this::release);
-        server.createContext("/v1/handover", this::handover);
-        server.createContext("/v1/file", this::putFile);
-        server.createContext("/v1/outbox", this::outboxList);
-        server.createContext("/v1/outbox/file", this::outboxFile);
-        server.createContext("/v1/outbox/ack", this::outboxAck);
-        server.createContext("/v1/outbox/bundle", this::outboxBundle);
-        server.createContext("/v1/outbox/bundle/ack", this::outboxBundleAck);
-        server.createContext("/v1/push/compare", this::pushCompare);
-        server.createContext("/v1/push/bundle", this::pushBundle);
-        server.createContext("/v1/push/apply", this::pushApply);
-        server.createContext("/v1/push/done", this::pushDone);
-        server.setExecutor(Executors.newCachedThreadPool(r -> {
+        context("/v1/status", this::status);
+        context("/v1/heartbeat", this::heartbeat);
+        context("/v1/lock/claim", this::claim);
+        context("/v1/lock/release", this::release);
+        context("/v1/handover", this::handover);
+        context("/v1/file", this::putFile);
+        context("/v1/outbox", this::outboxList);
+        context("/v1/outbox/file", this::outboxFile);
+        context("/v1/outbox/ack", this::outboxAck);
+        context("/v1/outbox/bundle", this::outboxBundle);
+        context("/v1/outbox/bundle/ack", this::outboxBundleAck);
+        context("/v1/push/compare", this::pushCompare);
+        context("/v1/push/bundle", this::pushBundle);
+        context("/v1/push/apply", this::pushApply);
+        context("/v1/push/done", this::pushDone);
+        executor = Executors.newCachedThreadPool(r -> {
             Thread t = new Thread(r, "MCWWS-WorldSync-http");
             t.setDaemon(true);
             return t;
-        }));
+        });
+        server.setExecutor(executor);
         server.start();
         plugin.getLogger().info("WorldSync 监听 " + cfg.listenHost + ":" + cfg.listenPort);
+    }
+
+    private void context(String path, com.sun.net.httpserver.HttpHandler handler) {
+        server.createContext(path, exchange -> {
+            if (!plugin.beginHttpRequest()) {
+                HttpIo.json(exchange, 503, HttpIo.err("sync paused"));
+                return;
+            }
+            try {
+                handler.handle(exchange);
+            } finally {
+                exchange.close();
+                plugin.endHttpRequest();
+            }
+        });
     }
 
     public void stop() {
         if (server != null) {
             server.stop(0);
             server = null;
+        }
+        if (executor != null) {
+            executor.shutdown();
+            executor = null;
         }
     }
 

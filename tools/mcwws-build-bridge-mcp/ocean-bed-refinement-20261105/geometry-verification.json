@@ -1,0 +1,20 @@
+{
+  "actual_bed_geometry": {
+    "before": {
+      "edges_over_8": 4407,
+      "neighbor_p99": 10.0,
+      "seam_edges_over_8": 232,
+      "seam_p99": 29.0
+    },
+    "after": {
+      "edges_over_8": 159,
+      "neighbor_p99": 2.0,
+      "seam_edges_over_8": 15,
+      "seam_p99": 4.0
+    }
+  },
+  "core_height_median": 3.0,
+  "sea_level_preserved_y": 62,
+  "harbour_preserved": true,
+  "native_reference_preserved": true
+}

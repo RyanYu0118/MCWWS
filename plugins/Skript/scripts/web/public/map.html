@@ -11,6 +11,7 @@
     <script src="mcwws-theme.js?v=4"></script>
     <script src="mcwws-page-transition.js?v=3"></script>
     <link rel="stylesheet" href="themes.css?v=24">
+    <link rel="stylesheet" href="map-menu-glass.css?v=1">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
@@ -99,6 +100,7 @@
                 pageParams.forEach((value, key) => {
                     url.searchParams.set(key, value);
                 });
+                url.searchParams.set('mcwwsUi', '20261120-liquid-10');
                 if (window.location.hash) {
                     url.hash = window.location.hash;
                 }

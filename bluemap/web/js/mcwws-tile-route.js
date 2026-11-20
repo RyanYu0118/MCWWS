@@ -9,6 +9,7 @@
     }
     window.__mcwwsTileRouteInstalled = true;
     const STORAGE_KEY = 'mcwws-gis-render-above-320';
+    const SURFACE_TILE_VERSION = 'relit-20261120-1';
 
     function renderAbove320() {
         try {
@@ -20,13 +21,11 @@
 
     function rewriteWorldTileUrl(url) {
         const text = String(url || '');
-        if (renderAbove320() || !text.includes('maps/world/tiles/')) {
-            return text;
-        }
-        if (text.includes('maps/world_surface/tiles/')) {
-            return text;
-        }
-        return text.replace('maps/world/tiles/', 'maps/world_surface/tiles/');
+        const routed = renderAbove320() ? text : text.replace('maps/world/tiles/', 'maps/world_surface/tiles/');
+        if (!routed.includes('maps/world_surface/tiles/')) return text;
+        const [path, fragment] = routed.split('#', 2);
+        const separator = path.includes('?') ? '&' : '?';
+        return `${path}${separator}mcwwsSurface=${SURFACE_TILE_VERSION}${fragment === undefined ? '' : '#' + fragment}`;
     }
 
     const origFetch = window.fetch;
@@ -43,7 +42,7 @@
                 ? rewritten
                 : new Request(rewritten, input.clone());
             return origFetch.call(this, request, init).then((response) => {
-                if (response.status !== 404 && response.status !== 204) {
+                if (!original.includes('maps/world/tiles/') || (response.status !== 404 && response.status !== 204)) {
                     return response;
                 }
                 const fallback = typeof input === 'string'
@@ -65,7 +64,7 @@
             set(value) {
                 const original = String(value || '');
                 const rewritten = rewriteWorldTileUrl(original);
-                if (rewritten !== original) {
+                if (rewritten !== original && original.includes('maps/world/tiles/')) {
                     this.addEventListener('error', function mcwwsImgFallback() {
                         this.removeEventListener('error', mcwwsImgFallback);
                         imgSrc.set.call(this, original);

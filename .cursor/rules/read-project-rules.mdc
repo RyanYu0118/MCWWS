@@ -1,0 +1,12 @@
+---
+description: 每次修改服务器仓库前必须读取项目规则（适用于 Cursor 与 Codex）
+alwaysApply: true
+---
+
+# 修改前读取规则
+
+每次任务涉及修改本仓库文件，必须先读取根目录 `.cursorrules`、全部 `alwaysApply: true` 的 `.cursor/rules/*.mdc`，以及本次文件或操作适用的其他规则和子目录 `AGENTS.md`。
+
+不得因切换客户端、沿用旧会话或认为是简单改动而跳过。规则更新或任务范围改变时，重新读取相关规则。
+
+当前用户明确指示优先；已授予的提交、推送等授权不重复询问。`y` / `c` / `n` 按 `agent-git-commit.mdc` 解释。

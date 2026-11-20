@@ -1,0 +1,1497 @@
+{
+  "counts": {
+    "minecraft:air": 21361798,
+    "minecraft:polished_deepslate": 82076,
+    "minecraft:deepslate_bricks": 91183,
+    "minecraft:cyan_terracotta": 1605837,
+    "minecraft:deepslate_tiles": 29854,
+    "minecraft:polished_deepslate_slab": 28631,
+    "minecraft:iron_bars": 267,
+    "minecraft:stone_brick_slab": 104,
+    "minecraft:polished_deepslate_wall": 2710,
+    "minecraft:light_gray_concrete": 5524,
+    "minecraft:deepslate_brick_slab": 9459,
+    "minecraft:stone_brick_wall": 64,
+    "minecraft:andesite": 53352,
+    "minecraft:diorite_wall": 164,
+    "minecraft:netherite_block": 4641,
+    "minecraft:beacon": 4393,
+    "minecraft:light_blue_stained_glass": 4393,
+    "minecraft:reinforced_deepslate": 251,
+    "minecraft:polished_deepslate_stairs": 68,
+    "minecraft:deepslate_brick_stairs": 31
+  },
+  "states": [
+    {
+      "name": "minecraft:air",
+      "properties": {},
+      "count": 21361798
+    },
+    {
+      "name": "minecraft:polished_deepslate",
+      "properties": {},
+      "count": 82076
+    },
+    {
+      "name": "minecraft:deepslate_bricks",
+      "properties": {},
+      "count": 91183
+    },
+    {
+      "name": "minecraft:cyan_terracotta",
+      "properties": {},
+      "count": 1605837
+    },
+    {
+      "name": "minecraft:deepslate_tiles",
+      "properties": {},
+      "count": 29854
+    },
+    {
+      "name": "minecraft:polished_deepslate_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "bottom"
+      },
+      "count": 15661
+    },
+    {
+      "name": "minecraft:polished_deepslate_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "double"
+      },
+      "count": 162
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "false",
+        "west": "false"
+      },
+      "count": 24
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "false",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "true",
+        "west": "true"
+      },
+      "count": 18
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "false",
+        "north": "true",
+        "west": "false"
+      },
+      "count": 21
+    },
+    {
+      "name": "minecraft:stone_brick_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "bottom"
+      },
+      "count": 104
+    },
+    {
+      "name": "minecraft:polished_deepslate_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "top"
+      },
+      "count": 12808
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 15
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 51
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 47
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "low",
+        "west": "low",
+        "up": "false"
+      },
+      "count": 205
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 44
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 38
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 47
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 45
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "false",
+        "north": "true",
+        "west": "true"
+      },
+      "count": 30
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "false",
+        "waterlogged": "false",
+        "south": "false",
+        "north": "true",
+        "west": "true"
+      },
+      "count": 21
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "false",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "true",
+        "west": "false"
+      },
+      "count": 60
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "tall",
+        "up": "false"
+      },
+      "count": 38
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 15
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 64
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "false"
+      },
+      "count": 58
+    },
+    {
+      "name": "minecraft:light_gray_concrete",
+      "properties": {},
+      "count": 5524
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "low",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 20
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "false",
+        "west": "true"
+      },
+      "count": 8
+    },
+    {
+      "name": "minecraft:deepslate_brick_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "top"
+      },
+      "count": 8831
+    },
+    {
+      "name": "minecraft:deepslate_brick_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "bottom"
+      },
+      "count": 627
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "false",
+        "north": "false",
+        "west": "true"
+      },
+      "count": 43
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "low",
+        "west": "none",
+        "up": "false"
+      },
+      "count": 63
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 10
+    },
+    {
+      "name": "minecraft:andesite",
+      "properties": {},
+      "count": 53352
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 6
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 128
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 14
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 14
+    },
+    {
+      "name": "minecraft:netherite_block",
+      "properties": {},
+      "count": 4641
+    },
+    {
+      "name": "minecraft:beacon",
+      "properties": {},
+      "count": 4393
+    },
+    {
+      "name": "minecraft:light_blue_stained_glass",
+      "properties": {},
+      "count": 4393
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 50
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 139
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 196
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 58
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 58
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 14
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 145
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 3
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "tall",
+        "up": "false"
+      },
+      "count": 10
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 63
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 7
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 205
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 20
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 142
+    },
+    {
+      "name": "minecraft:reinforced_deepslate",
+      "properties": {},
+      "count": 251
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "none",
+        "up": "false"
+      },
+      "count": 4
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 21
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 66
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 134
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 6
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 21
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 16
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 51
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 158
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 21
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 23
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 166
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 9
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "tall",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 4
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 18
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 49
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 6
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 7
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "tall",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "tall",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 23
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 6
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "west"
+      },
+      "count": 10
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_left",
+        "facing": "west"
+      },
+      "count": 3
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_left",
+        "facing": "west"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_right",
+        "facing": "south"
+      },
+      "count": 3
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_right",
+        "facing": "south"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "south"
+      },
+      "count": 7
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "west"
+      },
+      "count": 8
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_left",
+        "facing": "west"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_right",
+        "facing": "south"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "south"
+      },
+      "count": 9
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "east"
+      },
+      "count": 7
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_right",
+        "facing": "east"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_left",
+        "facing": "south"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_right",
+        "facing": "east"
+      },
+      "count": 4
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_left",
+        "facing": "south"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:deepslate_brick_slab",
+      "properties": {
+        "waterlogged": "false",
+        "type": "double"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "north"
+      },
+      "count": 8
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "false",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "false",
+        "west": "true"
+      },
+      "count": 24
+    },
+    {
+      "name": "minecraft:iron_bars",
+      "properties": {
+        "east": "true",
+        "waterlogged": "false",
+        "south": "true",
+        "north": "true",
+        "west": "false"
+      },
+      "count": 18
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 3
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "low",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 4
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 12
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_left",
+        "facing": "north"
+      },
+      "count": 3
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "straight",
+        "facing": "north"
+      },
+      "count": 7
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_left",
+        "facing": "north"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_right",
+        "facing": "west"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_right",
+        "facing": "west"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_right",
+        "facing": "west"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:deepslate_brick_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_left",
+        "facing": "north"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_right",
+        "facing": "north"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_right",
+        "facing": "north"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "inner_left",
+        "facing": "east"
+      },
+      "count": 4
+    },
+    {
+      "name": "minecraft:polished_deepslate_stairs",
+      "properties": {
+        "half": "bottom",
+        "waterlogged": "false",
+        "shape": "outer_left",
+        "facing": "east"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 14
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 5
+    },
+    {
+      "name": "minecraft:stone_brick_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "low",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "none",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 12
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:diorite_wall",
+      "properties": {
+        "east": "low",
+        "waterlogged": "false",
+        "south": "none",
+        "north": "low",
+        "west": "none",
+        "up": "true"
+      },
+      "count": 1
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "none",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 12
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "low",
+        "north": "tall",
+        "west": "tall",
+        "up": "true"
+      },
+      "count": 2
+    },
+    {
+      "name": "minecraft:polished_deepslate_wall",
+      "properties": {
+        "east": "tall",
+        "waterlogged": "false",
+        "south": "tall",
+        "north": "tall",
+        "west": "low",
+        "up": "true"
+      },
+      "count": 1
+    }
+  ],
+  "metadata": {
+    "size": [
+      441,
+      120,
+      440
+    ],
+    "author": "YellowCatMeow"
+  }
+}

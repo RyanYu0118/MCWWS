@@ -1,0 +1,18 @@
+{
+  "time": "2026-11-05T03:44:15.377Z",
+  "changedSamples": 1351,
+  "protectedSamples": 360,
+  "profileSamples": 1388,
+  "failures": [
+    {
+      "x": -579,
+      "y": 66,
+      "z": 3022,
+      "before": "minecraft:air",
+      "after": "minecraft:stone",
+      "actual": "minecraft:stripped_spruce_wood[axis=x]"
+    }
+  ],
+  "protectedFailures": [],
+  "profileFailures": []
+}
