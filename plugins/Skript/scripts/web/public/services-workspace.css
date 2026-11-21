@@ -177,26 +177,31 @@ html.mcwws-embedded-shop-root body::after { background: none !important; }
     text-align: center;
 }
 
+.shop-workspace-actions button[data-shop-action] {
+    touch-action: none;
+    color: #fff;
+    background: #f2f2f216;
+    transition: color 360ms ease-in-out, background-color 360ms ease-in-out, box-shadow 180ms ease;
+}
+.shop-workspace-actions button[data-ink="dark"] {
+    color: #000;
+    background: rgb(246 246 246 / .72);
+}
+.shop-workspace-actions button[data-held] {
+    box-shadow: inset 0 0 14px #ffffff50;
+}
 @media (prefers-reduced-motion: no-preference) {
     .shop-workspace-actions button[data-shop-action] {
-        transition: scale 360ms cubic-bezier(.2, 1.5, .45, 1), background-color 180ms ease;
+        translate: var(--pull-x, 0px) var(--pull-y, 0px);
+        scale: var(--stretch-x, 1) var(--stretch-y, 1);
+        transition: translate 300ms cubic-bezier(.2, 1.35, .4, 1),
+            scale 360ms cubic-bezier(.2, 1.45, .4, 1),
+            color 360ms ease-in-out, background-color 360ms ease-in-out, box-shadow 180ms ease;
     }
-    .shop-workspace-actions button > svg {
-        transition: transform 440ms cubic-bezier(.2, 1.4, .4, 1);
-    }
-    .shop-workspace-actions button[data-shop-action]:enabled:is(:hover, :focus-visible) {
-        background-color: #ffffff36;
-    }
-    .shop-workspace-actions [data-shop-action="refresh"]:enabled:is(:hover, :focus-visible) > svg {
-        transform: rotate(35deg);
-    }
-    .shop-workspace-actions [data-shop-action="cart"]:enabled:is(:hover, :focus-visible) > svg {
-        transform: translate(2px, -1px) rotate(-8deg);
-    }
-    .shop-workspace-actions button[data-shop-action]:enabled:active {
-        scale: .88;
-        transition-duration: 100ms;
-    }
+    .shop-workspace-actions button[data-held] { transition-duration: 90ms, 90ms, 360ms, 360ms, 180ms; }
+}
+@media (prefers-reduced-motion: reduce) {
+    .shop-workspace-actions button[data-shop-action] { transition: none; }
 }
 
 body.mcwws-embedded-shop .navbar,
