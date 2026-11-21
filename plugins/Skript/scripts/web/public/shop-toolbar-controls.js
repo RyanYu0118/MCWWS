@@ -2,7 +2,7 @@ const toolbar = document.querySelector('.shop-workspace-actions');
 const backdrop = document.querySelector('.landscape');
 const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
 
-for (const button of toolbar.querySelectorAll('button[data-shop-action]')) {
+for (const button of toolbar.querySelectorAll('button[data-shop-action="refresh"]')) {
     let press;
     let dragged = false;
 

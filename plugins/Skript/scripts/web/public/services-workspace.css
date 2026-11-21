@@ -190,6 +190,17 @@ html.mcwws-embedded-shop-root body::after { background: none !important; }
 .shop-workspace-actions button[data-held] {
     box-shadow: inset 0 0 14px #ffffff50;
 }
+.shop-cart-dock { padding: 5px; }
+.shop-cart-dock:has(button[hidden]) { display: none; }
+.shop-workspace-actions .shop-cart-dock button[data-shop-action="cart"] {
+    width: 52px;
+    height: 48px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+    touch-action: pan-y pinch-zoom;
+}
 @media (prefers-reduced-motion: no-preference) {
     .shop-workspace-actions button[data-shop-action] {
         translate: var(--pull-x, 0px) var(--pull-y, 0px);

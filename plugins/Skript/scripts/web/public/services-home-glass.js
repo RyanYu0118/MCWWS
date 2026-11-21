@@ -1,6 +1,6 @@
 import { attachPress, glass, supportsBackdropSvg } from './glassy-liquid-0.1.0.js';
 import { dockMaterial } from './dock-material.js';
-import { mountDockSlider } from './services-dock-slider.js?v=4';
+import { mountDockSlider } from './services-dock-slider.js?v=5';
 
 const root = document.documentElement;
 const presets = {
@@ -32,7 +32,10 @@ function updateIntensity() {
   for (const { surface } of surfaces) surface?.set(presets[root.dataset.intensity]);
 }
 
-for (const bar of bars) mountDockSlider(bar);
+for (const bar of bars) {
+  if (bar.hasAttribute('data-single-action')) bar.dataset.optics = hasLens ? 'lens' : 'frost';
+  mountDockSlider(bar);
+}
 
 new MutationObserver(updateIntensity).observe(root, {
   attributes: true,

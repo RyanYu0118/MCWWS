@@ -59,6 +59,7 @@ export function mountDockSlider(dock) {
   addTask(animation);
 
   function currentItem() {
+    if (dock.hasAttribute('data-single-action')) return items[0];
     return dock.querySelector('[aria-expanded="true"], [aria-pressed="true"]') ?? dock.querySelector('[aria-current]');
   }
 
@@ -181,6 +182,7 @@ export function mountDockSlider(dock) {
     position.to(selected.center, settle);
     width.to(selected.width, settle);
     ignorePointerClick = true;
+    if (dock.hasAttribute('data-single-action')) return;
     selected.item.focus({ preventScroll: true });
     selected.item.click();
   }
