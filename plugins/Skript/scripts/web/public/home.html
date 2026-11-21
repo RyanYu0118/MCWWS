@@ -8,7 +8,7 @@
   <title>流浪世界服务</title>
   <link rel="stylesheet" href="mcwws-auth.css?v=1">
   <link rel="stylesheet" href="services-home-glass.css?v=11">
-  <link rel="stylesheet" href="services-workspace.css?v=10">
+  <link rel="stylesheet" href="services-workspace.css?v=11">
   <script src="mcwws-auth.js?v=15" defer></script>
   <script type="module" src="services-home-glass.js?v=7"></script>
   <script type="module" src="services-workspace.js?v=19"></script>
@@ -35,8 +35,13 @@
       </nav>
       <div class="shop-workspace-actions" aria-label="商店操作" hidden>
         <span data-shop-status aria-live="off"></span>
-        <button type="button" data-shop-action="refresh" aria-label="刷新" title="刷新">⟳</button>
-        <button type="button" data-shop-action="cart" aria-label="购物车" title="购物车">购物车<span data-shop-cart-count hidden></span></button>
+        <button type="button" data-shop-action="refresh" aria-label="刷新" title="刷新">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 10a8 8 0 1 0-.9 6M20 4v6h-6"/></svg>
+        </button>
+        <button type="button" data-shop-action="cart" aria-label="购物车" title="购物车">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 4h2l2.5 11h11L21 7H6"/><circle cx="9" cy="19" r="1.25"/><circle cx="17" cy="19" r="1.25"/></svg>
+          <span data-shop-cart-count hidden></span>
+        </button>
       </div>
     </div>
   </header>

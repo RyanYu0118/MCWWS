@@ -153,7 +153,29 @@ html.mcwws-embedded-shop-root :is(.hero, .hero-glow) { background: transparent !
 html.mcwws-embedded-shop-root body::before,
 html.mcwws-embedded-shop-root body::after { background: none !important; }
 .shop-workspace-actions [data-shop-status] { font-size: .75rem; }
-[data-shop-cart-count] { margin-inline-start: 5px; }
+.shop-workspace-actions button[data-shop-action] { position: relative; width: 44px; padding: 0; }
+.shop-workspace-actions button > svg {
+    display: block;
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+[data-shop-cart-count] {
+    position: absolute;
+    inset: 1px 1px auto auto;
+    min-width: 15px;
+    padding: 0 3px;
+    border-radius: 999px;
+    background: #eef2f1;
+    color: #1d2b26;
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+}
 
 body.mcwws-embedded-shop .navbar,
 body.mcwws-embedded-shop .navbar .nav-actions { display: contents !important; }
