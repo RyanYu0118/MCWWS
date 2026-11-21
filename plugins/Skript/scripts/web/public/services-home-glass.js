@@ -1,6 +1,6 @@
 import { attachPress, glass, supportsBackdropSvg } from './glassy-liquid-0.1.0.js';
 import { dockMaterial } from './dock-material.js';
-import { mountDockSlider } from './services-dock-slider.js?v=3';
+import { mountDockSlider } from './services-dock-slider.js?v=4';
 
 const root = document.documentElement;
 const presets = {
@@ -95,25 +95,12 @@ window.addEventListener('scroll', scheduleScroll, { passive: true });
 window.addEventListener('resize', scheduleScroll);
 updateScroll();
 
-const client = document.querySelector('#mcwwsAppDownload');
 const hint = document.querySelector('#mcwwsPwaHint');
 const inApp = /MCWWSApp/i.test(navigator.userAgent)
   || matchMedia('(display-mode: standalone)').matches || navigator.standalone === true;
 if (inApp) {
-  client.hidden = true;
   hint.hidden = true;
 } else {
-  fetch('/api/app-release', { cache: 'no-store' })
-    .then(response => response.ok ? response.json() : null)
-    .then(info => {
-      if (info?.url) {
-        client.href = info.url;
-        if (info.version) client.title = '下载 Android 客户端 · ' + info.version;
-      } else {
-        client.hidden = true;
-      }
-    })
-    .catch(() => { client.hidden = true; });
   window.addEventListener('mcwws-pwa-installable', () => {
     if (!window.MCWWS_PWA) return;
     const button = document.createElement('button');

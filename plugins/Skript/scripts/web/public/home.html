@@ -4,12 +4,15 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#1D2B26">
-  <meta name="description" content="流浪世界服务器的商店、地图、管理与客户端入口。">
+  <meta name="description" content="流浪世界服务器的商店、地图、管理与统一账户入口。">
   <title>流浪世界服务</title>
-  <link rel="stylesheet" href="services-home-glass.css?v=10">
-  <link rel="stylesheet" href="services-workspace.css?v=9">
-  <script type="module" src="services-home-glass.js?v=6"></script>
-  <script type="module" src="services-workspace.js?v=18"></script>
+  <link rel="stylesheet" href="mcwws-auth.css?v=1">
+  <link rel="stylesheet" href="services-home-glass.css?v=11">
+  <link rel="stylesheet" href="services-workspace.css?v=10">
+  <script src="mcwws-auth.js?v=15" defer></script>
+  <script type="module" src="services-home-glass.js?v=7"></script>
+  <script type="module" src="services-workspace.js?v=19"></script>
+  <script type="module" src="services-account.js?v=1"></script>
 </head>
 <body>
   <glass-scene class="alpine-scene">
@@ -34,10 +37,6 @@
         <span data-shop-status aria-live="off"></span>
         <button type="button" data-shop-action="refresh" aria-label="刷新" title="刷新">⟳</button>
         <button type="button" data-shop-action="cart" aria-label="购物车" title="购物车">购物车<span data-shop-cart-count hidden></span></button>
-        <button type="button" data-shop-action="account" aria-label="账户" title="账户" aria-expanded="false">
-          <img data-shop-avatar alt="" hidden>
-          <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.6" aria-hidden="true"><circle cx="12" cy="8" r="4"/><path d="M4 21a8 8 0 0 1 16 0"/></svg>
-        </button>
       </div>
     </div>
   </header>
@@ -75,7 +74,7 @@
     </div>
   </section>
 
-  <nav class="dock glass" aria-label="服务导航">
+  <nav class="dock glass mcwws-auth-widget" id="mcwwsAuthWidget" aria-label="服务导航">
     <span class="dock-slider" aria-hidden="true" hidden></span>
     <a href="#scene" data-service="home" aria-current="page" draggable="false" aria-label="主页" title="主页">
       <svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m4 10 8-7 8 7v10h-6v-6h-4v6H4z"/></svg>
@@ -83,8 +82,34 @@
     <a href="items.html" data-service="shop" draggable="false" aria-label="商店" title="商店"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M5 7h14l1 13H4L5 7Z"/><path d="M9 8V6a3 3 0 0 1 6 0v2"/></svg></a>
     <a href="map.html" data-service="map" draggable="false" aria-label="地图" title="地图"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="m3 5 6-2 6 2 6-2v16l-6 2-6-2-6 2V5Z"/><path d="M9 3v16M15 5v16"/></svg></a>
     <a href="manage/shop-locations.html" data-service="manage" draggable="false" aria-label="管理" title="管理"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h8m4 0h4M4 17h3m4 0h9"/><circle cx="14" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></svg></a>
-    <a href="/app/MCWWS.apk" id="mcwwsAppDownload" draggable="false" aria-label="下载客户端" title="下载客户端"><svg class="nav-icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v12m-5-5 5 5 5-5M4 16v5h16v-5"/></svg></a>
+    <button type="button" id="authButton" class="mcwws-auth-avatar-btn" aria-label="账户" title="账户" aria-expanded="false" aria-haspopup="true">
+      <img id="authAvatar" class="mcwws-auth-avatar-img" alt="" width="32" height="32" hidden decoding="async" referrerpolicy="no-referrer">
+      <span class="mcwws-auth-avatar-fallback" aria-hidden="true"><svg class="nav-icon" viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 21v-1a7 7 0 0 1 14 0v1"/></svg></span>
+    </button>
+    <div id="authPopover" class="mcwws-auth-popover" role="tooltip" aria-hidden="true">
+      <div class="mcwws-auth-popover-body">
+        <p id="authPopoverTitle" class="mcwws-auth-popover-title">未登录</p>
+        <p id="authPopoverMeta" class="mcwws-auth-popover-meta"></p>
+        <button type="button" id="authPopoverAction" class="mcwws-auth-popover-action">登录 / 注册</button>
+      </div>
+    </div>
   </nav>
+
+  <div id="authModal" class="modal services-auth-modal" role="dialog" aria-modal="true" aria-labelledby="authModalTitle" tabindex="-1">
+    <div class="modal-content glass">
+      <div class="modal-header"><h2 id="authModalTitle">登录</h2><button type="button" class="modal-close" aria-label="关闭">×</button></div>
+      <div class="modal-body">
+        <div class="auth-toggle"><button id="authModeLogin" type="button" class="auth-toggle-btn active">登录</button><button id="authModeRegister" type="button" class="auth-toggle-btn">注册</button></div>
+        <form id="authForm">
+          <div class="form-field"><label for="authUsername">用户名</label><input type="text" id="authUsername" autocomplete="username" required></div>
+          <div class="form-field"><label for="authPassword">密码</label><input type="password" id="authPassword" autocomplete="current-password" required></div>
+          <div class="form-field auth-register-only" style="display:none"><label for="authPlayerId">游戏玩家ID</label><input type="text" id="authPlayerId" autocomplete="off"></div>
+          <div class="form-actions"><button type="submit" class="primary-btn">提交</button></div>
+          <p id="authMessage" class="auth-message" role="status"></p>
+        </form>
+      </div>
+    </div>
+  </div>
 
   <dialog class="glass panel" data-liquid id="light-panel" aria-labelledby="panel-title">
     <div class="handle" aria-hidden="true"></div>

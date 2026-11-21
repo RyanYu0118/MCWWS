@@ -711,10 +711,10 @@
                 scheduleCloseAuthPopover(refs);
             });
         };
-        bindHoverOpen(widget);
+        bindHoverOpen(widget.matches('.dock') ? btn : widget);
         bindHoverOpen(popover);
 
-        btn?.addEventListener('click', () => {
+        btn?.addEventListener('click', (event) => {
             if (widget.id === 'mapAuthWidget') {
                 const open = widget.classList.toggle('is-popover-open');
                 widget.classList.toggle('is-popover-hover', open);
@@ -726,7 +726,7 @@
                 return;
             }
             if (currentUser) {
-                if (!canHover()) {
+                if (!canHover() || event.detail === 0) {
                     widget.classList.toggle('is-popover-open');
                     const open = widget.classList.contains('is-popover-open');
                     btn.setAttribute('aria-expanded', open ? 'true' : 'false');

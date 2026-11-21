@@ -8,7 +8,7 @@ const jelly = { duration: 0.24, bounce: 0.23 };
 
 export function mountDockSlider(dock) {
   const slider = dock.querySelector('.dock-slider');
-  const items = [...dock.querySelectorAll('a, button')];
+  const items = [...dock.querySelectorAll(':scope > a, :scope > button')];
   const lens = glass(slider, dockThumbMaterial);
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const position = new Spring();
@@ -111,7 +111,7 @@ export function mountDockSlider(dock) {
   }
 
   dock.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || !event.isPrimary || !geometry) return;
+    if (event.button !== 0 || !event.isPrimary || !geometry || !items.some(item => item.contains(event.target))) return;
     ignorePointerClick = false;
     const x = localX(event.clientX);
     const origin = geometry.find(entry => entry.item.contains(event.target)) ?? nearest(x);

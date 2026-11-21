@@ -7,7 +7,7 @@ alwaysApply: true
 
 用户指定：以后需要图标，都使用当前底部 Dock 的这一套简约线条风格。
 
-- 基准是 `plugins/Skript/scripts/web/public/home.html` 底部 Dock 的五个内联 SVG；这是项目自绘图标，不是第三方图标库。
+- 基准是 `plugins/Skript/scripts/web/public/home.html` 底部 Dock 的内联 SVG（主页、商店、地图、管理及未登录账户）；这是项目自绘图标，不是第三方图标库。账户已登录显示玩家头像，原下载入口已移除。
 - 使用 `viewBox="0 0 24 24"`、`fill="none"`、`stroke="currentColor"`、`stroke-width="1.7"`，线端和连接均为 `round`；默认显示 23×23px。
 - 保持等线宽、简洁轮廓、克制细节、均衡留白和一致视觉大小；随控件继承黑白自适应颜色。
 - 已有语义优先复用 Dock 原图；新增语义按相同规范绘制 SVG，不混用写实、彩色、立体、emoji 或不同风格的图标。

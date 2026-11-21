@@ -11,8 +11,7 @@ const shopNav = document.querySelector('.shop-workspace-nav');
 const shopActions = document.querySelector('.shop-workspace-actions');
 const shopStatus = shopActions.querySelector('[data-shop-status]');
 const cartCount = shopActions.querySelector('[data-shop-cart-count]');
-const accountButton = shopActions.querySelector('[data-shop-action="account"]');
-const avatar = accountButton.querySelector('[data-shop-avatar]');
+const accountButton = document.getElementById('authButton');
 const brand = document.querySelector('[data-workspace-brand]');
 const lightControls = document.querySelector('.top-inner [aria-label="光感强度"]');
 const threshold = document.querySelector('.top-inner .threshold');
@@ -47,7 +46,7 @@ function styleEmbeddedPanel(panel, name) {
         const style = doc.createElement('link');
         style.id = 'mcwws-embedded-shop-style';
         style.rel = 'stylesheet';
-        style.href = new URL('services-workspace.css?v=9', location.href);
+        style.href = new URL('services-workspace.css?v=10', location.href);
         doc.head.append(style);
     }
     doc.body.classList.add('mcwws-embedded-' + name);
@@ -58,20 +57,13 @@ function styleEmbeddedPanel(panel, name) {
 }
 
 function activePanel() { return panels[services.indexOf(active)]; }
-function accountIds() {
-    return active === 'map' ? ['mapAuthWidget', 'mapAuthPopover', 'mapAuthButton', 'mapAuthAvatar']
-        : ['mcwwsAuthWidget', 'authPopover', 'authButton', 'authAvatar'];
-}
+
 
 function syncShopHeader() {
     shopObserver?.disconnect();
     const doc = activePanel()?.contentDocument;
-    const [widgetId, , buttonId, avatarId] = accountIds();
     const nav = doc?.querySelector('.navbar');
-    const authWidget = doc?.getElementById(widgetId);
-    if (!nav && !authWidget) {
-        avatar.hidden = true;
-        accountButton.setAttribute('aria-expanded', 'false');
+    if (!nav) {
         for (const button of shopActions.querySelectorAll('button')) button.disabled = true;
         shopStatus.textContent = '';
         cartCount.hidden = true;
@@ -83,8 +75,7 @@ function syncShopHeader() {
         else link.removeAttribute('aria-current');
     }
     for (const button of shopActions.querySelectorAll('button')) {
-        button.hidden = active !== 'shop' ? button.dataset.shopAction !== 'account'
-            : dashboard && button.dataset.shopAction !== 'refresh';
+        button.hidden = active !== 'shop' || dashboard && button.dataset.shopAction !== 'refresh';
         button.disabled = false;
     }
     const updateStatus = () => {
@@ -92,16 +83,10 @@ function syncShopHeader() {
         const badge = nav?.querySelector('#cartBadge');
         cartCount.hidden = !badge || badge.hidden;
         cartCount.textContent = badge?.textContent || '';
-        const shopAvatar = doc.getElementById(avatarId);
-        const source = shopAvatar && !shopAvatar.hidden && shopAvatar.style.display !== 'none'
-            && shopAvatar.getAttribute('src') ? shopAvatar.src : '';
-        avatar.hidden = !source;
-        if (source && avatar.src !== source) avatar.src = source;
-        accountButton.setAttribute('aria-expanded', doc.getElementById(buttonId)?.getAttribute('aria-expanded') || 'false');
     };
     updateStatus();
     shopObserver = new MutationObserver(updateStatus);
-    shopObserver.observe(nav || authWidget, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['hidden', 'src', 'style', 'aria-expanded'] });
+    shopObserver.observe(nav, { subtree: true, childList: true, characterData: true, attributes: true, attributeFilter: ['hidden', 'src', 'style', 'aria-expanded'] });
 }
 
 panels.forEach((panel, index) => panel.addEventListener('load', () => {
@@ -122,37 +107,16 @@ shopNav.addEventListener('click', event => {
     }
 });
 
-const actionSelectors = { refresh: '.navbar .refresh-btn', cart: '#cartToggleBtn', account: '#authButton' };
+const actionSelectors = { refresh: '.navbar .refresh-btn', cart: '#cartToggleBtn' };
 function closeShopAccount() {
-    const doc = activePanel()?.contentDocument;
-    const [widgetId, popoverId, buttonId] = accountIds();
-    doc?.getElementById(widgetId)?.classList.remove('is-popover-open', 'is-popover-hover');
-    doc?.getElementById(popoverId)?.setAttribute('aria-hidden', 'true');
-    doc?.getElementById(buttonId)?.setAttribute('aria-expanded', 'false');
+    const widget = document.getElementById('mcwwsAuthWidget');
+    widget?.classList.remove('is-popover-open', 'is-popover-hover');
+    document.getElementById('authPopover')?.setAttribute('aria-hidden', 'true');
+    accountButton.setAttribute('aria-expanded', 'false');
 }
-
-document.addEventListener('click', event => {
-    if (!accountButton.contains(event.target) && accountButton.getAttribute('aria-expanded') === 'true') {
-        closeShopAccount();
-    }
-});
 shopActions.addEventListener('click', event => {
     const action = event.target.closest('[data-shop-action]')?.dataset.shopAction;
-    const doc = activePanel()?.contentDocument;
-    const [widgetId, popoverId, buttonId] = accountIds();
-    if (action === 'account' && active === 'map') {
-        doc?.getElementById(buttonId)?.click();
-        return;
-    }
-    if (action === 'account' && doc?.defaultView?.MCWWS_AUTH?.getUser()) {
-        const widget = doc.getElementById(widgetId);
-        const open = widget?.classList.toggle('is-popover-open') || false;
-        widget?.classList.remove('is-popover-hover');
-        doc.getElementById(popoverId)?.setAttribute('aria-hidden', String(!open));
-        doc.getElementById(buttonId)?.setAttribute('aria-expanded', String(open));
-        return;
-    }
-    if (action) doc?.querySelector(actionSelectors[action])?.click();
+    if (action) activePanel()?.contentDocument?.querySelector(actionSelectors[action])?.click();
 });
 
 function activate(service, updateHistory = false) {
@@ -185,7 +149,7 @@ function activate(service, updateHistory = false) {
         link.hidden = view === 'catalog' || view === 'dashboard' ? !inShop : view !== next;
     }
     for (const button of shopActions.querySelectorAll('button')) {
-        button.hidden = !inShop && button !== accountButton;
+        button.hidden = !inShop;
     }
     if (index >= 0 && !panels[index].hasAttribute('src')) {
         panels[index].src = panels[index].dataset.serviceSrc;
