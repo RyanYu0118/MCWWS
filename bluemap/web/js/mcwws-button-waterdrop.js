@@ -3,7 +3,7 @@ import { dockThumbMaterial } from './dock-material.js';
 import { dockThumbPose, mountDockSlider } from './services-dock-slider.js?v=7';
 
 const controls = 'button, [role="button"], [role="tab"], input:is([type="button"], [type="submit"], [type="reset"]), a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn, .mcwws-auth-popover-services-link, .nav-link)';
-const groups = '.auth-toggle, .leaderboard-tabs, .trends-tabs, .mcwws-ledger-filters, .nav-tabs, .letter-index-bar, .mcwws-ctrl-tools-cluster, .mcwws-gis-volume-shapes, [role="tablist"], [role="toolbar"]';
+const groups = '.mcwws-ctrl-tools-cluster, .mcwws-dock-grid, .mcwws-dock-shortcuts, .mcwws-shop-row-actions, .mcwws-layer-dimension-options, .mcwws-gis-volume-shapes, [role="tablist"], [role="toolbar"]';
 const excluded = '.dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn';
 const selected = '[aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"], .active, .is-active';
 const reduce = matchMedia('(prefers-reduced-motion: reduce)');

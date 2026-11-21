@@ -3974,6 +3974,7 @@
                 <span class="mcwws-layer-menu-title-text">维度</span>
                 <button type="button" class="mcwws-layer-sheet-close" data-action="close-layer-menu" aria-label="关闭">×</button>
             </div>
+            <div class="mcwws-layer-dimension-options" role="group" aria-label="维度选项">
             ${maps.map((entry) => {
                 const active = entry.id === current;
                 return `
@@ -3983,6 +3984,7 @@
                 </button>
             `;
             }).join('')}
+            </div>
         `;
     }
 

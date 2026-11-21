@@ -336,6 +336,40 @@ body #mcwws-shop-panel .mcwws-shop-mini-btn:hover { background: #ffffff30; }
 body #mcwws-shop-panel { margin-top: var(--mcwws-workspace-top, 0px); }
 body .mcwws-map-controls { margin-bottom: var(--mcwws-workspace-bottom, 0px); }
 
+body .mcwws-map-outline-icon {
+    display: block;
+    flex: none;
+    width: 23px;
+    height: 23px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+body :is(.mcwws-dock-tile-icon, .mcwws-dock-shortcut-icon)[data-mcwws-outline] {
+    color: inherit !important;
+    background: transparent !important;
+    box-shadow: none;
+}
+body .mcwws-layer-dimension-options { display: grid; gap: 4px; }
+body .mcwws-ctrl-tools-cluster { --map-dock-control-size: clamp(36px, 6dvh, 48px); }
+body .mcwws-ctrl-tools-cluster[data-function-dock] :is(.mcwws-ctrl-btn, .mcwws-ctrl-fullscreen) {
+    width: var(--map-dock-control-size);
+    height: var(--map-dock-control-size);
+    min-height: var(--map-dock-control-size);
+    padding: 0;
+    gap: 2px;
+    border: 0;
+    border-radius: 50%;
+}
+body .mcwws-ctrl-tools-cluster[data-function-dock] .mcwws-ctrl-zoom {
+    background: transparent;
+    border-color: transparent;
+    overflow: visible;
+}
+body .mcwws-ctrl-tools-cluster[data-function-dock] .mcwws-ctrl-zoom-in { border-bottom: 0; }
+
 @media (prefers-reduced-motion: no-preference) {
     body :is(#mcwws-shop-panel, .mcwws-map-controls, .mcwws-layer-dialog, .mcwws-layer-menu) button {
         translate: var(--mcwws-magnet-x, 0px) var(--mcwws-magnet-y, 0px);

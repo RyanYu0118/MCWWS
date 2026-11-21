@@ -91,7 +91,7 @@ function resetMagnet() {
 
 function magneticButton(event) {
     const target = event.target instanceof Element ? event.target.closest(magneticControls) : null;
-    return target && !target.matches(':disabled, [aria-disabled="true"]') ? target : null;
+    return target && !target.matches(':disabled, [aria-disabled="true"], [data-cart-dock-control], [data-dock-group-item]') ? target : null;
 }
 
 function moveMagnet(event, target) {
