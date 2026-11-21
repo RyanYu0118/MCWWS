@@ -1,0 +1,11 @@
+---
+description: 网站交互控件使用底部 Dock 和右上角购物车作为范式
+alwaysApply: true
+---
+
+# Dock UI 范式
+
+- **两个及以上功能**：使用完整的底部 Dock 组件，包括外层玻璃胶囊与共用滑块。滑块随选项左右移动，按住可拖动切换，也可轻微上下拉动并在松手后回中。
+- **单个功能**：使用右上角购物车的单格 Dock。外层透明，只显示滑块和功能图标。点击执行操作，拖动后松手只回弹。
+- 优先复用 `plugins/Skript/scripts/web/public/services-dock-slider.js`、`dock-material.js` 和现有样式，保持相同的按压形变、回弹与 SVG 折射，并尊重减少动画设置。
+- 图标遵循 `outline-icons.mdc`。完整 Dock 和单格购物车的实现参考 `plugins/Skript/scripts/web/public/home.html`。
