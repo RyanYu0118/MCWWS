@@ -16,6 +16,7 @@ let pending = 0;
 let gesture;
 let drop;
 let lens;
+let coveredRest;
 let suppressUntil = 0;
 
 function groupItems(group) {
@@ -115,6 +116,8 @@ function moveTo(rect, config) {
 }
 
 function clearDrop() {
+    coveredRest?.removeAttribute('data-rest-slider-covered');
+    coveredRest = null;
     lens?.destroy();
     drop?.remove();
     drop = lens = null;
@@ -154,8 +157,9 @@ function begin(item, event) {
     const rect = item.getBoundingClientRect();
     if (!rect.width || !rect.height) return;
     const group = item.closest('[data-function-dock]');
-    group?.setAttribute('data-function-dock-held', '');
     clearDrop();
+    coveredRest = group ?? item;
+    coveredRest.setAttribute('data-rest-slider-covered', '');
     drop = document.createElement('span');
     drop.className = 'mcwws-button-drop';
     drop.setAttribute('aria-hidden', 'true');
@@ -163,7 +167,7 @@ function begin(item, event) {
     // Fullscreen and native dialogs have their own stacking context.
     (item.closest('dialog:modal') ?? document.fullscreenElement ?? document.body).append(drop);
     if (supportsLens) {
-        lens = glass(drop, { ...dockThumbMaterial, backdrop: true, fill: 'rgba(225,245,235,.06)' });
+        lens = glass(drop, { ...dockThumbMaterial, backdrop: true, fill: 'transparent' });
         lens.setOpacity(0);
     }
     x.set(rect.left + rect.width / 2);
@@ -224,7 +228,6 @@ function release(cancelled = false) {
     if (!gesture) return;
     const { item, target, group, dragged } = gesture;
     gesture = null;
-    group?.removeAttribute('data-function-dock-held');
     if (dragged) suppressUntil = performance.now() + 400;
     const dest = !cancelled && group ? target : item;
     if (dest.isConnected) moveTo(dest.getBoundingClientRect(), springs.release);
@@ -265,7 +268,6 @@ document.addEventListener('click', event => {
     if (state) { state.last = item; schedule(); }
 }, true);
 for (const preference of [reduce, solid]) preference.addEventListener('change', () => {
-    gesture?.group?.removeAttribute('data-function-dock-held');
     gesture = null;
     clearDrop();
 });
