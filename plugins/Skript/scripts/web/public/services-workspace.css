@@ -153,11 +153,18 @@ html.mcwws-embedded-shop-root :is(.hero, .hero-glow) { background: transparent !
 html.mcwws-embedded-shop-root body::before,
 html.mcwws-embedded-shop-root body::after { background: none !important; }
 .shop-workspace-actions [data-shop-status] { font-size: .75rem; }
-.shop-workspace-actions button[data-shop-action] { position: relative; width: 44px; padding: 0; }
+.shop-workspace-actions button[data-shop-action] {
+    position: relative;
+    width: var(--dock-icon-button-size, 48px);
+    height: var(--dock-icon-button-size, 48px);
+    min-height: var(--dock-icon-button-size, 48px);
+    padding: 0;
+    border: 0;
+}
 .shop-workspace-actions button > svg {
     display: block;
-    width: 23px;
-    height: 23px;
+    width: var(--dock-icon-size, 23px);
+    height: var(--dock-icon-size, 23px);
     fill: none;
     stroke: currentColor;
     stroke-width: 1.7;
@@ -193,8 +200,6 @@ html.mcwws-embedded-shop-root body::after { background: none !important; }
 .shop-cart-dock { padding: 5px; touch-action: pinch-zoom; }
 .shop-cart-dock:has(button[hidden]) { display: none; }
 .shop-workspace-actions .shop-cart-dock button[data-shop-action="cart"] {
-    width: 52px;
-    height: 48px;
     padding: 0;
     border: 0;
     background: transparent;

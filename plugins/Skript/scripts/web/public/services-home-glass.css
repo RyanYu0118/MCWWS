@@ -8,6 +8,8 @@
   --blur: 12px;
   --scroll: 0;
   --top-height: 72px;
+  --dock-icon-button-size: 48px;
+  --dock-icon-size: 23px;
 }
 
 :root[data-intensity="soft"] { --glow: .14; --tint: 24%; --blur: 17px; }
@@ -345,16 +347,16 @@ h1 {
 }
 
 .dock :is(a, button) {
-  width: 52px;
-  height: 48px;
-  min-height: 48px;
+  width: var(--dock-icon-button-size);
+  height: var(--dock-icon-button-size);
+  min-height: var(--dock-icon-button-size);
   padding: 0;
   gap: 0;
 }
 .dock .nav-icon {
   display: block;
-  width: 23px;
-  height: 23px;
+  width: var(--dock-icon-size);
+  height: var(--dock-icon-size);
   fill: none;
   stroke: currentColor;
   stroke-width: 1.7;
