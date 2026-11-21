@@ -38,6 +38,7 @@ function refresh() {
         if (group.matches('.dock, .segmented, #categoryTabs') || group.closest('#categoryTabs')) continue;
         const items = groupItems(group);
         let state = mounted.get(group);
+        group.toggleAttribute('data-function-dock-single', items.length === 1);
         if (items.length < 2) {
             delete group.dataset.functionDock;
             if (state) {
