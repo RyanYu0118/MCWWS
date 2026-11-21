@@ -739,7 +739,7 @@ Skript `portable_crafter_place.sk` 在服务端强制拦截违规放置。
 - 无地址的旧订单仍在上线后写入随身行囊
 - 记入网页日志与零钱明细；可嵌入公开 Wiki 页浏览
 - 零钱明细读取最近一次成功保存的账本。新的流水在后台批量保存，历史记录补齐后会随页面自动刷新显示。账本暂时被占用时，待处理流水保留在队列中，网页查询可继续使用。
-- **手机：** Chrome / Edge 打开上述地址后可「添加到主屏幕」或点首页「安装到桌面」；也可在首页下载 **Android APK**（文件名含版本号，如 `MCWWS-1.1.1.apk`；允许安装未知应用）。App 带底部导航：**商店 / 地图 / 管理 / 我的**（网页浏览器端布局不变；≥1.1.1 去掉 Material 组件以兼容鸿蒙）。App 与浏览器不共享登录态，首次打开需再登录一次。维护者构建：`tools/mcwws-web-android/build.ps1`
+- **手机：** Chrome / Edge 可将网页添加到主屏幕。Android 可下载安装 [MCWWS-1.1.3.apk](https://mcs.ryanstudio.work/app/MCWWS-1.1.3.apk)。新版默认进入主页，使用与网页相同的五格 Dock（主页、商店、地图、管理、账户），可点按或触摸拖动切换。App 与浏览器不共享登录态，首次打开需再登录一次。维护者构建入口为 `tools/mcwws-web-android/build.ps1`。
 - **HTTPS：** 樱花等内网穿透的**自签证书**会导致手机浏览器空白或证书警告。**根治**是为 `mcs.ryanstudio.work` 与 `mcsmap.ryanstudio.work` 配置可信证书（推荐 **Cloudflare 橙云代理** 或 **Let's Encrypt**），穿透只走 HTTP 到本机即可。临时方案：Android APK ≥ **1.1.2** 已对两域名放行自签；地图 Tab 依赖 `mcsmap` 子域，旧版 App 仅信任主站会在地图页误报「无法连接」
 - **地图外网：** 商店站 `https://mcs.ryanstudio.work/`（反代本机 `:8002`）的 `map.html` 内嵌 BlueMap；地图站为 `https://mcsmap.ryanstudio.work/`（反代本机 `:8100`）。外网勿依赖 `:8100` 端口直连；地图脚本向商店域的 `/api` 拉取标记与 GIS 数据
 

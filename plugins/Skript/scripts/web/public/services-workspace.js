@@ -187,7 +187,7 @@ function syncFromUrl() {
 }
 
 if (new URLSearchParams(location.search).get('shell') === 'android') {
-    document.body.setAttribute('data-native-service-nav', '');
+    document.body.setAttribute('data-android-workspace', '');
 }
 window.MCWWS_SERVICES_WORKSPACE = { open: service => activate(service, true) };
 window.addEventListener('popstate', syncFromUrl);

@@ -23,8 +23,16 @@
 
 body[data-service-open] { overflow: hidden; }
 body[data-service-open] > glass-scene > main { visibility: hidden; }
-body[data-native-service-nav] .dock { display: flex; }
-body[data-native-service-nav] .service-workspace { bottom: 0; }
+body[data-android-workspace] .dock {
+    bottom: max(10px, env(safe-area-inset-bottom));
+    max-width: calc(100% - 16px - env(safe-area-inset-left) - env(safe-area-inset-right));
+}
+body[data-android-workspace] .dock #authPopover {
+    max-height: min(440px, calc(100dvh - 82px - env(safe-area-inset-top)));
+}
+@media (max-width: 320px) {
+    body[data-android-workspace] .dock { gap: 2px; }
+}
 
 @media (prefers-reduced-motion: reduce) {
     .service-track { transition: none; }

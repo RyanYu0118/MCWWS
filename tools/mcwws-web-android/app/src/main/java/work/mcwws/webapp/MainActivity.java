@@ -3,6 +3,8 @@ package work.mcwws.webapp;
 import android.annotation.SuppressLint;
 import android.content.ActivityNotFoundException;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.content.res.ColorStateList;
 import android.graphics.Bitmap;
 import android.graphics.Color;
@@ -36,13 +38,12 @@ import androidx.core.content.ContextCompat;
 import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 /**
- * 鸿蒙 / 部分国产 ROM 对 Material BottomNavigation 不稳定，改用原生底部栏。
+ * The service workspace provides the shared web Dock. Standalone pages retain native navigation.
  */
 public class MainActivity extends AppCompatActivity {
     static final String HOST = "mcs.ryanstudio.work";
     /** 地图 iframe、资源子域；樱花自签证书需与主站一并放行 */
     static final String MAP_HOST = "mcsmap.ryanstudio.work";
-    static final String APP_UA_SUFFIX = " MCWWSApp/1.1.2";
 
     private WebView webView;
     private SwipeRefreshLayout swipeRefresh;
@@ -84,7 +85,7 @@ public class MainActivity extends AppCompatActivity {
         errorOverlay = findViewById(R.id.errorOverlay);
         bottomNav = findViewById(R.id.bottomNav);
         Button retryButton = findViewById(R.id.retryButton);
-        retryButton.setOnClickListener(v -> openTab(currentTabId, true));
+        retryButton.setOnClickListener(v -> reloadCurrent());
 
         swipeRefresh.setColorSchemeResources(R.color.progress);
         swipeRefresh.setOnRefreshListener(this::reloadCurrent);
@@ -113,6 +114,11 @@ public class MainActivity extends AppCompatActivity {
     private void startInitialPage() {
         Uri deepLink = resolveDeepLink();
         if (deepLink != null) {
+            String path = normalizePath(deepLink.getPath());
+            if ("/".equals(path) || "/home.html".equals(path)) {
+                openWorkspace(deepLink.getQueryParameter("service"));
+                return;
+            }
             int tab = tabIdForPath(deepLink.getPath());
             currentTabId = tab;
             paintSelectedTab(tab);
@@ -120,7 +126,37 @@ public class MainActivity extends AppCompatActivity {
             webView.loadUrl(deepLink.toString());
             return;
         }
-        openTab(R.id.nav_shop, true);
+        openWorkspace(null);
+    }
+
+    @Override
+    protected void onNewIntent(Intent intent) {
+        super.onNewIntent(intent);
+        setIntent(intent);
+        if (webView != null) startInitialPage();
+    }
+
+    private String appVersion() {
+        try {
+            PackageInfo info = getPackageManager().getPackageInfo(getPackageName(), 0);
+            return info.versionName;
+        } catch (PackageManager.NameNotFoundException ignored) {
+            return "unknown";
+        }
+    }
+
+    private String workspaceUrl(@Nullable String service) {
+        Uri.Builder url = Uri.parse(getString(R.string.web_url) + "home.html").buildUpon()
+                .appendQueryParameter("shell", "android")
+                .appendQueryParameter("app", appVersion());
+        if (service != null) url.appendQueryParameter("service", service);
+        return url.build().toString();
+    }
+
+    private void openWorkspace(@Nullable String service) {
+        String url = workspaceUrl(service);
+        syncTabFromUrl(url);
+        webView.loadUrl(url);
     }
 
     private Uri resolveDeepLink() {
@@ -144,7 +180,7 @@ public class MainActivity extends AppCompatActivity {
             updateSwipeForTab(tabId);
             errorOverlay.setVisibility(View.GONE);
             pageHadError = false;
-            String workspaceUrl = getString(R.string.web_url) + "home.html?shell=android&service=" + service;
+            String workspaceUrl = workspaceUrl(service);
             if (!forceReload && isWorkspaceUrl(current)) {
                 webView.evaluateJavascript(
                         "(function(){if(!window.MCWWS_SERVICES_WORKSPACE)return false;"
@@ -221,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void updateSwipeForTab(@IdRes int tabId) {
-        swipeRefresh.setEnabled(tabId != R.id.nav_map);
+        swipeRefresh.setEnabled(bottomNav.getVisibility() == View.VISIBLE && tabId != R.id.nav_map);
     }
 
     private String urlForTab(@IdRes int tabId) {
@@ -308,7 +344,7 @@ public class MainActivity extends AppCompatActivity {
             settings.setMixedContentMode(WebSettings.MIXED_CONTENT_COMPATIBILITY_MODE);
         }
         String ua = settings.getUserAgentString();
-        settings.setUserAgentString((ua == null ? "" : ua) + APP_UA_SUFFIX);
+        settings.setUserAgentString((ua == null ? "" : ua) + " MCWWSApp/" + appVersion());
 
         webView.setBackgroundColor(Color.parseColor("#050505"));
         webView.setWebViewClient(new WebViewClient() {
@@ -351,7 +387,7 @@ public class MainActivity extends AppCompatActivity {
                 if (url != null && !pageHadError) {
                     String path = normalizePath(safePath(url));
                     if (!isWorkspaceUrl(url) && ("/".equals(path) || "/home.html".equalsIgnoreCase(path))) {
-                        openTab(R.id.nav_shop, true);
+                        openWorkspace(null);
                     }
                 }
             }
@@ -459,14 +495,16 @@ public class MainActivity extends AppCompatActivity {
             if (!HOST.equalsIgnoreCase(uri.getHost())) {
                 return;
             }
-            String service = isWorkspaceUrl(url) ? uri.getQueryParameter("service") : null;
+            boolean workspace = isWorkspaceUrl(url);
+            bottomNav.setVisibility(workspace ? View.GONE : View.VISIBLE);
+            String service = workspace ? uri.getQueryParameter("service") : null;
             int tab = "map".equals(service) ? R.id.nav_map : "manage".equals(service)
                     ? R.id.nav_manage : tabIdForPath(uri.getPath());
             if (tab != currentTabId) {
                 currentTabId = tab;
                 paintSelectedTab(tab);
-                updateSwipeForTab(tab);
             }
+            updateSwipeForTab(tab);
         } catch (Exception ignored) {
             /* ignore */
         }
@@ -478,7 +516,6 @@ public class MainActivity extends AppCompatActivity {
                 + "var s=document.createElement('style');"
                 + "s.id='mcwws-app-shell-style';"
                 + "s.textContent=["
-                + "'.nav-link[href=\"home.html\"],a.nav-link[title*=\"更多服务\"]{display:none!important}',"
                 + "'.services-hub-install-hint,#mcwwsAppDownload,.mcwws-auth-popover-services-link{display:none!important}',"
                 + "'.services-map-auth-float{bottom:12px!important}'"
                 + "].join('');"
