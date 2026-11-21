@@ -1,5 +1,8 @@
 const fs = require('fs');
 const path = require('path');
+const { randomUUID } = require('crypto');
+const { setTimeout: delay } = require('timers/promises');
+const io = fs.promises;
 const yaml = require('js-yaml');
 
 const CATEGORY_LABELS = {
@@ -27,50 +30,26 @@ function isRetryableFsError(error) {
         || code === 'EACCES' || code === 'EAGAIN' || code === 'EIO';
 }
 
-function waitMs(ms) {
-    const until = Date.now() + Math.max(ms, 1);
-    while (Date.now() < until) {
-        // Windows 上账本文件偶发被杀毒/索引占用，短自旋后重试
+async function retryFileOperation(operation) {
+    for (let attempt = 1; ; attempt++) {
+        try {
+            return await operation();
+        } catch (error) {
+            if (!isRetryableFsError(error) || attempt >= WRITE_ATTEMPTS) throw error;
+            await delay(25 * attempt);
+        }
     }
 }
 
-/** 先写临时文件再替换，避免 Windows 上对正打开的 yml 做 writeFileSync 得到 UNKNOWN / -4094 */
-function writeFileAtomicSync(filePath, content) {
-    const dir = path.dirname(filePath);
-    if (!fs.existsSync(dir)) {
-        fs.mkdirSync(dir, { recursive: true });
+async function writeFileAtomic(filePath, content) {
+    const tempPath = `${filePath}.${process.pid}.${randomUUID()}.tmp`;
+    await io.mkdir(path.dirname(filePath), { recursive: true });
+    try {
+        await retryFileOperation(() => io.writeFile(tempPath, content, 'utf8'));
+        await retryFileOperation(() => io.rename(tempPath, filePath));
+    } finally {
+        await io.unlink(tempPath).catch(() => {});
     }
-    const tempPath = path.join(dir, `${path.basename(filePath)}.${process.pid}.tmp`);
-    let lastError = null;
-    for (let attempt = 1; attempt <= WRITE_ATTEMPTS; attempt += 1) {
-        try {
-            fs.writeFileSync(tempPath, content, 'utf8');
-            try {
-                fs.renameSync(tempPath, filePath);
-            } catch (renameError) {
-                fs.copyFileSync(tempPath, filePath);
-                try {
-                    fs.unlinkSync(tempPath);
-                } catch (_) {
-                    // 替换成功后清临时文件失败可忽略
-                }
-            }
-            return;
-        } catch (error) {
-            lastError = error;
-            try {
-                fs.unlinkSync(tempPath);
-            } catch (_) {
-                // 重试前尽量去掉残留临时文件
-            }
-            if (!isRetryableFsError(error) || attempt === WRITE_ATTEMPTS) {
-                throw error;
-            }
-            console.warn(`[player-ledger] 写入占用中，${25 * attempt}ms 后重试 (${attempt}/${WRITE_ATTEMPTS}): ${error.message}`);
-            waitMs(25 * attempt);
-        }
-    }
-    throw lastError;
 }
 
 function normalizeUuid(uuid) {
@@ -112,36 +91,56 @@ function createPlayerLedgerService(opts) {
 
     const backfillDone = new Set();
 
-    function ensureLedgerFile() {
-        const dir = path.dirname(ledgerPath);
-        if (!fs.existsSync(dir)) {
-            fs.mkdirSync(dir, { recursive: true });
+    let snapshot;
+    let loading;
+    let writes = Promise.resolve();
+    let queueWork;
+    const queueDir = path.dirname(queuePath);
+    const batchPrefix = path.basename(queuePath) + '.processing-';
+
+    async function loadStore() {
+        if (snapshot) return snapshot;
+        if (!loading) {
+            loading = (async () => {
+                let content;
+                try {
+                    content = await io.readFile(ledgerPath, 'utf8');
+                } catch (error) {
+                    if (error.code === 'ENOENT') return snapshot = { next_id: 1, entries: {} };
+                    throw error;
+                }
+                const doc = yaml.load(content);
+                if (!doc?.entries || typeof doc.entries !== 'object' || Array.isArray(doc.entries)
+                    || !Number.isSafeInteger(Number(doc.next_id)) || Number(doc.next_id) < 1) {
+                    throw new Error('零钱账本格式无效，已保留原文件');
+                }
+                return snapshot = doc;
+            })().finally(() => { loading = null; });
         }
-        if (!fs.existsSync(ledgerPath)) {
-            writeFileAtomicSync(ledgerPath, 'next_id: 1\nentries: {}\n');
-        }
+        return loading;
     }
 
-    function loadStore() {
-        ensureLedgerFile();
-        try {
-            const doc = yaml.load(fs.readFileSync(ledgerPath, 'utf8')) || {};
-            if (!doc.entries || typeof doc.entries !== 'object') {
-                doc.entries = {};
-            }
-            if (!Number.isFinite(Number(doc.next_id))) {
-                doc.next_id = 1;
-            }
-            return doc;
-        } catch (error) {
-            console.error('[player-ledger] 读取失败，已重置:', error.message);
-            return { next_id: 1, entries: {} };
-        }
+    function serializeWrite(task) {
+        const result = writes.then(task);
+        writes = result.catch(() => {});
+        return result;
     }
 
-    function saveStore(store) {
-        ensureLedgerFile();
-        writeFileAtomicSync(ledgerPath, yaml.dump(store, { lineWidth: 120, noRefs: true }));
+    async function saveStore(store) {
+        await writeFileAtomic(ledgerPath, yaml.dump(store, { lineWidth: 120, noRefs: true }));
+        snapshot = store;
+    }
+
+    function draftStore(store) {
+        return { ...store, entries: { ...store.entries } };
+    }
+
+    function pruneStore(store) {
+        const keys = Object.keys(store.entries);
+        if (keys.length <= MAX_ENTRIES) return;
+        keys.sort((a, b) => (Number(store.entries[a]?.id) || 0) - (Number(store.entries[b]?.id) || 0))
+            .slice(0, keys.length - MAX_ENTRIES)
+            .forEach(key => delete store.entries[key]);
     }
 
     function flightAnchorMs(row) {
@@ -189,12 +188,11 @@ function createPlayerLedgerService(opts) {
         return existing;
     }
 
-    function appendEntry(entry) {
+    function addEntry(store, entry, refs) {
         const uuid = normalizeUuid(entry.uuid);
         if (!uuid) {
             return null;
         }
-        const store = loadStore();
         const direction = entry.direction === 'credit' ? 'credit' : 'debit';
         const category = String(entry.category || 'other').trim() || 'other';
         const amount = roundMoney(entry.amount);
@@ -204,24 +202,19 @@ function createPlayerLedgerService(opts) {
         const createdAt = entry.createdAt || new Date().toISOString();
         const createdMs = Date.parse(createdAt) || Date.now();
 
+        const refKey = safeText(entry.refId || '', 80);
+        if (refKey && refs.has(refKey)) return null;
+
         if (category === 'flight' && direction === 'debit') {
             const mergeTarget = findMergeableFlightEntry(store, uuid, createdMs);
             if (mergeTarget) {
-                mergeFlightEntry(mergeTarget, amount, entry, createdAt);
-                try {
-                    saveStore(store);
-                } catch (error) {
-                    console.error('[player-ledger] 写入失败:', error.message);
-                    return null;
-                }
-                return mergeTarget;
+                const updated = mergeFlightEntry({ ...mergeTarget }, amount, entry, createdAt);
+                store.entries[String(updated.id)] = updated;
+                if (refKey) refs.add(refKey);
+                return updated;
             }
         }
 
-        const refKey = safeText(entry.refId || '', 80);
-        if (refKey && hasRef(store, refKey)) {
-            return null;
-        }
         const id = Number(store.next_id) || 1;
         const row = {
             id,
@@ -240,117 +233,97 @@ function createPlayerLedgerService(opts) {
         store.entries[String(id)] = row;
         store.next_id = id + 1;
 
-        const keys = Object.keys(store.entries);
-        if (keys.length > MAX_ENTRIES) {
-            keys
-                .map((k) => ({ k, id: Number(store.entries[k]?.id) || 0 }))
-                .sort((a, b) => a.id - b.id)
-                .slice(0, keys.length - MAX_ENTRIES)
-                .forEach(({ k }) => delete store.entries[k]);
-        }
-        try {
-            saveStore(store);
-        } catch (error) {
-            console.error('[player-ledger] 写入失败:', error.message);
-            return null;
-        }
+        if (refKey) refs.add(refKey);
         return row;
     }
 
-    function processQueue() {
-        if (!fs.existsSync(queuePath)) {
-            return 0;
-        }
-        const size = fs.statSync(queuePath).size;
-        if (size <= 0) {
-            return 0;
-        }
-        let text;
-        try {
-            text = fs.readFileSync(queuePath, 'utf8');
-            fs.writeFileSync(queuePath, '', 'utf8');
-        } catch (error) {
-            console.error('[player-ledger] 处理队列失败:', error.message);
-            return 0;
-        }
-        let count = 0;
-        text.split(/\r?\n/).forEach((line) => {
-            const trimmed = line.trim();
-            if (!trimmed) {
-                return;
+    function refIndex(store) {
+        return new Set(Object.values(store.entries).map(row => row?.refId).filter(Boolean));
+    }
+
+    function appendEntry(entry) {
+        return serializeWrite(async () => {
+            const store = draftStore(await loadStore());
+            const row = addEntry(store, entry, refIndex(store));
+            if (row) {
+                pruneStore(store);
+                await saveStore(store);
             }
-            const parts = trimmed.split('|');
-            if (parts.length < 6) {
-                return;
-            }
-            const [
-                uuid,
-                playerId,
-                direction,
-                category,
-                amountRaw,
-                balanceAfterRaw,
-                description,
-                refId,
-                createdAt
-            ] = parts;
-            let appended = null;
-            try {
-                appended = appendEntry({
-                    uuid,
-                    playerId,
-                    direction,
-                    category,
-                    amount: amountRaw,
-                    balanceAfter: balanceAfterRaw ? Number(balanceAfterRaw) : null,
-                    description,
-                    refId,
-                    createdAt: createdAt || undefined
-                });
-            } catch (error) {
-                console.error('[player-ledger] 写入队列条目失败:', error.message);
-            }
-            if (appended) {
-                count += 1;
-            }
+            return row;
         });
+    }
+
+    async function importQueueBatch() {
+        let files;
+        try {
+            files = await io.readdir(queueDir);
+        } catch (error) {
+            if (error.code === 'ENOENT') return 0;
+            throw error;
+        }
+        let batch = files.find(name => name.startsWith(batchPrefix));
+        if (!batch) {
+            try {
+                if (!(await io.stat(queuePath)).size) return 0;
+                batch = batchPrefix + randomUUID();
+                await retryFileOperation(() => io.rename(queuePath, path.join(queueDir, batch)));
+            } catch (error) {
+                if (error.code === 'ENOENT') return 0;
+                throw error;
+            }
+        }
+        const file = path.join(queueDir, batch);
+        const saved = await loadStore();
+        let count = 0;
+        if (saved.last_queue_batch !== batch) {
+            const content = await retryFileOperation(() => io.readFile(file, 'utf8'));
+            const store = draftStore(saved);
+            const refs = refIndex(store);
+            for (const line of content.split(/\r?\n/)) {
+                const parts = line.trim().split('|');
+                if (parts.length < 6) continue;
+                const [uuid, playerId, direction, category, amount, balance, description, refId, createdAt] = parts;
+                if (addEntry(store, {
+                    uuid, playerId, direction, category, amount, description, refId,
+                    balanceAfter: balance === '' ? null : Number(balance),
+                    createdAt: createdAt || undefined
+                }, refs)) count++;
+            }
+            pruneStore(store);
+            // The receipt and the entries commit together. A failed cleanup cannot replay the batch.
+            store.last_queue_batch = batch;
+            await saveStore(store);
+        }
+        await retryFileOperation(() => io.unlink(file));
         return count;
     }
 
-    function hasRef(store, refId) {
-        const key = safeText(refId, 80);
-        if (!key) {
-            return false;
+    function processQueue() {
+        if (!queueWork) {
+            queueWork = serializeWrite(importQueueBatch).finally(() => { queueWork = null; });
         }
-        return Object.values(store.entries).some((row) => row && row.refId === key);
+        return queueWork;
     }
 
-    function backfillForUuid(uuid) {
-        const norm = normalizeUuid(uuid);
-        if (!norm || backfillDone.has(norm)) {
-            return;
-        }
-        backfillDone.add(norm);
-        const store = loadStore();
+    async function backfillForUuid(norm) {
+        const entriesToImport = [];
+        let retry = false;
         const prices = loadPriceTables();
 
-        if (pendingOrdersPath && fs.existsSync(pendingOrdersPath)) {
+        if (pendingOrdersPath) {
             try {
-                const doc = yaml.load(fs.readFileSync(pendingOrdersPath, 'utf8')) || {};
+                const doc = yaml.load(await io.readFile(pendingOrdersPath, 'utf8')) || {};
                 const orders = doc.orders || {};
                 Object.values(orders).forEach((order) => {
                     if (!order || normalizeUuid(order.playerUuid) !== norm) {
                         return;
                     }
                     const refId = `web-order-${order.numericId || order.id}`;
-                    if (hasRef(store, refId)) {
-                        return;
-                    }
                     const total = roundMoney(order.total);
                     if (total <= 0) {
                         return;
                     }
-                    appendEntry({
+                    entriesToImport.push({
                         uuid: norm,
                         playerId: order.playerId,
                         direction: 'debit',
@@ -363,27 +336,27 @@ function createPlayerLedgerService(opts) {
                     });
                 });
             } catch (error) {
-                console.warn('[player-ledger] 回填 pending_orders 失败:', error.message);
+                if (error.code !== 'ENOENT') {
+                    retry = true;
+                    console.warn('[player-ledger] 回填 pending_orders 失败:', error.message);
+                }
             }
         }
 
-        if (pendingPasteOrdersPath && fs.existsSync(pendingPasteOrdersPath)) {
+        if (pendingPasteOrdersPath) {
             try {
-                const doc = yaml.load(fs.readFileSync(pendingPasteOrdersPath, 'utf8')) || {};
+                const doc = yaml.load(await io.readFile(pendingPasteOrdersPath, 'utf8')) || {};
                 const orders = doc.orders || {};
                 Object.values(orders).forEach((order) => {
                     if (!order || normalizeUuid(order.playerUuid) !== norm) {
                         return;
                     }
                     const refId = `paste-order-${order.numericId || order.id}`;
-                    if (hasRef(store, refId)) {
-                        return;
-                    }
                     const total = roundMoney(order.total);
                     if (total <= 0) {
                         return;
                     }
-                    appendEntry({
+                    entriesToImport.push({
                         uuid: norm,
                         playerId: order.playerId,
                         direction: 'debit',
@@ -395,13 +368,16 @@ function createPlayerLedgerService(opts) {
                     });
                 });
             } catch (error) {
-                console.warn('[player-ledger] 回填 pending_paste_orders 失败:', error.message);
+                if (error.code !== 'ENOENT') {
+                    retry = true;
+                    console.warn('[player-ledger] 回填 pending_paste_orders 失败:', error.message);
+                }
             }
         }
 
-        if (transactionsYamlPath && fs.existsSync(transactionsYamlPath)) {
+        if (transactionsYamlPath) {
             try {
-                const doc = yaml.load(fs.readFileSync(transactionsYamlPath, 'utf8')) || {};
+                const doc = yaml.load(await io.readFile(transactionsYamlPath, 'utf8')) || {};
                 const entries = doc.entry || {};
                 Object.values(entries).forEach((raw) => {
                     if (!raw || typeof raw !== 'string') {
@@ -416,9 +392,6 @@ function createPlayerLedgerService(opts) {
                         return;
                     }
                     const refId = `us-${txId}`;
-                    if (hasRef(store, refId)) {
-                        return;
-                    }
                     const qty = Math.max(1, Number(amountRaw) || 1);
                     const material = String(productId || '').trim().toLowerCase().replace(/-/g, '_');
                     const priceRow = prices[material] || {};
@@ -430,7 +403,7 @@ function createPlayerLedgerService(opts) {
                         return;
                     }
                     const isSell = String(type).toUpperCase() === 'SELL';
-                    appendEntry({
+                    entriesToImport.push({
                         uuid: norm,
                         playerId: playerName,
                         direction: isSell ? 'credit' : 'debit',
@@ -442,9 +415,36 @@ function createPlayerLedgerService(opts) {
                     });
                 });
             } catch (error) {
-                console.warn('[player-ledger] 回填 transactions_store 失败:', error.message);
+                if (error.code !== 'ENOENT') {
+                    retry = true;
+                    console.warn('[player-ledger] 回填 transactions_store 失败:', error.message);
+                }
             }
         }
+        await serializeWrite(async () => {
+            const store = draftStore(await loadStore());
+            const refs = refIndex(store);
+            let changed = false;
+            for (const entry of entriesToImport) {
+                if (addEntry(store, entry, refs)) changed = true;
+            }
+            if (changed) {
+                pruneStore(store);
+                await saveStore(store);
+            }
+        });
+        if (retry) backfillDone.delete(norm);
+    }
+
+    function scheduleBackfill(uuid) {
+        if (backfillDone.has(uuid)) return;
+        backfillDone.add(uuid);
+        setImmediate(() => {
+            backfillForUuid(uuid).catch(error => {
+                backfillDone.delete(uuid);
+                console.error('[player-ledger] 历史流水回填失败:', error.message);
+            });
+        });
     }
 
     function formatEntry(row) {
@@ -521,14 +521,13 @@ function createPlayerLedgerService(opts) {
         return out;
     }
 
-    function listForUuid(uuid, options = {}) {
-        processQueue();
+    async function listForUuid(uuid, options = {}) {
         const norm = normalizeUuid(uuid);
         if (!norm) {
             return { entries: [], summary: emptySummary(), hasMore: false };
         }
-        backfillForUuid(norm);
-        const store = loadStore();
+        const store = await loadStore();
+        scheduleBackfill(norm);
         const limit = Math.min(Math.max(Number(options.limit) || 40, 1), MAX_PER_PLAYER_LIST);
         const offset = Math.max(Number(options.offset) || 0, 0);
         const filter = String(options.filter || 'all');
@@ -536,9 +535,10 @@ function createPlayerLedgerService(opts) {
         let rows = Object.values(store.entries)
             .filter((row) => row && normalizeUuid(row.uuid) === norm);
 
+        const summaryAll = summarize(rows);
         if (filter === 'flight') {
             rows = rows.filter((row) => row.category === 'flight');
-        } else         if (filter === 'exclude_flight') {
+        } else if (filter === 'exclude_flight') {
             rows = rows.filter((row) => row.category !== 'flight');
         }
 
@@ -556,6 +556,7 @@ function createPlayerLedgerService(opts) {
         return {
             entries: slice,
             summary,
+            summaryAll,
             total: totalMatching,
             hasMore: offset + limit < totalMatching,
             offset,
@@ -615,6 +616,9 @@ function createPlayerLedgerService(opts) {
             balanceAfter,
             description,
             refId
+        }).catch(error => {
+            backfillDone.delete(normalizeUuid(uuid));
+            throw error;
         });
     }
 

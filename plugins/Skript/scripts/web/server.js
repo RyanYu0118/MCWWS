@@ -2532,7 +2532,7 @@ app.get('/api/player-economy', async (req, res) => {
     }
 });
 
-app.get('/api/player-ledger', (req, res) => {
+app.get('/api/player-ledger', async (req, res) => {
     try {
         const user = authenticate(req);
         if (!user) {
@@ -2550,13 +2550,11 @@ app.get('/api/player-ledger', (req, res) => {
         const filter = ['all', 'flight', 'exclude_flight'].includes(filterRaw) ? filterRaw : 'exclude_flight';
         const limit = Math.min(Number(req.query.limit) || 30, 100);
         const offset = Math.max(Number(req.query.offset) || 0, 0);
-        const result = playerLedger.listForUuid(uuid, { limit, offset, filter });
-        const summaryAll = playerLedger.listForUuid(uuid, { limit: 1, offset: 0, filter: 'all' }).summary;
+        const result = await playerLedger.listForUuid(uuid, { limit, offset, filter });
         res.json({
             playerId,
             uuid,
             ...result,
-            summaryAll,
             updatedAt: new Date().toISOString()
         });
     } catch (error) {
@@ -3532,7 +3530,7 @@ app.post('/api/shop/checkout', (req, res) => {
 
         const linePreview = resolvedLines.slice(0, 3).map((line) => `${line.itemId}×${line.quantity}`).join('、');
         const lineSuffix = resolvedLines.length > 3 ? ` 等${resolvedLines.length}项` : '';
-        playerLedger.logCheckout({
+        void playerLedger.logCheckout({
             uuid,
             playerId,
             category: 'web_shop',
@@ -3540,7 +3538,7 @@ app.post('/api/shop/checkout', (req, res) => {
             balanceAfter,
             description: `网页商城：${linePreview}${lineSuffix}`,
             refId: `web-order-${numericId}`
-        });
+        }).catch(error => console.error('[player-ledger] 订单流水保存失败，可从订单回填:', error.message));
 
         enqueueEssentialsDeduction({
             uuid,
@@ -3676,11 +3674,18 @@ function localIpv4Addresses() {
 
 function logServerStart(protocol) {
     analytics.reload();
-    try {
-        playerLedger.processQueue();
-    } catch (error) {
-        console.error('[player-ledger] 启动时处理队列失败:', error.message || error);
-    }
+    let lastLedgerWarning = 0;
+    const drainLedger = () => {
+        void playerLedger.processQueue().catch(error => {
+            const now = Date.now();
+            if (now - lastLedgerWarning >= 60_000) {
+                lastLedgerWarning = now;
+                console.warn('[player-ledger] 队列保留，后台将重试:', error.message);
+            }
+        });
+    };
+    drainLedger();
+    setInterval(drainLedger, 3_000).unref();
     purgeBlueMapShopMarkers();
     const mappingCount = syncUltimateShopMappingsFile();
     if (mappingCount > 0) {
