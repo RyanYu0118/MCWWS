@@ -90,6 +90,11 @@ body .mcwws-map-controls .mcwws-ctrl-fullscreen:hover,
 body :is(.mcwws-dock-search-btn, .mcwws-dock-economy-btn):hover,
 body #mcwws-shop-panel.is-trade-mode .mcwws-dock-trade-toggle { color: #ffffff; }
 body .mcwws-ctrl-fullscreen:hover .mcwws-ctrl-fs-label { color: #ffffff; }
+/* The mode label must inherit the sampled button ink, including hover ink. */
+body .mcwws-map-controls .mcwws-ctrl-mode-label {
+    color: inherit;
+    transition: color var(--mcwws-contrast-transition) var(--mcwws-contrast-easing);
+}
 body :is(.mcwws-ctrl-btn, .mcwws-ctrl-fullscreen, .mcwws-dock-search-btn, .mcwws-dock-economy-btn)[data-mcwws-ink]:hover:not(:disabled),
 body .mcwws-map-controls .mcwws-ctrl-btn[data-mcwws-ink]:is(.is-active, [aria-pressed="true"]) {
     background: #414141e8;
