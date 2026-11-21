@@ -1,17 +1,15 @@
-/* Dock-style press feedback for buttons without their own moving slider. */
-@media (prefers-reduced-motion: no-preference) {
-    body :is(button, [role="button"], input:is([type="button"], [type="submit"], [type="reset"]),
-        a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn)):not(:disabled, [aria-disabled="true"],
-        [data-slider] > :is(a, button), #categoryTabs > .category-btn):is(:active, [data-held], [data-mcwws-magnet="held"]) {
-        animation: mcwws-button-drop 260ms cubic-bezier(.22, 1.35, .4, 1) both;
-    }
+/* The lens sits above the label so the same surface refracts text and backdrop. */
+.mcwws-button-drop {
+    position: fixed;
+    z-index: 2147483646;
+    display: block;
+    pointer-events: none;
+    border-radius: 999px;
+    background: rgb(225 245 235 / .08);
+    box-shadow: inset 0 1px 2px #fbfcfc72, inset 0 -1px 3px #dae3e034, 0 5px 12px #0c121050;
+    will-change: transform, opacity;
 }
-
-@keyframes mcwws-button-drop {
-    from { scale: .95 .93; }
-    to {
-        border-radius: 999px;
-        scale: calc(1.075 * var(--stretch-x, 1)) calc(1.045 * var(--stretch-y, 1));
-        box-shadow: inset 0 1px 2px #ffffff85, inset 0 -2px 5px #ffffff32, 0 3px 10px #0004;
-    }
+.mcwws-button-drop > gl-fx > .r { display: none; }
+@media (prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce), (forced-colors: active) {
+    .mcwws-button-drop { display: none; }
 }
