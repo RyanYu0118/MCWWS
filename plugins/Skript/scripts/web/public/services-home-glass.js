@@ -1,6 +1,6 @@
 import { attachPress, glass, supportsBackdropSvg } from './glassy-liquid-0.1.0.js';
 import { dockMaterial } from './dock-material.js';
-import { mountDockSlider } from './services-dock-slider.js?v=5';
+import { mountDockSlider } from './services-dock-slider.js?v=6';
 
 const root = document.documentElement;
 const presets = {

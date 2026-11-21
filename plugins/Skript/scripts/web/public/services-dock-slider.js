@@ -12,6 +12,8 @@ export function mountDockSlider(dock) {
   const lens = glass(slider, dockThumbMaterial);
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const position = new Spring();
+  const vertical = new Spring();
+  const allowVerticalPull = dock.matches('.dock, [data-single-action]');
   const width = new Spring();
   const lift = new Spring();
   const stretch = new Spring(0, jelly);
@@ -24,7 +26,7 @@ export function mountDockSlider(dock) {
   const animation = {
     write(_now, dt) {
       const reduced = reducedMotion.matches;
-      for (const spring of [position, width, lift]) {
+      for (const spring of [position, vertical, width, lift]) {
         if (reduced) spring.set(spring.target);
         else spring.step(dt);
       }
@@ -38,7 +40,7 @@ export function mountDockSlider(dock) {
       const scaleY = (1 + 0.10 * rise) / Math.sqrt(1 + deformation);
       const x = position.value - lensWidth / 2;
       const peel = rise * 2;
-      slider.style.transform = `translate3d(${x.toFixed(2)}px, ${(-peel).toFixed(2)}px, 0) scale(${scaleX.toFixed(4)}, ${scaleY.toFixed(4)})`;
+      slider.style.transform = `translate3d(${x.toFixed(2)}px, ${(vertical.value - peel).toFixed(2)}px, 0) scale(${scaleX.toFixed(4)}, ${scaleY.toFixed(4)})`;
       slider.style.setProperty('--slider-lift', clamp(rise, 0, 1));
       dock.toggleAttribute('data-drop-lifted', rise > 0.025);
       for (const { item, center } of geometry ?? []) {
@@ -53,7 +55,7 @@ export function mountDockSlider(dock) {
         lens.set({ backdrop: false });
         refracting = false;
       }
-      return !position.settled || !width.settled || !lift.settled || !stretch.settled;
+      return !position.settled || !vertical.settled || !width.settled || !lift.settled || !stretch.settled;
     },
   };
   addTask(animation);
@@ -125,6 +127,7 @@ export function mountDockSlider(dock) {
       lastTime: event.timeStamp,
       velocity: 0,
       dragging: false,
+      movedAcross: false,
     };
     place(origin.item, springs.press);
     lift.to(1, springs.press);
@@ -138,18 +141,24 @@ export function mountDockSlider(dock) {
 
   window.addEventListener('pointermove', event => {
     if (gesture?.id !== event.pointerId) return;
+    const dx = Math.abs(event.clientX - gesture.x);
+    const dy = event.clientY - gesture.y;
+    const slop = tapSlop(event);
     if (!gesture.dragging) {
-      const dx = Math.abs(event.clientX - gesture.x);
-      const dy = Math.abs(event.clientY - gesture.y);
-      const slop = tapSlop(event);
-      if (dy > slop && dy > dx) {
+      if (!allowVerticalPull && Math.abs(dy) > slop && Math.abs(dy) > dx) {
         finish(event, true);
         return;
       }
-      if (dx < slop) return;
+      if (Math.max(dx, Math.abs(dy)) < slop) return;
       gesture.dragging = true;
       dock.setPointerCapture(event.pointerId);
       dock.dataset.sliding = '';
+    }
+    if (allowVerticalPull) vertical.to(reducedMotion.matches ? 0 : 13 * Math.tanh(dy / 30), springs.track);
+    if (dx >= slop) gesture.movedAcross = true;
+    if (!gesture.movedAcross) {
+      wake(animation);
+      return;
     }
     const elapsed = Math.max(8, event.timeStamp - gesture.lastTime);
     const velocity = clamp(1000 * (event.clientX - gesture.lastX) / elapsed, -2200, 2200);
@@ -166,12 +175,18 @@ export function mountDockSlider(dock) {
 
   function finish(event, cancelled) {
     if (gesture?.id !== event.pointerId) return;
-    const { dragging, offset, velocity, lastTime } = gesture;
+    const { dragging, movedAcross, offset, velocity, lastTime } = gesture;
     gesture = null;
     delete dock.dataset.sliding;
     lift.to(0, springs.release);
+    vertical.to(0, springs.release);
     wake(animation);
     if (cancelled || !dragging) {
+      syncSelection();
+      return;
+    }
+    if (!movedAcross) {
+      ignorePointerClick = true;
       syncSelection();
       return;
     }
