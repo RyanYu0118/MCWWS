@@ -1,5 +1,6 @@
 import { addTask, clamp, glass, Spring, springs, supportsBackdropSvg, wake } from './glassy-liquid-0.1.0.js';
 import { dockThumbMaterial } from './dock-material.js';
+import { dockThumbPose, mountDockSlider } from './services-dock-slider.js?v=7';
 
 const controls = 'button, [role="button"], [role="tab"], input:is([type="button"], [type="submit"], [type="reset"]), a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn, .mcwws-auth-popover-services-link, .nav-link)';
 const groups = '.auth-toggle, .leaderboard-tabs, .trends-tabs, .mcwws-ledger-filters, .nav-tabs, .letter-index-bar, .mcwws-ctrl-tools-cluster, .mcwws-gis-volume-shapes, [role="tablist"], [role="toolbar"]';
@@ -10,6 +11,7 @@ const solid = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors
 const supportsLens = supportsBackdropSvg();
 
 const mounted = new Map();
+const singleControls = new Map();
 const disabled = item => item.matches(':disabled, [aria-disabled="true"]');
 const eligible = item => !item.matches(excluded);
 let pending = 0;
@@ -85,6 +87,27 @@ function refresh() {
         const y = (box.top - bounds.top) / sy - group.clientTop + group.scrollTop;
         state.slider.style.transform = `translate3d(${x}px,${y}px,0)`;
     }
+    for (const [item, state] of singleControls) {
+        if (item.isConnected && state.slider.parentElement === item && eligible(item) && !item.hasAttribute('data-dock-group-item')) continue;
+        state.controller?.abort();
+        state.slider.remove();
+        delete item.dataset.cartDockControl;
+        delete item.dataset.cartDockPosition;
+        delete item.dataset.slider;
+        delete item.dataset.dropLifted;
+        delete item.dataset.optics;
+        singleControls.delete(item);
+    }
+    for (const item of document.querySelectorAll(controls)) {
+        if (!eligible(item) || item.matches('input, [data-dock-group-item]') || singleControls.has(item)) continue;
+        const slider = document.createElement('span');
+        slider.className = 'dock-slider';
+        slider.setAttribute('aria-hidden', 'true');
+        if (getComputedStyle(item).position === 'static') item.dataset.cartDockPosition = '';
+        item.dataset.cartDockControl = '';
+        item.prepend(slider);
+        singleControls.set(item, { slider });
+    }
 }
 
 function schedule() {
@@ -94,7 +117,8 @@ const resize = new ResizeObserver(schedule);
 new MutationObserver(records => {
     if (records.some(record => record.type === 'attributes'
         ? record.target.matches(controls + ', ' + groups) || record.target.querySelector(groups)
-        : [...record.addedNodes, ...record.removedNodes].some(node =>
+        : record.target.matches?.('[data-cart-dock-control]') && !record.target.querySelector(':scope > .dock-slider')
+            || [...record.addedNodes, ...record.removedNodes].some(node =>
             node instanceof Element && (node.matches(controls + ', ' + groups) || node.querySelector(controls + ', ' + groups))))) schedule();
 }).observe(document.body, {
     subtree: true, childList: true, attributes: true,
@@ -127,14 +151,10 @@ const animation = {
     write(_now, dt) {
         if (!drop) return false;
         for (const spring of springList) spring.step(dt);
-        const rise = clamp(lift.value, 0, 1.14);
-        stretch.to(Math.min(.38, Math.abs(x.velocity) * .0008) * rise).step(dt);
-        const bend = clamp(stretch.value, -.06, .4);
-        const w = width.value * (1 + .22 * rise) * (1 + bend);
-        const h = height.value * (1 + .10 * rise) / Math.sqrt(1 + bend);
+        const { rise, scaleX, scaleY, peel } = dockThumbPose(lift.value, stretch, x.velocity, dt);
         drop.style.width = width.value.toFixed(2) + 'px';
         drop.style.height = height.value.toFixed(2) + 'px';
-        drop.style.transform = `translate3d(${x.value - width.value / 2}px,${y.value - height.value / 2 - rise * 2}px,0) scale(${w / width.value},${h / height.value})`;
+        drop.style.transform = `translate3d(${x.value - width.value / 2}px,${y.value - height.value / 2 - peel}px,0) scale(${scaleX},${scaleY})`;
         // The outer element stays fully opaque so the SVG can sample behind it.
         drop.style.setProperty('--function-drop-lift', clamp(rise, 0, 1));
         lens?.setOpacity(clamp(rise * 1.5, 0, 1));
@@ -186,6 +206,15 @@ document.addEventListener('pointerdown', event => {
     if (!event.isPrimary || event.button !== 0) return;
     suppressUntil = 0;
     const item = findControl(event.target);
+    const single = singleControls.get(item);
+    if (single) {
+        if (!single.controller) {
+            single.controller = new AbortController();
+            item.dataset.optics = supportsLens && !solid.matches ? 'lens' : 'frost';
+            mountDockSlider(item, { self: true, signal: single.controller.signal });
+        }
+        return;
+    }
     if (item) begin(item, event);
 }, true);
 
@@ -250,7 +279,7 @@ window.addEventListener('scroll', () => release(true), { passive: true, capture:
 document.addEventListener('keydown', event => {
     if (!event.repeat && (event.key === 'Enter' || event.key === ' ')) {
         const item = findControl(event.target);
-        if (item) begin(item, event);
+        if (item && !singleControls.has(item)) begin(item, event);
     }
 }, true);
 document.addEventListener('keyup', event => {

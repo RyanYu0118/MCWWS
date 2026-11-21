@@ -8,7 +8,7 @@
 /* Single controls have one resting slider, with no separate glass shell. */
 body :is(button, [role="button"], [role="tab"], input:is([type="button"], [type="submit"], [type="reset"]),
     a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn, .mcwws-auth-popover-services-link, .nav-link)):not(
-    .dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn, [data-dock-group-item], [data-rest-slider-covered]) {
+    .dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn, [data-dock-group-item], [data-rest-slider-covered], [data-cart-dock-control]) {
     background: rgb(225 245 235 / .15) !important;
     border-color: transparent !important;
     box-shadow: none !important;
@@ -23,6 +23,42 @@ body [data-function-dock-single] {
     -webkit-backdrop-filter: none !important;
 }
 body [data-function-dock-single] > gl-fx { display: none; }
+body [data-cart-dock-control]:not(#categoryTabs) {
+    isolation: isolate;
+    overflow: visible;
+    background: transparent !important;
+    border-color: transparent !important;
+    box-shadow: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+    touch-action: pinch-zoom;
+}
+body [data-cart-dock-position] { position: relative; }
+body [data-cart-dock-control] > gl-fx { display: none; }
+body [data-cart-dock-control][data-liquid]::before { background: none; }
+body [data-cart-dock-control] > .dock-slider {
+    position: absolute;
+    inset: 0 auto 0 0;
+    width: 100%;
+    height: auto;
+    z-index: -1;
+    border-radius: 999px;
+    pointer-events: none;
+    background: rgb(225 245 235 / calc(.15 - .09 * var(--slider-lift, 0)));
+}
+body [data-cart-dock-control][data-drop-lifted] > .dock-slider {
+    z-index: 2;
+    box-shadow: inset 0 1px 2px #fbfcfc72, inset 0 -1px 3px #dae3e034, 0 5px 12px #0c121050;
+}
+body [data-cart-dock-control][data-drop-lifted] > .dock-slider::after {
+    content: "";
+    position: absolute;
+    inset: 3px 12% auto;
+    height: 30%;
+    border-radius: inherit;
+    background: linear-gradient(#fbfcfc24, transparent);
+}
+body [data-cart-dock-control] > .dock-slider gl-fx > .r { display: none; }
 [data-function-dock] {
     position: relative;
     isolation: isolate;

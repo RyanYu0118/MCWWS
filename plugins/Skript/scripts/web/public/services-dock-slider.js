@@ -6,14 +6,27 @@ import { dockThumbMaterial } from './dock-material.js';
 const settle = { duration: 0.46, bounce: 0.42 };
 const jelly = { duration: 0.24, bounce: 0.23 };
 
-export function mountDockSlider(dock) {
+export function dockThumbPose(lift, stretch, velocity, dt, reduced = false) {
+  const rise = reduced ? 0 : clamp(lift, 0, 1.14);
+  if (reduced) stretch.set(0);
+  else stretch.to(Math.min(.38, Math.abs(velocity) * .0008) * rise).step(dt);
+  const deformation = clamp(stretch.value, -.06, .40);
+  return {
+    rise,
+    scaleX: (1 + .22 * rise) * (1 + deformation),
+    scaleY: (1 + .10 * rise) / Math.sqrt(1 + deformation),
+    peel: rise * 2,
+  };
+}
+
+export function mountDockSlider(dock, { self = false, signal } = {}) {
   const slider = dock.querySelector('.dock-slider');
-  const items = [...dock.querySelectorAll(':scope > a, :scope > button')];
-  const lens = glass(slider, dockThumbMaterial);
+  const items = self ? [dock] : [...dock.querySelectorAll(':scope > a, :scope > button')];
+  let lens;
   const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
   const position = new Spring();
   const vertical = new Spring();
-  const allowVerticalPull = dock.matches('.dock, [data-single-action]');
+  const allowVerticalPull = self || dock.matches('.dock, [data-single-action]');
   const width = new Spring();
   const lift = new Spring();
   const stretch = new Spring(0, jelly);
@@ -31,19 +44,13 @@ export function mountDockSlider(dock) {
         else spring.step(dt);
       }
 
-      const rise = reduced ? 0 : clamp(lift.value, 0, 1.14);
-      const elongation = Math.min(0.38, Math.abs(position.velocity) * 0.0008) * rise;
-      if (reduced) stretch.set(0);
-      else stretch.to(elongation).step(dt);
-      const deformation = clamp(stretch.value, -0.06, 0.40);
-      const scaleX = (width.value / lensWidth) * (1 + 0.22 * rise) * (1 + deformation);
-      const scaleY = (1 + 0.10 * rise) / Math.sqrt(1 + deformation);
+      const { rise, scaleX, scaleY, peel } = dockThumbPose(lift.value, stretch, position.velocity, dt, reduced);
+      const scale = width.value / lensWidth * scaleX;
       const x = position.value - lensWidth / 2;
-      const peel = rise * 2;
-      slider.style.transform = `translate3d(${x.toFixed(2)}px, ${(vertical.value - peel).toFixed(2)}px, 0) scale(${scaleX.toFixed(4)}, ${scaleY.toFixed(4)})`;
+      slider.style.transform = `translate3d(${x.toFixed(2)}px, ${(vertical.value - peel).toFixed(2)}px, 0) scale(${scale.toFixed(4)}, ${scaleY.toFixed(4)})`;
       slider.style.setProperty('--slider-lift', clamp(rise, 0, 1));
       dock.toggleAttribute('data-drop-lifted', rise > 0.025);
-      for (const { item, center } of geometry ?? []) {
+      for (const { item, center } of self ? [] : geometry ?? []) {
         const distance = center - position.value;
         const pull = rise * 32 / (32 + Math.abs(distance));
         const bend = Math.tanh(distance / 24) * pull;
@@ -58,10 +65,14 @@ export function mountDockSlider(dock) {
       return !position.settled || !vertical.settled || !width.settled || !lift.settled || !stretch.settled;
     },
   };
-  addTask(animation);
+  const removeTask = addTask(animation);
+  signal?.addEventListener('abort', () => {
+    removeTask();
+    lens?.destroy();
+  }, { once: true });
 
   function currentItem() {
-    if (dock.hasAttribute('data-single-action')) return items[0];
+    if (self || dock.hasAttribute('data-single-action')) return items[0];
     return dock.querySelector('[aria-expanded="true"], [aria-pressed="true"]') ?? dock.querySelector('[aria-current]');
   }
 
@@ -81,7 +92,7 @@ export function mountDockSlider(dock) {
     if (!dock.offsetWidth) return;
     const firstMeasure = !geometry;
     geometry = items.filter(item => item.offsetWidth)
-      .map(item => ({ item, width: item.offsetWidth, center: item.offsetLeft + item.offsetWidth / 2 }));
+      .map(item => ({ item, width: item.offsetWidth, center: (self ? 0 : item.offsetLeft) + item.offsetWidth / 2 }));
     if (!geometry.length) return;
     lensWidth = Math.max(...geometry.map(entry => entry.width));
     slider.style.width = `${lensWidth}px`;
@@ -114,7 +125,7 @@ export function mountDockSlider(dock) {
   }
 
   dock.addEventListener('pointerdown', event => {
-    if (event.button !== 0 || !event.isPrimary || !geometry || !items.some(item => item.contains(event.target))) return;
+    if (event.button !== 0 || !event.isPrimary || !geometry || dock.matches(':disabled, [aria-disabled="true"]') || !items.some(item => item.contains(event.target))) return;
     ignorePointerClick = false;
     const x = localX(event.clientX);
     const origin = geometry.find(entry => entry.item.contains(event.target)) ?? nearest(x);
@@ -132,12 +143,13 @@ export function mountDockSlider(dock) {
     place(origin.item, springs.press);
     lift.to(1, springs.press);
     if (!refracting && dock.dataset.optics === 'lens' && !reducedMotion.matches) {
+      lens ??= glass(slider, dockThumbMaterial);
       lens.setOpacity(0);
       lens.set({ backdrop: true });
       refracting = true;
     }
     wake(animation);
-  });
+  }, { signal });
 
   window.addEventListener('pointermove', event => {
     if (gesture?.id !== event.pointerId) return;
@@ -171,7 +183,7 @@ export function mountDockSlider(dock) {
     position.to(tracked, springs.track);
     width.to(widthAt(end), springs.track);
     wake(animation);
-  }, { passive: true });
+  }, { passive: true, signal });
 
   function finish(event, cancelled) {
     if (gesture?.id !== event.pointerId) return;
@@ -197,17 +209,18 @@ export function mountDockSlider(dock) {
     position.to(selected.center, settle);
     width.to(selected.width, settle);
     ignorePointerClick = true;
-    if (dock.hasAttribute('data-single-action')) return;
+    if (self || dock.hasAttribute('data-single-action')) return;
     selected.item.focus({ preventScroll: true });
     selected.item.click();
   }
 
-  window.addEventListener('pointerup', event => finish(event, false));
-  window.addEventListener('pointercancel', event => finish(event, true));
+  window.addEventListener('pointerup', event => finish(event, false), { signal });
+  window.addEventListener('pointercancel', event => finish(event, true), { signal });
+  window.addEventListener('blur', () => { if (gesture) finish({ pointerId: gesture.id }, true); }, { signal });
   dock.addEventListener('lostpointercapture', event => {
     // Touch starts with implicit capture on the item, then transfers it to the dock.
     if (event.target === dock) finish(event, true);
-  });
+  }, { signal });
   dock.addEventListener('click', event => {
     if (ignorePointerClick && event.detail > 0) {
       ignorePointerClick = false;
@@ -217,13 +230,15 @@ export function mountDockSlider(dock) {
     }
     const item = event.target.closest('a, button');
     if (items.includes(item)) place(item);
-  }, { capture: true });
+  }, { capture: true, signal });
 
   const selectionObserver = new MutationObserver(syncSelection);
   selectionObserver.observe(dock, { subtree: true, attributes: true, attributeFilter: ['aria-current', 'aria-expanded', 'aria-pressed'] });
-  new ResizeObserver(measure).observe(dock);
-  for (const item of items) new ResizeObserver(measure).observe(item);
-  reducedMotion.addEventListener('change', () => wake(animation));
+  const resize = new ResizeObserver(measure);
+  resize.observe(dock);
+  for (const item of items) resize.observe(item);
+  signal?.addEventListener('abort', () => { resize.disconnect(); selectionObserver.disconnect(); }, { once: true });
+  reducedMotion.addEventListener('change', () => wake(animation), { signal });
   dock.dataset.slider = '';
   slider.hidden = false;
   measure();
