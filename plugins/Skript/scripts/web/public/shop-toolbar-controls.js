@@ -1,57 +1,5 @@
 const toolbar = document.querySelector('.shop-workspace-actions');
 const backdrop = document.querySelector('.landscape');
-const reducedMotion = matchMedia('(prefers-reduced-motion: reduce)');
-
-for (const button of toolbar.querySelectorAll('button[data-shop-action="refresh"]')) {
-    let press;
-    let dragged = false;
-
-    function follow(event, held) {
-        const { width, height } = button.getBoundingClientRect();
-        const rect = press?.rect ?? button.getBoundingClientRect();
-        const dx = event.clientX - rect.left - rect.width / 2;
-        const dy = event.clientY - rect.top - rect.height / 2;
-        const limit = held ? 7 : 3;
-        const pull = offset => limit * Math.tanh(offset / (held ? 20 : 25));
-        button.style.setProperty('--pull-x', `${pull(dx)}px`);
-        button.style.setProperty('--pull-y', `${pull(dy)}px`);
-        button.style.setProperty('--stretch-x', held ? 0.95 + Math.min(.19, Math.abs(dx) / (width * 6)) : 1);
-        button.style.setProperty('--stretch-y', held ? 0.95 + Math.min(.19, Math.abs(dy) / (height * 6)) : 1);
-    }
-
-    function release() {
-        press = null;
-        delete button.dataset.held;
-        for (const name of ['--pull-x', '--pull-y', '--stretch-x', '--stretch-y']) button.style.removeProperty(name);
-    }
-
-    button.addEventListener('pointerdown', event => {
-        if (event.button !== 0 || !event.isPrimary || button.disabled) return;
-        dragged = false;
-        press = { id: event.pointerId, x: event.clientX, y: event.clientY, rect: button.getBoundingClientRect() };
-        button.setPointerCapture(event.pointerId);
-        if (!reducedMotion.matches) {
-            button.dataset.held = '';
-            follow(event, true);
-        }
-    });
-    button.addEventListener('pointermove', event => {
-        const held = press?.id === event.pointerId;
-        if (held && Math.hypot(event.clientX - press.x, event.clientY - press.y) > 7) dragged = true;
-        if (!button.disabled && !reducedMotion.matches && (held || event.pointerType === 'mouse')) follow(event, held);
-    });
-    for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-        button.addEventListener(type, event => { if (event.pointerId === press?.id) release(); });
-    }
-    button.addEventListener('pointerleave', () => { if (!press) release(); });
-    button.addEventListener('click', event => {
-        if (dragged && event.detail > 0) {
-            dragged = false;
-            event.preventDefault();
-            event.stopPropagation();
-        }
-    });
-}
 
 // Sample the shared wallpaper at the controls, using its current CSS crop.
 const image = new Image();

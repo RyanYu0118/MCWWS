@@ -1,15 +1,57 @@
-/* The lens sits above the label so the same surface refracts text and backdrop. */
+/* The resting pill is the single-action slider. Groups share one moving pill. */
+:where(button, [role="button"], [role="tab"], input:is([type="button"], [type="submit"], [type="reset"]),
+    a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn, .mcwws-auth-popover-services-link, .nav-link)):not(
+    .dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn) {
+    border-radius: 999px !important;
+    touch-action: manipulation;
+}
+/* Use the control itself as the resting pill so its semantic color stays intact. */
+:where(button, [role="button"], [role="tab"], a.primary, a.primary-btn, a.btn, a.nav-btn):not(
+    .dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn, [data-dock-group-item]) {
+    box-shadow: inset 0 1px 2px #ffffff25;
+}
+[data-function-dock] {
+    position: relative;
+    isolation: isolate;
+    border-radius: 999px;
+    touch-action: pinch-zoom;
+}
+[data-function-dock]:not([data-mcwws-optics="lens"]) {
+    background: linear-gradient(155deg, #ffffff23, #ffffff08 55%), #1d2b2622;
+    box-shadow: inset 0 0 0 1px #ffffff2b, inset 0 1px 3px #ffffff21;
+}
+[data-function-dock] [data-dock-group-item] {
+    background: transparent !important;
+    box-shadow: none !important;
+    touch-action: pinch-zoom;
+    user-select: none;
+}
+.mcwws-function-dock-slider {
+    position: absolute;
+    left: 0;
+    top: 0;
+    z-index: -1;
+    pointer-events: none;
+    border-radius: 999px;
+    background: #e1f5eb26;
+    transition: transform 360ms cubic-bezier(.22,.8,.24,1), width 360ms, height 360ms, opacity 150ms;
+}
+[data-function-dock-held] > .mcwws-function-dock-slider { opacity: .35; }
 .mcwws-button-drop {
     position: fixed;
+    top: 0;
+    left: 0;
     z-index: 2147483646;
     display: block;
     pointer-events: none;
     border-radius: 999px;
-    background: rgb(225 245 235 / .08);
-    box-shadow: inset 0 1px 2px #fbfcfc72, inset 0 -1px 3px #dae3e034, 0 5px 12px #0c121050;
-    will-change: transform, opacity;
+    background: rgb(225 245 235 / calc(.11 * var(--function-drop-lift, 0)));
+    box-shadow: inset 0 1px 2px rgb(251 252 252 / calc(.45 * var(--function-drop-lift, 0))),
+        0 5px 12px rgb(12 18 16 / calc(.31 * var(--function-drop-lift, 0)));
+    will-change: transform;
 }
 .mcwws-button-drop > gl-fx > .r { display: none; }
 @media (prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce), (forced-colors: active) {
     .mcwws-button-drop { display: none; }
+    .mcwws-function-dock-slider { transition: none; }
 }

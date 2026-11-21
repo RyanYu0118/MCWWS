@@ -1,78 +1,270 @@
-import { glass, supportsBackdropSvg } from './glassy-liquid-0.1.0.js';
+import { addTask, clamp, glass, Spring, springs, supportsBackdropSvg, wake } from './glassy-liquid-0.1.0.js';
+import { dockThumbMaterial } from './dock-material.js';
 
-const reduced = matchMedia('(prefers-reduced-motion: reduce), (prefers-reduced-transparency: reduce), (forced-colors: active)');
-const selector = 'button, [role="button"], input:is([type="button"], [type="submit"], [type="reset"]), a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn)';
-let press;
+const controls = 'button, [role="button"], [role="tab"], input:is([type="button"], [type="submit"], [type="reset"]), a:is(.primary, .primary-btn, .btn, .nav-btn, .mcwws-auth-ledger-btn, .mcwws-auth-popover-services-link, .nav-link)';
+const groups = '.auth-toggle, .leaderboard-tabs, .trends-tabs, .mcwws-ledger-filters, .nav-tabs, .letter-index-bar, .mcwws-ctrl-tools-cluster, .mcwws-gis-volume-shapes, [role="tablist"], [role="toolbar"]';
+const excluded = '.dock > :is(a, button), .segmented > :is(a, button), #categoryTabs .category-btn';
+const selected = '[aria-current]:not([aria-current="false"]), [aria-selected="true"], [aria-pressed="true"], .active, .is-active';
+const reduce = matchMedia('(prefers-reduced-motion: reduce)');
+const solid = matchMedia('(prefers-reduced-transparency: reduce), (forced-colors: active)');
+const supportsLens = supportsBackdropSvg();
 
-function control(target) {
-    const button = target instanceof Element ? target.closest(selector) : null;
-    if (button?.matches(':disabled, [aria-disabled="true"], [data-slider] > :is(a, button), #categoryTabs > .category-btn')) return null;
-    return button;
+const mounted = new Map();
+const disabled = item => item.matches(':disabled, [aria-disabled="true"]');
+const eligible = item => !item.matches(excluded);
+let pending = 0;
+let gesture;
+let drop;
+let lens;
+let suppressUntil = 0;
+
+function groupItems(group) {
+    return [...group.querySelectorAll(controls)].filter(item =>
+        eligible(item) && item.closest(groups) === group && item.getClientRects().length);
 }
 
-function dispose(state) {
-    state.shape.cancel();
-    state.lens?.destroy();
-    state.drop.remove();
+function refresh() {
+    pending = 0;
+    for (const [group, state] of mounted) {
+        if (group.isConnected) continue;
+        resize.unobserve(group);
+        for (const item of state.items) {
+            resize.unobserve(item);
+            delete item.dataset.dockGroupItem;
+        }
+        mounted.delete(group);
+    }
+    for (const group of document.querySelectorAll(groups)) {
+        if (group.matches('.dock, .segmented, #categoryTabs') || group.closest('#categoryTabs')) continue;
+        const items = groupItems(group);
+        let state = mounted.get(group);
+        if (items.length < 2) {
+            delete group.dataset.functionDock;
+            if (state) {
+                resize.unobserve(group);
+                for (const item of state.items) {
+                    resize.unobserve(item);
+                    delete item.dataset.dockGroupItem;
+                }
+                state.slider.remove();
+                mounted.delete(group);
+            }
+            continue;
+        }
+        if (!state) {
+            const slider = document.createElement('span');
+            slider.className = 'mcwws-function-dock-slider';
+            slider.setAttribute('aria-hidden', 'true');
+            state = { slider, items: [], last: null };
+            mounted.set(group, state);
+            resize.observe(group);
+        }
+        if (state.slider.parentElement !== group) group.prepend(state.slider);
+        for (const item of state.items) {
+            if (items.includes(item)) continue;
+            resize.unobserve(item);
+            delete item.dataset.dockGroupItem;
+        }
+        for (const item of items) {
+            item.dataset.dockGroupItem = '';
+            resize.observe(item);
+        }
+        state.items = items;
+        group.dataset.functionDock = '';
+        const active = items.find(item => item.matches(selected)) ??
+            (items.includes(state.last) ? state.last : items[0]);
+        const bounds = group.getBoundingClientRect();
+        const box = active.getBoundingClientRect();
+        const sx = bounds.width / group.offsetWidth || 1;
+        const sy = bounds.height / group.offsetHeight || 1;
+        state.slider.style.width = (box.width / sx) + 'px';
+        state.slider.style.height = (box.height / sy) + 'px';
+        const x = (box.left - bounds.left) / sx - group.clientLeft + group.scrollLeft;
+        const y = (box.top - bounds.top) / sy - group.clientTop + group.scrollTop;
+        state.slider.style.transform = `translate3d(${x}px,${y}px,0)`;
+    }
 }
 
-function begin(button, pointerId, key) {
-    if (!button || reduced.matches) return;
-    if (press) dispose(press);
-    const rect = button.getBoundingClientRect();
-    if (!rect.width || !rect.height) { press = null; return; }
-    const drop = document.createElement('span');
+function schedule() {
+    if (!pending) pending = requestAnimationFrame(refresh);
+}
+const resize = new ResizeObserver(schedule);
+new MutationObserver(records => {
+    if (records.some(record => record.type === 'attributes'
+        ? record.target.matches(controls + ', ' + groups) || record.target.querySelector(groups)
+        : [...record.addedNodes, ...record.removedNodes].some(node =>
+            node instanceof Element && (node.matches(controls + ', ' + groups) || node.querySelector(controls + ', ' + groups))))) schedule();
+}).observe(document.body, {
+    subtree: true, childList: true, attributes: true,
+    attributeFilter: ['hidden', 'class', 'aria-current', 'aria-pressed', 'aria-selected', 'disabled']
+});
+document.fonts.ready.then(schedule);
+schedule();
+
+const x = new Spring(), y = new Spring(), width = new Spring(), height = new Spring();
+const lift = new Spring(), stretch = new Spring(0, { duration: .24, bounce: .23 });
+const springList = [x, y, width, height, lift];
+
+function moveTo(rect, config) {
+    x.to(rect.left + rect.width / 2, config);
+    y.to(rect.top + rect.height / 2, config);
+    width.to(rect.width, config);
+    height.to(rect.height, config);
+    wake(animation);
+}
+
+function clearDrop() {
+    lens?.destroy();
+    drop?.remove();
+    drop = lens = null;
+}
+
+const animation = {
+    write(_now, dt) {
+        if (!drop) return false;
+        for (const spring of springList) spring.step(dt);
+        const rise = clamp(lift.value, 0, 1.14);
+        stretch.to(Math.min(.38, Math.abs(x.velocity) * .0008) * rise).step(dt);
+        const bend = clamp(stretch.value, -.06, .4);
+        const w = width.value * (1 + .22 * rise) * (1 + bend);
+        const h = height.value * (1 + .10 * rise) / Math.sqrt(1 + bend);
+        drop.style.width = width.value.toFixed(2) + 'px';
+        drop.style.height = height.value.toFixed(2) + 'px';
+        drop.style.transform = `translate3d(${x.value - width.value / 2}px,${y.value - height.value / 2 - rise * 2}px,0) scale(${w / width.value},${h / height.value})`;
+        // The outer element stays fully opaque so the SVG can sample behind it.
+        drop.style.setProperty('--function-drop-lift', clamp(rise, 0, 1));
+        lens?.setOpacity(clamp(rise * 1.5, 0, 1));
+        if (!gesture && lift.settled && lift.target === 0) {
+            clearDrop();
+            return false;
+        }
+        return springList.some(spring => !spring.settled) || !stretch.settled;
+    }
+};
+addTask(animation);
+
+function findControl(target) {
+    const item = target instanceof Element ? target.closest(controls) : null;
+    return item && eligible(item) && !disabled(item) ? item : null;
+}
+
+function begin(item, event) {
+    if (reduce.matches || solid.matches || gesture) return;
+    const rect = item.getBoundingClientRect();
+    if (!rect.width || !rect.height) return;
+    const group = item.closest('[data-function-dock]');
+    group?.setAttribute('data-function-dock-held', '');
+    clearDrop();
+    drop = document.createElement('span');
     drop.className = 'mcwws-button-drop';
     drop.setAttribute('aria-hidden', 'true');
-    Object.assign(drop.style, {
-        left: rect.left + 'px', top: rect.top + 'px',
-        width: rect.width + 'px', height: rect.height + 'px'
-    });
-    (button.closest('dialog:modal') ?? document.body).append(drop);
-    const lens = supportsBackdropSvg() ? glass(drop, {
-        appearance: 'dark', material: 'clear', radius: 'capsule', profile: 'squircle',
-        bezel: 14, refraction: 12, blur: .32, zoom: 1, dispersion: 0, specular: 0, shadow: false,
-        fill: 'rgba(225,245,235,.06)'
-    }) : null;
-    const shape = drop.animate([
-        { transform: 'translateY(0) scale(.96,.92)', opacity: 0 },
-        { transform: 'translateY(-3px) scale(1.12,1.12)', opacity: 1, offset: .39, easing: 'cubic-bezier(.22,.75,.3,1)' },
-        { transform: 'translateY(-2px) scale(1.22,.88)', opacity: 1 }
-    ], { duration: 340, fill: 'forwards', easing: 'ease-out' });
-    press = { drop, lens, shape, rect, pointerId, key };
-}
-
-function release() {
-    if (!press) return;
-    const state = press;
-    press = null;
-    const style = getComputedStyle(state.drop);
-    const from = { transform: style.transform, opacity: style.opacity };
-    state.shape.cancel();
-    state.shape = state.drop.animate([
-        from,
-        { transform: 'translateY(1px) scale(1.04,.96)', opacity: .36, offset: .55 },
-        { transform: 'translateY(0) scale(1)', opacity: 0 }
-    ], { duration: 240, easing: 'ease-out', fill: 'forwards' });
-    state.shape.onfinish = () => dispose(state);
+    Object.assign(drop.style, { width: rect.width + 'px', height: rect.height + 'px' });
+    // Fullscreen and native dialogs have their own stacking context.
+    (item.closest('dialog:modal') ?? document.fullscreenElement ?? document.body).append(drop);
+    if (supportsLens) {
+        lens = glass(drop, { ...dockThumbMaterial, backdrop: true, fill: 'rgba(225,245,235,.06)' });
+        lens.setOpacity(0);
+    }
+    x.set(rect.left + rect.width / 2);
+    y.set(rect.top + rect.height / 2);
+    width.set(rect.width);
+    height.set(rect.height);
+    lift.set(0);
+    stretch.set(0);
+    gesture = { item, group, rect, id: event.pointerId, key: event.key, startX: event.clientX, startY: event.clientY, dragged: false, target: item };
+    lift.to(1, springs.press);
+    animation.write(0, 0);
+    wake(animation);
 }
 
 document.addEventListener('pointerdown', event => {
-    if (event.isPrimary && event.button === 0) begin(control(event.target), event.pointerId);
+    if (!event.isPrimary || event.button !== 0) return;
+    suppressUntil = 0;
+    const item = findControl(event.target);
+    if (item) begin(item, event);
 }, true);
-window.addEventListener('pointermove', event => {
-    if (!press || event.pointerId !== press.pointerId) return;
-    const { rect, drop } = press;
-    const pull = delta => 6 * Math.tanh(delta / 24);
-    drop.style.translate = pull(event.clientX - rect.left - rect.width / 2) + 'px '
-        + pull(event.clientY - rect.top - rect.height / 2) + 'px';
-}, { passive: true });
-for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
-    window.addEventListener(type, event => { if (press?.pointerId === event.pointerId) release(); }, true);
+
+function nearest(items, px, py) {
+    let best, distance = Infinity;
+    for (const item of items) {
+        if (!item.isConnected || disabled(item)) continue;
+        const box = item.getBoundingClientRect();
+        if (!box.width || !box.height) continue;
+        const d = Math.hypot(Math.max(box.left - px, px - box.right, 0), Math.max(box.top - py, py - box.bottom, 0));
+        if (d < distance) { best = item; distance = d; }
+    }
+    return best;
 }
-document.addEventListener('keydown', event => {
-    if (!event.repeat && (event.key === ' ' || event.key === 'Enter')) begin(control(event.target), undefined, event.key);
+
+window.addEventListener('pointermove', event => {
+    if (!gesture || gesture.id !== event.pointerId) return;
+    const { rect, startX, startY, group } = gesture;
+    const dx = event.clientX - startX, dy = event.clientY - startY;
+    if (!gesture.dragged && Math.hypot(dx, dy) < 7) return;
+    gesture.dragged = true;
+    const items = mounted.get(group)?.items;
+    const target = items && nearest(items, event.clientX, event.clientY);
+    if (target) {
+        gesture.target = target;
+        const bounds = group.getBoundingClientRect();
+        const box = target.getBoundingClientRect();
+        moveTo({
+            left: clamp(rect.left + dx, bounds.left, Math.max(bounds.left, bounds.right - box.width)),
+            top: clamp(rect.top + dy, bounds.top, Math.max(bounds.top, bounds.bottom - box.height)),
+            width: box.width,
+            height: box.height
+        }, springs.track);
+    } else {
+        moveTo({ left: rect.left + 13 * Math.tanh(dx / 30), top: rect.top + 13 * Math.tanh(dy / 30), width: rect.width, height: rect.height }, springs.track);
+    }
+}, { passive: true });
+
+function release(cancelled = false) {
+    if (!gesture) return;
+    const { item, target, group, dragged } = gesture;
+    gesture = null;
+    group?.removeAttribute('data-function-dock-held');
+    if (dragged) suppressUntil = performance.now() + 400;
+    const dest = !cancelled && group ? target : item;
+    if (dest.isConnected) moveTo(dest.getBoundingClientRect(), springs.release);
+    lift.to(0, springs.release);
+    wake(animation);
+    if (!cancelled && dragged && group && target !== item && findControl(target)) {
+        target.focus({ preventScroll: true });
+        target.click();
+    }
+}
+
+window.addEventListener('pointerup', event => {
+    if (gesture?.id === event.pointerId) release();
 }, true);
-document.addEventListener('keyup', event => { if (press?.key === event.key) release(); }, true);
-window.addEventListener('blur', release);
-reduced.addEventListener('change', release);
+window.addEventListener('pointercancel', event => {
+    if (gesture?.id === event.pointerId) release(true);
+}, true);
+window.addEventListener('blur', () => release(true));
+window.addEventListener('scroll', () => release(true), { passive: true, capture: true });
+document.addEventListener('keydown', event => {
+    if (!event.repeat && (event.key === 'Enter' || event.key === ' ')) {
+        const item = findControl(event.target);
+        if (item) begin(item, event);
+    }
+}, true);
+document.addEventListener('keyup', event => {
+    if (gesture?.key === event.key) release();
+}, true);
+document.addEventListener('click', event => {
+    if (event.isTrusted && event.detail > 0 && performance.now() < suppressUntil) {
+        suppressUntil = 0;
+        event.preventDefault();
+        event.stopImmediatePropagation();
+        return;
+    }
+    const item = findControl(event.target);
+    const state = mounted.get(item?.closest('[data-function-dock]'));
+    if (state) { state.last = item; schedule(); }
+}, true);
+for (const preference of [reduce, solid]) preference.addEventListener('change', () => {
+    gesture?.group?.removeAttribute('data-function-dock-held');
+    gesture = null;
+    clearDrop();
+});
