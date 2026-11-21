@@ -11,7 +11,6 @@ body.shop-locations-page {
 }
 body.shop-locations-page,
 body.shop-locations-page :is(h2, p, span, div, input, button, td, th, a, strong) {
-    font-family: Inter, "PingFang SC", "Microsoft YaHei", system-ui, sans-serif !important;
     font-weight: revert !important;
 }
 .shop-locations-page .content { padding: 16px clamp(12px, 3vw, 32px) 28px; }

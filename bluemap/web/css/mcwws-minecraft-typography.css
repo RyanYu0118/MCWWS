@@ -1,0 +1,17 @@
+@font-face {
+    font-family: "MinecraftFont";
+    src: url("../assets/5_Minecraft AE.ttf") format("truetype");
+    font-style: normal;
+    font-weight: normal;
+    font-display: swap;
+    /* The font's multiplication sign is malformed. Use the same fallback as the shop. */
+    unicode-range: U+0000-00D6, U+00D8-10FFFF;
+}
+
+:root {
+    --mcwws-ui-font: "MinecraftFont", "Segoe UI", sans-serif;
+}
+
+html, body, body * {
+    font-family: var(--mcwws-ui-font) !important;
+}

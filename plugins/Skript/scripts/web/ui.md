@@ -13,6 +13,8 @@
 
 ### 当前服务与商店 Dock（优先于下文旧版通用规范）
 
+所有服务界面的文字统一使用 `minecraft-typography.css` 定义的 `MinecraftFont`（`5_Minecraft AE.ttf`），包括主页标题、管理表格、表单和 BlueMap 标注。缺字及 `×` U+00D7 沿用商店系统字体回退。
+
 底部 Dock 与商店顶栏的购物车、刷新共用 `--dock-icon-button-size`（48px）和 `--dock-icon-size`（23px）。滑块静止时正圆。透明边框也会占据尺寸，因此顶栏图标按钮不使用实体边框。
 
 独立按钮使用 `services-dock-slider.js` 的单格模式，原生按钮直接承载滑块。原位、浮起与回弹复用同一个滑块，按需创建折射滤镜。多功能组按原布局共享滑块，形变使用同一个 `dockThumbPose`。
