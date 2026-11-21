@@ -177,6 +177,28 @@ html.mcwws-embedded-shop-root body::after { background: none !important; }
     text-align: center;
 }
 
+@media (prefers-reduced-motion: no-preference) {
+    .shop-workspace-actions button[data-shop-action] {
+        transition: scale 360ms cubic-bezier(.2, 1.5, .45, 1), background-color 180ms ease;
+    }
+    .shop-workspace-actions button > svg {
+        transition: transform 440ms cubic-bezier(.2, 1.4, .4, 1);
+    }
+    .shop-workspace-actions button[data-shop-action]:enabled:is(:hover, :focus-visible) {
+        background-color: #ffffff36;
+    }
+    .shop-workspace-actions [data-shop-action="refresh"]:enabled:is(:hover, :focus-visible) > svg {
+        transform: rotate(35deg);
+    }
+    .shop-workspace-actions [data-shop-action="cart"]:enabled:is(:hover, :focus-visible) > svg {
+        transform: translate(2px, -1px) rotate(-8deg);
+    }
+    .shop-workspace-actions button[data-shop-action]:enabled:active {
+        scale: .88;
+        transition-duration: 100ms;
+    }
+}
+
 body.mcwws-embedded-shop .navbar,
 body.mcwws-embedded-shop .navbar .nav-actions { display: contents !important; }
 body.mcwws-embedded-shop .navbar :is(.nav-brand, .nav-links),
