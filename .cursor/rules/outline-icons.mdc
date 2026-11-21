@@ -1,0 +1,15 @@
+---
+description: 所有新增界面图标沿用用户指定的底部 Dock 简约线条 SVG 风格
+alwaysApply: true
+---
+
+# 图标统一规范
+
+用户指定：以后需要图标，都使用当前底部 Dock 的这一套简约线条风格。
+
+- 基准是 `plugins/Skript/scripts/web/public/home.html` 底部 Dock 的五个内联 SVG；这是项目自绘图标，不是第三方图标库。
+- 使用 `viewBox="0 0 24 24"`、`fill="none"`、`stroke="currentColor"`、`stroke-width="1.7"`，线端和连接均为 `round`；默认显示 23×23px。
+- 保持等线宽、简洁轮廓、克制细节、均衡留白和一致视觉大小；随控件继承黑白自适应颜色。
+- 已有语义优先复用 Dock 原图；新增语义按相同规范绘制 SVG，不混用写实、彩色、立体、emoji 或不同风格的图标。
+- 图标按钮保留可访问名称与必要的悬停提示；纯装饰 SVG 使用 `aria-hidden="true"`。
+- 本条约束今后新增或修改图标，不自动替换业务物品贴图、玩家头像或品牌标志。
