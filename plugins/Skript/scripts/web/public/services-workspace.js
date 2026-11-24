@@ -46,7 +46,7 @@ function styleEmbeddedPanel(panel, name) {
         const style = doc.createElement('link');
         style.id = 'mcwws-embedded-shop-style';
         style.rel = 'stylesheet';
-        style.href = new URL('services-workspace.css?v=10', location.href);
+        style.href = new URL('services-workspace.css?v=17', location.href);
         doc.head.append(style);
     }
     doc.body.classList.add('mcwws-embedded-' + name);
@@ -102,7 +102,7 @@ shopNav.addEventListener('click', event => {
         for (const button of shopActions.querySelectorAll('button')) button.disabled = true;
         const url = new URL(link.href);
         url.searchParams.set('embed', 'workspace-v8');
-        url.searchParams.set('glass', '8');
+        url.searchParams.set('glass', '9');
         shopPanel.src = url.href;
     }
 });

@@ -1,0 +1,25 @@
+/* Direct links share the workspace backdrop. Embedded panels let the workspace paint it. */
+html {
+    background-color: #1d2b26;
+}
+html:not(.mcwws-embedded-shop-root, .mcwws-embedded-map-root, .mcwws-embedded-manage-root) {
+    background-image: linear-gradient(#111b16a8, #101913b8), url("services-world-night.png");
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+}
+html[data-color-scheme="light"]:not(.mcwws-embedded-shop-root, .mcwws-embedded-map-root, .mcwws-embedded-manage-root) {
+    background-color: #e1e8e4;
+    background-image: linear-gradient(#edf2eddf, #edf2edd1), url("services-world-night.png");
+}
+html body,
+html body :is(.hero, .services-hub-hero, .hero-glow, .services-hub-hero-glow) {
+    background: transparent !important;
+}
+html body::before,
+html body::after {
+    background: none !important;
+}
+html:is(.mcwws-embedded-shop-root, .mcwws-embedded-map-root, .mcwws-embedded-manage-root) {
+    background: transparent !important;
+}
