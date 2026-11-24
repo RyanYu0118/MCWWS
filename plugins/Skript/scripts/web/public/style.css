@@ -6,7 +6,7 @@
 /* 引入本地 Minecraft 字体 */
 @font-face {
     font-family: 'MinecraftFont';
-    src: url('5_Minecraft AE.ttf') format('truetype');
+    src: url('minecraft-ae-v1.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     /* × (U+00D7) 在该字体中显示异常，排除后回退到 font-family 中的系统字体 */
@@ -934,7 +934,7 @@ body.mcwws-ledger-open {
 /* 仪表板英雄区：左侧标题 + 右侧 Minecraft 时钟 */
 @font-face {
     font-family: 'MinecraftAE';
-    src: url('5_Minecraft AE.ttf') format('truetype');
+    src: url('minecraft-ae-v1.woff2') format('woff2');
     font-weight: normal;
     font-style: normal;
     unicode-range: U+0000-00D6, U+00D8-10FFFF;

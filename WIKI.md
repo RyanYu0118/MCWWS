@@ -120,6 +120,8 @@ mindmap
 
 本次已完成的光照基线位于 `D:/Minecraft/服务器/BlueMapSurface/baseline-20261119-164745/world`。基线完成不等于网页瓦片已重渲完毕，后者以正式服的地表图渲染状态为准。
 
+手机地图在支持 Service Worker 的环境中会缓存已浏览的瓦片，上限 320 个，每个最多 384 KiB。版本号相同的地表瓦片优先从本机读取；发布新地表瓦片后要更新 `mcwws-tile-route.js` 中的 `SURFACE_TILE_VERSION`，并同时更新 BlueMap HTML 中该脚本的 `v` 参数。离线只可查看已缓存的资源和区域，地图首次打开及未访问过的区域需要网络。
+
 ##### 玩家修改方块后，两张图如何更新
 
 ```mermaid
