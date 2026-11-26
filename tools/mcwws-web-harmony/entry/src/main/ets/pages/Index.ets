@@ -1,8 +1,20 @@
 import { webview } from '@kit.ArkWeb';
-import { uiMaterial } from '@kit.ArkUI';
+import { HdsTabs, HdsTabsController, hdsMaterial } from '@kit.UIDesignKit';
 
 const SERVICE_ORIGIN: string = 'https://mcs.ryanstudio.work';
 const DOCK_CLEARANCE: number = 76;
+
+function serviceTabBar(icon: Resource, title: string): BottomTabBarStyle {
+  return BottomTabBarStyle.of(icon, title)
+    .iconStyle({
+      selectedColor: $r('sys.color.ohos_id_color_activated'),
+      unselectedColor: $r('sys.color.font_primary')
+    })
+    .labelStyle({
+      selectedColor: $r('sys.color.ohos_id_color_activated'),
+      unselectedColor: $r('sys.color.font_primary')
+    });
+}
 
 @Component
 struct ServiceWeb {
@@ -72,7 +84,7 @@ struct ServiceWeb {
 @Entry
 @Component
 struct Index {
-  private tabs: TabsController = new TabsController();
+  private tabs: HdsTabsController = new HdsTabsController();
   private shop: webview.WebviewController = new webview.WebviewController();
   private map: webview.WebviewController = new webview.WebviewController();
   private manage: webview.WebviewController = new webview.WebviewController();
@@ -121,7 +133,7 @@ struct Index {
         .height('100%')
         .linearGradient({
           direction: GradientDirection.Bottom,
-          colors: [['#AA081210', 0], ['#18081210', 0.55], ['#87081210', 1]]
+          colors: [['#AA081210', 0], ['#18081210', 0.55], ['#18081210', 1]]
         })
         .hitTestBehavior(HitTestMode.None)
 
@@ -148,36 +160,36 @@ struct Index {
   }
 
   build() {
-    Tabs({ controller: this.tabs, barPosition: BarPosition.End }) {
+    HdsTabs({ controller: this.tabs }) {
       TabContent() {
         this.home()
-      }.tabBar(BottomTabBarStyle.of($r('app.media.nav_home'), '主页'))
+      }.tabBar(serviceTabBar($r('app.media.nav_home'), '主页'))
       TabContent() {
         ServiceWeb({ path: '/items.html', controller: this.shop })
-      }.tabBar(BottomTabBarStyle.of($r('app.media.nav_shop'), '商店'))
+      }.tabBar(serviceTabBar($r('app.media.nav_shop'), '商店'))
       TabContent() {
         ServiceWeb({ path: '/map.html', controller: this.map })
-      }.tabBar(BottomTabBarStyle.of($r('app.media.nav_map'), '地图'))
+      }.tabBar(serviceTabBar($r('app.media.nav_map'), '地图'))
       TabContent() {
         ServiceWeb({ path: '/manage/shop-locations.html', controller: this.manage })
-      }.tabBar(BottomTabBarStyle.of($r('app.media.nav_manage'), '管理'))
+      }.tabBar(serviceTabBar($r('app.media.nav_manage'), '管理'))
       TabContent() {
         ServiceWeb({ path: '/ledger.html', controller: this.account })
-      }.tabBar(BottomTabBarStyle.of($r('app.media.nav_account'), '账户'))
+      }.tabBar(serviceTabBar($r('app.media.nav_account'), '账户'))
     }
     .width('100%')
     .height('100%')
-    .backgroundColor('#1D2B26')
+    .backgroundColor($r('sys.color.comp_background_primary'))
     .scrollable(false)
     .animationDuration(320)
+    .barPosition(BarPosition.End)
     .barOverlap(true)
     .barFloatingStyle({
       adaptToHandedness: true,
-      systemMaterial: new uiMaterial.ImmersiveMaterial({
-        style: uiMaterial.ImmersiveStyle.THIN,
-        applyShadow: true,
-        interactive: true
-      })
+      systemMaterialEffect: {
+        materialType: hdsMaterial.MaterialType.ADAPTIVE,
+        materialLevel: hdsMaterial.MaterialLevel.ADAPTIVE
+      }
     })
     .onChange(index => {
       this.selectedTab = index;
