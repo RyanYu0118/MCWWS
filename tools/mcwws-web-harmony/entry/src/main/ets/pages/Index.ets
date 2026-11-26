@@ -1,7 +1,13 @@
-import { webview } from '@kit.ArkWeb';
 import { HdsTabs, HdsTabsController, hdsMaterial } from '@kit.UIDesignKit';
 
-const SERVICE_ORIGIN: string = 'https://mcs.ryanstudio.work';
+import { AccountPage } from './AccountPage';
+import { ManagePage } from './ManagePage';
+import { MapPage } from './MapPage';
+import { ShopPage } from './ShopPage';
+import { CART, SESSION } from '../services/Api';
+
+PersistentStorage.persistProp(SESSION, '');
+PersistentStorage.persistProp(CART, '[]');
 const DOCK_CLEARANCE: number = 76;
 
 function serviceTabBar(icon: Resource, title: string): BottomTabBarStyle {
@@ -16,104 +22,16 @@ function serviceTabBar(icon: Resource, title: string): BottomTabBarStyle {
     });
 }
 
-@Component
-struct ServiceWeb {
-  @Prop path: string = '';
-  controller: webview.WebviewController = new webview.WebviewController();
-  @State progress: number = 0;
-  @State failed: boolean = false;
-
-  build() {
-    Stack({ alignContent: Alignment.Top }) {
-      Web({ src: SERVICE_ORIGIN + this.path, controller: this.controller })
-        .width('100%')
-        .height('100%')
-        .javaScriptAccess(true)
-        .domStorageAccess(true)
-        .fileAccess(false)
-        .cacheMode(CacheMode.Default)
-        .backgroundColor('#1D2B26')
-        .onPageBegin(() => {
-          this.progress = 0;
-          this.failed = false;
-        })
-        .onProgressChange(event => {
-          if (event) {
-            this.progress = event.newProgress;
-          }
-        })
-        .onErrorReceive(event => {
-          if (event?.request.isMainFrame()) {
-            this.failed = true;
-          }
-        })
-
-      if (this.failed) {
-        Column({ space: 14 }) {
-          Text('页面无法加载')
-            .fontSize(22)
-            .fontWeight(FontWeight.Medium)
-            .fontColor($r('sys.color.font_primary'))
-          Text('请检查网络连接后重试。')
-            .fontSize(14)
-            .fontColor($r('sys.color.font_secondary'))
-          Button('重新加载')
-            .onClick(() => {
-              this.failed = false;
-              this.progress = 0;
-              this.controller.refresh();
-            })
-        }
-        .width('100%')
-        .height('100%')
-        .justifyContent(FlexAlign.Center)
-        .backgroundColor($r('sys.color.comp_background_primary'))
-      } else if (this.progress < 100) {
-        Progress({ value: this.progress, total: 100, type: ProgressType.Linear })
-          .width('100%')
-          .style({ strokeWidth: 2 })
-          .hitTestBehavior(HitTestMode.None)
-      }
-    }
-    .width('100%')
-    .height('100%')
-    .padding({ bottom: DOCK_CLEARANCE })
-  }
-}
-
 @Entry
 @Component
 struct Index {
   private tabs: HdsTabsController = new HdsTabsController();
-  private shop: webview.WebviewController = new webview.WebviewController();
-  private map: webview.WebviewController = new webview.WebviewController();
-  private manage: webview.WebviewController = new webview.WebviewController();
-  private account: webview.WebviewController = new webview.WebviewController();
   @State selectedTab: number = 0;
+  @State mapTarget: string = '';
 
   onBackPressed(): boolean {
-    switch (this.selectedTab) {
-      case 1:
-        return this.webBack(this.shop);
-      case 2:
-        return this.webBack(this.map);
-      case 3:
-        return this.webBack(this.manage);
-      case 4:
-        return this.webBack(this.account);
-      default:
-        return false;
-    }
-  }
-
-  private webBack(controller: webview.WebviewController): boolean {
-    try {
-      if (controller.accessBackward()) {
-        controller.backward();
-        return true;
-      }
-    } catch {
-      // The Web component may still be attaching its controller.
+    if (this.selectedTab === 0) {
+      return false;
     }
     this.tabs.changeIndex(0);
     return true;
@@ -165,16 +83,22 @@ struct Index {
         this.home()
       }.tabBar(serviceTabBar($r('app.media.nav_home'), '主页'))
       TabContent() {
-        ServiceWeb({ path: '/items.html', controller: this.shop })
+        ShopPage({ onAccount: () => this.tabs.changeIndex(4) })
       }.tabBar(serviceTabBar($r('app.media.nav_shop'), '商店'))
       TabContent() {
-        ServiceWeb({ path: '/map.html', controller: this.map })
+        MapPage({ target: this.mapTarget, onAccount: () => this.tabs.changeIndex(4) })
       }.tabBar(serviceTabBar($r('app.media.nav_map'), '地图'))
       TabContent() {
-        ServiceWeb({ path: '/manage/shop-locations.html', controller: this.manage })
+        ManagePage({
+          onAccount: () => this.tabs.changeIndex(4),
+          onMap: (url: string) => {
+            this.mapTarget = url;
+            this.tabs.changeIndex(2);
+          }
+        })
       }.tabBar(serviceTabBar($r('app.media.nav_manage'), '管理'))
       TabContent() {
-        ServiceWeb({ path: '/ledger.html', controller: this.account })
+        AccountPage()
       }.tabBar(serviceTabBar($r('app.media.nav_account'), '账户'))
     }
     .width('100%')
