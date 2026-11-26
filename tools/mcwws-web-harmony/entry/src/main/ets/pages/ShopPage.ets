@@ -137,6 +137,7 @@ struct PriceChart {
 
 @Component
 export struct ShopPage {
+  @Prop @Watch('mapSearchChanged') mapSearch: string = '';
   @StorageLink(SESSION) @Watch('sessionChanged') token: string = '';
   @StorageLink(CART) savedCart: string = '[]';
   @State query: string = '';
@@ -175,6 +176,7 @@ export struct ShopPage {
   private detailGeneration: number = 0;
 
   aboutToAppear(): void {
+    this.mapSearchChanged();
     try {
       const restored = JSON.parse(this.savedCart) as BasketLine[];
       if (Array.isArray(restored)) {
@@ -184,6 +186,13 @@ export struct ShopPage {
       this.savedCart = '[]';
     }
     void this.reload();
+  }
+
+  mapSearchChanged(): void {
+    if (!this.mapSearch) return;
+    this.query = this.mapSearch;
+    this.categoryIndex = 0;
+    this.filter();
   }
 
   aboutToDisappear(): void {

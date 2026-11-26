@@ -1,4 +1,4 @@
-import { HdsTabs, HdsTabsController, hdsMaterial } from '@kit.UIDesignKit';
+import { HdsAnimationMode, HdsTabs, HdsTabsController, hdsMaterial } from '@kit.UIDesignKit';
 
 import { AccountPage } from './AccountPage';
 import { ManagePage } from './ManagePage';
@@ -28,13 +28,28 @@ struct Index {
   private tabs: HdsTabsController = new HdsTabsController();
   @State selectedTab: number = 0;
   @State mapTarget: string = '';
+  @State shopSearch: string = '';
+  @State mapFullScreen: boolean = false;
 
   onBackPressed(): boolean {
+    if (this.mapFullScreen) {
+      this.toggleMapFullScreen();
+      return true;
+    }
     if (this.selectedTab === 0) {
       return false;
     }
     this.tabs.changeIndex(0);
     return true;
+  }
+
+  private toggleMapFullScreen(): void {
+    this.mapFullScreen = !this.mapFullScreen;
+    if (this.mapFullScreen) {
+      this.tabs.applyHideAnimation(HdsAnimationMode.CLICK_ANIMATION);
+    } else {
+      this.tabs.applyShowAnimation(HdsAnimationMode.CLICK_ANIMATION);
+    }
   }
 
   @Builder
@@ -83,10 +98,18 @@ struct Index {
         this.home()
       }.tabBar(serviceTabBar($r('app.media.nav_home'), '主页'))
       TabContent() {
-        ShopPage({ onAccount: () => this.tabs.changeIndex(4) })
+        ShopPage({ mapSearch: this.shopSearch, onAccount: () => this.tabs.changeIndex(4) })
       }.tabBar(serviceTabBar($r('app.media.nav_shop'), '商店'))
       TabContent() {
-        MapPage({ target: this.mapTarget, onAccount: () => this.tabs.changeIndex(4) })
+        MapPage({
+          target: this.mapTarget, active: this.selectedTab === 2, clean: this.mapFullScreen,
+          onToggleClean: () => this.toggleMapFullScreen(),
+          onAccount: () => this.tabs.changeIndex(4),
+          onShopSearch: (label: string) => {
+            this.shopSearch = label;
+            this.tabs.changeIndex(1);
+          }
+        })
       }.tabBar(serviceTabBar($r('app.media.nav_map'), '地图'))
       TabContent() {
         ManagePage({
@@ -103,7 +126,7 @@ struct Index {
     }
     .width('100%')
     .height('100%')
-    .backgroundColor($r('sys.color.comp_background_primary'))
+    .backgroundColor(this.selectedTab === 2 ? '#171719' : $r('sys.color.comp_background_primary'))
     .scrollable(false)
     .animationDuration(320)
     .barPosition(BarPosition.End)
