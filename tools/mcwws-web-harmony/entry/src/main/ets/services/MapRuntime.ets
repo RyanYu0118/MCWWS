@@ -24,7 +24,7 @@ export const MAP_RUNTIME: string = `
   const q = selector => document.querySelector(selector);
   const control = name => q('.mcwws-ctrl-' + name);
   const tilt = name => control(name)?.classList;
-  const allowedControls = new Set(['zoom-in','zoom-out','mode','compass','daynight','night-vision','fly','locate']);
+  const allowedControls = new Set(['mode','compass','daynight','night-vision','fly','locate']);
   const switches = {
     'info-toggle':'infoEnabled', 'show-road-names':'roadNames', 'show-building-names':'buildingNames',
     'render-above-320':'above320', 'show-residence-bounds':'residenceBounds'

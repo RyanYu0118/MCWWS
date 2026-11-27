@@ -97,6 +97,7 @@ struct MapAction {
     .width(46).height(46)
     .mapGlass()
     .borderColor(this.selected ? INK : EDGE)
+    .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
     .accessibilityText(this.label)
     .enabled(this.available)
     .onClick(() => this.onAction())
@@ -137,6 +138,7 @@ export struct MapPage {
   private watchTimer: number = -1;
   private sequence: number = 0;
   private syncedToken: string = '';
+  private lightLockPending: boolean = false;
 
   aboutToDisappear(): void {
     clearTimeout(this.watchTimer);
@@ -213,11 +215,11 @@ export struct MapPage {
   }
 
   private async action(name: string): Promise<void> {
-    if (!this.view.ready) return;
+    if (!this.view.ready || (name === 'daynight' && (this.lightLockPending || this.view.locked))) return;
     try {
       const ok = await this.script('click', name);
       if (ok === true) {
-        if (name !== 'zoom-in' && name !== 'zoom-out') this.refreshState();
+        this.refreshState(name === 'night-vision' ? 0 : 360);
         return;
       }
     } catch {
@@ -227,10 +229,19 @@ export struct MapPage {
   }
 
   private async lockLight(): Promise<void> {
+    if (!this.view.ready || this.lightLockPending) return;
+    this.lightLockPending = true;
     try {
-      if (await this.script('dayLock') === true) this.refreshState(860);
+      if (await this.script('dayLock') !== true) {
+        this.toast('无法切换光照锁定');
+        return;
+      }
+      await this.delay(860);
+      await this.readState();
     } catch {
       this.toast('无法切换光照锁定');
+    } finally {
+      this.lightLockPending = false;
     }
   }
 
@@ -671,7 +682,24 @@ export struct MapPage {
   flyingKey(label: string, key: string) {
     Button(label)
       .width(44).height(42).fontColor(INK).mapGlass()
+      .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
       .onClick(() => this.sendFlightKey(key, true))
+  }
+
+  @Builder
+  dayNightControl() {
+    Button({ type: ButtonType.Circle }) {
+      Image(this.view.locked ? $r('app.media.map_light_lock') :
+        this.view.night ? $r('app.media.map_moon') : $r('app.media.map_sun'))
+        .width(21).height(21).accessibilityLevel('no')
+    }
+    .width(46).height(46).mapGlass()
+    .borderColor(this.view.locked ? INK : EDGE)
+    .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
+    .accessibilityText(this.view.locked ? '已锁定光照，长按解锁' :
+      (this.view.night ? '切换日景' : '切换夜景') + '，长按锁定当前光照')
+    .onClick(() => void this.action('daynight'))
+    .priorityGesture(LongPressGesture({ duration: 600 }).onAction(() => void this.lockLight()))
   }
 
   @Builder
@@ -694,6 +722,7 @@ export struct MapPage {
         }.width('100%').padding({ left: 13, right: 12 })
       }
       .width('100%').height(45).mapGlass()
+      .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
       .accessibilityText('搜索地图').onClick(() => this.openSheet('search'))
       if (this.progress < 100) {
         Progress({ value: this.progress, total: 100, type: ProgressType.Linear }).style({ strokeWidth: 2 })
@@ -738,8 +767,9 @@ export struct MapPage {
             Column({ space: 8 }) {
               MapAction({ label: '复位朝北', icon: $r('app.media.map_north'), onAction: () => void this.action('compass') })
               MapAction({ label: '切换地图视角', symbol: this.view.mode, onAction: () => void this.action('mode') })
-              MapAction({ label: '放大', icon: $r('app.media.map_plus'), onAction: () => void this.action('zoom-in') })
-              MapAction({ label: '缩小', icon: $r('app.media.map_minus'), onAction: () => void this.action('zoom-out') })
+              this.dayNightControl()
+              MapAction({ label: this.view.nightVision ? '关闭夜视' : '开启夜视', icon: $r('app.media.map_night_vision'),
+                selected: this.view.nightVision, onAction: () => void this.action('night-vision') })
               MapAction({ label: '定位玩家', icon: $r('app.media.map_locate'), selected: this.view.following,
                 onAction: () => void this.playerAction(false) })
               MapAction({ label: '全屏地图', icon: $r('app.media.map_fullscreen'), onAction: this.onToggleClean })
