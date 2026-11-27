@@ -12,12 +12,12 @@ export const MAP_RUNTIME: string = `
     'body.mcwws-mobile:not(.mcwws-mobile-editor) #mcwws-mobile-sheet-backdrop{display:none!important}',
     'body.mcwws-mobile-editor #mcwws-gis-layer-dialog{color-scheme:dark;background:#171719;color:#f4f4f5}',
     'body.mcwws-mobile-editor #mcwws-gis-layer-dialog :is(input,select,textarea){color-scheme:dark}',
-    'body.mcwws-mobile .mcwws-screen-pin{font-family:system-ui,sans-serif;background:#202022eb!important;',
-    'border:1px solid #ffffff44!important;color:#fafafc!important}',
+    'body.mcwws-mobile .mcwws-screen-pin{font-family:system-ui,sans-serif;background:#84919a65!important;',
+    'border:1px solid #ffffff70!important;color:#fff!important;text-shadow:0 1px 3px #18212b}',
     'body.mcwws-mobile .mcwws-screen-pin-icon{background:none!important;color:transparent!important;',
     'position:relative;width:18px;height:18px}',
     'body.mcwws-mobile .mcwws-screen-pin-icon:before{content:"";position:absolute;inset:5px;',
-    'border:1.5px solid #fafafc;border-radius:50%}'
+    'border:1.5px solid #fff;border-radius:50%}'
   ].join('');
   document.head.append(style);
   document.body.classList.add('mcwws-mobile');

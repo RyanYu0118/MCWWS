@@ -61,14 +61,21 @@ class MapEvents {
 
 const MAP_URL: string = MAP_ORIGIN + '/';
 const PANEL: string = '#171719';
-const SURFACE: string = '#EA202022';
-const EDGE: string = '#4AFFFFFF';
-const INK: string = '#FAFAFC';
-const FADED: string = '#C2C2CB';
+const GLASS_TINT: string = '#2AFFFFFF';
+const EDGE: string = '#70FFFFFF';
+const INK: string = '#FFFFFF';
+const FADED: string = '#E8FFFFFF';
 const INITIAL_STATE: MapState = {
   ready: false, map: 'world', mode: '3D', night: false, locked: false, nightVision: false,
   following: false, canFly: false, editor: false, hash: ''
 };
+
+@Styles
+function mapGlass() {
+  .backgroundColor(Color.Transparent)
+  .backgroundEffect({ radius: 20, saturation: 0.85, brightness: 0.76, color: GLASS_TINT })
+  .border({ width: 0.75, color: EDGE })
+}
 
 @Component
 struct MapAction {
@@ -88,8 +95,8 @@ struct MapAction {
       }
     }
     .width(46).height(46)
-    .backgroundColor(this.selected ? '#535356' : SURFACE)
-    .border({ width: 0.75, color: EDGE })
+    .mapGlass()
+    .borderColor(this.selected ? INK : EDGE)
     .accessibilityText(this.label)
     .enabled(this.available)
     .onClick(() => this.onAction())
@@ -489,7 +496,7 @@ export struct MapPage {
         Text('›').fontSize(22).fontColor(FADED)
       }.width('100%')
     }
-    .width('100%').padding(13).borderRadius(16).backgroundColor('#262629')
+    .width('100%').padding(13).borderRadius(16).backgroundColor(GLASS_TINT)
     .enabled(available)
     .onClick(handler)
   }
@@ -501,14 +508,14 @@ export struct MapPage {
       Toggle({ type: ToggleType.Switch, isOn: state })
         .enabled(enabled && this.layer !== null && !this.layerBusy)
         .onChange(value => void this.updateLayer('layerSet', name, value))
-    }.width('100%').padding(12).backgroundColor('#262629').borderRadius(15)
+    }.width('100%').padding(12).backgroundColor(GLASS_TINT).borderRadius(15)
   }
 
   @Builder
   searchBox() {
     Search({ value: this.query, placeholder: '商店、物品或 X Y Z' })
       .width('100%').height(48).fontColor(INK).placeholderColor(FADED)
-      .backgroundColor('#29292C')
+      .backgroundColor(GLASS_TINT)
       .searchIcon({ color: FADED })
       .onChange(value => this.query = value)
       .onSubmit(value => this.coordinates(value))
@@ -610,7 +617,7 @@ export struct MapPage {
           Text('夜视').fontSize(16).fontColor(INK).layoutWeight(1)
           Toggle({ type: ToggleType.Switch, isOn: this.view.nightVision })
             .onChange(() => void this.action('night-vision'))
-        }.width('100%').padding(12).backgroundColor('#262629').borderRadius(15)
+        }.width('100%').padding(12).backgroundColor(GLASS_TINT).borderRadius(15)
         this.rowAction('定位玩家', '查看当前位置或最后离线位置', () => void this.playerAction(false))
         this.rowAction(this.view.following ? '停止跟随' : '跟随玩家', '', () => void this.playerAction(true))
         this.rowAction('复制当前位置链接', '', () => void this.copyPosition())
@@ -663,7 +670,7 @@ export struct MapPage {
   @Builder
   flyingKey(label: string, key: string) {
     Button(label)
-      .width(44).height(42).fontColor(INK).backgroundColor(SURFACE)
+      .width(44).height(42).fontColor(INK).mapGlass()
       .onClick(() => this.sendFlightKey(key, true))
   }
 
@@ -682,19 +689,18 @@ export struct MapPage {
       }.width('100%')
       Button({ type: ButtonType.Capsule }) {
         Row({ space: 9 }) {
-          Image($r('app.media.map_search')).width(17).height(17).opacity(0.82).accessibilityLevel('no')
-          Text('搜索商店、物品或坐标').fontSize(15).fontColor(FADED).layoutWeight(1)
+          Image($r('app.media.map_search')).width(17).height(17).accessibilityLevel('no')
+          Text('搜索商店、物品或坐标').fontSize(15).fontColor(INK).layoutWeight(1)
         }.width('100%').padding({ left: 13, right: 12 })
       }
-      .width('100%').height(45).backgroundColor(SURFACE)
-      .border({ width: 0.75, color: EDGE })
+      .width('100%').height(45).mapGlass()
       .accessibilityText('搜索地图').onClick(() => this.openSheet('search'))
       if (this.progress < 100) {
         Progress({ value: this.progress, total: 100, type: ProgressType.Linear }).style({ strokeWidth: 2 })
       }
     }.width('100%').padding({ left: 16, right: 16, top: 12, bottom: 9 })
       .linearGradient({ direction: GradientDirection.Bottom,
-        colors: [['#E6161618', 0], ['#AD161618', 0.76], [Color.Transparent, 1]] })
+        colors: [['#53161820', 0], ['#27161820', 0.70], [Color.Transparent, 1]] })
       .hitTestBehavior(HitTestMode.Transparent)
   }
 
@@ -742,13 +748,16 @@ export struct MapPage {
             .alignItems(VerticalAlign.Bottom).hitTestBehavior(HitTestMode.Transparent)
         }
       }
-    }.width('100%').height('100%').hitTestBehavior(HitTestMode.Transparent)
+    }.width('100%').height('100%')
+      .padding({ bottom: this.clean ? 0 : BOTTOM_INSET })
+      .hitTestBehavior(HitTestMode.Transparent)
   }
 
   build() {
     Stack({ alignContent: Alignment.Top }) {
       Web({ src: MAP_URL, controller: this.controller })
         .width('100%').height('100%')
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
         .javaScriptAccess(true).domStorageAccess(true).fileAccess(false)
         .cacheMode(CacheMode.Default)
         .javaScriptProxy({ object: this.events, name: 'MCWWSNativeMap', methodList: ['marker'],
@@ -778,7 +787,7 @@ export struct MapPage {
         Column({ space: 12 }) {
           Text('地图无法连接').fontSize(22).fontColor(INK).fontWeight(FontWeight.Medium)
           Text('请检查网络后重试').fontSize(14).fontColor(FADED)
-          Button('重新加载').onClick(() => this.controller.refresh())
+          Button('重新加载').fontColor(INK).mapGlass().onClick(() => this.controller.refresh())
           Button('查看商店标记', { buttonStyle: ButtonStyleMode.TEXTUAL }).fontColor(INK)
             .onClick(() => this.openSheet('search'))
         }.width('100%').height('100%').justifyContent(FlexAlign.Center).backgroundColor(PANEL)
@@ -786,7 +795,8 @@ export struct MapPage {
         this.controls()
       }
     }
-    .width('100%').height('100%').padding({ bottom: this.clean ? 0 : BOTTOM_INSET })
+    .width('100%').height('100%')
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     .backgroundColor(PANEL)
     .bindSheet($$this.sheetOpen, this.sheetContent(), { height: SheetSize.LARGE, dragBar: true,
       showClose: true, backgroundColor: PANEL })

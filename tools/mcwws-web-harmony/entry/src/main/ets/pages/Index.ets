@@ -110,7 +110,10 @@ struct Index {
             this.tabs.changeIndex(1);
           }
         })
-      }.tabBar(serviceTabBar($r('app.media.nav_map'), '地图'))
+      }
+      .clip(false)
+      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+      .tabBar(serviceTabBar($r('app.media.nav_map'), '地图'))
       TabContent() {
         ManagePage({
           onAccount: () => this.tabs.changeIndex(4),
@@ -126,6 +129,7 @@ struct Index {
     }
     .width('100%')
     .height('100%')
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     .backgroundColor(this.selectedTab === 2 ? '#171719' : $r('sys.color.comp_background_primary'))
     .scrollable(false)
     .animationDuration(320)
