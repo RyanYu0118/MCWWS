@@ -48,3 +48,5 @@ export struct LoadState {
 }
 
 export const BOTTOM_INSET: number = 76;
+export const SERVICE_CARD_COLOR: string = '#84212D27';
+export const SERVICE_SHEET_COLOR: string = '#EF202C26';

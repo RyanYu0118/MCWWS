@@ -1,5 +1,5 @@
 import { ApiError, dateText, errorMessage, money, ORIGIN, request, SESSION } from '../services/Api';
-import { BOTTOM_INSET, LoadState, ScreenHeader } from '../components/NativeUi';
+import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR } from '../components/NativeUi';
 
 interface AuthResult {
   username: string;
@@ -9,7 +9,7 @@ interface AuthResult {
 interface Economy {
   balanceFormatted?: string;
   balance: number | null;
-  playHours: number;
+  playHours?: number | null;
   role: string;
   online: boolean;
   warningProgress?: number;
@@ -144,6 +144,13 @@ export struct AccountPage {
     }
   }
 
+  private playTimeLabel(): string {
+    const hours = this.economy?.playHours;
+    if (!this.economy) return '';
+    return typeof hours === 'number' && Number.isFinite(hours) ? '游戏时长 ' + hours.toFixed(1) + ' 小时' :
+      '游戏时长 —';
+  }
+
   @Builder
   login() {
     Column({ space: 14 }) {
@@ -203,14 +210,14 @@ export struct AccountPage {
         }.alignItems(HorizontalAlign.Start).layoutWeight(1)
         Column({ space: 5 }) {
           Text(this.economy?.role || '').fontSize(14)
-          Text(this.economy ? '游戏时长 ' + this.economy.playHours.toFixed(1) + ' 小时' : '')
+          Text(this.playTimeLabel())
             .fontColor($r('sys.color.font_secondary')).fontSize(12)
         }.alignItems(HorizontalAlign.End)
       }
     }
     .padding(16)
     .borderRadius(20)
-    .backgroundColor($r('sys.color.comp_background_primary'))
+    .backgroundColor(SERVICE_CARD_COLOR)
   }
 
   @Builder
@@ -220,6 +227,7 @@ export struct AccountPage {
         Text('零钱明细').fontSize(19).fontWeight(FontWeight.Medium).layoutWeight(1)
         Select([{ value: '排除飞行' }, { value: '全部' }, { value: '仅飞行' }])
           .selected(this.filterIndex)
+          .value(['排除飞行', '全部', '仅飞行'][this.filterIndex])
           .onSelect(index => {
             this.filterIndex = index;
             this.filter = ['exclude_flight', 'all', 'flight'][index];
@@ -242,13 +250,21 @@ export struct AccountPage {
 
   build() {
     Column() {
-      ScreenHeader({ title: '账户', caption: this.token ? '' : '使用流浪世界服务账户登录' })
       if (!this.token) {
-        Scroll() { this.login() }
+        Scroll() {
+          Column() {
+            ScreenHeader({ title: '账户', caption: '使用流浪世界服务账户登录' })
+            this.login()
+          }.width('100%')
+        }
           .layoutWeight(1)
           .width('100%')
+          .contentEndOffset(BOTTOM_INSET)
+          .clipContent(ContentClipMode.SAFE_AREA)
+          .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
       } else {
         List({ space: 10 }) {
+          ListItem() { ScreenHeader({ title: '账户' }) }
           ListItem() { this.profileCard() }
           ListItem() { this.ledgerHeader() }
           if (this.error || !this.ledger?.entries?.length) {
@@ -276,7 +292,7 @@ export struct AccountPage {
                   Text(entry.balanceAfterFormatted || '—').fontSize(12)
                     .fontColor($r('sys.color.font_secondary'))
                 }.alignItems(HorizontalAlign.End)
-              }.padding(14).borderRadius(16).backgroundColor($r('sys.color.comp_background_primary'))
+              }.padding(14).borderRadius(16).backgroundColor(SERVICE_CARD_COLOR)
             }
           }, (entry: LedgerEntry) => entry.id)
         }
@@ -284,8 +300,12 @@ export struct AccountPage {
         .width('100%')
         .layoutWeight(1)
         .cachedCount(4)
+        .contentEndOffset(BOTTOM_INSET)
+        .clipContent(ContentClipMode.SAFE_AREA)
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
       }
     }
-    .width('100%').height('100%').padding({ bottom: BOTTOM_INSET })
+    .width('100%').height('100%')
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
   }
 }

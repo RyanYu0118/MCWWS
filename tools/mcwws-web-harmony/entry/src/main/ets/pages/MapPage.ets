@@ -757,6 +757,8 @@ export struct MapPage {
     Stack({ alignContent: Alignment.Top }) {
       Web({ src: MAP_URL, controller: this.controller })
         .width('100%').height('100%')
+        .backgroundColor(Color.Transparent)
+        .visibility(this.failed ? Visibility.Hidden : Visibility.Visible)
         .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
         .javaScriptAccess(true).domStorageAccess(true).fileAccess(false)
         .cacheMode(CacheMode.Default)
@@ -790,14 +792,13 @@ export struct MapPage {
           Button('重新加载').fontColor(INK).mapGlass().onClick(() => this.controller.refresh())
           Button('查看商店标记', { buttonStyle: ButtonStyleMode.TEXTUAL }).fontColor(INK)
             .onClick(() => this.openSheet('search'))
-        }.width('100%').height('100%').justifyContent(FlexAlign.Center).backgroundColor(PANEL)
+        }.width('100%').height('100%').justifyContent(FlexAlign.Center)
       } else {
         this.controls()
       }
     }
     .width('100%').height('100%')
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
-    .backgroundColor(PANEL)
     .bindSheet($$this.sheetOpen, this.sheetContent(), { height: SheetSize.LARGE, dragBar: true,
       showClose: true, backgroundColor: PANEL })
   }

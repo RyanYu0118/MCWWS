@@ -1,5 +1,5 @@
 import { CART, dateText, errorMessage, ListSource, money, request, SESSION } from '../services/Api';
-import { BOTTOM_INSET, LoadState, ScreenHeader } from '../components/NativeUi';
+import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR, SERVICE_SHEET_COLOR } from '../components/NativeUi';
 
 interface Offer {
   shopId: string;
@@ -405,7 +405,10 @@ export struct ShopPage {
         if (this.activeOffers.length > 0) {
           Select(this.activeOffers.map((offer): SelectOption =>
             ({ value: offer.shopTitleResolved || offer.shopTitle || offer.shopId })))
-            .selected(this.offerIndex).onSelect(index => this.offerIndex = index).width('100%')
+            .selected(this.offerIndex)
+            .value(this.activeOffers[this.offerIndex]?.shopTitleResolved ||
+              this.activeOffers[this.offerIndex]?.shopTitle || this.activeOffers[this.offerIndex]?.shopId || '选择商店')
+            .onSelect(index => this.offerIndex = index).width('100%')
           Text('上架单价 ' + money(this.activeOffers[this.offerIndex]?.buyAmountResolved)).width('100%')
           Row({ space: 12 }) {
             Text('数量').layoutWeight(1)
@@ -531,7 +534,7 @@ export struct ShopPage {
               Text(order.failureReason).fontSize(13)
             }
           }.alignItems(HorizontalAlign.Start).width('100%').padding(14)
-            .borderRadius(16).backgroundColor($r('sys.color.comp_background_primary'))
+            .borderRadius(16).backgroundColor(SERVICE_CARD_COLOR)
         }
       }, (order: Order) => order.orderId.toString())
     }.width('100%').padding({ top: 12, left: 16, right: 16 })
@@ -576,7 +579,8 @@ export struct ShopPage {
     }
   }
 
-  build() {
+  @Builder
+  catalogHeader() {
     Column() {
       ScreenHeader({ title: '商店', caption: this.resultCount + ' 件物品' })
       Search({ placeholder: '搜索物品名称或 ID', value: this.query })
@@ -589,6 +593,7 @@ export struct ShopPage {
       Row({ space: 4 }) {
         Select(this.categories.map((category): SelectOption => ({ value: category.name })))
           .selected(this.categoryIndex)
+          .value(this.categories[this.categoryIndex]?.name || '全部物品')
           .onSelect(index => {
             this.categoryIndex = index;
             this.filter();
@@ -605,7 +610,13 @@ export struct ShopPage {
         LoadState({ loading: this.loading, message: this.error || '没有匹配的物品',
           actionLabel: this.error ? '重试' : '', onAction: () => void this.reload() })
       }
+    }.width('100%')
+  }
+
+  build() {
+    Column() {
       List({ space: 8 }) {
+        ListItem() { this.catalogHeader() }
         LazyForEach(this.filtered, (product: Product) => {
           ListItem() {
             Row({ space: 12 }) {
@@ -618,12 +629,18 @@ export struct ShopPage {
                 Text('买 ' + money(product.price.buy)).fontSize(14)
                 Text('卖 ' + money(product.price.sell)).fontSize(12).fontColor($r('sys.color.font_secondary'))
               }.alignItems(HorizontalAlign.End)
-            }.width('100%').padding(14).borderRadius(16).backgroundColor($r('sys.color.comp_background_primary'))
-          }.onClick(() => void this.showProduct(product))
+            }.width('100%').padding(14).borderRadius(16).backgroundColor(SERVICE_CARD_COLOR)
+          }.padding({ left: 16, right: 16 }).onClick(() => void this.showProduct(product))
         }, (product: Product) => product.id)
-      }.width('100%').layoutWeight(1).padding({ left: 16, right: 16 }).cachedCount(5)
+      }.width('100%').layoutWeight(1).cachedCount(5)
+        .contentEndOffset(BOTTOM_INSET)
+        .clipContent(ContentClipMode.SAFE_AREA)
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     }
-    .width('100%').height('100%').padding({ bottom: BOTTOM_INSET })
-    .bindSheet($$this.sheetOpen, this.sheetContent(), { height: SheetSize.LARGE, dragBar: true, showClose: true })
+    .width('100%').height('100%')
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .bindSheet($$this.sheetOpen, this.sheetContent(), {
+      height: SheetSize.LARGE, dragBar: true, showClose: true, backgroundColor: SERVICE_SHEET_COLOR
+    })
   }
 }

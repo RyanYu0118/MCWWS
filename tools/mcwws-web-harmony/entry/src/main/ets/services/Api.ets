@@ -56,7 +56,7 @@ export function errorMessage(error: Error): string {
 }
 
 export function money(amount: number | null | undefined): string {
-  return amount === null || amount === undefined ? '—' : '￥' + amount.toFixed(2);
+  return typeof amount === 'number' && Number.isFinite(amount) ? '￥' + amount.toFixed(2) : '—';
 }
 
 export function dateText(value: string): string {

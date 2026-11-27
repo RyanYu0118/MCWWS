@@ -1,5 +1,5 @@
 import { errorMessage, request, SESSION } from '../services/Api';
-import { BOTTOM_INSET, LoadState, ScreenHeader } from '../components/NativeUi';
+import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR, SERVICE_SHEET_COLOR } from '../components/NativeUi';
 
 interface ShopLocation {
   viewUrl?: string;
@@ -154,18 +154,26 @@ export struct ManagePage {
 
   build() {
     Column() {
-      ScreenHeader({ title: '管理', caption: '商店位置' })
-      if (!this.token) {
-        LoadState({ message: '登录后可查看管理权限', actionLabel: '前往账户', onAction: this.onAccount })
-      } else if (this.error || (!this.stores.length && this.loading)) {
-        LoadState({ loading: this.loading, message: this.error, actionLabel: '重试', onAction: () => void this.reload() })
-      } else {
-        Row({ space: 8 }) {
-          Search({ placeholder: '搜索商店', value: this.query }).layoutWeight(1).onChange(value => this.query = value)
-          Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
-            .onClick(() => void this.reload())
-        }.padding({ left: 16, right: 16, bottom: 10 })
-        List({ space: 8 }) {
+      List({ space: 8 }) {
+        ListItem() { ScreenHeader({ title: '管理', caption: '商店位置' }) }
+        if (!this.token) {
+          ListItem() {
+            LoadState({ message: '登录后可查看管理权限', actionLabel: '前往账户', onAction: this.onAccount })
+          }
+        } else if (this.error || (!this.stores.length && this.loading)) {
+          ListItem() {
+            LoadState({ loading: this.loading, message: this.error, actionLabel: '重试',
+              onAction: () => void this.reload() })
+          }
+        } else {
+          ListItem() {
+            Row({ space: 8 }) {
+              Search({ placeholder: '搜索商店', value: this.query })
+                .layoutWeight(1).onChange(value => this.query = value)
+              Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
+                .onClick(() => void this.reload())
+            }.padding({ left: 16, right: 16, bottom: 10 })
+          }
           ForEach(this.stores.filter(shop => (shop.titleResolved + ' ' + shop.id).toLowerCase().includes(
             this.query.trim().toLowerCase())), (shop: Store) => {
             ListItem() {
@@ -176,13 +184,20 @@ export struct ManagePage {
                     .fontSize(13).fontColor($r('sys.color.font_secondary'))
                 }.layoutWeight(1).alignItems(HorizontalAlign.Start)
                 Button('编辑', { buttonStyle: ButtonStyleMode.TEXTUAL }).onClick(() => this.edit(shop))
-              }.padding(14).borderRadius(16).backgroundColor($r('sys.color.comp_background_primary'))
-            }
+              }.padding(14).borderRadius(16).backgroundColor(SERVICE_CARD_COLOR)
+            }.padding({ left: 16, right: 16 })
           }, (shop: Store) => shop.id)
-        }.width('100%').layoutWeight(1).padding({ left: 16, right: 16 }).cachedCount(4)
+        }
       }
+      .width('100%').layoutWeight(1).cachedCount(4)
+      .contentEndOffset(BOTTOM_INSET)
+      .clipContent(ContentClipMode.SAFE_AREA)
+      .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     }
-    .width('100%').height('100%').padding({ bottom: BOTTOM_INSET })
-    .bindSheet($$this.editor, this.editorContent(), { height: SheetSize.LARGE, dragBar: true, showClose: true })
+    .width('100%').height('100%')
+    .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+    .bindSheet($$this.editor, this.editorContent(), {
+      height: SheetSize.LARGE, dragBar: true, showClose: true, backgroundColor: SERVICE_SHEET_COLOR
+    })
   }
 }
