@@ -156,14 +156,17 @@ export struct AccountPage {
     Column({ space: 14 }) {
       TextInput({ placeholder: '用户名', text: this.username })
         .height(48)
+        .enableKeyboardOnFocus(false)
         .onChange(value => this.username = value)
       TextInput({ placeholder: '密码', text: this.password })
         .type(InputType.Password)
         .height(48)
+        .enableKeyboardOnFocus(false)
         .onChange(value => this.password = value)
       if (this.register) {
         TextInput({ placeholder: '游戏玩家 ID', text: this.playerId })
           .height(48)
+          .enableKeyboardOnFocus(false)
           .onChange(value => this.playerId = value)
       }
       Button(this.register ? '注册并登录' : '登录')

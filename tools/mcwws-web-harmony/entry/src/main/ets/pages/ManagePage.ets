@@ -169,7 +169,7 @@ export struct ManagePage {
           ListItem() {
             Row({ space: 8 }) {
               Search({ placeholder: '搜索商店', value: this.query })
-                .layoutWeight(1).onChange(value => this.query = value)
+                .layoutWeight(1).enableKeyboardOnFocus(false).onChange(value => this.query = value)
               Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
                 .onClick(() => void this.reload())
             }.padding({ left: 16, right: 16, bottom: 10 })

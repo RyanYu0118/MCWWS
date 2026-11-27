@@ -585,6 +585,7 @@ export struct ShopPage {
       ScreenHeader({ title: '商店', caption: this.resultCount + ' 件物品' })
       Search({ placeholder: '搜索物品名称或 ID', value: this.query })
         .margin({ left: 16, right: 16, bottom: 8 })
+        .enableKeyboardOnFocus(false)
         .onChange(value => {
           this.query = value;
           clearTimeout(this.filterTimer);
