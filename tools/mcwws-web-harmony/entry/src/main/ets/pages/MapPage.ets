@@ -65,6 +65,9 @@ const GLASS_TINT: string = '#2AFFFFFF';
 const EDGE: string = '#70FFFFFF';
 const INK: string = '#FFFFFF';
 const FADED: string = '#E8FFFFFF';
+const MAP_ACTION_SIZE: number = 46;
+const MAP_ACTION_GAP: number = 8;
+const MAP_ACTION_LIST_HEIGHT: number = 8 * MAP_ACTION_SIZE + 7 * MAP_ACTION_GAP;
 const INITIAL_STATE: MapState = {
   ready: false, map: 'world', mode: '3D', night: false, locked: false, nightVision: false,
   following: false, canFly: false, editor: false, hash: ''
@@ -94,7 +97,7 @@ struct MapAction {
         Image(this.icon).width(21).height(21).accessibilityLevel('no')
       }
     }
-    .width(46).height(46)
+    .width(MAP_ACTION_SIZE).height(MAP_ACTION_SIZE)
     .mapGlass()
     .borderColor(this.selected ? INK : EDGE)
     .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
@@ -116,6 +119,7 @@ export struct MapPage {
 
   @State view: MapState = INITIAL_STATE;
   @State progress: number = 0;
+  @State actionAreaHeight: number = MAP_ACTION_LIST_HEIGHT;
   @State failed: boolean = false;
   @State sheetOpen: boolean = false;
   @State sheet: string = 'search';
@@ -693,7 +697,7 @@ export struct MapPage {
         this.view.night ? $r('app.media.map_moon') : $r('app.media.map_sun'))
         .width(21).height(21).accessibilityLevel('no')
     }
-    .width(46).height(46).mapGlass()
+    .width(MAP_ACTION_SIZE).height(MAP_ACTION_SIZE).mapGlass()
     .borderColor(this.view.locked ? INK : EDGE)
     .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
     .accessibilityText(this.view.locked ? '已锁定光照，长按解锁' :
@@ -703,18 +707,8 @@ export struct MapPage {
   }
 
   @Builder
-  header() {
+  searchOverlay() {
     Column({ space: 8 }) {
-      Row({ space: 8 }) {
-        Column({ space: 3 }) {
-          Text('地图').fontSize(29).fontWeight(FontWeight.Bold).fontColor(INK)
-          Text(this.mapLabel(this.view.map)).fontSize(13).fontColor(FADED)
-        }.layoutWeight(1).alignItems(HorizontalAlign.Start)
-        MapAction({ label: '维度与图层', icon: $r('app.media.map_layers'), available: this.view.ready,
-          onAction: () => this.openSheet('layers') })
-        MapAction({ label: '地图工具', icon: $r('app.media.map_tools'), available: this.view.ready,
-          onAction: () => this.openSheet('tools') })
-      }.width('100%')
       Button({ type: ButtonType.Capsule }) {
         Row({ space: 9 }) {
           Image($r('app.media.map_search')).width(17).height(17).accessibilityLevel('no')
@@ -728,8 +722,6 @@ export struct MapPage {
         Progress({ value: this.progress, total: 100, type: ProgressType.Linear }).style({ strokeWidth: 2 })
       }
     }.width('100%').padding({ left: 16, right: 16, top: 12, bottom: 9 })
-      .linearGradient({ direction: GradientDirection.Bottom,
-        colors: [['#53161820', 0], ['#27161820', 0.70], [Color.Transparent, 1]] })
       .hitTestBehavior(HitTestMode.Transparent)
   }
 
@@ -745,8 +737,7 @@ export struct MapPage {
             } })
         }.width('100%').justifyContent(FlexAlign.End).padding(12).hitTestBehavior(HitTestMode.Transparent)
       } else {
-        this.header()
-        Blank().hitTestBehavior(HitTestMode.None)
+        this.searchOverlay()
         if (this.view.ready) {
           Row({ space: 10 }) {
             if (this.view.mode === '飞行') {
@@ -764,18 +755,33 @@ export struct MapPage {
               }.alignItems(HorizontalAlign.Start)
             }
             Blank().hitTestBehavior(HitTestMode.None)
-            Column({ space: 8 }) {
-              MapAction({ label: '复位朝北', icon: $r('app.media.map_north'), onAction: () => void this.action('compass') })
-              MapAction({ label: '切换地图视角', symbol: this.view.mode, onAction: () => void this.action('mode') })
-              this.dayNightControl()
-              MapAction({ label: this.view.nightVision ? '关闭夜视' : '开启夜视', icon: $r('app.media.map_night_vision'),
-                selected: this.view.nightVision, onAction: () => void this.action('night-vision') })
-              MapAction({ label: '定位玩家', icon: $r('app.media.map_locate'), selected: this.view.following,
-                onAction: () => void this.playerAction(false) })
-              MapAction({ label: '全屏地图', icon: $r('app.media.map_fullscreen'), onAction: this.onToggleClean })
-            }.hitTestBehavior(HitTestMode.Transparent)
-          }.width('100%').padding({ left: 16, right: 16, bottom: 12 })
-            .alignItems(VerticalAlign.Bottom).hitTestBehavior(HitTestMode.Transparent)
+            Scroll() {
+              Column({ space: MAP_ACTION_GAP }) {
+                MapAction({ label: '维度与图层', icon: $r('app.media.map_layers'),
+                  onAction: () => this.openSheet('layers') })
+                MapAction({ label: '地图工具', icon: $r('app.media.map_tools'),
+                  onAction: () => this.openSheet('tools') })
+                MapAction({ label: '复位朝北', icon: $r('app.media.map_north'), onAction: () => void this.action('compass') })
+                MapAction({ label: '切换地图视角', symbol: this.view.mode, onAction: () => void this.action('mode') })
+                this.dayNightControl()
+                MapAction({ label: this.view.nightVision ? '关闭夜视' : '开启夜视', icon: $r('app.media.map_night_vision'),
+                  selected: this.view.nightVision, onAction: () => void this.action('night-vision') })
+                MapAction({ label: '定位玩家', icon: $r('app.media.map_locate'), selected: this.view.following,
+                  onAction: () => void this.playerAction(false) })
+                MapAction({ label: '全屏地图', icon: $r('app.media.map_fullscreen'), onAction: this.onToggleClean })
+              }.hitTestBehavior(HitTestMode.Transparent)
+            }
+            .width(MAP_ACTION_SIZE).height(Math.min(this.actionAreaHeight, MAP_ACTION_LIST_HEIGHT))
+            .enableScrollInteraction(this.actionAreaHeight < MAP_ACTION_LIST_HEIGHT)
+            .scrollBar(BarState.Off)
+            .hitTestBehavior(HitTestMode.Transparent)
+          }
+          .width('100%').layoutWeight(1).padding({ left: 16, right: 16 }).margin({ bottom: 12 })
+          .alignItems(VerticalAlign.Bottom).hitTestBehavior(HitTestMode.Transparent)
+          .onSizeChange((_, size) => {
+            const height = size.height;
+            if (typeof height === 'number' && height > 0) this.actionAreaHeight = height;
+          })
         }
       }
     }.width('100%').height('100%')

@@ -1,5 +1,5 @@
 import { ApiError, dateText, errorMessage, money, ORIGIN, request, SESSION } from '../services/Api';
-import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR } from '../components/NativeUi';
+import { BOTTOM_INSET, LoadState, SERVICE_CARD_COLOR } from '../components/NativeUi';
 
 interface AuthResult {
   username: string;
@@ -255,7 +255,6 @@ export struct AccountPage {
     Column() {
       if (!this.token) {
         List() {
-          ListItem() { ScreenHeader({ title: '账户', caption: '使用流浪世界服务账户登录' }) }
           ListItem() { this.login() }
         }
         .layoutWeight(1)
@@ -265,8 +264,7 @@ export struct AccountPage {
         .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
       } else {
         List({ space: 10 }) {
-          ListItem() { ScreenHeader({ title: '账户' }) }
-          ListItem() { this.profileCard() }
+          ListItem() { this.profileCard() }.padding({ top: 12 })
           ListItem() { this.ledgerHeader() }
           if (this.error || !this.ledger?.entries?.length) {
             ListItem() {

@@ -582,9 +582,8 @@ export struct ShopPage {
   @Builder
   catalogHeader() {
     Column() {
-      ScreenHeader({ title: '商店', caption: this.resultCount + ' 件物品' })
       Search({ placeholder: '搜索物品名称或 ID', value: this.query })
-        .margin({ left: 16, right: 16, bottom: 8 })
+        .margin({ left: 16, right: 16, top: 12, bottom: 8 })
         .enableKeyboardOnFocus(false)
         .onChange(value => {
           this.query = value;
@@ -605,8 +604,11 @@ export struct ShopPage {
         Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
           .onClick(() => void this.reload())
       }.padding({ left: 12, right: 12, bottom: 8 }).width('100%')
-      Button('交易概览', { buttonStyle: ButtonStyleMode.TEXTUAL })
-        .alignSelf(ItemAlign.Start).margin({ left: 12 }).onClick(() => void this.showStats())
+      Row() {
+        Button('交易概览', { buttonStyle: ButtonStyleMode.TEXTUAL }).onClick(() => void this.showStats())
+        Blank()
+        Text(this.resultCount + ' 件物品').fontSize(13).fontColor($r('sys.color.font_secondary'))
+      }.width('100%').padding({ left: 12, right: 16 })
       if (!this.resultCount) {
         LoadState({ loading: this.loading, message: this.error || '没有匹配的物品',
           actionLabel: this.error ? '重试' : '', onAction: () => void this.reload() })

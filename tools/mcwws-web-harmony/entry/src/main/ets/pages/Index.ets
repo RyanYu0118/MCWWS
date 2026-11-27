@@ -54,12 +54,7 @@ struct Index {
   @Builder
   home() {
     Column() {
-      Text('流浪世界服务')
-        .fontColor(Color.White)
-        .fontSize(36)
-        .fontWeight(FontWeight.Bold)
       Button('打开地图')
-        .margin({ top: 22 })
         .height(48)
         .padding({ left: 24, right: 24 })
         .fontColor(Color.White)
@@ -68,7 +63,7 @@ struct Index {
     }
     .width('100%')
     .height('100%')
-    .padding({ top: 32, left: 24, right: 24, bottom: BOTTOM_INSET })
+    .padding({ top: 16, left: 24, right: 24, bottom: BOTTOM_INSET })
     .alignItems(HorizontalAlign.Start)
   }
 

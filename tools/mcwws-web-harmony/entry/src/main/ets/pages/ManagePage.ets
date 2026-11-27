@@ -155,7 +155,6 @@ export struct ManagePage {
   build() {
     Column() {
       List({ space: 8 }) {
-        ListItem() { ScreenHeader({ title: '管理', caption: '商店位置' }) }
         if (!this.token) {
           ListItem() {
             LoadState({ message: '登录后可查看管理权限', actionLabel: '前往账户', onAction: this.onAccount })
@@ -172,7 +171,7 @@ export struct ManagePage {
                 .layoutWeight(1).enableKeyboardOnFocus(false).onChange(value => this.query = value)
               Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
                 .onClick(() => void this.reload())
-            }.padding({ left: 16, right: 16, bottom: 10 })
+            }.padding({ left: 16, right: 16, top: 12, bottom: 10 })
           }
           ForEach(this.stores.filter(shop => (shop.titleResolved + ' ' + shop.id).toLowerCase().includes(
             this.query.trim().toLowerCase())), (shop: Store) => {
