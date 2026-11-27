@@ -7,7 +7,7 @@ import { ShopPage } from './ShopPage';
 import { CART, SESSION } from '../services/Api';
 import { BOTTOM_INSET } from '../components/NativeUi';
 
-const SELECTED_DOCK_COLOR: string = '#B3CDB7';
+const SELECTED_DOCK_COLOR: string = '#91B397';
 
 PersistentStorage.persistProp(SESSION, '');
 PersistentStorage.persistProp(CART, '[]');
@@ -123,7 +123,7 @@ struct Index {
     .height('100%')
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
     .backgroundColor(Color.Transparent)
-    .scrollable(false)
+    .scrollable(this.selectedTab !== 2 && !this.mapFullScreen)
     .animationDuration(320)
     .barPosition(BarPosition.End)
     .barOverlap(true)
