@@ -254,17 +254,15 @@ export struct AccountPage {
   build() {
     Column() {
       if (!this.token) {
-        Scroll() {
-          Column() {
-            ScreenHeader({ title: '账户', caption: '使用流浪世界服务账户登录' })
-            this.login()
-          }.width('100%')
+        List() {
+          ListItem() { ScreenHeader({ title: '账户', caption: '使用流浪世界服务账户登录' }) }
+          ListItem() { this.login() }
         }
-          .layoutWeight(1)
-          .width('100%')
-          .contentEndOffset(BOTTOM_INSET)
-          .clipContent(ContentClipMode.SAFE_AREA)
-          .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+        .layoutWeight(1)
+        .width('100%')
+        .contentEndOffset(BOTTOM_INSET)
+        .clipContent(ContentClipMode.SAFE_AREA)
+        .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
       } else {
         List({ space: 10 }) {
           ListItem() { ScreenHeader({ title: '账户' }) }
