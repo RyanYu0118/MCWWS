@@ -30,7 +30,6 @@ export const MAP_RUNTIME: string = `
     'render-above-320':'above320', 'show-residence-bounds':'residenceBounds'
   };
   const held = new Map();
-  let cacheResult = {tiles:0, active:false, busy:false};
 
   function openLayers() {
     const dialog = q('#mcwws-gis-layer-dialog');
@@ -91,13 +90,6 @@ export const MAP_RUNTIME: string = `
       button.click();
     }, 760);
     return true;
-  }
-
-  async function cacheInfo() {
-    const names = typeof caches !== 'undefined' ? (await caches.keys()).filter(name => name.startsWith('mcwws-map-')) : [];
-    let tiles = 0;
-    for (const name of names.filter(name => name.includes('-tiles-'))) tiles += (await (await caches.open(name)).keys()).length;
-    return {tiles, active: !!navigator.serviceWorker?.controller};
   }
 
   function keyInput(key, down) {
@@ -167,22 +159,6 @@ export const MAP_RUNTIME: string = `
       return true;
     }
     if (action === 'key') return keyInput(value, flag);
-    if (action === 'cache' || action === 'clearCache') {
-      cacheResult.busy = true;
-      void (async () => {
-        try {
-          if (action === 'clearCache' && typeof caches !== 'undefined') {
-            const names = (await caches.keys()).filter(name => name.startsWith('mcwws-map-tiles-'));
-            await Promise.all(names.map(name => caches.delete(name)));
-          }
-          cacheResult = {...await cacheInfo(), busy:false};
-        } catch {
-          cacheResult = {tiles:0,active:false,busy:false};
-        }
-      })();
-      return true;
-    }
-    if (action === 'cacheResult') return cacheResult;
     return false;
   };
   return true;

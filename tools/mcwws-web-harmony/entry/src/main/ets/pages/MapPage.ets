@@ -1,6 +1,7 @@
 import { webview } from '@kit.ArkWeb';
 import { common } from '@kit.AbilityKit';
 import { pasteboard } from '@kit.BasicServicesKit';
+import { curves } from '@kit.ArkUI';
 import { errorMessage, MAP_ORIGIN, ORIGIN, request, SESSION } from '../services/Api';
 import { MAP_RUNTIME } from '../services/MapRuntime';
 import { BOTTOM_INSET } from '../components/NativeUi';
@@ -44,11 +45,6 @@ interface LayerState {
   residenceBounds?: boolean;
   simplified?: boolean;
 }
-interface CachedTiles {
-  tiles: number;
-  active: boolean;
-  busy: boolean;
-}
 class MapEvents {
   private onMarker: (id: string) => void;
   constructor(onMarker: (id: string) => void) {
@@ -67,7 +63,7 @@ const INK: string = '#FFFFFF';
 const FADED: string = '#E8FFFFFF';
 const MAP_ACTION_SIZE: number = 46;
 const MAP_ACTION_GAP: number = 8;
-const MAP_ACTION_LIST_HEIGHT: number = 8 * MAP_ACTION_SIZE + 7 * MAP_ACTION_GAP;
+const MAP_ACTION_LIST_HEIGHT: number = 7 * MAP_ACTION_SIZE + 6 * MAP_ACTION_GAP;
 const INITIAL_STATE: MapState = {
   ready: false, map: 'world', mode: '3D', night: false, locked: false, nightVision: false,
   following: false, canFly: false, editor: false, hash: ''
@@ -84,26 +80,109 @@ function mapGlass() {
 struct MapAction {
   @Prop label: string = '';
   @Prop symbol: string = '';
-  @Prop icon: Resource = $r('app.media.map_tools');
+  @Prop icon: Resource = $r('app.media.map_close');
   @Prop selected: boolean = false;
-  @Prop available: boolean = true;
+  @Prop wide: boolean = false;
+  @Prop holdToAct: boolean = false;
   onAction: () => void = () => {};
+  onHold: () => void = () => {};
+  @State offsetX: number = 0;
+  @State offsetY: number = 0;
+  @State pressed: boolean = false;
+  private startX: number = 0;
+  private startY: number = 0;
+  private fingerId: number = -1;
+  private moved: boolean = false;
+  private held: boolean = false;
+  private suppressClickUntil: number = 0;
+  private holdTimer: number = -1;
+
+  aboutToDisappear(): void {
+    clearTimeout(this.holdTimer);
+  }
+
+  private track(event: TouchEvent): void {
+    if (event.type === TouchType.Cancel) {
+      if (this.fingerId >= 0) this.release(true);
+      return;
+    }
+    const touch = event.changedTouches[0];
+    if (!touch) return;
+    if (event.type === TouchType.Down && this.fingerId < 0) {
+      this.fingerId = touch.id;
+      this.startX = touch.windowX;
+      this.startY = touch.windowY;
+      this.moved = false;
+      this.held = false;
+      this.suppressClickUntil = 0;
+      this.getUIContext().animateTo({ duration: 120 }, () => { this.pressed = true; });
+      if (this.holdToAct) {
+        this.holdTimer = setTimeout(() => {
+          this.held = true;
+          this.suppressClickUntil = Date.now() + 350;
+          this.onHold();
+        }, 600);
+      }
+    } else if (touch.id === this.fingerId && event.type === TouchType.Move) {
+      const dx = touch.windowX - this.startX;
+      const dy = touch.windowY - this.startY;
+      if (Math.hypot(dx, dy) > 7) {
+        this.moved = true;
+        clearTimeout(this.holdTimer);
+      }
+      this.offsetX = (this.wide ? 9 : 15) * Math.tanh(dx / 35);
+      this.offsetY = 15 * Math.tanh(dy / 35);
+    } else if (touch.id === this.fingerId && event.type === TouchType.Up) {
+      this.release(false);
+    }
+  }
+
+  private release(cancelled: boolean): void {
+    clearTimeout(this.holdTimer);
+    this.fingerId = -1;
+    if (cancelled || this.moved || this.held) this.suppressClickUntil = Date.now() + 350;
+    this.getUIContext().animateTo({ curve: curves.interpolatingSpring(0, 1, 300, 23) }, () => {
+      this.pressed = false;
+      this.offsetX = 0;
+      this.offsetY = 0;
+    });
+  }
 
   build() {
-    Button({ type: ButtonType.Circle }) {
-      if (this.symbol) {
-        Text(this.symbol).fontSize(14).fontWeight(FontWeight.Medium).fontColor(INK)
-      } else {
-        Image(this.icon).width(21).height(21).accessibilityLevel('no')
-      }
+    Button({ type: this.wide ? ButtonType.Capsule : ButtonType.Circle, stateEffect: false }) {
+      Stack() {
+        Row()
+          .width('100%').height('100%')
+          .radialGradient({ center: [`${45 + this.offsetX * 3}%`, `${18 + this.offsetY * 3}%`], radius: '83%',
+            colors: [['#D8FFFFFF', 0], ['#57D0ECD7', 0.40], [Color.Transparent, 1]] })
+          .opacity(this.pressed ? 0.72 : 0)
+          .hitTestBehavior(HitTestMode.None).accessibilityLevel('no')
+        if (this.wide) {
+          Row({ space: 9 }) {
+            Image(this.icon).width(17).height(17).accessibilityLevel('no')
+            Text(this.symbol).fontSize(15).fontColor(INK).layoutWeight(1)
+          }.width('100%').padding({ left: 13, right: 12 })
+        } else if (this.symbol) {
+          Text(this.symbol).fontSize(14).fontWeight(FontWeight.Medium).fontColor(INK)
+        } else {
+          Image(this.icon).width(21).height(21).accessibilityLevel('no')
+        }
+      }.width('100%').height('100%')
     }
-    .width(MAP_ACTION_SIZE).height(MAP_ACTION_SIZE)
+    .width(this.wide ? '100%' : MAP_ACTION_SIZE).height(MAP_ACTION_SIZE).padding(0)
     .mapGlass()
-    .borderColor(this.selected ? INK : EDGE)
+    .borderColor(this.pressed || this.selected ? INK : EDGE)
+    .scale({ x: this.pressed ? 1.07 + Math.abs(this.offsetX) * 0.008 : 1,
+      y: this.pressed ? 0.87 + Math.abs(this.offsetY) * 0.008 : 1 })
+    .translate({ x: this.offsetX, y: this.offsetY })
+    .shadow({ radius: this.pressed ? 10 : 0, color: '#669DCEAB', offsetX: 0, offsetY: 2 })
+    .clip(true)
     .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
     .accessibilityText(this.label)
-    .enabled(this.available)
-    .onClick(() => this.onAction())
+    .onTouch(event => this.track(event))
+    .onClick(() => {
+      if (Date.now() >= this.suppressClickUntil) this.onAction();
+    })
   }
 }
 
@@ -134,8 +213,6 @@ export struct MapPage {
   @State maps: string[] = ['world', 'world_nether', 'world_the_end', 'dimensionalhome'];
   @State layer: LayerState | null = null;
   @State layerBusy: boolean = false;
-  @State tileCache: CachedTiles | null = null;
-  @State cacheBusy: boolean = false;
   @State authBusy: boolean = false;
   private controller: webview.WebviewController = new webview.WebviewController();
   private events: MapEvents = new MapEvents(id => void this.showMarker(id));
@@ -298,8 +375,6 @@ export struct MapPage {
     this.sheetOpen = true;
     if (name === 'search') void this.loadMarkers(false);
     if (name === 'layers') void this.loadLayer();
-    if (name === 'tools') void this.readState();
-    if (name === 'cache') void this.loadCache(false);
   }
 
   private async loadMarkers(reload: boolean): Promise<void> {
@@ -450,28 +525,6 @@ export struct MapPage {
     }
   }
 
-  private async loadCache(clear: boolean): Promise<void> {
-    if (this.cacheBusy || !this.view.ready) return;
-    this.cacheBusy = true;
-    try {
-      await this.script(clear ? 'clearCache' : 'cache');
-      for (let i = 0; i < 10; i++) {
-        await this.delay(200);
-        const result = await this.script('cacheResult');
-        if (typeof result === 'boolean') break;
-        const info = result as CachedTiles;
-        if (!info.busy) {
-          this.tileCache = info;
-          break;
-        }
-      }
-    } catch {
-      this.toast('无法读取地图缓存');
-    } finally {
-      this.cacheBusy = false;
-    }
-  }
-
   private async copyPosition(): Promise<void> {
     await this.readState();
     const hash = this.getHash(this.view.hash);
@@ -607,70 +660,20 @@ export struct MapPage {
         this.layerToggle('渲染 Y=320 以上方块', 'render-above-320', this.layer?.above320 ?? false)
         if (this.layerBusy) Text('正在应用图层').fontColor(FADED).fontSize(13)
         this.rowAction('专业 GIS 编辑', '编辑标注、道路、区域和三维体块', () => void this.launchEditor())
-      }.padding(20).width('100%').alignItems(HorizontalAlign.Start)
-    }
-  }
-
-  @Builder
-  toolsSheet() {
-    Scroll() {
-      Column({ space: 8 }) {
-        this.heading('地图工具', this.mapLabel(this.view.map) + ' · ' + this.view.mode)
-        this.rowAction('复位朝北', '', () => void this.action('compass'))
-        this.rowAction(this.view.mode === '2D' ? '切换到 3D' : '切换到 2D', '', () => void this.action('mode'))
         if (this.view.canFly) {
           this.rowAction(this.view.mode === '飞行' ? '退出自由飞行' : '自由飞行', '使用触屏方向键移动', () => {
             this.sheetOpen = false;
             void this.action('fly');
           })
         }
-        this.rowAction(this.view.night ? '切换日景' : '切换夜景', '临时覆盖游戏时间',
-          () => void this.action('daynight'), !this.view.locked)
-        this.rowAction(this.view.locked ? '解锁，跟随游戏时间' : '锁定当前光照', '',
-          () => void this.lockLight())
-        Row() {
-          Text('夜视').fontSize(16).fontColor(INK).layoutWeight(1)
-          Toggle({ type: ToggleType.Switch, isOn: this.view.nightVision })
-            .onChange(() => void this.action('night-vision'))
-        }.width('100%').padding(12).backgroundColor(GLASS_TINT).borderRadius(15)
-        this.rowAction('定位玩家', '查看当前位置或最后离线位置', () => void this.playerAction(false))
         this.rowAction(this.view.following ? '停止跟随' : '跟随玩家', '', () => void this.playerAction(true))
         this.rowAction('复制当前位置链接', '', () => void this.copyPosition())
-        this.rowAction('地图缓存', '管理已浏览瓦片', () => this.openSheet('cache'))
-        this.rowAction('全屏地图', '隐藏工具与应用底栏', () => {
-          this.sheetOpen = false;
-          this.onToggleClean();
-        })
         this.rowAction('重新加载地图', '', () => {
           this.sheetOpen = false;
           this.controller.refresh();
         })
-      }.width('100%').padding(20).alignItems(HorizontalAlign.Start)
+      }.padding(20).width('100%').alignItems(HorizontalAlign.Start)
     }
-  }
-
-  @Builder
-  cacheSheet() {
-    Column({ space: 10 }) {
-      this.heading('地图缓存')
-      if (this.cacheBusy) {
-        Text('正在读取瓦片缓存').fontColor(FADED)
-      } else {
-        Text(this.tileCache?.active ? '已缓存 ' + this.tileCache.tiles + ' 张瓦片' : '瓦片缓存暂不可用')
-          .fontColor(INK).fontSize(16)
-      }
-      Text('缓存覆盖已浏览的瓦片。离线查看新区域仍需网络。').fontSize(14).fontColor(FADED)
-      this.rowAction('刷新缓存统计', '', () => void this.loadCache(false), !this.cacheBusy)
-      this.rowAction('清除地图瓦片缓存', '', () => {
-        this.getUIContext().getPromptAction().showDialog({
-          title: '清除地图瓦片缓存',
-          message: '下次查看这些区域时会重新加载瓦片。',
-          buttons: [{ text: '取消', color: FADED }, { text: '清除', color: INK }]
-        }).then(answer => {
-          if (answer.index === 1) void this.loadCache(true);
-        }).catch(() => {});
-      }, !this.cacheBusy && (this.tileCache?.tiles || 0) > 0)
-    }.width('100%').padding(20).alignItems(HorizontalAlign.Start)
   }
 
   @Builder
@@ -678,46 +681,29 @@ export struct MapPage {
     if (this.sheet === 'search') this.searchSheet()
     else if (this.sheet === 'marker') this.markerSheet()
     else if (this.sheet === 'layers') this.layerSheet()
-    else if (this.sheet === 'cache') this.cacheSheet()
-    else this.toolsSheet()
   }
 
   @Builder
   flyingKey(label: string, key: string) {
-    Button(label)
-      .width(44).height(42).fontColor(INK).mapGlass()
-      .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
-      .onClick(() => this.sendFlightKey(key, true))
+    MapAction({ label: label, symbol: label, onAction: () => this.sendFlightKey(key, true) })
   }
 
   @Builder
   dayNightControl() {
-    Button({ type: ButtonType.Circle }) {
-      Image(this.view.locked ? $r('app.media.map_light_lock') :
-        this.view.night ? $r('app.media.map_moon') : $r('app.media.map_sun'))
-        .width(21).height(21).accessibilityLevel('no')
-    }
-    .width(MAP_ACTION_SIZE).height(MAP_ACTION_SIZE).mapGlass()
-    .borderColor(this.view.locked ? INK : EDGE)
-    .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
-    .accessibilityText(this.view.locked ? '已锁定光照，长按解锁' :
-      (this.view.night ? '切换日景' : '切换夜景') + '，长按锁定当前光照')
-    .onClick(() => void this.action('daynight'))
-    .priorityGesture(LongPressGesture({ duration: 600 }).onAction(() => void this.lockLight()))
+    MapAction({ label: this.view.locked ? '已锁定光照，长按解锁' :
+      (this.view.night ? '切换日景' : '切换夜景') + '，长按锁定当前光照',
+      icon: this.view.locked ? $r('app.media.map_light_lock') :
+        this.view.night ? $r('app.media.map_moon') : $r('app.media.map_sun'),
+      selected: this.view.locked, holdToAct: true,
+      onAction: () => void this.action('daynight'), onHold: () => void this.lockLight() })
   }
 
   @Builder
   searchOverlay() {
     Column({ space: 8 }) {
-      Button({ type: ButtonType.Capsule }) {
-        Row({ space: 9 }) {
-          Image($r('app.media.map_search')).width(17).height(17).accessibilityLevel('no')
-          Text('搜索商店、物品或坐标').fontSize(15).fontColor(INK).layoutWeight(1)
-        }.width('100%').padding({ left: 13, right: 12 })
-      }
-      .width('100%').height(45).mapGlass()
-      .hitTestBehavior(HitTestMode.BLOCK_HIERARCHY)
-      .accessibilityText('搜索地图').onClick(() => this.openSheet('search'))
+      MapAction({ label: '搜索地图', wide: true, symbol: '搜索商店、物品或坐标',
+        icon: $r('app.media.map_search'), onAction: () => this.openSheet('search') })
+
       if (this.progress < 100) {
         Progress({ value: this.progress, total: 100, type: ProgressType.Linear }).style({ strokeWidth: 2 })
       }
@@ -759,8 +745,6 @@ export struct MapPage {
               Column({ space: MAP_ACTION_GAP }) {
                 MapAction({ label: '维度与图层', icon: $r('app.media.map_layers'),
                   onAction: () => this.openSheet('layers') })
-                MapAction({ label: '地图工具', icon: $r('app.media.map_tools'),
-                  onAction: () => this.openSheet('tools') })
                 MapAction({ label: '复位朝北', icon: $r('app.media.map_north'), onAction: () => void this.action('compass') })
                 MapAction({ label: '切换地图视角', symbol: this.view.mode, onAction: () => void this.action('mode') })
                 this.dayNightControl()
@@ -773,6 +757,7 @@ export struct MapPage {
             }
             .width(MAP_ACTION_SIZE).height(Math.min(this.actionAreaHeight, MAP_ACTION_LIST_HEIGHT))
             .enableScrollInteraction(this.actionAreaHeight < MAP_ACTION_LIST_HEIGHT)
+            .clip(this.actionAreaHeight < MAP_ACTION_LIST_HEIGHT)
             .scrollBar(BarState.Off)
             .hitTestBehavior(HitTestMode.Transparent)
           }

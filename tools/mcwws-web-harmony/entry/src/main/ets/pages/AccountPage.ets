@@ -1,5 +1,6 @@
 import { ApiError, dateText, errorMessage, money, ORIGIN, request, SESSION } from '../services/Api';
 import { BOTTOM_INSET, LoadState, SERVICE_CARD_COLOR } from '../components/NativeUi';
+import { MapCachePanel } from '../components/MapCachePanel';
 
 interface AuthResult {
   username: string;
@@ -42,6 +43,7 @@ interface Credentials {
 
 @Component
 export struct AccountPage {
+  @Link settingsOpen: boolean;
   @StorageLink(SESSION) @Watch('sessionChanged') token: string = '';
   @State username: string = '';
   @State password: string = '';
@@ -99,6 +101,7 @@ export struct AccountPage {
 
   private async signOut(): Promise<void> {
     const token = this.token;
+    this.settingsOpen = false;
     this.token = '';
     try {
       const body: Record<string, string> = {};
@@ -189,22 +192,30 @@ export struct AccountPage {
   }
 
   @Builder
+  profileIdentity() {
+    Row({ space: 12 }) {
+      if (this.profile?.playerId) {
+        Image(ORIGIN + '/api/player-avatar/' + encodeURIComponent(this.profile.playerId) + '?size=64')
+          .width(48).height(48).borderRadius(24)
+      }
+      Column({ space: 4 }) {
+        Text(this.profile?.username || '账户').fontSize(20).fontWeight(FontWeight.Medium)
+        Text(this.profile?.playerId || '').fontSize(13).fontColor($r('sys.color.font_secondary'))
+      }.alignItems(HorizontalAlign.Start).layoutWeight(1)
+    }.width('100%')
+  }
+
+  @Builder
   profileCard() {
     Column({ space: 14 }) {
-      Row({ space: 12 }) {
-        if (this.profile?.playerId) {
-          Image(ORIGIN + '/api/player-avatar/' + encodeURIComponent(this.profile.playerId) + '?size=64')
-            .width(48).height(48).borderRadius(24)
-        }
-        Column({ space: 4 }) {
-          Text(this.profile?.username || '账户').fontSize(20).fontWeight(FontWeight.Medium)
-          Text(this.profile?.playerId || '').fontSize(13).fontColor($r('sys.color.font_secondary'))
-        }
-        .alignItems(HorizontalAlign.Start)
-        .layoutWeight(1)
-        Button('退出', { buttonStyle: ButtonStyleMode.TEXTUAL })
-          .onClick(() => void this.signOut())
+      Button({ type: ButtonType.Normal }) {
+        Row({ space: 6 }) {
+          Row() { this.profileIdentity() }.layoutWeight(1)
+          Image($r('app.media.nav_manage')).width(22).height(22).accessibilityLevel('no')
+        }.width('100%')
       }
+      .width('100%').padding(0).backgroundColor(Color.Transparent)
+      .accessibilityText('账户设置').onClick(() => this.settingsOpen = true)
       Row() {
         Column({ space: 5 }) {
           Text('当前余额').fontSize(13).fontColor($r('sys.color.font_secondary'))
@@ -251,11 +262,42 @@ export struct AccountPage {
     }.alignItems(HorizontalAlign.Start).width('100%')
   }
 
+  @Builder
+  settingsPage() {
+    Scroll() {
+      Column({ space: 16 }) {
+        Row({ space: 8 }) {
+          Button({ type: ButtonType.Circle }) {
+            Image($r('app.media.nav_back')).width(22).height(22).accessibilityLevel('no')
+          }.width(44).height(44).backgroundColor(SERVICE_CARD_COLOR)
+            .accessibilityText('返回账户').onClick(() => this.settingsOpen = false)
+          Text('设置').fontSize(24).fontWeight(FontWeight.Medium)
+        }.width('100%')
+        if (this.token) {
+          this.profileIdentity()
+        }
+        MapCachePanel()
+        if (this.token) {
+          Button('退出登录', { buttonStyle: ButtonStyleMode.TEXTUAL })
+            .width('100%').height(46).fontColor('#FFB6B1').backgroundColor(SERVICE_CARD_COLOR)
+            .onClick(() => void this.signOut())
+        }
+      }.width('100%').alignItems(HorizontalAlign.Start)
+        .padding({ top: 12, left: 16, right: 16, bottom: BOTTOM_INSET })
+    }.width('100%').layoutWeight(1).scrollBar(BarState.Off)
+  }
+
   build() {
     Column() {
-      if (!this.token) {
+      if (this.settingsOpen) {
+        this.settingsPage()
+      } else if (!this.token) {
         List() {
           ListItem() { this.login() }
+          ListItem() {
+            Button('设置', { buttonStyle: ButtonStyleMode.TEXTUAL })
+              .margin({ left: 20 }).onClick(() => this.settingsOpen = true)
+          }
         }
         .layoutWeight(1)
         .width('100%')

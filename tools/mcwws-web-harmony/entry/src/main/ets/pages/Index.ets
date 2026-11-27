@@ -7,16 +7,18 @@ import { ShopPage } from './ShopPage';
 import { CART, SESSION } from '../services/Api';
 import { BOTTOM_INSET } from '../components/NativeUi';
 
+const SELECTED_DOCK_COLOR: string = '#B3CDB7';
+
 PersistentStorage.persistProp(SESSION, '');
 PersistentStorage.persistProp(CART, '[]');
 function serviceTabBar(icon: Resource, title: string): BottomTabBarStyle {
   return BottomTabBarStyle.of(icon, title)
     .iconStyle({
-      selectedColor: Color.White,
+      selectedColor: SELECTED_DOCK_COLOR,
       unselectedColor: '#CCFFFFFF'
     })
     .labelStyle({
-      selectedColor: Color.White,
+      selectedColor: SELECTED_DOCK_COLOR,
       unselectedColor: '#CCFFFFFF'
     });
 }
@@ -29,8 +31,13 @@ struct Index {
   @State mapTarget: string = '';
   @State shopSearch: string = '';
   @State mapFullScreen: boolean = false;
+  @State accountSettings: boolean = false;
 
   onBackPressed(): boolean {
+    if (this.selectedTab === 4 && this.accountSettings) {
+      this.accountSettings = false;
+      return true;
+    }
     if (this.mapFullScreen) {
       this.toggleMapFullScreen();
       return true;
@@ -106,7 +113,7 @@ struct Index {
       .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
       .tabBar(serviceTabBar($r('app.media.nav_manage'), '管理'))
       TabContent() {
-        AccountPage()
+        AccountPage({ settingsOpen: $accountSettings })
       }
       .clip(false)
       .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
@@ -130,6 +137,7 @@ struct Index {
     })
     .onChange(index => {
       this.selectedTab = index;
+      if (index !== 4) this.accountSettings = false;
     })
   }
 
