@@ -1,5 +1,7 @@
 import { CART, dateText, errorMessage, ListSource, money, request, SESSION } from '../services/Api';
 import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR, SERVICE_SHEET_COLOR } from '../components/NativeUi';
+import { ShopItemPreview } from '../components/ShopItemPreview';
+import { ShopBrowser, SHOP_BROWSER_URL } from '../services/ShopBrowser';
 
 interface Offer {
   shopId: string;
@@ -28,6 +30,10 @@ interface Product {
   id: string;
   title: string;
   price: PriceRow;
+}
+interface SearchItem {
+  id: string;
+  name: string;
 }
 interface BasketLine {
   itemId: string;
@@ -79,6 +85,7 @@ interface PriceHistory {
 }
 
 const GAME_ASSETS: string = '/26.1.2/assets/minecraft/';
+const SHOP_LETTERS: string[] = [''].concat('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
 
 @Component
 struct PriceChart {
@@ -144,6 +151,8 @@ export struct ShopPage {
   @State loading: boolean = false;
   @State error: string = '';
   @State categoryIndex: number = 0;
+  @State letter: string = '';
+  @State browserReady: boolean = false;
   @State resultCount: number = 0;
   @State categories: Category[] = [{ id: '', name: '全部物品' }, { id: 'in_shop', name: '已上架' }];
   @State activeProduct: Product | null = null;
@@ -171,6 +180,10 @@ export struct ShopPage {
   onAccount: () => void = () => {};
   private catalog: Product[] = [];
   private filtered: ListSource<Product> = new ListSource<Product>();
+  private browser: ShopBrowser = new ShopBrowser();
+  private catalogIndexed: boolean = false;
+  private filterVersion: number = 0;
+  private browserVersion: number = 0;
   private filterTimer: number = -1;
   private ordersGeneration: number = 0;
   private detailGeneration: number = 0;
@@ -192,11 +205,53 @@ export struct ShopPage {
     if (!this.mapSearch) return;
     this.query = this.mapSearch;
     this.categoryIndex = 0;
+    this.letter = '';
     this.filter();
   }
 
   aboutToDisappear(): void {
     clearTimeout(this.filterTimer);
+    this.browserVersion++;
+    this.filterVersion++;
+    this.browser.reset();
+  }
+
+  private async initializeBrowser(): Promise<void> {
+    const version = ++this.browserVersion;
+    for (let i = 0; i < 24 && version === this.browserVersion; i++) {
+      try {
+        if (await this.browser.run('true') === 'true' && version === this.browserVersion) {
+          this.browserReady = true;
+          await this.indexCatalog();
+          return;
+        }
+      } catch {
+        // The renderer may still be starting.
+      }
+      await new Promise<void>(resolve => { setTimeout(resolve, 250); });
+    }
+  }
+
+  private async indexCatalog(): Promise<void> {
+    if (!this.browserReady || !this.catalog.length || this.catalogIndexed) return;
+    const catalog = this.catalog;
+    const version = this.browserVersion;
+    const rows = catalog.map((item): SearchItem => ({
+      id: item.id,
+      name: item.price.displayName || item.price.customDisplayName || ''
+    }));
+    try {
+      const raw = await this.browser.run('window.MCWWSNativeShopPage.setCatalog(' + JSON.stringify(rows) + ')');
+      const names = JSON.parse(raw) as string[];
+      if (version !== this.browserVersion || catalog !== this.catalog || !Array.isArray(names)
+        || names.length !== catalog.length) return;
+      this.catalog = catalog.map((item, index): Product => ({ id: item.id, title: names[index], price: item.price }))
+        .sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
+      this.catalogIndexed = true;
+      this.filter();
+    } catch {
+      // The local name and ID filters are usable while the browser is unavailable.
+    }
   }
 
   sessionChanged(): void {
@@ -220,6 +275,7 @@ export struct ShopPage {
       ]);
       const prices = results[0];
       const lang = results[1];
+      this.catalogIndexed = false;
       this.catalog = Object.keys(prices).map((id): Product => {
         const price = prices[id];
         const title = price.displayName || price.customDisplayName || lang['item.minecraft.' + id] ||
@@ -227,6 +283,7 @@ export struct ShopPage {
         return { id, title, price };
       }).sort((a, b) => a.title.localeCompare(b.title, 'zh-CN'));
       this.filter();
+      void this.indexCatalog();
     } catch (err) {
       this.error = errorMessage(err as Error);
     } finally {
@@ -245,15 +302,41 @@ export struct ShopPage {
   }
 
   private filter(): void {
+    const version = ++this.filterVersion;
     const query = this.query.trim().toLowerCase();
+    const letter = this.letter;
     const category = this.categories[this.categoryIndex]?.id || '';
     const items = this.catalog.filter(product => {
-      const filtersMatch = !category || (category === 'in_shop' ? product.price.inShop === true :
+      return !category || (category === 'in_shop' ? product.price.inShop === true :
         (product.price.shopCategories || []).some(value => value === category || value.startsWith(category + '__')));
-      return filtersMatch && (!query || product.id.includes(query) || product.title.toLowerCase().includes(query));
     });
-    this.filtered.set(items);
-    this.resultCount = items.length;
+    const publish = (results: Product[]): void => {
+      if (version !== this.filterVersion) return;
+      this.filtered.set(results);
+      this.resultCount = results.length;
+    };
+    if (!query && !letter) {
+      publish(items);
+      return;
+    }
+    const applyLocal = (): void => {
+      publish(items.filter(product => {
+        const first = /^[A-Z]/i.test(product.title) ? product.title[0] : product.id.replace(/^minecraft:/i, '')[0];
+        return (!letter || first?.toUpperCase() === letter) &&
+          (!query || product.id.toLowerCase().includes(query) || product.title.toLowerCase().includes(query));
+      }));
+    };
+    if (this.catalogIndexed) {
+      this.browser.run('window.MCWWSNativeShopPage.filter(' + JSON.stringify(query) + ',' +
+        JSON.stringify(letter) + ')').then(raw => {
+        const ids = JSON.parse(raw) as string[];
+        if (!Array.isArray(ids)) { applyLocal(); return; }
+        const matches = new Set<string>(ids);
+        publish(items.filter(product => matches.has(product.id)));
+      }).catch(() => applyLocal());
+    } else {
+      applyLocal();
+    }
   }
 
   private async showProduct(product: Product): Promise<void> {
@@ -399,7 +482,15 @@ export struct ShopPage {
   detail() {
     Scroll() {
       Column({ space: 14 }) {
-        ScreenHeader({ title: this.activeProduct?.title || '物品详情', caption: this.activeProduct?.id || '' })
+        Row() {
+          if (this.activeProduct) {
+            ShopItemPreview({ itemId: this.activeProduct.id, iconSize: 72, ready: this.browserReady,
+              requestPreview: id => this.browser.preview(id) })
+          }
+          Row() {
+            ScreenHeader({ title: this.activeProduct?.title || '物品详情', caption: this.activeProduct?.id || '' })
+          }.layoutWeight(1)
+        }.width('100%')
         Text('买入 ' + money(this.activeProduct?.price.buy) + '   ·   卖出 ' +
           money(this.activeProduct?.price.sell)).width('100%')
         if (this.activeOffers.length > 0) {
@@ -460,6 +551,8 @@ export struct ShopPage {
         }
         ForEach(this.basket, (line: BasketLine) => {
           Row({ space: 8 }) {
+            ShopItemPreview({ itemId: line.itemId, iconSize: 38, ready: this.browserReady,
+              requestPreview: id => this.browser.preview(id) })
             Column({ space: 4 }) {
               Text(line.title).fontSize(16)
               Text(line.quantity + ' 件  ·  ' + money(line.unitPrice * line.quantity))
@@ -582,8 +675,9 @@ export struct ShopPage {
   @Builder
   catalogHeader() {
     Column() {
-      Search({ placeholder: '搜索物品名称或 ID', value: this.query })
+      Search({ placeholder: '搜索名称、ID 或拼音', value: this.query })
         .margin({ left: 16, right: 16, top: 12, bottom: 8 })
+        .maxLength(96)
         .enableKeyboardOnFocus(false)
         .onChange(value => {
           this.query = value;
@@ -604,6 +698,21 @@ export struct ShopPage {
         Button('刷新', { buttonStyle: ButtonStyleMode.TEXTUAL }).enabled(!this.loading)
           .onClick(() => void this.reload())
       }.padding({ left: 12, right: 12, bottom: 8 }).width('100%')
+      Scroll() {
+        Row({ space: 5 }) {
+          ForEach(SHOP_LETTERS, (letter: string) => {
+            Button(letter || '全部', { type: ButtonType.Capsule, buttonStyle: ButtonStyleMode.TEXTUAL })
+              .height(36).constraintSize({ minWidth: 36 }).padding({ left: 9, right: 9 })
+              .fontColor(this.letter === letter ? '#15271B' : Color.White)
+              .backgroundColor(this.letter === letter ? '#91B397' : SERVICE_CARD_COLOR)
+              .accessibilityText(letter ? '首字母 ' + letter : '取消字母筛选')
+              .onClick(() => {
+                this.letter = this.letter === letter ? '' : letter;
+                this.filter();
+              })
+          }, (letter: string) => letter || 'all')
+        }.padding({ left: 16, right: 16 })
+      }.scrollable(ScrollDirection.Horizontal).scrollBar(BarState.Off).width('100%')
       Row() {
         Button('交易概览', { buttonStyle: ButtonStyleMode.TEXTUAL }).onClick(() => void this.showStats())
         Blank()
@@ -623,6 +732,8 @@ export struct ShopPage {
         LazyForEach(this.filtered, (product: Product) => {
           ListItem() {
             Row({ space: 12 }) {
+              ShopItemPreview({ itemId: product.id, ready: this.browserReady,
+                requestPreview: id => this.browser.preview(id) })
               Column({ space: 4 }) {
                 Text(product.title).fontSize(17).fontWeight(FontWeight.Medium).maxLines(1)
                   .textOverflow({ overflow: TextOverflow.Ellipsis })
@@ -634,11 +745,24 @@ export struct ShopPage {
               }.alignItems(HorizontalAlign.End)
             }.width('100%').padding(14).borderRadius(16).backgroundColor(SERVICE_CARD_COLOR)
           }.padding({ left: 16, right: 16 }).onClick(() => void this.showProduct(product))
-        }, (product: Product) => product.id)
+        }, (product: Product) => product.id + ':' + product.title)
       }.width('100%').layoutWeight(1).cachedCount(5)
         .contentEndOffset(BOTTOM_INSET)
         .clipContent(ContentClipMode.SAFE_AREA)
         .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])
+      Web({ src: SHOP_BROWSER_URL, controller: this.browser.controller })
+        .width(1).height(1).opacity(0).hitTestBehavior(HitTestMode.None).accessibilityLevel('no')
+        .javaScriptAccess(true).fileAccess(false)
+        .javaScriptProxy({ object: this.browser, name: 'MCWWSNativeShop', methodList: ['previewReady'],
+          controller: this.browser.controller })
+        .onPageBegin(() => {
+          this.browserVersion++;
+          this.browserReady = false;
+          this.catalogIndexed = false;
+          this.browser.reset();
+        })
+        .onPageEnd(() => void this.initializeBrowser())
+        .onLoadIntercept(event => event.data.isMainFrame() && event.data.getRequestUrl() !== SHOP_BROWSER_URL)
     }
     .width('100%').height('100%')
     .expandSafeArea([SafeAreaType.SYSTEM], [SafeAreaEdge.TOP, SafeAreaEdge.BOTTOM])

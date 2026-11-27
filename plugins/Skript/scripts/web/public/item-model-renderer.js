@@ -1096,6 +1096,18 @@
     getMcCfg().get3dSlotBitmapSize = get3dSlotBitmapSize;
 
     global.McItemIcon = {
+        async capturePreview(slot, itemId) {
+            if (!getThree() || !(await prefers3d(itemId))) return null;
+            try {
+                await renderItemToSlot(slot, itemId);
+                const cached = iconCache.get(normalizeId(itemId));
+                if (cached === 'ANIMATED') return slot.querySelector('canvas').toDataURL('image/png');
+                return cached || null;
+            } finally {
+                clearAnimatedSlots();
+            }
+        },
+
         renderAnimatedSlots() {
             if (!renderer || !camera) return;
             pruneAnimatedSlots();
