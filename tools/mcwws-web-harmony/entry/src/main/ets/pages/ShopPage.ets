@@ -2,6 +2,7 @@ import { CART, dateText, errorMessage, ListSource, money, request, SESSION } fro
 import { BOTTOM_INSET, LoadState, ScreenHeader, SERVICE_CARD_COLOR, SERVICE_SHEET_COLOR } from '../components/NativeUi';
 import { ShopItemPreview } from '../components/ShopItemPreview';
 import { ShopBrowser, SHOP_BROWSER_URL } from '../services/ShopBrowser';
+import { ChartPoint, PriceChart, PricePoint } from '../components/PriceChart';
 
 interface Offer {
   shopId: string;
@@ -75,72 +76,12 @@ interface EconomyStats {
   avgTransaction: number;
   netFlow: number;
 }
-interface PricePoint {
-  timestamp: string;
-  avgBuyPrice: number;
-  avgSellPrice: number;
-}
 interface PriceHistory {
   priceHistory: PricePoint[];
 }
 
 const GAME_ASSETS: string = '/26.1.2/assets/minecraft/';
 const SHOP_LETTERS: string[] = [''].concat('ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split(''));
-
-@Component
-struct PriceChart {
-  @Prop @Watch('draw') points: PricePoint[] = [];
-  private settings: RenderingContextSettings = new RenderingContextSettings(true);
-  private canvas: CanvasRenderingContext2D = new CanvasRenderingContext2D(this.settings);
-
-  draw(): void {
-    const width = this.canvas.width;
-    const height = this.canvas.height;
-    if (width <= 0 || height <= 0 || this.points.length < 2) {
-      return;
-    }
-    const lowest = Math.min(...this.points.map(point => Math.min(point.avgBuyPrice, point.avgSellPrice)));
-    const highest = Math.max(...this.points.map(point => Math.max(point.avgBuyPrice, point.avgSellPrice)));
-    const range = Math.max(0.01, highest - lowest);
-    this.canvas.clearRect(0, 0, width, height);
-    this.canvas.strokeStyle = '#33768596';
-    this.canvas.lineWidth = 1;
-    for (let row = 0; row < 3; row++) {
-      const y = 8 + row * (height - 16) / 2;
-      this.canvas.beginPath();
-      this.canvas.moveTo(4, y);
-      this.canvas.lineTo(width - 4, y);
-      this.canvas.stroke();
-    }
-    this.plot(width, height, lowest, range, '#0A59F7', false);
-    this.plot(width, height, lowest, range, '#768596', true);
-  }
-
-  private plot(width: number, height: number, lowest: number, range: number, color: string,
-    sell: boolean): void {
-    this.canvas.strokeStyle = color;
-    this.canvas.lineWidth = 2;
-    this.canvas.beginPath();
-    this.points.forEach((point, index) => {
-      const x = 4 + index * (width - 8) / (this.points.length - 1);
-      const value = sell ? point.avgSellPrice : point.avgBuyPrice;
-      const y = height - 8 - (value - lowest) / range * (height - 16);
-      if (index === 0) {
-        this.canvas.moveTo(x, y);
-      } else {
-        this.canvas.lineTo(x, y);
-      }
-    });
-    this.canvas.stroke();
-  }
-
-  build() {
-    Canvas(this.canvas)
-      .width('100%').height(112)
-      .accessibilityText('历史价格，蓝线为买入，灰线为卖出')
-      .onReady(() => this.draw())
-  }
-}
 
 @Component
 export struct ShopPage {
@@ -166,7 +107,7 @@ export struct ShopPage {
   @State checkoutMessage: string = '';
   @State addresses: string[] = [];
   @State address: string = '';
-  @State qty: number = 1;
+  @State qtyText: string = '1';
   @State sending: boolean = false;
   @State loadingOrders: boolean = false;
   @State shopStats: ShopStats | null = null;
@@ -174,7 +115,7 @@ export struct ShopPage {
   @State statsError: string = '';
   @State statsLoading: boolean = false;
   @State history: PricePoint[] = [];
-  @State chartPoints: PricePoint[] = [];
+  @State chartPoints: ChartPoint[] = [];
   @State historyLoading: boolean = false;
   @State historyError: string = '';
   onAccount: () => void = () => {};
@@ -346,7 +287,7 @@ export struct ShopPage {
       typeof offer.buyAmountResolved === 'number' && Number.isFinite(offer.buyAmountResolved) &&
       offer.buyAmountResolved >= 0 && !!offer.slot && !!offer.shopId);
     this.offerIndex = 0;
-    this.qty = 1;
+    this.qtyText = '1';
     this.history = [];
     this.chartPoints = [];
     this.historyLoading = true;
@@ -357,10 +298,13 @@ export struct ShopPage {
       const data = await request<PriceHistory>('/api/shop/item-snapshot/' +
         encodeURIComponent(product.id) + '?range=7d');
       if (generation === this.detailGeneration) {
-        const recent = (data.priceHistory || []).filter(point =>
-          Number.isFinite(point.avgBuyPrice) && Number.isFinite(point.avgSellPrice)).slice(-48);
-        this.chartPoints = recent;
-        this.history = recent.slice(-8).reverse();
+        const points = (data.priceHistory || []).map((point): ChartPoint => ({
+          timestamp: point.timestamp, time: Date.parse(point.timestamp.replace(' ', 'T')),
+          avgBuyPrice: point.avgBuyPrice, avgSellPrice: point.avgSellPrice
+        })).filter(point => Number.isFinite(point.time) &&
+          Number.isFinite(point.avgBuyPrice) && Number.isFinite(point.avgSellPrice)).sort((a, b) => a.time - b.time);
+        this.chartPoints = points;
+        this.history = points.slice(-8).reverse();
       }
     } catch (err) {
       if (generation === this.detailGeneration) {
@@ -390,6 +334,14 @@ export struct ShopPage {
     this.statsLoading = false;
   }
 
+  private quantity(): number {
+    return Math.max(1, Math.min(10000, Number(this.qtyText) || 1));
+  }
+
+  private changeQuantity(delta: number): void {
+    this.qtyText = Math.max(1, Math.min(10000, this.quantity() + delta)).toString();
+  }
+
   private addToBasket(): void {
     const product = this.activeProduct;
     const offer = this.activeOffers[this.offerIndex];
@@ -397,7 +349,7 @@ export struct ShopPage {
       return;
     }
     const line: BasketLine = {
-      itemId: product.id, shopId: offer.shopId, slot: offer.slot, quantity: this.qty,
+      itemId: product.id, shopId: offer.shopId, slot: offer.slot, quantity: this.quantity(),
       title: product.title, unitPrice: offer.buyAmountResolved
     };
     const existing = this.basket.findIndex(entry => this.lineKey(entry) === this.lineKey(line));
@@ -503,18 +455,25 @@ export struct ShopPage {
           Text('上架单价 ' + money(this.activeOffers[this.offerIndex]?.buyAmountResolved)).width('100%')
           Row({ space: 12 }) {
             Text('数量').layoutWeight(1)
-            Counter() {
-              TextInput({ text: this.qty.toString() })
-                .width(70).height(34).type(InputType.Number).textAlign(TextAlign.Center)
-                .maxLength(5)
-                .onChange(value => {
-                  const qty = Number(value);
-                  if (value && Number.isInteger(qty)) this.qty = Math.max(1, Math.min(10000, qty));
-                })
+            Row({ space: 8 }) {
+              Button('−', { type: ButtonType.Circle, buttonStyle: ButtonStyleMode.TEXTUAL })
+                .width(44).height(44).padding(0).fontSize(22).fontColor(Color.White)
+                .backgroundColor('#30483A').enabled(this.quantity() > 1)
+                .accessibilityText('减少数量').onClick(() => this.changeQuantity(-1))
+              TextInput({ text: this.qtyText })
+                .width(86).height(44).padding({ left: 6, right: 6 })
+                .type(InputType.Number).textAlign(TextAlign.Center).fontSize(18)
+                .fontColor(Color.White).backgroundColor('#293F34').borderRadius(12)
+                .border({ width: 1, color: '#668FB197' })
+                .inputFilter('[0-9]').maxLength(5).accessibilityText('购买数量')
+                .onChange(value => this.qtyText = value)
+                .onBlur(() => this.changeQuantity(0))
+                .onSubmit(() => this.changeQuantity(0))
+              Button('+', { type: ButtonType.Circle, buttonStyle: ButtonStyleMode.TEXTUAL })
+                .width(44).height(44).padding(0).fontSize(22).fontColor(Color.White)
+                .backgroundColor('#30483A').enabled(this.quantity() < 10000)
+                .accessibilityText('增加数量').onClick(() => this.changeQuantity(1))
             }
-              .enableDec(this.qty > 1).enableInc(this.qty < 10000)
-              .onDec(() => this.qty = Math.max(1, this.qty - 1))
-              .onInc(() => this.qty = Math.min(10000, this.qty + 1))
           }.width('100%')
           Button('加入购物车').height(48).width('100%').onClick(() => this.addToBasket())
         } else {
@@ -525,11 +484,7 @@ export struct ShopPage {
         if (this.historyLoading || !this.history.length) {
           LoadState({ loading: this.historyLoading, message: this.historyError || '暂无价格记录' })
         } else {
-          if (this.chartPoints.length > 1) {
-            PriceChart({ points: this.chartPoints })
-            Text('蓝线 买入  ·  灰线 卖出').fontSize(12)
-              .fontColor($r('sys.color.font_secondary')).width('100%')
-          }
+          PriceChart({ points: this.chartPoints })
           ForEach(this.history, (point: PricePoint) => {
             Row({ space: 12 }) {
               Text(dateText(point.timestamp)).layoutWeight(1).fontSize(13)
