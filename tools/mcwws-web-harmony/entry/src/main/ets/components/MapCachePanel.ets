@@ -2,6 +2,8 @@ import { webview } from '@kit.ArkWeb';
 import { MAP_ORIGIN } from '../services/Api';
 import { SERVICE_CARD_COLOR } from './NativeUi';
 
+const CACHE_DOCUMENT: string = MAP_ORIGIN + '/.mcwws-native-cache';
+
 @Component
 export struct MapCachePanel {
   @State tiles: number = -1;
@@ -14,13 +16,17 @@ export struct MapCachePanel {
     this.open = false;
   }
 
-  private loadCacheOrigin(): void {
-    try {
-      // Use the map's Cache Storage without loading the map or its tiles.
-      this.controller.loadData('<!doctype html><meta charset="utf-8">', 'text/html', 'UTF-8', MAP_ORIGIN + '/');
-    } catch {
-      this.error = '无法访问地图瓦片缓存';
-    }
+  private cacheDocument(event: OnInterceptRequestEvent): WebResourceResponse {
+    const isCacheDocument = event.request.getRequestUrl() === CACHE_DOCUMENT;
+    // Give the local page the map's storage origin without a network request.
+    const response = new WebResourceResponse();
+    response.setResponseData(isCacheDocument ? '<!doctype html><meta charset="utf-8">' : '');
+    response.setResponseMimeType('text/html');
+    response.setResponseEncoding('utf-8');
+    response.setResponseCode(isCacheDocument ? 200 : 404);
+    response.setReasonMessage(isCacheDocument ? 'OK' : 'Not Found');
+    response.setResponseHeader([{ headerKey: 'Cache-Control', headerValue: 'no-store' }]);
+    return response;
   }
 
   private async updateCache(clear: boolean): Promise<void> {
@@ -91,10 +97,10 @@ export struct MapCachePanel {
         Button('清除瓦片缓存', { buttonStyle: ButtonStyleMode.TEXTUAL })
           .enabled(!this.busy && this.tiles > 0).onClick(() => this.confirmClear())
       }
-      Web({ src: 'about:blank', controller: this.controller })
+      Web({ src: CACHE_DOCUMENT, controller: this.controller })
         .width(1).height(1).opacity(0).accessibilityLevel('no')
         .hitTestBehavior(HitTestMode.None).javaScriptAccess(true).domStorageAccess(true).fileAccess(false)
-        .onControllerAttached(() => this.loadCacheOrigin())
+        .onInterceptRequest(event => this.cacheDocument(event))
         .onPageEnd(() => void this.updateCache(false))
     }.width('100%').alignItems(HorizontalAlign.Start)
       .padding(16).backgroundColor(SERVICE_CARD_COLOR).borderRadius(20)

@@ -284,7 +284,7 @@ export struct AccountPage {
         }
       }.width('100%').alignItems(HorizontalAlign.Start)
         .padding({ top: 12, left: 16, right: 16, bottom: BOTTOM_INSET })
-    }.width('100%').layoutWeight(1).scrollBar(BarState.Off)
+    }.width('100%').layoutWeight(1).align(Alignment.TopStart).scrollBar(BarState.Off)
   }
 
   build() {
